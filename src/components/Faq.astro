@@ -1,0 +1,69 @@
+---
+import type { Dict } from '../i18n';
+
+interface Props { t: Dict }
+const { t } = Astro.props;
+---
+
+<section class="faq">
+  <h2 class="h2">{t.faqTitle}</h2>
+  <div class="list" data-acc-group="faq">
+    {
+      t.faq.map((f, i) => {
+        const open = i === 0;
+        return (
+          <div class="item">
+            <button type="button" aria-expanded={open ? 'true' : 'false'} aria-controls={`faq-panel-${i}`} data-acc-btn>
+              <span>{f.q}</span>
+              <span class="sign"><span class="sign-closed">+</span><span class="sign-open">−</span></span>
+            </button>
+            <p id={`faq-panel-${i}`} data-acc-panel data-closed={open ? undefined : ''}>{f.a}</p>
+          </div>
+        );
+      })
+    }
+  </div>
+</section>
+
+<style>
+  .faq {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: clamp(80px, 9vw, 128px) clamp(20px, 4vw, 40px);
+  }
+  .h2 {
+    margin: 0 0 36px;
+  }
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .item {
+    background: var(--surf);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+  }
+  button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    background: transparent;
+    border: 0;
+    color: var(--ink);
+    padding: 22px 24px;
+    font-size: clamp(17px, 1.6vw, 19px);
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+  }
+  p {
+    margin: 0;
+    padding: 0 72px 24px 24px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--mut);
+  }
+</style>

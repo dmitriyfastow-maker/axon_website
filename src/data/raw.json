@@ -1,0 +1,323 @@
+{
+  "THEMES": {
+    "light": {
+      "bg": "#F5F2EC",
+      "surf": "#FFFFFF",
+      "surf2": "#ECE7DD",
+      "ink": "#17150F",
+      "mut": "#5F5A50",
+      "line": "rgba(23,21,15,0.10)",
+      "acc": "#E4A93F",
+      "accText": "#865800",
+      "deep": "#17150F",
+      "deepInk": "#F5F2EC",
+      "deepMut": "#A9A398",
+      "deepLine": "rgba(255,255,255,0.10)"
+    },
+    "dark": {
+      "bg": "#0F0E0C",
+      "surf": "#181713",
+      "surf2": "#22201B",
+      "ink": "#F3EFE7",
+      "mut": "#A39D91",
+      "line": "rgba(255,255,255,0.09)",
+      "acc": "#E4A93F",
+      "accText": "#E8B65A",
+      "deep": "#1D1B16",
+      "deepInk": "#F3EFE7",
+      "deepMut": "#A39D91",
+      "deepLine": "rgba(255,255,255,0.10)"
+    }
+  },
+  "PRICES": [
+    "$900 – $1,300",
+    "$1,500 – $2,400",
+    "$3,000 – $5,500"
+  ],
+  "TIER_NAMES": [
+    "Foundation",
+    "Growth",
+    "Scale"
+  ],
+  "TIMES": [
+    "30–60",
+    "3–6",
+    "12"
+  ],
+  "CASE_META": [
+    {
+      "client": "TrichoTech",
+      "tier": 2,
+      "real": true,
+      "stack": "Flutter · PostgreSQL",
+      "img": "assets/tricho-cover.png",
+      "pal": {
+        "bg": "#173F4F",
+        "ink": "#FFFFFF",
+        "acc": "#3FB8B0",
+        "chip": "rgba(0,0,0,.4)",
+        "card": "#FFFFFF",
+        "cardInk": "#17150F",
+        "barMute": "rgba(23,21,15,0.12)"
+      },
+      "gallery": [
+        {
+          "src": "assets/tricho-logo.png",
+          "fit": "cover",
+          "bg": "#173F4F"
+        },
+        {
+          "src": "assets/tricho-laptop.png",
+          "fit": "contain",
+          "bg": "#FFFFFF"
+        }
+      ],
+      "metrics": [
+        "+187%",
+        "+115%",
+        "−49%"
+      ]
+    },
+    {
+      "client": "AiPro Partners",
+      "tier": 2,
+      "real": true,
+      "stack": "React · PostgreSQL",
+      "img": "assets/aipro-cover.png",
+      "pal": {
+        "bg": "#1C1C1C",
+        "ink": "#FFFFFF",
+        "acc": "#1EA7E1",
+        "chip": "rgba(0,0,0,.4)",
+        "card": "#FFFFFF",
+        "cardInk": "#17150F",
+        "barMute": "rgba(23,21,15,0.12)"
+      },
+      "gallery": [
+        {
+          "src": "assets/aipro-logo.png",
+          "fit": "cover",
+          "bg": "#1C1C1C"
+        },
+        {
+          "src": "assets/aipro-laptop.png",
+          "fit": "contain",
+          "bg": "#FFFFFF"
+        }
+      ],
+      "metrics": [
+        "5",
+        "CRM",
+        "2024"
+      ]
+    },
+    {
+      "client": "Lumière Aesthetics",
+      "tier": 1,
+      "metrics": [
+        "+212%",
+        "−38%",
+        "63%"
+      ],
+      "pal": {
+        "bg": "#E9D8C9",
+        "ink": "#3A2820",
+        "acc": "#B5704F",
+        "chip": "rgba(255,255,255,.55)",
+        "card": "#FFFFFF",
+        "cardInk": "#17150F",
+        "barMute": "rgba(23,21,15,0.12)"
+      },
+      "bars": [
+        28,
+        34,
+        31,
+        46,
+        58,
+        72,
+        94
+      ]
+    },
+    {
+      "client": "Nordvik Interiors",
+      "tier": 0,
+      "metrics": [
+        "×3.1",
+        "12 min",
+        "45"
+      ],
+      "pal": {
+        "bg": "#D9DED1",
+        "ink": "#24302A",
+        "acc": "#56745C",
+        "chip": "rgba(255,255,255,.55)",
+        "card": "#FFFFFF",
+        "cardInk": "#17150F",
+        "barMute": "rgba(23,21,15,0.12)"
+      },
+      "bars": [
+        22,
+        26,
+        30,
+        41,
+        52,
+        70,
+        88
+      ]
+    },
+    {
+      "client": "Halden & Co.",
+      "tier": 1,
+      "metrics": [
+        "9 → 41",
+        "−44%",
+        "€2.6M"
+      ],
+      "pal": {
+        "bg": "#1E2935",
+        "ink": "#EDE6D8",
+        "acc": "#C9A35E",
+        "chip": "rgba(255,255,255,.1)",
+        "card": "#FFFFFF",
+        "cardInk": "#17150F",
+        "barMute": "rgba(23,21,15,0.12)"
+      },
+      "bars": [
+        18,
+        24,
+        33,
+        40,
+        55,
+        74,
+        96
+      ]
+    },
+    {
+      "client": "Sable Roasters",
+      "tier": 2,
+      "metrics": [
+        "34%",
+        "27%",
+        "×2.4"
+      ],
+      "pal": {
+        "bg": "#3B2A1F",
+        "ink": "#F2E6D4",
+        "acc": "#E0954A",
+        "chip": "rgba(255,255,255,.1)",
+        "card": "#FFFFFF",
+        "cardInk": "#17150F",
+        "barMute": "rgba(23,21,15,0.12)"
+      },
+      "bars": [
+        40,
+        38,
+        47,
+        52,
+        61,
+        73,
+        90
+      ]
+    },
+    {
+      "client": "Atlas Yacht Charter",
+      "tier": 1,
+      "metrics": [
+        "6.4×",
+        "+180%",
+        "71%"
+      ],
+      "pal": {
+        "bg": "#CBDFE2",
+        "ink": "#0F3239",
+        "acc": "#2A7C89",
+        "chip": "rgba(255,255,255,.55)",
+        "card": "#FFFFFF",
+        "cardInk": "#17150F",
+        "barMute": "rgba(23,21,15,0.12)"
+      },
+      "bars": [
+        30,
+        52,
+        44,
+        63,
+        58,
+        80,
+        95
+      ]
+    },
+    {
+      "client": "Meridian Fit",
+      "tier": 2,
+      "metrics": [
+        "18k",
+        "−41%",
+        "4.8"
+      ],
+      "pal": {
+        "bg": "#E8613A",
+        "ink": "#1A0F0A",
+        "acc": "#1A0F0A",
+        "chip": "rgba(255,255,255,.35)",
+        "card": "#FFFFFF",
+        "cardInk": "#17150F",
+        "barMute": "rgba(23,21,15,0.12)"
+      },
+      "bars": [
+        12,
+        20,
+        31,
+        44,
+        58,
+        76,
+        98
+      ]
+    }
+  ],
+  "SVC_PRICES": [
+    [
+      "$700 – $4,000 / mo"
+    ],
+    [
+      "$700 – $7,000 / mo"
+    ],
+    [
+      "$1,000 – $5,000",
+      "$2,000 – $10,000",
+      "$3,000 – $20,000",
+      null
+    ],
+    [
+      "$5,000 – $15,000",
+      "$15,000 – $40,000",
+      "$25,000 – $70,000",
+      null
+    ],
+    [
+      "$500 – $2,500",
+      "$1,000 – $4,000 / mo",
+      "$100 – $600 / page"
+    ],
+    [
+      "$300 – $1,500",
+      "$500 – $4,000",
+      "$300 – $1,500",
+      "$500 – $3,000",
+      "$500 – $4,000"
+    ],
+    [
+      "$20 – $80 / 500 words",
+      "$10 – $50 / 500 words"
+    ],
+    [
+      "$500 – $3,000 / mo"
+    ]
+  ],
+  "NAV_HREFS": [
+    "#method",
+    "#cases",
+    "#pricing",
+    "#services",
+    "#referral"
+  ]
+}

@@ -1,0 +1,40 @@
+/* Theme tokens — exact values of THEMES in design/AXON_Landing_v2.dc.html. */
+:root,
+[data-theme='light'] {
+  --bg: #f5f2ec;
+  --surf: #ffffff;
+  --surf2: #ece7dd;
+  --ink: #17150f;
+  --mut: #5f5a50;
+  --line: rgba(23, 21, 15, 0.1);
+  --acc: #e4a93f;
+  --accText: #865800;
+  --deep: #17150f;
+  --deepInk: #f5f2ec;
+  --deepMut: #a9a398;
+  --deepLine: rgba(255, 255, 255, 0.1);
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #0f0e0c;
+  --surf: #181713;
+  --surf2: #22201b;
+  --ink: #f3efe7;
+  --mut: #a39d91;
+  --line: rgba(255, 255, 255, 0.09);
+  --acc: #e4a93f;
+  --accText: #e8b65a;
+  --deep: #1d1b16;
+  --deepInk: #f3efe7;
+  --deepMut: #a39d91;
+  --deepLine: rgba(255, 255, 255, 0.1);
+  color-scheme: dark;
+}
+
+:root {
+  --font: 'Onest', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --dark-ink: #17150f;
+  --error: #c2412d;
+}

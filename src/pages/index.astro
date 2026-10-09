@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import Landing from '../components/Landing.astro';
+import { getDict, langPath } from '../i18n';
+
+const lang = 'en';
+const t = getDict(lang);
+---
+
+<Base lang={lang} title={`AXON — ${t.h1}`} description={t.sub} path={langPath(lang)}>
+  <script is:inline slot="head">
+    // Return visitors who picked UA/RU land on their language.
+    try {
+      var l = localStorage.getItem('axon_lang');
+      if (l === 'ua' || l === 'ru') location.replace('/' + l + '/' + location.hash);
+    } catch (e) {}
+  </script>
+  <Landing lang={lang} />
+</Base>

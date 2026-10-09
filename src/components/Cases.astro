@@ -1,0 +1,84 @@
+---
+import type { Dict } from '../i18n';
+import { CASE_META } from '../data/cases';
+import { TIER_NAMES } from '../data/tiers';
+import CaseCard from './CaseCard.astro';
+
+interface Props { t: Dict }
+const { t } = Astro.props;
+const filters = [{ label: t.all, v: -1 }, ...TIER_NAMES.map((n, i) => ({ label: n, v: i }))];
+---
+
+<section id="cases" class="cases">
+  <div class="head">
+    <div class="intro">
+      <div class="eyebrow">◆ {t.casesEyebrow}</div>
+      <h2 class="h2">{t.casesTitle}</h2>
+      <p>{t.casesSub}</p>
+    </div>
+    <div class="filters" role="group" aria-label={t.casesEyebrow}>
+      {
+        filters.map((f) => (
+          <button type="button" class="pill" data-case-filter={f.v} aria-pressed={f.v === -1 ? 'true' : 'false'}>
+            {f.label}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+  <div class="grid" data-acc-group="cases">
+    {CASE_META.map((m, i) => <CaseCard meta={m} copy={t.cases[i]} labels={t.labels} index={i} />)}
+  </div>
+</section>
+
+<style>
+  .cases {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: clamp(80px, 9vw, 128px) clamp(20px, 4vw, 40px);
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 640px;
+  }
+  .intro p {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px;
+    background: var(--surf2);
+    border-radius: 999px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 20px;
+    align-items: start;
+  }
+  @media (min-width: 720px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1100px) {
+    .grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+</style>

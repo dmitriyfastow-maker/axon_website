@@ -1,0 +1,386 @@
+---
+import type { Dict } from '../i18n';
+import type { CaseMeta } from '../data/cases';
+import { TIER_NAMES } from '../data/tiers';
+import Img from './Img.astro';
+
+interface Props { meta: CaseMeta; copy: Dict['cases'][number]; labels: Dict['labels']; index: number }
+const { meta: m, copy: c, labels, index } = Astro.props;
+
+const feat = !!m.real;
+const img = !!m.img;
+const p = m.pal;
+const ext = c as typeof c & { duration?: string; extras?: { title: string; items: string[] }[]; note?: string };
+const metrics = m.metrics.map((v, k) => ({ v, l: c.ml[k] }));
+const bars = m.bars ?? [];
+const panelId = `case-panel-${index}`;
+const vars = `--c-bg:${p.bg};--c-ink:${p.ink};--c-acc:${p.acc};--c-chip:${p.chip};--c-card:${p.card};--c-card-ink:${p.cardInk};--c-bar:${p.barMute}`;
+---
+
+<article class:list={['case', { feat, 'has-img': img }]} style={vars} data-case-tier={m.tier}>
+  <div class="cover">
+    {
+      img ? (
+        <>
+          <Img name={m.img!} alt={m.client} class="cover-img" sizes="(min-width: 1100px) 50vw, (min-width: 720px) 100vw, 100vw" widths={[640, 960, 1280]} />
+          <div class="shade" />
+        </>
+      ) : (
+        <>
+          <span class="mono" aria-hidden="true">{m.client[0]}</span>
+          <div class="kpi-card" aria-hidden="true">
+            <span class="kpi-label">{c.ml[0]}</span>
+            <span class="kpi">{m.metrics[0]}</span>
+            <div class="bars">
+              {bars.map((h, k) => <span style={`height:${h}%`} class:list={{ last: k === bars.length - 1 }} />)}
+            </div>
+          </div>
+        </>
+      )
+    }
+    <div class="cover-top">
+      <span class="chip">{c.shot}</span>
+      <span class="badge">{TIER_NAMES[m.tier]}</span>
+    </div>
+    <span class="word">{m.client}</span>
+  </div>
+  <div class="body">
+    <div class="intro">
+      <span class="meta">{c.industry} · {c.city}</span>
+      <h3>{m.client}</h3>
+      <p>{c.summary}</p>
+    </div>
+    <div class="metrics">
+      {
+        metrics.map((x) => (
+          <div class="metric">
+            <span class="mv">{x.v}</span>
+            <span class="ml">{x.l}</span>
+          </div>
+        ))
+      }
+    </div>
+    <div class="details" id={panelId} data-acc-panel data-closed>
+      {
+        m.gallery && (
+          <div class="gallery">
+            {m.gallery.map((g) => (
+              <div class="shot">
+                <Img name={g.src} alt="" style={`object-fit:${g.fit};background:${g.bg}`} sizes="(min-width: 1100px) 25vw, 50vw" widths={[400, 700]} />
+              </div>
+            ))}
+          </div>
+        )
+      }
+      <div class="block first">
+        <span class="mono-label lbl">{labels.challenge}</span>
+        <span class="txt">{c.challenge}</span>
+      </div>
+      <div class="block">
+        <span class="mono-label lbl acc">{labels.approach}</span>
+        {c.steps.map((s) => <span class="li"><span class="dash">—</span>{s}</span>)}
+      </div>
+      {
+        (ext.extras ?? []).map((ex) => (
+          <div class="block">
+            <span class="mono-label lbl acc">{ex.title}</span>
+            {ex.items.map((x) => <span class="li"><span class="dash">—</span>{x}</span>)}
+          </div>
+        ))
+      }
+      {ext.note && <span class="note">{ext.note}</span>}
+      <span class="foot">{m.real ? labels.stack : labels.duration}: {m.real ? m.stack : ext.duration}</span>
+    </div>
+    <button type="button" class="toggle" aria-expanded="false" aria-controls={panelId} data-acc-btn>
+      <span class="sign-closed">{labels.readCase}</span><span class="sign-open">{labels.hideCase}</span>
+      <span class="sign"><span class="sign-closed">+</span><span class="sign-open">−</span></span>
+    </button>
+  </div>
+</article>
+
+<style>
+  .case {
+    grid-column: span 1;
+    background: var(--surf);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .cover {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--c-bg);
+    color: var(--c-ink);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 18px;
+  }
+  .cover :global(picture) {
+    position: absolute;
+    inset: 0;
+  }
+  .cover :global(.cover-img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s;
+  }
+  .shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(8, 10, 12, 0.05) 30%, rgba(8, 10, 12, 0.82) 100%);
+  }
+  .mono {
+    position: absolute;
+    left: -0.05em;
+    bottom: -0.3em;
+    font-size: clamp(170px, 20vw, 250px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.06em;
+    color: var(--c-acc);
+    opacity: 0.2;
+    pointer-events: none;
+    user-select: none;
+  }
+  .kpi-card {
+    position: absolute;
+    right: 7%;
+    top: 27%;
+    width: 44%;
+    max-width: 230px;
+    background: var(--c-card);
+    color: var(--c-card-ink);
+    border-radius: 16px;
+    padding: 14px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 22px 44px -20px rgba(0, 0, 0, 0.45);
+    transform: rotate(-2.5deg);
+  }
+  .kpi-label {
+    font-size: 11px;
+    line-height: 1.3;
+    opacity: 0.62;
+  }
+  .kpi {
+    font-size: clamp(24px, 2.6vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 40px;
+    margin-top: 6px;
+  }
+  .bars span {
+    flex: 1;
+    border-radius: 3px;
+    background: var(--c-bar);
+  }
+  .bars span.last {
+    background: var(--c-acc);
+  }
+  .cover-top {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.4;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: var(--c-chip);
+    color: var(--c-ink);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    max-width: 62%;
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 6px 10px;
+    border-radius: 999px;
+    flex: none;
+    background: var(--c-ink);
+    color: var(--c-bg);
+  }
+  .word {
+    position: relative;
+    font-size: clamp(22px, 2.2vw, 28px);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: var(--c-ink);
+  }
+  .feat .word {
+    font-size: clamp(28px, 3.2vw, 44px);
+  }
+  .has-img .chip,
+  .has-img .word {
+    color: #ffffff;
+  }
+  .has-img .badge {
+    background: #ffffff;
+    color: var(--dark-ink);
+  }
+  .body {
+    padding: 26px 26px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .meta {
+    font-size: 13px;
+    color: var(--mut);
+  }
+  h3 {
+    margin: 0;
+    font-size: 24px;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
+  .intro p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .metric {
+    background: var(--bg);
+    border-radius: 14px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .mv {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .ml {
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--mut);
+  }
+  .details {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 6px;
+    border-top: 1px solid var(--line);
+  }
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding-top: 12px;
+  }
+  .shot {
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .shot :global(img) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .block.first {
+    gap: 6px;
+    padding-top: 12px;
+  }
+  .lbl {
+    color: var(--mut);
+  }
+  .lbl.acc {
+    color: var(--accText);
+  }
+  .txt {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .li {
+    font-size: 15px;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+  }
+  .dash {
+    color: var(--accText);
+  }
+  .note {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--mut);
+    padding: 12px 14px;
+    background: var(--bg);
+    border-radius: 12px;
+  }
+  .foot {
+    font-size: 13px;
+    color: var(--mut);
+  }
+  .toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--line);
+    padding: 16px 0 0;
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  @media (min-width: 720px) {
+    .feat {
+      grid-column: span 2;
+    }
+    .feat .cover {
+      aspect-ratio: 16 / 9;
+    }
+  }
+  @media (min-width: 1100px) {
+    .case {
+      grid-column: span 2;
+    }
+    .feat {
+      grid-column: span 3;
+    }
+  }
+</style>

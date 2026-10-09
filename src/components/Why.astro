@@ -1,0 +1,88 @@
+---
+import type { Dict } from '../i18n';
+
+interface Props { t: Dict }
+const { t } = Astro.props;
+---
+
+<section class="why">
+  <div class="inner">
+    <div class="head">
+      <h2 class="h2">{t.whyTitle}</h2>
+      <p>{t.whySub}</p>
+    </div>
+    <div class="list">
+      {
+        t.why.map((w) => (
+          <div class="row">
+            <span class="n">{w.n}</span>
+            <div class="body">
+              <h3>{w.t}</h3>
+              <p>{w.d}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .why {
+    background: var(--surf);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: clamp(80px, 9vw, 128px) clamp(20px, 4vw, 40px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+    gap: clamp(32px, 5vw, 80px);
+  }
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .head p {
+    margin: 0;
+    font-size: 18px;
+    color: var(--mut);
+  }
+  .list {
+    display: flex;
+    flex-direction: column;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 16px;
+    padding: 28px 0;
+    border-top: 1px solid var(--line);
+  }
+  .n {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accText);
+    padding-top: 6px;
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  h3 {
+    margin: 0;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  .body p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--mut);
+  }
+</style>

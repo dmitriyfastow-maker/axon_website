@@ -1,0 +1,112 @@
+import { isValidContact, LIMITS } from '../lib/validate';
+
+type Mode = 'request' | 'question';
+interface Copy { message: string; question: string; send: string; sendQ: string; sending: string }
+
+export function initContactForm(): void {
+  const form = document.querySelector<HTMLFormElement>('[data-lead-form]');
+  const success = document.querySelector<HTMLElement>('[data-form-success]');
+  if (!form || !success) return;
+
+  const copy = JSON.parse(form.dataset.copy!) as Copy;
+  const $ = <T extends Element>(sel: string) => form.querySelector<T>(sel)!;
+  const name = $<HTMLInputElement>('[name=name]');
+  const contact = $<HTMLInputElement>('[name=contact]');
+  const message = $<HTMLTextAreaElement>('[name=message]');
+  const trap = $<HTMLInputElement>('[name=website]');
+  const submit = $<HTMLButtonElement>('[type=submit]');
+  const submitLabel = $<HTMLElement>('[data-submit-label]');
+  const formError = $<HTMLElement>('[data-form-error]');
+  const chips = [...form.querySelectorAll<HTMLButtonElement>('[data-interest-value]')];
+  const modeButtons = [...form.querySelectorAll<HTMLButtonElement>('[data-mode]')];
+
+  let mode: Mode = 'request';
+  let interest = '';
+  let startedAt = Date.now();
+  let sending = false;
+
+  const setError = (field: 'name' | 'contact', on: boolean) => {
+    $<HTMLElement>(`[data-error=${field}]`).hidden = !on;
+    (field === 'name' ? name : contact).setAttribute('aria-invalid', String(on));
+  };
+  const setInterest = (v: string) => {
+    interest = v;
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.interestValue === v)));
+  };
+  const setMode = (m: Mode) => {
+    mode = m;
+    modeButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+    $<HTMLElement>('[data-interest]').hidden = m !== 'request';
+    $<HTMLElement>('[data-message-label]').textContent = m === 'request' ? copy.message : copy.question;
+    submitLabel.textContent = m === 'request' ? copy.send : copy.sendQ;
+    setError('name', false);
+    setError('contact', false);
+  };
+  const showForm = () => {
+    success.hidden = true;
+    form.hidden = false;
+    formError.hidden = true;
+    startedAt = Date.now();
+  };
+
+  modeButtons.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode as Mode)));
+  chips.forEach((c) => c.addEventListener('click', () => setInterest(interest === c.dataset.interestValue ? '' : c.dataset.interestValue!)));
+  name.addEventListener('input', () => setError('name', false));
+  contact.addEventListener('input', () => setError('contact', false));
+
+  document.querySelector('[data-form-again]')?.addEventListener('click', showForm);
+
+  // Tier CTAs preselect the tier and jump to the form.
+  document.querySelectorAll<HTMLElement>('[data-choose-tier]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      showForm();
+      setMode('request');
+      setInterest(btn.dataset.chooseTier!);
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.getElementById('contact')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    }),
+  );
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (sending) return;
+    const badName = !name.value.trim();
+    const badContact = !isValidContact(contact.value) || contact.value.trim().length > LIMITS.contact;
+    setError('name', badName);
+    setError('contact', badContact);
+    if (badName || badContact) return;
+
+    sending = true;
+    submit.disabled = true;
+    formError.hidden = true;
+    const idle = submitLabel.textContent;
+    submitLabel.textContent = copy.sending;
+    try {
+      const res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mode,
+          name: name.value,
+          contact: contact.value,
+          interest: mode === 'request' ? interest : '',
+          message: message.value,
+          lang: form.dataset.lang,
+          website: trap.value,
+          startedAt,
+        }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset();
+      setInterest('');
+      form.hidden = true;
+      success.hidden = false;
+    } catch {
+      formError.hidden = false;
+    } finally {
+      sending = false;
+      submit.disabled = false;
+      submitLabel.textContent = idle;
+    }
+  });
+}

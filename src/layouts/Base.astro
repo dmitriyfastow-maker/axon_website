@@ -1,0 +1,82 @@
+---
+import '../styles/fonts.css';
+import '../styles/global.css';
+import { HTML_LANG, LANGS, OG_LOCALE, langPath, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Page path for canonical/hreflang; omit for pages that must not be indexed. */
+  path?: string;
+  noindex?: boolean;
+}
+
+const { lang, title, description, path, noindex = false } = Astro.props;
+const site = Astro.site!;
+const abs = (p: string) => new URL(p, site).href;
+const ogImage = abs('/og-image.png');
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'AXON',
+  description,
+  url: abs(langPath(lang)),
+  image: ogImage,
+  areaServed: ['London', 'Dubai', 'New York'],
+};
+---
+
+<!doctype html>
+<html lang={HTML_LANG[lang]} data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#F5F2EC" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0F0E0C" media="(prefers-color-scheme: dark)" />
+    {
+      path && (
+        <>
+          <link rel="canonical" href={abs(path)} />
+          {LANGS.map((l) => <link rel="alternate" hreflang={HTML_LANG[l]} href={abs(langPath(l))} />)}
+          <link rel="alternate" hreflang="x-default" href={abs('/')} />
+        </>
+      )
+    }
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AXON" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {path && <meta property="og:url" content={abs(path)} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={OG_LOCALE[lang]} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    {path && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <script is:inline>
+      // Apply the saved or system theme before first paint to avoid a flash.
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('axon_theme2'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        var r = document.documentElement;
+        r.setAttribute('data-theme', t);
+        r.classList.add('js');
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

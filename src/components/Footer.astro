@@ -1,0 +1,54 @@
+---
+import type { Dict } from '../i18n';
+import { NAV_HREFS } from '../data/tiers';
+
+interface Props { t: Dict }
+const { t } = Astro.props;
+---
+
+<footer class="footer">
+  <div class="inner">
+    <span class="logo">AXON<span>.</span></span>
+    <nav aria-label="Footer">
+      {t.nav.map((label, i) => <a href={NAV_HREFS[i]}>{label}</a>)}
+    </nav>
+    <span class="copy">© 2026 {t.footer}</span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line);
+  }
+  .inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 28px clamp(20px, 4vw, 40px);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo {
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.03em;
+  }
+  .logo span {
+    color: var(--acc);
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 14px;
+    color: var(--mut);
+  }
+  .copy {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--mut);
+  }
+</style>

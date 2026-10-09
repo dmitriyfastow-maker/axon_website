@@ -1,0 +1,12 @@
+---
+import Base from '../../layouts/Base.astro';
+import Landing from '../../components/Landing.astro';
+import { getDict, langPath } from '../../i18n';
+
+const lang = 'ua';
+const t = getDict(lang);
+---
+
+<Base lang={lang} title={`AXON — ${t.h1}`} description={t.sub} path={langPath(lang)}>
+  <Landing lang={lang} />
+</Base>

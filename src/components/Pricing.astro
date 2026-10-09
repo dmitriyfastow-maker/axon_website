@@ -1,0 +1,249 @@
+---
+import type { Dict } from '../i18n';
+import { PRICES, TIER_NAMES } from '../data/tiers';
+
+interface Props { t: Dict }
+const { t } = Astro.props;
+const L = t.labels;
+---
+
+<section id="pricing" class="pricing">
+  <div class="inner">
+    <div class="head">
+      <h2 class="h2">{t.tiersTitle}</h2>
+      <p>{t.tiersSub}</p>
+    </div>
+    <div class="grid" data-acc-group="tiers" data-acc-independent>
+      {
+        t.tiers.map((tr, i) => {
+          const rec = i === 1;
+          return (
+            <article class:list={['tier', { rec }]}>
+              <div class="top">
+                <span class="tag">{tr.tag}</span>
+                {rec && <span class="rec-badge">{L.recommended}</span>}
+              </div>
+              <h3>{TIER_NAMES[i]}</h3>
+              <div class="psr">
+                <div><span class="mono-label k">{L.problem}</span><span class="v">{tr.problem}</span></div>
+                <div><span class="mono-label k">{L.solution}</span><span class="v">{tr.solution}</span></div>
+                <div><span class="mono-label k">{L.result}</span><span class="v result">{tr.result}</span></div>
+              </div>
+              <div class="price-box">
+                <span class="mono-label k">{L.investment}</span>
+                <span class="price">{PRICES[i]} <span class="mo">{L.mo}</span></span>
+                <span class="range">{L.rangeNote}</span>
+              </div>
+              <button type="button" class="toggle" aria-expanded="false" aria-controls={`tier-panel-${i}`} data-acc-btn data-tier-btn={i}>
+                <span>{rec ? L.strategicDetails : L.details}</span>
+                <span class="tsign"><span class="sign-closed">+</span><span class="sign-open">−</span></span>
+              </button>
+              <div class="details" id={`tier-panel-${i}`} data-acc-panel data-closed>
+                <div class="strategy">
+                  <span class="mono-label k">{L.strategy}</span>
+                  <span class="st-title">{tr.strategyTitle}</span>
+                  {tr.strategy.map((s) => <span class="st">— {s}</span>)}
+                </div>
+                <div class="items">
+                  {tr.items.map((it) => <span>• {it}</span>)}
+                  {tr.referral && (
+                    <a href="#referral" class="ref">
+                      • {tr.referral} <span class="how">{L.howBuild} →</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+              <button type="button" class="choose" data-choose-tier={TIER_NAMES[i]}>{tr.cta}</button>
+            </article>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing {
+    background: var(--deep);
+    color: var(--deepInk);
+  }
+  .inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: clamp(80px, 9vw, 128px) clamp(20px, 4vw, 40px);
+  }
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 48px;
+  }
+  .head p {
+    margin: 0;
+    font-size: 18px;
+    color: var(--deepMut);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
+    gap: 16px;
+    align-items: start;
+  }
+  .tier {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 30px 26px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--deepInk);
+    border: 1px solid var(--deepLine);
+  }
+  .tier.rec {
+    background: var(--acc);
+    color: var(--dark-ink);
+    border-color: transparent;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .tag {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .rec-badge {
+    background: #17150f;
+    color: #f5f2ec;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    padding: 6px 11px;
+    border-radius: 999px;
+  }
+  h3 {
+    margin: 0;
+    font-size: 38px;
+    letter-spacing: -0.035em;
+    font-weight: 700;
+  }
+  .psr {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .psr > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .v {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .k {
+    opacity: 0.6;
+  }
+  .result {
+    font-weight: 500;
+  }
+  .price-box {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .rec .price-box {
+    background: rgba(23, 21, 15, 0.08);
+  }
+  .price {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+  .mo {
+    font-size: 15px;
+    font-weight: 500;
+    opacity: 0.65;
+  }
+  .range {
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.65;
+  }
+  .toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid currentColor;
+    padding: 14px 0 0;
+    color: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0.9;
+  }
+  .tsign {
+    font-size: 20px;
+    font-weight: 400;
+  }
+  .details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .strategy,
+  .items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .st-title {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .st {
+    font-size: 14px;
+    line-height: 1.5;
+    opacity: 0.8;
+  }
+  .items span,
+  .ref {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .ref {
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .items .how {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+  .choose {
+    margin-top: 4px;
+    padding: 17px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 0;
+    background: var(--deepInk);
+    color: #17150f;
+  }
+  .rec .choose {
+    background: #17150f;
+    color: #f5f2ec;
+  }
+</style>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <!-- Placeholder: replace with the real TrichoTech logo (same file name). -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2B8FA8"/>
+      <stop offset="1" stop-color="#3FB8B0"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1C5C8C"/>
+      <stop offset="1" stop-color="#22417A"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="#173F4F"/>
+  <g transform="translate(400 262)">
+    <path d="M-120 -96 H48 C82 -96 104 -78 110 -48 H-92 C-110 -48 -120 -60 -120 -76 Z" fill="url(#g1)"/>
+    <path d="M58 -96 H120 C120 -60 104 -48 78 -48 H58 Z" fill="url(#g1)" opacity=".75"/>
+    <path d="M-30 -40 H30 V96 C30 112 18 124 0 124 C-18 124 -30 112 -30 96 Z" fill="url(#g2)"/>
+  </g>
+  <text x="400" y="470" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="56" font-weight="300" letter-spacing="2" fill="#FFFFFF">Tricho<tspan font-weight="600">Tech</tspan></text>
+</svg>

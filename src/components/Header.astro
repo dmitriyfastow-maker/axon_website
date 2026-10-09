@@ -1,0 +1,182 @@
+---
+import { LANGS, langPath, type Lang, type Dict } from '../i18n';
+import { NAV_HREFS } from '../data/tiers';
+
+interface Props { lang: Lang; t: Dict }
+const { lang, t } = Astro.props;
+const nav = t.nav.map((label, i) => ({ label, href: NAV_HREFS[i] }));
+---
+
+<header class="header">
+  <div class="bar">
+    <a href="#top" class="logo" aria-label="AXON">AXON<span>.</span></a>
+    <nav class="nav-desktop" aria-label="Main">
+      {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+    </nav>
+    <div class="tools">
+      <div class="langs">
+        {
+          LANGS.map((l) => (
+            <a
+              class="pill lang"
+              href={langPath(l)}
+              hreflang={l === 'ua' ? 'uk' : l}
+              data-lang-link={l}
+              aria-current={l === lang ? 'true' : undefined}
+            >
+              {l.toUpperCase()}
+            </a>
+          ))
+        }
+      </div>
+      <button class="icon-btn theme-btn" type="button" title="Theme" aria-label="Toggle theme" data-theme-toggle>
+        <span class="icon-light">☾</span><span class="icon-dark">☀</span>
+      </button>
+      <a href="#contact" class="cta">{t.cta1}</a>
+      <button class="icon-btn menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
+        <span class="sign-closed">≡</span><span class="sign-open">×</span>
+      </button>
+    </div>
+  </div>
+  <nav id="mobile-nav" class="nav-mobile" aria-label="Main" data-menu hidden>
+    {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+    <a href="#contact" class="nav-mobile-cta">{t.cta1}</a>
+  </nav>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 3vw, 32px);
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .logo {
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: -0.03em;
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+    color: var(--ink);
+  }
+  .logo span {
+    color: var(--acc);
+  }
+  .nav-desktop {
+    display: flex;
+    gap: 4px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .nav-desktop a {
+    padding: 8px 14px;
+    border-radius: 999px;
+    color: var(--mut);
+  }
+  .nav-desktop a:hover {
+    background: var(--surf2);
+    color: var(--ink);
+  }
+  .tools {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .langs {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    background: var(--surf2);
+    border-radius: 999px;
+  }
+  .lang {
+    padding: 6px 11px;
+    font-size: 12px;
+  }
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 15px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+  }
+  .menu-btn {
+    font-size: 18px;
+    display: none;
+  }
+  .icon-dark,
+  :global([data-theme='dark']) .icon-light {
+    display: none;
+  }
+  :global([data-theme='dark']) .icon-dark {
+    display: inline;
+  }
+  .cta {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 11px 20px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .cta:hover {
+    opacity: 0.88;
+    color: var(--bg);
+  }
+  .nav-mobile {
+    display: flex;
+    flex-direction: column;
+    padding: 4px clamp(16px, 3vw, 32px) 20px;
+    font-size: 19px;
+    font-weight: 500;
+  }
+  .nav-mobile a {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-mobile .nav-mobile-cta {
+    margin-top: 16px;
+    background: var(--acc);
+    color: var(--dark-ink);
+    padding: 16px;
+    border-radius: 999px;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: 0;
+  }
+  @media (max-width: 1039.98px) {
+    .nav-desktop,
+    .cta {
+      display: none;
+    }
+    .menu-btn {
+      display: grid;
+    }
+  }
+  @media (min-width: 1040px) {
+    .nav-mobile {
+      display: none !important;
+    }
+  }
+</style>

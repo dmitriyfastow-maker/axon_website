@@ -1,0 +1,62 @@
+---
+import type { Dict } from '../i18n';
+
+interface Props { t: Dict }
+const { t } = Astro.props;
+---
+
+<section id="method" class="method">
+  <div class="grid">
+    {
+      t.layers.map((ly) => (
+        <div class="card">
+          <div class="n">{ly.n}</div>
+          <h3>{ly.t}</h3>
+          <p>{ly.d}</p>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .method {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 40px) clamp(80px, 9vw, 128px);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--surf);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .n {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--accText);
+    text-transform: uppercase;
+  }
+  h3 {
+    margin: 0;
+    font-size: 26px;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
+  p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--mut);
+    text-wrap: pretty;
+  }
+</style>

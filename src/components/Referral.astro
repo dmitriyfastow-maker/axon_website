@@ -1,0 +1,191 @@
+---
+import type { Dict } from '../i18n';
+import Img from './Img.astro';
+
+interface Props { t: Dict }
+const { t } = Astro.props;
+const r = t.ref;
+---
+
+<section id="referral" class="referral">
+  <div class="top">
+    <div class="copy">
+      <div class="eyebrow">◆ {r.eyebrow}</div>
+      <h2>{r.title}</h2>
+      <p class="sub">{r.sub}</p>
+      <p class="body">{r.body}</p>
+      <p class="outcome">{r.outcome}</p>
+      <span class="note">◆ {r.note}</span>
+    </div>
+    <div class="art">
+      <Img name="network-diagram" alt="Referral network diagram" />
+    </div>
+  </div>
+  <div class="block why">
+    <h3>{r.whyTitle}</h3>
+    <div class="grid grid-why">
+      {
+        r.why.map((x, i) => (
+          <div class="card">
+            <span class="n">/ {`0${i + 1}`}</span>
+            <span class="ct">{x.t}</span>
+            <span class="cd">{x.d}</span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <div class="block">
+    <h3>{r.buildTitle}</h3>
+    <div class="grid grid-build">
+      {
+        r.build.map((x) => (
+          <div class="card build">
+            <span class="tier">{x.tier}</span>
+            <span class="bt">{x.t}</span>
+            <span class="cd">{x.d}</span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .referral {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: clamp(80px, 9vw, 128px) clamp(20px, 4vw, 40px);
+  }
+  .top {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+    margin-bottom: 56px;
+  }
+  .copy {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  h2 {
+    margin: 0;
+    font-size: clamp(36px, 4.4vw, 60px);
+    letter-spacing: -0.04em;
+    font-weight: 700;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+  .sub {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    line-height: 1.6;
+    text-transform: uppercase;
+    color: var(--accText);
+  }
+  .body {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--mut);
+    text-wrap: pretty;
+  }
+  .outcome {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    padding: 18px 20px;
+    background: var(--surf);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+  }
+  .note {
+    font-size: 14px;
+    color: var(--mut);
+  }
+  .art {
+    aspect-ratio: 1 / 1;
+    border-radius: 28px;
+    overflow: hidden;
+    background: #0b0b0b;
+  }
+  .art :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .block {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .block.why {
+    margin-bottom: 56px;
+  }
+  h3 {
+    margin: 0;
+    font-size: clamp(24px, 2.4vw, 32px);
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
+  .grid {
+    display: grid;
+    gap: 16px;
+  }
+  .grid-why {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  }
+  .grid-build {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  }
+  .card {
+    background: var(--surf);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .card.build {
+    background: var(--surf2);
+    border: 0;
+    gap: 10px;
+  }
+  .n {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accText);
+  }
+  .ct {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+  .cd {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+  .tier {
+    align-self: flex-start;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--surf);
+    color: var(--accText);
+  }
+  .bt {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+</style>
