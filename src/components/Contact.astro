@@ -157,7 +157,10 @@ const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.
   }
   .mode {
     flex: 1;
+    min-width: 0;
     padding: 11px 12px;
+    /* Deviation from the design: long UA/RU labels overflowed 360px screens. */
+    white-space: normal;
   }
   .field {
     display: flex;

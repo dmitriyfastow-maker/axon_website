@@ -11,7 +11,7 @@ const { t } = Astro.props;
       t.layers.map((ly) => (
         <div class="card">
           <div class="n">{ly.n}</div>
-          <h3>{ly.t}</h3>
+          <h2>{ly.t}</h2>
           <p>{ly.d}</p>
         </div>
       ))
@@ -46,7 +46,7 @@ const { t } = Astro.props;
     color: var(--accText);
     text-transform: uppercase;
   }
-  h3 {
+  h2 {
     margin: 0;
     font-size: 26px;
     letter-spacing: -0.025em;

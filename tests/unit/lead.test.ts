@@ -72,3 +72,17 @@ describe('handleLead', () => {
 });
 
 test('escapeHtml', () => expect(escapeHtml(`<a href="x">'&`)).toBe('&lt;a href=&quot;x&quot;&gt;&#39;&amp;'));
+
+describe('api/lead', async () => {
+  const { POST, GET } = await import('../../api/lead');
+  test('rejects invalid JSON with 400', async () => {
+    const res = await POST(new Request('http://x/api/lead', { method: 'POST', body: 'nope' }));
+    expect(res.status).toBe(400);
+  });
+  test('GET is not allowed', () => expect(GET().status).toBe(405));
+  test('valid body without channels → 500 JSON', async () => {
+    const res = await POST(new Request('http://x/api/lead', { method: 'POST', body: JSON.stringify({ ...lead, startedAt: Date.now() - 10_000 }) }));
+    expect(res.status).toBe(500);
+    expect(res.headers.get('content-type')).toBe('application/json');
+  });
+});
