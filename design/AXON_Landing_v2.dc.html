@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F2EC;--surf:#FFFFFF;--surf2:#ECE7DD;--ink:#17150F;--mut:#5F5A50;--line:rgba(23,21,15,0.10);--acc:#E4A93F;--accText:#865800;--deep:#17150F;--deepInk:#F5F2EC;--deepMut:#A9A398;--deepLine:rgba(255,255,255,0.10)}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+section[id]{scroll-margin-top:88px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Onest',system-ui,sans-serif;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--accText)}
+*{box-sizing:border-box}
+input,textarea,button{font-family:inherit}
+::selection{background:var(--acc);color:#17150F}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="min-height:100vh;background:var(--bg);color:var(--ink);transition:background .3s,color .3s">
+
+<header style="position:sticky;top:0;z-index:40;background:color-mix(in srgb, var(--bg) 82%, transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)">
+  <div style="max-width:1280px;margin:0 auto;padding:0 clamp(16px,3vw,32px);height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px">
+    <a href="#top" style="font-weight:800;font-size:24px;letter-spacing:-0.03em;display:flex;align-items:baseline;gap:3px;color:var(--ink)">AXON<span style="color:var(--acc)">.</span></a>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <nav style="display:flex;gap:4px;font-size:15px;font-weight:500">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+          <a href="{{ n.href }}" style="padding:8px 14px;border-radius:999px;color:var(--mut)" style-hover="background:var(--surf2);color:var(--ink)">{{ n.label }}</a>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;gap:2px;padding:3px;background:var(--surf2);border-radius:999px">
+        <sc-for list="{{ langs }}" as="l" hint-placeholder-count="3">
+          <button onClick="{{ l.select }}" style="{{ l.style }}">{{ l.label }}</button>
+        </sc-for>
+      </div>
+      <button onClick="{{ toggleTheme }}" title="Theme" style="width:38px;height:38px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:15px;display:grid;place-items:center">{{ themeIcon }}</button>
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+        <a href="#contact" style="background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:999px;font-size:15px;font-weight:600;white-space:nowrap" style-hover="opacity:.88;color:var(--bg)">{{ t.cta1 }}</a>
+      </sc-if>
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ toggleMenu }}" style="width:38px;height:38px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:18px">{{ menuIcon }}</button>
+      </sc-if>
+    </div>
+  </div>
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <nav style="display:flex;flex-direction:column;padding:4px clamp(16px,3vw,32px) 20px;font-size:19px;font-weight:500">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+        <a href="{{ n.href }}" onClick="{{ closeMenu }}" style="padding:14px 0;border-bottom:1px solid var(--line)">{{ n.label }}</a>
+      </sc-for>
+      <a href="#contact" onClick="{{ closeMenu }}" style="margin-top:16px;background:var(--acc);color:#17150F;padding:16px;border-radius:999px;text-align:center;font-weight:600">{{ t.cta1 }}</a>
+    </nav>
+  </sc-if>
+</header>
+
+<section id="top" style="max-width:1280px;margin:0 auto;padding:clamp(56px,8vw,112px) clamp(20px,4vw,40px) clamp(56px,7vw,96px)">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:clamp(40px,6vw,80px);align-items:center">
+    <div style="display:flex;flex-direction:column;gap:28px">
+      <div style="display:inline-flex;align-self:flex-start;align-items:center;gap:10px;padding:8px 14px;border-radius:16px;line-height:1.5;background:var(--surf);border:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accText)"><span style="width:7px;height:7px;border-radius:50%;background:var(--acc)"></span>{{ t.eyebrow }}</div>
+      <h1 style="margin:0;font-size:clamp(50px,7vw,100px);line-height:0.98;letter-spacing:-0.045em;font-weight:700;text-wrap:balance">{{ t.h1 }}</h1>
+      <p style="margin:0;font-size:clamp(18px,1.5vw,21px);line-height:1.6;color:var(--mut);max-width:560px;text-wrap:pretty">{{ t.sub }}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px">
+        <a href="#contact" style="display:inline-flex;align-items:center;gap:10px;white-space:nowrap;background:var(--acc);color:#17150F;padding:18px 30px;border-radius:999px;font-size:17px;font-weight:600;transition:transform .2s" style-hover="transform:translateY(-2px);color:#17150F">{{ t.cta1 }} <span>→</span></a>
+        <a href="#pricing" style="display:inline-flex;align-items:center;white-space:nowrap;border:1px solid var(--line);background:var(--surf);padding:18px 30px;border-radius:999px;font-size:17px;font-weight:600" style-hover="border-color:var(--ink);color:var(--ink)">{{ t.cta2 }}</a>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px 20px;padding-top:8px;font-size:14px;color:var(--mut)">
+        <sc-for list="{{ t.heroTags }}" as="h" hint-placeholder-count="3">
+          <span style="display:flex;align-items:center;gap:8px"><span style="color:var(--accText)">✓</span>{{ h }}</span>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ heroCascade }}" as="c" hint-placeholder-count="3">
+        <a href="#pricing" onClick="{{ c.open }}" style="{{ c.style }}">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;opacity:.7">{{ c.n }}</span>
+            <span style="font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid currentColor;opacity:.75;white-space:nowrap;flex:none">{{ c.time }}</span>
+          </div>
+          <div style="font-size:clamp(24px,2.4vw,32px);font-weight:700;letter-spacing:-0.03em">{{ c.t }}</div>
+          <div style="font-size:15px;line-height:1.5;opacity:.75">{{ c.d }}</div>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="method" style="max-width:1280px;margin:0 auto;padding:0 clamp(20px,4vw,40px) clamp(80px,9vw,128px)">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px">
+    <sc-for list="{{ t.layers }}" as="ly" hint-placeholder-count="3">
+      <div style="background:var(--surf);border:1px solid var(--line);border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:14px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.12em;color:var(--accText);text-transform:uppercase">{{ ly.n }}</div>
+        <h3 style="margin:0;font-size:26px;letter-spacing:-0.025em;font-weight:700">{{ ly.t }}</h3>
+        <p style="margin:0;font-size:16px;line-height:1.6;color:var(--mut);text-wrap:pretty">{{ ly.d }}</p>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section style="background:var(--surf);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div style="max-width:1280px;margin:0 auto;padding:clamp(80px,9vw,128px) clamp(20px,4vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:clamp(32px,5vw,80px)">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:clamp(40px,5vw,64px);letter-spacing:-0.04em;font-weight:700;line-height:1">{{ t.whyTitle }}</h2>
+      <p style="margin:0;font-size:18px;color:var(--mut)">{{ t.whySub }}</p>
+    </div>
+    <div style="display:flex;flex-direction:column">
+      <sc-for list="{{ t.why }}" as="w" hint-placeholder-count="3">
+        <div style="display:grid;grid-template-columns:56px minmax(0,1fr);gap:16px;padding:28px 0;border-top:1px solid var(--line)">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accText);padding-top:6px">{{ w.n }}</span>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <h3 style="margin:0;font-size:24px;letter-spacing:-0.02em;font-weight:700">{{ w.t }}</h3>
+            <p style="margin:0;font-size:16px;line-height:1.6;color:var(--mut)">{{ w.d }}</p>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="cases" style="max-width:1280px;margin:0 auto;padding:clamp(80px,9vw,128px) clamp(20px,4vw,40px)">
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:40px">
+    <div style="display:flex;flex-direction:column;gap:14px;max-width:640px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.2em;color:var(--accText);text-transform:uppercase">◆ {{ t.casesEyebrow }}</div>
+      <h2 style="margin:0;font-size:clamp(40px,5vw,64px);letter-spacing:-0.04em;font-weight:700;line-height:1">{{ t.casesTitle }}</h2>
+      <p style="margin:0;font-size:18px;line-height:1.55;color:var(--mut)">{{ t.casesSub }}</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;padding:4px;background:var(--surf2);border-radius:999px">
+      <sc-for list="{{ caseFilters }}" as="f" hint-placeholder-count="4">
+        <button onClick="{{ f.select }}" style="{{ f.style }}">{{ f.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+  <div style="{{ casesGrid }}">
+    <sc-for list="{{ cases }}" as="cs" hint-placeholder-count="6">
+      <article style="{{ cs.artStyle }}">
+        <div style="{{ cs.coverStyle }}">
+          <sc-if value="{{ cs.img }}" hint-placeholder-val="{{ false }}">
+            <img src="{{ cs.img }}" alt="{{ cs.client }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s" >
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,10,12,0.05) 30%,rgba(8,10,12,0.82) 100%)"></div>
+          </sc-if>
+          <sc-if value="{{ cs.art }}" hint-placeholder-val="{{ true }}">
+            <span style="{{ cs.monoStyle }}">{{ cs.mono }}</span>
+            <div style="{{ cs.cardStyle }}">
+              <span style="font-size:11px;line-height:1.3;opacity:.62">{{ cs.kpiLabel }}</span>
+              <span style="font-size:clamp(24px,2.6vw,34px);font-weight:700;letter-spacing:-0.04em;line-height:1">{{ cs.kpi }}</span>
+              <div style="display:flex;align-items:flex-end;gap:4px;height:40px;margin-top:6px">
+                <sc-for list="{{ cs.bars }}" as="b" hint-placeholder-count="7"><span style="{{ b }}"></span></sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <div style="position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <span style="{{ cs.chipStyle }}">{{ cs.shot }}</span>
+            <span style="{{ cs.badgeStyle }}">{{ cs.tierName }}</span>
+          </div>
+          <span style="{{ cs.wordStyle }}">{{ cs.client }}</span>
+        </div>
+        <div style="padding:26px 26px 22px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:13px;color:var(--mut)">{{ cs.industry }} · {{ cs.city }}</span>
+            <h3 style="margin:0;font-size:24px;letter-spacing:-0.025em;font-weight:700">{{ cs.client }}</h3>
+            <p style="margin:0;font-size:15px;line-height:1.55;color:var(--mut)">{{ cs.summary }}</p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ cs.metrics }}" as="m" hint-placeholder-count="3">
+              <div style="background:var(--bg);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:4px">
+                <span style="font-size:22px;font-weight:700;letter-spacing:-0.03em">{{ m.v }}</span>
+                <span style="font-size:12px;line-height:1.35;color:var(--mut)">{{ m.l }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ cs.open }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:14px;padding-top:6px;border-top:1px solid var(--line)">
+              <sc-if value="{{ cs.hasGallery }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-top:12px">
+                  <sc-for list="{{ cs.gallery }}" as="g" hint-placeholder-count="2">
+                    <div style="aspect-ratio:4/3;border-radius:14px;overflow:hidden;border:1px solid var(--line)"><img src="{{ g.src }}" alt="" style="{{ g.style }}"></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <div style="display:flex;flex-direction:column;gap:6px;padding-top:12px">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--mut)">{{ t.labels.challenge }}</span>
+                <span style="font-size:15px;line-height:1.55">{{ cs.challenge }}</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accText)">{{ t.labels.approach }}</span>
+                <sc-for list="{{ cs.steps }}" as="sp" hint-placeholder-count="3">
+                  <span style="font-size:15px;line-height:1.5;display:flex;gap:10px"><span style="color:var(--accText)">—</span>{{ sp }}</span>
+                </sc-for>
+              </div>
+              <sc-for list="{{ cs.extras }}" as="ex" hint-placeholder-count="0">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accText)">{{ ex.title }}</span>
+                  <sc-for list="{{ ex.items }}" as="xi" hint-placeholder-count="3">
+                    <span style="font-size:15px;line-height:1.5;display:flex;gap:10px"><span style="color:var(--accText)">—</span>{{ xi }}</span>
+                  </sc-for>
+                </div>
+              </sc-for>
+              <sc-if value="{{ cs.note }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;line-height:1.5;color:var(--mut);padding:12px 14px;background:var(--bg);border-radius:12px">{{ cs.note }}</span></sc-if>
+              <span style="font-size:13px;color:var(--mut)">{{ cs.footLabel }}: {{ cs.footVal }}</span>
+            </div>
+          </sc-if>
+          <button onClick="{{ cs.toggle }}" style="display:flex;justify-content:space-between;align-items:center;background:transparent;border:0;border-top:1px solid var(--line);padding:16px 0 0;color:var(--ink);font-size:15px;font-weight:600;cursor:pointer">
+            <span>{{ cs.btn }}</span><span style="width:30px;height:30px;border-radius:999px;background:var(--surf2);display:grid;place-items:center;color:var(--accText)">{{ cs.sign }}</span>
+          </button>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+</section>
+
+<section style="max-width:1280px;margin:0 auto;padding:0 clamp(20px,4vw,40px) clamp(80px,9vw,128px)">
+  <div style="background:var(--surf2);border-radius:32px;padding:clamp(32px,5vw,64px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:clamp(32px,5vw,64px)">
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.2em;color:var(--accText);text-transform:uppercase">{{ t.stepZero }}</div>
+      <h2 style="margin:0;font-size:clamp(34px,4vw,52px);letter-spacing:-0.035em;font-weight:700;line-height:1.04;text-wrap:balance">{{ t.sessTitle }}</h2>
+      <p style="margin:0;font-size:17px;line-height:1.6;color:var(--mut)">{{ t.sessSub }}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:auto;padding-top:12px">
+        <a href="#contact" style="display:inline-flex;white-space:nowrap;background:var(--ink);color:var(--bg);padding:16px 26px;border-radius:999px;font-size:16px;font-weight:600" style-hover="opacity:.88;color:var(--bg)">{{ t.cta1 }}</a>
+        <span style="font-size:14px;color:var(--mut)">◆ {{ t.sessNote }}</span>
+      </div>
+    </div>
+    <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ sessItems }}" as="s" hint-placeholder-count="5">
+        <li style="display:flex;gap:18px;align-items:center;padding:18px 20px;background:var(--surf);border-radius:16px;font-size:17px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accText);min-width:22px">{{ s.n }}</span>
+          <span>{{ s.t }}</span>
+        </li>
+      </sc-for>
+    </ol>
+  </div>
+</section>
+
+<section id="pricing" style="background:var(--deep);color:var(--deepInk)">
+  <div style="max-width:1280px;margin:0 auto;padding:clamp(80px,9vw,128px) clamp(20px,4vw,40px)">
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:48px">
+      <h2 style="margin:0;font-size:clamp(40px,5vw,64px);letter-spacing:-0.04em;font-weight:700;line-height:1">{{ t.tiersTitle }}</h2>
+      <p style="margin:0;font-size:18px;color:var(--deepMut)">{{ t.tiersSub }}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:16px;align-items:start">
+      <sc-for list="{{ tiers }}" as="tr" hint-placeholder-count="3">
+        <article style="{{ tr.cardStyle }}">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;opacity:.7">{{ tr.tag }}</span>
+            <sc-if value="{{ tr.rec }}" hint-placeholder-val="{{ false }}">
+              <span style="background:#17150F;color:#F5F2EC;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;padding:6px 11px;border-radius:999px">{{ t.labels.recommended }}</span>
+            </sc-if>
+          </div>
+          <h3 style="margin:0;font-size:38px;letter-spacing:-0.035em;font-weight:700">{{ tr.name }}</h3>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;flex-direction:column;gap:5px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:.6">{{ t.labels.problem }}</span><span style="font-size:15px;line-height:1.55">{{ tr.problem }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:5px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:.6">{{ t.labels.solution }}</span><span style="font-size:15px;line-height:1.55">{{ tr.solution }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:5px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:.6">{{ t.labels.result }}</span><span style="font-size:15px;line-height:1.55;font-weight:500">{{ tr.result }}</span></div>
+          </div>
+          <div style="{{ tr.priceBox }}">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:.6">{{ t.labels.investment }}</span>
+            <span style="font-size:28px;font-weight:700;letter-spacing:-0.025em">{{ tr.price }} <span style="font-size:15px;font-weight:500;opacity:.65">{{ t.labels.mo }}</span></span>
+            <span style="font-size:13px;line-height:1.5;opacity:.65">{{ t.labels.rangeNote }}</span>
+          </div>
+          <button onClick="{{ tr.toggle }}" style="display:flex;justify-content:space-between;align-items:center;background:transparent;border:0;border-top:1px solid currentColor;padding:14px 0 0;color:inherit;font-size:15px;font-weight:600;cursor:pointer;opacity:.9">
+            <span>{{ tr.detailsLabel }}</span><span style="font-size:20px;font-weight:400">{{ tr.sign }}</span>
+          </button>
+          <sc-if value="{{ tr.open }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:.6">{{ t.labels.strategy }}</span>
+                <span style="font-size:15px;font-weight:600">{{ tr.strategyTitle }}</span>
+                <sc-for list="{{ tr.strategy }}" as="st" hint-placeholder-count="4">
+                  <span style="font-size:14px;line-height:1.5;opacity:.8">— {{ st }}</span>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <sc-for list="{{ tr.items }}" as="it" hint-placeholder-count="3">
+                  <span style="font-size:14px;line-height:1.55">• {{ it }}</span>
+                </sc-for>
+                <sc-if value="{{ tr.referral }}" hint-placeholder-val="{{ false }}">
+                  <a href="#referral" style="font-size:14px;line-height:1.55;font-weight:600;text-decoration:underline;text-underline-offset:3px">• {{ tr.referral }} <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em">{{ t.labels.howBuild }} →</span></a>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+          <button onClick="{{ tr.choose }}" style="{{ tr.btnStyle }}">{{ tr.cta }}</button>
+        </article>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="referral" style="max-width:1280px;margin:0 auto;padding:clamp(80px,9vw,128px) clamp(20px,4vw,40px)">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:clamp(32px,5vw,72px);align-items:center;margin-bottom:56px">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.2em;color:var(--accText);text-transform:uppercase">◆ {{ t.ref.eyebrow }}</div>
+      <h2 style="margin:0;font-size:clamp(36px,4.4vw,60px);letter-spacing:-0.04em;font-weight:700;line-height:1.02;text-wrap:balance">{{ t.ref.title }}</h2>
+      <p style="margin:0;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:0.08em;line-height:1.6;text-transform:uppercase;color:var(--accText)">{{ t.ref.sub }}</p>
+      <p style="margin:0;font-size:17px;line-height:1.65;color:var(--mut);text-wrap:pretty">{{ t.ref.body }}</p>
+      <p style="margin:0;font-size:16px;line-height:1.6;padding:18px 20px;background:var(--surf);border:1px solid var(--line);border-radius:16px">{{ t.ref.outcome }}</p>
+      <span style="font-size:14px;color:var(--mut)">◆ {{ t.ref.note }}</span>
+    </div>
+    <div style="aspect-ratio:1/1;border-radius:28px;overflow:hidden;background:#0B0B0B">
+      <img src="https://strategy-cascade-framework.lovable.app/assets/network-diagram-YX21a0JH.jpg" alt="Referral network diagram" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:20px;margin-bottom:56px">
+    <h3 style="margin:0;font-size:clamp(24px,2.4vw,32px);letter-spacing:-0.025em;font-weight:700">{{ t.ref.whyTitle }}</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px">
+      <sc-for list="{{ refWhy }}" as="rw" hint-placeholder-count="4">
+        <div style="background:var(--surf);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accText)">/ {{ rw.n }}</span>
+          <span style="font-size:19px;font-weight:700;letter-spacing:-0.015em;line-height:1.25">{{ rw.t }}</span>
+          <span style="font-size:15px;line-height:1.55;color:var(--mut)">{{ rw.d }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <h3 style="margin:0;font-size:clamp(24px,2.4vw,32px);letter-spacing:-0.025em;font-weight:700">{{ t.ref.buildTitle }}</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px">
+      <sc-for list="{{ t.ref.build }}" as="rb" hint-placeholder-count="3">
+        <div style="background:var(--surf2);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:10px">
+          <span style="align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--surf);color:var(--accText)">{{ rb.tier }}</span>
+          <span style="font-size:20px;font-weight:700;letter-spacing:-0.02em">{{ rb.t }}</span>
+          <span style="font-size:15px;line-height:1.55;color:var(--mut)">{{ rb.d }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="services" style="background:var(--surf);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div style="max-width:1280px;margin:0 auto;padding:clamp(80px,9vw,128px) clamp(20px,4vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:clamp(32px,5vw,72px);align-items:start">
+    <div style="display:flex;flex-direction:column;gap:18px;position:sticky;top:100px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.2em;color:var(--accText);text-transform:uppercase">◆ {{ t.cat.eyebrow }}</div>
+      <h2 style="margin:0;font-size:clamp(36px,4.4vw,56px);letter-spacing:-0.04em;font-weight:700;line-height:1.02;text-wrap:balance">{{ t.cat.title }}</h2>
+      <p style="margin:0;font-size:17px;line-height:1.6;color:var(--mut)">{{ t.cat.body }}</p>
+      <p style="margin:0;font-size:17px;line-height:1.6;color:var(--mut)">{{ t.cat.sub }}</p>
+      <p style="margin:0;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;line-height:1.6;text-transform:uppercase;color:var(--accText)">◆ {{ t.cat.note }}</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ services }}" as="sv" hint-placeholder-count="8">
+        <div style="{{ sv.boxStyle }}">
+          <button onClick="{{ sv.toggle }}" style="width:100%;display:flex;align-items:center;gap:16px;background:transparent;border:0;padding:20px 22px;color:var(--ink);cursor:pointer;text-align:left">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accText);min-width:30px">/ {{ sv.n }}</span>
+            <span style="flex:1;font-size:18px;font-weight:600;letter-spacing:-0.01em">{{ sv.name }}</span>
+            <span style="width:30px;height:30px;flex:none;border-radius:999px;background:var(--surf);display:grid;place-items:center;color:var(--accText)">{{ sv.sign }}</span>
+          </button>
+          <sc-if value="{{ sv.open }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;padding:0 22px 14px">
+              <sc-for list="{{ sv.rows }}" as="r" hint-placeholder-count="2">
+                <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;padding:14px 0;border-top:1px solid var(--line)">
+                  <div style="display:flex;flex-direction:column;gap:4px;flex:1 1 220px">
+                    <span style="font-size:15px;font-weight:500">{{ r.l }}</span>
+                    <sc-if value="{{ r.d }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;line-height:1.5;color:var(--mut)">{{ r.d }}</span></sc-if>
+                  </div>
+                  <span style="font-size:15px;font-weight:700;white-space:nowrap">{{ r.p }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section style="max-width:900px;margin:0 auto;padding:clamp(80px,9vw,128px) clamp(20px,4vw,40px)">
+  <h2 style="margin:0 0 36px;font-size:clamp(40px,5vw,64px);letter-spacing:-0.04em;font-weight:700;line-height:1">{{ t.faqTitle }}</h2>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <sc-for list="{{ faq }}" as="f" hint-placeholder-count="5">
+      <div style="background:var(--surf);border:1px solid var(--line);border-radius:18px">
+        <button onClick="{{ f.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;background:transparent;border:0;color:var(--ink);padding:22px 24px;font-size:clamp(17px,1.6vw,19px);font-weight:600;cursor:pointer;text-align:left">
+          <span>{{ f.q }}</span><span style="width:30px;height:30px;flex:none;border-radius:999px;background:var(--surf2);display:grid;place-items:center;color:var(--accText)">{{ f.sign }}</span>
+        </button>
+        <sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}">
+          <p style="margin:0;padding:0 72px 24px 24px;font-size:16px;line-height:1.65;color:var(--mut)">{{ f.a }}</p>
+        </sc-if>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section id="contact" style="max-width:1280px;margin:0 auto;padding:0 clamp(20px,4vw,40px) clamp(64px,8vw,104px)">
+  <div style="background:var(--deep);color:var(--deepInk);border-radius:32px;padding:clamp(32px,5vw,72px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:clamp(32px,5vw,72px)">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <h2 style="margin:0;font-size:clamp(40px,5.5vw,76px);letter-spacing:-0.045em;font-weight:700;line-height:0.98;text-wrap:balance">{{ t.finalTitle }}</h2>
+      <p style="margin:0;font-size:17px;line-height:1.6;color:var(--deepMut)">{{ t.sessSub }}</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:auto;padding-top:16px;font-size:15px;color:var(--deepMut)">
+        <span>◆ {{ t.sessNote }}</span>
+        <span>◆ {{ t.footerCities }}</span>
+      </div>
+    </div>
+    <div style="background:var(--surf);color:var(--ink);border-radius:24px;padding:clamp(22px,3vw,32px)">
+      <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:18px;min-height:320px;justify-content:center">
+          <span style="width:48px;height:48px;border-radius:999px;background:var(--acc);color:#17150F;display:grid;place-items:center;font-size:22px">✓</span>
+          <p style="margin:0;font-size:20px;line-height:1.5;font-weight:600">{{ t.form.success }}</p>
+          <button onClick="{{ reset }}" style="align-self:flex-start;background:transparent;border:1px solid var(--line);color:var(--ink);padding:12px 20px;border-radius:999px;font-size:15px;font-weight:600;cursor:pointer">{{ t.form.again }}</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+        <form onSubmit="{{ submit }}" style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;gap:8px;padding:4px;background:var(--surf2);border-radius:999px">
+            <sc-for list="{{ modes }}" as="md" hint-placeholder-count="2">
+              <button type="button" onClick="{{ md.select }}" style="{{ md.style }}">{{ md.label }}</button>
+            </sc-for>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:500;color:var(--mut)">{{ t.form.name }}
+            <input value="{{ form.name }}" onInput="{{ setName }}" style="{{ nameStyle }}">
+            <sc-if value="{{ errors.name }}" hint-placeholder-val="{{ false }}"><span style="color:#C2412D;font-size:13px">{{ t.form.required }}</span></sc-if>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:500;color:var(--mut)">{{ t.form.contact }}
+            <input value="{{ form.contact }}" onInput="{{ setContact }}" placeholder="@telegram / +971… / mail@…" style="{{ contactStyle }}">
+            <sc-if value="{{ errors.contact }}" hint-placeholder-val="{{ false }}"><span style="color:#C2412D;font-size:13px">{{ t.form.invalid }}</span></sc-if>
+          </label>
+          <sc-if value="{{ isRequest }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;font-weight:500;color:var(--mut)">{{ t.form.interest }}
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <sc-for list="{{ interestOpts }}" as="o" hint-placeholder-count="5">
+                  <button type="button" onClick="{{ o.select }}" style="{{ o.style }}">{{ o.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:500;color:var(--mut)">{{ msgLabel }}
+            <textarea value="{{ form.message }}" onInput="{{ setMessage }}" rows="4" style="background:var(--bg);border:1px solid var(--line);border-radius:14px;color:var(--ink);padding:14px;font-size:16px;resize:vertical;outline:none"></textarea>
+          </label>
+          <button type="submit" style="background:var(--acc);color:#17150F;border:0;padding:18px;border-radius:999px;font-size:17px;font-weight:600;cursor:pointer" style-hover="filter:brightness(1.05)">{{ sendLabel }} →</button>
+        </form>
+      </sc-if>
+    </div>
+  </div>
+</section>
+
+<footer style="border-top:1px solid var(--line)">
+  <div style="max-width:1280px;margin:0 auto;padding:28px clamp(20px,4vw,40px);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px">
+    <span style="font-weight:800;font-size:22px;letter-spacing:-0.03em">AXON<span style="color:var(--acc)">.</span></span>
+    <nav style="display:flex;flex-wrap:wrap;gap:20px;font-size:14px;color:var(--mut)">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+        <a href="{{ n.href }}">{{ n.label }}</a>
+      </sc-for>
+    </nav>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--mut)">© 2026 {{ t.footer }}</span>
+  </div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const THEMES = {
+  light:{bg:'#F5F2EC',surf:'#FFFFFF',surf2:'#ECE7DD',ink:'#17150F',mut:'#5F5A50',line:'rgba(23,21,15,0.10)',acc:'#E4A93F',accText:'#865800',deep:'#17150F',deepInk:'#F5F2EC',deepMut:'#A9A398',deepLine:'rgba(255,255,255,0.10)'},
+  dark:{bg:'#0F0E0C',surf:'#181713',surf2:'#22201B',ink:'#F3EFE7',mut:'#A39D91',line:'rgba(255,255,255,0.09)',acc:'#E4A93F',accText:'#E8B65A',deep:'#1D1B16',deepInk:'#F3EFE7',deepMut:'#A39D91',deepLine:'rgba(255,255,255,0.10)'}
+};
+const PRICES = ['$900 – $1,300','$1,500 – $2,400','$3,000 – $5,500'];
+const TIER_NAMES = ['Foundation','Growth','Scale'];
+const TIMES = ['30–60', '3–6', '12'];
+const PAL = (bg,ink,acc,chip) => ({bg,ink,acc,chip,card:'#FFFFFF',cardInk:'#17150F',barMute:'rgba(23,21,15,0.12)'});
+const CASE_META = [
+  {client:'TrichoTech',tier:2,real:true,stack:'Flutter · PostgreSQL',img:'assets/tricho-cover.png',pal:PAL('#173F4F','#FFFFFF','#3FB8B0','rgba(0,0,0,.4)'),
+   gallery:[{src:'assets/tricho-logo.png',fit:'cover',bg:'#173F4F'},{src:'assets/tricho-laptop.png',fit:'contain',bg:'#FFFFFF'}],metrics:['+187%','+115%','−49%']},
+  {client:'AiPro Partners',tier:2,real:true,stack:'React · PostgreSQL',img:'assets/aipro-cover.png',pal:PAL('#1C1C1C','#FFFFFF','#1EA7E1','rgba(0,0,0,.4)'),
+   gallery:[{src:'assets/aipro-logo.png',fit:'cover',bg:'#1C1C1C'},{src:'assets/aipro-laptop.png',fit:'contain',bg:'#FFFFFF'}],metrics:['5','CRM','2024']},
+  {client:'Lumière Aesthetics',tier:1,metrics:['+212%','−38%','63%'],pal:PAL('#E9D8C9','#3A2820','#B5704F','rgba(255,255,255,.55)'),bars:[28,34,31,46,58,72,94]},
+  {client:'Nordvik Interiors',tier:0,metrics:['×3.1','12 min','45'],pal:PAL('#D9DED1','#24302A','#56745C','rgba(255,255,255,.55)'),bars:[22,26,30,41,52,70,88]},
+  {client:'Halden & Co.',tier:1,metrics:['9 → 41','−44%','€2.6M'],pal:PAL('#1E2935','#EDE6D8','#C9A35E','rgba(255,255,255,.1)'),bars:[18,24,33,40,55,74,96]},
+  {client:'Sable Roasters',tier:2,metrics:['34%','27%','×2.4'],pal:PAL('#3B2A1F','#F2E6D4','#E0954A','rgba(255,255,255,.1)'),bars:[40,38,47,52,61,73,90]},
+  {client:'Atlas Yacht Charter',tier:1,metrics:['6.4×','+180%','71%'],pal:PAL('#CBDFE2','#0F3239','#2A7C89','rgba(255,255,255,.55)'),bars:[30,52,44,63,58,80,95]},
+  {client:'Meridian Fit',tier:2,metrics:['18k','−41%','4.8'],pal:PAL('#E8613A','#1A0F0A','#1A0F0A','rgba(255,255,255,.35)'),bars:[12,20,31,44,58,76,98]}
+];
+const SVC_PRICES = [
+  ['$700 – $4,000 / mo'],
+  ['$700 – $7,000 / mo'],
+  ['$1,000 – $5,000','$2,000 – $10,000','$3,000 – $20,000',null],
+  ['$5,000 – $15,000','$15,000 – $40,000','$25,000 – $70,000',null],
+  ['$500 – $2,500','$1,000 – $4,000 / mo','$100 – $600 / page'],
+  ['$300 – $1,500','$500 – $4,000','$300 – $1,500','$500 – $3,000','$500 – $4,000'],
+  ['$20 – $80 / 500 words','$10 – $50 / 500 words'],
+  ['$500 – $3,000 / mo']
+];
+
+const L = {
+en: {
+  nav:['Method','Cases','Solutions','Services','Partners'],
+  eyebrow:'Strategic partner for your growth', h1:'We build digital assets',
+  sub:'Foundational strategy. End-to-end IT development and marketing that multiply the value of your business.',
+  cta1:'Strategic session', cta2:'See pricing',
+  heroTags:['Strategy → launch → scale','EU · UAE · USA','One accountable team'],
+  time:['days','months','months'],
+  layers:[
+    {n:'01 / Foundation',t:'Structural base',d:'We build the core: a packaged profile, selling content and a reliable client-acquisition infrastructure.'},
+    {n:'02 / Growth',t:'Growth architecture',d:'We design multi-channel funnels, amplify content reach and create a steady flow of leads.'},
+    {n:'03 / Scale',t:'Global market',d:'Custom IT solutions, automation and process scaling to take you into global markets.'}],
+  whyTitle:'Why us', whySub:'Principles that work in every project.',
+  why:[{n:'01',t:'Strategic thinking',d:'We map a 3–12 month growth path before a single launch.'},
+       {n:'02',t:'Systemic approach',d:'SMM, paid traffic, development and automation run as one system.'},
+       {n:'03',t:'Partnership model',d:'Strategic mindset and proactive ownership in delivering your projects.'}],
+  casesEyebrow:'Selected cases', casesTitle:'Systems that already work',
+  casesSub:'How premium brands in the EU, UAE and USA grew with a Foundation, Growth or Scale architecture.',
+  all:'All',
+  cases:[
+    {industry:'MedTech · AI trichoscopy',city:'Clinical practice',shot:'AI platform · laptop + tablet',summary:'An AI platform that helps dermatologists and trichologists diagnose faster and more accurately, and treat with personalised plans.',ml:['diagnostic accuracy','patient satisfaction','treatment costs'],challenge:'Trichoscopy relied on manual image reading: diagnosis took long, depended on the doctor’s experience, and patient history was scattered across systems.',steps:['AI image analysis: machine-learning algorithms detect key features and support an accurate diagnosis','Personalised treatment recommendations based on diagnostic results','EMR integration — fast, secure access to the patient’s medical history','Workspace modules: trichoscopy, clients, files, products'],extras:[{title:'Additional results',items:['+83% successfully treated patients','72% shorter time to full recovery','142% faster diagnosis thanks to AI-powered imaging']}],note:'Figures are based on clinical study data from several medical institutions.'},
+    {industry:'Partner program · digital marketplaces',city:'2024',shot:'Partner platform · web + tablet',summary:'An innovative partner program for marketplaces selling digital products — partners, referral links, analytics and a promo store in one platform.',ml:['core platform modules','integration with any CRM','year delivered'],challenge:'Build an effective partner program for digital-product marketplaces that attracts new clients and partners, drives purchases and expands the distribution network.',steps:['Partner platform: a convenient interface for managing referral links','Partner database with search and editing','Built-in store for partners with promo materials','Analytics panel: performance tracking, program settings, CRM integration'],extras:[{title:'Key features',items:['Flexibility — adapts to a marketplace of any size','Automation of routine marketing tasks','Detailed analytics on partners and clients','Multilingual — the platform is available in several languages']},{title:'Development stages',items:['Analysis & planning: goals, market, competitors','Design: prototypes, UI/UX','Development: frontend, backend, databases','Testing: functional and load testing','Launch: platform rollout and user onboarding']}],note:''},
+    {industry:'Aesthetic clinic',city:'Dubai',shot:'clinic website + Instagram feed',duration:'4 months',summary:'From a beautiful but silent profile to a booking engine with concierge handling for premium patients.',ml:['inquiries in 4 months','cost per lead','bookings via chatbot'],challenge:'Strong reputation offline, but Instagram traffic didn’t convert and every inquiry was handled manually in DMs.',steps:['Repackaged the profile and launched 16 videos/mo with a clinical ToV','Multi-segment paid campaigns: mass procedures vs. premium programs','Landing page, online deposits, CRM and a booking chatbot']},
+    {industry:'Interior design studio',city:'Copenhagen',shot:'portfolio profile + highlights funnel',duration:'45 days',summary:'A packaged profile and inquiry infrastructure for a studio that relied only on word of mouth.',ml:['more inquiries','first response time','days to launch'],challenge:'Portfolio-quality work, but the profile looked like an archive and leads were lost between email and Instagram.',steps:['Profile packaging, 12 scripts and a highlights funnel','Basic paid launch with retargeting on project viewers','Multi-link hub, inquiry forms and a CRM pipeline']},
+    {industry:'Private wealth advisory',city:'London',shot:'LinkedIn + advisory website',duration:'6 months',summary:'A trust-first funnel for a high-ticket advisory firm where one client equals a year of revenue.',ml:['qualified leads / mo','cost per qualified lead','assets onboarded'],challenge:'Cold ads attracted the wrong audience; the firm needed fewer, but far better-qualified conversations.',steps:['Traffic segmentation by purchasing power, concierge handling track','Expert content on LinkedIn and YouTube, 14 pieces/mo','Website with a diagnostic form and CRM scoring']},
+    {industry:'Specialty coffee e-commerce',city:'Berlin',shot:'online store + subscription flow',duration:'9 months',summary:'From a marketplace-dependent shop to an independent e-commerce platform with a partner network.',ml:['repeat purchase rate','revenue from referrals','online revenue'],challenge:'Most sales went through marketplaces with thin margins and no ownership of customer data.',steps:['Custom e-commerce with subscriptions and lifecycle messaging','Email and bot funnels, offline tracking for café partners','Multi-level partner program with automated commissions']},
+    {industry:'Luxury yacht charter',city:'Dubai Marina',shot:'charter booking landing',duration:'5 months',summary:'A conversion-focused booking system for a seasonal, high-intent premium audience.',ml:['ROAS on paid traffic','direct bookings','repeat & referred clients'],challenge:'Dependence on broker platforms taking up to 30% commission per charter.',steps:['Landing with live availability and online payments','Competitor analysis and A/B-tested campaigns in 3 languages','Basic referral system for returning charter guests']},
+    {industry:'Fitness app',city:'New York',shot:'app screens + partner dashboard',duration:'6 months',summary:'An app and partner ecosystem that turned trainers into an acquisition channel.',ml:['active users in 6 months','customer acquisition cost','App Store rating'],challenge:'A strong studio brand with no digital product and no way to scale beyond two locations.',steps:['Full app with payments, push and analytics on a scalable backend','Producer-led content: 30 videos/mo with partner creators','Partner program for trainers with ranks and a KPI dashboard']}],
+  stepZero:'Step zero', sessTitle:'Strategic session before we start',
+  sessSub:'Before kicking off, we analyse your situation and shape the strategy for your growth.',
+  sessItems:['Identify your real growth points','Shape an initial product line','Segment your audience (mass / premium)','Map out possible scaling scenarios','Agree on the best format of collaboration'],
+  sessNote:'The strategic session is included in every tier.',
+  tiersTitle:'Strategic tiers', tiersSub:'Solutions that grow together with your business.',
+  labels:{problem:'Problem',solution:'Solution',result:'Result',investment:'Investment',mo:'/ mo',rangeNote:'Indicative range — the final scope is locked in after the strategic session.',details:'Details',strategicDetails:'Strategic details',strategy:'Strategy',recommended:'RECOMMENDED',howBuild:'HOW WE BUILD IT',challenge:'Challenge',approach:'What we built',duration:'Timeline',stack:'Stack',readCase:'Read the case',hideCase:'Hide details'},
+  tiers:[
+    {tag:'Tier 01',problem:"Traffic exists, but it leaks. The profile doesn't sell. No structure.",solution:'A selling foundation: profile, content, traffic, infrastructure.',result:'The profile starts converting traffic into inquiries. Content sells. Traffic stops leaking.',strategyTitle:'Strategy (built in from Foundation)',strategy:['Identifying growth points','Initial product line','Audience segmentation (mass / premium)','Recommendations for the next growth strategy'],items:['SMM: profile packaging, 10–14 scripts, highlights funnel, omnichannel setup.','Paid: basic traffic launch, BM, retargeting, creatives.','Development: multi-link hub, CRM, inquiry forms.'],referral:'',cta:'Start with Foundation'},
+    {tag:'Tier 02',problem:"Inquiries are coming in, but there's no stable, scalable funnel.",solution:'A growth system: funnel, content, traffic, website.',result:'Steady flow of leads. Content warms up and sells. CPA drops.',strategyTitle:'Strategy (reinforced)',strategy:['Product line (mass / premium)','Traffic segmentation by purchasing power','Mass and concierge handling tracks','Growth plan for 3–6 months','Includes the Foundation strategy'],items:['SMM: 12–20 videos/mo, ToV, community, engagement mechanics.','Paid: competitor analysis, multi-segment campaigns, A/B testing.','Development: landing page, payments, CRM, chatbot.'],referral:'Basic referral system — included.',cta:'Move to Growth'},
+    {tag:'Tier 03',problem:"The business is ready to grow, but the infrastructure can't handle large budgets.",solution:'A scalable IT platform and multi-layered funnels.',result:'An independent sales system. Automation. Client-base growth. Entry into new markets.',strategyTitle:'Strategy (maximum)',strategy:['Scalable product-line architecture','Plan for entering new markets (EU / UAE / USA)','12-month growth model','Building the ecosystem','Includes Foundation and Growth strategies'],items:['SMM: producer-led, 20–40 videos/mo, creators, KPI model.','Paid: budgets from $3,000/mo, email/bot funnels, offline tracking.','Development: e-commerce / SaaS / app, integrations, lifecycle messaging.'],referral:'Multi-level partner program with automated tracking.',cta:'Scale globally'}],
+  ref:{eyebrow:'Layer 04 · Compounding growth',title:'Your private growth network',
+    sub:'Referral architecture — the system premium brands use to scale without extra budget.',
+    body:"Paid traffic plateaus. Reputation compounds. We build a private distribution network on top of every Growth and Scale tier — so each client you've won becomes a channel that brings in the next one. The cost of acquiring clients and repeat sales drops, while the value of your business grows without ad spend.",
+    outcome:'Outcome — a self-reinforcing acquisition channel that compounds month after month and survives any ad-platform change.',
+    note:'Designed in the strategic session. Built inside your tier. Yours to keep forever.',
+    whyTitle:'Why we set this up as its own layer',
+    why:[{t:'An infrastructure of its own.',d:'Built into the funnel, the CRM and the product.'},
+         {t:'Premium markets run on trust.',d:'In EU / UAE / US a warm intro converts 4–7× better than cold ads — and costs nothing.'},
+         {t:'It lowers the risk on ad budget.',d:'Every client becomes a potential acquisition channel. The system gradually compounds on its own.'},
+         {t:'Makes you impossible to copy.',d:'Competitors will copy the ad approach. Your network — never.'}],
+    buildTitle:"How it's built into your tier",
+    build:[{tier:'Foundation',t:'Data model prepared',d:'We structure the CRM and tracking so the system can launch instantly the day you upgrade.'},
+           {tier:'Growth',t:'Single-level system',d:'Tracking links, automated rewards, CRM tags, attribution. Clients start bringing in new clients.'},
+           {tier:'Scale',t:'Multi-level partner program',d:'Partner ranks, automated commission engine, partner dashboard, KPI reports. A distribution network.'}]},
+  cat:{eyebrow:'Service catalog',title:'Need a single service instead of a full tier?',
+    body:'All 8 categories — SMM, targeted ads, web design & development, app design & development, SEO, design, copywriting and short-form video — with transparent price ranges.',
+    sub:'Every discipline we deliver, with transparent price ranges. Pick a strategic tier above or commission a single line item.',
+    note:'The final price range is locked in after the strategic session and scope definition.',
+    items:[
+      {name:'SMM',rows:[{l:'Social media management, post & story creation, copy for posts and more'}]},
+      {name:'Targeted Advertising',rows:[{l:'Campaign setup & management'}]},
+      {name:'Web Development',rows:[{l:'Landing page (single)'},{l:'Multi-page website'},{l:'E-commerce store'},{l:'Complex features & integrations'}]},
+      {name:'App Development',rows:[{l:'MVP App',d:'Fast launch. Core screens, auth, basic logic. Hypothesis validation.'},{l:'Full App',d:'UX/UI, personal account, analytics, push, payments, integrations. Ready product.'},{l:'App + Backend',d:'Server architecture, API, roles, databases, security, scalability.'},{l:'Advanced Features & Integrations',d:'AI features, maps + geolocation, streaming, chats, marketplaces, high-load, custom modules.'}]},
+      {name:'SEO Optimization',rows:[{l:'Website audit & analysis'},{l:'SEO strategy development & execution'},{l:'Content optimization'}]},
+      {name:'Design',rows:[{l:'Logo creation'},{l:'UI/UX design'},{l:'2D design'},{l:'3D design'},{l:'Website design'}]},
+      {name:'Copywriting',rows:[{l:'Content creation'},{l:'Editing & proofreading'}]},
+      {name:'Short-form Video (TikTok / Reels / Shorts)',rows:[{l:'Viral content creation for TikTok, Instagram/Facebook Reels, YouTube Shorts'}]}],
+    custom:'Custom quote'},
+  faqTitle:'Frequently asked',
+  faq:[{q:'Why are prices shown as a range?',a:'Every project is scoped after the strategic session — the range protects you from overpaying and us from under-delivering.'},
+       {q:'Can a tier be adapted?',a:'Yes. Tiers are starting architectures, not rigid packages. We adapt the scope, channels and deliverables to your reality.'},
+       {q:"What's included in the strategic session?",a:'Diagnosis of growth points, initial product line, audience segmentation, scaling scenarios and a partnership-fit check. Included in every tier.'},
+       {q:'How does the work happen?',a:'Weekly strategic syncs, a shared roadmap, transparent reporting, and a single point of contact across SMM, paid and development.'},
+       {q:'What are the timelines?',a:'Foundation 30–60 days. Growth compounds month over month. Scale opens new markets within a quarter.'}],
+  finalTitle:'Ready for systemic growth?', submit:'Submit request', ask:'Ask a question',
+  footer:'STRATEGIC GROWTH STUDIO. LONDON · DUBAI · NEW YORK.', footerCities:'London · Dubai · New York',
+  form:{name:'Your name',contact:'Telegram, phone or email',interest:'What are you interested in?',single:'Single service',any:'Not sure yet',message:'Tell us about your business',question:'Your question',send:'Submit request',sendQ:'Send question',success:"Thank you. We'll get back to you within 24 hours to schedule the strategic session.",again:'Send another',required:'Required field',invalid:'Enter a valid Telegram, phone or email'}
+},
+ua: {
+  nav:['Метод','Кейси','Рішення','Послуги','Партнерам'],
+  eyebrow:'Стратегічний партнер вашого зростання', h1:'Ми створюємо цифрові активи',
+  sub:'Фундаментальна стратегія. Повний цикл IT-розробки та маркетингу, що примножують вартість вашого бізнесу.',
+  cta1:'Стратегічна сесія', cta2:'Переглянути ціни',
+  heroTags:['Стратегія → запуск → масштаб','ЄС · ОАЕ · США','Одна команда — повна відповідальність'],
+  time:['днів','місяців','місяців'],
+  layers:[
+    {n:'01 / Foundation',t:'Структурна база',d:'Будуємо основу: упакований профіль, продаючий контент і надійну інфраструктуру залучення клієнтів.'},
+    {n:'02 / Growth',t:'Архітектура зростання',d:'Проєктуємо багатоканальні воронки, підсилюємо охоплення контенту й створюємо стабільний потік лідів.'},
+    {n:'03 / Scale',t:'Глобальний ринок',d:'Індивідуальні IT-рішення, автоматизація та масштабування процесів для виходу на світові ринки.'}],
+  whyTitle:'Чому ми', whySub:'Принципи, що працюють у кожному проєкті.',
+  why:[{n:'01',t:'Стратегічне мислення',d:'Вибудовуємо шлях зростання на 3–12 місяців ще до першого запуску.'},
+       {n:'02',t:'Системний підхід',d:'SMM, трафік, розробка та автоматизація працюють як єдина система.'},
+       {n:'03',t:'Партнерська модель',d:'Стратегічне мислення та проактивна відповідальність за реалізацію ваших проєктів.'}],
+  casesEyebrow:'Вибрані кейси', casesTitle:'Системи, які вже працюють',
+  casesSub:'Як преміальні бренди в ЄС, ОАЕ та США зросли на архітектурі Foundation, Growth або Scale.',
+  all:'Усі',
+  cases:[
+    {industry:'MedTech · ШІ-трихоскопія',city:'Клінічна практика',shot:'ШІ-платформа · ноутбук + планшет',summary:'Платформа на основі ШІ, що допомагає дерматологам і трихологам ставити діагноз швидше й точніше та лікувати за персоналізованими планами.',ml:['точність діагностики','задоволеність пацієнтів','витрати на лікування'],challenge:'Трихоскопія спиралася на ручний аналіз знімків: діагностика забирала багато часу, залежала від досвіду лікаря, а історія пацієнта була розпорошена між різними системами.',steps:['Аналіз зображень за допомогою ШІ: алгоритми машинного навчання виявляють ключові ознаки й допомагають поставити точний діагноз','Персоналізовані рекомендації щодо лікування на основі результатів діагностики','Інтеграція з EMR — швидкий і безпечний доступ до історії хвороби пацієнта','Робочі модулі: трихоскопія, клієнти, файли, продукти'],extras:[{title:'Додаткові результати',items:['+83% успішно вилікуваних пацієнтів','На 72% коротший час до повного одужання','На 142% швидша діагностика завдяки аналізу зображень за допомогою ШІ']}],note:'Показники засновані на даних клінічних досліджень у кількох медичних установах.'},
+    {industry:'Партнерська програма · маркетплейси',city:'2024',shot:'Партнерська платформа · веб + планшет',summary:'Інноваційна партнерська програма для маркетплейсів із цифровою продукцією: партнери, реферальні посилання, аналітика та промомагазин в одній платформі.',ml:['ключових модулів платформи','інтеграція з будь-якою CRM','рік реалізації'],challenge:'Створити ефективну партнерську програму для маркетплейсів із цифровою продукцією, яка залучає нових клієнтів і партнерів, стимулює покупки та розширює дистриб’юторську мережу.',steps:['Платформа для партнерів: зручний інтерфейс для керування партнерськими посиланнями','База даних партнерів із пошуком і редагуванням','Вбудований магазин для партнерів із промоматеріалами','Аналітична панель: відстеження ефективності, налаштування програми, інтеграція з CRM'],extras:[{title:'Особливості',items:['Гнучкість — адаптується до маркетплейсу будь-якого розміру','Автоматизація рутинних маркетингових завдань','Детальна аналітика щодо партнерів і клієнтів','Мультимовність — платформа доступна кількома мовами']},{title:'Етапи розробки',items:['Аналіз і планування: цілі, ринок, конкуренти','Проєктування: прототипи, UI/UX-дизайн','Розробка: frontend, backend, бази даних','Тестування: функціональне та навантажувальне','Впровадження: запуск платформи й навчання користувачів']}],note:''},
+    {industry:'Естетична клініка',city:'Дубай',shot:'сайт клініки + стрічка Instagram',duration:'4 місяці',summary:'Від гарного, але «мовчазного» профілю до системи записів із консьєрж-обробкою преміум-пацієнтів.',ml:['заявок за 4 місяці','вартість ліда','записів через чат-бот'],challenge:'Сильна офлайн-репутація, але трафік з Instagram не конвертувався, а кожну заявку обробляли вручну в директі.',steps:['Переупакували профіль і запустили 16 відео/міс в експертному тоні клініки','Мультисегментні кампанії: окремо масові процедури та преміум-програми','Лендинг, онлайн-передоплата, CRM і чат-бот для запису']},
+    {industry:'Студія дизайну інтер’єрів',city:'Копенгаген',shot:'профіль-портфоліо + воронка в хайлайтах',duration:'45 днів',summary:'Упакований профіль та інфраструктура заявок для студії, що трималася лише на «сарафанному радіо».',ml:['більше заявок','час першої відповіді','днів до запуску'],challenge:'Роботи рівня портфоліо, але профіль виглядав як архів, а ліди губилися між поштою та Instagram.',steps:['Упаковка профілю, 12 сценаріїв і воронка в хайлайтах','Базовий запуск трафіку з ретаргетингом на тих, хто переглядав проєкти','Мультипосилання, форми заявок і воронка в CRM']},
+    {industry:'Управління приватним капіталом',city:'Лондон',shot:'LinkedIn + сайт компанії',duration:'6 місяців',summary:'Воронка довіри для консалтингу з високим чеком, де один клієнт — це рік виручки.',ml:['кваліфікованих лідів на місяць','вартість кваліфікованого ліда','активів під управлінням'],challenge:'Холодна реклама приводила не ту аудиторію; потрібно було менше розмов, але значно якісніших.',steps:['Сегментація трафіку за платоспроможністю, консьєрж-трек','Експертний контент у LinkedIn та YouTube, 14 публікацій на місяць','Сайт із діагностичною формою та скорингом у CRM']},
+    {industry:'Інтернет-магазин specialty-кави',city:'Берлін',shot:'інтернет-магазин + підписка',duration:'9 місяців',summary:'Від залежності від маркетплейсів до власної e-commerce платформи з партнерською мережею.',ml:['частка повторних покупок','виручки з рекомендацій','онлайн-виручка'],challenge:'Більшість продажів ішла через маркетплейси з низькою маржею і без доступу до даних клієнтів.',steps:['Власний інтернет-магазин з підписками та lifecycle-розсилками','Email- і бот-воронки, офлайн-трекінг для кав’ярень-партнерів','Багаторівнева партнерська програма з автокомісіями']},
+    {industry:'Чартер яхт преміум-класу',city:'Дубай Марина',shot:'лендинг бронювання',duration:'5 місяців',summary:'Система бронювань для сезонної преміум-аудиторії з високою готовністю до покупки.',ml:['ROAS платного трафіку','прямих бронювань','повторних клієнтів і за рекомендаціями'],challenge:'Залежність від брокерських платформ, що забирали до 30% комісії з кожного чартеру.',steps:['Лендинг з календарем вільних дат та онлайн-оплатою','Аналіз конкурентів і A/B-кампанії трьома мовами','Базова реферальна система для постійних гостей']},
+    {industry:'Фітнес-застосунок',city:'Нью-Йорк',shot:'екрани застосунку + кабінет партнера',duration:'6 місяців',summary:'Застосунок і партнерська екосистема, що перетворили тренерів на канал залучення.',ml:['активних користувачів за 6 міс','вартість залучення','рейтинг в App Store'],challenge:'Сильний бренд студії без цифрового продукту і без можливості вийти за межі двох локацій.',steps:['Повний застосунок з оплатами, push-сповіщеннями й аналітикою на масштабованому бекенді','Продюсерський контент: 30 відео/міс з креаторами-партнерами','Партнерська програма для тренерів з рангами та KPI-дашбордом']}],
+  stepZero:'Крок нуль', sessTitle:'Стратегічна сесія перед стартом',
+  sessSub:'Перед початком роботи ми аналізуємо вашу ситуацію та формуємо стратегію вашого зростання.',
+  sessItems:['Визначаємо реальні точки зростання','Формуємо початкову продуктову лінійку','Сегментуємо аудиторію (масова / преміум)','Прописуємо можливі сценарії масштабування','Узгоджуємо оптимальний формат співпраці'],
+  sessNote:'Стратегічна сесія входить у кожен тариф.',
+  tiersTitle:'Стратегічні тарифи', tiersSub:'Рішення, що ростуть разом із вашим бізнесом.',
+  labels:{problem:'Проблема',solution:'Рішення',result:'Результат',investment:'Інвестиції',mo:'/ міс',rangeNote:'Орієнтовний діапазон — фінальний обсяг фіксуємо після стратегічної сесії.',details:'Деталі',strategicDetails:'Стратегічні деталі',strategy:'Стратегія',recommended:'РЕКОМЕНДУЄМО',howBuild:'ЯК МИ ЦЕ БУДУЄМО',challenge:'Задача',approach:'Що ми побудували',duration:'Терміни',stack:'Стек',readCase:'Читати кейс',hideCase:'Згорнути'},
+  tiers:[
+    {tag:'Тариф 01',problem:'Трафік є, але він витікає. Профіль не продає. Немає структури.',solution:'Продаючий фундамент: профіль, контент, трафік, інфраструктура.',result:'Профіль починає конвертувати трафік у заявки. Контент продає. Трафік більше не витікає.',strategyTitle:'Стратегія (закладена з Foundation)',strategy:['Визначення точок зростання','Початкова продуктова лінійка','Сегментація аудиторії (масова / преміум)','Рекомендації щодо наступної стратегії зростання'],items:['SMM: упаковка профілю, 10–14 сценаріїв, воронка в хайлайтах, омніканальність.','Трафік: базовий запуск, BM, ретаргетинг, креативи.','Розробка: мультипосилання, CRM, форми заявок.'],referral:'',cta:'Почати з Foundation'},
+    {tag:'Тариф 02',problem:'Заявки йдуть, але немає стабільної воронки, що масштабується.',solution:'Система зростання: воронка, контент, трафік, сайт.',result:'Стабільний потік лідів. Контент прогріває й продає. CPA знижується.',strategyTitle:'Стратегія (посилена)',strategy:['Продуктова лінійка (масова / преміум)','Сегментація трафіку за платоспроможністю','Масовий та консьєрж-сценарії обробки заявок','План зростання на 3–6 місяців','Включає стратегію Foundation'],items:['SMM: 12–20 відео/міс, tone of voice, ком’юніті, механіки залучення.','Трафік: аналіз конкурентів, мультисегментні кампанії, A/B-тести.','Розробка: лендинг, оплати, CRM, чат-бот.'],referral:'Базова реферальна система — включена.',cta:'Перейти на Growth'},
+    {tag:'Тариф 03',problem:'Бізнес готовий рости, але інфраструктура не витримує великих бюджетів.',solution:'Масштабована IT-платформа та багаторівневі воронки.',result:'Незалежна система продажів. Автоматизація. Зростання клієнтської бази. Вихід на нові ринки.',strategyTitle:'Стратегія (максимальна)',strategy:['Масштабована архітектура продуктової лінійки','План виходу на нові ринки (ЄС / ОАЕ / США)','Модель зростання на 12 місяців','Побудова екосистеми','Включає стратегії Foundation і Growth'],items:['SMM: продюсування, 20–40 відео/міс, креатори, KPI-модель.','Трафік: бюджети від $3 000/міс, email/бот-воронки, офлайн-трекінг.','Розробка: e-commerce / SaaS / застосунок, інтеграції, lifecycle-розсилки.'],referral:'Багаторівнева партнерська програма з автоматичним трекінгом.',cta:'Вийти на глобальний ринок'}],
+  ref:{eyebrow:'Шар 04 · Накопичувальне зростання',title:'Ваша приватна мережа зростання',
+    sub:'Реферальна архітектура — система, якою преміальні бренди масштабуються без додаткового бюджету.',
+    body:'Платний трафік виходить на плато. Репутація накопичується. Ми будуємо приватну мережу дистрибуції у межах тарифів Growth і Scale — щоб кожен залучений клієнт ставав каналом, що приводить наступного. Вартість залучення клієнтів і повторних продажів знижується, а вартість бізнесу зростає без рекламних витрат.',
+    outcome:'Результат — самопідсилюваний канал залучення, що накопичує ефект місяць за місяцем і переживає будь-які зміни рекламних платформ.',
+    note:'Проєктується на стратегічній сесії. Будується всередині вашого тарифу. Залишається з вами назавжди.',
+    whyTitle:'Чому ми виносимо це в окремий шар',
+    why:[{t:'Окрема інфраструктура.',d:'Вбудована у воронку, CRM і продукт.'},
+         {t:'Преміум-ринки працюють на довірі.',d:'У ЄС, ОАЕ та США тепла рекомендація конвертує в 4–7 разів краще за холодну рекламу — і нічого не коштує.'},
+         {t:'Знижує ризик рекламного бюджету.',d:'Кожен клієнт стає потенційним каналом залучення. Система поступово накопичує ефект сама.'},
+         {t:'Вас неможливо скопіювати.',d:'Конкуренти скопіюють рекламний підхід. Вашу мережу — ніколи.'}],
+    buildTitle:'Як це вбудовано у ваш тариф',
+    build:[{tier:'Foundation',t:'Підготовлена модель даних',d:'Структуруємо CRM і трекінг, щоб систему можна було запустити в день переходу на вищий тариф.'},
+           {tier:'Growth',t:'Однорівнева система',d:'Трекінгові посилання, автоматичні винагороди, CRM-теги, атрибуція. Клієнти починають приводити нових клієнтів.'},
+           {tier:'Scale',t:'Багаторівнева партнерська програма',d:'Ранги партнерів, автоматичний розрахунок комісій, кабінет партнера, KPI-звіти. Мережа дистрибуції.'}]},
+  cat:{eyebrow:'Каталог послуг',title:'Потрібна окрема послуга замість повного тарифу?',
+    body:'Усі 8 напрямів — SMM, таргетована реклама, веб-дизайн і розробка, дизайн і розробка застосунків, SEO, дизайн, копірайтинг і короткі відео — з прозорими діапазонами цін.',
+    sub:'Усі напрями нашої роботи — з прозорими діапазонами цін. Оберіть стратегічний тариф або замовте окрему позицію.',
+    note:'Фінальний діапазон ціни фіксується після стратегічної сесії та визначення обсягу робіт.',
+    items:[
+      {name:'SMM',rows:[{l:'Ведення соцмереж, створення постів і сторіз, тексти для публікацій та інше'}]},
+      {name:'Таргетована реклама',rows:[{l:'Налаштування та ведення кампаній'}]},
+      {name:'Веб-розробка',rows:[{l:'Лендинг (односторінковий)'},{l:'Багатосторінковий сайт'},{l:'Інтернет-магазин'},{l:'Складні функції та інтеграції'}]},
+      {name:'Розробка застосунків',rows:[{l:'MVP-застосунок',d:'Швидкий запуск. Ключові екрани, авторизація, базова логіка. Перевірка гіпотези.'},{l:'Повний застосунок',d:'UX/UI, особистий кабінет, аналітика, push, оплати, інтеграції. Готовий продукт.'},{l:'Застосунок + бекенд',d:'Серверна архітектура, API, ролі, бази даних, безпека, масштабованість.'},{l:'Розширені функції та інтеграції',d:'AI-функції, карти й геолокація, стрімінг, чати, маркетплейси, high-load, індивідуальні модулі.'}]},
+      {name:'SEO-оптимізація',rows:[{l:'Аудит та аналіз сайту'},{l:'Розробка та реалізація SEO-стратегії'},{l:'Оптимізація контенту'}]},
+      {name:'Дизайн',rows:[{l:'Створення логотипу'},{l:'UI/UX-дизайн'},{l:'2D-дизайн'},{l:'3D-дизайн'},{l:'Дизайн сайту'}]},
+      {name:'Копірайтинг',rows:[{l:'Створення контенту'},{l:'Редагування та коректура'}]},
+      {name:'Короткі відео (TikTok / Reels / Shorts)',rows:[{l:'Створення вірусного контенту для TikTok, Instagram/Facebook Reels, YouTube Shorts'}]}],
+    custom:'Індивідуальна оцінка'},
+  faqTitle:'Часті запитання',
+  faq:[{q:'Чому ціни вказані діапазоном?',a:'Обсяг кожного проєкту визначаємо після стратегічної сесії — діапазон захищає вас від переплати, а нам — виконати роботу в повному обсязі.'},
+       {q:'Чи можна адаптувати тариф?',a:'Так. Тарифи — це стартові архітектури, а не жорсткі пакети. Ми адаптуємо обсяг, канали й результати під ваші завдання.'},
+       {q:'Що входить у стратегічну сесію?',a:'Діагностика точок зростання, початкова продуктова лінійка, сегментація аудиторії, сценарії масштабування та перевірка партнерської сумісності. Входить у кожен тариф.'},
+       {q:'Як відбувається робота?',a:'Щотижневі стратегічні зустрічі, спільна дорожня карта, прозора звітність і єдина точка контакту для SMM, трафіку та розробки.'},
+       {q:'Які терміни?',a:'Foundation — 30–60 днів. Growth накопичує ефект місяць за місяцем. Scale відкриває нові ринки протягом кварталу.'}],
+  finalTitle:'Готові до системного зростання?', submit:'Залишити заявку', ask:'Поставити запитання',
+  footer:'STRATEGIC GROWTH STUDIO. ЛОНДОН · ДУБАЙ · НЬЮ-ЙОРК.', footerCities:'Лондон · Дубай · Нью-Йорк',
+  form:{name:'Ваше ім’я',contact:'Telegram, телефон або email',interest:'Що вас цікавить?',single:'Окрема послуга',any:'Ще не знаю',message:'Розкажіть про ваш бізнес',question:'Ваше запитання',send:'Залишити заявку',sendQ:'Надіслати запитання',success:'Дякуємо. Ми зв’яжемося з вами протягом 24 годин, щоб призначити стратегічну сесію.',again:'Надіслати ще одну заявку',required:'Обов’язкове поле',invalid:'Вкажіть коректний Telegram, телефон або email'}
+},
+ru: {
+  nav:['Метод','Кейсы','Решения','Услуги','Партнёрам'],
+  eyebrow:'Стратегический партнёр вашего роста', h1:'Мы создаём цифровые активы',
+  sub:'Фундаментальная стратегия. Полный цикл IT-разработки и маркетинга, который умножает стоимость вашего бизнеса.',
+  cta1:'Стратегическая сессия', cta2:'Смотреть цены',
+  heroTags:['Стратегия → запуск → масштаб','ЕС · ОАЭ · США','Одна команда — полная ответственность'],
+  time:['дней','месяцев','месяцев'],
+  layers:[
+    {n:'01 / Foundation',t:'Структурная база',d:'Строим основу: упакованный профиль, продающий контент и надёжную инфраструктуру привлечения клиентов.'},
+    {n:'02 / Growth',t:'Архитектура роста',d:'Проектируем многоканальные воронки, усиливаем охват контента и создаём стабильный поток лидов.'},
+    {n:'03 / Scale',t:'Глобальный рынок',d:'Индивидуальные IT-решения, автоматизация и масштабирование процессов для выхода на мировые рынки.'}],
+  whyTitle:'Почему мы', whySub:'Принципы, которые работают в каждом проекте.',
+  why:[{n:'01',t:'Стратегическое мышление',d:'Выстраиваем путь роста на 3–12 месяцев ещё до первого запуска.'},
+       {n:'02',t:'Системный подход',d:'SMM, трафик, разработка и автоматизация работают как единая система.'},
+       {n:'03',t:'Партнёрская модель',d:'Стратегическое мышление и проактивная ответственность за реализацию ваших проектов.'}],
+  casesEyebrow:'Избранные кейсы', casesTitle:'Системы, которые уже работают',
+  casesSub:'Как премиальные бренды в ЕС, ОАЭ и США выросли на архитектуре Foundation, Growth или Scale.',
+  all:'Все',
+  cases:[
+    {industry:'MedTech · ИИ-трихоскопия',city:'Клиническая практика',shot:'ИИ-платформа · ноутбук + планшет',summary:'Платформа на базе ИИ, которая помогает дерматологам и трихологам ставить диагноз быстрее и точнее и лечить по персонализированным планам.',ml:['точность диагностики','удовлетворённость пациентов','затраты на лечение'],challenge:'Трихоскопия опиралась на ручной анализ снимков: диагностика занимала много времени, зависела от опыта врача, а история пациента была разбросана по разным системам.',steps:['Анализ изображений с помощью ИИ: алгоритмы машинного обучения выявляют ключевые признаки и помогают поставить точный диагноз','Персонализированные рекомендации по лечению на основе результатов диагностики','Интеграция с EMR — быстрый и безопасный доступ к истории болезни пациента','Рабочие модули: трихоскопия, клиенты, файлы, продукты'],extras:[{title:'Дополнительные результаты',items:['+83% успешно вылеченных пациентов','На 72% меньше времени до полного выздоровления','На 142% быстрее диагностика благодаря анализу изображений с помощью ИИ']}],note:'Показатели основаны на данных клинических исследований в нескольких медицинских учреждениях.'},
+    {industry:'Партнёрская программа · маркетплейсы',city:'2024',shot:'Партнёрская платформа · веб + планшет',summary:'Инновационная партнёрская программа для маркетплейсов с цифровыми продуктами: партнёры, реферальные ссылки, аналитика и промомагазин в одной платформе.',ml:['ключевых модулей платформы','интеграция с любой CRM','год реализации'],challenge:'Создать эффективную партнёрскую программу для маркетплейсов с цифровыми продуктами, которая привлекает новых клиентов и партнёров, стимулирует покупки и расширяет дистрибьюторскую сеть.',steps:['Платформа для партнёров: удобный интерфейс для управления партнёрскими ссылками','База данных партнёров с поиском и редактированием','Встроенный магазин для партнёров с промоматериалами','Аналитическая панель: отслеживание эффективности, настройка программы, интеграция с CRM'],extras:[{title:'Особенности',items:['Гибкость — адаптируется к маркетплейсу любого размера','Автоматизация рутинных маркетинговых задач','Детальная аналитика по партнёрам и клиентам','Мультиязычность — платформа доступна на нескольких языках']},{title:'Этапы разработки',items:['Анализ и планирование: цели, рынок, конкуренты','Проектирование: прототипы, UI/UX-дизайн','Разработка: frontend, backend, базы данных','Тестирование: функциональное и нагрузочное','Внедрение: запуск платформы и обучение пользователей']}],note:''},
+    {industry:'Эстетическая клиника',city:'Дубай',shot:'сайт клиники + лента Instagram',duration:'4 месяца',summary:'От красивого, но «молчащего» профиля к системе записей с консьерж-обработкой премиум-пациентов.',ml:['заявок за 4 месяца','стоимость лида','записей через чат-бот'],challenge:'Сильная офлайн-репутация, но трафик из Instagram не конвертировался, а каждую заявку обрабатывали вручную в директе.',steps:['Переупаковали профиль и запустили 16 видео/мес в экспертном тоне клиники','Мультисегментные кампании: отдельно массовые процедуры и премиум-программы','Лендинг, онлайн-предоплата, CRM и чат-бот для записи']},
+    {industry:'Студия дизайна интерьеров',city:'Копенгаген',shot:'профиль-портфолио + воронка в хайлайтах',duration:'45 дней',summary:'Упакованный профиль и инфраструктура заявок для студии, которая держалась только на сарафанном радио.',ml:['больше заявок','время первого ответа','дней до запуска'],challenge:'Работы уровня портфолио, но профиль выглядел как архив, а лиды терялись между почтой и Instagram.',steps:['Упаковка профиля, 12 сценариев и воронка в хайлайтах','Базовый запуск трафика с ретаргетингом на тех, кто смотрел проекты','Мультиссылка, формы заявок и воронка в CRM']},
+    {industry:'Управление частным капиталом',city:'Лондон',shot:'LinkedIn + сайт компании',duration:'6 месяцев',summary:'Воронка доверия для консалтинга с высоким чеком, где один клиент — это год выручки.',ml:['квалифицированных лидов в месяц','стоимость квалифицированного лида','активов под управлением'],challenge:'Холодная реклама приводила не ту аудиторию; нужно было меньше обращений, но гораздо более качественных.',steps:['Сегментация трафика по платёжеспособности, консьерж-трек','Экспертный контент в LinkedIn и YouTube, 14 публикаций в месяц','Сайт с диагностической формой и скорингом в CRM']},
+    {industry:'Интернет-магазин specialty-кофе',city:'Берлин',shot:'интернет-магазин + подписка',duration:'9 месяцев',summary:'От зависимости от маркетплейсов к собственной e-commerce платформе с партнёрской сетью.',ml:['доля повторных покупок','выручки от рекомендаций','онлайн-выручка'],challenge:'Большая часть продаж шла через маркетплейсы с низкой маржой и без доступа к данным клиентов.',steps:['Собственный интернет-магазин с подписками и lifecycle-рассылками','Email- и бот-воронки, офлайн-трекинг для кофеен-партнёров','Многоуровневая партнёрская программа с автокомиссиями']},
+    {industry:'Чартер яхт премиум-класса',city:'Дубай Марина',shot:'лендинг бронирования',duration:'5 месяцев',summary:'Система бронирований для сезонной премиум-аудитории с высокой готовностью к покупке.',ml:['ROAS платного трафика','прямых бронирований','повторных клиентов и по рекомендациям'],challenge:'Зависимость от брокерских платформ, забиравших до 30% комиссии с каждого чартера.',steps:['Лендинг с календарём свободных дат и онлайн-оплатой','Анализ конкурентов и A/B-кампании на трёх языках','Базовая реферальная система для постоянных гостей']},
+    {industry:'Фитнес-приложение',city:'Нью-Йорк',shot:'экраны приложения + кабинет партнёра',duration:'6 месяцев',summary:'Приложение и партнёрская экосистема, которые превратили тренеров в канал привлечения.',ml:['активных пользователей за 6 мес','стоимость привлечения','рейтинг в App Store'],challenge:'Сильный бренд студии без цифрового продукта и без возможности выйти за пределы двух локаций.',steps:['Полное приложение с оплатами, push-уведомлениями и аналитикой на масштабируемом бэкенде','Продюсерский контент: 30 видео/мес с креаторами-партнёрами','Партнёрская программа для тренеров с рангами и KPI-дашбордом']}],
+  stepZero:'Шаг ноль', sessTitle:'Стратегическая сессия перед стартом',
+  sessSub:'Перед началом работы мы анализируем вашу ситуацию и формируем стратегию вашего роста.',
+  sessItems:['Определяем реальные точки роста','Формируем начальную продуктовую линейку','Сегментируем аудиторию (массовая / премиум)','Прописываем возможные сценарии масштабирования','Согласуем оптимальный формат сотрудничества'],
+  sessNote:'Стратегическая сессия входит в каждый тариф.',
+  tiersTitle:'Стратегические тарифы', tiersSub:'Решения, которые растут вместе с вашим бизнесом.',
+  labels:{problem:'Проблема',solution:'Решение',result:'Результат',investment:'Инвестиции',mo:'/ мес',rangeNote:'Ориентировочный диапазон — финальный объём фиксируем после стратегической сессии.',details:'Детали',strategicDetails:'Стратегические детали',strategy:'Стратегия',recommended:'РЕКОМЕНДУЕМ',howBuild:'КАК МЫ ЭТО СТРОИМ',challenge:'Задача',approach:'Что мы построили',duration:'Сроки',stack:'Стек',readCase:'Читать кейс',hideCase:'Свернуть'},
+  tiers:[
+    {tag:'Тариф 01',problem:'Трафик есть, но он утекает. Профиль не продаёт. Нет структуры.',solution:'Продающий фундамент: профиль, контент, трафик, инфраструктура.',result:'Профиль начинает конвертировать трафик в заявки. Контент продаёт. Трафик перестаёт утекать.',strategyTitle:'Стратегия (заложена с Foundation)',strategy:['Определение точек роста','Начальная продуктовая линейка','Сегментация аудитории (массовая / премиум)','Рекомендации по следующей стратегии роста'],items:['SMM: упаковка профиля, 10–14 сценариев, воронка в хайлайтах, омниканальность.','Трафик: базовый запуск, BM, ретаргетинг, креативы.','Разработка: мультиссылка, CRM, формы заявок.'],referral:'',cta:'Начать с Foundation'},
+    {tag:'Тариф 02',problem:'Заявки идут, но нет стабильной масштабируемой воронки.',solution:'Система роста: воронка, контент, трафик, сайт.',result:'Стабильный поток лидов. Контент прогревает и продаёт. CPA снижается.',strategyTitle:'Стратегия (усиленная)',strategy:['Продуктовая линейка (массовый / премиум-сегмент)','Сегментация трафика по платёжеспособности','Массовый и консьерж-сценарии обработки заявок','План роста на 3–6 месяцев','Включает стратегию Foundation'],items:['SMM: 12–20 видео/мес, tone of voice, комьюнити, механики вовлечения.','Трафик: анализ конкурентов, мультисегментные кампании, A/B-тесты.','Разработка: лендинг, оплаты, CRM, чат-бот.'],referral:'Базовая реферальная система — включена.',cta:'Перейти на Growth'},
+    {tag:'Тариф 03',problem:'Бизнес готов расти, но инфраструктура не выдерживает больших бюджетов.',solution:'Масштабируемая IT-платформа и многоуровневые воронки.',result:'Независимая система продаж. Автоматизация. Рост клиентской базы. Выход на новые рынки.',strategyTitle:'Стратегия (максимальная)',strategy:['Масштабируемая архитектура продуктовой линейки','План выхода на новые рынки (ЕС / ОАЭ / США)','Модель роста на 12 месяцев','Построение экосистемы','Включает стратегии Foundation и Growth'],items:['SMM: продюсирование, 20–40 видео/мес, креаторы, KPI-модель.','Трафик: бюджеты от $3 000/мес, email/бот-воронки, офлайн-трекинг.','Разработка: e-commerce / SaaS / приложение, интеграции, lifecycle-рассылки.'],referral:'Многоуровневая партнёрская программа с автоматическим трекингом.',cta:'Выйти на глобальный рынок'}],
+  ref:{eyebrow:'Слой 04 · Накопительный рост',title:'Ваша частная сеть роста',
+    sub:'Реферальная архитектура — система, с помощью которой премиальные бренды масштабируются без дополнительного бюджета.',
+    body:'Платный трафик выходит на плато. Репутация накапливается. Мы строим частную сеть дистрибуции в рамках тарифов Growth и Scale — чтобы каждый привлечённый клиент становился каналом, приводящим следующего. Стоимость привлечения клиентов и повторных продаж снижается, а стоимость бизнеса растёт без рекламных затрат.',
+    outcome:'Результат — самоусиливающийся канал привлечения, который накапливает эффект месяц за месяцем и переживает любые изменения рекламных платформ.',
+    note:'Проектируется на стратегической сессии. Строится внутри вашего тарифа. Остаётся с вами навсегда.',
+    whyTitle:'Почему мы выносим это в отдельный слой',
+    why:[{t:'Отдельная инфраструктура.',d:'Встроена в воронку, CRM и продукт.'},
+         {t:'Премиум-рынки работают на доверии.',d:'В ЕС, ОАЭ и США тёплая рекомендация конвертирует в 4–7 раз лучше холодной рекламы — и ничего не стоит.'},
+         {t:'Снижает риск рекламного бюджета.',d:'Каждый клиент становится потенциальным каналом привлечения. Система постепенно накапливает эффект сама.'},
+         {t:'Вас невозможно скопировать.',d:'Конкуренты скопируют рекламный подход. Вашу сеть — никогда.'}],
+    buildTitle:'Как это встроено в ваш тариф',
+    build:[{tier:'Foundation',t:'Подготовленная модель данных',d:'Структурируем CRM и трекинг, чтобы систему можно было запустить в день перехода на старший тариф.'},
+           {tier:'Growth',t:'Одноуровневая система',d:'Трекинговые ссылки, автоматические вознаграждения, CRM-теги, атрибуция. Клиенты начинают приводить новых клиентов.'},
+           {tier:'Scale',t:'Многоуровневая партнёрская программа',d:'Ранги партнёров, автоматический расчёт комиссий, кабинет партнёра, KPI-отчёты. Сеть дистрибуции.'}]},
+  cat:{eyebrow:'Каталог услуг',title:'Нужна отдельная услуга вместо полного тарифа?',
+    body:'Все 8 направлений — SMM, таргетированная реклама, веб-дизайн и разработка, дизайн и разработка приложений, SEO, дизайн, копирайтинг и короткие видео — с прозрачными диапазонами цен.',
+    sub:'Все направления нашей работы — с прозрачными диапазонами цен. Выберите стратегический тариф или закажите отдельную позицию.',
+    note:'Финальный диапазон цены фиксируется после стратегической сессии и определения объёма работ.',
+    items:[
+      {name:'SMM',rows:[{l:'Ведение соцсетей, создание постов и сторис, тексты для публикаций и другое'}]},
+      {name:'Таргетированная реклама',rows:[{l:'Настройка и ведение кампаний'}]},
+      {name:'Веб-разработка',rows:[{l:'Лендинг (одностраничный)'},{l:'Многостраничный сайт'},{l:'Интернет-магазин'},{l:'Сложные функции и интеграции'}]},
+      {name:'Разработка приложений',rows:[{l:'MVP-приложение',d:'Быстрый запуск. Ключевые экраны, авторизация, базовая логика. Проверка гипотезы.'},{l:'Полное приложение',d:'UX/UI, личный кабинет, аналитика, push, оплаты, интеграции. Готовый продукт.'},{l:'Приложение + бэкенд',d:'Серверная архитектура, API, роли, базы данных, безопасность, масштабируемость.'},{l:'Расширенные функции и интеграции',d:'AI-функции, карты и геолокация, стриминг, чаты, маркетплейсы, high-load, индивидуальные модули.'}]},
+      {name:'SEO-оптимизация',rows:[{l:'Аудит и анализ сайта'},{l:'Разработка и реализация SEO-стратегии'},{l:'Оптимизация контента'}]},
+      {name:'Дизайн',rows:[{l:'Создание логотипа'},{l:'UI/UX-дизайн'},{l:'2D-дизайн'},{l:'3D-дизайн'},{l:'Дизайн сайта'}]},
+      {name:'Копирайтинг',rows:[{l:'Создание контента'},{l:'Редактура и корректура'}]},
+      {name:'Короткие видео (TikTok / Reels / Shorts)',rows:[{l:'Создание вирусного контента для TikTok, Instagram/Facebook Reels, YouTube Shorts'}]}],
+    custom:'Индивидуальная оценка'},
+  faqTitle:'Частые вопросы',
+  faq:[{q:'Почему цены указаны диапазоном?',a:'Объём каждого проекта определяем после стратегической сессии — диапазон защищает вас от переплаты, а нам — выполнить работу в полном объёме.'},
+       {q:'Можно ли адаптировать тариф?',a:'Да. Тарифы — это стартовые архитектуры, а не жёсткие пакеты. Мы адаптируем объём, каналы и результаты под ваши задачи.'},
+       {q:'Что входит в стратегическую сессию?',a:'Диагностика точек роста, начальная продуктовая линейка, сегментация аудитории, сценарии масштабирования и проверка партнёрской совместимости. Входит в каждый тариф.'},
+       {q:'Как происходит работа?',a:'Еженедельные стратегические созвоны, общая дорожная карта, прозрачная отчётность и единая точка контакта для SMM, трафика и разработки.'},
+       {q:'Какие сроки?',a:'Foundation — 30–60 дней. Growth накапливает эффект месяц за месяцем. Scale открывает новые рынки в течение квартала.'}],
+  finalTitle:'Готовы к системному росту?', submit:'Оставить заявку', ask:'Задать вопрос',
+  footer:'STRATEGIC GROWTH STUDIO. ЛОНДОН · ДУБАЙ · НЬЮ-ЙОРК.', footerCities:'Лондон · Дубай · Нью-Йорк',
+  form:{name:'Ваше имя',contact:'Telegram, телефон или email',interest:'Что вас интересует?',single:'Отдельная услуга',any:'Пока не знаю',message:'Расскажите о вашем бизнесе',question:'Ваш вопрос',send:'Оставить заявку',sendQ:'Отправить вопрос',success:'Спасибо. Мы свяжемся с вами в течение 24 часов, чтобы назначить стратегическую сессию.',again:'Отправить ещё одну заявку',required:'Обязательное поле',invalid:'Укажите корректный Telegram, телефон или email'}
+}};
+
+const NAV_HREFS = ['#method','#cases','#pricing','#services','#referral'];
+const inputStyle = err => ({background:'var(--bg)',border:'1px solid '+(err?'#C2412D':'var(--line)'),borderRadius:14,color:'var(--ink)',padding:'14px',fontSize:16,outline:'none'});
+const pill = (on, extra) => Object.assign({border:0,borderRadius:999,padding:'9px 16px',fontSize:14,fontWeight:600,cursor:'pointer',
+  background:on?'var(--ink)':'transparent',color:on?'var(--bg)':'var(--mut)',whiteSpace:'nowrap'}, extra||{});
+const ls = (k, d) => { try { return localStorage.getItem(k) || d; } catch(e) { return d; } };
+
+class Component extends DCLogic {
+  state = {
+    lang: ls('axon_lang','en'), theme: ls('axon_theme2','light'),
+    openTiers:{}, openFaq:0, openSvc:2, openCase:null, caseFilter:-1, menuOpen:false,
+    w: typeof window!=='undefined' ? window.innerWidth : 1440,
+    mode:'request', form:{name:'',contact:'',interest:'',message:''}, errors:{}, sent:false
+  };
+  rootRef = React.createRef();
+  scrollToId(id){
+    if (id==='top' || !id) return window.scrollTo({top:0, behavior:'smooth'});
+    const el = document.getElementById(id); if (!el) return;
+    const head = document.querySelector('header'); const off = (head ? 72 : 0) + 16;
+    window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - off, behavior:'smooth'});
+  }
+  componentDidMount(){
+    this.onAnchor = e => {
+      const a = e.target.closest && e.target.closest('a[href^="#"]');
+      if (!a) return;
+      e.preventDefault();
+      const id = a.getAttribute('href').slice(1);
+      if (this.state.menuOpen) this.setState({menuOpen:false}, () => requestAnimationFrame(() => this.scrollToId(id)));
+      else requestAnimationFrame(() => this.scrollToId(id));
+    };
+    document.addEventListener('click', this.onAnchor);
+    this.onResize = () => this.setState({w: window.innerWidth});
+    window.addEventListener('resize', this.onResize);
+    this.applyTheme();
+  }
+  componentWillUnmount(){ window.removeEventListener('resize', this.onResize); document.removeEventListener('click', this.onAnchor); }
+  componentDidUpdate(_, p){ if (p.theme!==this.state.theme || p.lang!==this.state.lang) this.applyTheme(); }
+  applyTheme(){
+    const r = document.documentElement, vars = THEMES[this.state.theme];
+    [r, document.body, this.rootRef.current].forEach(el => el && Object.entries(vars).forEach(([k,v]) => el.style.setProperty('--'+k, v)));
+    document.body.style.background = vars.bg;
+    r.style.colorScheme = this.state.theme;
+    r.lang = this.state.lang==='ua' ? 'uk' : this.state.lang;
+  }
+  setLang(l){ try{localStorage.setItem('axon_lang',l);}catch(e){} this.setState({lang:l}, () => this.applyTheme()); }
+  goContact(interest){
+    this.setState(s => ({mode:'request', sent:false, form:{...s.form, interest}}));
+    requestAnimationFrame(() => this.scrollToId('contact'));
+  }
+  setField(k,v){ this.setState(s => ({form:{...s.form,[k]:v}, errors:{...s.errors,[k]:false}})); }
+  submit(e){
+    e.preventDefault();
+    const f = this.state.form, c = f.contact.trim();
+    const ok = /^@[\w]{3,}$/.test(c) || /^\+?[\d\s()-]{7,}$/.test(c) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c);
+    const errors = {name:!f.name.trim(), contact:!ok};
+    if (errors.name || errors.contact) return this.setState({errors});
+    try {
+      const log = JSON.parse(localStorage.getItem('axon_requests')||'[]');
+      log.push({...f, mode:this.state.mode, lang:this.state.lang, at:new Date().toISOString()});
+      localStorage.setItem('axon_requests', JSON.stringify(log));
+    } catch(err) {}
+    this.setState({sent:true, form:{name:'',contact:'',interest:'',message:''}});
+  }
+  renderVals(){
+    const s = this.state, t = L[s.lang] || L.en, isMobile = s.w < 1040;
+    const dark = s.theme==='dark';
+    const cascadeStyles = [
+      {background:'var(--surf)',color:'var(--ink)',border:'1px solid var(--line)',marginRight:'12%'},
+      {background:'var(--acc)',color:'#17150F',border:'1px solid transparent',margin:'0 6%'},
+      {background:'var(--deep)',color:'var(--deepInk)',border:'1px solid var(--deepLine)',marginLeft:'12%'}
+    ];
+    const tiers = t.tiers.map((tr,i) => {
+      const rec = i===1, open = !!s.openTiers[i];
+      return {...tr, name:TIER_NAMES[i], rec, open, price:PRICES[i], sign:open?'−':'+',
+        detailsLabel: rec ? t.labels.strategicDetails : t.labels.details,
+        toggle: () => this.setState(st => ({openTiers:{...st.openTiers,[i]:!st.openTiers[i]}})),
+        choose: () => this.goContact(TIER_NAMES[i]),
+        cardStyle:{display:'flex',flexDirection:'column',gap:22,padding:'30px 26px',borderRadius:24,
+          background: rec?'var(--acc)':'rgba(255,255,255,0.04)', color: rec?'#17150F':'var(--deepInk)',
+          border:'1px solid '+(rec?'transparent':'var(--deepLine)')},
+        priceBox:{display:'flex',flexDirection:'column',gap:6,padding:'18px',borderRadius:16,background: rec?'rgba(23,21,15,0.08)':'rgba(255,255,255,0.05)'},
+        btnStyle:{marginTop:4,padding:'17px',borderRadius:999,fontSize:16,fontWeight:600,cursor:'pointer',border:0,
+          background: rec?'#17150F':'var(--deepInk)', color: rec?'#F5F2EC':'#17150F'}
+      };
+    });
+    const filters = [{label:t.all, v:-1}, ...TIER_NAMES.map((n,i)=>({label:n, v:i}))];
+    const cols = s.w>=1100 ? 6 : s.w>=720 ? 2 : 1;
+    const mono = "'JetBrains Mono',monospace";
+    const cases = CASE_META.map((m,i) => ({...m, ...t.cases[i], i}))
+      .filter(c => s.caseFilter===-1 || c.tier===s.caseFilter)
+      .map(c => {
+        const open = s.openCase===c.i, p = c.pal, feat = !!c.real, img = !!c.img;
+        const span = cols===6 ? (feat?3:2) : cols===2 ? (feat?2:1) : 1;
+        return {...c, tierName:TIER_NAMES[c.tier], open, sign:open?'−':'+', btn: open?t.labels.hideCase:t.labels.readCase,
+          metrics: c.metrics.map((v,k)=>({v, l:c.ml[k]})),
+          toggle: () => this.setState({openCase: open?null:c.i}),
+          img: c.img||'', art: !img, mono: c.client[0], kpi: c.metrics[0], kpiLabel: c.ml[0],
+          artStyle:{gridColumn:'span '+span,background:'var(--surf)',border:'1px solid var(--line)',borderRadius:24,overflow:'hidden',display:'flex',flexDirection:'column'},
+          coverStyle:{position:'relative',aspectRatio:(feat&&cols>1)?'16/9':'16/10',overflow:'hidden',background:p.bg,color:p.ink,display:'flex',flexDirection:'column',justifyContent:'space-between',padding:18},
+          monoStyle:{position:'absolute',left:'-0.05em',bottom:'-0.3em',fontSize:'clamp(170px,20vw,250px)',fontWeight:800,lineHeight:1,letterSpacing:'-0.06em',color:p.acc,opacity:.2,pointerEvents:'none',userSelect:'none'},
+          cardStyle:{position:'absolute',right:'7%',top:'27%',width:'44%',maxWidth:230,background:p.card,color:p.cardInk,borderRadius:16,padding:'14px 14px 12px',display:'flex',flexDirection:'column',gap:6,boxShadow:'0 22px 44px -20px rgba(0,0,0,.45)',transform:'rotate(-2.5deg)'},
+          bars:(c.bars||[]).map((h,k,a)=>({flex:1,height:h+'%',borderRadius:3,background:k===a.length-1?p.acc:p.barMute})),
+          chipStyle:{fontFamily:mono,fontSize:11,lineHeight:1.4,padding:'6px 10px',borderRadius:8,background:p.chip,color:img?'#FFFFFF':p.ink,backdropFilter:'blur(8px)',maxWidth:'62%'},
+          badgeStyle:{fontFamily:mono,fontSize:11,letterSpacing:'0.1em',padding:'6px 10px',borderRadius:999,flex:'none',background:img?'#FFFFFF':p.ink,color:img?'#17150F':p.bg},
+          wordStyle:{position:'relative',fontSize:feat?'clamp(28px,3.2vw,44px)':'clamp(22px,2.2vw,28px)',fontWeight:700,letterSpacing:'-0.035em',lineHeight:1,color:img?'#FFFFFF':p.ink},
+          gallery:(c.gallery||[]).map(g=>({src:g.src, style:{width:'100%',height:'100%',objectFit:g.fit,display:'block',background:g.bg}})),
+          hasGallery:!!c.gallery, extras:c.extras||[], note:c.note||'',
+          footLabel: c.real?t.labels.stack:t.labels.duration, footVal: c.real?c.stack:c.duration};
+      });
+    const casesGrid = {display:'grid',gridTemplateColumns:'repeat('+cols+',minmax(0,1fr))',gap:20,alignItems:'start'};
+    const services = t.cat.items.map((it,i) => {
+      const open = s.openSvc===i;
+      return {n:'0'+(i+1), name:it.name, open, sign:open?'−':'+',
+        rows: it.rows.map((r,k)=>({l:r.l, d:r.d||'', p: SVC_PRICES[i][k] || t.cat.custom})),
+        toggle: () => this.setState({openSvc: open?-1:i}),
+        boxStyle:{borderRadius:18,background: open?'var(--surf2)':'var(--bg)',border:'1px solid var(--line)',transition:'background .2s'}};
+    });
+    const interests = [...TIER_NAMES, t.form.single, t.form.any];
+    const isRequest = s.mode==='request';
+    return {
+      rootRef: this.rootRef, t, tiers, cases, casesGrid, services,
+      navItems: t.nav.map((l,i)=>({label:l, href:NAV_HREFS[i]})),
+      langs: ['en','ua','ru'].map(l => ({label:l.toUpperCase(), select:()=>this.setLang(l),
+        style: pill(s.lang===l, {padding:'6px 11px',fontSize:12})})),
+      isMobile, isDesktop:!isMobile, menuOpen: isMobile && s.menuOpen, menuIcon: s.menuOpen?'×':'≡',
+      toggleMenu: () => this.setState({menuOpen:!s.menuOpen}), closeMenu: () => this.setState({menuOpen:false}),
+      themeIcon: dark ? '☀' : '☾',
+      toggleTheme: () => { const n = dark?'light':'dark'; try{localStorage.setItem('axon_theme2',n);}catch(e){} this.setState({theme:n}, () => this.applyTheme()); },
+      heroCascade: t.layers.map((ly,i) => ({open: () => this.setState(st => ({openTiers:{...st.openTiers,[i]:true}})), n:ly.n, t:ly.t, d:ly.d, time: TIMES[i]+' '+t.time[i],
+        style: Object.assign({display:'flex',flexDirection:'column',gap:10,padding:'24px 26px',borderRadius:22,transition:'transform .25s'}, cascadeStyles[i])})),
+      caseFilters: filters.map(f => ({label:f.label, select:()=>this.setState({caseFilter:f.v, openCase:null}),
+        style: pill(s.caseFilter===f.v)})),
+      sessItems: t.sessItems.map((x,i)=>({n:'0'+(i+1), t:x})),
+      refWhy: t.ref.why.map((x,i)=>({...x, n:'0'+(i+1)})),
+      faq: t.faq.map((f,i)=>({...f, open:s.openFaq===i, sign:s.openFaq===i?'−':'+', toggle:()=>this.setState({openFaq:s.openFaq===i?-1:i})})),
+      modes: [{k:'request',label:t.submit},{k:'question',label:t.ask}].map(m => ({label:m.label,
+        select:()=>this.setState({mode:m.k, errors:{}}), style: pill(s.mode===m.k, {flex:1,padding:'11px 12px'})})),
+      isRequest, msgLabel: isRequest?t.form.message:t.form.question, sendLabel: isRequest?t.form.send:t.form.sendQ,
+      interestOpts: interests.map(v => ({label:v, select:()=>this.setField('interest', s.form.interest===v?'':v),
+        style:{padding:'9px 14px',borderRadius:999,fontSize:14,fontWeight:600,cursor:'pointer',
+          background: s.form.interest===v?'var(--acc)':'transparent', color: s.form.interest===v?'#17150F':'var(--ink)',
+          border:'1px solid '+(s.form.interest===v?'var(--acc)':'var(--line)')}})),
+      sent:s.sent, notSent:!s.sent, form:s.form, errors:s.errors,
+      nameStyle: inputStyle(s.errors.name), contactStyle: inputStyle(s.errors.contact),
+      setName: e=>this.setField('name',e.target.value), setContact: e=>this.setField('contact',e.target.value),
+      setMessage: e=>this.setField('message',e.target.value),
+      submit: e=>this.submit(e), reset: ()=>this.setState({sent:false})
+    };
+  }
+}
+</script>
+</body>
+</html>
