@@ -7,7 +7,7 @@ const fullEnv: LeadEnv = { TELEGRAM_BOT_TOKEN: 'T', TELEGRAM_CHAT_ID: '42', RESE
 const ok = async () => new Response('{}', { status: 200 });
 const fail = async () => new Response('{}', { status: 500 });
 const bodyOf = (f: ReturnType<typeof vi.fn>, urlPart: string) => {
-  const call = f.mock.calls.find(([u]) => String(u).includes(urlPart));
+  const call = (f.mock.calls as unknown[][]).find(([u]) => String(u).includes(urlPart));
   return call ? { url: String(call[0]), init: call[1] as RequestInit, json: JSON.parse(String((call[1] as RequestInit).body)) } : null;
 };
 
@@ -85,4 +85,23 @@ describe('api/lead', async () => {
     expect(res.status).toBe(500);
     expect(res.headers.get('content-type')).toBe('application/json');
   });
+});
+
+test('api/lead trims env values before use', async () => {
+  const { POST } = await import('../../api/lead');
+  process.env.TELEGRAM_BOT_TOKEN = ' T \n';
+  process.env.TELEGRAM_CHAT_ID = '42\n';
+  const f = vi.fn(ok);
+  vi.stubGlobal('fetch', f);
+  try {
+    const res = await POST(new Request('http://x/api/lead', { method: 'POST', body: JSON.stringify({ ...lead, startedAt: Date.now() - 10_000 }) }));
+    expect(res.status).toBe(200);
+    const tg = bodyOf(f, 'telegram')!;
+    expect(tg.url).toBe('https://api.telegram.org/botT/sendMessage');
+    expect(tg.json.chat_id).toBe('42');
+  } finally {
+    vi.unstubAllGlobals();
+    delete process.env.TELEGRAM_BOT_TOKEN;
+    delete process.env.TELEGRAM_CHAT_ID;
+  }
 });

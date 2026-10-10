@@ -1,4 +1,4 @@
-import type { Lang } from '../i18n';
+import type { Lang } from '../i18n/index.js';
 
 export const INTERESTS = ['Foundation', 'Growth', 'Scale', 'single', 'any'] as const;
 export const LIMITS = { name: 100, contact: 100, message: 2000 } as const;

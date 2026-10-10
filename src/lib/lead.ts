@@ -1,4 +1,4 @@
-import { validateLead, type LeadErrors, type LeadInput } from './validate';
+import { validateLead, type LeadErrors, type LeadInput } from './validate.js';
 
 export type LeadEnv = Partial<
   Record<'TELEGRAM_BOT_TOKEN' | 'TELEGRAM_CHAT_ID' | 'RESEND_API_KEY' | 'LEAD_EMAIL_TO' | 'LEAD_EMAIL_FROM', string>
@@ -72,11 +72,13 @@ export async function handleLead(body: unknown, env: LeadEnv, fetchFn: typeof fe
   if (o.website || !Number.isFinite(startedAt) || now - startedAt < MIN_FILL_MS) return { status: 200, body: { ok: true } };
 
   const v = validateLead(o);
-  if (!v.ok) return { status: 400, body: { ok: false, errors: v.errors } };
+  // `in` narrows even under Vercel's non-strict compile of this file.
+  if ('errors' in v) return { status: 400, body: { ok: false, errors: v.errors } };
+  const lead = v.value;
 
   const channels: [string, () => Promise<void>][] = [];
-  if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) channels.push(['telegram', () => sendTelegram(v.value, env, fetchFn)]);
-  if (env.RESEND_API_KEY && env.LEAD_EMAIL_TO && env.LEAD_EMAIL_FROM) channels.push(['email', () => sendEmail(v.value, env, fetchFn)]);
+  if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) channels.push(['telegram', () => sendTelegram(lead, env, fetchFn)]);
+  if (env.RESEND_API_KEY && env.LEAD_EMAIL_TO && env.LEAD_EMAIL_FROM) channels.push(['email', () => sendEmail(lead, env, fetchFn)]);
   if (!channels.length) {
     console.error('[lead] no delivery channel configured');
     return { status: 500, body: { ok: false } };
