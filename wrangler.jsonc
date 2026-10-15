@@ -6,11 +6,14 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/r/*"]
   },
   "routes": [
     { "pattern": "vaxogroup.com", "custom_domain": true },
     { "pattern": "www.vaxogroup.com", "custom_domain": true }
+  ],
+  "d1_databases": [
+    { "binding": "LEADS", "database_name": "vaxo-leads", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" }
   ],
   "vars": { "LEAD_EMAIL_FROM": "Vaxo <hello@vaxogroup.com>" }
 }

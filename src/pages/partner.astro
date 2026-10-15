@@ -1,0 +1,210 @@
+---
+// Partner cabinet: sign up / log in, unlimited tracking links with stats, team invite link, rules.
+import Base from '../layouts/Base.astro';
+---
+
+<Base lang="en" title="Vaxo Partners — your cabinet" description="Earn with Vaxo: services, digital products and partner offers. Your links, stats and team in one place." path="/partner/" noindex>
+  <main class="wrap">
+    <a href="/" class="logo">VAXO<span>.</span> <small>Partners</small></a>
+
+    <section data-view="auth" hidden>
+      <h1>Earn with Vaxo</h1>
+      <p class="mut">One cabinet for everything you promote: agency services, our digital products and partner offers. Clients you bring stay yours for life.</p>
+      <div class="tabs">
+        <button type="button" data-tab="register" aria-pressed="true">Create account</button>
+        <button type="button" data-tab="login" aria-pressed="false">Log in</button>
+      </div>
+      <form data-form="register" class="card">
+        <label>Name<input name="name" required maxlength="80" autocomplete="name" /></label>
+        <label>Email<input name="email" type="email" required autocomplete="email" /></label>
+        <label>Password (8+ characters)<input name="password" type="password" required minlength="8" autocomplete="new-password" /></label>
+        <label class="check"><input type="checkbox" name="adult" required /> I am 18 or older</label>
+        <label class="check"><input type="checkbox" name="rules" required /> I accept the <a href="#rules">partner rules</a></label>
+        <button type="submit" class="cta">Create account</button>
+        <p class="err" data-err hidden></p>
+      </form>
+      <form data-form="login" class="card" hidden>
+        <label>Email<input name="email" type="email" required autocomplete="email" /></label>
+        <label>Password<input name="password" type="password" required autocomplete="current-password" /></label>
+        <button type="submit" class="cta">Log in</button>
+        <p class="err" data-err hidden></p>
+      </form>
+    </section>
+
+    <section data-view="cabinet" hidden>
+      <div class="top">
+        <h1>Hi, <span data-name></span></h1>
+        <button type="button" class="ghost" data-logout>Log out</button>
+      </div>
+      <div class="stats">
+        <div class="card"><b data-total="clicks">0</b><span>clicks</span></div>
+        <div class="card"><b data-total="leads">0</b><span>leads</span></div>
+        <div class="card"><b data-total="team">0</b><span>partners in your team</span></div>
+      </div>
+
+      <h2>My links</h2>
+      <p class="mut">Make a separate link for every place you post (a channel, a video, an audience) to see what works. Turn off any link and make a new one at any time.</p>
+      <form data-form="link" class="row">
+        <input name="name" placeholder="Link name, e.g. TikTok video #3" maxlength="60" />
+        <select name="target">
+          <option value="/start/">Starter packages page</option>
+          <option value="/">Main page</option>
+        </select>
+        <button type="submit" class="cta">+ New link</button>
+      </form>
+      <div class="table"><table>
+        <thead><tr><th>Name</th><th>Link</th><th>Clicks</th><th>Leads</th><th></th></tr></thead>
+        <tbody data-links></tbody>
+      </table></div>
+
+      <h2>Build your team</h2>
+      <p class="mut">Invite other partners with this link. You earn a share of your team's real sales — never for the invite itself.</p>
+      <div class="row"><input readonly data-invite /><button type="button" class="ghost" data-copy-invite>Copy</button></div>
+    </section>
+
+    <section id="rules">
+      <h2>Partner rules</h2>
+      <ol>
+        <li>18+ only.</li>
+        <li>Honest promotion: no spam, no fake income promises, no fake reviews, no bots or paid clicks.</li>
+        <li>Follow each offer's own rules, shown next to its link.</li>
+        <li>Don't take our clients or advertisers around us.</li>
+        <li>Weekly payouts for money we have received and held for 7 days (refund protection).</li>
+        <li>Breaking the rules means the account is switched off and those sales are not paid.</li>
+      </ol>
+    </section>
+  </main>
+</Base>
+
+<script>
+  type Link = { id: number; slug: string; name: string; target: string; active: number; clicks: number; leads: number };
+  const $ = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
+  const api = (path: string, body?: unknown) =>
+    fetch(`/api/partner/${path}`, body === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const show = (view: 'auth' | 'cabinet') => {
+    $('[data-view="auth"]').hidden = view !== 'auth';
+    $('[data-view="cabinet"]').hidden = view !== 'cabinet';
+  };
+
+  function cell(text: string): HTMLTableCellElement {
+    const td = document.createElement('td');
+    td.textContent = text;
+    return td;
+  }
+
+  async function load() {
+    const res = await api('me');
+    if (!res.ok) return show('auth');
+    const data = (await res.json()) as { partner: { name: string; code: string }; links: Link[]; team: number };
+    $('[data-name]').textContent = data.partner.name;
+    $('[data-total="clicks"]').textContent = String(data.links.reduce((n, l) => n + l.clicks, 0));
+    $('[data-total="leads"]').textContent = String(data.links.reduce((n, l) => n + l.leads, 0));
+    $('[data-total="team"]').textContent = String(data.team);
+    $<HTMLInputElement>('[data-invite]').value = `${location.origin}/partner/?invite=${data.partner.code}`;
+    const body = $('[data-links]');
+    body.replaceChildren(
+      ...data.links.map((l) => {
+        const tr = document.createElement('tr');
+        if (!l.active) tr.className = 'off';
+        const url = `${location.origin}/r/${l.slug}`;
+        const linkTd = document.createElement('td');
+        const copy = document.createElement('button');
+        copy.type = 'button';
+        copy.className = 'ghost';
+        copy.textContent = url.replace(/^https?:\/\//, '');
+        copy.title = 'Copy';
+        copy.onclick = () => navigator.clipboard?.writeText(url).then(() => (copy.textContent = 'Copied ✓'));
+        linkTd.append(copy);
+        const actTd = document.createElement('td');
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'ghost';
+        toggle.textContent = l.active ? 'Turn off' : 'Turn on';
+        toggle.onclick = async () => {
+          await api(`links/${l.id}/toggle`, {});
+          load();
+        };
+        actTd.append(toggle);
+        tr.append(cell(l.name), linkTd, cell(String(l.clicks)), cell(String(l.leads)), actTd);
+        return tr;
+      }),
+    );
+    show('cabinet');
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) =>
+    b.addEventListener('click', () => {
+      document.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      $('[data-form="register"]').hidden = b.dataset.tab !== 'register';
+      $('[data-form="login"]').hidden = b.dataset.tab !== 'login';
+    }),
+  );
+
+  const invite = new URLSearchParams(location.search).get('invite') ?? '';
+
+  for (const kind of ['register', 'login'] as const) {
+    const form = $<HTMLFormElement>(`[data-form="${kind}"]`);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const body: Record<string, unknown> = Object.fromEntries(fd.entries());
+      if (kind === 'register') Object.assign(body, { adult: fd.has('adult'), rules: fd.has('rules'), invite });
+      const err = form.querySelector<HTMLElement>('[data-err]')!;
+      const res = await api(kind, body);
+      if (res.ok) return load();
+      const out = (await res.json().catch(() => ({}))) as { reason?: string };
+      err.textContent =
+        kind === 'login' ? 'Wrong email or password.' : out.reason === 'exists' ? 'This email already has an account — log in instead.' : 'Please check the fields and both boxes.';
+      err.hidden = false;
+    });
+  }
+
+  $<HTMLFormElement>('[data-form="link"]').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget as HTMLFormElement);
+    await api('links', Object.fromEntries(fd.entries()));
+    (e.currentTarget as HTMLFormElement).reset();
+    load();
+  });
+
+  $('[data-logout]').addEventListener('click', async () => {
+    await api('logout', {});
+    show('auth');
+  });
+  $('[data-copy-invite]').addEventListener('click', () => navigator.clipboard?.writeText($<HTMLInputElement>('[data-invite]').value));
+
+  load();
+</script>
+
+<style>
+  .wrap { max-width: 960px; margin: 0 auto; padding: 24px 16px 80px; }
+  .logo { font-weight: 800; font-size: 22px; text-decoration: none; color: var(--ink); }
+  .logo span { color: var(--acc); }
+  .logo small { font-weight: 500; color: var(--mut); font-size: 14px; }
+  h1 { font-size: clamp(28px, 5vw, 44px); margin: 32px 0 8px; }
+  h2 { margin: 40px 0 8px; }
+  .mut { color: var(--mut); max-width: 62ch; }
+  .card { background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+  form.card { display: grid; gap: 12px; max-width: 420px; }
+  label { display: grid; gap: 4px; font-size: 14px; color: var(--mut); }
+  label.check { display: flex; gap: 8px; align-items: center; color: var(--ink); }
+  input, select { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); min-width: 0; }
+  .cta { background: var(--acc); color: var(--dark-ink); font-weight: 600; border: 0; border-radius: 999px; padding: 12px 18px; cursor: pointer; }
+  .ghost { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+  .tabs { display: flex; gap: 8px; margin: 24px 0 12px; }
+  .tabs button { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+  .tabs button[aria-pressed='true'] { background: var(--ink); color: var(--bg); }
+  .err { color: var(--error); margin: 0; }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 16px; }
+  .stats b { display: block; font-size: 32px; }
+  .stats span { color: var(--mut); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  .row input { flex: 1 1 220px; }
+  .table { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--mut); font-weight: 500; font-size: 14px; }
+  tr.off td { opacity: 0.5; }
+  ol li { margin: 6px 0; }
+</style>

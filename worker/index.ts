@@ -1,13 +1,10 @@
 // Cloudflare Worker: serves the static site from ./dist and handles the lead form.
 import { handleLead, type LeadEnv, type LeadInput } from '../src/lib/lead.js';
-
-interface D1 {
-  prepare(sql: string): { bind(...values: unknown[]): { run(): Promise<unknown> } };
-}
+import { handlePartnerApi, handleRedirect, type DB } from './partner.js';
 
 interface Env extends LeadEnv {
   ASSETS: { fetch(request: Request): Promise<Response> };
-  LEADS?: D1;
+  LEADS?: DB;
 }
 
 const ENV_KEYS = ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'RESEND_API_KEY', 'LEAD_EMAIL_TO', 'LEAD_EMAIL_FROM'] as const;
@@ -21,6 +18,12 @@ export default {
     if (url.hostname === 'www.vaxogroup.com') {
       url.hostname = 'vaxogroup.com';
       return Response.redirect(url.toString(), 301);
+    }
+    const r = url.pathname.match(/^\/r\/([^/]+)\/?$/);
+    if (r) return env.LEADS ? handleRedirect(env.LEADS, request, r[1].toLowerCase()) : Response.redirect(new URL('/', url).toString(), 302);
+    if (url.pathname.startsWith('/api/partner/')) {
+      if (!env.LEADS) return json(503, { ok: false });
+      return handlePartnerApi(env.LEADS, request, url.pathname.slice('/api/partner/'.length));
     }
     if (url.pathname === '/api/lead') {
       if (request.method !== 'POST') return json(405, { ok: false });
