@@ -13,7 +13,7 @@
     { "pattern": "www.vaxogroup.com", "custom_domain": true }
   ],
   "d1_databases": [
-    { "binding": "LEADS", "database_name": "vaxo-leads", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" }
+    { "binding": "LEADS", "database_name": "vaxo-leads", "database_id": "288e62a1-690b-4f45-89c9-d0bcb24f76bb", "migrations_dir": "migrations" }
   ],
   "vars": { "LEAD_EMAIL_FROM": "Vaxo <hello@vaxogroup.com>" }
 }
