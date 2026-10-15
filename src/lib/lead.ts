@@ -1,4 +1,5 @@
 import { validateLead, type LeadErrors, type LeadInput } from './validate.js';
+export type { LeadInput };
 
 export type LeadEnv = Partial<
   Record<'TELEGRAM_BOT_TOKEN' | 'TELEGRAM_CHAT_ID' | 'RESEND_API_KEY' | 'LEAD_EMAIL_TO' | 'LEAD_EMAIL_FROM', string>
@@ -33,6 +34,7 @@ async function sendTelegram(l: LeadInput, env: LeadEnv, fetchFn: typeof fetch) {
     `👤 ${e(l.name)}`,
     `📞 ${e(l.contact)}`,
     `💬 ${e(f.message)}`,
+    ...(l.ref ? [`🤝 partner: ${e(l.ref)}`] : []),
   ].join('\n');
   const res = await fetchFn(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: 'POST',
@@ -66,7 +68,10 @@ async function sendEmail(l: LeadInput, env: LeadEnv, fetchFn: typeof fetch) {
   if (!res.ok) throw new Error(`Resend ${res.status}: ${await res.text()}`);
 }
 
-export async function handleLead(body: unknown, env: LeadEnv, fetchFn: typeof fetch, now = Date.now()): Promise<LeadResult> {
+/** Optional permanent storage (Cloudflare D1): a stored lead is never lost, even if Telegram/email fail. */
+export type SaveLead = (lead: LeadInput) => Promise<void>;
+
+export async function handleLead(body: unknown, env: LeadEnv, fetchFn: typeof fetch, now = Date.now(), save?: SaveLead): Promise<LeadResult> {
   const o = (body && typeof body === 'object' ? body : {}) as Record<string, unknown>;
   const startedAt = Number(o.startedAt);
   if (o.website || !Number.isFinite(startedAt) || now - startedAt < MIN_FILL_MS) return { status: 200, body: { ok: true } };
@@ -76,15 +81,26 @@ export async function handleLead(body: unknown, env: LeadEnv, fetchFn: typeof fe
   if ('errors' in v) return { status: 400, body: { ok: false, errors: v.errors } };
   const lead = v.value;
 
+  let saved = false;
+  if (save) {
+    try {
+      await save(lead);
+      saved = true;
+    } catch (err) {
+      console.error('[lead] save failed:', err);
+    }
+  }
+
   const channels: [string, () => Promise<void>][] = [];
   if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) channels.push(['telegram', () => sendTelegram(lead, env, fetchFn)]);
   if (env.RESEND_API_KEY && env.LEAD_EMAIL_TO && env.LEAD_EMAIL_FROM) channels.push(['email', () => sendEmail(lead, env, fetchFn)]);
   if (!channels.length) {
+    if (saved) return { status: 200, body: { ok: true } };
     console.error('[lead] no delivery channel configured');
     return { status: 500, body: { ok: false } };
   }
 
   const results = await Promise.allSettled(channels.map(([, send]) => send()));
   results.forEach((r, i) => r.status === 'rejected' && console.error(`[lead] ${channels[i][0]} failed:`, r.reason));
-  return results.some((r) => r.status === 'fulfilled') ? { status: 200, body: { ok: true } } : { status: 502, body: { ok: false } };
+  return saved || results.some((r) => r.status === 'fulfilled') ? { status: 200, body: { ok: true } } : { status: 502, body: { ok: false } };
 }

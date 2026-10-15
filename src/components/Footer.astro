@@ -2,15 +2,15 @@
 import type { Dict } from '../i18n';
 import { NAV_HREFS } from '../data/tiers';
 
-interface Props { t: Dict }
-const { t } = Astro.props;
+interface Props { t: Dict; home?: string }
+const { t, home = '' } = Astro.props;
 ---
 
 <footer class="footer">
   <div class="inner">
     <span class="logo">VAXO<span>.</span></span>
     <nav aria-label="Footer">
-      {t.nav.map((label, i) => <a href={NAV_HREFS[i]}>{label}</a>)}
+      {t.nav.map((label, i) => <a href={home + NAV_HREFS[i]}>{label}</a>)}
     </nav>
     <span class="copy">© 2026 {t.footer}</span>
   </div>

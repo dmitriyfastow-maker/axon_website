@@ -2,9 +2,9 @@
 import { LANGS, langPath, type Lang, type Dict } from '../i18n';
 import { NAV_HREFS } from '../data/tiers';
 
-interface Props { lang: Lang; t: Dict }
-const { lang, t } = Astro.props;
-const nav = t.nav.map((label, i) => ({ label, href: NAV_HREFS[i] }));
+interface Props { lang: Lang; t: Dict; home?: string }
+const { lang, t, home = '' } = Astro.props;
+const nav = t.nav.map((label, i) => ({ label, href: home + NAV_HREFS[i] }));
 ---
 
 <header class="header">

@@ -1,5 +1,13 @@
 import { isValidContact, LIMITS } from '../lib/validate';
 
+function readRef(): string {
+  try {
+    return localStorage.getItem('vaxo_ref') ?? '';
+  } catch {
+    return '';
+  }
+}
+
 type Mode = 'request' | 'question';
 interface Copy { message: string; question: string; send: string; sendQ: string; sending: string }
 
@@ -94,6 +102,7 @@ export function initContactForm(): void {
           lang: form.dataset.lang,
           website: trap.value,
           startedAt,
+          ref: readRef(),
         }),
       });
       if (!res.ok) throw new Error(String(res.status));

@@ -1,6 +1,6 @@
 import type { Lang } from '../i18n/index.js';
 
-export const INTERESTS = ['Foundation', 'Growth', 'Scale', 'single', 'any'] as const;
+export const INTERESTS = ['Starter', 'Foundation', 'Growth', 'Scale', 'single', 'any'] as const;
 export const LIMITS = { name: 100, contact: 100, message: 2000 } as const;
 
 export interface LeadInput {
@@ -10,6 +10,8 @@ export interface LeadInput {
   interest: string;
   message: string;
   lang: Lang;
+  /** Partner code from a ?ref= link (first touch, kept for life). */
+  ref?: string;
 }
 
 export type LeadErrors = Partial<Record<keyof LeadInput, true>>;
@@ -38,9 +40,10 @@ export function validateLead(x: unknown): LeadValidation {
   if (message === null || message.length > LIMITS.message) errors.message = true;
   if (interest === null || (interest !== '' && !(INTERESTS as readonly string[]).includes(interest))) errors.interest = true;
 
+  const ref = str(o.ref)?.trim() ?? '';
   if (Object.keys(errors).length) return { ok: false, errors };
   return {
     ok: true,
-    value: { mode: o.mode as LeadInput['mode'], name: name!, contact: contact!, interest: interest!, message: message!, lang: o.lang as Lang },
+    value: { mode: o.mode as LeadInput['mode'], name: name!, contact: contact!, interest: interest!, message: message!, lang: o.lang as Lang, ...(/^[A-Za-z0-9_-]{1,64}$/.test(ref) ? { ref } : {}) },
   };
 }

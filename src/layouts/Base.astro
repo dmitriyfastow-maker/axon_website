@@ -75,6 +75,22 @@ const jsonLd = {
       })();
     </script>
     <slot name="head" />
+    <script is:inline>
+      // Partner links: ?ref=CODE. First touch wins and is kept for life (localStorage + 400-day cookie).
+      (function () {
+        try {
+          var r = new URLSearchParams(location.search).get('ref');
+          if (r && /^[A-Za-z0-9_-]{1,64}$/.test(r) && !localStorage.getItem('vaxo_ref')) {
+            localStorage.setItem('vaxo_ref', r);
+            document.cookie = 'vaxo_ref=' + r + '; max-age=34560000; path=/; samesite=lax';
+          }
+          if (!localStorage.getItem('vaxo_ref')) {
+            var m = document.cookie.match(/(?:^|; )vaxo_ref=([A-Za-z0-9_-]{1,64})/);
+            if (m) localStorage.setItem('vaxo_ref', m[1]);
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <slot />

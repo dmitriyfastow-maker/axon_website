@@ -6,7 +6,7 @@ import { LIMITS } from '../lib/validate';
 interface Props { t: Dict; lang: Lang }
 const { t, lang } = Astro.props;
 const f = t.form;
-const interests = [...TIER_NAMES.map((n) => ({ v: n, label: n })), { v: 'single', label: f.single }, { v: 'any', label: f.any }];
+const interests = [{ v: 'Starter', label: 'Starter' }, ...TIER_NAMES.map((n) => ({ v: n, label: n })), { v: 'single', label: f.single }, { v: 'any', label: f.any }];
 // Labels the script swaps when the form mode changes.
 const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.sendQ, sending: f.sending };
 ---
