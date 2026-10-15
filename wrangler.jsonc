@@ -1,0 +1,16 @@
+{
+  "name": "vaxo-site",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "routes": [
+    { "pattern": "vaxogroup.com", "custom_domain": true },
+    { "pattern": "www.vaxogroup.com", "custom_domain": true }
+  ],
+  "vars": { "LEAD_EMAIL_FROM": "Vaxo <hello@vaxogroup.com>" }
+}

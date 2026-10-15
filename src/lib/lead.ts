@@ -57,7 +57,7 @@ async function sendEmail(l: LeadInput, env: LeadEnv, fetchFn: typeof fetch) {
     body: JSON.stringify({
       from: env.LEAD_EMAIL_FROM,
       to: [env.LEAD_EMAIL_TO],
-      subject: `AXON — new ${f.kind.toLowerCase()}: ${l.name}`,
+      subject: `Vaxo — new ${f.kind.toLowerCase()}: ${l.name}`,
       text: rows.map(([k, v]) => `${k}: ${v}`).join('\n'),
       html,
       ...(isEmail ? { reply_to: l.contact } : {}),

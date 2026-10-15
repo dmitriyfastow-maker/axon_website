@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-const site = process.env.SITE_URL || 'https://axon-website.vercel.app';
+const site = process.env.SITE_URL || 'https://vaxogroup.com';
 
 export default defineConfig({
   site,
