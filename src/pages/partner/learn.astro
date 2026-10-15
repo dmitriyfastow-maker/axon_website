@@ -1,0 +1,93 @@
+---
+// Partner training: how to earn, a video factory on free tools, prompts for free AI.
+import Base from '../../layouts/Base.astro';
+
+const prompts = [
+  {
+    title: 'Video script (30 seconds)',
+    text: `You are a short-video scriptwriter. Write a 30-second vertical video script for small business owners in the US about this offer: [paste the offer]. Structure: hook in the first 2 seconds, one real problem, how the offer solves it, one clear call to action "link in bio". Plain spoken English, no hype, no income promises. Give 5 different hooks I can test.`,
+  },
+  {
+    title: '10 video ideas from one offer',
+    text: `Give me 10 different short-video ideas for this offer: [paste the offer]. Mix formats: before/after, myth vs fact, "3 mistakes", screen recording, story of a typical client, question to the viewer. One line per idea plus the first sentence of the video.`,
+  },
+  {
+    title: 'Personal message to a business',
+    text: `Here is a business: [name, website or Instagram, city]. Look at what I pasted about them: [paste what you saw: their site, reviews, posts]. Write a short, friendly message (max 70 words) to the owner. Mention one specific thing you noticed, one way [our offer] could help, and ask a simple yes/no question. No pressure, no fake claims.`,
+  },
+  {
+    title: 'Reply to a client question',
+    text: `A potential client asked: [paste the question]. Our offer: [paste the offer and price]. Write a short, honest reply that answers the question, gives one useful detail, and suggests the next step (a short chat or the order link). Match the client's tone.`,
+  },
+];
+---
+
+<Base lang="en" title="Vaxo Partners — how to earn" description="Practical training for Vaxo partners: offers, a video factory on free tools and ready prompts for free AI." path="/partner/learn/" noindex>
+  <main class="wrap">
+    <a href="/partner/" class="back">← Back to cabinet</a>
+    <h1>How to earn with Vaxo</h1>
+    <p class="mut">Everything here works with free tools. No paid AI, no paid ads needed to start.</p>
+
+    <h2>1. The basics</h2>
+    <ol>
+      <li><b>Pick an offer.</b> Start with the starter packages ($149–$249): they are easy to say yes to.</li>
+      <li><b>One link per place.</b> Make a separate link in your cabinet for each video, channel or audience. After a week you will see which one brings leads — do more of that.</li>
+      <li><b>Clients stay yours for life.</b> When a client you brought buys again or pays monthly, you earn again.</li>
+      <li><b>We do the selling work.</b> Our team answers clients, prepares proposals and delivers. You bring people.</li>
+    </ol>
+
+    <h2>2. Your own video factory</h2>
+    <p class="mut">The strongest way to earn steadily: short videos that keep bringing people to your links while you sleep.</p>
+    <div class="steps">
+      <div class="card"><b>Ideas and scripts</b><p>Free ChatGPT, Gemini or Claude with the prompts below. 10 ideas in 2 minutes.</p></div>
+      <div class="card"><b>Recording</b><p>Your phone. Screen recordings of a chatbot or website work well and need no face.</p></div>
+      <div class="card"><b>Editing</b><p>Free CapCut or Canva: subtitles, cuts, music from the built-in library.</p></div>
+      <div class="card"><b>Posting</b><p>TikTok, YouTube Shorts, Instagram Reels. Your link in the bio or description.</p></div>
+    </div>
+    <p><b>Important:</b> every video must be different. Platforms hide accounts that post the same video again and again — we learned this the hard way. Change the hook, the example, the format. 1–3 unique videos a day beats 15 copies.</p>
+
+    <h2>3. Ready prompts for free AI</h2>
+    <p class="mut">Copy, replace the parts in [brackets], paste into any free AI chat.</p>
+    {prompts.map((p) => (
+      <details class="card prompt">
+        <summary>{p.title}</summary>
+        <pre>{p.text}</pre>
+        <button type="button" class="ghost" data-copy>Copy</button>
+      </details>
+    ))}
+
+    <h2>4. What is not allowed</h2>
+    <ul>
+      <li>Spam: mass messages, comments under other people's posts, fake accounts.</li>
+      <li>Bots, paid clicks, "sign up and I'll pay you" traffic.</li>
+      <li>Promises of income or results we can't guarantee. Fake reviews or fake cases.</li>
+      <li>Ads on the brand names of our offers unless an offer allows it.</li>
+    </ul>
+    <p class="mut">Breaking these rules switches the account off without payment for those sales. It protects you too: one partner's spam can close an offer for everyone.</p>
+  </main>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const text = b.parentElement?.querySelector('pre')?.textContent ?? '';
+      navigator.clipboard?.writeText(text).then(() => (b.textContent = 'Copied ✓'));
+    }),
+  );
+</script>
+
+<style>
+  .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }
+  .back { color: var(--mut); text-decoration: none; }
+  h1 { font-size: clamp(28px, 5vw, 44px); margin: 24px 0 8px; }
+  h2 { margin: 40px 0 12px; }
+  .mut { color: var(--mut); }
+  li { margin: 8px 0; }
+  .card { background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 16px 20px; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 12px 0; }
+  .steps p { color: var(--mut); margin: 6px 0 0; }
+  .prompt { margin: 10px 0; }
+  .prompt summary { cursor: pointer; font-weight: 600; }
+  pre { white-space: pre-wrap; font: 14px/1.5 var(--mono); background: var(--bg); padding: 12px; border-radius: 10px; }
+  .ghost { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+</style>
