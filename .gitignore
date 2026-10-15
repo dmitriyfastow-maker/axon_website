@@ -9,3 +9,4 @@ test-results/
 playwright-report/
 tests/visual/out/
 .wrangler/
+.dev.vars
