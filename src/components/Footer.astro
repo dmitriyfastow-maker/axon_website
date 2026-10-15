@@ -12,6 +12,7 @@ const { t, home = '' } = Astro.props;
     <nav aria-label="Footer">
       {t.nav.map((label, i) => <a href={home + NAV_HREFS[i]}>{label}</a>)}
       <a href="/start/">Starter packages</a>
+      <a href="/shop/">Templates shop</a>
       <a href="/partner/">Become a partner</a>
     </nav>
     <span class="copy">© 2026 {t.footer}</span>
