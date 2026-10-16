@@ -12,6 +12,7 @@ const { lang } = Astro.props;
 const t = getDict(lang);
 const p = PARTNERS_TEXT[lang];
 const home = langPath(lang);
+const cab = lang === 'en' ? '/partner/' : `/${lang}/partner/`;
 const alts = { en: '/partners/', ua: '/ua/partners/', ru: '/ru/partners/' };
 const calc = { ...CALC, own: RATES.agencyOwn, renewal: RATES.agencyRenewal, products: RATES.products };
 const chips = ['Claude', 'ChatGPT', 'Gemini', 'CapCut', 'Canva', 'TikTok', 'Reels', 'Shorts', 'Telegram', 'Reddit', 'Facebook', 'LinkedIn'];
@@ -29,8 +30,8 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
           <h1>{p.h1}</h1>
           <p class="sub">{p.sub}</p>
           <div class="ctas">
-            <a class="btn" href="/partner/">{p.join}</a>
-            <a class="btn ghost" href="/partner/?tab=login">{p.login}</a>
+            <a class="btn" href={cab}>{p.join}</a>
+            <a class="btn ghost" href={`${cab}?tab=login`}>{p.login}</a>
           </div>
         </div>
         <ol class="flow" aria-label={p.flow.join(' → ')}>
@@ -114,7 +115,7 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
             </div>
             <div class="year">≈ $<span data-year>0</span> {p.calcYear}</div>
             <p class="note">{p.calcNote}</p>
-            <a class="btn" href="/partner/">{p.join}</a>
+            <a class="btn" href={cab}>{p.join}</a>
           </div>
         </div>
       </div>
@@ -167,7 +168,7 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
         <div class="faq">
           {p.faq.map(([q, a]) => <details class="card"><summary>{q}</summary><p>{a}</p></details>)}
         </div>
-        <p class="rules">{p.rules} <a href="/partner/#rules">{p.rulesLink}</a>.</p>
+        <p class="rules">{p.rules} <a href={`${cab}#rules`}>{p.rulesLink}</a>.</p>
       </div>
     </section>
 
@@ -176,8 +177,8 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
         <div class="box">
           <div><h2>{p.finalH}</h2><p>{p.finalP}</p></div>
           <div class="ctas">
-            <a class="btn" href="/partner/">{p.create}</a>
-            <a class="btn ghost" href="/partner/?tab=login">{p.login}</a>
+            <a class="btn" href={cab}>{p.create}</a>
+            <a class="btn ghost" href={`${cab}?tab=login`}>{p.login}</a>
           </div>
         </div>
       </div>

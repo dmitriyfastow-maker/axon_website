@@ -1,0 +1,639 @@
+---
+// Partner cabinet (EN/UA/RU): sign up / log in, then tabs — Home (next step, checklist, rates, achievements),
+// Links (unlimited tracking links), Academy (lessons with prompts), AI prompts, Team, Payouts & rules.
+import Base from '../layouts/Base.astro';
+import PromptCard from './PromptCard.astro';
+import { LANGS, type Lang } from '../i18n';
+import { CABINET } from '../i18n/cabinet';
+import { OFFERS, PROMPTS } from '../data/ai-toolkit';
+import { CHECKLIST, LESSONS } from '../data/academy';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = CABINET[lang];
+const base = lang === 'en' ? '/partner/' : `/${lang}/partner/`;
+const landing = lang === 'en' ? '/partners/' : `/${lang}/partners/`;
+const byId = (id: string) => PROMPTS.find((p) => p.id === id)!;
+const title = (id: string) => c.titles[id] ?? byId(id).title;
+const labels = c.card;
+const tabs: [string, string][] = [['home', '🏠'], ['links', '🔗'], ['academy', '🎓'], ['prompts', '🤖'], ['team', '👥'], ['rules', '💸']];
+const checklist = CHECKLIST[lang];
+const offerSelect = OFFERS.map((o) => ({ id: o.id, name: c.offers[o.id] }));
+const js = { ...c.js, of: c.home.of, allDone: c.home.allDone };
+---
+
+<Base lang={lang} title={c.meta.title} description={c.meta.description} path={base} noindex>
+  <main class="wrap" data-offers={JSON.stringify(OFFERS)} data-checklist={JSON.stringify(checklist)} data-t={JSON.stringify(js)}>
+    <div class="topbar">
+      <a href={landing} class="logo">VAXO<span>.</span> <small>Partners</small></a>
+      <div class="row tight">
+        <div class="langs">{LANGS.map((l) => <a href={l === 'en' ? '/partner/' : `/${l}/partner/`} data-keep-hash aria-current={l === lang ? 'true' : undefined}>{l.toUpperCase()}</a>)}</div>
+        <span class="mut small" data-view="cabinet" data-email hidden></span>
+        <button type="button" class="ghost" data-view="cabinet" data-logout hidden>{c.logout}</button>
+      </div>
+    </div>
+
+    <section data-view="auth" hidden>
+      <div class="auth">
+        <div>
+          <h1>{c.auth.h1}</h1>
+          <p class="mut">{c.auth.p}</p>
+          <ul class="ticks">{c.auth.ticks.map((x) => <li>{x}</li>)}</ul>
+          <a href={landing} class="mut small">{c.auth.how}</a>
+        </div>
+        <div>
+          <div class="tabs">
+            <button type="button" data-tab="register" aria-pressed="true">{c.auth.create}</button>
+            <button type="button" data-tab="login" aria-pressed="false">{c.auth.login}</button>
+          </div>
+          <form data-form="register" class="card">
+            <label>{c.auth.name}<input name="name" required maxlength="80" autocomplete="name" /></label>
+            <label>{c.auth.email}<input name="email" type="email" required autocomplete="email" /></label>
+            <label>{c.auth.pass}<input name="password" type="password" required minlength="8" autocomplete="new-password" /></label>
+            <label class="check"><input type="checkbox" name="adult" required /> {c.auth.adult}</label>
+            <label class="check"><input type="checkbox" name="rules" required /> {c.auth.rules1} <a href="#rules">{c.auth.rules2}</a></label>
+            <button type="submit" class="cta">{c.auth.create}</button>
+            <p class="err" data-err hidden></p>
+          </form>
+          <form data-form="login" class="card" hidden>
+            <label>{c.auth.email}<input name="email" type="email" required autocomplete="email" /></label>
+            <label>{c.auth.passLogin}<input name="password" type="password" required autocomplete="current-password" /></label>
+            <button type="submit" class="cta">{c.auth.login}</button>
+            <p class="err" data-err hidden></p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section data-view="cabinet" hidden>
+      <nav class="tabbar" aria-label="Cabinet">
+        {tabs.map(([id, icon]) => <button type="button" data-go={id}><span>{icon}</span>{c.tabs[id as keyof typeof c.tabs]}</button>)}
+      </nav>
+
+      <!-- HOME -->
+      <div data-panel="home">
+        <div class="hello">
+          <h1>{c.home.hi}, <span data-name></span> 👋</h1>
+          <p class="mut">{c.home.today}</p>
+        </div>
+
+        <div class="next card">
+          <span class="eyebrow-s">{c.home.next}</span>
+          <h2 data-next-text>…</h2>
+          <button type="button" class="cta" data-next-go>{c.home.doIt}</button>
+        </div>
+
+        <div class="mylink card">
+          <div><span class="eyebrow-s">{c.home.mainLink}</span><code data-main-link></code></div>
+          <div class="row tight"><button type="button" class="cta" data-copy-main>{c.home.copy}</button><button type="button" class="ghost" data-share-main>{c.home.share}</button></div>
+        </div>
+
+        <div class="stats">
+          {['clicks', 'leads', 'sales', 'team'].map((k, i) => <div class="card"><b data-total={k}>0</b><span>{c.home.stats[i]}</span></div>)}
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="ch-head"><h2>{c.home.start}</h2><span class="mut small" data-check-count></span></div>
+            <div class="bar"><i data-check-bar></i></div>
+            <ol class="checklist">
+              {checklist.map((x) => (
+                <li data-check={x.id}>
+                  <label><input type="checkbox" /> <span>{x.text}</span></label>
+                  <button type="button" class="ghost sm" data-go={x.tab} data-lesson={x.lesson}>{c.home.open}</button>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div class="card">
+            <h2>{c.home.rates}</h2>
+            <p class="mut small">{c.home.ratesSub}</p>
+            <div class="rates">
+              {c.home.rateRows.map(([n, h, x]) => <div><b>{n}</b><span><strong>{h}</strong> {x}</span></div>)}
+            </div>
+          </div>
+        </div>
+
+        <h2>{c.home.achievements}</h2>
+        <div class="badges" data-badges></div>
+
+        <div class="soon card">
+          <span class="pill">{c.home.soon}</span>
+          <span class="gift">🎁</span>
+          <div><h3>{c.home.soonH}</h3><p class="mut small">{c.home.soonP}</p></div>
+        </div>
+      </div>
+
+      <!-- LINKS -->
+      <div data-panel="links" hidden>
+        <h1>{c.links.h1}</h1>
+        <p class="mut">{c.links.p}</p>
+        <form data-form="link" class="card linkform">
+          <label>{c.links.where}<input name="name" placeholder={c.links.wherePh} maxlength="60" /></label>
+          <label>{c.links.to}
+            <select name="target">
+              {OFFERS.map((o) => <option value={lang === 'en' || o.target === '/start/' || o.target === '/shop/' ? o.target : `/${lang}${o.target}`}>{c.offers[o.id]}</option>)}
+              <option value={lang === 'en' ? '/' : `/${lang}/`}>{c.links.main}</option>
+            </select>
+          </label>
+          <button type="submit" class="cta">{c.links.create}</button>
+        </form>
+        <div class="table"><table>
+          <thead><tr>{c.links.cols.map((h) => <th>{h}</th>)}</tr></thead>
+          <tbody data-links></tbody>
+        </table></div>
+        <p class="mut small">{c.links.tip}</p>
+      </div>
+
+      <!-- ACADEMY -->
+      <div data-panel="academy" hidden>
+        <h1>{c.academy.h1}</h1>
+        <p class="mut">{c.academy.p}</p>
+        <div class="offerpick card"><label>{c.academy.promote}<select data-offer>{offerSelect.map((o) => <option value={o.id}>{o.name}</option>)}</select></label></div>
+        <div class="lessons">
+          {LESSONS[lang].map((l, i) => (
+            <details class="lesson card" data-lesson-box={l.id} open={i === 0}>
+              <summary>
+                <span class="lic">{l.icon}</span>
+                <span class="lt"><b>{i}. {l.title}</b><small>{l.time} · {l.goal}</small></span>
+              </summary>
+              <ol class="lsteps">{l.steps.map((s) => <li>{s}</li>)}</ol>
+              {l.tip && <p class="tip">⚠️ {l.tip}</p>}
+              <div class="ways">
+                <div class="way"><b>{c.academy.free}</b><p>{l.free}</p></div>
+                <div class="way max"><b>{c.academy.max}</b><p>{l.max}</p></div>
+              </div>
+              {l.prompts.length > 0 && (
+                <div class="lprompts">
+                  <b class="small">{c.academy.prompts}</b>
+                  {l.prompts.map((id) => <PromptCard prompt={byId(id)} title={title(id)} labels={labels} />)}
+                </div>
+              )}
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <!-- PROMPTS -->
+      <div data-panel="prompts" hidden>
+        <h1>{c.prompts.h1}</h1>
+        <p class="mut">{c.prompts.p}</p>
+        {c.prompts.lang && <p class="tip">🌍 {c.prompts.lang}</p>}
+        <div class="offerpick card"><label>{c.academy.promote}<select data-offer>{offerSelect.map((o) => <option value={o.id}>{o.name}</option>)}</select></label></div>
+        <div class="chips">
+          <button type="button" data-cat="all" aria-pressed="true">{c.prompts.all}</button>
+          {Object.entries(c.cats).map(([id, name]) => <button type="button" data-cat={id} aria-pressed="false">{name}</button>)}
+        </div>
+        <div class="plist">{PROMPTS.map((p) => <PromptCard prompt={p} title={title(p.id)} labels={labels} />)}</div>
+        <h2>{c.prompts.tools}</h2>
+        <div class="table"><table class="tools">
+          <thead><tr>{c.prompts.toolCols.map((h) => <th>{h}</th>)}</tr></thead>
+          <tbody>{c.tools.map(([a, b, d]) => <tr><td><b>{a}</b></td><td>{b}</td><td>{d}</td></tr>)}</tbody>
+        </table></div>
+        <p class="mut small">{c.prompts.gemini}</p>
+      </div>
+
+      <!-- TEAM -->
+      <div data-panel="team" hidden>
+        <h1>{c.team.h1}</h1>
+        <div class="grid2">
+          <div class="card">
+            <div class="teamnum"><b data-total="team2">0</b><span>{c.team.count}</span></div>
+            <p class="mut">{c.team.p}</p>
+            <code data-invite></code>
+            <div class="row tight"><button type="button" class="cta" data-copy-invite>{c.team.copy}</button><button type="button" class="ghost" data-share-invite>{c.home.share}</button></div>
+          </div>
+          <div class="card">
+            <h2>{c.team.how}</h2>
+            <ol class="lsteps">{c.team.steps.map((s) => <li>{s}</li>)}</ol>
+          </div>
+        </div>
+        <PromptCard prompt={byId('invite')} title={title('invite')} labels={labels} open />
+      </div>
+
+      <!-- RULES -->
+      <div data-panel="rules" hidden>
+        <h1>{c.pay.h1}</h1>
+        <div class="grid2">
+          <div class="card"><h3>{c.pay.payH}</h3><p class="mut">{c.pay.payP}</p></div>
+          <div class="card"><h3>{c.pay.clientsH}</h3><p class="mut">{c.pay.clientsP}</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="rules" class="rules">
+      <h2>{c.pay.rulesH}</h2>
+      <ol>{c.pay.rules.map((x) => <li>{x}</li>)}</ol>
+    </section>
+  </main>
+</Base>
+
+<script>
+  type Link = { id: number; slug: string; name: string; target: string; active: number; clicks: number; leads: number };
+  type Offer = { id: string; target: string; text: string };
+  type Check = { id: string; text: string; tab: string; lesson?: string };
+  const $ = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
+  const $$ = <T extends Element = HTMLElement>(sel: string) => [...document.querySelectorAll<T>(sel)];
+  const root = $('main.wrap');
+  const offers = JSON.parse(root.dataset.offers!) as Offer[];
+  const checklist = JSON.parse(root.dataset.checklist!) as Check[];
+  const T = JSON.parse(root.dataset.t!) as { copied: string; off: string; on: string; wrong: string; exists: string; check: string; done: string; of: string; allDone: string; badges: [string, string][] };
+  const store = {
+    get: (k: string) => { try { return localStorage.getItem(k); } catch { return null; } },
+    set: (k: string, v: string) => { try { localStorage.setItem(k, v); } catch { /* private mode */ } },
+  };
+  const api = (path: string, body?: unknown) =>
+    fetch(`/api/partner/${path}`, body === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+
+  let view: 'auth' | 'cabinet' = 'auth';
+  const show = (v: 'auth' | 'cabinet') => {
+    view = v;
+    $$('[data-view]').forEach((el) => (el.hidden = el.dataset.view !== v));
+    if (v === 'cabinet') go((location.hash.slice(1) || 'home') as string, undefined, false);
+    else $('#rules').hidden = false;
+  };
+
+  // ---- tabs ----
+  const PANELS = ['home', 'links', 'academy', 'prompts', 'team', 'rules'];
+  function go(tab: string, lesson?: string, scroll = true) {
+    if (!PANELS.includes(tab)) tab = 'home';
+    $$('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== tab));
+    $$('.tabbar [data-go]').forEach((b) => b.setAttribute('aria-current', String(b.dataset.go === tab)));
+    $('.tabbar [aria-current="true"]').scrollIntoView({ block: 'nearest', inline: 'center' });
+    $('#rules').hidden = tab !== 'rules';
+    history.replaceState(null, '', tab === 'home' ? location.pathname + location.search : `#${tab}`);
+    if (lesson) {
+      const box = $<HTMLDetailsElement>(`[data-lesson-box="${lesson}"]`);
+      box.open = true;
+      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  $$<HTMLAnchorElement>('[data-keep-hash]').forEach((a) => a.addEventListener('click', () => (a.href = a.getAttribute('href')! + location.hash)));
+  addEventListener('hashchange', () => view === 'cabinet' && go(location.hash.slice(1)));
+  document.addEventListener('click', (e) => {
+    const b = (e.target as Element).closest<HTMLElement>('[data-go]');
+    if (b) go(b.dataset.go!, b.dataset.lesson || undefined);
+  });
+
+  // ---- prompts ----
+  let mainLink = location.origin;
+  let inviteLink = location.origin + '/partners/';
+  let offerId = store.get('vaxo_offer') ?? 'start';
+  const OPEN: Record<string, (q: string) => string> = {
+    claude: (q) => `https://claude.ai/new?q=${encodeURIComponent(q)}`,
+    chatgpt: (q) => `https://chatgpt.com/?q=${encodeURIComponent(q)}`,
+    gemini: () => 'https://gemini.google.com/app',
+  };
+  function renderPrompts() {
+    const offer = offers.find((o) => o.id === offerId) ?? offers[0];
+    $$<HTMLSelectElement>('[data-offer]').forEach((s) => (s.value = offer.id));
+    $$('[data-prompt]').forEach((box) => {
+      const pre = box.querySelector<HTMLElement>('pre')!;
+      const link = box.dataset.cat === 'team' ? inviteLink : mainLink;
+      const offerText = box.dataset.cat === 'team' ? offers.find((o) => o.id === 'partners')!.text : offer.text;
+      pre.textContent = pre.dataset.tpl!.replaceAll('{offer}', offerText).replaceAll('{link}', link);
+      box.querySelectorAll<HTMLAnchorElement>('[data-open]').forEach((a) => (a.href = OPEN[a.dataset.open!](pre.textContent!)));
+    });
+  }
+  $$<HTMLSelectElement>('[data-offer]').forEach((s) =>
+    s.addEventListener('change', () => {
+      offerId = s.value;
+      store.set('vaxo_offer', offerId);
+      renderPrompts();
+    }),
+  );
+  $$('[data-prompt]').forEach((box) => {
+    const text = () => box.querySelector('pre')!.textContent ?? '';
+    box.querySelector('[data-open="gemini"]')!.addEventListener('click', () => navigator.clipboard?.writeText(text()));
+    const copy = box.querySelector<HTMLButtonElement>('[data-copy]')!;
+    copy.addEventListener('click', () => navigator.clipboard?.writeText(text()).then(() => flash(copy, T.copied)));
+  });
+  $$<HTMLButtonElement>('[data-cat]').forEach((b) =>
+    b.addEventListener('click', () => {
+      $$('[data-cat]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      $$('.plist [data-prompt]').forEach((p) => (p.hidden = b.dataset.cat !== 'all' && p.dataset.cat !== b.dataset.cat));
+    }),
+  );
+
+  // ---- helpers ----
+  function flash(el: HTMLElement, text: string) {
+    const old = el.textContent;
+    el.textContent = text;
+    setTimeout(() => (el.textContent = old), 1500);
+  }
+  function share(url: string, btn: HTMLElement) {
+    if (navigator.share) navigator.share({ url }).catch(() => {});
+    else navigator.clipboard?.writeText(url).then(() => flash(btn, T.copied));
+  }
+  function cell(text: string): HTMLTableCellElement {
+    const td = document.createElement('td');
+    td.textContent = text;
+    return td;
+  }
+
+  // ---- checklist (saved in this browser) ----
+  let code = '';
+  let auto: Record<string, boolean> = {};
+  const checkKey = () => `vaxo_check_${code}`;
+  const doneSet = () => new Set<string>(JSON.parse(store.get(checkKey()) ?? '[]'));
+  function renderChecklist() {
+    const done = doneSet();
+    for (const [k, v] of Object.entries(auto)) if (v) done.add(k);
+    let n = 0;
+    $$('[data-check]').forEach((li) => {
+      const on = done.has(li.dataset.check!);
+      if (on) n++;
+      li.classList.toggle('done', on);
+      li.querySelector<HTMLInputElement>('input')!.checked = on;
+    });
+    $('[data-check-count]').textContent = `${n} ${T.of} ${checklist.length}`;
+    $('[data-check-bar]').style.width = `${Math.max(4, (n / checklist.length) * 100)}%`;
+    const next = checklist.find((c) => !done.has(c.id));
+    const btn = $('[data-next-go]');
+    if (next) {
+      $('[data-next-text]').textContent = next.text;
+      btn.hidden = false;
+      btn.dataset.go = next.tab;
+      if (next.lesson) btn.dataset.lesson = next.lesson;
+      else delete btn.dataset.lesson;
+    } else {
+      $('[data-next-text]').textContent = T.allDone;
+      btn.dataset.go = 'academy';
+      btn.dataset.lesson = 'video';
+    }
+  }
+  $$('[data-check]').forEach((li) =>
+    li.querySelector('input')!.addEventListener('change', (e) => {
+      const done = doneSet();
+      if ((e.target as HTMLInputElement).checked) done.add(li.dataset.check!);
+      else done.delete(li.dataset.check!);
+      store.set(checkKey(), JSON.stringify([...done]));
+      renderChecklist();
+    }),
+  );
+
+  function renderBadges(list: [string, string, string, number, number][]) {
+    $('[data-badges]').replaceChildren(
+      ...list.map(([icon, name, hint, have, goal]) => {
+        const done = have >= goal;
+        const d = document.createElement('div');
+        d.className = `badge${done ? ' done' : ''}`;
+        const i = document.createElement('span');
+        i.className = 'icon';
+        i.textContent = icon;
+        const b = document.createElement('b');
+        b.textContent = name;
+        const s = document.createElement('small');
+        s.textContent = done ? T.done : goal > 1 ? `${hint} · ${Math.max(0, have)}/${goal}` : hint;
+        d.append(i, b, s);
+        return d;
+      }),
+    );
+  }
+
+  // ---- data ----
+  async function load() {
+    const res = await api('me');
+    if (!res.ok) return show('auth');
+    const data = (await res.json()) as { partner: { name: string; code: string; email?: string }; links: Link[]; team: number; sales?: number };
+    code = data.partner.code;
+    $('[data-name]').textContent = data.partner.name;
+    $('[data-email]').textContent = data.partner.email ?? '';
+    const clicks = data.links.reduce((n, l) => n + l.clicks, 0);
+    const leads = data.links.reduce((n, l) => n + l.leads, 0);
+    const sales = data.sales ?? 0;
+    $('[data-total="clicks"]').textContent = String(clicks);
+    $('[data-total="leads"]').textContent = String(leads);
+    $('[data-total="sales"]').textContent = String(sales);
+    $('[data-total="team"]').textContent = String(data.team);
+    $('[data-total="team2"]').textContent = String(data.team);
+    inviteLink = `${location.origin}${location.pathname}?invite=${data.partner.code}`;
+    $('[data-invite]').textContent = inviteLink;
+    const active = data.links.find((l) => l.active);
+    mainLink = active ? `${location.origin}/r/${active.slug}` : location.origin;
+    $('[data-main-link]').textContent = mainLink.replace(/^https?:\/\//, '');
+
+    auto = { link: data.links.length > 1, invite: data.team > 0 };
+    renderChecklist();
+    const have: [string, number, number][] = [
+      ['🔗', data.links.length - 1, 1],
+      ['👆', clicks, 1],
+      ['🔥', clicks, 100],
+      ['📩', leads, 1],
+      ['🚀', leads, 10],
+      ['💰', sales, 1],
+      ['👥', data.team, 1],
+      ['🏆', data.team, 5],
+    ];
+    renderBadges(have.map(([icon, n, goal], i) => [icon, T.badges[i][0], T.badges[i][1], n, goal]));
+    renderPrompts();
+
+    $('[data-links]').replaceChildren(
+      ...data.links.map((l) => {
+        const tr = document.createElement('tr');
+        if (!l.active) tr.className = 'off';
+        const url = `${location.origin}/r/${l.slug}`;
+        const linkTd = document.createElement('td');
+        const copy = document.createElement('button');
+        copy.type = 'button';
+        copy.className = 'ghost';
+        copy.textContent = url.replace(/^https?:\/\//, '');
+        copy.title = 'Copy';
+        copy.onclick = () => navigator.clipboard?.writeText(url).then(() => flash(copy, T.copied));
+        linkTd.append(copy);
+        const actTd = document.createElement('td');
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'ghost';
+        toggle.textContent = l.active ? T.off : T.on;
+        toggle.onclick = async () => {
+          await api(`links/${l.id}/toggle`, {});
+          load();
+        };
+        actTd.append(toggle);
+        tr.append(cell(l.name), linkTd, cell(String(l.clicks)), cell(String(l.leads)), actTd);
+        return tr;
+      }),
+    );
+    if (view !== 'cabinet') show('cabinet');
+  }
+
+  // ---- auth ----
+  $$<HTMLButtonElement>('[data-tab]').forEach((b) =>
+    b.addEventListener('click', () => {
+      $$('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      $('[data-form="register"]').hidden = b.dataset.tab !== 'register';
+      $('[data-form="login"]').hidden = b.dataset.tab !== 'login';
+    }),
+  );
+  const params = new URLSearchParams(location.search);
+  const invite = params.get('invite') ?? '';
+  if (params.get('tab') === 'login') $<HTMLButtonElement>('[data-tab="login"]').click();
+
+  for (const kind of ['register', 'login'] as const) {
+    const form = $<HTMLFormElement>(`[data-form="${kind}"]`);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const body: Record<string, unknown> = Object.fromEntries(fd.entries());
+      if (kind === 'register') Object.assign(body, { adult: fd.has('adult'), rules: fd.has('rules'), invite });
+      const err = form.querySelector<HTMLElement>('[data-err]')!;
+      const res = await api(kind, body);
+      if (res.ok) return load();
+      const out = (await res.json().catch(() => ({}))) as { reason?: string };
+      err.textContent =
+        kind === 'login' ? T.wrong : out.reason === 'exists' ? T.exists : T.check;
+      err.hidden = false;
+    });
+  }
+
+  $<HTMLFormElement>('[data-form="link"]').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    await api('links', Object.fromEntries(new FormData(form).entries()));
+    form.reset();
+    load();
+  });
+
+  $('[data-logout]').addEventListener('click', async () => {
+    await api('logout', {});
+    show('auth');
+  });
+  $('[data-copy-main]').addEventListener('click', (e) => navigator.clipboard?.writeText(mainLink).then(() => flash(e.currentTarget as HTMLElement, T.copied)));
+  $('[data-share-main]').addEventListener('click', (e) => share(mainLink, e.currentTarget as HTMLElement));
+  $('[data-copy-invite]').addEventListener('click', (e) => navigator.clipboard?.writeText(inviteLink).then(() => flash(e.currentTarget as HTMLElement, T.copied)));
+  $('[data-share-invite]').addEventListener('click', (e) => share(inviteLink, e.currentTarget as HTMLElement));
+
+  renderPrompts();
+  load();
+</script>
+
+<style>
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 16px 16px 80px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0 16px; }
+  .logo { font-weight: 800; font-size: 22px; text-decoration: none; color: var(--ink); }
+  .logo span { color: var(--acc); }
+  .langs { display: flex; gap: 2px; padding: 3px; background: var(--surf2); border-radius: 999px; }
+  .langs a { font-size: 12px; padding: 5px 9px; border-radius: 999px; text-decoration: none; color: var(--mut); }
+  .langs a[aria-current='true'] { background: var(--ink); color: var(--bg); }
+  .logo small { font-weight: 500; color: var(--mut); font-size: 14px; }
+  h1 { font-size: clamp(28px, 5vw, 42px); margin: 16px 0 8px; letter-spacing: -0.02em; }
+  h2 { margin: 36px 0 10px; font-size: 22px; }
+  h3 { margin: 0 0 6px; }
+  .card h2 { margin-top: 0; }
+  .mut { color: var(--mut); max-width: 66ch; }
+  .small { font-size: 14px; }
+  .card { background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+  label { display: grid; gap: 4px; font-size: 14px; color: var(--mut); }
+  label.check { display: flex; gap: 8px; align-items: center; color: var(--ink); }
+  input, select { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); min-width: 0; }
+  .cta { display: inline-block; text-decoration: none; background: var(--acc); color: var(--dark-ink); font: inherit; font-weight: 600; border: 0; border-radius: 999px; padding: 12px 18px; cursor: pointer; transition: transform 0.15s; }
+  .cta:hover { transform: translateY(-1px); }
+  .ghost, .table :global(button) { font: inherit; font-size: 14px; background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+  .ghost.sm { padding: 5px 12px; font-size: 13px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+  .row.tight { margin: 0; }
+  .err { color: var(--error); margin: 0; }
+  .eyebrow-s { font-family: var(--mono); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accText); }
+
+  /* auth */
+  .auth { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; padding-top: 24px; }
+  .ticks { list-style: none; padding: 0; display: grid; gap: 10px; margin: 20px 0; }
+  .ticks li { padding-left: 26px; position: relative; }
+  .ticks li::before { content: '✓'; position: absolute; left: 0; color: var(--accText); font-weight: 700; }
+  form.card { display: grid; gap: 12px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .tabs button { font: inherit; background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+  .tabs button[aria-pressed='true'] { background: var(--ink); color: var(--bg); }
+
+  /* tab bar */
+  .tabbar { position: sticky; top: 0; z-index: 10; display: flex; gap: 4px; overflow-x: auto; padding: 8px; margin: 0 -8px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); scrollbar-width: none; }
+  .tabbar button { font: inherit; font-size: 15px; font-weight: 500; white-space: nowrap; border: 0; background: none; color: var(--mut); padding: 9px 14px; border-radius: 999px; cursor: pointer; }
+  .tabbar button span { margin-right: 4px; }
+  .tabbar button:hover { background: var(--surf2); color: var(--ink); }
+  .tabbar button[aria-current='true'] { background: var(--ink); color: var(--bg); }
+
+  /* home */
+  .next { margin-top: 8px; background: var(--deep); border-color: var(--deepLine); color: var(--deepInk); display: grid; gap: 10px; justify-items: start; position: relative; overflow: hidden; }
+  .next::after { content: ''; position: absolute; right: -80px; top: -80px; width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--acc) 35%, transparent), transparent 70%); animation: pulse 4s ease-in-out infinite; }
+  @keyframes pulse { 50% { transform: scale(1.2); opacity: 0.6; } }
+  .next .eyebrow-s { color: var(--acc); }
+  .next h2 { margin: 0; font-size: clamp(20px, 3vw, 26px); }
+  .mylink { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .mylink code, [data-invite] { display: block; font: 600 16px var(--mono); margin-top: 4px; word-break: break-all; }
+  [data-invite] { background: var(--bg); padding: 12px; border-radius: 10px; margin: 12px 0; font-size: 14px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 12px; }
+  .stats b { display: block; font-size: 34px; letter-spacing: -0.02em; }
+  .stats span { color: var(--mut); font-size: 14px; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; margin-top: 12px; }
+  .ch-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .bar { height: 8px; background: var(--surf2); border-radius: 99px; overflow: hidden; margin: 8px 0 12px; }
+  .bar i { display: block; height: 100%; background: var(--acc); border-radius: 99px; transition: width 0.5s; }
+  .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+  .checklist li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .checklist label { display: flex; gap: 10px; align-items: center; color: var(--ink); font-size: 15px; cursor: pointer; }
+  .checklist input { width: 18px; height: 18px; accent-color: var(--acc); flex: none; }
+  .checklist li.done span { text-decoration: line-through; color: var(--mut); }
+  .rates { display: grid; gap: 8px; }
+  .rates div { display: flex; gap: 14px; align-items: center; background: var(--bg); border-radius: 12px; padding: 10px 14px; }
+  .rates b { font-size: 22px; color: var(--accText); min-width: 64px; }
+  .rates span { font-size: 14px; color: var(--mut); }
+  .rates strong { color: var(--ink); display: block; }
+  .badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .badges :global(.badge) { background: var(--surf); border: 1px solid var(--line); border-radius: 16px; display: grid; gap: 4px; padding: 14px; opacity: 0.5; filter: grayscale(1); }
+  .badges :global(.badge.done) { opacity: 1; filter: none; border-color: var(--acc); }
+  .badges :global(.icon) { font-size: 26px; }
+  .badges :global(small) { color: var(--mut); }
+  .soon { margin-top: 16px; display: flex; gap: 16px; align-items: center; position: relative; }
+  .soon .pill { position: absolute; top: 12px; right: 12px; background: var(--acc); color: var(--dark-ink); font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .soon .gift { font-size: 40px; animation: bob 3s ease-in-out infinite; }
+  .soon p { margin: 0; }
+  @keyframes bob { 50% { transform: translateY(-5px) rotate(-6deg); } }
+
+  /* links */
+  .linkform { display: grid; grid-template-columns: 1.3fr 1fr auto; gap: 12px; align-items: end; margin: 16px 0; }
+  .table { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--mut); font-weight: 500; font-size: 14px; }
+  tr.off td { opacity: 0.5; }
+  table.tools td { white-space: normal; vertical-align: top; }
+
+  /* academy + prompts */
+  .offerpick { margin: 16px 0; padding: 14px 18px; }
+  .offerpick label { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; color: var(--ink); font-weight: 600; font-size: 15px; }
+  .lessons { display: grid; gap: 10px; }
+  .lesson summary { cursor: pointer; list-style: none; display: flex; gap: 14px; align-items: center; }
+  .lesson summary::-webkit-details-marker { display: none; }
+  .lic { font-size: 28px; width: 48px; height: 48px; flex: none; display: grid; place-items: center; background: var(--bg); border-radius: 14px; }
+  .lt { display: grid; gap: 2px; }
+  .lt b { font-size: 18px; }
+  .lt small { color: var(--mut); }
+  .lesson[open] { border-color: color-mix(in srgb, var(--acc) 60%, var(--line)); }
+  .lsteps { display: grid; gap: 8px; padding-left: 22px; margin: 16px 0; }
+  .tip { background: color-mix(in srgb, var(--acc) 14%, var(--surf)); border-radius: 12px; padding: 12px 14px; margin: 0 0 12px; font-size: 14px; }
+  .ways { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .way { background: var(--bg); border-radius: 12px; padding: 12px 14px; }
+  .way p { margin: 4px 0 0; color: var(--mut); font-size: 14px; }
+  .way.max { background: var(--deep); color: var(--deepInk); }
+  .way.max b { color: var(--acc); }
+  .way.max p { color: var(--deepMut); }
+  .lprompts { display: grid; gap: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .chips button { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--surf); color: var(--ink); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .chips button[aria-pressed='true'] { background: var(--acc); border-color: var(--acc); color: var(--dark-ink); }
+  .plist { display: grid; gap: 8px; }
+  .teamnum b { font-size: 48px; display: block; color: var(--accText); line-height: 1; }
+  .teamnum span { color: var(--mut); }
+
+  .rules { margin-top: 48px; }
+  .rules ol li { margin: 6px 0; }
+
+  @media (max-width: 760px) {
+    .auth, .ways, .linkform { grid-template-columns: 1fr; }
+    [data-email] { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .next::after, .soon .gift { animation: none; }
+  }
+</style>

@@ -1,5 +1,8 @@
 // Partner academy (cabinet): short lessons, each with steps, a free way, a maximum way and the prompts to use.
-// `prompts` are ids from ai-toolkit.ts PROMPTS.
+// `prompts` are ids from ai-toolkit.ts PROMPTS. Translations: academy-ua.ts, academy-ru.ts.
+import type { Lang } from '../i18n';
+import { CHECKLIST_RU, LESSONS_RU } from './academy-ru';
+import { CHECKLIST_UA, LESSONS_UA } from './academy-ua';
 
 export type Lesson = {
   id: string;
@@ -14,7 +17,9 @@ export type Lesson = {
   tip?: string;
 };
 
-export const LESSONS: Lesson[] = [
+export type Check = { id: string; text: string; tab: string; lesson?: string };
+
+const LESSONS_EN: Lesson[] = [
   {
     id: 'start',
     icon: '🚀',
@@ -140,7 +145,7 @@ export const LESSONS: Lesson[] = [
 ];
 
 /** "Start here" checklist on the Home tab: each item jumps to a tab (and lesson). */
-export const CHECKLIST = [
+const CHECKLIST_EN: Check[] = [
   { id: 'lesson', text: 'Read “Start here” (5 min)', tab: 'academy', lesson: 'start' },
   { id: 'link', text: 'Make a link for your first channel', tab: 'links' },
   { id: 'bio', text: 'Set up your profile bio with your link', tab: 'academy', lesson: 'posts' },
@@ -148,3 +153,6 @@ export const CHECKLIST = [
   { id: 'messages', text: 'Write 5 personal messages to businesses', tab: 'academy', lesson: 'outreach' },
   { id: 'invite', text: 'Invite one friend to your team', tab: 'team' },
 ];
+
+export const LESSONS: Record<Lang, Lesson[]> = { en: LESSONS_EN, ua: LESSONS_UA, ru: LESSONS_RU };
+export const CHECKLIST: Record<Lang, Check[]> = { en: CHECKLIST_EN, ua: CHECKLIST_UA, ru: CHECKLIST_RU };

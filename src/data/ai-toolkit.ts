@@ -1,35 +1,25 @@
-// Partner AI toolkit (cabinet): offers to promote, prompt templates by goal and recommended AI tools.
+// Partner AI toolkit (cabinet): offers to promote and prompt templates by goal (texts stay in English;
+// titles, categories and the tools table are translated in i18n/cabinet.ts).
 // In prompts, {offer} becomes the chosen offer's description and {link} the partner's link.
 
 export const OFFERS = [
   {
     id: 'start',
-    name: 'Starter packages ($149–$249)',
     target: '/start/',
     text: 'Vaxo starter packages for small businesses: an AI chat assistant that answers customers 24/7 ($249), a one-page website ($199) or one business automation ($149). Delivered within 7 days, the Vaxo team does all the work.',
   },
   {
     id: 'shop',
-    name: 'Templates for small business ($9–$67)',
     target: '/shop/',
     text: 'Vaxo ready-made templates for small businesses ($9–$67): AI prompt pack, client tracker, customer message templates, pricing calculator, review request kit, booking checklists and more. Instant download.',
   },
   {
     id: 'partners',
-    name: 'Invite partners (your team)',
     target: '/partners/',
     text: 'The free Vaxo partner program for people 18+: recommend AI services and templates for small businesses, earn 30% on services and 50% on templates from the first sale, free training and AI tools, weekly payouts. No income is guaranteed — earnings depend only on real sales.',
   },
 ];
 
-export const CATEGORIES = [
-  { id: 'video', name: '🎬 Videos' },
-  { id: 'posts', name: '✍️ Posts & profile' },
-  { id: 'outreach', name: '✉️ Personal messages' },
-  { id: 'community', name: '💬 Communities' },
-  { id: 'client', name: '🤝 Talking to clients' },
-  { id: 'team', name: '👥 Team' },
-];
 
 export type Prompt = { id: string; cat: string; title: string; text: string };
 
@@ -160,11 +150,3 @@ One casual, one for someone who wants extra income, one for someone who already 
   },
 ];
 
-/** Best tools by task. Claude first: it gives the strongest results for writing and planning. */
-export const TOOLS = [
-  { task: 'Ideas, scripts, messages', free: 'Claude (free plan), ChatGPT, Gemini', paid: 'Claude Pro — remembers your offer in a Project, the strongest texts' },
-  { task: 'Video editing & subtitles', free: 'CapCut (auto-captions, templates)', paid: 'CapCut Pro' },
-  { task: 'Images & covers', free: 'Canva, Gemini, ChatGPT images', paid: 'Canva Pro, Midjourney' },
-  { task: 'Voice-over', free: 'CapCut text-to-speech, your own voice', paid: 'ElevenLabs' },
-  { task: 'Screen recording (no face needed)', free: 'Phone screen recorder, OBS Studio', paid: '—' },
-];
