@@ -1,6 +1,10 @@
 ---
-// Partner cabinet: sign up / log in, unlimited tracking links with stats, team invite link, rules.
+// Partner cabinet: sign up / log in, level and achievements, unlimited tracking links with stats,
+// AI toolkit (prompts that open in Claude / ChatGPT / Gemini), team invite link, rules.
 import Base from '../../layouts/Base.astro';
+import { LEVELS, RATES } from '../../data/partners';
+import { OFFERS, PROMPTS, TOOLS } from '../../data/ai-toolkit';
+const cfg = { levels: LEVELS, rates: RATES, offers: OFFERS };
 ---
 
 <Base lang="en" title="Vaxo Partners — your cabinet" description="Earn with Vaxo: services, digital products and partner offers. Your links, stats and team in one place." path="/partner/" noindex>
@@ -40,14 +44,29 @@ import Base from '../../layouts/Base.astro';
         <div class="card"><b data-total="clicks">0</b><span>clicks</span></div>
         <div class="card"><b data-total="leads">0</b><span>leads</span></div>
         <div class="card"><b data-total="team">0</b><span>partners in your team</span></div>
+        <div class="card"><b data-total="sales">0</b><span>paid sales (90 days)</span></div>
       </div>
+
+      <div class="level card" data-cfg={JSON.stringify(cfg)}>
+        <div class="lvl-head">
+          <div><span class="mut small">Your level</span><div class="lvl-name"><span data-lvl-stars></span> <span data-lvl-name></span></div></div>
+          <a href="/partners/#calc" class="ghost">Income calculator</a>
+        </div>
+        <div class="bar"><i data-lvl-bar></i></div>
+        <p class="small" data-lvl-next></p>
+        <div class="rates" data-rates></div>
+        <p class="mut small">Sales count after the client has paid. Your level updates by itself.</p>
+      </div>
+
+      <h2>Achievements</h2>
+      <div class="badges" data-badges></div>
 
       <h2>My links</h2>
       <p class="mut">Make a separate link for every place you post (a channel, a video, an audience) to see what works. Turn off any link and make a new one at any time.</p>
       <form data-form="link" class="row">
         <input name="name" placeholder="Link name, e.g. TikTok video #3" maxlength="60" />
         <select name="target">
-          <option value="/start/">Starter packages page</option>
+          {OFFERS.map((o) => <option value={o.target}>{o.name}</option>)}
           <option value="/">Main page</option>
         </select>
         <button type="submit" class="cta">+ New link</button>
@@ -56,6 +75,32 @@ import Base from '../../layouts/Base.astro';
         <thead><tr><th>Name</th><th>Link</th><th>Clicks</th><th>Leads</th><th></th></tr></thead>
         <tbody data-links></tbody>
       </table></div>
+
+      <h2 id="toolkit">AI toolkit</h2>
+      <p class="mut">Pick what you promote — every prompt fills in the offer and your link. Open it in one click in Claude (our pick: the strongest for writing), ChatGPT or Gemini. All have free plans.</p>
+      <div class="row">
+        <select data-offer>{OFFERS.map((o) => <option value={o.id}>{o.name}</option>)}</select>
+      </div>
+      <div class="prompts">
+        {PROMPTS.map((pr, i) => (
+          <details class="card prompt" data-prompt={i}>
+            <summary>{pr.title}</summary>
+            <pre data-tpl={pr.text}></pre>
+            <div class="row">
+              <a class="cta" data-open="claude" target="_blank" rel="noopener">Open in Claude</a>
+              <a class="ghost" data-open="chatgpt" target="_blank" rel="noopener">ChatGPT</a>
+              <a class="ghost" data-open="gemini" target="_blank" rel="noopener">Gemini</a>
+              <button type="button" class="ghost" data-copy>Copy</button>
+            </div>
+          </details>
+        ))}
+      </div>
+      <h3>Best tools for each task</h3>
+      <div class="table"><table class="tools">
+        <thead><tr><th>Task</th><th>Free</th><th>When you grow</th></tr></thead>
+        <tbody>{TOOLS.map((t) => <tr><td>{t.task}</td><td>{t.free}</td><td>{t.paid}</td></tr>)}</tbody>
+      </table></div>
+      <p class="mut small">Gemini opens empty — the prompt is copied, just paste it. More: <a href="/partner/learn/">how to earn step by step</a>.</p>
 
       <h2>Build your team</h2>
       <p class="mut">Invite other partners with this link. You earn a share of your team's real sales — never for the invite itself.</p>
@@ -95,11 +140,28 @@ import Base from '../../layouts/Base.astro';
   async function load() {
     const res = await api('me');
     if (!res.ok) return show('auth');
-    const data = (await res.json()) as { partner: { name: string; code: string }; links: Link[]; team: number };
+    const data = (await res.json()) as { partner: { name: string; code: string }; links: Link[]; team: number; sales?: number };
     $('[data-name]').textContent = data.partner.name;
     $('[data-total="clicks"]').textContent = String(data.links.reduce((n, l) => n + l.clicks, 0));
     $('[data-total="leads"]').textContent = String(data.links.reduce((n, l) => n + l.leads, 0));
     $('[data-total="team"]').textContent = String(data.team);
+    const clicks = data.links.reduce((n, l) => n + l.clicks, 0);
+    const leads = data.links.reduce((n, l) => n + l.leads, 0);
+    const sales = data.sales ?? 0;
+    $('[data-total="sales"]').textContent = String(sales);
+    renderLevel(sales);
+    renderBadges([
+      ['🔗', 'Own link', 'Make a link of your own', data.links.length - 1, 1],
+      ['👆', 'First click', 'Someone opened your link', clicks, 1],
+      ['🔥', 'Hot link', '100 clicks', clicks, 100],
+      ['📩', 'First lead', 'A client left a request', leads, 1],
+      ['🚀', 'Lead machine', '10 leads', leads, 10],
+      ['💰', 'First sale', 'A client paid', sales, 1],
+      ['👥', 'Team player', 'First partner in your team', data.team, 1],
+      ['🏆', 'Team leader', '5 partners in your team', data.team, 5],
+    ]);
+    mainLink = data.links.find((l) => l.active) ? `${location.origin}/r/${data.links.find((l) => l.active)!.slug}` : location.origin;
+    renderPrompts();
     $<HTMLInputElement>('[data-invite]').value = `${location.origin}/partner/?invite=${data.partner.code}`;
     const body = $('[data-links]');
     body.replaceChildren(
@@ -131,6 +193,83 @@ import Base from '../../layouts/Base.astro';
     );
     show('cabinet');
   }
+
+  type Cfg = {
+    levels: { id: 'start' | 'pro' | 'elite'; name: string; minSales: number }[];
+    rates: { agencyOwn: number; agencyGiven: number; agencyRenewal: number; products: Record<string, number>; offers: Record<string, number>; team: number };
+    offers: { id: string; target: string; text: string }[];
+  };
+  const cfg = JSON.parse($('[data-cfg]').dataset.cfg!) as Cfg;
+  let mainLink = location.origin;
+
+  function renderLevel(sales: number) {
+    const i = cfg.levels.reduce((k, l, j) => (sales >= l.minSales ? j : k), 0);
+    const lvl = cfg.levels[i];
+    const next = cfg.levels[i + 1];
+    const r = cfg.rates;
+    $('[data-lvl-name]').textContent = lvl.name;
+    $('[data-lvl-stars]').textContent = '★'.repeat(i + 1);
+    $('[data-lvl-bar]').style.width = next ? `${Math.max(3, (sales / next.minSales) * 100)}%` : '100%';
+    $('[data-lvl-next]').textContent = next
+      ? `${sales} of ${next.minSales} paid sales to ${next.name} → ${r.products[next.id]}% on products, ${r.offers[next.id]}% on partner offers.`
+      : 'Top level. You get the best rates and first access to new offers and leads.';
+    const rows: [string, string][] = [
+      ['Agency services', `${r.agencyOwn}% your client · ${r.agencyGiven}% our lead · +${r.agencyRenewal}% renewals`],
+      ['Our products', `${r.products[lvl.id]}%`],
+      ['Partner offers', `${r.offers[lvl.id]}% of the payout`],
+      ['Your team', `+${r.team}% of their earnings`],
+    ];
+    $('[data-rates]').replaceChildren(
+      ...rows.map(([k, v]) => {
+        const d = document.createElement('div');
+        const b = document.createElement('b');
+        b.textContent = v;
+        d.append(k, b);
+        return d;
+      }),
+    );
+  }
+
+  function renderBadges(list: [string, string, string, number, number][]) {
+    $('[data-badges]').replaceChildren(
+      ...list.map(([icon, name, hint, have, goal]) => {
+        const done = have >= goal;
+        const d = document.createElement('div');
+        d.className = `badge card${done ? ' done' : ''}`;
+        const i = document.createElement('span');
+        i.className = 'icon';
+        i.textContent = icon;
+        const b = document.createElement('b');
+        b.textContent = name;
+        const s = document.createElement('small');
+        s.textContent = done ? '✓ Done' : goal > 1 ? `${hint} · ${Math.max(0, have)}/${goal}` : hint;
+        d.append(i, b, s);
+        return d;
+      }),
+    );
+  }
+
+  const OPEN: Record<string, (q: string) => string> = {
+    claude: (q) => `https://claude.ai/new?q=${encodeURIComponent(q)}`,
+    chatgpt: (q) => `https://chatgpt.com/?q=${encodeURIComponent(q)}`,
+    gemini: () => 'https://gemini.google.com/app',
+  };
+  function renderPrompts() {
+    const offer = cfg.offers.find((o) => o.id === $<HTMLSelectElement>('[data-offer]').value) ?? cfg.offers[0];
+    document.querySelectorAll<HTMLElement>('[data-prompt]').forEach((box) => {
+      const pre = box.querySelector<HTMLElement>('pre')!;
+      const link = `${mainLink}`;
+      pre.textContent = pre.dataset.tpl!.replaceAll('{offer}', offer.text).replaceAll('{link}', link);
+      box.querySelectorAll<HTMLAnchorElement>('[data-open]').forEach((a) => (a.href = OPEN[a.dataset.open!](pre.textContent!)));
+    });
+  }
+  $('[data-offer]').addEventListener('change', renderPrompts);
+  document.querySelectorAll<HTMLElement>('[data-prompt]').forEach((box) => {
+    const text = () => box.querySelector('pre')!.textContent ?? '';
+    box.querySelector<HTMLAnchorElement>('[data-open="gemini"]')!.addEventListener('click', () => navigator.clipboard?.writeText(text()));
+    const copy = box.querySelector<HTMLButtonElement>('[data-copy]')!;
+    copy.addEventListener('click', () => navigator.clipboard?.writeText(text()).then(() => (copy.textContent = 'Copied ✓')));
+  });
 
   document.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) =>
     b.addEventListener('click', () => {
@@ -191,7 +330,7 @@ import Base from '../../layouts/Base.astro';
   label.check { display: flex; gap: 8px; align-items: center; color: var(--ink); }
   input, select { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); min-width: 0; }
   .cta { display: inline-block; text-decoration: none; background: var(--acc); color: var(--dark-ink); font-weight: 600; border: 0; border-radius: 999px; padding: 12px 18px; cursor: pointer; }
-  .ghost { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+  .ghost, .table :global(button) { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
   .tabs { display: flex; gap: 8px; margin: 24px 0 12px; }
   .tabs button { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
   .tabs button[aria-pressed='true'] { background: var(--ink); color: var(--bg); }
@@ -208,4 +347,27 @@ import Base from '../../layouts/Base.astro';
   th { color: var(--mut); font-weight: 500; font-size: 14px; }
   tr.off td { opacity: 0.5; }
   ol li { margin: 6px 0; }
+  h3 { margin: 28px 0 8px; }
+  .small { font-size: 14px; }
+  .level { margin-top: 16px; display: grid; gap: 12px; }
+  .lvl-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .lvl-head .ghost { text-decoration: none; }
+  .lvl-name { font-size: 28px; font-weight: 800; }
+  .lvl-name [data-lvl-stars] { color: var(--accText); letter-spacing: 2px; }
+  .bar { height: 10px; background: var(--surf2); border-radius: 99px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--acc); border-radius: 99px; transition: width 0.6s; }
+  .level p { margin: 0; }
+  .rates { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+  .rates :global(div) { background: var(--bg); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; font-size: 14px; color: var(--mut); }
+  .rates :global(b) { color: var(--ink); font-size: 15px; }
+  .badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .badges :global(.badge) { background: var(--surf); border: 1px solid var(--line); border-radius: 16px; display: grid; gap: 4px; padding: 14px; opacity: 0.55; filter: grayscale(1); }
+  .badges :global(.badge.done) { opacity: 1; filter: none; border-color: var(--acc); }
+  .badges :global(.icon) { font-size: 26px; }
+  .badges :global(small) { color: var(--mut); }
+  .prompts { display: grid; gap: 10px; }
+  .prompt summary { cursor: pointer; font-weight: 600; }
+  .prompt .row a { text-decoration: none; }
+  pre { white-space: pre-wrap; font: 14px/1.5 var(--mono); background: var(--bg); padding: 12px; border-radius: 10px; }
+  table.tools td { white-space: normal; }
 </style>

@@ -2,24 +2,6 @@
 // Partner training: how to earn, a video factory on free tools, prompts for free AI.
 import Base from '../../layouts/Base.astro';
 
-const prompts = [
-  {
-    title: 'Video script (30 seconds)',
-    text: `You are a short-video scriptwriter. Write a 30-second vertical video script for small business owners in the US about this offer: [paste the offer]. Structure: hook in the first 2 seconds, one real problem, how the offer solves it, one clear call to action "link in bio". Plain spoken English, no hype, no income promises. Give 5 different hooks I can test.`,
-  },
-  {
-    title: '10 video ideas from one offer',
-    text: `Give me 10 different short-video ideas for this offer: [paste the offer]. Mix formats: before/after, myth vs fact, "3 mistakes", screen recording, story of a typical client, question to the viewer. One line per idea plus the first sentence of the video.`,
-  },
-  {
-    title: 'Personal message to a business',
-    text: `Here is a business: [name, website or Instagram, city]. Look at what I pasted about them: [paste what you saw: their site, reviews, posts]. Write a short, friendly message (max 70 words) to the owner. Mention one specific thing you noticed, one way [our offer] could help, and ask a simple yes/no question. No pressure, no fake claims.`,
-  },
-  {
-    title: 'Reply to a client question',
-    text: `A potential client asked: [paste the question]. Our offer: [paste the offer and price]. Write a short, honest reply that answers the question, gives one useful detail, and suggests the next step (a short chat or the order link). Match the client's tone.`,
-  },
-];
 ---
 
 <Base lang="en" title="Vaxo Partners — how to earn" description="Practical training for Vaxo partners: offers, a video factory on free tools and ready prompts for free AI." path="/partner/learn/" noindex>
@@ -47,14 +29,7 @@ const prompts = [
     <p><b>Important:</b> every video must be different. Platforms hide accounts that post the same video again and again — we learned this the hard way. Change the hook, the example, the format. 1–3 unique videos a day beats 15 copies.</p>
 
     <h2>3. Ready prompts for free AI</h2>
-    <p class="mut">Copy, replace the parts in [brackets], paste into any free AI chat.</p>
-    {prompts.map((p) => (
-      <details class="card prompt">
-        <summary>{p.title}</summary>
-        <pre>{p.text}</pre>
-        <button type="button" class="ghost" data-copy>Copy</button>
-      </details>
-    ))}
+    <p class="mut">Ready prompts now live in your cabinet: pick an offer and open any prompt in Claude, ChatGPT or Gemini in one click — with your link already inside. <a href="/partner/#toolkit">Open the AI toolkit →</a></p>
 
     <h2>4. What is not allowed</h2>
     <ul>
@@ -67,14 +42,6 @@ const prompts = [
   </main>
 </Base>
 
-<script>
-  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) =>
-    b.addEventListener('click', () => {
-      const text = b.parentElement?.querySelector('pre')?.textContent ?? '';
-      navigator.clipboard?.writeText(text).then(() => (b.textContent = 'Copied ✓'));
-    }),
-  );
-</script>
 
 <style>
   .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }

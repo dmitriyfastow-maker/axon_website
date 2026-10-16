@@ -1,0 +1,263 @@
+---
+// Partner program landing (EN/UA/RU): terms by direction, levels, income calculator, toolkit → sign up / log in.
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getDict, langPath, type Lang } from '../i18n';
+import { CALC, LEVELS, PARTNERS_TEXT, RATES } from '../data/partners';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = getDict(lang);
+const p = PARTNERS_TEXT[lang];
+const home = langPath(lang);
+const alts = { en: '/partners/', ua: '/ua/partners/', ru: '/ru/partners/' };
+const calc = { ...CALC, own: RATES.agencyOwn, renewal: RATES.agencyRenewal, products: RATES.products };
+---
+
+<Base lang={lang} title={p.meta.title} description={p.meta.description} path={alts[lang]} alts={alts}>
+  <Header lang={lang} t={t} home={home} alts={alts} />
+  <main>
+    <section class="hero">
+      <div class="in">
+        <div class="eyebrow">{p.eyebrow}</div>
+        <h1>{p.h1}</h1>
+        <p class="sub">{p.sub}</p>
+        <div class="ctas">
+          <a class="btn" href="/partner/">{p.join}</a>
+          <a class="btn ghost" href="/partner/?tab=login">{p.login}</a>
+        </div>
+        <div class="stats">
+          {p.stats.map(([n, l]) => <div><b>{n}</b><span>{l}</span></div>)}
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="in">
+        <h2>{p.promoteH}</h2>
+        <div class="grid three">
+          {p.directions.map((d, i) => (
+            <article class={`card dir${i === 0 ? ' main' : ''}`}>
+              <div class="rate">{d.rate}</div>
+              <h3>{d.name}</h3>
+              <div class="tag">{d.price}</div>
+              <p>{d.what}</p>
+              <ul>{d.points.map((x) => <li>{x}</li>)}</ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="in">
+        <h2>{p.levelsH}</h2>
+        <p class="lead">{p.levelsSub}</p>
+        <ol class="levels">
+          {LEVELS.map((l, i) => (
+            <li class={`card lvl lvl-${l.id}`}>
+              <div class="lvl-top"><span class="badge">{['★', '★★', '★★★'][i]}</span><span class="tag">{p.levelNeed(l.minSales)}</span></div>
+              <h3>{l.name}</h3>
+              <ul>{p.levelPerks[l.id].map((x) => <li>{x}</li>)}</ul>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section id="calc">
+      <div class="in">
+        <div class="calc" data-calc={JSON.stringify(calc)}>
+          <div class="calc-in">
+            <h2>{p.calcH}</h2>
+            <p class="lead">{p.calcSub}</p>
+            <label><span>{p.calcAgency} <output data-out="agency">2</output></span><input type="range" min="0" max="20" value="2" data-in="agency" /></label>
+            <label><span>{p.calcProducts} <output data-out="products">20</output></span><input type="range" min="0" max="200" step="5" value="20" data-in="products" /></label>
+            <label><span>{p.calcRenewals} <output data-out="renewals">3</output></span><input type="range" min="0" max="50" value="3" data-in="renewals" /></label>
+            <div class="seg" role="group" aria-label={p.calcLevel}>
+              {LEVELS.map((l, i) => <button type="button" data-level={l.id} aria-pressed={i === 0 ? "true" : "false"}>{l.name}</button>)}
+            </div>
+          </div>
+          <div class="calc-out">
+            <div class="big">$<span data-total>0</span></div>
+            <div class="per">{p.calcMonth}</div>
+            <div class="bars" aria-hidden="true">
+              <i data-bar="agency"></i><i data-bar="products"></i><i data-bar="renewals"></i>
+            </div>
+            <div class="year">≈ $<span data-year>0</span> {p.calcYear}</div>
+            <p class="note">{p.calcNote}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="in">
+        <h2>{p.stepsH}</h2>
+        <ol class="steps">
+          {p.steps.map(([h, x]) => <li class="card"><h3>{h}</h3><p>{x}</p></li>)}
+        </ol>
+      </div>
+    </section>
+
+    <section>
+      <div class="in">
+        <h2>{p.perksH}</h2>
+        <div class="grid two">
+          {p.perks.map(([h, x]) => <article class="card"><h3>{h}</h3><p>{x}</p></article>)}
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="in">
+        <div class="ai">
+          <h2>{p.aiH}</h2>
+          <p class="lead">{p.aiSub}</p>
+          <div class="chips"><span>Claude</span><span>ChatGPT</span><span>Gemini</span><span>CapCut</span><span>Canva</span></div>
+          <div class="grid three">
+            {p.aiItems.map(([h, x]) => <div class="ai-item"><h3>{h}</h3><p>{x}</p></div>)}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="in">
+        <h2>{p.faqH}</h2>
+        <div class="faq">
+          {p.faq.map(([q, a]) => <details class="card"><summary>{q}</summary><p>{a}</p></details>)}
+        </div>
+        <p class="rules">{p.rules} <a href="/partner/#rules">{p.rulesLink}</a>.</p>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="in">
+        <div class="box">
+          <div><h2>{p.finalH}</h2><p>{p.finalP}</p></div>
+          <div class="ctas">
+            <a class="btn" href="/partner/">{p.create}</a>
+            <a class="btn ghost" href="/partner/?tab=login">{p.login}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer t={t} home={home} lang={lang} />
+</Base>
+
+<script>
+  import '../scripts/main';
+
+  const box = document.querySelector<HTMLElement>('[data-calc]');
+  if (box) {
+    const c = JSON.parse(box.dataset.calc!) as { agencyAvg: number; productAvg: number; renewalAvg: number; own: number; renewal: number; products: Record<string, number> };
+    let level = 'start';
+    const val = (k: string) => Number(box.querySelector<HTMLInputElement>(`[data-in="${k}"]`)!.value);
+    const fmt = (n: number) => Math.round(n).toLocaleString('en-US');
+    const update = () => {
+      const parts = {
+        agency: (val('agency') * c.agencyAvg * c.own) / 100,
+        products: (val('products') * c.productAvg * c.products[level]) / 100,
+        renewals: (val('renewals') * c.renewalAvg * c.renewal) / 100,
+      };
+      const total = parts.agency + parts.products + parts.renewals;
+      for (const k of ['agency', 'products', 'renewals'] as const) {
+        box.querySelector(`[data-out="${k}"]`)!.textContent = String(val(k));
+        box.querySelector<HTMLElement>(`[data-bar="${k}"]`)!.style.flexGrow = String(total ? parts[k] : 1);
+      }
+      box.querySelector('[data-total]')!.textContent = fmt(total);
+      box.querySelector('[data-year]')!.textContent = fmt(total * 12);
+    };
+    box.querySelectorAll('input').forEach((i) => i.addEventListener('input', update));
+    box.querySelectorAll<HTMLButtonElement>('[data-level]').forEach((b) =>
+      b.addEventListener('click', () => {
+        level = b.dataset.level!;
+        box.querySelectorAll('[data-level]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        update();
+      }),
+    );
+    update();
+  }
+</script>
+
+<style>
+  .in { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+  section { padding: 36px 0; }
+  .hero { padding: 110px 0 40px; }
+  h1 { font-size: clamp(34px, 6vw, 62px); line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0; max-width: 20ch; }
+  h2 { font-size: clamp(26px, 4vw, 38px); letter-spacing: -0.01em; margin: 0 0 18px; }
+  h3 { font-size: 20px; margin: 0 0 6px; }
+  .sub, .lead { color: var(--mut); font-size: 18px; max-width: 62ch; margin: 0 0 24px; }
+  .sub { font-size: 19px; margin: 0; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .btn { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 600; padding: 14px 24px; border-radius: 999px; text-decoration: none; white-space: nowrap; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; margin-top: 44px; background: var(--line); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  .stats div { background: var(--surf); padding: 20px; display: flex; flex-direction: column; gap: 4px; }
+  .stats b { font-size: clamp(28px, 4vw, 40px); color: var(--accText); letter-spacing: -0.02em; }
+  .stats span { color: var(--mut); font-size: 14px; }
+  .grid { display: grid; gap: 16px; }
+  .three { grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+  .two { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .card { background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 24px; }
+  .card p { color: var(--mut); margin: 0; }
+  .card ul { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 8px; }
+  .card li { padding-left: 24px; position: relative; }
+  .card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--accText); font-weight: 700; }
+  .tag { font-family: var(--mono); font-size: 13px; color: var(--mut); margin-bottom: 10px; }
+  .rate { font-size: clamp(40px, 5vw, 52px); font-weight: 800; letter-spacing: -0.03em; color: var(--accText); line-height: 1; margin-bottom: 14px; }
+  .dir.main { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc); }
+  .levels { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .lvl-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .lvl-top .tag { margin: 0; }
+  .badge { color: var(--accText); letter-spacing: 2px; }
+  .lvl h3 { font-size: 28px; }
+  .lvl-elite { background: var(--deep); border-color: var(--deepLine); color: var(--deepInk); }
+  .lvl-elite .tag { color: var(--deepMut); }
+  .lvl-elite li { color: var(--deepInk); }
+  .lvl-elite .badge, .lvl-elite ul li::before { color: var(--acc); }
+  .calc { display: grid; grid-template-columns: 1.2fr 1fr; gap: 0; border-radius: 24px; overflow: hidden; border: 1px solid var(--line); }
+  .calc-in { background: var(--surf); padding: 32px; }
+  .calc-in label { display: block; margin-bottom: 22px; }
+  .calc-in label span { display: flex; justify-content: space-between; gap: 12px; font-weight: 500; margin-bottom: 8px; }
+  .calc-in output { font-family: var(--mono); color: var(--accText); font-weight: 600; }
+  input[type='range'] { width: 100%; accent-color: var(--acc); }
+  .seg { display: inline-flex; gap: 2px; padding: 3px; background: var(--surf2); border-radius: 999px; }
+  .seg button { border: 0; background: transparent; color: var(--mut); padding: 8px 18px; border-radius: 999px; font: inherit; font-weight: 600; cursor: pointer; }
+  .seg button[aria-pressed='true'] { background: var(--acc); color: var(--dark-ink); }
+  .calc-out { background: var(--deep); color: var(--deepInk); padding: 32px; display: flex; flex-direction: column; justify-content: center; }
+  .big { font-size: clamp(48px, 8vw, 80px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--acc); }
+  .per { color: var(--deepMut); margin-top: 6px; }
+  .bars { display: flex; gap: 3px; height: 10px; margin: 24px 0 12px; }
+  .bars i { flex: 1 1 0; min-width: 4px; border-radius: 99px; background: var(--acc); transition: flex-grow 0.3s; }
+  .bars i:nth-child(2) { opacity: 0.6; }
+  .bars i:nth-child(3) { opacity: 0.35; }
+  .year { font-size: 20px; font-weight: 600; }
+  .note { color: var(--deepMut); font-size: 13px; margin: 16px 0 0; }
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); counter-reset: s; }
+  .steps li { counter-increment: s; }
+  .steps li::before { content: counter(s); display: grid; place-items: center; width: 36px; height: 36px; border-radius: 999px; background: var(--acc); color: var(--dark-ink); font-weight: 700; margin-bottom: 14px; }
+  .ai { background: var(--deep); color: var(--deepInk); border-radius: 24px; padding: clamp(24px, 4vw, 44px); }
+  .ai .lead { color: var(--deepMut); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .chips span { border: 1px solid var(--deepLine); border-radius: 999px; padding: 6px 14px; font-family: var(--mono); font-size: 13px; }
+  .chips span:first-child { background: var(--acc); color: var(--dark-ink); border-color: var(--acc); }
+  .ai-item { border-top: 1px solid var(--deepLine); padding-top: 16px; }
+  .ai-item p { color: var(--deepMut); margin: 0; }
+  .faq { display: grid; gap: 10px; }
+  .faq summary { font-weight: 600; font-size: 18px; cursor: pointer; }
+  .faq p { margin-top: 10px; }
+  .rules { color: var(--mut); margin: 20px 0 0; }
+  .rules a { color: var(--accText); }
+  .final { padding-bottom: 80px; }
+  .box { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
+  .box p { color: var(--mut); margin: 0; }
+  .box .ctas { margin-top: 0; }
+  @media (max-width: 800px) {
+    .calc { grid-template-columns: 1fr; }
+    .calc-in, .calc-out { padding: 24px; }
+  }
+</style>

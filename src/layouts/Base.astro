@@ -10,9 +10,12 @@ interface Props {
   /** Page path for canonical/hreflang; omit for pages that must not be indexed. */
   path?: string;
   noindex?: boolean;
+  /** Language versions of this page for hreflang; omit on the home pages. */
+  alts?: Partial<Record<Lang, string>>;
 }
 
-const { lang, title, description, path, noindex = false } = Astro.props;
+const { lang, title, description, path, noindex = false, alts } = Astro.props;
+const altLinks = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?.[l] ?? langPath(l) }));
 const site = Astro.site!;
 const abs = (p: string) => new URL(p, site).href;
 const ogImage = abs('/og-image.png');
@@ -42,8 +45,8 @@ const jsonLd = {
       path && (
         <>
           <link rel="canonical" href={abs(path)} />
-          {LANGS.map((l) => <link rel="alternate" hreflang={HTML_LANG[l]} href={abs(langPath(l))} />)}
-          <link rel="alternate" hreflang="x-default" href={abs('/')} />
+          {altLinks.map(({ l, href }) => <link rel="alternate" hreflang={HTML_LANG[l]} href={abs(href)} />)}
+          <link rel="alternate" hreflang="x-default" href={abs(altLinks[0].href)} />
         </>
       )
     }

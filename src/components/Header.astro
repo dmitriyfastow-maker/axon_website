@@ -2,24 +2,33 @@
 import { LANGS, langPath, type Lang, type Dict } from '../i18n';
 import { NAV_HREFS } from '../data/tiers';
 
-interface Props { lang: Lang; t: Dict; home?: string }
-const { lang, t, home = '' } = Astro.props;
-const nav = t.nav.map((label, i) => ({ label, href: NAV_HREFS[i].startsWith('/') ? NAV_HREFS[i] : home + NAV_HREFS[i] }));
+interface Props {
+  lang: Lang;
+  t: Dict;
+  home?: string;
+  /** Language versions of this page; languages left out are hidden. Omit on the home pages. */
+  alts?: Partial<Record<Lang, string>>;
+}
+const { lang, t, home = '', alts } = Astro.props;
+// Page links ("/partners/") get the language prefix; anchors ("#cases") point at the home page.
+const localize = (href: string) => (href.startsWith('/') ? (lang === 'en' ? href : `/${lang}${href}`) : home + href);
+const nav = t.nav.map((label, i) => ({ label, href: localize(NAV_HREFS[i]) }));
+const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?.[l] ?? langPath(l) }));
 ---
 
 <header class="header">
   <div class="bar">
-    <a href="#top" class="logo" aria-label="Vaxo">VAXO<span>.</span></a>
+    <a href={home || '#top'} class="logo" aria-label="Vaxo">VAXO<span>.</span></a>
     <nav class="nav-desktop" aria-label="Main">
       {nav.map((n) => <a href={n.href}>{n.label}</a>)}
     </nav>
     <div class="tools">
-      <div class="langs">
+      {langs.length > 1 && <div class="langs">
         {
-          LANGS.map((l) => (
+          langs.map(({ l, href }) => (
             <a
               class="pill lang"
-              href={langPath(l)}
+              href={href}
               hreflang={l === 'ua' ? 'uk' : l}
               data-lang-link={l}
               aria-current={l === lang ? 'true' : undefined}
@@ -28,11 +37,11 @@ const nav = t.nav.map((label, i) => ({ label, href: NAV_HREFS[i].startsWith('/')
             </a>
           ))
         }
-      </div>
+      </div>}
       <button class="icon-btn theme-btn" type="button" title="Theme" aria-label="Toggle theme" data-theme-toggle>
         <span class="icon-light">☾</span><span class="icon-dark">☀</span>
       </button>
-      <a href="#contact" class="cta">{t.cta1}</a>
+      <a href={`${home}#contact`} class="cta">{t.cta1}</a>
       <button class="icon-btn menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
         <span class="sign-closed">≡</span><span class="sign-open">×</span>
       </button>
@@ -40,7 +49,7 @@ const nav = t.nav.map((label, i) => ({ label, href: NAV_HREFS[i].startsWith('/')
   </div>
   <nav id="mobile-nav" class="nav-mobile" aria-label="Main" data-menu hidden>
     {nav.map((n) => <a href={n.href}>{n.label}</a>)}
-    <a href="#contact" class="nav-mobile-cta">{t.cta1}</a>
+    <a href={`${home}#contact`} class="nav-mobile-cta">{t.cta1}</a>
   </nav>
 </header>
 

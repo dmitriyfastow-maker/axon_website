@@ -1,16 +1,17 @@
 ---
-import type { Dict } from '../i18n';
+import type { Dict, Lang } from '../i18n';
 import { NAV_HREFS } from '../data/tiers';
 
-interface Props { t: Dict; home?: string }
-const { t, home = '' } = Astro.props;
+interface Props { t: Dict; home?: string; lang?: Lang }
+const { t, home = '', lang = 'en' } = Astro.props;
+const localize = (href: string) => (href.startsWith('/') ? (lang === 'en' ? href : `/${lang}${href}`) : home + href);
 ---
 
 <footer class="footer">
   <div class="inner">
     <span class="logo">VAXO<span>.</span></span>
     <nav aria-label="Footer">
-      {t.nav.map((label, i) => <a href={NAV_HREFS[i].startsWith('/') ? NAV_HREFS[i] : home + NAV_HREFS[i]}>{label}</a>)}
+      {t.nav.map((label, i) => <a href={localize(NAV_HREFS[i])}>{label}</a>)}
       <a href="/start/">Starter packages</a>
       <a href="/shop/">Templates shop</a>
       <a href="/partner/">Partner login</a>
