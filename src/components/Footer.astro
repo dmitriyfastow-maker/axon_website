@@ -10,10 +10,10 @@ const { t, home = '' } = Astro.props;
   <div class="inner">
     <span class="logo">VAXO<span>.</span></span>
     <nav aria-label="Footer">
-      {t.nav.map((label, i) => <a href={home + NAV_HREFS[i]}>{label}</a>)}
+      {t.nav.map((label, i) => <a href={NAV_HREFS[i].startsWith('/') ? NAV_HREFS[i] : home + NAV_HREFS[i]}>{label}</a>)}
       <a href="/start/">Starter packages</a>
       <a href="/shop/">Templates shop</a>
-      <a href="/partner/">Become a partner</a>
+      <a href="/partner/">Partner login</a>
     </nav>
     <span class="copy">© 2026 {t.footer}</span>
   </div>

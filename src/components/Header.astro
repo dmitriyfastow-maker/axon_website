@@ -4,7 +4,7 @@ import { NAV_HREFS } from '../data/tiers';
 
 interface Props { lang: Lang; t: Dict; home?: string }
 const { lang, t, home = '' } = Astro.props;
-const nav = t.nav.map((label, i) => ({ label, href: home + NAV_HREFS[i] }));
+const nav = t.nav.map((label, i) => ({ label, href: NAV_HREFS[i].startsWith('/') ? NAV_HREFS[i] : home + NAV_HREFS[i] }));
 ---
 
 <header class="header">

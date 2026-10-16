@@ -18,7 +18,7 @@ for (const p of pages) {
 test('nav links point at sections that exist', async ({ page }) => {
   await page.goto('/');
   const hrefs = await page.locator('.nav-desktop a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
-  expect(hrefs).toEqual(['#method', '#cases', '#pricing', '#services', '#referral']);
+  expect(hrefs).toEqual(['#method', '#cases', '#pricing', '#services', '/partners/']);
   for (const h of hrefs) await expect(page.locator(h!)).toHaveCount(1);
 });
 

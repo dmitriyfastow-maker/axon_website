@@ -141,6 +141,7 @@ import Base from '../../layouts/Base.astro';
   );
 
   const invite = new URLSearchParams(location.search).get('invite') ?? '';
+  if (new URLSearchParams(location.search).get('tab') === 'login') $<HTMLButtonElement>('[data-tab="login"]').click();
 
   for (const kind of ['register', 'login'] as const) {
     const form = $<HTMLFormElement>(`[data-form="${kind}"]`);
