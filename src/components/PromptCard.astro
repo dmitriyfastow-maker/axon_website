@@ -1,0 +1,31 @@
+---
+// One AI prompt in the partner cabinet: the page script fills in the offer and link, and sets the open links.
+import type { Prompt } from '../data/ai-toolkit';
+
+interface Props { prompt: Prompt; open?: boolean }
+const { prompt, open = false } = Astro.props;
+---
+
+<details class="pc" data-prompt={prompt.id} data-cat={prompt.cat} open={open}>
+  <summary>{prompt.title}</summary>
+  <pre data-tpl={prompt.text}>{prompt.text}</pre>
+  <div class="pc-btns">
+    <a class="pc-main" data-open="claude" href="https://claude.ai/new" target="_blank" rel="noopener">Open in Claude</a>
+    <a data-open="chatgpt" href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT</a>
+    <a data-open="gemini" href="https://gemini.google.com/app" target="_blank" rel="noopener">Gemini</a>
+    <button type="button" data-copy>Copy</button>
+  </div>
+</details>
+
+<style>
+  .pc { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; }
+  .pc[open] { border-color: color-mix(in srgb, var(--acc) 60%, var(--line)); }
+  summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; color: var(--accText); font-weight: 700; }
+  .pc[open] summary::after { content: '–'; }
+  pre { white-space: pre-wrap; font: 13px/1.55 var(--mono); background: var(--bg); padding: 12px; border-radius: 10px; margin: 12px 0; max-height: 320px; overflow: auto; }
+  .pc-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pc-btns a, .pc-btns button { font: inherit; font-size: 14px; text-decoration: none; background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+  .pc-btns .pc-main { background: var(--acc); border-color: var(--acc); color: var(--dark-ink); font-weight: 600; }
+</style>

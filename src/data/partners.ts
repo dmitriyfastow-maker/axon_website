@@ -1,29 +1,28 @@
 // Partner program terms — the single source of truth for the landing page (/partners/) and the cabinet.
-// Change a number here and every page follows.
+// Every partner gets the full rates from day one. Change a number here and every page follows.
 import type { Lang } from '../i18n';
 
-export type LevelId = 'start' | 'pro' | 'elite';
-
-/** Paid sales in the last 90 days needed for each level. */
-export const LEVELS: { id: LevelId; name: string; minSales: number }[] = [
-  { id: 'start', name: 'Start', minSales: 0 },
-  { id: 'pro', name: 'Pro', minSales: 5 },
-  { id: 'elite', name: 'Elite', minSales: 20 },
-];
-
-/** Commission, % — by direction and level. Agency terms are fixed for every level. */
+/** Commission, %. */
 export const RATES = {
   agencyOwn: 30, // client the partner found
   agencyGiven: 20, // warm lead Vaxo hands to the partner to close
   agencyRenewal: 10, // every renewal / monthly payment, for life
-  products: { start: 30, pro: 40, elite: 50 } as Record<LevelId, number>,
-  offers: { start: 60, pro: 65, elite: 70 } as Record<LevelId, number>, // % of the payout Vaxo receives
+  products: 50, // our digital products
+  offers: 70, // share of the payout Vaxo receives from partner offers
   team: 10, // bonus on direct partners' earnings, paid by Vaxo on top
   holdDays: 7,
 };
 
-/** Average order values used by the calculator. */
-export const CALC = { agencyAvg: 199, productAvg: 20, renewalAvg: 49 };
+/** Real prices from /start/ and /shop/; the calculator uses the middle of each range. */
+export const CALC = {
+  packages: [149, 199, 249], // starter packages: automation, one-page website, AI chat assistant
+  project: 800, // bigger projects start at $800
+  template: 10, // single templates cost $9–$12
+  bundle: 67, // all templates in one bundle
+  support: 100, // monthly support costs $50–$200 / month
+};
+
+export type CalcRow = { id: 'pk' | 'pr' | 'tp' | 'bd' | 'sp'; label: string; hint: string; max: number; step: number; value: number };
 
 type Text = {
   meta: { title: string; description: string };
@@ -32,29 +31,32 @@ type Text = {
   sub: string;
   join: string;
   login: string;
-  stats: [string, string][];
+  flow: string[];
+  stats: [number, string, string][]; // value, suffix/prefix pattern, label
+  aloneH: string;
+  aloneSub: string;
+  alone: [string, string, string][]; // icon, title, text
   promoteH: string;
   directions: { name: string; rate: string; price: string; what: string; points: string[] }[];
-  levelsH: string;
-  levelsSub: string;
-  levelNeed: (n: number) => string;
-  levelPerks: Record<LevelId, string[]>;
   calcH: string;
   calcSub: string;
-  calcAgency: string;
-  calcProducts: string;
-  calcRenewals: string;
-  calcLevel: string;
+  calcRows: CalcRow[];
+  calcPkg: string[];
   calcMonth: string;
   calcYear: string;
   calcNote: string;
+  academyH: string;
+  academySub: string;
+  modules: [string, string][];
+  ways: [string, string][];
   stepsH: string;
   steps: [string, string][];
-  perksH: string;
-  perks: [string, string][];
-  aiH: string;
-  aiSub: string;
-  aiItems: [string, string][];
+  teamH: string;
+  teamP: string;
+  teamPoints: string[];
+  soonTag: string;
+  soonH: string;
+  soonP: string;
   faqH: string;
   faq: [string, string][];
   rules: string;
@@ -65,90 +67,103 @@ type Text = {
 };
 
 const r = RATES;
+const c = CALC;
 
 const en: Text = {
   meta: {
     title: 'Vaxo Partners — earn by recommending AI for business',
-    description: `Promote AI automation, websites, chatbots and templates for small businesses. Up to ${r.agencyOwn}% on services, up to ${r.products.elite}% on products, lifetime clients, weekly payouts.`,
+    description: `Promote AI automation, websites, chatbots and templates for small businesses. ${r.agencyOwn}% on services, ${r.products}% on templates from day one, free training and AI toolkit, weekly payouts.`,
   },
   eyebrow: 'Partner program',
   h1: 'Earn by recommending AI that businesses actually need.',
-  sub: 'Share our services and products with your audience. Get paid for every real sale — every week, for as long as the client stays.',
+  sub: 'Share our services and templates. We do the work, train you and give you the AI tools. You get the full commission from your first sale — every week.',
   join: 'Become a partner →',
   login: 'Log in',
+  flow: ['Your link', 'A click', 'A client request', 'We do the work', 'You get paid'],
   stats: [
-    [`${r.agencyOwn}%`, 'on agency services'],
-    [`${r.products.elite}%`, 'max on our products'],
-    [`+${r.agencyRenewal}%`, 'on every renewal, for life'],
-    ['7 days', 'from sale to payout'],
+    [r.agencyOwn, '%', 'on agency services'],
+    [r.products, '%', 'on our templates'],
+    [r.agencyRenewal, '+%', 'every month the client pays'],
+    [r.holdDays, ' days', 'from payment to payout'],
+  ],
+  aloneH: 'You are not on your own',
+  aloneSub: 'Never sold anything online? That is fine. Everything you need is inside.',
+  alone: [
+    ['🎓', 'Step-by-step training', 'Videos, posts, personal messages, communities — what to do, in what order, with examples.'],
+    ['🤖', 'AI does the hard part', 'Ready prompts with your link already inside. One click opens them in Claude, ChatGPT or Gemini.'],
+    ['🤝', 'We close the deals', 'Our team answers clients, prepares proposals and delivers the work. You bring people.'],
+    ['👥', 'Build your team', `Invite other partners and earn +${r.team}% of what they earn — paid by us, on top.`],
   ],
   promoteH: 'What you promote — and what you earn',
   directions: [
     {
       name: 'Agency services',
-      rate: `${r.agencyGiven}–${r.agencyOwn}%`,
+      rate: `${r.agencyOwn}%`,
       price: 'deals from $149',
-      what: 'Automation, websites and AI chatbots. Our team talks to the client, makes the proposal and does the work.',
-      points: [`${r.agencyOwn}% — client you found`, `${r.agencyGiven}% — warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment`],
+      what: 'Automation, websites and AI chatbots for small businesses. Our team does all the work.',
+      points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`],
     },
     {
-      name: 'Our digital products',
-      rate: `${r.products.start}–${r.products.elite}%`,
+      name: 'Our templates',
+      rate: `${r.products}%`,
       price: '$9 – $67',
       what: 'Ready-made templates and guides for small businesses. A cheap, easy first purchase — great for content.',
-      points: [`${r.products.start}% at Start`, `${r.products.pro}% at Pro`, `${r.products.elite}% at Elite`],
+      points: ['Half of every sale is yours', 'Bundle of all templates — $67', 'Instant download, no support needed from you'],
     },
     {
       name: 'Partner offers',
-      rate: `${r.offers.start}–${r.offers.elite}%`,
+      rate: `${r.offers}%`,
       price: 'coming soon',
-      what: 'Offers from other companies, checked by us. You get the biggest share of what the company pays us.',
-      points: [`${r.offers.start}% of the payout at Start`, `${r.offers.pro}% at Pro`, `${r.offers.elite}% at Elite`],
+      what: 'Offers from other companies, checked by us. You get most of what the company pays us.',
+      points: [`${r.offers}% of the payout we receive`, 'Every offer shows its own rules', 'Same cabinet, same links'],
     },
   ],
-  levelsH: 'Grow your level — earn more',
-  levelsSub: 'Your level depends on paid sales in the last 90 days. It updates by itself.',
-  levelNeed: (n) => (n === 0 ? 'from day one' : `${n}+ sales / 90 days`),
-  levelPerks: {
-    start: [`${r.products.start}% on products`, `${r.offers.start}% on partner offers`, 'Free training and AI toolkit'],
-    pro: [`${r.products.pro}% on products`, `${r.offers.pro}% on partner offers`, `Warm leads from us to close (${r.agencyGiven}%)`],
-    elite: [`${r.products.elite}% on products`, `${r.offers.elite}% on partner offers`, 'First access to new offers and leads'],
-  },
   calcH: 'Count your income',
-  calcSub: 'Move the sliders. This is example math with average prices, not a promise.',
-  calcAgency: 'Service clients per month',
-  calcProducts: 'Product sales per month',
-  calcRenewals: 'Clients paying monthly',
-  calcLevel: 'Level',
+  calcSub: 'Real prices from our site. Move the sliders — every line shows exactly how it is counted.',
+  calcRows: [
+    { id: 'pk', label: 'Starter packages sold', hint: `${r.agencyOwn}% of the package price`, max: 20, step: 1, value: 2 },
+    { id: 'pr', label: 'Bigger projects (from $800)', hint: `${r.agencyOwn}% of $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'tp', label: 'Single templates ($9–$12)', hint: `${r.products}% of $${c.template}`, max: 200, step: 5, value: 20 },
+    { id: 'bd', label: 'Template bundles ($67)', hint: `${r.products}% of $${c.bundle}`, max: 50, step: 1, value: 3 },
+    { id: 'sp', label: 'Clients on monthly support ($50–$200)', hint: `${r.agencyRenewal}% of $${c.support} every month`, max: 30, step: 1, value: 2 },
+  ],
+  calcPkg: ['Automation', 'Website', 'AI chatbot'],
   calcMonth: 'per month',
   calcYear: 'per year',
-  calcNote: `Averages: service deal $${CALC.agencyAvg}, product $${CALC.productAvg}, monthly payment $${CALC.renewalAvg}. Real income depends only on real sales.`,
+  calcNote: `Templates are counted at $${c.template} and support at $${c.support}/month — the middle of each price range. Example math, not a promise: real income depends only on real sales.`,
+  academyH: 'Free training inside the cabinet',
+  academySub: 'Short, practical lessons. Each one shows the free way to start and the maximum way for faster results.',
+  modules: [
+    ['Start here', 'How the money is made and your first 3 actions today'],
+    ['Video factory', 'Unlimited short videos with AI: scripts, hooks, editing, posting'],
+    ['Posts & your profile', 'A profile that sells, captions and a weekly content plan'],
+    ['Personal messages', 'Find businesses, write to them personally, follow up — without spam'],
+    ['Communities', 'Help in groups and forums so people come to you'],
+    ['When a client answers', 'What to say and how to hand the client over to us'],
+    ['Build your team', 'Invite partners honestly and grow your +10%'],
+  ],
+  ways: [
+    ['Free way', 'Free Claude, ChatGPT or Gemini, CapCut and your phone. Enough to start and earn.'],
+    ['Maximum way', 'Claude Pro: it remembers your offer and style, writes a week of content in one go, and gives the strongest texts. Upgrade when you see results.'],
+  ],
   stepsH: 'How it works',
   steps: [
     ['Sign up', 'Free, takes a minute. 18+ only.'],
-    ['Make your links', 'As many as you want — one per channel, video or audience — to see what works.'],
-    ['Share honestly', 'Post, film, recommend. Our AI toolkit writes scripts and messages with you.'],
+    ['Follow “Start here”', 'A short checklist in your cabinet tells you exactly what to do first.'],
+    ['Share honestly', 'Videos, posts, personal messages — with ready AI prompts.'],
     ['Get paid weekly', `For real sales, ${r.holdDays} days after the client pays.`],
   ],
-  perksH: 'Why partners choose Vaxo',
-  perks: [
-    ['Clients stay yours for life', 'The first link a client clicks is saved for good. Buys again in a year? Still yours.'],
-    ['We do the hard part', 'Calls, proposals, delivery, support — our team handles it. You bring people.'],
-    ['Live stats for every link', 'Clicks, leads and your team — right in the cabinet. Turn links on and off any time.'],
-    ['Build a team', `Invite partners and get +${r.team}% of their earnings, paid by us on top — never for the invite itself.`],
-  ],
-  aiH: 'Your AI toolkit — free or paid, your choice',
-  aiSub: 'In the cabinet: ready prompts that open in one click in Claude, ChatGPT or Gemini — plus the best free tools for every task.',
-  aiItems: [
-    ['Scripts & posts', 'Hooks, video scripts, captions, 10 ideas from one offer.'],
-    ['Messages to clients', 'Personal first message, follow-ups, answers to objections.'],
-    ['Video & images', 'Free tools for editing, voice and visuals — and paid upgrades when you grow.'],
-  ],
+  teamH: 'Grow a team, earn from it',
+  teamP: `Invite people with your personal link. When they earn, you get +${r.team}% on top — we pay it, they lose nothing.`,
+  teamPoints: ['Only for real sales — never for the invite itself', 'Your team and their results are in your cabinet', 'Ready prompts to explain the program honestly'],
+  soonTag: 'Soon',
+  soonH: 'Prize draws for active partners',
+  soonP: 'Regular draws and challenges with prizes for partners who post and help clients. Join now to take part from the first one.',
   faqH: 'Questions',
   faq: [
     ['Does it cost anything?', 'No. Signing up, the cabinet, training and the AI toolkit are free.'],
-    ['Do I need experience?', 'No. The training shows step by step how to make content and where to post it.'],
-    ['How much will I earn?', 'It depends only on real sales you bring. Use the calculator above to see the math. We never promise income.'],
+    ['I have never worked online. Can I do it?', 'Yes. The “Start here” checklist and training show every step. AI writes the texts with you.'],
+    ['How much will I earn?', 'It depends only on real sales you bring. The calculator above shows the exact math. We never promise income.'],
     ['When and how do I get paid?', `Every week, for money we received and held for ${r.holdDays} days (refund protection). Main method: crypto (USDT).`],
     ['Where can I promote?', 'Anywhere, honestly: social media, video, blogs, communities, your own clients. No spam, no fake reviews, no paid clicks.'],
   ],
@@ -162,86 +177,98 @@ const en: Text = {
 const ua: Text = {
   meta: {
     title: 'Партнерка Vaxo — заробляйте, рекомендуючи ШІ для бізнесу',
-    description: `Рекомендуйте автоматизацію, сайти, чат-боти та шаблони для бізнесу. До ${r.agencyOwn}% з послуг, до ${r.products.elite}% з продуктів, клієнти закріплені назавжди, виплати щотижня.`,
+    description: `Рекомендуйте автоматизацію, сайти, чат-боти та шаблони для бізнесу. ${r.agencyOwn}% з послуг, ${r.products}% з шаблонів з першого дня, безкоштовне навчання і ШІ-набір, виплати щотижня.`,
   },
   eyebrow: 'Партнерська програма',
   h1: 'Заробляйте, рекомендуючи ШІ, який справді потрібен бізнесу.',
-  sub: 'Діліться нашими послугами та продуктами зі своєю аудиторією. Отримуйте гроші за кожен реальний продаж — щотижня, поки клієнт з нами.',
+  sub: 'Рекомендуйте наші послуги та шаблони. Роботу робимо ми, навчаємо вас і даємо ШІ-інструменти. Повна комісія — з першого продажу, щотижня.',
   join: 'Стати партнером →',
   login: 'Увійти',
+  flow: ['Ваше посилання', 'Клік', 'Заявка клієнта', 'Ми робимо роботу', 'Вам виплата'],
   stats: [
-    [`${r.agencyOwn}%`, 'з послуг агенції'],
-    [`${r.products.elite}%`, 'максимум з наших продуктів'],
-    [`+${r.agencyRenewal}%`, 'з кожного продовження, назавжди'],
-    ['7 днів', 'від продажу до виплати'],
+    [r.agencyOwn, '%', 'з послуг агенції'],
+    [r.products, '%', 'з наших шаблонів'],
+    [r.agencyRenewal, '+%', 'щомісяця, поки клієнт платить'],
+    [r.holdDays, ' днів', 'від оплати до виплати'],
+  ],
+  aloneH: 'Ви не самі',
+  aloneSub: 'Ніколи нічого не продавали онлайн? Нічого страшного. Усе потрібне — всередині.',
+  alone: [
+    ['🎓', 'Покрокове навчання', 'Відео, пости, особисті повідомлення, спільноти — що робити, в якому порядку, з прикладами.'],
+    ['🤖', 'Складне робить ШІ', 'Готові промпти з вашим посиланням. Один клік — і вони відкриваються в Claude, ChatGPT чи Gemini.'],
+    ['🤝', 'Угоди закриваємо ми', 'Наша команда відповідає клієнтам, готує пропозиції та робить роботу. Ви приводите людей.'],
+    ['👥', 'Будуйте команду', `Запрошуйте партнерів і отримуйте +${r.team}% від їхнього заробітку — понад, від нас.`],
   ],
   promoteH: 'Що рекомендуєте — і скільки заробляєте',
   directions: [
     {
       name: 'Послуги агенції',
-      rate: `${r.agencyGiven}–${r.agencyOwn}%`,
+      rate: `${r.agencyOwn}%`,
       price: 'угоди від $149',
-      what: 'Автоматизація, сайти та ШІ-чат-боти. Наша команда спілкується з клієнтом, готує пропозицію та робить роботу.',
-      points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого ви закриваєте`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата`],
+      what: 'Автоматизація, сайти та ШІ-чат-боти для малого бізнесу. Усю роботу робить наша команда.',
+      points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`],
     },
     {
-      name: 'Наші цифрові продукти',
-      rate: `${r.products.start}–${r.products.elite}%`,
+      name: 'Наші шаблони',
+      rate: `${r.products}%`,
       price: '$9 – $67',
       what: 'Готові шаблони та посібники для малого бізнесу. Дешева і легка перша покупка — ідеально для контенту.',
-      points: [`${r.products.start}% на рівні Start`, `${r.products.pro}% на рівні Pro`, `${r.products.elite}% на рівні Elite`],
+      points: ['Половина кожного продажу — ваша', 'Набір усіх шаблонів — $67', 'Миттєве завантаження, підтримка від вас не потрібна'],
     },
     {
       name: 'Офери партнерів',
-      rate: `${r.offers.start}–${r.offers.elite}%`,
+      rate: `${r.offers}%`,
       price: 'скоро',
       what: 'Пропозиції інших компаній, перевірені нами. Ви отримуєте більшу частину того, що компанія платить нам.',
-      points: [`${r.offers.start}% від виплати на Start`, `${r.offers.pro}% на Pro`, `${r.offers.elite}% на Elite`],
+      points: [`${r.offers}% від виплати, яку отримуємо ми`, 'У кожного офера свої правила', 'Той самий кабінет і посилання'],
     },
   ],
-  levelsH: 'Ростіть у рівні — заробляйте більше',
-  levelsSub: 'Рівень залежить від оплачених продажів за останні 90 днів і оновлюється сам.',
-  levelNeed: (n) => (n === 0 ? 'з першого дня' : `${n}+ продажів / 90 днів`),
-  levelPerks: {
-    start: [`${r.products.start}% з продуктів`, `${r.offers.start}% з оферів партнерів`, 'Безкоштовне навчання та ШІ-набір'],
-    pro: [`${r.products.pro}% з продуктів`, `${r.offers.pro}% з оферів партнерів`, `Теплі клієнти від нас (${r.agencyGiven}%)`],
-    elite: [`${r.products.elite}% з продуктів`, `${r.offers.elite}% з оферів партнерів`, 'Першим — нові офери та клієнти'],
-  },
   calcH: 'Порахуйте свій дохід',
-  calcSub: 'Рухайте повзунки. Це приклад розрахунку за середніми цінами, а не обіцянка.',
-  calcAgency: 'Клієнтів на послуги за місяць',
-  calcProducts: 'Продажів продуктів за місяць',
-  calcRenewals: 'Клієнтів зі щомісячною оплатою',
-  calcLevel: 'Рівень',
+  calcSub: 'Реальні ціни з нашого сайту. Рухайте повзунки — кожен рядок показує, як саме рахується.',
+  calcRows: [
+    { id: 'pk', label: 'Продано стартових пакетів', hint: `${r.agencyOwn}% від ціни пакета`, max: 20, step: 1, value: 2 },
+    { id: 'pr', label: 'Великі проєкти (від $800)', hint: `${r.agencyOwn}% від $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'tp', label: 'Окремі шаблони ($9–$12)', hint: `${r.products}% від $${c.template}`, max: 200, step: 5, value: 20 },
+    { id: 'bd', label: 'Набори шаблонів ($67)', hint: `${r.products}% від $${c.bundle}`, max: 50, step: 1, value: 3 },
+    { id: 'sp', label: 'Клієнти на щомісячній підтримці ($50–$200)', hint: `${r.agencyRenewal}% від $${c.support} щомісяця`, max: 30, step: 1, value: 2 },
+  ],
+  calcPkg: ['Автоматизація', 'Сайт', 'ШІ-чат-бот'],
   calcMonth: 'на місяць',
   calcYear: 'на рік',
-  calcNote: `Середні: угода на послугу $${CALC.agencyAvg}, продукт $${CALC.productAvg}, щомісячна оплата $${CALC.renewalAvg}. Реальний дохід залежить лише від реальних продажів.`,
+  calcNote: `Шаблон рахуємо по $${c.template}, підтримку — $${c.support}/міс (середина діапазону цін). Це приклад, а не обіцянка: дохід залежить лише від реальних продажів.`,
+  academyH: 'Безкоштовне навчання в кабінеті',
+  academySub: 'Короткі практичні уроки. У кожному — безкоштовний спосіб почати і максимальний — для швидшого результату.',
+  modules: [
+    ['З чого почати', 'Як заробляються гроші і ваші перші 3 дії сьогодні'],
+    ['Завод відео', 'Необмежено коротких відео з ШІ: сценарії, гачки, монтаж, публікація'],
+    ['Пости і профіль', 'Профіль, що продає, підписи і план контенту на тиждень'],
+    ['Особисті повідомлення', 'Знайти бізнеси, написати особисто, нагадати — без спаму'],
+    ['Спільноти', 'Допомагайте в групах і форумах — і люди прийдуть до вас'],
+    ['Коли клієнт відповів', 'Що сказати і як передати клієнта нам'],
+    ['Своя команда', 'Чесно запрошуйте партнерів і ростіть свої +10%'],
+  ],
+  ways: [
+    ['Безкоштовний шлях', 'Безкоштовні Claude, ChatGPT чи Gemini, CapCut і ваш телефон. Цього достатньо, щоб почати й заробити.'],
+    ['Максимум', 'Claude Pro: пам’ятає ваш офер і стиль, пише контент на тиждень за раз і дає найсильніші тексти. Переходьте, коли побачите результат.'],
+  ],
   stepsH: 'Як це працює',
   steps: [
     ['Реєстрація', 'Безкоштовно, за хвилину. Лише 18+.'],
-    ['Створіть посилання', 'Скільки завгодно — окреме для кожного каналу, відео чи аудиторії.'],
-    ['Рекомендуйте чесно', 'Пости, відео, поради. Наш ШІ-набір допоможе зі сценаріями та повідомленнями.'],
+    ['Пройдіть «З чого почати»', 'Короткий чек-лист у кабінеті підкаже, що робити першим.'],
+    ['Рекомендуйте чесно', 'Відео, пости, особисті повідомлення — з готовими ШІ-промптами.'],
     ['Виплати щотижня', `За реальні продажі, через ${r.holdDays} днів після оплати клієнта.`],
   ],
-  perksH: 'Чому партнери обирають Vaxo',
-  perks: [
-    ['Клієнти ваші назавжди', 'Перше посилання, по якому прийшов клієнт, зберігається. Купить ще раз через рік — ваш.'],
-    ['Складне робимо ми', 'Дзвінки, пропозиції, виконання, підтримка — на нашій команді. Ви приводите людей.'],
-    ['Статистика по кожному посиланню', 'Кліки, заявки, ваша команда — прямо в кабінеті.'],
-    ['Будуйте команду', `Запрошуйте партнерів і отримуйте +${r.team}% від їхнього заробітку — понад, від нас. Ніколи за саме запрошення.`],
-  ],
-  aiH: 'Ваш ШІ-набір — безкоштовно чи платно, на ваш вибір',
-  aiSub: 'У кабінеті: готові промпти, що відкриваються в один клік у Claude, ChatGPT чи Gemini, і найкращі безкоштовні інструменти для кожної задачі.',
-  aiItems: [
-    ['Сценарії та пости', 'Гачки, сценарії відео, підписи, 10 ідей з одного офера.'],
-    ['Повідомлення клієнтам', 'Перше персональне повідомлення, нагадування, відповіді на заперечення.'],
-    ['Відео та картинки', 'Безкоштовні інструменти для монтажу, голосу і візуалу — і платні, коли зростете.'],
-  ],
+  teamH: 'Збирайте команду — заробляйте з неї',
+  teamP: `Запрошуйте людей своїм посиланням. Коли вони заробляють, ви отримуєте +${r.team}% зверху — платимо ми, вони нічого не втрачають.`,
+  teamPoints: ['Лише за реальні продажі — ніколи за саме запрошення', 'Ваша команда та її результати — у кабінеті', 'Готові промпти, щоб чесно пояснити програму'],
+  soonTag: 'Скоро',
+  soonH: 'Розіграші для активних партнерів',
+  soonP: 'Регулярні розіграші та челенджі з призами для тих, хто публікує контент і допомагає клієнтам. Приєднуйтесь зараз, щоб брати участь з першого.',
   faqH: 'Питання',
   faq: [
     ['Це щось коштує?', 'Ні. Реєстрація, кабінет, навчання та ШІ-набір — безкоштовні.'],
-    ['Потрібен досвід?', 'Ні. Навчання покроково показує, як робити контент і де його публікувати.'],
-    ['Скільки я зароблю?', 'Залежить лише від реальних продажів. Подивіться розрахунок у калькуляторі вище. Ми ніколи не обіцяємо дохід.'],
+    ['Я ніколи не працював онлайн. Впораюсь?', 'Так. Чек-лист «З чого почати» і навчання показують кожен крок. Тексти ШІ пише разом з вами.'],
+    ['Скільки я зароблю?', 'Залежить лише від реальних продажів. Калькулятор вище показує точний розрахунок. Ми ніколи не обіцяємо дохід.'],
     ['Коли і як виплати?', `Щотижня, за гроші, які ми отримали і тримали ${r.holdDays} днів (захист від повернень). Основний спосіб — крипта (USDT).`],
     ['Де можна рекламувати?', 'Будь-де, чесно: соцмережі, відео, блоги, спільноти, ваші клієнти. Без спаму, фейкових відгуків і купленого трафіку.'],
   ],
@@ -255,86 +282,98 @@ const ua: Text = {
 const ru: Text = {
   meta: {
     title: 'Партнёрка Vaxo — зарабатывайте, рекомендуя ИИ для бизнеса',
-    description: `Рекомендуйте автоматизацию, сайты, чат-боты и шаблоны для бизнеса. До ${r.agencyOwn}% с услуг, до ${r.products.elite}% с продуктов, клиенты закреплены навсегда, выплаты каждую неделю.`,
+    description: `Рекомендуйте автоматизацию, сайты, чат-боты и шаблоны для бизнеса. ${r.agencyOwn}% с услуг, ${r.products}% с шаблонов с первого дня, бесплатное обучение и ИИ-набор, выплаты каждую неделю.`,
   },
   eyebrow: 'Партнёрская программа',
   h1: 'Зарабатывайте, рекомендуя ИИ, который реально нужен бизнесу.',
-  sub: 'Делитесь нашими услугами и продуктами со своей аудиторией. Получайте деньги за каждую реальную продажу — каждую неделю, пока клиент с нами.',
+  sub: 'Рекомендуйте наши услуги и шаблоны. Работу делаем мы, обучаем вас и даём ИИ-инструменты. Полная комиссия — с первой продажи, каждую неделю.',
   join: 'Стать партнёром →',
   login: 'Войти',
+  flow: ['Ваша ссылка', 'Клик', 'Заявка клиента', 'Мы делаем работу', 'Вам выплата'],
   stats: [
-    [`${r.agencyOwn}%`, 'с услуг агентства'],
-    [`${r.products.elite}%`, 'максимум с наших продуктов'],
-    [`+${r.agencyRenewal}%`, 'с каждого продления, навсегда'],
-    ['7 дней', 'от продажи до выплаты'],
+    [r.agencyOwn, '%', 'с услуг агентства'],
+    [r.products, '%', 'с наших шаблонов'],
+    [r.agencyRenewal, '+%', 'каждый месяц, пока клиент платит'],
+    [r.holdDays, ' дней', 'от оплаты до выплаты'],
+  ],
+  aloneH: 'Вы не одни',
+  aloneSub: 'Никогда ничего не продавали онлайн? Ничего страшного. Всё нужное — внутри.',
+  alone: [
+    ['🎓', 'Пошаговое обучение', 'Видео, посты, личные сообщения, сообщества — что делать, в каком порядке, с примерами.'],
+    ['🤖', 'Сложное делает ИИ', 'Готовые промпты с вашей ссылкой внутри. Один клик — и они открываются в Claude, ChatGPT или Gemini.'],
+    ['🤝', 'Сделки закрываем мы', 'Наша команда отвечает клиентам, готовит предложения и делает работу. Вы приводите людей.'],
+    ['👥', 'Стройте команду', `Приглашайте партнёров и получайте +${r.team}% от их заработка — сверху, от нас.`],
   ],
   promoteH: 'Что рекомендуете — и сколько зарабатываете',
   directions: [
     {
       name: 'Услуги агентства',
-      rate: `${r.agencyGiven}–${r.agencyOwn}%`,
+      rate: `${r.agencyOwn}%`,
       price: 'сделки от $149',
-      what: 'Автоматизация, сайты и ИИ-чат-боты. Наша команда общается с клиентом, готовит предложение и делает работу.',
-      points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата`],
+      what: 'Автоматизация, сайты и ИИ-чат-боты для малого бизнеса. Всю работу делает наша команда.',
+      points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`],
     },
     {
-      name: 'Наши цифровые продукты',
-      rate: `${r.products.start}–${r.products.elite}%`,
+      name: 'Наши шаблоны',
+      rate: `${r.products}%`,
       price: '$9 – $67',
       what: 'Готовые шаблоны и руководства для малого бизнеса. Дешёвая и лёгкая первая покупка — идеально для контента.',
-      points: [`${r.products.start}% на уровне Start`, `${r.products.pro}% на уровне Pro`, `${r.products.elite}% на уровне Elite`],
+      points: ['Половина каждой продажи — ваша', 'Набор всех шаблонов — $67', 'Мгновенная загрузка, поддержка от вас не нужна'],
     },
     {
       name: 'Офферы партнёров',
-      rate: `${r.offers.start}–${r.offers.elite}%`,
+      rate: `${r.offers}%`,
       price: 'скоро',
       what: 'Предложения других компаний, проверенные нами. Вы получаете бо́льшую часть того, что компания платит нам.',
-      points: [`${r.offers.start}% от выплаты на Start`, `${r.offers.pro}% на Pro`, `${r.offers.elite}% на Elite`],
+      points: [`${r.offers}% от выплаты, которую получаем мы`, 'У каждого оффера свои правила', 'Тот же кабинет и ссылки'],
     },
   ],
-  levelsH: 'Растите в уровне — зарабатывайте больше',
-  levelsSub: 'Уровень зависит от оплаченных продаж за последние 90 дней и обновляется сам.',
-  levelNeed: (n) => (n === 0 ? 'с первого дня' : `${n}+ продаж / 90 дней`),
-  levelPerks: {
-    start: [`${r.products.start}% с продуктов`, `${r.offers.start}% с офферов партнёров`, 'Бесплатное обучение и ИИ-набор'],
-    pro: [`${r.products.pro}% с продуктов`, `${r.offers.pro}% с офферов партнёров`, `Тёплые клиенты от нас (${r.agencyGiven}%)`],
-    elite: [`${r.products.elite}% с продуктов`, `${r.offers.elite}% с офферов партнёров`, 'Первым — новые офферы и клиенты'],
-  },
   calcH: 'Посчитайте свой доход',
-  calcSub: 'Двигайте ползунки. Это пример расчёта по средним ценам, а не обещание.',
-  calcAgency: 'Клиентов на услуги в месяц',
-  calcProducts: 'Продаж продуктов в месяц',
-  calcRenewals: 'Клиентов с ежемесячной оплатой',
-  calcLevel: 'Уровень',
+  calcSub: 'Реальные цены с нашего сайта. Двигайте ползунки — каждая строка показывает, как именно считается.',
+  calcRows: [
+    { id: 'pk', label: 'Продано стартовых пакетов', hint: `${r.agencyOwn}% от цены пакета`, max: 20, step: 1, value: 2 },
+    { id: 'pr', label: 'Большие проекты (от $800)', hint: `${r.agencyOwn}% от $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'tp', label: 'Отдельные шаблоны ($9–$12)', hint: `${r.products}% от $${c.template}`, max: 200, step: 5, value: 20 },
+    { id: 'bd', label: 'Наборы шаблонов ($67)', hint: `${r.products}% от $${c.bundle}`, max: 50, step: 1, value: 3 },
+    { id: 'sp', label: 'Клиенты на ежемесячной поддержке ($50–$200)', hint: `${r.agencyRenewal}% от $${c.support} каждый месяц`, max: 30, step: 1, value: 2 },
+  ],
+  calcPkg: ['Автоматизация', 'Сайт', 'ИИ-чат-бот'],
   calcMonth: 'в месяц',
   calcYear: 'в год',
-  calcNote: `Средние: сделка на услугу $${CALC.agencyAvg}, продукт $${CALC.productAvg}, ежемесячная оплата $${CALC.renewalAvg}. Реальный доход зависит только от реальных продаж.`,
+  calcNote: `Шаблон считаем по $${c.template}, поддержку — $${c.support}/мес (середина диапазона цен). Это пример, а не обещание: доход зависит только от реальных продаж.`,
+  academyH: 'Бесплатное обучение в кабинете',
+  academySub: 'Короткие практичные уроки. В каждом — бесплатный способ начать и максимальный — для более быстрого результата.',
+  modules: [
+    ['С чего начать', 'Как зарабатываются деньги и ваши первые 3 действия сегодня'],
+    ['Завод видео', 'Неограниченно коротких видео с ИИ: сценарии, хуки, монтаж, публикация'],
+    ['Посты и профиль', 'Продающий профиль, подписи и контент-план на неделю'],
+    ['Личные сообщения', 'Найти бизнесы, написать лично, напомнить — без спама'],
+    ['Сообщества', 'Помогайте в группах и форумах — и люди придут к вам'],
+    ['Когда клиент ответил', 'Что сказать и как передать клиента нам'],
+    ['Своя команда', 'Честно приглашайте партнёров и растите свои +10%'],
+  ],
+  ways: [
+    ['Бесплатный путь', 'Бесплатные Claude, ChatGPT или Gemini, CapCut и ваш телефон. Этого достаточно, чтобы начать и заработать.'],
+    ['Максимум', 'Claude Pro: помнит ваш оффер и стиль, пишет контент на неделю за раз и даёт самые сильные тексты. Переходите, когда увидите результат.'],
+  ],
   stepsH: 'Как это работает',
   steps: [
     ['Регистрация', 'Бесплатно, за минуту. Только 18+.'],
-    ['Создайте ссылки', 'Сколько угодно — отдельную для каждого канала, видео или аудитории.'],
-    ['Рекомендуйте честно', 'Посты, видео, советы. Наш ИИ-набор поможет со сценариями и сообщениями.'],
+    ['Пройдите «С чего начать»', 'Короткий чек-лист в кабинете подскажет, что делать первым.'],
+    ['Рекомендуйте честно', 'Видео, посты, личные сообщения — с готовыми ИИ-промптами.'],
     ['Выплаты каждую неделю', `За реальные продажи, через ${r.holdDays} дней после оплаты клиента.`],
   ],
-  perksH: 'Почему партнёры выбирают Vaxo',
-  perks: [
-    ['Клиенты ваши навсегда', 'Первая ссылка, по которой пришёл клиент, сохраняется. Купит снова через год — ваш.'],
-    ['Сложное делаем мы', 'Созвоны, предложения, выполнение, поддержка — на нашей команде. Вы приводите людей.'],
-    ['Статистика по каждой ссылке', 'Клики, заявки, ваша команда — прямо в кабинете.'],
-    ['Стройте команду', `Приглашайте партнёров и получайте +${r.team}% от их заработка — сверху, от нас. Никогда за само приглашение.`],
-  ],
-  aiH: 'Ваш ИИ-набор — бесплатно или платно, на выбор',
-  aiSub: 'В кабинете: готовые промпты, которые открываются в один клик в Claude, ChatGPT или Gemini, и лучшие бесплатные инструменты для каждой задачи.',
-  aiItems: [
-    ['Сценарии и посты', 'Хуки, сценарии видео, подписи, 10 идей из одного оффера.'],
-    ['Сообщения клиентам', 'Первое персональное сообщение, напоминания, ответы на возражения.'],
-    ['Видео и картинки', 'Бесплатные инструменты для монтажа, голоса и визуала — и платные, когда вырастете.'],
-  ],
+  teamH: 'Собирайте команду — зарабатывайте с неё',
+  teamP: `Приглашайте людей своей ссылкой. Когда они зарабатывают, вы получаете +${r.team}% сверху — платим мы, они ничего не теряют.`,
+  teamPoints: ['Только за реальные продажи — никогда за само приглашение', 'Ваша команда и её результаты — в кабинете', 'Готовые промпты, чтобы честно объяснить программу'],
+  soonTag: 'Скоро',
+  soonH: 'Розыгрыши для активных партнёров',
+  soonP: 'Регулярные розыгрыши и челленджи с призами для тех, кто публикует контент и помогает клиентам. Присоединяйтесь сейчас, чтобы участвовать с первого.',
   faqH: 'Вопросы',
   faq: [
     ['Это что-то стоит?', 'Нет. Регистрация, кабинет, обучение и ИИ-набор — бесплатные.'],
-    ['Нужен опыт?', 'Нет. Обучение пошагово показывает, как делать контент и где его публиковать.'],
-    ['Сколько я заработаю?', 'Зависит только от реальных продаж. Посмотрите расчёт в калькуляторе выше. Мы никогда не обещаем доход.'],
+    ['Я никогда не работал онлайн. Справлюсь?', 'Да. Чек-лист «С чего начать» и обучение показывают каждый шаг. Тексты ИИ пишет вместе с вами.'],
+    ['Сколько я заработаю?', 'Зависит только от реальных продаж. Калькулятор выше показывает точный расчёт. Мы никогда не обещаем доход.'],
     ['Когда и как выплаты?', `Каждую неделю, за деньги, которые мы получили и держали ${r.holdDays} дней (защита от возвратов). Основной способ — крипта (USDT).`],
     ['Где можно рекламировать?', 'Где угодно, честно: соцсети, видео, блоги, сообщества, ваши клиенты. Без спама, фейковых отзывов и купленного трафика.'],
   ],
