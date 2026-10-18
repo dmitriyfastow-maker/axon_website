@@ -1,13 +1,14 @@
 ---
-// Partner cabinet (EN/UA/RU): sign up / log in, then tabs — Home (next step, checklist, rates, achievements),
+// Partner cabinet (EN/UA/RU): sign up / log in, then tabs — Home (next step, Vax's road, rates, achievements),
 // Links (unlimited tracking links), Academy (lessons with prompts), AI prompts, Team, Payouts & rules.
 import Base from '../layouts/Base.astro';
 import PromptCard from './PromptCard.astro';
 import { LANGS, type Lang } from '../i18n';
 import { CABINET } from '../i18n/cabinet';
 import { OFFERS, PROMPTS } from '../data/ai-toolkit';
-import { CHECKLIST, LESSONS } from '../data/academy';
+import { LESSONS } from '../data/academy';
 import { RATES } from '../data/partners';
+import { LEVELS } from '../data/roadmap';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -18,20 +19,14 @@ const byId = (id: string) => PROMPTS.find((p) => p.id === id)!;
 const title = (id: string) => c.titles[id] ?? byId(id).title;
 const labels = c.card;
 const tabs: [string, string][] = [['home', '🏠'], ['links', '🔗'], ['academy', '🎓'], ['prompts', '🤖'], ['team', '👥'], ['rules', '💸']];
-const checklist = CHECKLIST[lang];
 const offerSelect = OFFERS.map((o) => ({ id: o.id, name: c.offers[o.id] }));
-// Partner ranks with Vax (cosmetic — rates are the same for everyone).
-const RANK = {
-  en: { title: 'Your rank', next: 'Next rank', max: 'Top rank reached. Respect.', note: 'Ranks are just for fun — your rates are the same from day one.', need: ['1 lead', '1 sale', '5 sales', '20 sales'],
-        names: ['Rookie raccoon', 'Lead hunter', 'Deal baker', 'Master raccoon', 'Raccoon legend'],
-        says: ['“Everyone starts here. Share your link with one person today.”', '“First lead! Now let’s turn it into a sale.”', '“First sale! I’m baking you a cake.”', '“Five sales. Neighbours are starting to talk about you.”', '“Legend. I’m asking YOU for advice now.”'] },
-  ru: { title: 'Ваше звание', next: 'Следующее звание', max: 'Высшее звание. Уважение.', note: 'Звания — для удовольствия, ставки одинаковые с первого дня.', need: ['1 заявка', '1 продажа', '5 продаж', '20 продаж'],
-        names: ['Енот-новичок', 'Охотник за заявками', 'Пекарь сделок', 'Мастер-енот', 'Легенда Vaxo'],
-        says: ['«Все начинают отсюда. Отправьте свою ссылку сегодня хотя бы одному человеку.»', '«Первая заявка! Теперь превратим её в продажу.»', '«Первая продажа! Пеку вам торт.»', '«Пять продаж. Соседи начинают о вас говорить.»', '«Легенда. Теперь я спрашиваю совета у ВАС.»'] },
-  ua: { title: 'Ваше звання', next: 'Наступне звання', max: 'Найвище звання. Повага.', note: 'Звання — для задоволення, ставки однакові з першого дня.', need: ['1 заявка', '1 продаж', '5 продажів', '20 продажів'],
-        names: ['Єнот-новачок', 'Мисливець за заявками', 'Пекар угод', 'Майстер-єнот', 'Легенда Vaxo'],
-        says: ['«Усі починають звідси. Надішліть своє посилання сьогодні хоча б одній людині.»', '«Перша заявка! Тепер перетворимо її на продаж.»', '«Перший продаж! Печу вам торт.»', '«П\'ять продажів. Сусіди починають про вас говорити.»', '«Легенда. Тепер я питаю поради у ВАС.»'] },
+// Vax's road: 6 levels × 4 missions (data/roadmap.ts). Levels are just for fun — rates are the same for everyone.
+const ROAD = {
+  en: { title: 'Vax’s road', level: 'Level', of: 'of', go: 'Do it →', locked: 'Finish the previous level to unlock', note: 'Levels are just for fun — your rates are the same from day one. Missions with numbers tick themselves.', done: 'All levels done. You are a legend.' },
+  ru: { title: 'Дорога Vax', level: 'Уровень', of: 'из', go: 'Сделать →', locked: 'Пройдите предыдущий уровень, чтобы открыть', note: 'Уровни — для удовольствия, ставки одинаковые с первого дня. Задания с цифрами отмечаются сами.', done: 'Все уровни пройдены. Вы — легенда.' },
+  ua: { title: 'Дорога Vax', level: 'Рівень', of: 'з', go: 'Зробити →', locked: 'Пройдіть попередній рівень, щоб відкрити', note: 'Рівні — для задоволення, ставки однакові з першого дня. Завдання з цифрами відмічаються самі.', done: 'Усі рівні пройдено. Ви — легенда.' },
 }[lang];
+const levelsJs = LEVELS.map((l) => ({ face: l.face, name: l.name[lang], say: l.say[lang], missions: l.missions.map((mi) => ({ id: mi.id, auto: mi.auto, tab: mi.tab, lesson: mi.lesson, text: mi.text[lang] })) }));
 // Income map on top of the academy: every direction a partner earns from (rates from data/partners.ts).
 const r = RATES;
 const MAP = {
@@ -45,11 +40,11 @@ const MAP = {
         rows: [['🛠', 'Послуги агентства', `${r.agencyOwn}% з вашого клієнта · ${r.agencyGiven}% з нашої заявки, яку ви закрили · +${r.agencyRenewal}% з кожного продовження назавжди`],
                ['📦', 'Наші шаблони', `${r.products}% з кожного продажу`], ['🤝', 'Офери партнерів', `${r.offers}% від виплати, яку отримуємо ми (скоро)`], ['👥', 'Ваша команда', `+${r.team}% зверху від заробітку ваших партнерів`]] },
 }[lang];
-const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
+const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels: levelsJs };
 ---
 
 <Base lang={lang} title={c.meta.title} description={c.meta.description} path={base} noindex>
-  <main class="wrap" data-offers={JSON.stringify(OFFERS)} data-checklist={JSON.stringify(checklist)} data-t={JSON.stringify(js)}>
+  <main class="wrap" data-offers={JSON.stringify(OFFERS)} data-t={JSON.stringify(js)}>
     <div class="topbar">
       <a href={landing} class="logo">VAXO<span>.</span> <small>Partners</small></a>
       <div class="row tight">
@@ -115,16 +110,35 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
           <div class="row tight"><button type="button" class="cta" data-copy-main>{c.home.copy}</button><button type="button" class="ghost" data-share-main>{c.home.share}</button></div>
         </div>
 
-        <div class="rank card" data-rank>
-          <img src="/mascot/vax-front.webp" alt="Vax" width="120" height="120" data-rank-img data-vax-poke />
-          <div class="rank-body">
-            <span class="eyebrow-s">{RANK.title}</span>
-            <h2 data-rank-name>{RANK.names[0]}</h2>
-            <p class="rank-say" data-rank-say>{RANK.says[0]}</p>
-            <div class="rank-bar"><span data-rank-bar></span></div>
-            <span class="mut small" data-rank-next></span>
-            <p class="mut small">{RANK.note}</p>
+        <div class="road card" data-road>
+          <div class="road-head">
+            <img src="/mascot/vax-front.webp" alt="Vax" width="120" height="120" data-road-img data-vax-poke />
+            <div class="road-who">
+              <span class="eyebrow-s">{ROAD.title} · <span data-road-count></span></span>
+              <h2 data-road-name>{LEVELS[0].name[lang]}</h2>
+              <p class="road-say" data-road-say>{LEVELS[0].say[lang]}</p>
+            </div>
           </div>
+          <ol class="road-path">
+            {LEVELS.map((l, i) => (
+              <li data-road-node={i}><button type="button" data-road-show={i}><span class="dot">{i + 1}</span><small>{l.name[lang]}</small></button></li>
+            ))}
+          </ol>
+          {LEVELS.map((l, i) => (
+            <div class="road-level" data-road-level={i} hidden>
+              <p class="mut small road-locked" data-road-locked hidden>🔒 {ROAD.locked}</p>
+              <ul class="missions">
+                {l.missions.map((mi) => (
+                  <li data-mission={mi.id}>
+                    <label><input type="checkbox" disabled={!!mi.auto} /> <span>{mi.text[lang]}{mi.auto && <em data-progress></em>}</span></label>
+                    <p class="hint">💡 {mi.hint[lang]}</p>
+                    <button type="button" class="ghost sm" data-go={mi.tab} data-lesson={mi.lesson}>{ROAD.go}</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          <p class="mut small">{ROAD.note}</p>
         </div>
 
         <div class="stats">
@@ -132,18 +146,6 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
         </div>
 
         <div class="grid2">
-          <div class="card">
-            <div class="ch-head"><h2>{c.home.start}</h2><span class="mut small" data-check-count></span></div>
-            <div class="bar"><i data-check-bar></i></div>
-            <ol class="checklist">
-              {checklist.map((x) => (
-                <li data-check={x.id}>
-                  <label><input type="checkbox" /> <span>{x.text}</span></label>
-                  <button type="button" class="ghost sm" data-go={x.tab} data-lesson={x.lesson}>{c.home.open}</button>
-                </li>
-              ))}
-            </ol>
-          </div>
           <div class="card">
             <h2>{c.home.rates}</h2>
             <p class="mut small">{c.home.ratesSub}</p>
@@ -281,8 +283,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
   const $$ = <T extends Element = HTMLElement>(sel: string) => [...document.querySelectorAll<T>(sel)];
   const root = $('main.wrap');
   const offers = JSON.parse(root.dataset.offers!) as Offer[];
-  const checklist = JSON.parse(root.dataset.checklist!) as Check[];
-  const T = JSON.parse(root.dataset.t!) as { rank: { next: string; max: string; need: string[]; names: string[]; says: string[] }; copied: string; off: string; on: string; wrong: string; exists: string; check: string; done: string; of: string; allDone: string; badges: [string, string][] };
+  const T = JSON.parse(root.dataset.t!) as { road: { level: string; of: string; done: string }; levels: unknown; copied: string; off: string; on: string; wrong: string; exists: string; check: string; done: string; of: string; allDone: string; badges: [string, string][] };
   const store = {
     get: (k: string) => { try { return localStorage.getItem(k); } catch { return null; } },
     set: (k: string, v: string) => { try { localStorage.setItem(k, v); } catch { /* private mode */ } },
@@ -376,60 +377,76 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
     return td;
   }
 
-  // ---- rank with Vax: 0 → 1 lead → 1 sale → 5 sales → 20 sales (cosmetic) ----
-  function renderRank(leads: number, sales: number) {
-    const steps: [number, number][] = [[leads, 1], [sales, 1], [sales, 5], [sales, 20]];
-    let r = 0;
-    while (r < steps.length && steps[r][0] >= steps[r][1]) r++;
-    const faces = ['front', 'happy', 'smug', 'smug', 'shocked'];
-    $<HTMLImageElement>('[data-rank-img]').src = `/mascot/vax-${faces[r]}.webp`;
-    $('[data-rank-name]').textContent = T.rank.names[r];
-    $('[data-rank-say]').textContent = T.rank.says[r];
-    const bar = $('[data-rank-bar]');
-    if (r >= steps.length) { bar.style.width = '100%'; $('[data-rank-next]').textContent = T.rank.max; return; }
-    const [have, goal] = steps[r];
-    bar.style.width = `${Math.max(4, Math.min(100, (have / goal) * 100))}%`;
-    $('[data-rank-next]').textContent = `${T.rank.next}: ${T.rank.names[r + 1]} — ${T.rank.need[r]} (${have}/${goal})`;
-  }
-
-  // ---- checklist (saved in this browser) ----
+  // ---- Vax's road: current level = first level with an unfinished mission ----
+  type Mission = { id: string; auto?: [string, number]; tab: string; lesson?: string; text: string };
+  type RoadLevel = { face: string; name: string; say: string; missions: Mission[] };
+  const levels = T.levels as RoadLevel[];
   let code = '';
-  let auto: Record<string, boolean> = {};
+  let metrics: Record<string, number> = {};
+  let viewing = -1;
   const checkKey = () => `vaxo_check_${code}`;
   const doneSet = () => new Set<string>(JSON.parse(store.get(checkKey()) ?? '[]'));
-  function renderChecklist() {
+  const isDone = (mi: Mission, done: Set<string>) => (mi.auto ? (metrics[mi.auto[0]] ?? 0) >= mi.auto[1] : done.has(mi.id));
+  function renderRoad() {
     const done = doneSet();
-    for (const [k, v] of Object.entries(auto)) if (v) done.add(k);
-    let n = 0;
-    $$('[data-check]').forEach((li) => {
-      const on = done.has(li.dataset.check!);
-      if (on) n++;
-      li.classList.toggle('done', on);
-      li.querySelector<HTMLInputElement>('input')!.checked = on;
+    const finished = levels.map((l) => l.missions.every((mi) => isDone(mi, done)));
+    let cur = finished.indexOf(false);
+    const all = cur === -1;
+    if (all) cur = levels.length - 1;
+    if (viewing < 0) viewing = cur;
+    const L = levels[cur];
+    $<HTMLImageElement>('[data-road-img]').src = `/mascot/vax-${L.face}.webp`;
+    $('[data-road-name]').textContent = L.name;
+    $('[data-road-say]').textContent = all ? T.road.done : L.say;
+    $('[data-road-count]').textContent = `${T.road.level} ${cur + 1} ${T.road.of} ${levels.length}`;
+    $$('[data-road-node]').forEach((li) => {
+      const i = Number(li.dataset.roadNode);
+      li.className = finished[i] ? 'done' : i === cur ? 'cur' : i > cur ? 'locked' : '';
+      li.querySelector('button')!.setAttribute('aria-pressed', String(i === viewing));
     });
-    $('[data-check-count]').textContent = `${n} ${T.of} ${checklist.length}`;
-    $('[data-check-bar]').style.width = `${Math.max(4, (n / checklist.length) * 100)}%`;
-    const next = checklist.find((c) => !done.has(c.id));
+    $$('[data-road-level]').forEach((box) => {
+      const i = Number(box.dataset.roadLevel);
+      box.hidden = i !== viewing;
+      box.querySelector<HTMLElement>('[data-road-locked]')!.hidden = !(i > cur);
+      levels[i].missions.forEach((mi) => {
+        const li = box.querySelector<HTMLElement>(`[data-mission="${mi.id}"]`)!;
+        const on = isDone(mi, done);
+        li.classList.toggle('done', on);
+        const input = li.querySelector('input')!;
+        input.checked = on;
+        if (!mi.auto) input.disabled = i > cur;
+        const pr = li.querySelector('[data-progress]');
+        if (pr && mi.auto) pr.textContent = ` · ${Math.min(metrics[mi.auto[0]] ?? 0, mi.auto[1])}/${mi.auto[1]}`;
+      });
+    });
+    // "Your next step" banner = first unfinished mission of the current level.
+    const next = L.missions.find((mi) => !isDone(mi, done));
     const btn = $('[data-next-go]');
     if (next) {
       $('[data-next-text]').textContent = next.text;
-      btn.hidden = false;
       btn.dataset.go = next.tab;
       if (next.lesson) btn.dataset.lesson = next.lesson;
       else delete btn.dataset.lesson;
     } else {
       $('[data-next-text]').textContent = T.allDone;
       btn.dataset.go = 'academy';
-      btn.dataset.lesson = 'video';
+      delete btn.dataset.lesson;
     }
   }
-  $$('[data-check]').forEach((li) =>
+  $$<HTMLButtonElement>('[data-road-show]').forEach((b) =>
+    b.addEventListener('click', () => {
+      viewing = Number(b.dataset.roadShow);
+      renderRoad();
+    }),
+  );
+  $$('[data-mission]').forEach((li) =>
     li.querySelector('input')!.addEventListener('change', (e) => {
       const done = doneSet();
-      if ((e.target as HTMLInputElement).checked) done.add(li.dataset.check!);
-      else done.delete(li.dataset.check!);
+      if ((e.target as HTMLInputElement).checked) done.add(li.dataset.mission!);
+      else done.delete(li.dataset.mission!);
       store.set(checkKey(), JSON.stringify([...done]));
-      renderChecklist();
+      viewing = -1;
+      renderRoad();
     }),
   );
 
@@ -474,8 +491,8 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
     mainLink = active ? `${location.origin}/r/${active.slug}` : location.origin;
     $('[data-main-link]').textContent = mainLink.replace(/^https?:\/\//, '');
 
-    auto = { link: data.links.length > 1, invite: data.team > 0 };
-    renderChecklist();
+    metrics = { links: data.links.length - 1, clicks, leads, sales, team: data.team, channels: data.links.filter((l) => l.leads > 0).length };
+    renderRoad();
     const have: [string, number, number][] = [
       ['🔗', data.links.length - 1, 1],
       ['👆', clicks, 1],
@@ -487,7 +504,6 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
       ['🏆', data.team, 5],
     ];
     renderBadges(have.map(([icon, n, goal], i) => [icon, T.badges[i][0], T.badges[i][1], n, goal]));
-    renderRank(leads, sales);
     renderPrompts();
 
     $('[data-links]').replaceChildren(
@@ -628,13 +644,34 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
   .mylink { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
   .mylink code, [data-invite] { display: block; font: 600 16px var(--mono); margin-top: 4px; word-break: break-all; }
   [data-invite] { background: var(--bg); padding: 12px; border-radius: 10px; margin: 12px 0; font-size: 14px; }
-  .rank { display: flex; gap: 18px; align-items: center; margin-top: 12px; }
-  .rank img { width: 96px; height: auto; flex: none; }
-  .rank-body { flex: 1; min-width: 0; }
-  .rank h2 { margin: 2px 0 4px; }
-  .rank-say { margin: 0 0 10px; font-style: italic; }
-  .rank-bar { height: 8px; background: var(--surf2); border-radius: 99px; overflow: hidden; margin-bottom: 6px; }
-  .rank-bar span { display: block; height: 100%; width: 4%; background: var(--acc); border-radius: 99px; transition: width 0.6s ease; }
+  .road { margin-top: 12px; }
+  .road-head { display: flex; gap: 16px; align-items: center; }
+  .road-head img { width: 88px; height: auto; flex: none; }
+  .road-who h2 { margin: 2px 0 4px; }
+  .road-say { margin: 0; font-style: italic; color: var(--mut); }
+  .road-path { list-style: none; padding: 0; margin: 18px 0 12px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; position: relative; }
+  .road-path::before { content: ''; position: absolute; left: 8%; right: 8%; top: 17px; height: 3px; background: var(--surf2); border-radius: 3px; }
+  .road-path li { position: relative; text-align: center; }
+  .road-path button { background: none; border: 0; padding: 0; cursor: pointer; color: var(--mut); font: inherit; display: grid; justify-items: center; gap: 4px; width: 100%; }
+  .road-path .dot { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: var(--surf2); border: 2px solid var(--line); position: relative; z-index: 1; }
+  .road-path small { font-size: 11px; line-height: 1.2; }
+  .road-path li.done .dot { background: var(--acc); border-color: var(--acc); color: var(--dark-ink); }
+  .road-path li.done .dot::after { content: '✓'; position: absolute; font-size: 12px; right: -4px; top: -4px; background: var(--ink); color: var(--bg); width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; }
+  .road-path li.cur .dot { border-color: var(--acc); color: var(--accText); box-shadow: 0 0 0 5px color-mix(in srgb, var(--acc) 25%, transparent); animation: road-pulse 2s ease-in-out infinite; }
+  .road-path li.cur small { color: var(--ink); font-weight: 700; }
+  .road-path li.locked .dot { opacity: 0.55; }
+  .road-path button[aria-pressed='true'] small { text-decoration: underline; text-underline-offset: 3px; }
+  @keyframes road-pulse { 50% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--acc) 10%, transparent); } }
+  @media (prefers-reduced-motion: reduce) { .road-path li.cur .dot { animation: none; } }
+  .missions { list-style: none; padding: 0; margin: 0 0 8px; display: grid; gap: 8px; }
+  .missions li { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; background: var(--surf2); border-radius: 12px; padding: 12px 14px; }
+  .missions label { display: flex; gap: 10px; align-items: center; font-weight: 600; cursor: pointer; }
+  .missions input { width: 18px; height: 18px; accent-color: var(--acc); flex: none; }
+  .missions em { font-style: normal; color: var(--accText); font-weight: 700; }
+  .missions .hint { grid-column: 1 / -1; margin: 0; color: var(--mut); font-size: 13px; }
+  .missions button { grid-row: 1; grid-column: 2; }
+  .missions li.done label span { text-decoration: line-through; color: var(--mut); }
+  @media (max-width: 560px) { .road-path small { display: none; } .missions li { grid-template-columns: 1fr; } .missions button { grid-row: auto; grid-column: 1; justify-self: start; } }
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 12px; }
   .stats b { display: block; font-size: 34px; letter-spacing: -0.02em; }
   .stats span { color: var(--mut); font-size: 14px; }
