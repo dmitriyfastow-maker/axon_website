@@ -545,6 +545,7 @@ const en = {
     "error": "Couldn't send. Please try again."
   },
   "vax": {
+    "hint": "Psst… tap me 👆",
     "pricing": "I started with the smallest package. Now I have two ovens and a nap schedule.",
     "faq": "Didn’t find your answer? Write to us — a real human replies, not me.",
     "success": "Vax is already running to read your message.",

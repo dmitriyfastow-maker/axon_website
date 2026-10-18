@@ -98,6 +98,7 @@ const jsonLd = {
   <body>
     <slot />
     <script type="application/json" id="vax-jokes" set:html={JSON.stringify(getDict(lang).vax.poke)} />
+    <script type="application/json" id="vax-hint" set:html={JSON.stringify(getDict(lang).vax.hint)} />
     <script>
       // Theme toggle, mobile menu, language memory, contact form and accordions — on every page.
       import '../scripts/main';

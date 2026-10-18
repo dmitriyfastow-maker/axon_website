@@ -4,6 +4,11 @@
 
 export const OFFERS = [
   {
+    id: 'all',
+    target: '/',
+    text: 'Vaxo — everything a small business needs to get more customers with AI, in one place: done-for-you services (AI chat assistant that answers customers 24/7, websites, automations, Google reviews, content — starter packages from $149, bigger projects from $800, monthly support), ready-made templates ($9–$67, instant download), free tools (lost-leads and pricing calculators) and partner offers. The Vaxo team does all the work.',
+  },
+  {
     id: 'start',
     target: '/start/',
     text: 'Vaxo starter packages for small businesses: an AI chat assistant that answers customers 24/7 ($249), a one-page website ($199) or one business automation ($149). Delivered within 7 days, the Vaxo team does all the work.',
@@ -24,6 +29,32 @@ export const OFFERS = [
 export type Prompt = { id: string; cat: string; title: string; text: string };
 
 export const PROMPTS: Prompt[] = [
+  {
+    id: 'opportunities',
+    cat: 'mindset',
+    title: 'Find hidden opportunities around me',
+    text: `Act as my sharp, practical business mentor. I want to train my "entrepreneur's eyes".
+What I can offer people: {offer}
+My link: {link}
+My life right now: [city / country, my job or studies, my hobbies, the businesses and people I know — hairdresser, gym, uncle with a shop, friends online, etc.]
+1) List 15 concrete opportunities around me where this could solve a real problem — for each: who, what problem I can probably see, which direction it fits (done-for-you service, ready template, partner offer, or inviting this person to become a partner too).
+2) Mark the 3 easiest to try THIS week and explain why.
+3) For each of those 3: the very first small action (under 15 minutes) and what I would say in my own words.
+4) One non-obvious idea most people would miss.
+Be specific to my situation, no generic advice like "post more".`,
+  },
+  {
+    id: 'niche',
+    cat: 'mindset',
+    title: 'Find my niche goldmine',
+    text: `Help me choose one niche where I can become "the person who knows how AI helps" this type of business.
+What I can offer: {offer}
+What I know well: [industries I worked in, hobbies, places I go often, people I know]
+1) Suggest 5 niches (e.g. beauty salons, cleaning, dentists, gyms, car repair) that fit my background — for each: typical owner's daily pains, how they get clients now, what they would happily pay to fix.
+2) Pick the best one for me and explain why.
+3) Give me a 7-day plan to become known in this niche: where owners hang out online and offline, 5 content ideas that show I understand their world, 3 conversation starters.
+4) Show how one client in this niche can bring income in several ways (service + templates + referrals to other owners).`,
+  },
   {
     id: 'factory',
     cat: 'video',

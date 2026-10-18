@@ -2,12 +2,12 @@
 // One AI prompt in the partner cabinet: the page script fills in the offer and link, and sets the open links.
 import type { Prompt } from '../data/ai-toolkit';
 
-interface Props { prompt: Prompt; open?: boolean; title?: string; labels?: { open: string; copy: string } }
-const { prompt, open = false, title = prompt.title, labels = { open: 'Open in Claude', copy: 'Copy' } } = Astro.props;
+interface Props { prompt: Prompt; open?: boolean; title?: string; labels?: { open: string; copy: string; show?: string; hide?: string } }
+const { prompt, open = false, title = prompt.title, labels = { open: 'Open in Claude', copy: 'Copy', show: 'Open', hide: 'Close' } } = Astro.props;
 ---
 
 <details class="pc" data-prompt={prompt.id} data-cat={prompt.cat} open={open}>
-  <summary>{title}</summary>
+  <summary><span>{title}</span><span class="tog"><span class="t-show">{labels.show ?? 'Open'} ▾</span><span class="t-hide">{labels.hide ?? 'Close'} ▴</span></span></summary>
   <pre data-tpl={prompt.text}>{prompt.text}</pre>
   <div class="pc-btns">
     <a class="pc-main" data-open="claude" href="https://claude.ai/new" target="_blank" rel="noopener">{labels.open}</a>
@@ -22,8 +22,11 @@ const { prompt, open = false, title = prompt.title, labels = { open: 'Open in Cl
   .pc[open] { border-color: color-mix(in srgb, var(--acc) 60%, var(--line)); }
   summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
   summary::-webkit-details-marker { display: none; }
-  summary::after { content: '+'; color: var(--accText); font-weight: 700; }
-  .pc[open] summary::after { content: '–'; }
+  summary { align-items: center; }
+  summary:hover .tog { background: var(--acc); color: var(--dark-ink); border-color: var(--acc); }
+  .tog { flex: none; font-size: 13px; font-weight: 700; color: var(--accText); border: 1px solid color-mix(in srgb, var(--acc) 55%, var(--line)); border-radius: 999px; padding: 4px 10px; transition: background 0.15s; white-space: nowrap; }
+  .t-hide, .pc[open] .t-show { display: none; }
+  .pc[open] .t-hide { display: inline; }
   pre { white-space: pre-wrap; font: 13px/1.55 var(--mono); background: var(--bg); padding: 12px; border-radius: 10px; margin: 12px 0; max-height: 320px; overflow: auto; }
   .pc-btns { display: flex; flex-wrap: wrap; gap: 8px; }
   .pc-btns a, .pc-btns button { font: inherit; font-size: 14px; text-decoration: none; background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; }

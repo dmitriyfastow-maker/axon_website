@@ -141,3 +141,4 @@ img[data-vax-poke]:hover { transform: rotate(-4deg) scale(1.04); }
 .vax-pop { position: absolute; z-index: 60; width: 240px; background: var(--acc); color: var(--dark-ink); font-size: 14px; font-weight: 600; line-height: 1.35; padding: 10px 14px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); animation: vax-pop 0.25s ease; pointer-events: none; }
 @keyframes vax-pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .vax-wiggle, .vax-pop { animation: none; } }
+.vax-hint { position: absolute; z-index: 59; width: 170px; text-align: center; background: var(--surf); color: var(--ink); border: 1px solid var(--acc); font-size: 13px; font-weight: 600; padding: 7px 10px; border-radius: 999px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12); animation: vax-pop 0.3s ease; pointer-events: none; }

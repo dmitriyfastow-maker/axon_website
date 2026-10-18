@@ -7,6 +7,7 @@ import { LANGS, type Lang } from '../i18n';
 import { CABINET } from '../i18n/cabinet';
 import { OFFERS, PROMPTS } from '../data/ai-toolkit';
 import { CHECKLIST, LESSONS } from '../data/academy';
+import { RATES } from '../data/partners';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -30,6 +31,19 @@ const RANK = {
   ua: { title: 'Ваше звання', next: 'Наступне звання', max: 'Найвище звання. Повага.', note: 'Звання — для задоволення, ставки однакові з першого дня.', need: ['1 заявка', '1 продаж', '5 продажів', '20 продажів'],
         names: ['Єнот-новачок', 'Мисливець за заявками', 'Пекар угод', 'Майстер-єнот', 'Легенда Vaxo'],
         says: ['«Усі починають звідси. Надішліть своє посилання сьогодні хоча б одній людині.»', '«Перша заявка! Тепер перетворимо її на продаж.»', '«Перший продаж! Печу вам торт.»', '«П\'ять продажів. Сусіди починають про вас говорити.»', '«Легенда. Тепер я питаю поради у ВАС.»'] },
+}[lang];
+// Income map on top of the academy: every direction a partner earns from (rates from data/partners.ts).
+const r = RATES;
+const MAP = {
+  en: { h: 'Your income map — earn from every direction', p: 'One person you talk to can bring money in several ways at once. Think about all four.',
+        rows: [['🛠', 'Agency services', `${r.agencyOwn}% of your client · ${r.agencyGiven}% of our lead you close · +${r.agencyRenewal}% of every renewal for life`],
+               ['📦', 'Our templates', `${r.products}% of every sale`], ['🤝', 'Partner offers', `${r.offers}% of the payout we receive (soon)`], ['👥', 'Your team', `+${r.team}% on top of your partners’ earnings`]] },
+  ru: { h: 'Карта вашего дохода — зарабатывайте со всех направлений', p: 'Один человек, с которым вы поговорили, может принести деньги сразу несколькими способами. Думайте обо всех четырёх.',
+        rows: [['🛠', 'Услуги агентства', `${r.agencyOwn}% с вашего клиента · ${r.agencyGiven}% с нашей заявки, которую вы закрыли · +${r.agencyRenewal}% с каждого продления навсегда`],
+               ['📦', 'Наши шаблоны', `${r.products}% с каждой продажи`], ['🤝', 'Офферы партнёров', `${r.offers}% от выплаты, которую получаем мы (скоро)`], ['👥', 'Ваша команда', `+${r.team}% сверху от заработка ваших партнёров`]] },
+  ua: { h: 'Карта вашого доходу — заробляйте з усіх напрямів', p: 'Одна людина, з якою ви поговорили, може принести гроші одразу кількома способами. Думайте про всі чотири.',
+        rows: [['🛠', 'Послуги агентства', `${r.agencyOwn}% з вашого клієнта · ${r.agencyGiven}% з нашої заявки, яку ви закрили · +${r.agencyRenewal}% з кожного продовження назавжди`],
+               ['📦', 'Наші шаблони', `${r.products}% з кожного продажу`], ['🤝', 'Офери партнерів', `${r.offers}% від виплати, яку отримуємо ми (скоро)`], ['👥', 'Ваша команда', `+${r.team}% зверху від заробітку ваших партнерів`]] },
 }[lang];
 const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
 ---
@@ -174,6 +188,11 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
       <div data-panel="academy" hidden>
         <h1>{c.academy.h1}</h1>
         <p class="mut">{c.academy.p}</p>
+        <div class="incmap card">
+          <h2>{MAP.h}</h2>
+          <p class="mut">{MAP.p}</p>
+          <div class="incrows">{MAP.rows.map(([ic, name, how]) => <div class="incrow"><span class="lic">{ic}</span><div><b>{name}</b><small>{how}</small></div></div>)}</div>
+        </div>
         <div class="offerpick card"><label>{c.academy.promote}<select data-offer>{offerSelect.map((o) => <option value={o.id}>{o.name}</option>)}</select></label></div>
         <div class="lessons">
           {LESSONS[lang].map((l, i) => (
@@ -181,6 +200,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
               <summary>
                 <span class="lic">{l.icon}</span>
                 <span class="lt"><b>{i}. {l.title}</b><small>{l.time} · {l.goal}</small></span>
+                <span class="tog"><span class="t-show">{labels.show} ▾</span><span class="t-hide">{labels.hide} ▴</span></span>
               </summary>
               <ol class="lsteps">{l.steps.map((s) => <li>{s}</li>)}</ol>
               {l.tip && <p class="tip">⚠️ {l.tip}</p>}
@@ -303,7 +323,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
   // ---- prompts ----
   let mainLink = location.origin;
   let inviteLink = location.origin + '/partners/';
-  let offerId = store.get('vaxo_offer') ?? 'start';
+  let offerId = store.get('vaxo_offer') ?? 'all';
   const OPEN: Record<string, (q: string) => string> = {
     claude: (q) => `https://claude.ai/new?q=${encodeURIComponent(q)}`,
     chatgpt: (q) => `https://chatgpt.com/?q=${encodeURIComponent(q)}`,
@@ -658,6 +678,18 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, rank: RANK };
   .lessons { display: grid; gap: 10px; }
   .lesson summary { cursor: pointer; list-style: none; display: flex; gap: 14px; align-items: center; }
   .lesson summary::-webkit-details-marker { display: none; }
+  .lesson summary .lt { flex: 1; min-width: 0; }
+  .lesson summary:hover { color: var(--accText); }
+  .lesson .tog { flex: none; font-size: 13px; font-weight: 700; color: var(--accText); border: 1px solid color-mix(in srgb, var(--acc) 55%, var(--line)); border-radius: 999px; padding: 5px 12px; white-space: nowrap; transition: background 0.15s; }
+  .lesson summary:hover .tog { background: var(--acc); color: var(--dark-ink); border-color: var(--acc); }
+  .lesson .t-hide, .lesson[open] .t-show { display: none; }
+  .lesson[open] .t-hide { display: inline; }
+  .incmap { margin: 16px 0; }
+  .incmap h2 { margin: 0 0 4px; }
+  .incrows { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 12px; }
+  .incrow { display: flex; gap: 10px; align-items: flex-start; background: var(--surf2); border-radius: 12px; padding: 12px; }
+  .incrow b { display: block; }
+  .incrow small { color: var(--mut); font-size: 13px; }
   .lic { font-size: 28px; width: 48px; height: 48px; flex: none; display: grid; place-items: center; background: var(--bg); border-radius: 14px; }
   .lt { display: grid; gap: 2px; }
   .lt b { font-size: 18px; }
