@@ -314,10 +314,10 @@
     ]
   ],
   "NAV_HREFS": [
-    "#method",
-    "#cases",
-    "#pricing",
     "#services",
+    "#cases",
+    "/tools/",
+    "/shop/",
     "/partners/"
   ]
 }

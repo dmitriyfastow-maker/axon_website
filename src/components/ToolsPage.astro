@@ -1,0 +1,255 @@
+---
+// Free tools (Decision 09, step 2): two calculators that bring visitors to a paid service or a template.
+// Work fully in the browser, no paid AI. Vax the raccoon reacts to the result.
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Contact from './Contact.astro';
+import Footer from './Footer.astro';
+import { getDict, langPath, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = getDict(lang);
+const home = langPath(lang);
+
+const C = {
+  en: {
+    quest: 'Business check-up with Vax', steps: ['Count your losses', 'Find a fair price', 'Leave a request — we’ll go through your numbers together'], done: 'done', questOk: '“Two out of three! One step left — and I’ll look at your numbers myself.”', questStart: '“Change any number above — I’ll keep score.”',
+    title: 'Free tools for small business', eyebrow: 'Free tools · no sign-up',
+    h1: 'Two calculators that show where your money leaks',
+    sub: 'Vax the raccoon runs a small bakery and made every mistake on this page. Count yours in one minute.',
+    t1: 'How much do unanswered messages cost you?',
+    t1sub: 'Late or missed replies send customers to competitors. Count the loss.',
+    leads: 'Inquiries per month', late: 'Answered late or never, %', close: 'Of answered inquiries become customers, %', order: 'Average order, $',
+    lostM: 'You lose about', perMonth: 'per month', perYear: 'per year',
+    fix1: 'An AI chat on your website answers in seconds, day and night, and knows your prices. One-time setup — $249.',
+    payback: 'At this loss it pays back in', days: 'days',
+    cta1: 'Get an AI chat →', vaxBad: '“That’s my rent!”', vaxOk: '“Not bad. Keep it that way.”',
+    t2: 'How much should you charge?',
+    t2sub: 'Many owners guess the price — and work for free. Calculate a fair one.',
+    income: 'Income you want per month, $', costs: 'Business costs per month, $', hours: 'Paid working hours per week', perJob: 'Hours one job takes',
+    hourly: 'Your minimum hourly rate', jobPrice: 'Price per job', range: 'recommended range',
+    fix2: 'Want ready price lists and quotes? The Service Pricing & Quote Calculator template — $12.',
+    cta2: 'Open the shop →', vaxLow: '“You’re working almost for free!”', vaxFair: '“Now that’s a fair price.”', note: 'Estimates for guidance, not a promise of results.',
+  },
+  ru: {
+    quest: 'Чек-ап бизнеса с Vax', steps: ['Посчитать потери', 'Найти честную цену', 'Оставить заявку — разберём ваши цифры вместе'], done: 'готово', questOk: '«Два из трёх! Остался один шаг — и я сам посмотрю ваши цифры.»', questStart: '«Поменяйте любое число в калькуляторах — я веду счёт.»',
+    title: 'Бесплатные инструменты для малого бизнеса', eyebrow: 'Бесплатно · без регистрации',
+    h1: 'Два калькулятора, которые покажут, где утекают деньги',
+    sub: 'Енот Vax держит маленькую пекарню и совершил все ошибки с этой страницы. Посчитайте свои за минуту.',
+    t1: 'Сколько стоят вам неотвеченные сообщения?',
+    t1sub: 'Поздний ответ или его отсутствие — и клиент уходит к конкуренту. Посчитайте потери.',
+    leads: 'Обращений в месяц', late: 'Отвечаете поздно или никогда, %', close: 'Из отвеченных становятся клиентами, %', order: 'Средний чек, $',
+    lostM: 'Вы теряете примерно', perMonth: 'в месяц', perYear: 'в год',
+    fix1: 'ИИ-чат на сайте отвечает за секунды, днём и ночью, и знает ваши цены. Настройка один раз — $249.',
+    payback: 'При таких потерях окупится за', days: 'дн.',
+    cta1: 'Хочу ИИ-чат →', vaxBad: '«Это же моя аренда!»', vaxOk: '«Неплохо. Так держать.»',
+    t2: 'Сколько брать за свою услугу?',
+    t2sub: 'Многие ставят цену наугад — и работают бесплатно. Посчитайте честную.',
+    income: 'Желаемый доход в месяц, $', costs: 'Расходы бизнеса в месяц, $', hours: 'Оплачиваемых часов в неделю', perJob: 'Часов на один заказ',
+    hourly: 'Ваша минимальная ставка в час', jobPrice: 'Цена за заказ', range: 'рекомендуемый диапазон',
+    fix2: 'Нужны готовые прайс-листы и сметы? Шаблон «Калькулятор цен и смет» — $12.',
+    cta2: 'В магазин →', vaxLow: '«Да вы почти бесплатно работаете!»', vaxFair: '«Вот это честная цена.»', note: 'Расчёт ориентировочный, это не обещание результата.',
+  },
+  ua: {
+    quest: 'Чек-ап бізнесу з Vax', steps: ['Порахувати втрати', 'Знайти чесну ціну', 'Залишити заявку — розберемо ваші цифри разом'], done: 'готово', questOk: '«Два з трьох! Лишився один крок — і я сам подивлюся ваші цифри.»', questStart: '«Змініть будь-яке число в калькуляторах — я веду рахунок.»',
+    title: 'Безкоштовні інструменти для малого бізнесу', eyebrow: 'Безкоштовно · без реєстрації',
+    h1: 'Два калькулятори, які покажуть, де витікають гроші',
+    sub: 'Єнот Vax тримає маленьку пекарню і зробив усі помилки з цієї сторінки. Порахуйте свої за хвилину.',
+    t1: 'Скільки коштують вам повідомлення без відповіді?',
+    t1sub: 'Пізня відповідь або її відсутність — і клієнт іде до конкурента. Порахуйте втрати.',
+    leads: 'Звернень на місяць', late: 'Відповідаєте пізно або ніколи, %', close: 'З відповіданих стають клієнтами, %', order: 'Середній чек, $',
+    lostM: 'Ви втрачаєте приблизно', perMonth: 'на місяць', perYear: 'на рік',
+    fix1: 'ШІ-чат на сайті відповідає за секунди, вдень і вночі, і знає ваші ціни. Налаштування один раз — $249.',
+    payback: 'За таких втрат окупиться за', days: 'дн.',
+    cta1: 'Хочу ШІ-чат →', vaxBad: '«Це ж моя оренда!»', vaxOk: '«Непогано. Так тримати.»',
+    t2: 'Скільки брати за свою послугу?',
+    t2sub: 'Багато хто ставить ціну навмання — і працює безкоштовно. Порахуйте чесну.',
+    income: 'Бажаний дохід на місяць, $', costs: 'Витрати бізнесу на місяць, $', hours: 'Оплачуваних годин на тиждень', perJob: 'Годин на одне замовлення',
+    hourly: 'Ваша мінімальна ставка за годину', jobPrice: 'Ціна за замовлення', range: 'рекомендований діапазон',
+    fix2: 'Потрібні готові прайси та кошториси? Шаблон «Калькулятор цін і кошторисів» — $12.',
+    cta2: 'До магазину →', vaxLow: '«Та ви майже безкоштовно працюєте!»', vaxFair: '«Оце чесна ціна.»', note: 'Розрахунок орієнтовний, це не обіцянка результату.',
+  },
+}[lang];
+const path = lang === 'en' ? '/tools/' : `/${lang}/tools/`;
+---
+
+<Base lang={lang} title={`Vaxo — ${C.title}`} description={C.h1} path={path} alts={{ en: '/tools/', ua: '/ua/tools/', ru: '/ru/tools/' }}>
+  <Header lang={lang} t={t} home={home} alts={{ en: '/tools/', ua: '/ua/tools/', ru: '/ru/tools/' }} />
+  <main>
+    <section class="hero">
+      <div class="in">
+        <div class="txt">
+          <div class="eyebrow">{C.eyebrow}</div>
+          <h1>{C.h1}</h1>
+          <p class="sub">{C.sub}</p>
+        </div>
+        <img class="vax-hero" src="/mascot/vax-front.webp" alt="Vax the raccoon" width="278" height="360" data-vax-poke />
+      </div>
+    </section>
+
+    <section class="quest" data-quest>
+      <div class="in qcard">
+        <div class="qhead">
+          <h2>{C.quest}</h2>
+          <span class="qcount"><b data-q-count>0</b>/3</span>
+        </div>
+        <div class="qbar"><span data-q-bar></span></div>
+        <ol class="qsteps">
+          {C.steps.map((x, i) => <li data-q-step={i}><span class="qdot">{i + 1}</span>{x} <em>✓ {C.done}</em></li>)}
+        </ol>
+        <p class="qsay" data-q-say>{C.questStart}</p>
+      </div>
+    </section>
+
+    <section class="tool" id="lost" data-tool="lost">
+      <div class="in card">
+        <div class="head">
+          <h2>{C.t1}</h2>
+          <p>{C.t1sub}</p>
+        </div>
+        <div class="grid">
+          <div class="inputs">
+            <label>{C.leads}<input type="number" min="0" value="60" data-in="leads" /></label>
+            <label>{C.late}<input type="number" min="0" max="100" value="30" data-in="late" /></label>
+            <label>{C.close}<input type="number" min="0" max="100" value="25" data-in="close" /></label>
+            <label>{C.order}<input type="number" min="0" value="80" data-in="order" /></label>
+          </div>
+          <div class="result">
+            <img class="vax" src="/mascot/vax-shocked.webp" alt="" width="202" height="212" data-vax />
+            <div class="bubble" data-bubble>{C.vaxBad}</div>
+            <div class="lbl">{C.lostM}</div>
+            <div class="big"><span data-out="month">$0</span> <small>{C.perMonth}</small></div>
+            <div class="mid"><span data-out="year">$0</span> {C.perYear}</div>
+            <p class="fix">{C.fix1} <span data-out="payback"></span></p>
+            <a class="cta" href="#contact">{C.cta1}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool" id="price" data-tool="price">
+      <div class="in card">
+        <div class="head">
+          <h2>{C.t2}</h2>
+          <p>{C.t2sub}</p>
+        </div>
+        <div class="grid">
+          <div class="inputs">
+            <label>{C.income}<input type="number" min="0" value="2000" data-in="income" /></label>
+            <label>{C.costs}<input type="number" min="0" value="300" data-in="costs" /></label>
+            <label>{C.hours}<input type="number" min="1" value="20" data-in="hours" /></label>
+            <label>{C.perJob}<input type="number" min="0.5" step="0.5" value="3" data-in="perJob" /></label>
+          </div>
+          <div class="result">
+            <img class="vax" src="/mascot/vax-smug.webp" alt="" width="200" height="191" data-vax />
+            <div class="bubble" data-bubble>{C.vaxFair}</div>
+            <div class="lbl">{C.hourly}</div>
+            <div class="big"><span data-out="hourly">$0</span></div>
+            <div class="mid">{C.jobPrice}: <span data-out="job">$0</span> <small>({C.range}: <span data-out="range"></span>)</small></div>
+            <p class="fix">{C.fix2}</p>
+            <a class="cta" href={lang === 'en' ? '/shop/' : `/${lang}/shop/`}>{C.cta2}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <p class="note">{C.note}</p>
+    <Contact t={t} lang={lang} />
+  </main>
+  <Footer t={t} home={home} lang={lang} />
+</Base>
+
+<script is:inline define:vars={{ C }}>
+  const money = (n) => '$' + Math.round(n).toLocaleString('en-US');
+  const val = (root, k) => Math.max(0, parseFloat(root.querySelector(`[data-in="${k}"]`).value) || 0);
+  const out = (root, k, v) => { root.querySelector(`[data-out="${k}"]`).textContent = v; };
+  const lost = document.querySelector('[data-tool="lost"]');
+  const price = document.querySelector('[data-tool="price"]');
+  function calcLost() {
+    const m = val(lost, 'leads') * Math.min(100, val(lost, 'late')) / 100 * Math.min(100, val(lost, 'close')) / 100 * val(lost, 'order');
+    out(lost, 'month', money(m)); out(lost, 'year', money(m * 12));
+    out(lost, 'payback', m > 0 ? `${C.payback} ${Math.max(1, Math.ceil(249 / (m / 30)))} ${C.days}` : '');
+    const bad = m >= 249;
+    lost.querySelector('[data-vax]').src = bad ? '/mascot/vax-shocked.webp' : '/mascot/vax-happy.webp';
+    lost.querySelector('[data-bubble]').textContent = bad ? C.vaxBad : C.vaxOk;
+  }
+  function calcPrice() {
+    const hrs = Math.max(1, val(price, 'hours')) * 4.33;
+    const hourly = (val(price, 'income') + val(price, 'costs')) / hrs;
+    const job = hourly * Math.max(0.5, val(price, 'perJob'));
+    out(price, 'hourly', money(hourly)); out(price, 'job', money(job)); out(price, 'range', `${money(job)} – ${money(job * 1.3)}`);
+    // Under ~$15/hour Vax panics: the owner is underpricing their work.
+    const low = hourly < 15;
+    price.querySelector('[data-vax]').src = low ? '/mascot/vax-shocked.webp' : '/mascot/vax-smug.webp';
+    price.querySelector('[data-bubble]').textContent = low ? C.vaxLow : C.vaxFair;
+  }
+  // Check-up quest: remembers which tools the visitor used (this browser only).
+  const KEY = 'vaxo_quest';
+  const quest = document.querySelector('[data-quest]');
+  let qs = {};
+  try { qs = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+  function renderQuest() {
+    const n = [qs.lost, qs.price, qs.lead].filter(Boolean).length;
+    quest.querySelector('[data-q-count]').textContent = String(n);
+    quest.querySelector('[data-q-bar]').style.width = `${Math.max(4, (n / 3) * 100)}%`;
+    ['lost', 'price', 'lead'].forEach((k, i) => quest.querySelector(`[data-q-step="${i}"]`).classList.toggle('done', !!qs[k]));
+    if (qs.lost && qs.price) quest.querySelector('[data-q-say]').textContent = C.questOk;
+  }
+  function mark(k) { if (qs[k]) return; qs[k] = 1; try { localStorage.setItem(KEY, JSON.stringify(qs)); } catch (e) {} renderQuest(); }
+  // Step 3 counts only when the request was really sent (the success panel appears).
+  const ok = document.querySelector('[data-form-success]');
+  if (ok) new MutationObserver(() => { if (!ok.hidden) mark('lead'); }).observe(ok, { attributes: true, attributeFilter: ['hidden'] });
+  renderQuest();
+  lost.addEventListener('input', () => { calcLost(); mark('lost'); });
+  price.addEventListener('input', () => { calcPrice(); mark('price'); });
+  calcLost(); calcPrice();
+</script>
+
+<style>
+  .in { max-width: 1120px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 32px); }
+  .hero { padding: clamp(40px, 7vw, 88px) 0 24px; }
+  .hero .in { display: flex; align-items: center; gap: 32px; justify-content: space-between; }
+  .eyebrow { color: var(--accText); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: .06em; }
+  h1 { font-size: clamp(32px, 5vw, 56px); line-height: 1.05; letter-spacing: -0.03em; margin: 12px 0 16px; max-width: 760px; }
+  .sub { color: var(--mut); font-size: 18px; max-width: 620px; }
+  .vax-hero { width: clamp(140px, 22vw, 240px); height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.18)); }
+  .tool { padding: 20px 0; }
+  .quest { padding: 8px 0 12px; }
+  .qcard { background: var(--deep); color: var(--deepInk); border-radius: 22px; padding: 22px clamp(18px, 3vw, 28px); }
+  .qhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .qhead h2 { margin: 0; font-size: 20px; }
+  .qcount { font-family: var(--mono); color: var(--acc); font-size: 18px; }
+  .qbar { height: 8px; background: var(--deepLine); border-radius: 99px; margin: 14px 0; overflow: hidden; }
+  .qbar span { display: block; height: 100%; width: 4%; background: var(--acc); border-radius: 99px; transition: width 0.5s ease; }
+  .qsteps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+  .qsteps li { display: flex; align-items: center; gap: 10px; color: var(--deepMut); font-size: 15px; }
+  .qsteps em { display: none; font-style: normal; color: var(--acc); font-size: 13px; }
+  .qsteps li.done { color: var(--deepInk); }
+  .qsteps li.done em { display: inline; }
+  .qdot { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--deepLine); display: grid; place-items: center; font-size: 13px; flex: none; }
+  .qsteps li.done .qdot { background: var(--acc); color: var(--dark-ink); border-color: var(--acc); }
+  .qsay { margin: 14px 0 0; color: var(--deepMut); font-size: 14px; }
+  .card { background: var(--surf); border: 1px solid var(--line); border-radius: 24px; padding: clamp(20px, 4vw, 40px); }
+  .head h2 { font-size: clamp(24px, 3vw, 34px); letter-spacing: -0.02em; margin: 0 0 6px; }
+  .head p { color: var(--mut); margin: 0 0 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .inputs { display: grid; gap: 16px; }
+  label { display: grid; gap: 6px; font-weight: 600; font-size: 15px; }
+  input { font: inherit; font-size: 18px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; box-sizing: border-box; }
+  .result { position: relative; background: var(--surf2); border-radius: 18px; padding: 24px 24px 24px; padding-right: 150px; min-height: 260px; }
+  .vax { position: absolute; right: 8px; bottom: 8px; width: 130px; height: auto; }
+  .bubble { position: absolute; right: 16px; top: 16px; background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 6px 10px; font-size: 13px; font-weight: 600; max-width: 130px; }
+  .lbl { color: var(--mut); font-weight: 600; }
+  .big { font-size: clamp(36px, 5vw, 52px); font-weight: 800; letter-spacing: -0.03em; }
+  .big small, .mid small { font-size: 14px; font-weight: 500; color: var(--mut); }
+  .mid { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+  .fix { color: var(--ink); font-size: 15px; margin: 8px 0 16px; }
+  .cta { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 700; padding: 12px 20px; border-radius: 999px; text-decoration: none; }
+  .note { text-align: center; color: var(--mut); font-size: 13px; margin: 8px 0 40px; }
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr; }
+    .hero .in { flex-direction: column-reverse; align-items: flex-start; }
+    .result { padding-right: 24px; padding-bottom: 150px; }
+    .bubble { top: auto; bottom: 110px; }
+  }
+</style>

@@ -23,8 +23,9 @@ const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.
     </div>
     <div class="card">
       <div class="success" data-form-success hidden>
-        <span class="tick">✓</span>
+        <img class="vax-ok" src="/mascot/vax-happy.webp" alt="Vax" width="120" height="120" loading="lazy" data-vax-poke />
         <p>{f.success}</p>
+        <p class="vax-line">{t.vax.success}</p>
         <button type="button" class="again" data-form-again>{f.again}</button>
       </div>
       <form data-lead-form data-lang={lang} data-copy={JSON.stringify(copy)} novalidate>
@@ -126,6 +127,8 @@ const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.
     place-items: center;
     font-size: 22px;
   }
+  .vax-ok { width: 96px; height: auto; }
+  .vax-line { color: var(--mut); font-style: italic; }
   .success p {
     margin: 0;
     font-size: 20px;

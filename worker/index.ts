@@ -21,6 +21,11 @@ export default {
       url.hostname = 'vaxogroup.com';
       return Response.redirect(url.toString(), 301);
     }
+    // Ukrainian language law (art. 27): visitors from Ukraine get the Ukrainian version by default, unless they picked a language.
+    const country = (request as Request & { cf?: { country?: string } }).cf?.country;
+    if (url.pathname === '/' && request.method === 'GET' && country === 'UA' && !/(?:^|;\s*)vaxo_lang=/.test(request.headers.get('Cookie') || '')) {
+      return Response.redirect(new URL('/ua/' + url.search, url).toString(), 302);
+    }
     const r = url.pathname.match(/^\/r\/([^/]+)\/?$/);
     if (r) return env.LEADS ? handleRedirect(env.LEADS, request, r[1].toLowerCase()) : Response.redirect(new URL('/', url).toString(), 302);
     if (url.pathname.startsWith('/api/partner/')) {

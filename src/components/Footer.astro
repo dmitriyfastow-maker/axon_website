@@ -1,20 +1,23 @@
 ---
-import type { Dict, Lang } from '../i18n';
+import { navHref, type Dict, type Lang } from '../i18n';
 import { NAV_HREFS } from '../data/tiers';
 
 interface Props { t: Dict; home?: string; lang?: Lang }
 const { t, home = '', lang = 'en' } = Astro.props;
-const localize = (href: string) => (href.startsWith('/') ? (lang === 'en' ? href : `/${lang}${href}`) : home + href);
+const F = { en: { examples: 'Examples', start: 'Starter packages', shop: 'Templates shop', login: 'Partner login' },
+            ru: { examples: 'Примеры работ', start: 'Стартовые пакеты', shop: 'Магазин шаблонов', login: 'Вход для партнёров' },
+            ua: { examples: 'Приклади робіт', start: 'Стартові пакети', shop: 'Магазин шаблонів', login: 'Вхід для партнерів' } }[lang];
 ---
 
 <footer class="footer">
   <div class="inner">
     <span class="logo">VAXO<span>.</span></span>
     <nav aria-label="Footer">
-      {t.nav.map((label, i) => <a href={localize(NAV_HREFS[i])}>{label}</a>)}
-      <a href="/start/">Starter packages</a>
-      <a href="/shop/">Templates shop</a>
-      <a href="/partner/">Partner login</a>
+      {t.nav.map((label, i) => <a href={navHref(NAV_HREFS[i], lang, home)}>{label}</a>)}
+      <a href={navHref('/examples/', lang)}>{F.examples}</a>
+      <a href={navHref('/start/', lang)}>{F.start}</a>
+      <a href={navHref('/shop/', lang)}>{F.shop}</a>
+      <a href={navHref('/partner/', lang)}>{F.login}</a>
     </nav>
     <span class="copy">© 2026 {t.footer}</span>
   </div>

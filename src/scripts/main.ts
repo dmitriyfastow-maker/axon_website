@@ -4,6 +4,7 @@ import { initContactForm } from './contact-form';
 import { initLang } from './lang';
 import { initMenu } from './menu';
 import { initTheme } from './theme';
+import { initVaxPoke } from './vax';
 
 initTheme();
 initLang();
@@ -12,3 +13,4 @@ initAccordions();
 initHeroTiers();
 initCasesFilter();
 initContactForm();
+initVaxPoke();

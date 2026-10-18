@@ -1,5 +1,5 @@
 ---
-import { LANGS, langPath, type Lang, type Dict } from '../i18n';
+import { LANGS, langPath, navHref, type Lang, type Dict } from '../i18n';
 import { NAV_HREFS } from '../data/tiers';
 
 interface Props {
@@ -10,9 +10,7 @@ interface Props {
   alts?: Partial<Record<Lang, string>>;
 }
 const { lang, t, home = '', alts } = Astro.props;
-// Page links ("/partners/") get the language prefix; anchors ("#cases") point at the home page.
-const localize = (href: string) => (href.startsWith('/') ? (lang === 'en' ? href : `/${lang}${href}`) : home + href);
-const nav = t.nav.map((label, i) => ({ label, href: localize(NAV_HREFS[i]) }));
+const nav = t.nav.map((label, i) => ({ label, href: navHref(NAV_HREFS[i], lang, home) }));
 const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?.[l] ?? langPath(l) }));
 ---
 

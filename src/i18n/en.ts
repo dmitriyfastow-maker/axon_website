@@ -1,10 +1,10 @@
 // Copy ported verbatim from design/AXON_Landing_v2.dc.html.
 const en = {
   "nav": [
-    "Method",
-    "Cases",
-    "Solutions",
     "Services",
+    "Cases",
+    "Free tools",
+    "Shop",
     "Partners"
   ],
   "eyebrow": "Strategic partner for your growth",
@@ -543,6 +543,21 @@ const en = {
     "invalid": "Enter a valid Telegram, phone or email",
     "sending": "Sending…",
     "error": "Couldn't send. Please try again."
+  },
+  "vax": {
+    "pricing": "I started with the smallest package. Now I have two ovens and a nap schedule.",
+    "faq": "Didn’t find your answer? Write to us — a real human replies, not me.",
+    "success": "Vax is already running to read your message.",
+    "notFound": "Even raccoons get lost. Let’s go home.",
+    "partners": "Every partner starts as a rookie raccoon. I started by telling my neighbour about Vaxo.",
+    "poke": [
+      "Hey! That tickles.",
+      "My chat answers at 3 AM. I sleep. Best deal ever.",
+      "Ask me about cinnamon rolls. Or conversion rates.",
+      "I made every mistake on this site so you don’t have to.",
+      "Stop poking, start growing!",
+      "I’m not a raccoon. I’m a business consultant in a fur coat."
+    ]
   }
 };
 

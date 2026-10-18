@@ -1,5 +1,6 @@
 ---
 import type { Dict } from '../i18n';
+import VaxSays from './VaxSays.astro';
 
 interface Props { t: Dict }
 const { t } = Astro.props;
@@ -23,6 +24,7 @@ const { t } = Astro.props;
       })
     }
   </div>
+  <VaxSays text={t.vax.faq} face="happy" />
 </section>
 
 <style>

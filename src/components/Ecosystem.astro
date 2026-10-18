@@ -1,0 +1,75 @@
+---
+// Ecosystem strip with Vax the raccoon (Decision 09): one place that sends visitors to every part of Vaxo.
+import type { Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const p = (path: string) => (lang === 'en' ? path : `/${lang}${path}`);
+
+const C = {
+  en: {
+    hi: 'Meet Vax', lead: 'Our raccoon runs a tiny bakery and makes every small-business mistake — so you don’t have to. Pick where to start:',
+    cards: [
+      ['Free tools', 'Count how much missed messages cost you and what to charge. 1 minute, no sign-up.', p('/tools/'), 'happy'],
+      ['Start small', 'AI chat, one-page site or one automation from $149. Ready in 7 days.', p('/start/'), 'smug'],
+      ['Templates', '12 ready-made templates for small business from $9.', p('/shop/'), 'front'],
+      ['Earn with us', 'Recommend Vaxo and earn 20–50% of every sale. Payouts weekly.', p('/partners/'), 'shocked'],
+    ],
+  },
+  ru: {
+    hi: 'Знакомьтесь — Vax', lead: 'Наш енот держит маленькую пекарню и совершает все ошибки малого бизнеса — чтобы не пришлось вам. С чего начнём?',
+    cards: [
+      ['Бесплатные инструменты', 'Посчитайте, сколько теряете на неотвеченных сообщениях и сколько брать за услугу. 1 минута.', p('/tools/'), 'happy'],
+      ['Начать с малого', 'ИИ-чат, сайт-визитка или одна автоматизация от $149. Готово за 7 дней.', p('/start/'), 'smug'],
+      ['Шаблоны', '12 готовых шаблонов для малого бизнеса от $9 (на английском).', p('/shop/'), 'front'],
+      ['Зарабатывайте с нами', 'Рекомендуйте Vaxo и получайте 20–50% с каждой продажи. Выплаты каждую неделю.', p('/partners/'), 'shocked'],
+    ],
+  },
+  ua: {
+    hi: 'Знайомтеся — Vax', lead: 'Наш єнот тримає маленьку пекарню і робить усі помилки малого бізнесу — щоб не довелося вам. З чого почнемо?',
+    cards: [
+      ['Безкоштовні інструменти', 'Порахуйте, скільки втрачаєте на повідомленнях без відповіді і скільки брати за послугу. 1 хвилина.', p('/tools/'), 'happy'],
+      ['Почати з малого', 'ШІ-чат, сайт-візитка або одна автоматизація від $149. Готово за 7 днів.', p('/start/'), 'smug'],
+      ['Шаблони', '12 готових шаблонів для малого бізнесу від $9 (англійською).', p('/shop/'), 'front'],
+      ['Заробляйте з нами', 'Рекомендуйте Vaxo і отримуйте 20–50% з кожного продажу. Виплати щотижня.', p('/partners/'), 'shocked'],
+    ],
+  },
+}[lang];
+---
+
+<section class="eco" id="ecosystem">
+  <div class="in">
+    <div class="intro">
+      <img src="/mascot/vax-front.webp" alt="Vax the raccoon" width="278" height="360" loading="lazy" data-vax-poke />
+      <div>
+        <h2>{C.hi}</h2>
+        <p>{C.lead}</p>
+      </div>
+    </div>
+    <div class="cards">
+      {C.cards.map(([title, text, href, face]) => (
+        <a class="card" href={href}>
+          <img src={`/mascot/vax-${face}.webp`} alt="" width="200" height="200" loading="lazy" />
+          <h3>{title} <span>→</span></h3>
+          <p>{text}</p>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .eco { padding: clamp(32px, 5vw, 64px) 0; }
+  .in { max-width: 1280px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 40px); }
+  .intro { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; }
+  .intro img { width: clamp(90px, 12vw, 140px); height: auto; filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.16)); }
+  h2 { font-size: clamp(28px, 4vw, 44px); letter-spacing: -0.03em; margin: 0 0 8px; }
+  .intro p { color: var(--mut); font-size: 18px; max-width: 640px; margin: 0; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 16px; }
+  .card { position: relative; display: block; background: var(--surf); border: 1px solid var(--line); border-radius: 20px; padding: 22px 22px 24px; padding-right: 96px; color: var(--ink); text-decoration: none; transition: transform 0.2s, border-color 0.2s; min-height: 150px; }
+  .card:hover { transform: translateY(-3px); border-color: var(--acc); }
+  .card img { position: absolute; right: 10px; bottom: 10px; width: 80px; height: auto; }
+  h3 { font-size: 19px; margin: 0 0 8px; }
+  h3 span { color: var(--accText); }
+  .card p { color: var(--mut); font-size: 15px; margin: 0; }
+</style>

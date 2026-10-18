@@ -1,7 +1,7 @@
 ---
 import '../styles/fonts.css';
 import '../styles/global.css';
-import { HTML_LANG, LANGS, OG_LOCALE, langPath, type Lang } from '../i18n';
+import { HTML_LANG, LANGS, OG_LOCALE, getDict, langPath, type Lang } from '../i18n';
 
 interface Props {
   lang: Lang;
@@ -97,5 +97,10 @@ const jsonLd = {
   </head>
   <body>
     <slot />
+    <script type="application/json" id="vax-jokes" set:html={JSON.stringify(getDict(lang).vax.poke)} />
+    <script>
+      // Theme toggle, mobile menu, language memory, contact form and accordions — on every page.
+      import '../scripts/main';
+    </script>
   </body>
 </html>

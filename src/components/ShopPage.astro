@@ -1,0 +1,207 @@
+---
+// Shop: ready-made templates and guides for small businesses (sold via Gumroad).
+// Each product: what = { en, ua, ru } (the templates themselves are in English). Set `url` to the Gumroad link once the store is registered; empty = "Coming soon".
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import CrossSell from './CrossSell.astro';
+import { getDict, langPath, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = getDict(lang);
+const home = langPath(lang);
+const alts = { en: '/shop/', ua: '/ua/shop/', ru: '/ru/shop/' };
+const startHref = lang === 'en' ? '/start/' : `/${lang}/start/`;
+
+const products = [
+  {
+    slug: 'ai-prompt-pack',
+    name: 'AI Prompt Pack for Small Business',
+    price: '$12',
+    format: 'PDF · 13 pages',
+    what: { en: '100 copy-and-paste prompts for ChatGPT, Claude and Gemini: marketing, sales, customer replies, planning.', ua: '100 готових промптів для ChatGPT, Claude і Gemini: маркетинг, продажі, відповіді клієнтам, планування.', ru: '100 готовых промптов для ChatGPT, Claude и Gemini: маркетинг, продажи, ответы клиентам, планирование.' },
+    url: '',
+  },
+  {
+    slug: 'lead-tracker',
+    name: 'Lead & Client Tracker',
+    price: '$9',
+    format: 'Excel / Google Sheets',
+    what: { en: 'A simple CRM spreadsheet: every inquiry, its status and next step, with a summary of where clients come from.', ua: 'Проста CRM-таблиця: кожна заявка, її статус і наступний крок, плюс зведення — звідки приходять клієнти.', ru: 'Простая CRM-таблица: каждая заявка, её статус и следующий шаг, плюс сводка — откуда приходят клиенты.' },
+    url: '',
+  },
+  {
+    slug: 'message-templates',
+    name: '50 Customer Message Templates',
+    price: '$9',
+    format: 'PDF · 11 pages',
+    what: { en: 'Ready texts for inquiries, bookings, quotes, reminders, reviews and complaints. For SMS, WhatsApp, DMs and email.', ua: 'Готові тексти для заявок, запису, кошторисів, нагадувань, відгуків і скарг. Для SMS, WhatsApp, директу та пошти.', ru: 'Готовые тексты для заявок, записи, смет, напоминаний, отзывов и жалоб. Для SMS, WhatsApp, директа и почты.' },
+    url: '',
+  },
+  {
+    slug: 'marketing-workbook',
+    name: '90-Day Marketing Plan Workbook',
+    price: '$12',
+    format: 'Printable PDF',
+    what: { en: 'A fill-in plan to get more customers in the next 90 days — no marketing degree needed.', ua: 'План на 90 днів із полями для заповнення: більше клієнтів без диплома маркетолога.', ru: 'План на 90 дней с полями для заполнения: больше клиентов без диплома маркетолога.' },
+    url: '',
+  },
+  {
+    slug: 'faq-builder',
+    name: 'AI Chatbot FAQ Builder',
+    price: '$12',
+    format: 'PDF · 16 pages',
+    what: { en: 'Write everything your AI assistant needs to answer customers correctly — prices, rules, examples — in one afternoon.', ua: 'Зберіть усе, що потрібно ШІ-помічнику, щоб правильно відповідати клієнтам: ціни, правила, приклади — за один вечір.', ru: 'Соберите всё, что нужно ИИ-помощнику, чтобы правильно отвечать клиентам: цены, правила, примеры — за один вечер.' },
+    url: '',
+  },
+  {
+    slug: 'pricing-calculator',
+    name: 'Service Pricing & Quote Calculator',
+    price: '$12',
+    format: 'Excel · Google Sheets',
+    what: { en: 'Find what one hour of your work really costs, the right price for every service — and turn it into a client quote.', ua: 'Дізнайтеся, скільки насправді коштує година вашої роботи, правильну ціну кожної послуги — і перетворіть її на кошторис для клієнта.', ru: 'Узнайте, сколько на самом деле стоит час вашей работы, правильную цену каждой услуги — и превратите её в смету для клиента.' },
+    url: '',
+  },
+  {
+    slug: 'content-calendar',
+    name: 'Social Media Content Calendar',
+    price: '$9',
+    format: 'Excel · Google Sheets',
+    what: { en: 'Plan a year of posts in one afternoon: 12-month plan with key dates, 52-week planner, 60 post ideas and a dashboard.', ua: 'План постів на рік за один вечір: план на 12 місяців із ключовими датами, планер на 52 тижні, 60 ідей постів і зведення.', ru: 'План постов на год за один вечер: план на 12 месяцев с ключевыми датами, планер на 52 недели, 60 идей постов и сводка.' },
+    url: '',
+  },
+  {
+    slug: 'weekly-kpi',
+    name: 'Weekly Planner & KPI Tracker',
+    price: '$9',
+    format: 'Excel · Google Sheets',
+    what: { en: '15 minutes every Monday: weekly scorecard, task list, 10 review questions and a dashboard with trends and quarters.', ua: '15 хвилин щопонеділка: тижнева таблиця результатів, список задач, 10 питань для розбору і графіки по кварталах.', ru: '15 минут каждый понедельник: недельная таблица результатов, список задач, 10 вопросов для разбора и графики по кварталам.' },
+    url: '',
+  },
+  {
+    slug: 'review-kit',
+    name: 'Customer Review Request Kit',
+    price: '$9',
+    format: 'PDF',
+    what: { en: 'Get more 5-star Google reviews: 16 request scripts, 12 reply templates, printable QR cards and a 30-day tracker.', ua: 'Більше відгуків на 5 зірок у Google: 16 сценаріїв прохання, 12 шаблонів відповідей, QR-картки для друку і трекер на 30 днів.', ru: 'Больше отзывов на 5 звёзд в Google: 16 сценариев просьбы, 12 шаблонов ответов, QR-карточки для печати и трекер на 30 дней.' },
+    url: '',
+  },  {
+    slug: 'onboarding-kit',
+    name: 'Client Onboarding Kit',
+    price: '$9',
+    format: 'PDF',
+    what: { en: 'Start every client right: 7 welcome messages, an intake form, a first-week checklist, a "what to expect" sheet and check-in scripts.', ua: 'Правильний старт із кожним клієнтом: 7 вітальних повідомлень, анкета, чек-лист першого тижня, пам\'ятка «що далі» і сценарії дзвінків.', ru: 'Правильный старт с каждым клиентом: 7 приветственных сообщений, анкета, чек-лист первой недели, памятка «что дальше» и сценарии созвонов.' },
+    url: '',
+  },
+  {
+    slug: 'payment-kit',
+    name: 'Get Paid On Time Kit',
+    price: '$9',
+    format: 'PDF',
+    what: { en: 'Stop chasing unpaid invoices: payment terms, an invoice checklist, 6 polite reminders, replies to common excuses and a tracker.', ua: 'Досить ганятися за неоплаченими рахунками: умови оплати, чек-лист рахунку, 6 ввічливих нагадувань, відповіді на відмовки і трекер.', ru: 'Хватит гоняться за неоплаченными счетами: условия оплаты, чек-лист счёта, 6 вежливых напоминаний, ответы на отговорки и трекер.' },
+    url: '',
+  },
+  {
+    slug: 'job-kit',
+    name: 'Booking & Job Checklist Pack',
+    price: '$9',
+    format: 'PDF',
+    what: { en: 'Every job the same smooth way: a booking checklist, 5 confirmation texts, prep, on-site and handover checklists, follow-ups and a job sheet.', ua: 'Кожне замовлення за одним зрозумілим порядком: чек-лист запису, 5 текстів підтвердження, чек-листи підготовки, роботи й здачі, follow-up і картка замовлення.', ru: 'Каждый заказ по одному понятному порядку: чек-лист записи, 5 текстов подтверждения, чек-листы подготовки, работы и сдачи, follow-up и карта заказа.' },
+    url: '',
+  },
+];
+const bundle = { name: 'All 12 in one bundle', price: '$67', old: '$120', url: '' };
+const C = {
+  en: { title: 'Vaxo — Templates and guides for small businesses', eyebrow: 'Shop', h1: 'Do it yourself, with ready-made templates.',
+        sub: 'Simple tools we use with our own clients. Instant download, from $9. Want us to set it up for you? See', subLink: 'starter packages',
+        buy: 'Buy now →', soon: 'Coming soon', best: 'Best value', bundle: 'All 12 in one bundle', bundleSub: 'Every template above in one download.', getBundle: 'Get the bundle →', langNote: '' },
+  ru: { title: 'Vaxo — Шаблоны и инструкции для малого бизнеса', eyebrow: 'Магазин', h1: 'Сделайте сами — по готовым шаблонам.',
+        sub: 'Простые инструменты, которыми мы пользуемся с нашими клиентами. Скачивание сразу, от $9. Хотите, чтобы мы всё настроили за вас? Смотрите', subLink: 'стартовые пакеты',
+        buy: 'Купить →', soon: 'Скоро', best: 'Выгоднее всего', bundle: 'Все 12 одним набором', bundleSub: 'Все шаблоны выше одной загрузкой.', getBundle: 'Получить набор →', langNote: 'Шаблоны на английском языке.' },
+  ua: { title: 'Vaxo — Шаблони та інструкції для малого бізнесу', eyebrow: 'Магазин', h1: 'Зробіть самі — за готовими шаблонами.',
+        sub: 'Прості інструменти, якими ми користуємося з нашими клієнтами. Завантаження одразу, від $9. Хочете, щоб ми все налаштували за вас? Дивіться', subLink: 'стартові пакети',
+        buy: 'Купити →', soon: 'Незабаром', best: 'Найвигідніше', bundle: 'Усі 12 одним набором', bundleSub: 'Усі шаблони вище одним завантаженням.', getBundle: 'Отримати набір →', langNote: 'Шаблони англійською мовою.' },
+}[lang];
+
+---
+
+<Base lang={lang} title={C.title} description={lang === 'en' ? 'Ready-made templates for small businesses: AI prompts, client tracker, message templates, a 90-day marketing plan, an AI chatbot FAQ builder, a pricing calculator, a social media content calendar, a weekly KPI tracker, a review request kit and a client onboarding kit.' : C.h1} path={alts[lang]} alts={alts}>
+  <Header lang={lang} t={t} home={home} alts={alts} />
+  <main>
+    <section class="hero">
+      <div class="in">
+        <div class="eyebrow">{C.eyebrow}</div>
+        <h1>{C.h1}</h1>
+        <p class="sub">{C.sub} <a href={startHref}>{C.subLink}</a>. {C.langNote}</p>
+      </div>
+    </section>
+
+    <section class="list">
+      <div class="in grid">
+        {products.map((p) => (
+          <article class="card">
+            <img src={`/shop/${p.slug}.jpg`} alt={p.name} width="800" height="450" loading="lazy" />
+            <div class="body">
+              <h2>{p.name}</h2>
+              <div class="fmt">{p.format}</div>
+              <p>{p.what[lang]}</p>
+              <div class="buy">
+                <span class="price">{p.price}</span>
+                {p.url
+                  ? <a class="btn" href={p.url} target="_blank" rel="noopener">{C.buy}</a>
+                  : <span class="btn off">{C.soon}</span>}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="bundle">
+      <div class="in">
+        <div class="box">
+          <div>
+            <div class="eyebrow">{C.best}</div>
+            <h2>{C.bundle}</h2>
+            <p>{C.bundleSub}</p>
+          </div>
+          <div class="buy">
+            <span class="price">{bundle.price} <s>{bundle.old}</s></span>
+            {bundle.url
+              ? <a class="btn" href={bundle.url} target="_blank" rel="noopener">{C.getBundle}</a>
+              : <span class="btn off">{C.soon}</span>}
+          </div>
+        </div>
+      </div>
+    </section>
+    <CrossSell lang={lang} items={['done', 'partner']} />
+  </main>
+  <Footer t={t} home={home} lang={lang} />
+</Base>
+
+
+<style>
+  .in { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+  .hero { padding: 120px 0 40px; }
+  h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0; max-width: 18ch; }
+  .sub { color: var(--mut); font-size: 19px; max-width: 60ch; margin: 0; }
+  .sub a { color: var(--accText); }
+  .list { padding: 24px 0 40px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .card { background: var(--surf); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
+  .card img { width: 100%; height: auto; display: block; border-bottom: 1px solid var(--line); }
+  .body { padding: 20px 24px 24px; display: flex; flex-direction: column; flex: 1; }
+  .card h2 { font-size: 20px; margin: 0 0 4px; }
+  .fmt { font-family: var(--mono); font-size: 13px; color: var(--mut); margin-bottom: 10px; }
+  .card p { color: var(--mut); margin: 0 0 16px; flex: 1; }
+  .buy { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .price { font-size: 28px; font-weight: 700; color: var(--accText); }
+  .price s { font-size: 16px; font-weight: 400; color: var(--mut); }
+  .btn { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 600; padding: 12px 20px; border-radius: 999px; text-decoration: none; white-space: nowrap; }
+  .btn.off { background: transparent; color: var(--mut); border: 1px solid var(--line); cursor: default; }
+  .bundle { padding: 0 0 80px; }
+  .box { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 24px; }
+  .box h2 { font-size: 26px; margin: 8px 0 4px; }
+  .box p { color: var(--mut); margin: 0; }
+</style>

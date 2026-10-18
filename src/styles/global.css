@@ -132,3 +132,12 @@ img {
     transition: none !important;
   }
 }
+
+/* Vax the raccoon: clickable mascot + joke pop-up (scripts/vax.ts) */
+img[data-vax-poke] { cursor: pointer; transition: transform 0.2s; }
+img[data-vax-poke]:hover { transform: rotate(-4deg) scale(1.04); }
+.vax-wiggle { animation: vax-wiggle 0.5s ease; }
+@keyframes vax-wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-10deg); } 50% { transform: rotate(8deg); } 75% { transform: rotate(-4deg); } }
+.vax-pop { position: absolute; z-index: 60; width: 240px; background: var(--acc); color: var(--dark-ink); font-size: 14px; font-weight: 600; line-height: 1.35; padding: 10px 14px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); animation: vax-pop 0.25s ease; pointer-events: none; }
+@keyframes vax-pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .vax-wiggle, .vax-pop { animation: none; } }

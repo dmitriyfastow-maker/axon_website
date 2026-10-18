@@ -4,6 +4,7 @@
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
+import VaxSays from './VaxSays.astro';
 import { getDict, langPath, type Lang } from '../i18n';
 import { CALC, PARTNERS_TEXT, RATES } from '../data/partners';
 
@@ -64,6 +65,7 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
         <div class="grid four">
           {p.alone.map(([icon, h, x]) => <article class="card feat"><span class="ic">{icon}</span><h3>{h}</h3><p>{x}</p></article>)}
         </div>
+        <VaxSays text={t.vax.partners} face="smug" />
       </div>
     </section>
 
@@ -188,7 +190,6 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
 </Base>
 
 <script>
-  import '../scripts/main';
 
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fmt = (n: number) => Math.round(n).toLocaleString('en-US');

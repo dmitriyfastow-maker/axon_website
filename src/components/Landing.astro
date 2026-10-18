@@ -2,6 +2,7 @@
 import { getDict, type Lang } from '../i18n';
 import Header from './Header.astro';
 import Hero from './Hero.astro';
+import Ecosystem from './Ecosystem.astro';
 import Method from './Method.astro';
 import Why from './Why.astro';
 import Cases from './Cases.astro';
@@ -21,6 +22,7 @@ const t = getDict(lang);
 <Header lang={lang} t={t} />
 <main>
   <Hero t={t} />
+  <Ecosystem lang={lang} />
   <Method t={t} />
   <Why t={t} />
   <Cases t={t} />
@@ -33,6 +35,3 @@ const t = getDict(lang);
 </main>
 <Footer t={t} lang={lang} />
 
-<script>
-  import '../scripts/main';
-</script>

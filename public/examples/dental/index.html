@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,follow">
+<title>Bright Oak Family Dental | Your City</title>
+<style>
+:root{--a:#2563eb;--ink:#1b1f24;--mute:#5b6470;--bg:#fff;--soft:#f4f6f8}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg)}
+.w{max-width:1040px;margin:0 auto;padding:0 16px}
+.draft{background:#fff4d6;color:#6b4e00;text-align:center;font-size:13px;padding:6px 16px}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 0;gap:12px}
+.logo{font-weight:800;font-size:20px}.logo span{color:var(--a)}
+.call{background:var(--a);color:#fff;text-decoration:none;padding:10px 16px;border-radius:10px;font-weight:700;white-space:nowrap}
+.hero{background:var(--soft);padding:56px 0}.hero h1{font-size:clamp(28px,5vw,44px);line-height:1.15;margin:0 0 12px}
+.hero p{font-size:18px;color:var(--mute);max-width:620px;margin:0 0 24px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}.badges span{background:#fff;border:1px solid #dde2e8;border-radius:99px;padding:4px 12px;font-size:14px}
+.btn{display:inline-block;background:var(--a);color:#fff;text-decoration:none;padding:14px 22px;border-radius:12px;font-weight:700}
+section{padding:48px 0}h2{font-size:28px;margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{border:1px solid #e3e7ec;border-radius:14px;padding:18px}.card h3{margin:0 0 6px;font-size:18px}.card p{margin:0;color:var(--mute)}
+.ph{background:repeating-linear-gradient(45deg,#eef1f4,#eef1f4 10px,#e6eaee 10px,#e6eaee 20px);border-radius:14px;aspect-ratio:4/3;display:grid;place-items:center;color:#7a8490;font-size:14px;text-align:center;padding:8px}
+.special{background:var(--a);color:#fff;border-radius:18px;padding:28px}.special p{color:#ffffffde}
+form{display:grid;gap:12px;max-width:520px}input,select,textarea{font:inherit;padding:12px;border:1px solid #cfd6de;border-radius:10px;width:100%}
+footer{background:var(--ink);color:#c9d1d9;padding:28px 0;font-size:14px}footer a{color:#fff}
+</style></head><body>
+<div class="draft">Example design by Vaxo. Fictional business: names, prices and contacts are made up.</div>
+<div class="w"><header><div class="logo">Bright Oak Family <span>Dental</span></div><a class="call" href="tel:(555) 010-0300">Call (555) 010-0300</a></header></div>
+<div class="hero"><div class="w">
+<h1>Gentle dental care for the whole family</h1><p>Check-ups, cleanings and same-week appointments. Request a time online, we confirm by text.</p>
+<div class="badges"><span>New patients welcome</span><span>Kids &amp; adults</span><span>Most insurance accepted</span></div>
+<a class="btn" href="#quote">Request an appointment</a>
+</div></div>
+<section><div class="w"><h2>Services</h2><div class="grid"><div class="card"><h3>Check-up &amp; cleaning</h3><p>Exam, X-rays and a professional cleaning in one visit.</p></div><div class="card"><h3>Fillings &amp; crowns</h3><p>Tooth-colored fillings and crowns that look natural.</p></div><div class="card"><h3>Whitening</h3><p>A brighter smile in a single appointment.</p></div></div></div></section>
+<section><div class="w"><div class="special"><h2>New patient visit</h2><p>Exam, X-rays and cleaning for new patients without insurance at one simple price. Ask in the form below.</p></div></div></section>
+<section><div class="w"><h2>Our office</h2><div class="grid"><div class="ph">Reception photo</div><div class="ph">Treatment room photo</div><div class="ph">Team photo</div></div></div></section>
+<section><div class="w"><h2>What customers say</h2><div class="grid">
+<div class="ph">Your real reviews go here<br>(Google, Yelp, Facebook)</div><div class="ph">Your real reviews go here</div><div class="ph">Your real reviews go here</div>
+</div></div></section>
+<section id="quote" style="background:var(--soft)"><div class="w"><h2>Request an appointment</h2>
+<form onsubmit="event.preventDefault();this.innerHTML='<p><b>Thanks!</b> In the live site this request goes straight to your phone by text.</p>'">
+<input placeholder="Your name" required><input placeholder="Phone" type="tel" required>
+<select><option>Check-up &amp; cleaning</option><option>Tooth pain</option><option>Fillings &amp; crowns</option><option>Whitening</option><option>Kids visit</option></select><textarea rows="3" placeholder="Preferred days and times, insurance (optional)"></textarea>
+<button class="btn" style="border:0;cursor:pointer">Send request</button></form></div></section>
+<footer><div class="w">Bright Oak Family Dental · Example city · (555) 010-0300<br>Example by Vaxo · <a href="https://vaxogroup.com">vaxogroup.com</a></div></footer>
+</body></html>

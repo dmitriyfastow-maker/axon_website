@@ -18,3 +18,11 @@ export function getDict(lang: Lang): Dict {
 export function langPath(lang: Lang): '/' | '/ua/' | '/ru/' {
   return lang === 'en' ? '/' : (`/${lang}/` as '/ua/' | '/ru/');
 }
+
+/** Nav link for a page in `lang`: "/partners/" gets the language prefix, "=/shop/" is English-only (no prefix),
+ *  anchors ("#cases") point at the home page given in `home`. */
+export function navHref(href: string, lang: Lang, home = ''): string {
+  if (href.startsWith('=')) return href.slice(1);
+  if (href.startsWith('/')) return lang === 'en' ? href : `/${lang}${href}`;
+  return home + href;
+}

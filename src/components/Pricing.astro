@@ -1,6 +1,7 @@
 ---
 import type { Dict } from '../i18n';
 import { PRICES, TIER_NAMES } from '../data/tiers';
+import VaxSays from './VaxSays.astro';
 
 interface Props { t: Dict }
 const { t } = Astro.props;
@@ -12,6 +13,7 @@ const L = t.labels;
     <div class="head">
       <h2 class="h2">{t.tiersTitle}</h2>
       <p>{t.tiersSub}</p>
+      <VaxSays text={t.vax.pricing} face="smug" />
     </div>
     <div class="grid" data-acc-group="tiers" data-acc-independent>
       {

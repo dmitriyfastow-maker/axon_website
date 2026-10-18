@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import VaxSays from '../components/VaxSays.astro';
 import { getDict, LANGS, langPath } from '../i18n';
 
 const t = getDict('en');
@@ -12,6 +13,7 @@ const labels = { en: 'English', ua: 'Українська', ru: 'Русский'
     <div class="eyebrow">◆ 404</div>
     <h1>Page not found</h1>
     <p>The page you are looking for doesn’t exist. Choose a language to go to the homepage.</p>
+    <VaxSays text={t.vax.notFound} face="shocked" />
     <nav>
       {LANGS.map((l) => <a href={langPath(l)} class="btn">{labels[l]}</a>)}
     </nav>

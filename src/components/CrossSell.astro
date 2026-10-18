@@ -1,0 +1,56 @@
+---
+// Cross-links between parts of the Vaxo ecosystem (Decision 09, step 3), with Vax the raccoon.
+import type { Lang } from '../i18n';
+
+interface Props { lang: Lang; items: ('done' | 'partner' | 'tools')[] }
+const { lang, items } = Astro.props;
+const p = (path: string) => (lang === 'en' ? path : `/${lang}${path}`);
+const T = {
+  en: {
+    done: ['No time to do it yourself?', 'We set it up for you: AI chat, website or automation from $149, ready in 7 days.', 'See starter packages'],
+    partner: ['Know a business that needs this?', 'Recommend Vaxo and earn 20–50% of every sale. Payouts every week.', 'Become a partner'],
+    tools: ['Not sure where to start?', 'Count how much missed messages cost you — free, in one minute.', 'Open free tools'],
+  },
+  ru: {
+    done: ['Нет времени делать самому?', 'Настроим за вас: ИИ-чат, сайт или автоматизация от $149, готово за 7 дней.', 'Стартовые пакеты'],
+    partner: ['Знаете бизнес, которому это нужно?', 'Рекомендуйте Vaxo и получайте 20–50% с каждой продажи. Выплаты каждую неделю.', 'Стать партнёром'],
+    tools: ['Не знаете, с чего начать?', 'Посчитайте, сколько теряете на неотвеченных сообщениях — бесплатно, за минуту.', 'Бесплатные инструменты'],
+  },
+  ua: {
+    done: ['Немає часу робити самому?', 'Налаштуємо за вас: ШІ-чат, сайт або автоматизація від $149, готово за 7 днів.', 'Стартові пакети'],
+    partner: ['Знаєте бізнес, якому це потрібно?', 'Рекомендуйте Vaxo і отримуйте 20–50% з кожного продажу. Виплати щотижня.', 'Стати партнером'],
+    tools: ['Не знаєте, з чого почати?', 'Порахуйте, скільки втрачаєте на повідомленнях без відповіді — безкоштовно, за хвилину.', 'Безкоштовні інструменти'],
+  },
+}[lang];
+const META = { done: ['smug', p('/start/')], partner: ['shocked', p('/partners/')], tools: ['happy', p('/tools/')] } as const;
+---
+
+<section class="cross">
+  <div class="in">
+    {items.map((k) => {
+      const [title, text, cta] = T[k];
+      const [face, href] = META[k];
+      return (
+        <a class="box" href={href}>
+          <img src={`/mascot/vax-${face}.webp`} alt="" width="200" height="200" loading="lazy" />
+          <div>
+            <h3>{title}</h3>
+            <p>{text}</p>
+            <span class="cta">{cta} →</span>
+          </div>
+        </a>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .cross { padding: 24px 0 48px; }
+  .in { max-width: 1120px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 32px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+  .box { display: flex; gap: 16px; align-items: center; background: var(--surf); border: 1px solid var(--line); border-radius: 20px; padding: 20px; color: var(--ink); text-decoration: none; transition: border-color 0.2s; }
+  .box:hover { border-color: var(--acc); }
+  img { width: 84px; height: auto; flex: none; }
+  h3 { margin: 0 0 6px; font-size: 19px; }
+  p { margin: 0 0 10px; color: var(--mut); font-size: 15px; }
+  .cta { color: var(--accText); font-weight: 700; font-size: 15px; }
+</style>
