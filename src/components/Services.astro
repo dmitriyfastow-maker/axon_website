@@ -1,5 +1,6 @@
 ---
 import type { Dict } from '../i18n';
+import VaxSays from './VaxSays.astro';
 import { SVC_PRICES } from '../data/services';
 
 interface Props { t: Dict }
@@ -16,6 +17,7 @@ const DEFAULT_OPEN = 2;
       <p>{c.body}</p>
       <p>{c.sub}</p>
       <p class="note">◆ {c.note}</p>
+      <VaxSays text={t.vax.services} face="happy" big />
     </div>
     <div class="list" data-acc-group="services">
       {

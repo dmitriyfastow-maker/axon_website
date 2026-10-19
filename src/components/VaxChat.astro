@@ -51,7 +51,7 @@ const T = {
   </button>
   <section class="vc-panel" data-vc-panel role="dialog" aria-label={T.title} hidden>
     <header>
-      <img src="/mascot/vax-front.webp" alt="" width="40" height="40" />
+      <span class="vc-av"><img src="/mascot/vax-happy.webp" alt="" width="44" height="44" /></span>
       <div><b>{T.title}</b><small>{T.status}</small></div>
       <button type="button" class="vc-x" data-vc-close aria-label={T.close}>×</button>
     </header>
@@ -215,7 +215,9 @@ const T = {
   .vchat .vc-teaser[hidden], .vchat .vc-panel[hidden] { display: none; }
   .vchat .vc-panel { width: min(380px, calc(100vw - 24px)); height: min(560px, calc(100dvh - 40px)); background: var(--surf); color: var(--ink); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); display: flex; flex-direction: column; overflow: hidden; animation: vc-pop 0.2s ease; }
   .vchat header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--deep); color: var(--deepInk); }
-  .vchat header img { width: 40px; height: 40px; object-fit: contain; background: var(--acc); border-radius: 50%; }
+  .vchat .vc-av { position: relative; flex: none; width: 46px; height: 46px; border-radius: 50%; background: var(--acc); display: grid; place-items: center; }
+  .vchat .vc-av img { width: 40px; height: 40px; object-fit: contain; }
+  .vchat .vc-av::after { content: ''; position: absolute; top: 1px; right: 1px; width: 10px; height: 10px; border-radius: 50%; background: #2fbf71; border: 2px solid var(--deep); }
   .vchat header div { flex: 1; display: flex; flex-direction: column; line-height: 1.25; }
   .vchat header small { color: var(--deepMut); font-size: 12px; }
   .vchat .vc-x { background: none; border: 0; color: var(--deepInk); font-size: 26px; cursor: pointer; line-height: 1; padding: 4px 8px; }

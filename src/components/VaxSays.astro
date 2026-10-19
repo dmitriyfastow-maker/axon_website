@@ -1,12 +1,12 @@
 ---
 // Vax the raccoon with a speech bubble — a small brand moment in context (monobank-cat style).
 // Click Vax for a random joke (see scripts/vax.ts).
-interface Props { text: string; face?: 'happy' | 'shocked' | 'smug' | 'front'; flip?: boolean }
-const { text, face = 'happy', flip = false } = Astro.props;
+interface Props { text: string; face?: 'happy' | 'shocked' | 'smug' | 'front'; flip?: boolean; big?: boolean }
+const { text, face = 'happy', flip = false, big = false } = Astro.props;
 ---
 
-<div class:list={['vax-says', { flip }]}>
-  <img src={`/mascot/vax-${face}.webp`} alt="Vax" width="120" height="120" loading="lazy" data-vax-poke />
+<div class:list={['vax-says', { flip, big }]}>
+  <img src={`/mascot/vax-${face}.webp`} alt="Vax, the Vaxo raccoon" width="120" height="120" loading="lazy" data-vax-poke />
   <p class="vax-bubble">{text}</p>
 </div>
 
@@ -17,4 +17,8 @@ const { text, face = 'happy', flip = false } = Astro.props;
   .vax-bubble { position: relative; margin: 0; background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 12px 16px; font-size: 15px; font-weight: 500; color: var(--ink); }
   .vax-bubble::before { content: ''; position: absolute; left: -7px; top: 50%; width: 12px; height: 12px; background: var(--surf); border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); transform: translateY(-50%) rotate(45deg); }
   .flip .vax-bubble::before { left: auto; right: -7px; transform: translateY(-50%) rotate(-135deg); }
+  .vax-says.big { flex-direction: column-reverse; align-items: flex-start; margin: 28px 0 0; max-width: 340px; gap: 10px; }
+  .big img { width: clamp(110px, 14vw, 170px); transform: rotate(-3deg); }
+  .big .vax-bubble::before { left: 36px; top: auto; bottom: -7px; transform: rotate(-45deg); }
+  @media (max-width: 760px) { .vax-says.big { flex-direction: row; align-items: center; max-width: none; } .big img { width: 84px; } .big .vax-bubble::before { left: -7px; top: 50%; bottom: auto; transform: translateY(-50%) rotate(45deg); } }
 </style>

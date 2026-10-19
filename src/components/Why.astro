@@ -1,5 +1,6 @@
 ---
 import type { Dict } from '../i18n';
+import VaxSays from './VaxSays.astro';
 
 interface Props { t: Dict }
 const { t } = Astro.props;
@@ -10,6 +11,7 @@ const { t } = Astro.props;
     <div class="head">
       <h2 class="h2">{t.whyTitle}</h2>
       <p>{t.whySub}</p>
+      <VaxSays text={t.vax.why} face="smug" big />
     </div>
     <div class="list">
       {

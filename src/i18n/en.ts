@@ -7,15 +7,15 @@ const en = {
     "Shop",
     "Partners"
   ],
-  "eyebrow": "Full-cycle studio · web · apps · AI · ads · content",
-  "h1": "One team for everything your business needs to grow.",
-  "sub": "Websites and apps, AI assistants and automations, ads, SMM, SEO, design and viral video — from strategy to launch, under one roof. Start with one step from $149 or build the whole growth system.",
+  "eyebrow": "Full-cycle digital studio",
+  "h1": "Websites, apps, ads and AI that bring you clients.",
+  "sub": "Strategy, design, development, marketing and automation — one team and one system, from launch to global markets.",
   "cta1": "Leave a request",
-  "cta2": "Starter packages from $149",
+  "cta2": "Services & prices",
   "heroTags": [
-      "From first client to global scale",
-      "Transparent price ranges",
-      "Starter packages ready in 7 days"
+    "Strategy session in every tier",
+    "Transparent price ranges",
+    "Launch from 7 days"
   ],
   "time": [
     "days",
@@ -548,8 +548,11 @@ const en = {
     "startHref": "/start/",
     "bubbles": ["New order 🔔", "Can I book for 9?", "Paid ✓"],
     "hint": "Psst… tap me 👆",
-    "pricing": "I started with the smallest package. Now I have two ovens and a nap schedule.",
-    "faq": "Didn’t find your answer? Write to us — a real human replies, not me.",
+    "pricing": "Starting small is fine. I started with one package — now I have a system and a sleep schedule.",
+    "faq": "Didn't find the answer? Ask me in the chat — or write to the humans on the team.",
+    "why": "I tried running a business without a system. Zero stars, would not recommend.",
+    "services": "One dish or the whole menu — your call. I usually order the whole menu.",
+    "contact": "A human replies within 24 hours. I'll make sure they don't forget.",
     "success": "Vax is already running to read your message.",
     "notFound": "Even raccoons get lost. Let’s go home.",
     "partners": "Every partner starts as a rookie raccoon. I started by telling my neighbour about Vaxo.",
