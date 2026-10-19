@@ -7,15 +7,15 @@ const en = {
     "Shop",
     "Partners"
   ],
-  "eyebrow": "AI for small business · ready in 7 days",
-  "h1": "More customers. Less routine. Thanks to AI.",
-  "sub": "An AI chat that answers your clients 24/7, a website that sells and automations that never lose a request — from $149. We set everything up, you get the customers.",
+  "eyebrow": "Full-cycle studio · web · apps · AI · ads · content",
+  "h1": "One team for everything your business needs to grow.",
+  "sub": "Websites and apps, AI assistants and automations, ads, SMM, SEO, design and viral video — from strategy to launch, under one roof. Start with one step from $149 or build the whole growth system.",
   "cta1": "Leave a request",
   "cta2": "Starter packages from $149",
   "heroTags": [
-    "Ready in 7 days",
-    "Fixed price, one-time",
-    "One round of edits included"
+      "From first client to global scale",
+      "Transparent price ranges",
+      "Starter packages ready in 7 days"
   ],
   "time": [
     "days",
