@@ -2,11 +2,13 @@
 import { handleLead, type LeadEnv, type LeadInput } from '../src/lib/lead.js';
 import { handlePartnerApi, handleRedirect, type DB } from './partner.js';
 import { handleAdminApi } from './admin.js';
+import { handleChat, type AiBinding } from './chat.js';
 
 interface Env extends LeadEnv {
   ASSETS: { fetch(request: Request): Promise<Response> };
   LEADS?: DB;
   ADMIN_TOKEN?: string;
+  AI?: AiBinding;
 }
 
 const ENV_KEYS = ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'RESEND_API_KEY', 'LEAD_EMAIL_TO', 'LEAD_EMAIL_FROM'] as const;
@@ -36,6 +38,7 @@ export default {
       if (!env.LEADS) return json(503, { ok: false });
       return handleAdminApi(env.LEADS, request, env.ADMIN_TOKEN);
     }
+    if (url.pathname === '/api/chat') return handleChat(env.AI, request);
     if (url.pathname === '/api/lead') {
       if (request.method !== 'POST') return json(405, { ok: false });
       let body: unknown;

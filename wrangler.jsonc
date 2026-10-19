@@ -12,6 +12,7 @@
     { "pattern": "vaxogroup.com", "custom_domain": true },
     { "pattern": "www.vaxogroup.com", "custom_domain": true }
   ],
+  "ai": { "binding": "AI" },
   "d1_databases": [
     { "binding": "LEADS", "database_name": "vaxo-leads", "database_id": "288e62a1-690b-4f45-89c9-d0bcb24f76bb", "migrations_dir": "migrations" }
   ],

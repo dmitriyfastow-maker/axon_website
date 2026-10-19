@@ -1,6 +1,7 @@
 ---
 import '../styles/fonts.css';
 import '../styles/global.css';
+import VaxChat from '../components/VaxChat.astro';
 import { HTML_LANG, LANGS, OG_LOCALE, getDict, langPath, type Lang } from '../i18n';
 
 interface Props {
@@ -12,9 +13,11 @@ interface Props {
   noindex?: boolean;
   /** Language versions of this page for hreflang; omit on the home pages. */
   alts?: Partial<Record<Lang, string>>;
+  /** Hide the Vax chat (owner pages). */
+  noChat?: boolean;
 }
 
-const { lang, title, description, path, noindex = false, alts } = Astro.props;
+const { lang, title, description, path, noindex = false, alts, noChat = false } = Astro.props;
 const altLinks = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?.[l] ?? langPath(l) }));
 const site = Astro.site!;
 const abs = (p: string) => new URL(p, site).href;
@@ -97,6 +100,7 @@ const jsonLd = {
   </head>
   <body>
     <slot />
+    {!noChat && <VaxChat lang={lang} />}
     <script type="application/json" id="vax-jokes" set:html={JSON.stringify(getDict(lang).vax.poke)} />
     <script type="application/json" id="vax-hint" set:html={JSON.stringify(getDict(lang).vax.hint)} />
     <script>
