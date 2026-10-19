@@ -14,7 +14,7 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/404'),
+      filter: (page) => !/\/(404|admin|demo|partner)\//.test(new URL(page).pathname),
       i18n: { defaultLocale: 'en', locales: { en: 'en', ua: 'uk', ru: 'ru' } },
     }),
   ],

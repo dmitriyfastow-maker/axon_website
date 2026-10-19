@@ -1,4 +1,6 @@
 // Vax chat: the site's own AI assistant (the same product we sell as the $249 "AI chat assistant").
+import { DEMOS, demoPrompt } from './demos.js';
+
 // Runs on Workers AI's free daily allocation; on any model error the widget falls back to the contact form.
 
 export interface AiBinding {
@@ -55,7 +57,23 @@ function textOf(r: unknown): string {
   return typeof c === 'string' ? c : '';
 }
 
-export async function handleChat(ai: AiBinding | undefined, request: Request): Promise<Response> {
+export interface ChatEnv {
+  AI?: AiBinding;
+  TELEGRAM_BOT_TOKEN?: string;
+  TELEGRAM_CHAT_ID?: string;
+}
+
+// The first message in a personal demo is a sales signal: the owner is trying it right now.
+async function pingDemo(env: ChatEnv, name: string, q: string) {
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) return;
+  await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: `🔥 Demo opened: ${name}\n«${q.slice(0, 200)}»` }),
+  }).catch(() => {});
+}
+
+export async function handleChat(env: ChatEnv, request: Request, waitUntil?: (p: Promise<unknown>) => void): Promise<Response> {
+  const ai = env.AI;
   const json = (status: number, body: unknown) =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
   if (request.method !== 'POST') return json(405, { ok: false });
@@ -69,7 +87,12 @@ export async function handleChat(ai: AiBinding | undefined, request: Request): P
   const messages = clean(body.messages);
   if (!messages) return json(400, { ok: false });
   const lang = typeof body.lang === 'string' && body.lang in LANG_NAME ? body.lang : 'en';
-  const input = { messages: [{ role: 'system', content: systemPrompt(lang) }, ...messages], max_tokens: 220, temperature: 0.6 };
+  const demo = typeof body.demo === 'string' && Object.hasOwn(DEMOS, body.demo) ? DEMOS[body.demo] : null;
+  if (demo && messages.filter((m) => m.role === 'user').length === 1) {
+    const p = pingDemo(env, demo.name, messages[messages.length - 1].content);
+    if (waitUntil) waitUntil(p);
+  }
+  const input = { messages: [{ role: 'system', content: demo ? demoPrompt(demo) : systemPrompt(lang) }, ...messages], max_tokens: 220, temperature: 0.6 };
   for (const model of MODELS) {
     try {
       let reply = textOf(await ai.run(model, input)).trim();

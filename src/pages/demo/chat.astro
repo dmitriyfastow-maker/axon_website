@@ -1,0 +1,115 @@
+---
+// Personal outreach demo: the business's own AI assistant, ready to try. vaxogroup.com/demo/chat/?b=<slug>
+import Base from '../../layouts/Base.astro';
+import { DEMOS } from '../../../worker/demos';
+const names = Object.fromEntries(Object.entries(DEMOS).map(([k, d]) => [k, { name: d.name, kind: d.kind, city: d.city }]));
+---
+
+<Base lang="en" title="Your AI assistant — live demo by Vaxo" description="A live demo of an AI assistant trained on your business." noindex noChat>
+  <main class="demo">
+    <p class="eyebrow">Live demo · built for you by Vaxo</p>
+    <h1 data-d-title>Your AI assistant</h1>
+    <p class="sub" data-d-sub>Ask it anything a customer would ask — at 3 a.m., on a Sunday, mid-job.</p>
+    <section class="box" aria-live="polite">
+      <header><span class="av" aria-hidden="true">💬</span><div><b data-d-name>Assistant</b><small>online · replies instantly</small></div></header>
+      <div class="log" data-d-log></div>
+      <div class="chips" data-d-chips></div>
+      <form data-d-form><input name="q" maxlength="500" autocomplete="off" placeholder="Type like a customer would…" aria-label="Message" /><button aria-label="Send">➤</button></form>
+    </section>
+    <p class="cta">Like it? It can be live on your website in 7 days — <b>$249 one-time</b>, no monthly contracts.<br /><a href="/start/#contact">Get it for my business →</a></p>
+    <p class="by">Made by <a href="/">Vaxo</a> · AI for small business</p>
+  </main>
+  <script type="application/json" id="demo-names" set:html={JSON.stringify(names)} />
+  <script>
+    type Msg = { role: 'user' | 'assistant'; content: string };
+    const names = JSON.parse(document.getElementById('demo-names')!.textContent || '{}');
+    const slug = new URLSearchParams(location.search).get('b') || '';
+    const d = names[slug];
+    const log = document.querySelector<HTMLElement>('[data-d-log]')!;
+    const chips = document.querySelector<HTMLElement>('[data-d-chips]')!;
+    const form = document.querySelector<HTMLFormElement>('[data-d-form]')!;
+    const input = form.querySelector('input')!;
+    const msgs: Msg[] = [];
+    let busy = false;
+    if (d) {
+      document.title = `${d.name} — your AI assistant (live demo)`;
+      document.querySelector('[data-d-title]')!.textContent = `${d.name}: your AI assistant`;
+      document.querySelector('[data-d-name]')!.textContent = d.name;
+    }
+    const bubble = (role: string, text: string) => {
+      const el = document.createElement('div');
+      el.className = 'm ' + (role === 'user' ? 'me' : 'it');
+      el.textContent = text;
+      log.appendChild(el);
+      log.scrollTop = log.scrollHeight;
+      return el;
+    };
+    const hello = d ? `Hi! Thanks for reaching out to ${d.name}. How can I help you today?` : 'This demo link is not active. Ask Vaxo for a fresh one at vaxogroup.com.';
+    msgs.push({ role: 'assistant', content: hello });
+    bubble('assistant', hello);
+    const ask = async (q: string) => {
+      q = q.trim();
+      if (!q || busy || !d) return;
+      busy = true;
+      chips.replaceChildren();
+      msgs.push({ role: 'user', content: q });
+      bubble('user', q);
+      const w = bubble('assistant', 'typing…');
+      w.classList.add('wait');
+      try {
+        const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang: 'en', demo: slug, messages: msgs.slice(-14) }) });
+        const j = await r.json();
+        if (!j.ok) throw new Error();
+        w.remove();
+        msgs.push({ role: 'assistant', content: j.reply });
+        bubble('assistant', j.reply);
+      } catch {
+        w.textContent = 'Busy right now — please try again in a minute.';
+        w.classList.remove('wait');
+      }
+      busy = false;
+    };
+    if (d) {
+      const q = /clean/i.test(d.kind)
+        ? ['How much is a deep clean for a 3-bedroom?', 'Can you come this Saturday?', 'Do you bring your own supplies?']
+        : /dent/i.test(d.kind)
+          ? ['I have a toothache, can I come tomorrow?', 'Do you take new patients?', 'Do you accept my insurance?']
+          : /landscap/i.test(d.kind)
+            ? ['How much for a paver patio?', 'Can I get a free estimate?', 'Do you do water features?']
+            : ['My car makes a weird noise, can you check it today?', 'How much for a diagnostic?', 'Are you open Saturday?'];
+      for (const c of q) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = c;
+        b.onclick = () => ask(c);
+        chips.appendChild(b);
+      }
+    }
+    form.onsubmit = (e) => { e.preventDefault(); const q = input.value; input.value = ''; ask(q); };
+  </script>
+</Base>
+
+<style is:global>
+  .demo { max-width: 560px; margin: 0 auto; padding: 32px 16px 48px; font-family: var(--font); color: var(--ink); }
+  .demo .eyebrow { font: 600 12px var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--accText); margin: 0 0 8px; }
+  .demo h1 { font-size: clamp(26px, 6vw, 36px); line-height: 1.1; margin: 0 0 8px; }
+  .demo .sub { color: var(--mut); margin: 0 0 20px; }
+  .demo .box { background: var(--surf); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12); display: flex; flex-direction: column; height: min(520px, 70dvh); }
+  .demo header { display: flex; gap: 10px; align-items: center; padding: 12px 14px; background: var(--deep); color: var(--deepInk); }
+  .demo header .av { width: 36px; height: 36px; border-radius: 50%; background: var(--acc); display: grid; place-items: center; }
+  .demo header div { display: flex; flex-direction: column; line-height: 1.25; }
+  .demo header small { color: var(--deepMut); font-size: 12px; }
+  .demo .log { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; background: var(--bg); }
+  .demo .m { max-width: 85%; padding: 9px 12px; border-radius: 16px; font-size: 15px; line-height: 1.4; white-space: pre-wrap; }
+  .demo .m.it { align-self: flex-start; background: var(--surf); border: 1px solid var(--line); }
+  .demo .m.me { align-self: flex-end; background: var(--acc); color: var(--dark-ink); }
+  .demo .m.wait { color: var(--mut); font-style: italic; }
+  .demo .chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 10px; background: var(--bg); }
+  .demo .chips button { border: 1px solid var(--accText); color: var(--accText); background: transparent; border-radius: 999px; padding: 6px 11px; font: 600 13px var(--font); cursor: pointer; }
+  .demo form { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--line); }
+  .demo form input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 12px; padding: 10px 12px; font: 16px var(--font); }
+  .demo form button { border: 0; background: var(--acc); color: var(--dark-ink); width: 44px; border-radius: 12px; font-size: 18px; cursor: pointer; }
+  .demo .cta { margin: 20px 0 6px; line-height: 1.5; }
+  .demo .cta a { display: inline-block; margin-top: 10px; background: var(--acc); color: var(--dark-ink); font-weight: 700; padding: 12px 18px; border-radius: 999px; text-decoration: none; }
+  .demo .by { color: var(--mut); font-size: 13px; }
+</style>

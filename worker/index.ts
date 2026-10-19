@@ -17,7 +17,7 @@ const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx?: { waitUntil(p: Promise<unknown>): void }): Promise<Response> {
     const url = new URL(request.url);
     if (url.hostname === 'www.vaxogroup.com') {
       url.hostname = 'vaxogroup.com';
@@ -38,7 +38,7 @@ export default {
       if (!env.LEADS) return json(503, { ok: false });
       return handleAdminApi(env.LEADS, request, env.ADMIN_TOKEN);
     }
-    if (url.pathname === '/api/chat') return handleChat(env.AI, request);
+    if (url.pathname === '/api/chat') return handleChat(env, request, ctx ? (p) => ctx.waitUntil(p) : undefined);
     if (url.pathname === '/api/lead') {
       if (request.method !== 'POST') return json(405, { ok: false });
       let body: unknown;
