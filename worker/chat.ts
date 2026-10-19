@@ -98,11 +98,15 @@ export async function handleChat(env: ChatEnv, request: Request, waitUntil?: (p:
     const p = pingDemo(env, demo.name, messages[messages.length - 1].content);
     if (waitUntil) waitUntil(p);
   }
-  const input = { messages: [{ role: 'system', content: demo ? demoPrompt(demo) : systemPrompt(lang) }, ...messages], max_tokens: 220, temperature: 0.6 };
+  const input = { messages: [{ role: 'system', content: demo ? demoPrompt(demo) : systemPrompt(lang) }, ...messages], max_tokens: 260, temperature: 0.6, chat_template_kwargs: { enable_thinking: false } };
   for (const model of MODELS) {
     try {
-      let reply = textOf(await ai.run(model, input)).trim();
-      if (!reply) continue;
+      const raw = await ai.run(model, input);
+      let reply = textOf(raw).trim();
+      if (!reply) {
+        console.error('[chat] empty', model, JSON.stringify(raw).slice(0, 600));
+        continue;
+      }
       const form = /\[FORM\]/i.test(reply);
       reply = reply.replace(/\[FORM\]/gi, '').replace(/\*\*/g, '').trim();
       return json(200, { ok: true, reply, form });

@@ -165,7 +165,7 @@ const T = {
         wait.remove();
         if (!d.ok) throw new Error();
         say(d.reply);
-        if (d.form) leadForm();
+        if (d.form && msgs.filter((m) => m.role === 'user').length >= 2) leadForm();
       } catch {
         wait.remove();
         say(T.error);
