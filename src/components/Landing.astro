@@ -13,6 +13,7 @@ import Services from './Services.astro';
 import Faq from './Faq.astro';
 import Contact from './Contact.astro';
 import Footer from './Footer.astro';
+import StickyCta from './StickyCta.astro';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -34,4 +35,5 @@ const t = getDict(lang);
   <Contact t={t} lang={lang} />
 </main>
 <Footer t={t} lang={lang} />
+<StickyCta t={t} />
 

@@ -1,0 +1,37 @@
+---
+// Mobile-only sticky call-to-action: shows after the first screen, hides near the contact form.
+import type { Dict } from '../i18n';
+interface Props { t: Dict }
+const { t } = Astro.props;
+---
+
+<div class="sticky-cta" data-sticky-cta hidden>
+  <img src="/mascot/vax-happy.webp" alt="" width="40" height="40" />
+  <a class="go" href="#contact">{t.cta1} →</a>
+  <a class="alt" href={t.vax.startHref}>{t.cta2}</a>
+</div>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-sticky-cta]');
+  const form = document.getElementById('contact');
+  if (bar) {
+    // Hidden on the first screen and once the contact form is on screen.
+    const tick = () => {
+      const nearForm = !!form && form.getBoundingClientRect().top < window.innerHeight;
+      bar.hidden = window.scrollY < 600 || nearForm;
+    };
+    window.addEventListener('scroll', tick, { passive: true });
+    tick();
+  }
+</script>
+
+<style>
+  .sticky-cta { display: none; }
+  @media (max-width: 760px) {
+    .sticky-cta:not([hidden]) { display: flex; position: fixed; left: 10px; right: 10px; bottom: max(10px, env(safe-area-inset-bottom)); z-index: 50; align-items: center; gap: 8px; padding: 8px; background: var(--ink); border-radius: 999px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25); animation: sc-in 0.25s ease; }
+    img { width: 36px; height: 36px; object-fit: contain; flex: none; }
+    .go { flex: 1; text-align: center; background: var(--acc); color: var(--dark-ink); font-weight: 700; padding: 11px 12px; border-radius: 999px; text-decoration: none; font-size: 15px; }
+    .alt { color: var(--bg); font-size: 12px; font-weight: 600; text-decoration: none; padding: 0 8px; max-width: 34%; line-height: 1.2; }
+  }
+  @keyframes sc-in { from { transform: translateY(20px); opacity: 0; } }
+</style>

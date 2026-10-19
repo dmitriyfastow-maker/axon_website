@@ -19,7 +19,7 @@ const { t } = Astro.props;
       <p class="sub">{t.sub}</p>
       <div class="actions">
         <a href="#contact" class="btn-primary">{t.cta1} <span>→</span></a>
-        <a href="#pricing" class="btn-secondary">{t.cta2}</a>
+        <a href={t.vax.startHref} class="btn-secondary">{t.cta2}</a>
       </div>
       <div class="tags">
         {t.heroTags.map((h) => <span><span class="check">✓</span>{h}</span>)}

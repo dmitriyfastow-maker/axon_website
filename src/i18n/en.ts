@@ -7,15 +7,15 @@ const en = {
     "Shop",
     "Partners"
   ],
-  "eyebrow": "Strategic partner for your growth",
-  "h1": "We build digital assets",
-  "sub": "Foundational strategy. End-to-end IT development and marketing that multiply the value of your business.",
-  "cta1": "Strategic session",
-  "cta2": "See pricing",
+  "eyebrow": "AI for small business · ready in 7 days",
+  "h1": "More customers. Less routine. Thanks to AI.",
+  "sub": "An AI chat that answers your clients 24/7, a website that sells and automations that never lose a request — from $149. We set everything up, you get the customers.",
+  "cta1": "Leave a request",
+  "cta2": "Starter packages from $149",
   "heroTags": [
-    "Strategy → launch → scale",
-    "EU · UAE · USA",
-    "One accountable team"
+    "Ready in 7 days",
+    "Fixed price, one-time",
+    "One round of edits included"
   ],
   "time": [
     "days",
@@ -545,6 +545,7 @@ const en = {
     "error": "Couldn't send. Please try again."
   },
   "vax": {
+    "startHref": "/start/",
     "bubbles": ["New order 🧁", "Can I book for 9?", "Paid ✓"],
     "hint": "Psst… tap me 👆",
     "pricing": "I started with the smallest package. Now I have two ovens and a nap schedule.",
