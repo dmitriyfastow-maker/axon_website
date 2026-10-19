@@ -22,7 +22,7 @@ const en = {
     rules1: 'I accept the',
     rules2: 'partner rules',
   },
-  tabs: { home: 'Home', links: 'Links', academy: 'Academy', prompts: 'AI prompts', team: 'Team', rules: 'Payouts & rules' },
+  tabs: { home: 'Home', deals: 'Agency leads', links: 'Links', academy: 'Academy', prompts: 'AI prompts', team: 'Team', rules: 'Payouts & rules' },
   home: {
     hi: 'Hi',
     today: 'Here is everything you need today.',
@@ -154,7 +154,7 @@ const ua: CabinetText = {
     rules1: 'Я приймаю',
     rules2: 'правила партнерів',
   },
-  tabs: { home: 'Головна', links: 'Посилання', academy: 'Навчання', prompts: 'ШІ-промпти', team: 'Команда', rules: 'Виплати і правила' },
+  tabs: { home: 'Головна', deals: 'Заявки агенції', links: 'Посилання', academy: 'Навчання', prompts: 'ШІ-промпти', team: 'Команда', rules: 'Виплати і правила' },
   home: {
     hi: 'Привіт',
     today: 'Тут усе, що потрібно сьогодні.',
@@ -302,7 +302,7 @@ const ru: CabinetText = {
     rules1: 'Я принимаю',
     rules2: 'правила партнёров',
   },
-  tabs: { home: 'Главная', links: 'Ссылки', academy: 'Обучение', prompts: 'ИИ-промпты', team: 'Команда', rules: 'Выплаты и правила' },
+  tabs: { home: 'Главная', deals: 'Заявки агентства', links: 'Ссылки', academy: 'Обучение', prompts: 'ИИ-промпты', team: 'Команда', rules: 'Выплаты и правила' },
   home: {
     hi: 'Привет',
     today: 'Здесь всё, что нужно сегодня.',

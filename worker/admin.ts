@@ -1,5 +1,6 @@
-// Owner-only API: leads, partners and link stats. Protected by the ADMIN_TOKEN secret.
+// Owner-only API: leads (with the lead exchange), partners and closers. Protected by the ADMIN_TOKEN secret.
 import type { DB } from './partner.js';
+import { ownerLead, ownerOverview, ownerUpdateLead, ownerUpdatePartner, type Notify } from './deals.js';
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -12,28 +13,16 @@ function authorized(request: Request, token: string | undefined): boolean {
   return diff === 0;
 }
 
-export async function handleAdminApi(db: DB, request: Request, token: string | undefined): Promise<Response> {
+/** /api/admin, /api/admin/lead/<id>, /api/admin/partner/<id> */
+export async function handleAdminApi(db: DB, request: Request, token: string | undefined, path: string, notify: Notify): Promise<Response> {
   if (!authorized(request, token)) return json(401, { ok: false });
-  const [leads, partners] = await Promise.all([
-    db
-      .prepare(
-        `SELECT d.id, d.created_at, d.mode, d.name, d.contact, d.interest, d.message, d.lang, d.country, d.ref,
-           p.name AS partner_name, p.email AS partner_email
-         FROM leads d LEFT JOIN links l ON l.slug = d.ref LEFT JOIN partners p ON p.id = l.partner_id
-         ORDER BY d.id DESC LIMIT 500`,
-      )
-      .all(),
-    db
-      .prepare(
-        `SELECT p.id, p.name, p.email, p.created_at, par.name AS invited_by,
-           (SELECT COUNT(*) FROM links l WHERE l.partner_id = p.id) AS links,
-           (SELECT COUNT(*) FROM clicks c JOIN links l ON l.id = c.link_id WHERE l.partner_id = p.id) AS clicks,
-           (SELECT COUNT(*) FROM leads d JOIN links l ON l.slug = d.ref WHERE l.partner_id = p.id) AS leads,
-           (SELECT COUNT(*) FROM partners t WHERE t.parent_id = p.id) AS team
-         FROM partners p LEFT JOIN partners par ON par.id = p.parent_id
-         ORDER BY p.id DESC LIMIT 500`,
-      )
-      .all(),
-  ]);
-  return json(200, { ok: true, leads: leads.results, partners: partners.results });
+  if (path === '' && request.method === 'GET') return json(200, { ok: true, ...(await ownerOverview(db, notify)) });
+  const m = path.match(/^(lead|partner)\/(\d+)$/);
+  if (!m) return json(404, { ok: false });
+  const id = Number(m[2]);
+  if (request.method === 'GET' && m[1] === 'lead') return json(200, { ok: true, events: await ownerLead(db, id) });
+  if (request.method !== 'POST') return json(405, { ok: false });
+  const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+  const ok = m[1] === 'lead' ? await ownerUpdateLead(db, id, b, notify) : await ownerUpdatePartner(db, id, b);
+  return json(ok ? 200 : 400, { ok });
 }

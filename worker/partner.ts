@@ -11,6 +11,8 @@ export interface DB {
   prepare(sql: string): Stmt;
 }
 
+import { handleDealsApi, type Notify } from './deals.js';
+
 const SESSION_DAYS = 30;
 // Free Workers plan allows ~10 ms CPU per request; 25k PBKDF2 rounds stays inside it.
 const PBKDF2_ITERATIONS = 25_000;
@@ -116,7 +118,7 @@ export async function handleRedirect(db: DB, request: Request, slug: string): Pr
 }
 
 /** /api/partner/* */
-export async function handlePartnerApi(db: DB, request: Request, path: string): Promise<Response> {
+export async function handlePartnerApi(db: DB, request: Request, path: string, notify: Notify = async () => {}): Promise<Response> {
   const method = request.method;
 
   if (path === 'register' && method === 'POST') {
@@ -168,6 +170,8 @@ export async function handlePartnerApi(db: DB, request: Request, path: string): 
 
   const me = await currentPartner(db, request);
   if (!me) return json(401, { ok: false });
+
+  if (path === 'deals' || path.startsWith('deals/')) return handleDealsApi(db, request, me, path, notify);
 
   if (path === 'me' && method === 'GET') {
     const { results: links } = await db

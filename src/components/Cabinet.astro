@@ -3,6 +3,7 @@
 // Links (unlimited tracking links), Academy (lessons with prompts), AI prompts, Team, Payouts & rules.
 import Base from '../layouts/Base.astro';
 import PromptCard from './PromptCard.astro';
+import Deals from './Deals.astro';
 import { LANGS, type Lang } from '../i18n';
 import { CABINET } from '../i18n/cabinet';
 import { OFFERS, PROMPTS } from '../data/ai-toolkit';
@@ -22,7 +23,7 @@ const title = (id: string) => c.titles[id] ?? byId(id).title;
 const ptext = (id: string) => (lang === 'en' ? byId(id).text : PROMPT_TEXT[lang][id] ?? byId(id).text);
 const offersLocal = OFFERS.map((o) => ({ ...o, text: lang === 'en' ? o.text : OFFER_TEXT[lang][o.id] ?? o.text }));
 const labels = c.card;
-const tabs: [string, string][] = [['home', '🏠'], ['links', '🔗'], ['academy', '🎓'], ['prompts', '🤖'], ['team', '👥'], ['rules', '💸']];
+const tabs: [string, string][] = [['home', '🏠'], ['deals', '🤝'], ['links', '🔗'], ['academy', '🎓'], ['prompts', '🤖'], ['team', '👥'], ['rules', '💸']];
 const offerSelect = OFFERS.map((o) => ({ id: o.id, name: c.offers[o.id] }));
 // Vax's road: 6 levels × 4 missions (data/roadmap.ts). Levels are just for fun — rates are the same for everyone.
 const ROAD = {
@@ -170,6 +171,8 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
       </div>
 
       <!-- LINKS -->
+      <div data-panel="deals" hidden><Deals lang={lang} /></div>
+
       <div data-panel="links" hidden>
         <h1>{c.links.h1}</h1>
         <p class="mut">{c.links.p}</p>
@@ -304,7 +307,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   };
 
   // ---- tabs ----
-  const PANELS = ['home', 'links', 'academy', 'prompts', 'team', 'rules'];
+  const PANELS = ['home', 'deals', 'links', 'academy', 'prompts', 'team', 'rules'];
   function go(tab: string, lesson?: string, scroll = true) {
     if (!PANELS.includes(tab)) tab = 'home';
     $$('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== tab));

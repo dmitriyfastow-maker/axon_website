@@ -1,77 +1,301 @@
 ---
-// Owner dashboard: every lead (with the partner who brought it) and every partner's numbers.
+// Owner dashboard: lead pipeline, lead exchange for partner-closers, partners and closer approvals.
 import Base from '../layouts/Base.astro';
 ---
 
-<Base lang="en" title="Vaxo — owner" description="Owner dashboard" path="/admin/" noindex noChat>
-  <main class="wrap">
-    <h1>Vaxo — owner</h1>
-    <form data-login class="row" hidden>
-      <input type="password" name="token" placeholder="Admin key" autocomplete="off" />
-      <button class="cta">Open</button>
+<Base lang="en" title="Vaxo — панель владельца" description="Owner dashboard" path="/admin/" noindex noChat>
+  <main class="adm">
+    <header class="top">
+      <h1>Vaxo · панель</h1>
+      <div class="top-r" data-on hidden>
+        <button type="button" class="ghost" data-reload>Обновить</button>
+        <button type="button" class="ghost" data-out>Выйти</button>
+      </div>
+    </header>
+    <form data-login class="login" hidden>
+      <input type="password" name="token" placeholder="Ключ владельца" autocomplete="off" />
+      <button class="cta">Открыть</button>
     </form>
-    <div data-data hidden>
-      <p class="row"><b data-count="leads"></b>&nbsp;leads · <b data-count="partners"></b>&nbsp;partners <button type="button" class="ghost" data-out>Lock</button></p>
-      <h2>Leads</h2>
-      <div class="table"><table><thead><tr><th>Date</th><th>Name</th><th>Contact</th><th>Interest</th><th>Partner</th><th>Country</th><th>Message</th></tr></thead><tbody data-leads></tbody></table></div>
-      <h2>Partners</h2>
-      <div class="table"><table><thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Invited by</th><th>Links</th><th>Clicks</th><th>Leads</th><th>Team</th></tr></thead><tbody data-partners></tbody></table></div>
+    <div data-app hidden>
+      <section class="kpis" data-kpis></section>
+      <nav class="tabs">
+        <button type="button" data-view="leads" aria-pressed="true">Заявки</button>
+        <button type="button" data-view="closers" aria-pressed="false">Закрывающие <span class="pill" data-apps hidden></span></button>
+        <button type="button" data-view="partners" aria-pressed="false">Партнёры</button>
+        <button type="button" data-view="help" aria-pressed="false">Как это работает</button>
+      </nav>
+
+      <section data-panel="leads">
+        <div class="bar">
+          <div class="chips" data-filters></div>
+          <input type="search" placeholder="Поиск: имя, контакт, текст" data-search />
+        </div>
+        <div class="table"><table><thead><tr><th>#</th><th>Дата</th><th>Статус</th><th>Клиент</th><th>Что нужно</th><th>Бюджет</th><th>Закрывающий</th><th>Срок</th><th>Откуда</th></tr></thead><tbody data-leads></tbody></table></div>
+      </section>
+
+      <section data-panel="closers" hidden>
+        <p class="hint">Заявки агентства видят только одобренные вами партнёры. Перед одобрением прочитайте анкету и питч. Рейтинг 1–5 ставите после каждой сделки: от рейтинга и побед зависит, сколько заявок партнёр может держать одновременно (2 → 3 → 5). Два пропущенных срока за 30 дней — автоматическая пауза.</p>
+        <div data-closers></div>
+      </section>
+
+      <section data-panel="partners" hidden>
+        <div class="table"><table><thead><tr><th>Имя</th><th>Email</th><th>С</th><th>Пригласил</th><th>Ссылки</th><th>Клики</th><th>Заявки</th><th>Команда</th><th>Закрывающий</th></tr></thead><tbody data-partners></tbody></table></div>
+      </section>
+
+      <section data-panel="help" hidden class="help">
+        <h2>Путь заявки</h2>
+        <ol>
+          <li><b>Новая</b> — пришла с сайта, из чата Vax или формы. ИИ сам пишет профиль клиента (бизнес, цель, бюджет, вопросы для звонка). Вы проверяете и дополняете.</li>
+          <li><b>Опубликовать</b> — заявка появляется у одобренных закрывающих. Они видят только описание, без контактов.</li>
+          <li><b>Взята</b> — партнёр забрал заявку и получил все данные. На первый контакт — 24 часа.</li>
+          <li><b>Контакт → Встреча → Предложение</b> — на каждый шаг свой срок (72 ч, 5 дней, 10 дней), к каждому шагу обязательный комментарий. Просрочил — заявка сама вернётся в общий список, вам придёт сообщение.</li>
+          <li><b>Выиграна / Проиграна</b> — партнёр указывает сумму или причину. Деньги клиент платит только Vaxo, договор и счёт выставляете вы. Партнёр получает 20% (ставка «тёплый лид»).</li>
+        </ol>
+        <p>Вы в любой момент можете забрать заявку, отдать её конкретному партнёру или вернуть в список. Каждое действие видно в журнале заявки.</p>
+      </section>
+    </div>
+
+    <div class="drawer" data-drawer hidden>
+      <div class="sheet" role="dialog" aria-label="Заявка">
+        <button type="button" class="x" data-close aria-label="Закрыть">×</button>
+        <div data-detail></div>
+      </div>
     </div>
   </main>
 </Base>
 
 <script>
+  type R = Record<string, any>;
   const KEY = 'vaxo_admin';
-  const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
-  const row = (cells: unknown[]) => {
-    const tr = document.createElement('tr');
-    for (const c of cells) {
-      const td = document.createElement('td');
-      td.textContent = c == null ? '' : String(c);
-      tr.append(td);
-    }
-    return tr;
+  const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s)!;
+  const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s));
+  const ST: Record<string, [string, string]> = {
+    new: ['Новая', 'b'], open: ['В общем списке', 'y'], claimed: ['Взята', 'p'], contacted: ['Контакт', 'p'], meeting: ['Встреча', 'p'],
+    proposal: ['Предложение', 'p'], won: ['Выиграна', 'g'], lost: ['Проиграна', 'r'], archived: ['Архив', 'n'],
   };
-  async function load() {
-    let token = '';
-    try { token = sessionStorage.getItem(KEY) ?? ''; } catch {}
-    if (!token) return ($('[data-login]').hidden = false);
-    const res = await fetch('/api/admin', { headers: { Authorization: `Bearer ${token}` } });
-    if (!res.ok) {
-      try { sessionStorage.removeItem(KEY); } catch {}
-      return ($('[data-login]').hidden = false);
+  const CL: Record<string, string> = { none: '—', applied: 'Анкета', approved: 'Одобрен', paused: 'Пауза' };
+  let token = '';
+  let data: { leads: R[]; partners: R[]; stats: R[] } = { leads: [], partners: [], stats: [] };
+  let filter = 'active';
+  try { token = sessionStorage.getItem(KEY) ?? ''; } catch {}
+
+  const api = async (path: string, body?: unknown) => {
+    const r = await fetch('/api/admin' + path, {
+      method: body ? 'POST' : 'GET',
+      headers: { Authorization: `Bearer ${token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (r.status === 401) { logout(); throw new Error('auth'); }
+    return r.json();
+  };
+  const el = (tag: string, attrs: R = {}, ...kids: (Node | string | null | undefined)[]) => {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === 'class') e.className = v; else if (k.startsWith('on')) (e as any)[k] = v; else if (v != null) e.setAttribute(k, String(v));
     }
-    type R = Record<string, unknown>;
-    const d = (await res.json()) as { leads: R[]; partners: R[] };
-    $('[data-count="leads"]').textContent = String(d.leads.length);
-    $('[data-count="partners"]').textContent = String(d.partners.length);
-    $('[data-leads]').replaceChildren(...d.leads.map((l) => row([l.created_at, l.name, l.contact, l.interest, l.partner_name ?? (l.ref ? `link ${l.ref}` : '—'), l.country, l.message])));
-    $('[data-partners]').replaceChildren(...d.partners.map((p) => row([p.name, p.email, p.created_at, p.invited_by ?? '—', p.links, p.clicks, p.leads, p.team])));
-    $('[data-login]').hidden = true;
-    $('[data-data]').hidden = false;
+    for (const k of kids) if (k != null) e.append(k);
+    return e;
+  };
+  const badge = (s: string) => el('span', { class: 'st st-' + (ST[s]?.[1] ?? 'n') }, ST[s]?.[0] ?? s);
+  const when = (iso?: string) => (iso ? new Date(iso.replace(' ', 'T') + 'Z').toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '');
+  const left = (iso?: string) => {
+    if (!iso) return '';
+    const h = Math.round((Date.parse(iso.replace(' ', 'T') + 'Z') - Date.now()) / 36e5);
+    return h < 0 ? 'просрочено' : h < 24 ? `${h} ч` : `${Math.round(h / 24)} дн`;
+  };
+
+  function logout() {
+    try { sessionStorage.removeItem(KEY); } catch {}
+    token = '';
+    $('[data-app]').hidden = true; $('[data-on]').hidden = true; $('[data-login]').hidden = false;
   }
+
+  async function load() {
+    if (!token) return logout();
+    try { data = await api(''); } catch { return; }
+    $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
+    renderKpis(); renderLeads(); renderClosers(); renderPartners();
+  }
+
+  function renderKpis() {
+    const by = Object.fromEntries(data.stats.map((s) => [s.status, s]));
+    const n = (k: string[]) => k.reduce((a, s) => a + (by[s]?.n ?? 0), 0);
+    const tiles: [string, string | number, string][] = [
+      ['Новые', n(['new']), 'Проверить и опубликовать'],
+      ['В общем списке', n(['open']), 'Ждут закрывающего'],
+      ['В работе', n(['claimed', 'contacted', 'meeting', 'proposal']), 'У партнёров'],
+      ['Выиграно', `${n(['won'])} · $${(by.won?.usd ?? 0).toLocaleString('en-US')}`, 'Сделки и сумма'],
+      ['Проиграно', n(['lost']), 'Причины — в журнале'],
+    ];
+    $('[data-kpis]').replaceChildren(...tiles.map(([t, v, h]) => el('div', { class: 'kpi' }, el('small', {}, t), el('b', {}, String(v)), el('span', {}, h))));
+    const apps = data.partners.filter((p) => p.closer === 'applied').length;
+    const pill = $('[data-apps]');
+    pill.hidden = !apps; pill.textContent = String(apps);
+  }
+
+  const FILTERS: [string, string, (l: R) => boolean][] = [
+    ['active', 'Активные', (l) => !['won', 'lost', 'archived'].includes(l.status)],
+    ['new', 'Новые', (l) => l.status === 'new'],
+    ['open', 'В списке', (l) => l.status === 'open'],
+    ['work', 'В работе', (l) => ['claimed', 'contacted', 'meeting', 'proposal'].includes(l.status)],
+    ['won', 'Выиграны', (l) => l.status === 'won'],
+    ['lost', 'Проиграны', (l) => l.status === 'lost'],
+    ['all', 'Все', () => true],
+  ];
+  function renderLeads() {
+    $('[data-filters]').replaceChildren(...FILTERS.map(([k, t, f]) =>
+      el('button', { type: 'button', 'aria-pressed': String(k === filter), onclick: () => { filter = k; renderLeads(); } }, `${t} ${data.leads.filter(f).length}`)));
+    const q = $<HTMLInputElement>('[data-search]').value.trim().toLowerCase();
+    const f = FILTERS.find((x) => x[0] === filter)![2];
+    const rows = data.leads.filter(f).filter((l) => !q || [l.name, l.contact, l.message, l.service, l.brief].join(' ').toLowerCase().includes(q));
+    $('[data-leads]').replaceChildren(...(rows.length ? rows.map((l) =>
+      el('tr', { onclick: () => openLead(l.id), class: l.due_at && left(l.due_at) === 'просрочено' ? 'late' : '' },
+        el('td', {}, String(l.id)), el('td', {}, when(l.created_at)), el('td', {}, badge(l.status)),
+        el('td', {}, el('b', {}, l.name), el('br'), el('small', {}, l.contact)),
+        el('td', {}, l.service || l.interest || '—'), el('td', {}, l.budget || '—'), el('td', {}, l.closer_name || '—'),
+        el('td', {}, left(l.due_at)), el('td', {}, l.partner_name ? `партнёр ${l.partner_name}` : (l.message || '').startsWith('[Vax chat]') ? 'чат Vax' : 'форма'))) :
+      [el('tr', {}, el('td', { colspan: '9', class: 'empty' }, 'Здесь пока пусто'))]));
+  }
+
+  async function openLead(id: number) {
+    const l = data.leads.find((x) => x.id === id)!;
+    const { events } = await api(`/lead/${id}`);
+    const closers = data.partners.filter((p) => p.closer === 'approved');
+    const field = (label: string, name: string, value: string, area = false) =>
+      el('label', { class: 'f' }, el('span', {}, label), area ? el('textarea', { name, rows: '9' }, value || '') : el('input', { name, value: value || '' }));
+    const statusSel = el('select', { name: 'status' }, ...Object.entries(ST).map(([k, [t]]) => el('option', { value: k, ...(k === l.status ? { selected: '' } : {}) }, t)));
+    const closerSel = el('select', { name: 'closer_id' }, el('option', { value: '' }, '— не назначен —'),
+      ...closers.map((p) => el('option', { value: p.id, ...(p.id === l.closer_id ? { selected: '' } : {}) }, `${p.name} · ★${p.closer_rating ?? '—'} · в работе ${p.active_deals}`)));
+    const form = el('form', { class: 'edit' },
+      field('Что нужно клиенту', 'service', l.service), field('Бюджет', 'budget', l.budget),
+      field('Профиль клиента для закрывающего (видят партнёры; без контактов — их увидит только тот, кто взял заявку)', 'brief', l.brief, true),
+      el('div', { class: 'two' }, el('label', { class: 'f' }, el('span', {}, 'Статус'), statusSel), el('label', { class: 'f' }, el('span', {}, 'Закрывающий'), closerSel)),
+      field('Сумма сделки, $', 'value_usd', l.value_usd ?? ''),
+      field('Комментарий в журнал', 'note', ''),
+      el('div', { class: 'btns' },
+        el('button', { class: 'cta', type: 'submit' }, 'Сохранить'),
+        l.status === 'new' ? el('button', { class: 'cta alt', type: 'button', onclick: () => save({ status: 'open' }) }, 'Опубликовать партнёрам') : null,
+        el('button', { class: 'ghost', type: 'button', onclick: () => save({ status: 'archived' }) }, 'В архив')));
+    async function save(extra: R = {}) {
+      const fd = new FormData(form as HTMLFormElement);
+      const b: R = Object.fromEntries(fd.entries());
+      if (b.closer_id === String(l.closer_id ?? '')) delete b.closer_id;
+      if (b.status === l.status) delete b.status;
+      if (b.value_usd === String(l.value_usd ?? '')) delete b.value_usd;
+      Object.assign(b, extra);
+      await api(`/lead/${id}`, b);
+      await load(); openLead(id);
+    }
+    form.addEventListener('submit', (e) => { e.preventDefault(); save(); });
+    $('[data-detail]').replaceChildren(
+      el('h2', {}, `#${l.id} · ${l.name}`, ' ', badge(l.status)),
+      el('dl', {},
+        el('dt', {}, 'Контакт'), el('dd', {}, l.contact),
+        el('dt', {}, 'Пришла'), el('dd', {}, `${when(l.created_at)} · ${l.lang?.toUpperCase()} · ${l.country ?? ''} · ${l.page ?? ''}`),
+        el('dt', {}, 'Интерес'), el('dd', {}, l.interest || '—'),
+        el('dt', {}, 'Привёл'), el('dd', {}, l.partner_name ?? '—')),
+      el('details', { open: '' }, el('summary', {}, 'Сообщение клиента / диалог с Vax'), el('pre', {}, l.message || '—')),
+      form,
+      el('h3', {}, 'Журнал'),
+      el('ol', { class: 'log' }, ...events.map((e: R) => el('li', {}, el('small', {}, `${when(e.at)} · ${e.actor === 'owner' ? 'вы' : e.actor === 'system' ? 'система' : 'партнёр'}`), el('div', {}, e.text || e.kind)))));
+    $('[data-drawer]').hidden = false;
+  }
+
+  function renderClosers() {
+    const list = data.partners.filter((p) => p.closer !== 'none');
+    $('[data-closers]').replaceChildren(...(list.length ? list.map((p) => {
+      let app: R = {};
+      try { app = JSON.parse(p.closer_app || '{}'); } catch {}
+      const sel = el('select', {}, ...Object.entries(CL).map(([k, t]) => el('option', { value: k, ...(k === p.closer ? { selected: '' } : {}) }, t)));
+      const rating = el('input', { type: 'number', min: '1', max: '5', step: '0.5', value: p.closer_rating ?? '', placeholder: '★' });
+      const note = el('input', { value: p.closer_note ?? '', placeholder: 'Заметка для себя' });
+      return el('article', { class: 'card' },
+        el('h3', {}, `${p.name} `, el('span', { class: 'st st-' + (p.closer === 'approved' ? 'g' : p.closer === 'applied' ? 'b' : 'r') }, CL[p.closer])),
+        el('p', { class: 'mut' }, `${p.email} · английский: ${app.english || '—'} · ${app.timezone || ''} ${app.hours || ''}`),
+        el('p', {}, `В работе: ${p.active_deals} · выиграно: ${p.won} ($${Number(p.won_usd).toLocaleString('en-US')}) · рейтинг: ${p.closer_rating ?? '—'}`),
+        app.profile ? el('p', {}, el('a', { href: /^https?:/.test(app.profile) ? app.profile : '#', target: '_blank', rel: 'noopener' }, app.profile)) : null,
+        el('details', {}, el('summary', {}, 'Анкета и питч'), el('p', {}, el('b', {}, 'Опыт: '), app.experience || '—'), el('p', {}, el('b', {}, 'Питч: '), app.pitch || '—')),
+        el('div', { class: 'two' }, sel, rating), note,
+        el('button', { class: 'cta', type: 'button', onclick: async () => {
+          await api(`/partner/${p.id}`, { closer: (sel as HTMLSelectElement).value, rating: (rating as HTMLInputElement).value || null, note: (note as HTMLInputElement).value });
+          load();
+        } }, 'Сохранить'));
+    }) : [el('p', { class: 'mut' }, 'Анкет пока нет. Партнёры подают их в кабинете → «Заявки агентства».')]));
+  }
+
+  function renderPartners() {
+    $('[data-partners]').replaceChildren(...data.partners.map((p) =>
+      el('tr', {}, ...[p.name, p.email, when(p.created_at), p.invited_by ?? '—', p.links, p.clicks, p.leads, p.team, CL[p.closer] ?? '—'].map((c) => el('td', {}, String(c ?? ''))))));
+  }
+
+  $$<HTMLButtonElement>('[data-view]').forEach((b) => b.addEventListener('click', () => {
+    $$('[data-view]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    $$<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.view));
+  }));
+  $('[data-search]').addEventListener('input', renderLeads);
+  $('[data-close]').addEventListener('click', () => ($('[data-drawer]').hidden = true));
+  $('[data-drawer]').addEventListener('click', (e) => { if (e.target === e.currentTarget) $('[data-drawer]').hidden = true; });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('[data-drawer]').hidden = true; });
+  $('[data-reload]').addEventListener('click', load);
+  $('[data-out]').addEventListener('click', logout);
   $<HTMLFormElement>('[data-login]').addEventListener('submit', (e) => {
     e.preventDefault();
-    const v = new FormData(e.currentTarget as HTMLFormElement).get('token');
-    try { sessionStorage.setItem(KEY, String(v ?? '')); } catch {}
+    token = String(new FormData(e.currentTarget as HTMLFormElement).get('token') ?? '');
+    try { sessionStorage.setItem(KEY, token); } catch {}
     load();
-  });
-  $('[data-out]').addEventListener('click', () => {
-    try { sessionStorage.removeItem(KEY); } catch {}
-    location.reload();
   });
   load();
 </script>
 
-<style>
-  .wrap { max-width: 1200px; margin: 0 auto; padding: 24px 16px 80px; }
-  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  input { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surf); color: var(--ink); min-width: 0; flex: 1 1 240px; max-width: 420px; }
-  .cta { background: var(--acc); color: var(--dark-ink); font-weight: 600; border: 0; border-radius: 999px; padding: 10px 18px; cursor: pointer; }
-  .ghost { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 6px 12px; cursor: pointer; margin-left: 8px; }
-  .table { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  td:last-child { max-width: 320px; }
-  th { color: var(--mut); font-weight: 500; }
+<style is:global>
+  .adm { max-width: 1280px; margin: 0 auto; padding: 24px 16px 80px; font-family: var(--font); color: var(--ink); }
+  .adm .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .adm h1 { margin: 0; font-size: 26px; }
+  .adm .top-r { display: flex; gap: 8px; }
+  .adm .login { display: flex; gap: 8px; max-width: 420px; }
+  .adm input, .adm select, .adm textarea { font: 15px var(--font); color: var(--ink); background: var(--surf); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; width: 100%; box-sizing: border-box; }
+  .adm textarea { font-family: var(--font); line-height: 1.45; resize: vertical; }
+  .adm .cta { background: var(--acc); color: var(--dark-ink); border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .adm .cta.alt { background: var(--ink); color: var(--bg); }
+  .adm .ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 9px 14px; cursor: pointer; }
+  .adm .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 18px; }
+  .adm .kpi { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 2px; }
+  .adm .kpi small, .adm .kpi span { color: var(--mut); font-size: 12px; }
+  .adm .kpi b { font-size: 24px; }
+  .adm .tabs, .adm .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .adm .tabs { margin-bottom: 14px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+  .adm .tabs button, .adm .chips button { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 7px 13px; cursor: pointer; font: 600 14px var(--font); }
+  .adm [aria-pressed='true'] { background: var(--ink) !important; color: var(--bg) !important; }
+  .adm .pill { background: var(--error); color: #fff; border-radius: 999px; padding: 0 7px; font-size: 12px; margin-left: 4px; }
+  .adm .bar { display: flex; gap: 10px; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+  .adm .bar input { max-width: 300px; }
+  .adm .table { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surf); }
+  .adm table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .adm th { text-align: left; font-size: 12px; color: var(--mut); font-weight: 600; padding: 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .adm td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .adm tbody tr { cursor: pointer; }
+  .adm tbody tr:hover { background: var(--bg); }
+  .adm tr.late td { background: color-mix(in srgb, var(--error) 10%, transparent); }
+  .adm .empty { text-align: center; color: var(--mut); padding: 30px; }
+  .adm .st { display: inline-block; border-radius: 999px; padding: 2px 9px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .adm .st-b { background: #dbe8ff; color: #1d4ea8; } .adm .st-y { background: #fff1c9; color: #7a5600; } .adm .st-p { background: #ece2ff; color: #5b2ca8; }
+  .adm .st-g { background: #d8f5e4; color: #146c3c; } .adm .st-r { background: #ffe0dc; color: #a12a1b; } .adm .st-n { background: var(--surf2); color: var(--mut); }
+  .adm .hint, .adm .mut { color: var(--mut); }
+  .adm .card { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .adm .card h3, .adm .card p { margin: 0; }
+  .adm .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .adm .help { max-width: 760px; line-height: 1.6; }
+  .adm .drawer { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.35); z-index: 80; display: flex; justify-content: flex-end; }
+  .adm .drawer[hidden] { display: none; }
+  .adm .sheet { width: min(640px, 100vw); height: 100dvh; overflow-y: auto; background: var(--bg); padding: 22px 20px 60px; box-sizing: border-box; position: relative; }
+  .adm .x { position: absolute; top: 10px; right: 12px; border: 0; background: none; font-size: 28px; cursor: pointer; color: var(--ink); }
+  .adm .sheet h2 { margin: 0 30px 12px 0; font-size: 22px; }
+  .adm dl { display: grid; grid-template-columns: 90px 1fr; gap: 4px 10px; margin: 0 0 12px; font-size: 14px; }
+  .adm dt { color: var(--mut); } .adm dd { margin: 0; overflow-wrap: anywhere; }
+  .adm pre { white-space: pre-wrap; font: 13px/1.45 var(--font); background: var(--surf); border: 1px solid var(--line); border-radius: 10px; padding: 10px; max-height: 260px; overflow: auto; }
+  .adm .edit { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
+  .adm .f { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--mut); }
+  .adm .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .adm .log { padding-left: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .adm .log small { color: var(--mut); }
 </style>
