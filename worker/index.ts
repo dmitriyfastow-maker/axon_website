@@ -4,6 +4,7 @@ import { handlePartnerApi, handleRedirect, type DB } from './partner.js';
 import { handleAdminApi } from './admin.js';
 import { handleChat, type AiBinding } from './chat.js';
 import { draftBrief, logEvent, sweep, type Notify } from './deals.js';
+import { bindReturningClient, handleRoomApi, newRoom } from './rooms.js';
 
 interface Env extends LeadEnv {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -49,6 +50,8 @@ export default {
       if (!env.LEADS) return json(503, { ok: false });
       return handleAdminApi(env.LEADS, request, env.ADMIN_TOKEN, url.pathname.slice('/api/admin'.length).replace(/^\//, ''), notify);
     }
+    const room = url.pathname.match(/^\/api\/room\/([a-f0-9]{24})$/);
+    if (room) return env.LEADS ? handleRoomApi(env.LEADS, request, room[1], notify) : json(503, { ok: false });
     if (url.pathname === '/api/chat') return handleChat(env, request, ctx ? (p) => ctx.waitUntil(p) : undefined);
     if (url.pathname === '/api/lead') {
       if (request.method !== 'POST') return json(405, { ok: false });
@@ -62,19 +65,21 @@ export default {
       const db = env.LEADS;
       const country = (request as { cf?: { country?: string } }).cf?.country ?? null;
       const page = request.headers.get('Referer');
+      const roomToken = newRoom();
       const save = db
         ? async (l: LeadInput) => {
             const res = (await db
-              .prepare('INSERT INTO leads (mode, name, contact, interest, message, lang, ref, country, page) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-              .bind(l.mode, l.name, l.contact, l.interest, l.message, l.lang, l.ref ?? null, country, page)
+              .prepare('INSERT INTO leads (mode, name, contact, interest, message, lang, ref, country, page, room) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+              .bind(l.mode, l.name, l.contact, l.interest, l.message, l.lang, l.ref ?? null, country, page, roomToken)
               .run()) as { meta?: { last_row_id?: number } };
             const id = res?.meta?.last_row_id;
             // Background: an AI client profile for the closer and the first line of the lead's history.
-            if (id) waitUntil(Promise.all([logEvent(db, id, 'system', 'note', 'Request received from the site'), draftBrief(db, env.AI, id)]));
+            if (id) waitUntil(Promise.all([logEvent(db, id, 'system', 'note', 'Request received from the site'), draftBrief(db, env.AI, id), bindReturningClient(db, id, l.contact, notify)]));
           }
         : undefined;
       const { status, body: out } = await handleLead(body, leadEnv, fetch, Date.now(), save);
-      return json(status, out);
+      // The client gets a link to their private project chat right away.
+      return json(status, status === 200 && db ? { ...(out as object), room: roomToken } : out);
     }
     return env.ASSETS.fetch(request);
   },

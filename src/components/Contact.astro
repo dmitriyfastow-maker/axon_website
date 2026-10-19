@@ -29,6 +29,7 @@ const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.
         <img class="vax-ok" src="/mascot/vax-happy.webp" alt="Vax" width="120" height="120" loading="lazy" data-vax-poke />
         <p>{f.success}</p>
         <p class="vax-line">{t.vax.success}</p>
+        <div class="room-link" data-room-box hidden><p>{f.room}</p><a href="#" class="room-btn" data-room-link>{f.roomBtn}</a></div>
         <button type="button" class="again" data-form-again>{f.again}</button>
       </div>
       <form data-lead-form data-lang={lang} data-copy={JSON.stringify(copy)} novalidate>
@@ -252,4 +253,6 @@ const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.
     cursor: progress;
     opacity: 0.75;
   }
+  .room-link p { margin: 8px 0; font-size: 14px; }
+  .room-btn { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 700; padding: 10px 16px; border-radius: 999px; text-decoration: none; }
 </style>

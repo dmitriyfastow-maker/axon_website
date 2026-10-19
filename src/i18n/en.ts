@@ -556,6 +556,8 @@ const en = {
     "sendQ": "Send question",
     "success": "Thank you. We'll get back to you within 24 hours to schedule the strategic session.",
     "again": "Send another",
+    "room": "Your private project chat is ready — open it and save the link:",
+    "roomBtn": "Open my project chat →",
     "required": "Required field",
     "invalid": "Enter a valid Telegram, phone or email",
     "sending": "Sending…",

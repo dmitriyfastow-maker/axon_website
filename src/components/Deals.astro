@@ -1,6 +1,7 @@
 ---
-// Cabinet tab "Agency leads": verified partner-closers take warm agency leads, work them under SLA and log every step.
-// Server rules live in worker/deals.ts. Clients always pay Vaxo; closers earn the warm-lead rate.
+// Cabinet tab "Agency clients": a verified partner becomes the client's personal manager — sales, calls, support.
+// All talk with the client goes through the client's project chat (/room/), which the owner sees in full.
+// Server rules: worker/deals.ts and worker/rooms.ts. Clients always pay Vaxo; the manager earns the warm-lead rate.
 import type { Lang } from '../i18n';
 import { RATES } from '../data/partners';
 interface Props { lang: Lang }
@@ -9,106 +10,112 @@ const r = RATES.agencyGiven;
 
 const T = {
   en: {
-    h: 'Close agency deals', lead: `We bring warm leads who asked for a website, app, ads or AI. You talk to them in English, close the deal and earn ${r}% of what the client pays. Vaxo delivers the work.`,
-    req: 'Who can take leads', reqs: ['Fluent English (C1+), calls and writing', 'Sales or client-facing experience', 'First reply to a client within 24 hours', 'You follow the rules below — every step is logged'],
-    rules: 'Rules (protect the client and the brand)', ruleList: [
-      'Quote only from official price ranges on vaxogroup.com. Discounts — only with the owner’s approval.',
+    h: 'Agency clients', lead: `People ask Vaxo for a website, app, ads or AI. You become their personal manager: you talk to them in English, close the deal and stay their contact for calls and support. You earn ${r}% of what the client pays; Vaxo does the work.`,
+    req: 'Who can manage clients', reqs: ['Fluent English (C1+), calls and writing', 'Sales or client-facing experience', 'Reply to clients within 24 hours', 'Every word with the client goes through the project chat'],
+    rules: 'Rules', ruleList: [
+      'Talk to the client in their project chat. A call or an email outside the chat — add a short note right after it.',
+      'Quote only official price ranges from vaxogroup.com. Discounts — only with the owner’s approval.',
       'Never take money. Contract and invoice come from Vaxo; the client pays Vaxo only.',
-      'Never promise dates, results or features that are not agreed with the team.',
-      'Update the lead after every contact with a short note. Deadlines: first contact 24 h, then 72 h, 5 days, 10 days.',
-      'Missed deadline — the lead returns to the pool. Two misses in 30 days — access is paused.',
-      'Client data is used only for this deal. No copying, no reselling, no spam.',
-      'Polite, honest, on time. The owner rates every deal; better rating — more leads at once (2 → 3 → 5).'],
-    apply: 'Apply to become a closer', english: 'English level', exp: 'Your sales experience (what, where, results)', profile: 'LinkedIn or another profile link', tz: 'Time zone', hours: 'Hours you can take calls',
+      'Never promise dates, results or features that the team has not confirmed.',
+      'Deadlines: first message 24 h, then 72 h, 5 days, 10 days. Missed — the client goes back to the pool; two misses in 30 days — access paused.',
+      'Client data is only for this client. No copying, reselling or taking clients off Vaxo.',
+      'After a win you stay the client’s manager for support and new orders. The owner rates every client; a better rating gives you more clients at once (2 → 3 → 5).'],
+    apply: 'Apply to manage clients', english: 'English level', exp: 'Your sales experience (what, where, results)', profile: 'LinkedIn or another profile link', tz: 'Time zone', hours: 'Hours you can take calls',
     pitchQ: 'Test: a restaurant owner from Texas writes “Why should I pay you $1,500 for a website if my nephew can do it for $300?”. Write your answer as you would send it (in English).',
-    agree: 'I agree to the rules above', send: 'Send application', sent: 'Application sent. The owner will review it and you will see the leads here.',
-    applied: 'Your application is under review. We will open the leads for you after the check.', paused: 'Access is paused. Contact the owner to discuss it.',
-    stats: (a: number, l: number, rt: string) => `In work: ${a} of ${l} · rating: ${rt}`,
-    open: 'Open leads', openNone: 'No open leads right now. New ones appear here — check daily.', take: 'Take this lead', taken: 'Someone took it first.', limit: 'You already hold the maximum number of leads. Close or release one first.',
-    mine: 'My leads', mineNone: 'You have no leads yet.', client: 'Client', contact: 'Contact', msg: 'Request / chat with Vax', brief: 'Client profile', links: 'Useful links', log: 'History',
-    due: 'Next step due', overdue: 'overdue', next: 'Move to', note: 'What happened (required, 10+ characters)', value: 'Deal value, $', save: 'Save step', release: 'Give back',
-    stage: { claimed: 'Taken', contacted: 'Contacted', meeting: 'Meeting', proposal: 'Proposal', won: 'Won', lost: 'Lost', open: 'Open', new: 'New', archived: 'Archived' } as Record<string, string>,
-    noteErr: 'Write a note (10+ characters). For “Won” add the deal value.',
-    book: 'Sales playbook', playbook: [
-      ['First message (within 24 h)', '“Hi {name}, this is {you} from Vaxo. Thanks for reaching out about {need}. I have a couple of quick questions so we can suggest the right plan — is a 15-minute call today or tomorrow OK?”'],
-      ['Discovery questions', 'What does the business do and for whom? What should happen in 3 months (leads, sales, launch)? What exists now (site, ads, CRM)? Who decides and by when? Budget range they have in mind.'],
-      ['How to quote', 'Pick the tier or service that solves the goal, give the official range, explain what is included, offer the strategy session as the first step. Then tell the owner the details — Vaxo sends the proposal and invoice.'],
-      ['Objections', '“Too expensive” → compare with the cost of lost clients and show the starter step from $149. “Need to think” → agree a date for the follow-up. “Nephew can do it” → we build a system: design, tracking, ads, AI, support.'],
-      ['Follow-up', 'Day 1, day 3, day 7 — short, helpful, with one question. After 3 tries with no reply — mark Lost with the reason.']],
+    agree: 'I agree to the rules', send: 'Send application', sent: 'Application sent. The owner will review it and clients will appear here.',
+    applied: 'Your application is under review. Clients open for you after the check.', paused: 'Access is paused. Contact the owner to discuss it.',
+    open: 'New requests', openNone: 'No new requests right now. They appear here — check daily.', take: 'Take this client', taken: 'Someone took it first.', limit: 'You already have the maximum number of clients in progress. Move one forward or give it back.',
+    mine: 'My clients', mineNone: 'No clients yet.', contact: 'Contact', msg: 'Their request', brief: 'Client profile', links: 'Links', log: 'History',
+    due: 'Next step by', overdue: 'overdue', unread: 'new',
+    stage: { claimed: 'New', contacted: 'In touch', meeting: 'Call done', proposal: 'Proposal sent', won: 'Client', lost: 'Lost', open: 'Open', new: 'New', archived: 'Archived' } as Record<string, string>,
+    toClient: 'To client', toNote: 'Internal note', toCall: 'Schedule call', phClient: 'Message to the client…', phNote: 'Only you and the owner see this…', when: 'Date and time (their time zone)', link: 'Meeting link (Google Meet / Zoom)', sendBtn: 'Send',
+    roomH: 'Client’s project chat', roomCopy: 'Copy link', copied: 'Copied',
+    first: 'First message (send by email/SMS, then continue in the chat)', firstText: 'Hi {name}, this is {you}, your manager at Vaxo. Thanks for your request about {need}. To keep everything in one place, here is your private project chat: {link} — I will answer there within a few hours. Would you prefer to continue in writing or have a short call?',
+    stepH: 'Move the client', note: 'What happened (10+ characters)', value: 'Deal value, $', save: 'Save', release: 'Give back',
+    noteErr: 'Write what happened (10+ characters). For “Client” add the deal value.',
+    book: 'How to work with a client', playbook: [
+      ['1. First 24 hours', 'Send the first message with the chat link. Read the client profile and their request before you write.'],
+      ['2. Understand the goal', 'What does the business do, for whom, what should change in 3 months, what exists now, who decides, what budget they have in mind.'],
+      ['3. Offer', 'Pick the tier or service that solves the goal, give the official range, explain what is included. Tell the owner the details — Vaxo sends the proposal and invoice.'],
+      ['4. Objections', '“Too expensive” → compare with the cost of lost clients; offer the starter step from $149. “Need to think” → agree a follow-up date. “Nephew can do it” → we build a system: design, tracking, ads, AI, support.'],
+      ['5. After the win', 'You stay their manager: questions, calls, updates, new orders. Answer within 24 hours.']],
     useful: [['All services and prices', '/#services'], ['Growth tiers', '/#pricing'], ['Cases', '/#cases'], ['Starter packages', '/start/'], ['Website examples', '/examples/'], ['Templates shop', '/shop/']],
   },
   ru: {
-    h: 'Закрывайте сделки агентства', lead: `Мы приводим тёплых клиентов, которые сами попросили сайт, приложение, рекламу или ИИ. Вы общаетесь с ними на английском, закрываете сделку и получаете ${r}% от оплаты клиента. Работу делает Vaxo.`,
-    req: 'Кто может брать заявки', reqs: ['Свободный английский (C1+): звонки и переписка', 'Опыт продаж или работы с клиентами', 'Первый ответ клиенту — в течение 24 часов', 'Соблюдение правил ниже — каждый шаг записывается'],
-    rules: 'Правила (защищают клиента и бренд)', ruleList: [
-      'Называйте цены только из официальных вилок на vaxogroup.com. Скидки — только с одобрения владельца.',
+    h: 'Клиенты агентства', lead: `Люди просят у Vaxo сайт, приложение, рекламу или ИИ. Вы становитесь их личным менеджером: общаетесь на английском, закрываете сделку и остаётесь их контактом для созвонов и поддержки. Вы получаете ${r}% от оплаты клиента; работу делает Vaxo.`,
+    req: 'Кто может вести клиентов', reqs: ['Свободный английский (C1+): звонки и переписка', 'Опыт продаж или работы с клиентами', 'Ответ клиенту — в течение 24 часов', 'Всё общение с клиентом — через чат проекта'],
+    rules: 'Правила', ruleList: [
+      'Общайтесь с клиентом в чате его проекта. Был звонок или письмо вне чата — сразу добавьте короткую заметку.',
+      'Называйте только официальные вилки цен с vaxogroup.com. Скидки — только с одобрения владельца.',
       'Никогда не берите деньги. Договор и счёт выставляет Vaxo, клиент платит только Vaxo.',
-      'Не обещайте сроков, результатов и функций, не согласованных с командой.',
-      'После каждого контакта обновляйте заявку коротким комментарием. Сроки: первый контакт — 24 ч, дальше 72 ч, 5 дней, 10 дней.',
-      'Пропустили срок — заявка возвращается в общий список. Два пропуска за 30 дней — доступ на паузе.',
-      'Данные клиента — только для этой сделки. Не копировать, не перепродавать, не спамить.',
-      'Вежливо, честно, вовремя. Владелец оценивает каждую сделку; выше рейтинг — больше заявок одновременно (2 → 3 → 5).'],
-    apply: 'Анкета закрывающего', english: 'Уровень английского', exp: 'Ваш опыт продаж (что, где, результаты)', profile: 'Ссылка на LinkedIn или другой профиль', tz: 'Часовой пояс', hours: 'Часы, когда можете созваниваться',
+      'Не обещайте сроков, результатов и функций, которые не подтвердила команда.',
+      'Сроки: первое сообщение — 24 ч, дальше 72 ч, 5 дней, 10 дней. Пропустили — клиент возвращается в общий список; два пропуска за 30 дней — доступ на паузе.',
+      'Данные клиента — только для этого клиента. Не копировать, не перепродавать, не уводить клиентов от Vaxo.',
+      'После победы вы остаётесь менеджером клиента: поддержка и новые заказы. Владелец оценивает каждого клиента; выше рейтинг — больше клиентов одновременно (2 → 3 → 5).'],
+    apply: 'Анкета менеджера клиентов', english: 'Уровень английского', exp: 'Ваш опыт продаж (что, где, результаты)', profile: 'Ссылка на LinkedIn или другой профиль', tz: 'Часовой пояс', hours: 'Часы, когда можете созваниваться',
     pitchQ: 'Тест: владелец ресторана из Техаса пишет «Why should I pay you $1,500 for a website if my nephew can do it for $300?». Напишите ответ так, как отправили бы его клиенту (на английском).',
-    agree: 'Согласен с правилами выше', send: 'Отправить анкету', sent: 'Анкета отправлена. Владелец проверит её, и заявки появятся здесь.',
-    applied: 'Ваша анкета на проверке. После проверки откроем вам заявки.', paused: 'Доступ на паузе. Свяжитесь с владельцем, чтобы обсудить.',
-    stats: (a: number, l: number, rt: string) => `В работе: ${a} из ${l} · рейтинг: ${rt}`,
-    open: 'Открытые заявки', openNone: 'Сейчас открытых заявок нет. Новые появятся здесь — заглядывайте каждый день.', take: 'Взять заявку', taken: 'Кто-то взял её раньше.', limit: 'У вас уже максимум заявок. Закройте или верните одну.',
-    mine: 'Мои заявки', mineNone: 'У вас пока нет заявок.', client: 'Клиент', contact: 'Контакт', msg: 'Запрос / диалог с Vax', brief: 'Профиль клиента', links: 'Полезные ссылки', log: 'История',
-    due: 'Следующий шаг до', overdue: 'просрочено', next: 'Перевести в', note: 'Что произошло (обязательно, от 10 символов)', value: 'Сумма сделки, $', save: 'Сохранить шаг', release: 'Вернуть заявку',
-    stage: { claimed: 'Взята', contacted: 'Контакт', meeting: 'Встреча', proposal: 'Предложение', won: 'Выиграна', lost: 'Проиграна', open: 'Открыта', new: 'Новая', archived: 'Архив' } as Record<string, string>,
-    noteErr: 'Напишите комментарий (от 10 символов). Для «Выиграна» укажите сумму.',
-    book: 'Памятка продаж', playbook: [
-      ['Первое сообщение (в течение 24 ч)', '«Hi {name}, this is {you} from Vaxo. Thanks for reaching out about {need}. I have a couple of quick questions so we can suggest the right plan — is a 15-minute call today or tomorrow OK?»'],
-      ['Вопросы на звонке', 'Чем занимается бизнес и для кого? Что должно случиться через 3 месяца (заявки, продажи, запуск)? Что уже есть (сайт, реклама, CRM)? Кто принимает решение и когда? Какой бюджет держат в голове?'],
-      ['Как называть цену', 'Выберите тариф или услугу под цель, назовите официальную вилку, объясните, что входит, предложите стратегическую сессию первым шагом. Детали передайте владельцу — предложение и счёт отправляет Vaxo.'],
-      ['Возражения', '«Дорого» → сравните со стоимостью потерянных клиентов и покажите стартовый шаг от $149. «Подумаю» → договоритесь о дате следующего контакта. «Племянник сделает» → мы строим систему: дизайн, аналитика, реклама, ИИ, поддержка.'],
-      ['Догоняющие сообщения', 'День 1, 3, 7 — коротко, с пользой и одним вопросом. После 3 попыток без ответа — «Проиграна» с причиной.']],
+    agree: 'Согласен с правилами', send: 'Отправить анкету', sent: 'Анкета отправлена. Владелец проверит её, и клиенты появятся здесь.',
+    applied: 'Ваша анкета на проверке. После проверки откроем вам клиентов.', paused: 'Доступ на паузе. Свяжитесь с владельцем, чтобы обсудить.',
+    open: 'Новые заявки', openNone: 'Сейчас новых заявок нет. Они появятся здесь — заглядывайте каждый день.', take: 'Взять клиента', taken: 'Кто-то взял раньше.', limit: 'У вас уже максимум клиентов в работе. Продвиньте одного дальше или верните.',
+    mine: 'Мои клиенты', mineNone: 'Клиентов пока нет.', contact: 'Контакт', msg: 'Запрос клиента', brief: 'Профиль клиента', links: 'Ссылки', log: 'История',
+    due: 'Следующий шаг до', overdue: 'просрочено', unread: 'новых',
+    stage: { claimed: 'Новый', contacted: 'На связи', meeting: 'Созвон был', proposal: 'Предложение', won: 'Клиент', lost: 'Проигран', open: 'Открыт', new: 'Новый', archived: 'Архив' } as Record<string, string>,
+    toClient: 'Клиенту', toNote: 'Заметка', toCall: 'Назначить созвон', phClient: 'Сообщение клиенту…', phNote: 'Видите только вы и владелец…', when: 'Дата и время (по времени клиента)', link: 'Ссылка на встречу (Google Meet / Zoom)', sendBtn: 'Отправить',
+    roomH: 'Чат проекта клиента', roomCopy: 'Скопировать ссылку', copied: 'Скопировано',
+    first: 'Первое сообщение (отправьте на email/SMS, дальше — в чате)', firstText: 'Hi {name}, this is {you}, your manager at Vaxo. Thanks for your request about {need}. To keep everything in one place, here is your private project chat: {link} — I will answer there within a few hours. Would you prefer to continue in writing or have a short call?',
+    stepH: 'Этап клиента', note: 'Что произошло (от 10 символов)', value: 'Сумма сделки, $', save: 'Сохранить', release: 'Вернуть',
+    noteErr: 'Напишите, что произошло (от 10 символов). Для «Клиент» укажите сумму.',
+    book: 'Как вести клиента', playbook: [
+      ['1. Первые 24 часа', 'Отправьте первое сообщение со ссылкой на чат. Перед этим прочитайте профиль клиента и его запрос.'],
+      ['2. Понять цель', 'Чем занимается бизнес, для кого, что должно измениться за 3 месяца, что уже есть, кто решает, какой бюджет держат в голове.'],
+      ['3. Предложение', 'Выберите тариф или услугу под цель, назовите официальную вилку, объясните, что входит. Детали передайте владельцу — предложение и счёт отправляет Vaxo.'],
+      ['4. Возражения', '«Дорого» → сравните со стоимостью потерянных клиентов, предложите стартовый шаг от $149. «Подумаю» → договоритесь о дате. «Племянник сделает» → мы строим систему: дизайн, аналитика, реклама, ИИ, поддержка.'],
+      ['5. После победы', 'Вы остаётесь менеджером: вопросы, созвоны, обновления, новые заказы. Ответ — в течение 24 часов.']],
     useful: [['Все услуги и цены', '/ru/#services'], ['Тарифы роста', '/ru/#pricing'], ['Кейсы', '/ru/#cases'], ['Стартовые пакеты', '/ru/start/'], ['Примеры сайтов', '/ru/examples/'], ['Магазин шаблонов', '/ru/shop/']],
   },
   ua: {
-    h: 'Закривайте угоди агенції', lead: `Ми приводимо теплих клієнтів, які самі попросили сайт, застосунок, рекламу чи ШІ. Ви спілкуєтеся з ними англійською, закриваєте угоду й отримуєте ${r}% від оплати клієнта. Роботу робить Vaxo.`,
-    req: 'Хто може брати заявки', reqs: ['Вільна англійська (C1+): дзвінки й листування', 'Досвід продажів або роботи з клієнтами', 'Перша відповідь клієнту — протягом 24 годин', 'Дотримання правил нижче — кожен крок записується'],
-    rules: 'Правила (захищають клієнта і бренд)', ruleList: [
-      'Називайте ціни лише з офіційних діапазонів на vaxogroup.com. Знижки — тільки зі схвалення власника.',
+    h: 'Клієнти агенції', lead: `Люди просять у Vaxo сайт, застосунок, рекламу чи ШІ. Ви стаєте їхнім особистим менеджером: спілкуєтеся англійською, закриваєте угоду й залишаєтеся їхнім контактом для дзвінків і підтримки. Ви отримуєте ${r}% від оплати клієнта; роботу робить Vaxo.`,
+    req: 'Хто може вести клієнтів', reqs: ['Вільна англійська (C1+): дзвінки й листування', 'Досвід продажів або роботи з клієнтами', 'Відповідь клієнту — протягом 24 годин', 'Усе спілкування з клієнтом — через чат проєкту'],
+    rules: 'Правила', ruleList: [
+      'Спілкуйтеся з клієнтом у чаті його проєкту. Був дзвінок чи лист поза чатом — одразу додайте коротку нотатку.',
+      'Називайте лише офіційні діапазони цін з vaxogroup.com. Знижки — тільки зі схвалення власника.',
       'Ніколи не беріть гроші. Договір і рахунок виставляє Vaxo, клієнт платить лише Vaxo.',
-      'Не обіцяйте строків, результатів і функцій, не погоджених з командою.',
-      'Після кожного контакту оновлюйте заявку коротким коментарем. Строки: перший контакт — 24 год, далі 72 год, 5 днів, 10 днів.',
-      'Пропустили строк — заявка повертається в загальний список. Два пропуски за 30 днів — доступ на паузі.',
-      'Дані клієнта — лише для цієї угоди. Не копіювати, не перепродавати, не спамити.',
-      'Ввічливо, чесно, вчасно. Власник оцінює кожну угоду; вищий рейтинг — більше заявок одночасно (2 → 3 → 5).'],
-    apply: 'Анкета того, хто закриває угоди', english: 'Рівень англійської', exp: 'Ваш досвід продажів (що, де, результати)', profile: 'Посилання на LinkedIn або інший профіль', tz: 'Часовий пояс', hours: 'Години, коли можете дзвонити',
+      'Не обіцяйте строків, результатів і функцій, які не підтвердила команда.',
+      'Строки: перше повідомлення — 24 год, далі 72 год, 5 днів, 10 днів. Пропустили — клієнт повертається в загальний список; два пропуски за 30 днів — доступ на паузі.',
+      'Дані клієнта — лише для цього клієнта. Не копіювати, не перепродавати, не відводити клієнтів від Vaxo.',
+      'Після перемоги ви залишаєтеся менеджером клієнта: підтримка й нові замовлення. Власник оцінює кожного клієнта; вищий рейтинг — більше клієнтів одночасно (2 → 3 → 5).'],
+    apply: 'Анкета менеджера клієнтів', english: 'Рівень англійської', exp: 'Ваш досвід продажів (що, де, результати)', profile: 'Посилання на LinkedIn або інший профіль', tz: 'Часовий пояс', hours: 'Години, коли можете дзвонити',
     pitchQ: 'Тест: власник ресторану з Техасу пише «Why should I pay you $1,500 for a website if my nephew can do it for $300?». Напишіть відповідь так, як надіслали б її клієнту (англійською).',
-    agree: 'Погоджуюся з правилами вище', send: 'Надіслати анкету', sent: 'Анкету надіслано. Власник перевірить її, і заявки з’являться тут.',
-    applied: 'Ваша анкета на перевірці. Після перевірки відкриємо вам заявки.', paused: 'Доступ на паузі. Зв’яжіться з власником, щоб обговорити.',
-    stats: (a: number, l: number, rt: string) => `У роботі: ${a} з ${l} · рейтинг: ${rt}`,
-    open: 'Відкриті заявки', openNone: 'Зараз відкритих заявок немає. Нові з’являться тут — заглядайте щодня.', take: 'Взяти заявку', taken: 'Хтось узяв її раніше.', limit: 'У вас уже максимум заявок. Закрийте або поверніть одну.',
-    mine: 'Мої заявки', mineNone: 'У вас поки немає заявок.', client: 'Клієнт', contact: 'Контакт', msg: 'Запит / діалог з Vax', brief: 'Профіль клієнта', links: 'Корисні посилання', log: 'Історія',
-    due: 'Наступний крок до', overdue: 'прострочено', next: 'Перевести в', note: 'Що сталося (обов’язково, від 10 символів)', value: 'Сума угоди, $', save: 'Зберегти крок', release: 'Повернути заявку',
-    stage: { claimed: 'Взята', contacted: 'Контакт', meeting: 'Зустріч', proposal: 'Пропозиція', won: 'Виграна', lost: 'Програна', open: 'Відкрита', new: 'Нова', archived: 'Архів' } as Record<string, string>,
-    noteErr: 'Напишіть коментар (від 10 символів). Для «Виграна» вкажіть суму.',
-    book: 'Пам’ятка продажів', playbook: [
-      ['Перше повідомлення (протягом 24 год)', '«Hi {name}, this is {you} from Vaxo. Thanks for reaching out about {need}. I have a couple of quick questions so we can suggest the right plan — is a 15-minute call today or tomorrow OK?»'],
-      ['Питання на дзвінку', 'Чим займається бізнес і для кого? Що має статися за 3 місяці (заявки, продажі, запуск)? Що вже є (сайт, реклама, CRM)? Хто ухвалює рішення і коли? Який бюджет мають на увазі?'],
-      ['Як називати ціну', 'Оберіть тариф або послугу під мету, назвіть офіційний діапазон, поясніть, що входить, запропонуйте стратегічну сесію першим кроком. Деталі передайте власнику — пропозицію і рахунок надсилає Vaxo.'],
-      ['Заперечення', '«Дорого» → порівняйте з вартістю втрачених клієнтів і покажіть стартовий крок від $149. «Подумаю» → домовтеся про дату наступного контакту. «Племінник зробить» → ми будуємо систему: дизайн, аналітика, реклама, ШІ, підтримка.'],
-      ['Повторні повідомлення', 'День 1, 3, 7 — коротко, з користю й одним питанням. Після 3 спроб без відповіді — «Програна» з причиною.']],
+    agree: 'Погоджуюся з правилами', send: 'Надіслати анкету', sent: 'Анкету надіслано. Власник перевірить її, і клієнти зʼявляться тут.',
+    applied: 'Ваша анкета на перевірці. Після перевірки відкриємо вам клієнтів.', paused: 'Доступ на паузі. Звʼяжіться з власником, щоб обговорити.',
+    open: 'Нові заявки', openNone: 'Зараз нових заявок немає. Вони зʼявляться тут — заглядайте щодня.', take: 'Взяти клієнта', taken: 'Хтось узяв раніше.', limit: 'У вас уже максимум клієнтів у роботі. Просуньте одного далі або поверніть.',
+    mine: 'Мої клієнти', mineNone: 'Клієнтів поки немає.', contact: 'Контакт', msg: 'Запит клієнта', brief: 'Профіль клієнта', links: 'Посилання', log: 'Історія',
+    due: 'Наступний крок до', overdue: 'прострочено', unread: 'нових',
+    stage: { claimed: 'Новий', contacted: 'На звʼязку', meeting: 'Дзвінок був', proposal: 'Пропозиція', won: 'Клієнт', lost: 'Програний', open: 'Відкритий', new: 'Новий', archived: 'Архів' } as Record<string, string>,
+    toClient: 'Клієнту', toNote: 'Нотатка', toCall: 'Призначити дзвінок', phClient: 'Повідомлення клієнту…', phNote: 'Бачите лише ви і власник…', when: 'Дата і час (за часом клієнта)', link: 'Посилання на зустріч (Google Meet / Zoom)', sendBtn: 'Надіслати',
+    roomH: 'Чат проєкту клієнта', roomCopy: 'Скопіювати посилання', copied: 'Скопійовано',
+    first: 'Перше повідомлення (надішліть на email/SMS, далі — у чаті)', firstText: 'Hi {name}, this is {you}, your manager at Vaxo. Thanks for your request about {need}. To keep everything in one place, here is your private project chat: {link} — I will answer there within a few hours. Would you prefer to continue in writing or have a short call?',
+    stepH: 'Етап клієнта', note: 'Що сталося (від 10 символів)', value: 'Сума угоди, $', save: 'Зберегти', release: 'Повернути',
+    noteErr: 'Напишіть, що сталося (від 10 символів). Для «Клієнт» вкажіть суму.',
+    book: 'Як вести клієнта', playbook: [
+      ['1. Перші 24 години', 'Надішліть перше повідомлення з посиланням на чат. Перед цим прочитайте профіль клієнта і його запит.'],
+      ['2. Зрозуміти мету', 'Чим займається бізнес, для кого, що має змінитися за 3 місяці, що вже є, хто вирішує, який бюджет мають на увазі.'],
+      ['3. Пропозиція', 'Оберіть тариф або послугу під мету, назвіть офіційний діапазон, поясніть, що входить. Деталі передайте власнику — пропозицію і рахунок надсилає Vaxo.'],
+      ['4. Заперечення', '«Дорого» → порівняйте з вартістю втрачених клієнтів, запропонуйте стартовий крок від $149. «Подумаю» → домовтеся про дату. «Племінник зробить» → ми будуємо систему: дизайн, аналітика, реклама, ШІ, підтримка.'],
+      ['5. Після перемоги', 'Ви залишаєтеся менеджером: питання, дзвінки, оновлення, нові замовлення. Відповідь — протягом 24 годин.']],
     useful: [['Усі послуги та ціни', '/ua/#services'], ['Тарифи зростання', '/ua/#pricing'], ['Кейси', '/ua/#cases'], ['Стартові пакети', '/ua/start/'], ['Приклади сайтів', '/ua/examples/'], ['Магазин шаблонів', '/ua/shop/']],
   },
 }[lang];
-const { stats: _s, ...TJ } = T;
 ---
 
 <div class="deals" data-deals>
-  <script type="application/json" data-deals-t set:html={JSON.stringify(TJ)} />
+  <script type="application/json" data-deals-t set:html={JSON.stringify(T)} />
   <h2>{T.h}</h2>
   <p class="lead">{T.lead}</p>
 
-  <div data-d-state="intro">
-    <div class="cols">
-      <div><h3>{T.req}</h3><ul>{T.reqs.map((x) => <li>{x}</li>)}</ul></div>
-      <div><h3>{T.rules}</h3><ol>{T.ruleList.map((x) => <li>{x}</li>)}</ol></div>
-    </div>
+  <div data-d-intro>
+    <h3>{T.req}</h3>
+    <ul>{T.reqs.map((x) => <li>{x}</li>)}</ul>
   </div>
 
   <form class="apply" data-d-apply hidden>
@@ -130,16 +137,14 @@ const { stats: _s, ...TJ } = T;
 
   <div data-d-work hidden>
     <p class="stats" data-d-stats></p>
+    <h3>{T.mine}</h3>
+    <div class="clients" data-d-mine></div>
     <h3>{T.open}</h3>
     <div class="grid" data-d-open></div>
-    <h3>{T.mine}</h3>
-    <div data-d-mine></div>
   </div>
 
-  <details class="book">
-    <summary>{T.book}</summary>
-    {T.playbook.map(([h, d]) => <div><b>{h}</b><p>{d}</p></div>)}
-  </details>
+  <details class="book"><summary>{T.rules}</summary><ol>{T.ruleList.map((x) => <li>{x}</li>)}</ol></details>
+  <details class="book"><summary>{T.book}</summary>{T.playbook.map(([h, d]) => <div><b>{h}</b><p>{d}</p></div>)}</details>
 </div>
 
 <script>
@@ -150,7 +155,7 @@ const { stats: _s, ...TJ } = T;
     const q = <E extends Element = HTMLElement>(s: string) => root.querySelector<E>(s)!;
     const el = (tag: string, attrs: R = {}, ...kids: (Node | string | null | undefined | false)[]) => {
       const e = document.createElement(tag);
-      for (const [k, v] of Object.entries(attrs)) { if (k.startsWith('on')) (e as any)[k] = v; else if (v != null) e.setAttribute(k, String(v)); }
+      for (const [k, v] of Object.entries(attrs)) { if (k.startsWith('on')) (e as any)[k] = v; else if (v != null && v !== false) e.setAttribute(k, String(v)); }
       for (const k of kids) if (k) e.append(k);
       return e;
     };
@@ -162,61 +167,92 @@ const { stats: _s, ...TJ } = T;
       if (v.includes('@')) return el('a', { href: `mailto:${v}` }, v);
       return el('a', { href: `tel:${v.replace(/[^\d+]/g, '')}` }, v);
     };
-    const urls = (t: string) => Array.from(new Set((t.match(/\bhttps?:\/\/[^\s)<>"]+|\b[a-z0-9-]+\.(?:com|net|org|io|co|us|uk|de|ca|au|biz|shop|store)\b/gi) || []).filter((u) => !/vaxogroup\.com/i.test(u)))).slice(0, 6);
+    const urls = (t: string) => Array.from(new Set((t.match(/\bhttps?:\/\/[^\s)<>"]+|\b[a-z0-9-]+\.(?:com|net|org|io|co|us|uk|de|ca|au|biz|shop|store)\b/gi) || []).filter((u) => !/vaxogroup\.com|gmail|yahoo|outlook|icloud|hotmail/i.test(u)))).slice(0, 6);
     const post = (path: string, b: unknown = {}) => fetch('/api/partner/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
+    let me = '';
+    let openId: number | null = null;
 
     async function load() {
       const res = await fetch('/api/partner/deals');
       if (!res.ok) return;
       const d = await res.json();
-      q('[data-d-apply]').hidden = !(d.closer === 'none');
+      if (!me) { const m = await fetch('/api/partner/me').then((r) => r.json()).catch(() => ({})); me = m?.partner?.name || ''; }
+      q('[data-d-apply]').hidden = d.closer !== 'none';
       const st = q('[data-d-status]');
       st.hidden = !(d.closer === 'applied' || d.closer === 'paused');
       st.textContent = d.closer === 'applied' ? T.applied : d.closer === 'paused' ? T.paused : '';
       q('[data-d-work]').hidden = d.closer !== 'approved';
-      q('[data-d-state="intro"]').hidden = d.closer === 'approved';
+      q('[data-d-intro]').hidden = d.closer === 'approved';
       if (d.closer !== 'approved') return;
-      q('[data-d-stats]').textContent = `${T.mine}: ${d.active} / ${d.limit} · ★ ${d.rating ?? '—'}`;
+      q("[data-d-stats]").textContent = `${T.mine}: ${d.active} / ${d.limit} · ★ ${d.rating ?? "—"}`;
       q('[data-d-open]').replaceChildren(...(d.open.length ? d.open.map((l: R) =>
         el('article', { class: 'card' },
           el('div', { class: 'meta' }, `#${l.id} · ${when(l.created_at)} · ${(l.lang || '').toUpperCase()} · ${l.country || ''}`),
           el('b', {}, l.service || l.interest || '—'), l.budget && el('div', {}, `$ ${l.budget}`),
           el('p', {}, l.teaser || ''),
           el('button', { class: 'cta', type: 'button', onclick: async (e: Event) => {
-            const b = e.currentTarget as HTMLButtonElement; b.disabled = true;
+            (e.currentTarget as HTMLButtonElement).disabled = true;
             const r = await post(`deals/${l.id}/claim`);
-            if (!r.ok) { const j = await r.json().catch(() => ({})); alert(j.error === 'limit' ? T.limit : T.taken); }
+            if (!r.ok) { const j = await r.json().catch(() => ({})); alert(j.error === 'limit' ? T.limit : T.taken); } else openId = l.id;
             load();
           } }, T.take))) : [el('p', { class: 'mut' }, T.openNone)]));
-      q('[data-d-mine]').replaceChildren(...(d.mine.length ? d.mine.map((l: R) => card(l, d.events.filter((e: R) => e.lead_id === l.id))) : [el('p', { class: 'mut' }, T.mineNone)]));
+      q('[data-d-mine]').replaceChildren(...(d.mine.length ? d.mine.map((l: R) => client(l, d.events.filter((e: R) => e.lead_id === l.id), d.messages.filter((m: R) => m.lead_id === l.id))) : [el('p', { class: 'mut' }, T.mineNone)]));
     }
 
-    function card(l: R, events: R[]) {
+    function client(l: R, events: R[], msgs: R[]) {
       const active = ['claimed', 'contacted', 'meeting', 'proposal'].includes(l.status);
+      const isOpen = openId === l.id;
+      const roomUrl = `${location.origin}/room/?t=${l.room}`;
+      const head = el('button', { type: 'button', class: 'row', 'aria-expanded': String(isOpen), onclick: () => { openId = isOpen ? null : l.id; if (!isOpen) post(`deals/${l.id}/seen`); load(); } },
+        el('b', {}, l.name), el('span', { class: 'svc' }, l.service || l.interest || ''),
+        el('span', { class: 'badge b-' + l.status }, T.stage[l.status] ?? l.status),
+        l.unread > 0 && el('span', { class: 'unread' }, `${l.unread} ${T.unread}`),
+        active && l.due_at && el('span', { class: late(l.due_at) ? 'due late' : 'due' }, `${T.due} ${when(l.due_at)}${late(l.due_at) ? ' · ' + T.overdue : ''}`));
+      if (!isOpen) return el('div', { class: 'client' }, head);
+
+      // Chat with the client (notes are shaded and never reach the client).
+      const thread = el('div', { class: 'thread' }, ...msgs.map((m) => el('div', { class: `m ${m.sender === 'client' ? 'them' : 'us'} k-${m.kind}` },
+        el('small', {}, `${m.sender === 'client' ? l.name : m.sender === 'owner' ? 'Vaxo' : m.partner_name || ''}${m.kind === 'note' ? ' · 🔒' : m.kind === 'call' ? ' · 📅' : ''} · ${when(m.at)}`),
+        el('div', {}, m.text))));
+      let mode = 'text';
+      const ta = el('textarea', { rows: '3', maxlength: '3000', placeholder: T.phClient }) as HTMLTextAreaElement;
+      const whenIn = el('input', { type: 'datetime-local', hidden: true }) as HTMLInputElement;
+      const linkIn = el('input', { placeholder: T.link, hidden: true }) as HTMLInputElement;
+      const tabs = el('div', { class: 'modes' }, ...[['text', T.toClient], ['note', T.toNote], ['call', T.toCall]].map(([k, t]) =>
+        el('button', { type: 'button', 'aria-pressed': String(k === mode), onclick: (e: Event) => {
+          mode = k;
+          tabs.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === e.currentTarget)));
+          ta.placeholder = k === 'note' ? T.phNote : T.phClient;
+          whenIn.hidden = linkIn.hidden = k !== 'call';
+        } }, t)));
+      const composer = el('div', { class: 'composer' }, tabs, whenIn, linkIn, ta,
+        el('button', { class: 'cta', type: 'button', onclick: async () => {
+          const r = await post(`deals/${l.id}/msg`, { kind: mode, text: ta.value, when: whenIn.value.replace('T', ' '), link: linkIn.value });
+          if (r.ok) load();
+        } }, T.sendBtn));
+
+      const first = T.firstText.replace('{name}', l.name).replace('{you}', me).replace('{need}', l.service || 'your project').replace('{link}', roomUrl);
+      const copyBtn = (text: string) => el('button', { type: 'button', class: 'ghost', onclick: async (e: Event) => { try { await navigator.clipboard.writeText(text); (e.currentTarget as HTMLElement).textContent = T.copied; } catch {} } }, T.roomCopy);
       const order = ['contacted', 'meeting', 'proposal', 'won', 'lost'];
-      const sel = el('select', { name: 'status' }, ...order.filter((s) => order.indexOf(s) > order.indexOf(l.status) || ['won', 'lost'].includes(s)).map((s) => el('option', { value: s }, T.stage[s])));
-      const note = el('textarea', { rows: '3', placeholder: T.note, maxlength: '2000' });
-      const value = el('input', { type: 'number', min: '0', placeholder: T.value });
-      const err = el('p', { class: 'err', hidden: '' }, T.noteErr);
+      const sel = el('select', {}, ...order.map((s) => el('option', { value: s, selected: s === order[order.indexOf(l.status) + 1] }, T.stage[s]))) as HTMLSelectElement;
+      const note = el('input', { placeholder: T.note, maxlength: '2000' }) as HTMLInputElement;
+      const value = el('input', { type: 'number', min: '0', placeholder: T.value }) as HTMLInputElement;
+      const err = el('p', { class: 'err', hidden: true }, T.noteErr);
       const found = urls(`${l.message || ''}\n${l.brief || ''}\n${l.contact || ''}`);
-      return el('article', { class: 'card big' },
-        el('div', { class: 'meta' }, `#${l.id} · ${T.stage[l.status] ?? l.status}`, active && l.due_at ? el('span', { class: late(l.due_at) ? 'late' : '' }, ` · ${T.due} ${when(l.due_at)}${late(l.due_at) ? ' — ' + T.overdue : ''}`) : null),
-        el('h4', {}, `${l.name} — ${l.service || l.interest || ''}`),
+      const side = el('aside', { class: 'side' },
         el('dl', {}, el('dt', {}, T.contact), el('dd', {}, contactLink(l.contact || '')),
-          el('dt', {}, '🌍'), el('dd', {}, `${(l.lang || '').toUpperCase()} · ${l.country || ''} · ${l.budget ? '$ ' + l.budget : ''}`)),
-        l.brief && el('details', { open: '' }, el('summary', {}, T.brief), el('pre', {}, l.brief)),
+          el('dt', {}, '🌍'), el('dd', {}, `${(l.lang || '').toUpperCase()} · ${l.country || ''}${l.budget ? ' · $ ' + l.budget : ''}`)),
+        el('div', { class: 'roombox' }, el('b', {}, T.roomH), el('a', { href: roomUrl, target: '_blank' }, roomUrl.replace(/^https?:\/\//, '')), copyBtn(roomUrl)),
+        l.status === 'claimed' && el('details', { open: true }, el('summary', {}, T.first), el('pre', {}, first), copyBtn(first)),
+        l.brief && el('details', { open: l.status === 'claimed' }, el('summary', {}, T.brief), el('pre', {}, l.brief)),
         el('details', {}, el('summary', {}, T.msg), el('pre', {}, l.message || '—')),
         el('details', {}, el('summary', {}, T.links), el('ul', {},
           ...found.map((u) => el('li', {}, el('a', { href: /^https?:/.test(u) ? u : `https://${u}`, target: '_blank', rel: 'noopener' }, u))),
           ...T.useful.map(([t, h]: [string, string]) => el('li', {}, el('a', { href: h, target: '_blank' }, t))))),
-        el('details', {}, el('summary', {}, T.log), el('ol', { class: 'log' }, ...events.map((e) => el('li', {}, el('small', {}, when(e.at)), ' ', e.text || e.kind)))),
-        active && el('div', { class: 'step' },
-          el('label', {}, T.next, sel), note, value, err,
+        active && el('div', { class: 'step' }, el('b', {}, T.stepH), sel, note, value, err,
           el('div', { class: 'btns' },
             el('button', { class: 'cta', type: 'button', onclick: async () => {
-              const s = (sel as HTMLSelectElement).value;
-              const n = (note as HTMLTextAreaElement).value.trim();
-              const v = Number((value as HTMLInputElement).value);
+              const s = sel.value, n = note.value.trim(), v = Number(value.value);
               if (n.length < 10 || (s === 'won' && !v)) { err.hidden = false; return; }
               const r = await post(`deals/${l.id}/status`, { status: s, note: n, value: v });
               if (!r.ok) { err.hidden = false; return; }
@@ -225,8 +261,12 @@ const { stats: _s, ...TJ } = T;
             el('button', { class: 'ghost', type: 'button', onclick: async () => {
               const n = prompt(T.note) || '';
               await post(`deals/${l.id}/release`, { note: n });
-              load();
-            } }, T.release))));
+              openId = null; load();
+            } }, T.release))),
+        el('details', {}, el('summary', {}, T.log), el('ol', { class: 'log' }, ...events.map((e) => el('li', {}, el('small', {}, when(e.at)), ' ', e.text || e.kind)))));
+      const ws = el('div', { class: 'ws' }, el('div', { class: 'chat' }, thread, composer), side);
+      requestAnimationFrame(() => (thread.scrollTop = thread.scrollHeight));
+      return el('div', { class: 'client open' }, head, ws);
     }
 
     q<HTMLFormElement>('[data-d-apply]').addEventListener('submit', async (e) => {
@@ -242,37 +282,62 @@ const { stats: _s, ...TJ } = T;
     });
     document.querySelectorAll('[data-go="deals"]').forEach((b) => b.addEventListener('click', load));
     load();
+    setInterval(() => { if (!document.hidden && !root.closest('[hidden]') && !document.activeElement?.closest('.composer, .step')) load(); }, 30000);
   }
 </script>
 
 <style is:global>
   .deals { display: flex; flex-direction: column; gap: 14px; }
-  .deals h2 { margin: 0; }
-  .deals .lead { margin: 0; color: var(--mut); max-width: 760px; }
-  .deals .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+  .deals h2, .deals h3 { margin: 0; }
+  .deals .lead { margin: 0; color: var(--mut); max-width: 780px; }
   .deals ul, .deals ol { padding-left: 20px; line-height: 1.55; }
   .deals .apply { display: flex; flex-direction: column; gap: 10px; max-width: 680px; background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
   .deals .apply[hidden] { display: none; }
   .deals label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--mut); }
   .deals label.chk { flex-direction: row; align-items: center; gap: 8px; color: var(--ink); }
-  .deals input, .deals select, .deals textarea { font: 15px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; }
+  .deals input, .deals select, .deals textarea { font: 15px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; box-sizing: border-box; width: 100%; }
+  .deals input[type='checkbox'] { width: auto; }
   .deals .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .deals .cta { background: var(--acc); color: var(--dark-ink); border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 700; cursor: pointer; align-self: flex-start; }
-  .deals .ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 9px 14px; cursor: pointer; }
-  .deals .status, .deals .stats { background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0; }
+  .deals .ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 7px 12px; cursor: pointer; align-self: flex-start; }
+  .deals .status, .deals .stats { background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin: 0; }
   .deals .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 10px; }
   .deals .card { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
-  .deals .card.big { margin-bottom: 12px; }
-  .deals .card p, .deals .card h4 { margin: 0; }
+  .deals .card p { margin: 0; }
   .deals .meta { font: 12px var(--mono); color: var(--mut); }
-  .deals .late { color: var(--error); font-weight: 700; }
   .deals .mut { color: var(--mut); }
-  .deals dl { display: grid; grid-template-columns: 70px 1fr; gap: 4px 8px; margin: 0; font-size: 14px; }
-  .deals dd { margin: 0; overflow-wrap: anywhere; }
-  .deals pre { white-space: pre-wrap; font: 13px/1.45 var(--font); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; max-height: 280px; overflow: auto; }
+  .deals .clients { display: flex; flex-direction: column; gap: 8px; }
+  .deals .client { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .deals .client.open { border-color: var(--acc); }
+  .deals .row { all: unset; box-sizing: border-box; width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 14px; cursor: pointer; }
+  .deals .row .svc { color: var(--mut); flex: 1; min-width: 120px; }
+  .deals .badge { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: var(--surf2); }
+  .deals .b-won { background: #d8f5e4; color: #146c3c; } .deals .b-lost { background: #ffe0dc; color: #a12a1b; } .deals .b-claimed { background: #dbe8ff; color: #1d4ea8; }
+  .deals .unread { background: var(--error); color: #fff; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 2px 8px; }
+  .deals .due { font-size: 12px; color: var(--mut); } .deals .due.late { color: var(--error); font-weight: 700; }
+  .deals .ws { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); border-top: 1px solid var(--line); }
+  @media (max-width: 860px) { .deals .ws { grid-template-columns: 1fr; } }
+  .deals .chat { display: flex; flex-direction: column; border-right: 1px solid var(--line); min-height: 420px; }
+  .deals .thread { flex: 1; max-height: 460px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; background: var(--bg); }
+  .deals .thread .m { max-width: 85%; padding: 8px 11px; border-radius: 14px; font-size: 14px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; display: flex; flex-direction: column; gap: 2px; }
+  .deals .thread .m small { font-size: 11px; color: var(--mut); }
+  .deals .thread .them { align-self: flex-start; background: var(--surf); border: 1px solid var(--line); }
+  .deals .thread .us { align-self: flex-end; background: var(--acc); color: var(--dark-ink); }
+  .deals .thread .us small { color: rgba(0, 0, 0, 0.55); }
+  .deals .thread .k-note { background: repeating-linear-gradient(45deg, var(--surf2), var(--surf2) 8px, var(--surf) 8px, var(--surf) 16px); color: var(--ink); }
+  .deals .thread .k-call { border: 2px solid var(--accText); }
+  .deals .composer { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-top: 1px solid var(--line); }
+  .deals .modes { display: flex; gap: 6px; flex-wrap: wrap; }
+  .deals .modes button { border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 5px 11px; cursor: pointer; font: 600 13px var(--font); }
+  .deals .modes [aria-pressed='true'] { background: var(--ink); color: var(--bg); }
+  .deals .side { padding: 12px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+  .deals .side dl { display: grid; grid-template-columns: 70px 1fr; gap: 4px 8px; margin: 0; }
+  .deals .side dd { margin: 0; overflow-wrap: anywhere; }
+  .deals .roombox { display: flex; flex-direction: column; gap: 4px; background: var(--bg); border: 1px dashed var(--acc); border-radius: 10px; padding: 10px; overflow-wrap: anywhere; }
+  .deals pre { white-space: pre-wrap; font: 13px/1.45 var(--font); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; max-height: 260px; overflow: auto; margin: 6px 0; }
   .deals .step { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); padding-top: 10px; }
   .deals .btns { display: flex; gap: 8px; flex-wrap: wrap; }
-  .deals .err { color: var(--error); margin: 0; font-size: 14px; }
+  .deals .err { color: var(--error); margin: 0; font-size: 13px; }
   .deals .book { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; }
   .deals .book summary { font-weight: 700; cursor: pointer; }
   .deals .book div { margin-top: 10px; }

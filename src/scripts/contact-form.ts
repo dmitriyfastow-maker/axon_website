@@ -107,6 +107,12 @@ export function initContactForm(): void {
         }),
       });
       if (!res.ok) throw new Error(String(res.status));
+      const out = (await res.json().catch(() => ({}))) as { room?: string };
+      const box = document.querySelector<HTMLElement>('[data-room-box]');
+      if (box && out.room) {
+        box.querySelector<HTMLAnchorElement>('[data-room-link]')!.href = `/room/?t=${out.room}`;
+        box.hidden = false;
+      }
       form.reset();
       setInterest('');
       form.hidden = true;

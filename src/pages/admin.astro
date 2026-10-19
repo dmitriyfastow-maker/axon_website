@@ -51,6 +51,7 @@ import Base from '../layouts/Base.astro';
           <li><b>Контакт → Встреча → Предложение</b> — на каждый шаг свой срок (72 ч, 5 дней, 10 дней), к каждому шагу обязательный комментарий. Просрочил — заявка сама вернётся в общий список, вам придёт сообщение.</li>
           <li><b>Выиграна / Проиграна</b> — партнёр указывает сумму или причину. Деньги клиент платит только Vaxo, договор и счёт выставляете вы. Партнёр получает 20% (ставка «тёплый лид»).</li>
         </ol>
+        <p><b>Чат проекта.</b> У каждого клиента сразу после заявки есть личный чат (ссылку он получает на экране). Партнёр, который взял клиента, становится его личным менеджером навсегда: продажа, созвоны, поддержка, новые заказы. Вся переписка — в этом чате, вы видите каждое сообщение и можете написать сами. Заметки с 🔒 клиент не видит. Если клиент ждёт ответа больше 24 часов — вам приходит сообщение. Повторная заявка от того же клиента сама уходит его менеджеру.</p>
         <p>Вы в любой момент можете забрать заявку, отдать её конкретному партнёру или вернуть в список. Каждое действие видно в журнале заявки.</p>
       </section>
     </div>
@@ -151,7 +152,7 @@ import Base from '../layouts/Base.astro';
     $('[data-leads]').replaceChildren(...(rows.length ? rows.map((l) =>
       el('tr', { onclick: () => openLead(l.id), class: l.due_at && left(l.due_at) === 'просрочено' ? 'late' : '' },
         el('td', {}, String(l.id)), el('td', {}, when(l.created_at)), el('td', {}, badge(l.status)),
-        el('td', {}, el('b', {}, l.name), el('br'), el('small', {}, l.contact)),
+        el('td', {}, el('b', {}, l.name), l.msgs ? el('span', { class: 'pill dark' }, `💬 ${l.msgs}`) : null, el('br'), el('small', {}, l.contact)),
         el('td', {}, l.service || l.interest || '—'), el('td', {}, l.budget || '—'), el('td', {}, l.closer_name || '—'),
         el('td', {}, left(l.due_at)), el('td', {}, l.partner_name ? `партнёр ${l.partner_name}` : (l.message || '').startsWith('[Vax chat]') ? 'чат Vax' : 'форма'))) :
       [el('tr', {}, el('td', { colspan: '9', class: 'empty' }, 'Здесь пока пусто'))]));
@@ -159,7 +160,7 @@ import Base from '../layouts/Base.astro';
 
   async function openLead(id: number) {
     const l = data.leads.find((x) => x.id === id)!;
-    const { events } = await api(`/lead/${id}`);
+    const { events, messages } = await api(`/lead/${id}`);
     const closers = data.partners.filter((p) => p.closer === 'approved');
     const field = (label: string, name: string, value: string, area = false) =>
       el('label', { class: 'f' }, el('span', {}, label), area ? el('textarea', { name, rows: '9' }, value || '') : el('input', { name, value: value || '' }));
@@ -187,6 +188,18 @@ import Base from '../layouts/Base.astro';
       await load(); openLead(id);
     }
     form.addEventListener('submit', (e) => { e.preventDefault(); save(); });
+    const thread = el('div', { class: 'thread' }, ...(messages.length ? messages.map((m: R) => el('div', { class: `m ${m.sender === 'client' ? 'them' : 'us'} k-${m.kind}` },
+      el('small', {}, `${m.sender === 'client' ? l.name : m.sender === 'owner' ? 'Вы (Vaxo)' : m.partner_name || 'менеджер'}${m.kind === 'note' ? ' · 🔒 заметка' : m.kind === 'call' ? ' · 📅 созвон' : ''} · ${when(m.at)}`),
+      el('div', {}, m.text))) : [el('p', { class: 'mut' }, 'Сообщений пока нет.')]));
+    const msgKind = el('select', {}, el('option', { value: 'text' }, 'Клиенту (от имени Vaxo)'), el('option', { value: 'note' }, '🔒 Заметка для менеджера'));
+    const msgText = el('textarea', { rows: '3', placeholder: 'Сообщение…' });
+    const composer = el('div', { class: 'composer' }, msgKind, msgText, el('button', { class: 'cta', type: 'button', onclick: async () => {
+      const text = (msgText as HTMLTextAreaElement).value.trim();
+      if (!text) return;
+      await api(`/lead/${id}/msg`, { kind: (msgKind as HTMLSelectElement).value, text });
+      openLead(id);
+    } }, 'Отправить'));
+    requestAnimationFrame(() => (thread.scrollTop = thread.scrollHeight));
     $('[data-detail]').replaceChildren(
       el('h2', {}, `#${l.id} · ${l.name}`, ' ', badge(l.status)),
       el('dl', {},
@@ -194,7 +207,12 @@ import Base from '../layouts/Base.astro';
         el('dt', {}, 'Пришла'), el('dd', {}, `${when(l.created_at)} · ${l.lang?.toUpperCase()} · ${l.country ?? ''} · ${l.page ?? ''}`),
         el('dt', {}, 'Интерес'), el('dd', {}, l.interest || '—'),
         el('dt', {}, 'Привёл'), el('dd', {}, l.partner_name ?? '—')),
-      el('details', { open: '' }, el('summary', {}, 'Сообщение клиента / диалог с Vax'), el('pre', {}, l.message || '—')),
+      el('details', {}, el('summary', {}, 'Первая заявка / диалог с Vax'), el('pre', {}, l.message || '—')),
+      el('h3', {}, 'Переписка с клиентом'),
+      el('p', { class: 'mut' }, 'Чат клиента: ', el('a', { href: `/room/?t=${l.room}`, target: '_blank' }, 'открыть как клиент'), ' · 🔒 — внутренние заметки, клиент их не видит'),
+      thread,
+      composer,
+      el('h3', {}, 'Карточка'),
       form,
       el('h3', {}, 'Журнал'),
       el('ol', { class: 'log' }, ...events.map((e: R) => el('li', {}, el('small', {}, `${when(e.at)} · ${e.actor === 'owner' ? 'вы' : e.actor === 'system' ? 'система' : 'партнёр'}`), el('div', {}, e.text || e.kind)))));
@@ -298,4 +316,13 @@ import Base from '../layouts/Base.astro';
   .adm .btns { display: flex; gap: 8px; flex-wrap: wrap; }
   .adm .log { padding-left: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 8px; }
   .adm .log small { color: var(--mut); }
+  .adm .pill.dark { background: var(--ink); color: var(--bg); }
+  .adm .thread { max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+  .adm .thread .m { max-width: 85%; padding: 8px 11px; border-radius: 14px; font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; display: flex; flex-direction: column; gap: 2px; }
+  .adm .thread .m small { font-size: 11px; color: var(--mut); }
+  .adm .thread .them { align-self: flex-start; background: var(--bg); border: 1px solid var(--line); }
+  .adm .thread .us { align-self: flex-end; background: var(--acc); color: var(--dark-ink); }
+  .adm .thread .k-note { background: repeating-linear-gradient(45deg, var(--surf2), var(--surf2) 8px, var(--bg) 8px, var(--bg) 16px); color: var(--ink); }
+  .adm .thread .k-call { border: 2px solid var(--accText); }
+  .adm .composer { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 4px; }
 </style>

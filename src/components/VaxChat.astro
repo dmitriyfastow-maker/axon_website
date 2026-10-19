@@ -15,7 +15,7 @@ const T = {
     error: "My paws slipped 🙈 Leave your contact and a human from Vaxo will reply within 24 hours.",
     fName: 'Your name', fContact: 'Email, phone or @telegram', fSend: 'Send to Vaxo', fDone: "Got it! A human from Vaxo will reply within 24 hours. I'm keeping the cookies warm 🍪",
     fBad: 'Please check the contact — email, phone or @telegram.',
-    demo: 'Built by Vaxo: AI assistant + brand character. Want one?', demoHref: '/#contact', close: 'Close chat',
+    room: 'Here is your private project chat — your manager will write there:', demo: 'Built by Vaxo: AI assistant + brand character. Want one?', demoHref: '/#contact', close: 'Close chat',
   },
   ua: {
     open: 'Чат з Vax', title: 'Vax · помічник Vaxo', status: 'онлайн · відповідає за секунди',
@@ -26,7 +26,7 @@ const T = {
     error: 'Лапки посковзнулися 🙈 Залиште контакт — людина з Vaxo відповість протягом 24 годин.',
     fName: "Ваше ім'я", fContact: 'Email, телефон або @telegram', fSend: 'Надіслати у Vaxo', fDone: 'Готово! Людина з Vaxo відповість протягом 24 годин. А я поки тримаю печиво теплим 🍪',
     fBad: 'Перевірте контакт — email, телефон або @telegram.',
-    demo: 'Зроблено у Vaxo: ШІ-помічник + персонаж бренду. Хочете такий?', demoHref: '/ua/#contact', close: 'Закрити чат',
+    room: 'Ось особистий чат вашого проєкту — менеджер напише туди:', demo: 'Зроблено у Vaxo: ШІ-помічник + персонаж бренду. Хочете такий?', demoHref: '/ua/#contact', close: 'Закрити чат',
   },
   ru: {
     open: 'Чат с Vax', title: 'Vax · помощник Vaxo', status: 'онлайн · отвечает за секунды',
@@ -37,7 +37,7 @@ const T = {
     error: 'Лапки соскользнули 🙈 Оставьте контакт — человек из Vaxo ответит в течение 24 часов.',
     fName: 'Ваше имя', fContact: 'Email, телефон или @telegram', fSend: 'Отправить в Vaxo', fDone: 'Готово! Человек из Vaxo ответит в течение 24 часов. А я пока держу печенье тёплым 🍪',
     fBad: 'Проверьте контакт — email, телефон или @telegram.',
-    demo: 'Сделано в Vaxo: ИИ-помощник + персонаж бренда. Хотите такой?', demoHref: '/ru/#contact', close: 'Закрыть чат',
+    room: 'Вот личный чат вашего проекта — менеджер напишет туда:', demo: 'Сделано в Vaxo: ИИ-помощник + персонаж бренда. Хотите такой?', demoHref: '/ru/#contact', close: 'Закрыть чат',
   },
 }[lang];
 ---
@@ -132,10 +132,20 @@ const T = {
             body: JSON.stringify({ mode: 'request', name: n.value, contact: c.value, interest: 'any', message: '[Vax chat] ' + location.pathname + '\n' + transcript, lang, ref, startedAt: Math.min(openedAt, Date.now() - 3000) }),
           });
           if (!r.ok) throw new Error(String(r.status));
+          const out = await r.json().catch(() => ({}));
           leadSent = true;
           store.set('vaxo_chat_lead', '1');
           f.remove();
           say(T.fDone);
+          if (out.room) {
+            const a = document.createElement('a');
+            a.href = `/room/?t=${out.room}`;
+            a.className = 'vc-m vax vc-room';
+            a.textContent = `${T.room} vaxogroup.com/room/ →`;
+            log.appendChild(a);
+            log.scrollTop = log.scrollHeight;
+            store.set('vaxo_chat_room', out.room);
+          }
         } catch {
           err.hidden = false; err.textContent = T.fBad; btn.disabled = false;
         }
@@ -235,6 +245,7 @@ const T = {
   .vchat .vc-lead { align-self: stretch; display: flex; flex-direction: column; gap: 6px; padding: 10px; background: var(--surf); border: 1px solid var(--acc); border-radius: 14px; }
   .vchat .vc-lead button { border: 0; background: var(--acc); color: var(--dark-ink); font: 700 15px var(--font); padding: 10px; border-radius: 12px; cursor: pointer; }
   .vchat .vc-lead small { color: var(--error); }
+  .vchat .vc-room { display: block; text-decoration: none; font-weight: 700; color: var(--accText); border-color: var(--acc); }
   .vchat .vc-demo { display: block; text-align: center; font-size: 12px; color: var(--mut); padding: 0 10px 10px; text-decoration: underline; }
   @keyframes vc-pop { from { opacity: 0; transform: translateY(10px) scale(0.97); } }
   @media (max-width: 760px) {

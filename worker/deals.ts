@@ -3,6 +3,7 @@
 // Every action lands in lead_events, so the owner sees the whole history of every client.
 import type { DB } from './partner.js';
 import type { AiBinding } from './chat.js';
+import { roomMessages, staffMessage, unansweredAlerts } from './rooms.js';
 
 export type Notify = (text: string) => Promise<void>;
 
@@ -21,6 +22,7 @@ export async function logEvent(db: DB, leadId: number, actor: string, kind: stri
 
 /** Return overdue leads to the pool; two misses in 30 days pause the closer. Cheap, so it runs on every list request. */
 export async function sweep(db: DB, notify: Notify) {
+  await unansweredAlerts(db, notify);
   const { results } = await db
     .prepare(`SELECT d.id, d.status, d.closer_id, p.name FROM leads d JOIN partners p ON p.id = d.closer_id
               WHERE d.status IN ${ACTIVE} AND d.due_at IS NOT NULL AND d.due_at < datetime('now')`)
@@ -109,7 +111,8 @@ export async function handleDealsApi(db: DB, request: Request, me: Me, path: str
     await sweep(db, notify);
     const limit = await limitFor(db, me.id, p?.closer_rating ?? null);
     const mine = await db
-      .prepare(`SELECT id, created_at, status, name, contact, interest, message, lang, country, page, service, budget, brief, value_usd, claimed_at, due_at
+      .prepare(`SELECT id, created_at, status, name, contact, interest, message, lang, country, page, service, budget, brief, value_usd, claimed_at, due_at, room,
+                  (SELECT COUNT(*) FROM messages m WHERE m.lead_id = leads.id AND m.sender = 'client' AND m.at > COALESCE(leads.manager_seen_at, '')) AS unread
                 FROM leads WHERE closer_id = ? ORDER BY CASE WHEN status IN ${ACTIVE} THEN 0 ELSE 1 END, id DESC LIMIT 100`)
       .bind(me.id)
       .all<Record<string, unknown>>();
@@ -122,7 +125,22 @@ export async function handleDealsApi(db: DB, request: Request, me: Me, path: str
       ? (await db.prepare(`SELECT id, created_at, interest, lang, country, service, budget, substr(COALESCE(brief, ''), 1, 280) AS teaser FROM leads WHERE status = 'open' ORDER BY id DESC LIMIT 50`).all()).results
       : [];
     const active = mine.results.filter((l) => ['claimed', 'contacted', 'meeting', 'proposal'].includes(String(l.status))).length;
-    return json(200, { ok: true, closer, rating: p?.closer_rating ?? null, limit, active, open, mine: mine.results, events, sla: SLA_HOURS });
+    const messages = [];
+    for (const id of ids.slice(0, 30)) for (const m of await roomMessages(db, id, true)) messages.push({ ...m, lead_id: id });
+    return json(200, { ok: true, closer, rating: p?.closer_rating ?? null, limit, active, open, mine: mine.results, events, messages, sla: SLA_HOURS });
+  }
+
+  const msg = path.match(/^deals\/(\d+)\/(msg|seen)$/);
+  if (msg && method === 'POST') {
+    const id = Number(msg[1]);
+    const own = await db.prepare('SELECT id FROM leads WHERE id = ? AND closer_id = ?').bind(id, me.id).first();
+    if (!own) return json(404, { ok: false });
+    if (msg[2] === 'seen') {
+      await db.prepare(`UPDATE leads SET manager_seen_at = datetime('now') WHERE id = ?`).bind(id).run();
+      return json(200, { ok: true });
+    }
+    const ok = await staffMessage(db, id, `partner:${me.id}`, body);
+    return json(ok ? 200 : 400, { ok });
   }
 
   const m = path.match(/^deals\/(\d+)\/(claim|status|release)$/);
@@ -176,7 +194,8 @@ export async function ownerOverview(db: DB, notify: Notify) {
     db
       .prepare(
         `SELECT d.id, d.created_at, d.mode, d.status, d.name, d.contact, d.interest, d.message, d.lang, d.country, d.page, d.ref,
-           d.service, d.budget, d.brief, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at,
+           d.service, d.budget, d.brief, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at, d.room,
+           (SELECT COUNT(*) FROM messages m WHERE m.lead_id = d.id) AS msgs,
            c.name AS closer_name, p.name AS partner_name
          FROM leads d LEFT JOIN partners c ON c.id = d.closer_id
            LEFT JOIN links l ON l.slug = d.ref LEFT JOIN partners p ON p.id = l.partner_id
@@ -204,7 +223,7 @@ export async function ownerOverview(db: DB, notify: Notify) {
 
 export async function ownerLead(db: DB, id: number) {
   const events = await db.prepare('SELECT at, actor, kind, text FROM lead_events WHERE lead_id = ? ORDER BY id').bind(id).all();
-  return events.results;
+  return { events: events.results, messages: await roomMessages(db, id, true) };
 }
 
 export async function ownerUpdateLead(db: DB, id: number, b: Record<string, unknown>, notify: Notify) {
