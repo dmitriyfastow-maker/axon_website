@@ -53,7 +53,7 @@ const en = {
   links: {
     h1: 'My links',
     p: 'Make a separate link for every place you post (TikTok, Instagram, a group, a video) — then you see what brings clients. Unlimited links, turn any off at any time.',
-    where: 'Where will you post it?',
+    where: 'Enter a name',
     wherePh: 'e.g. TikTok, Instagram bio, Facebook group',
     to: 'Where does it lead?',
     main: 'Main page',
@@ -185,7 +185,7 @@ const ua: CabinetText = {
   links: {
     h1: 'Мої посилання',
     p: 'Створюйте окреме посилання для кожного місця (TikTok, Instagram, група, відео) — так видно, що приводить клієнтів. Посилань без обмежень, будь-яке можна вимкнути.',
-    where: 'Де ви його опублікуєте?',
+    where: 'Введіть назву',
     wherePh: 'напр. TikTok, профіль Instagram, група Facebook',
     to: 'Куди воно веде?',
     main: 'Головна сторінка',
@@ -333,7 +333,7 @@ const ru: CabinetText = {
   links: {
     h1: 'Мои ссылки',
     p: 'Создавайте отдельную ссылку для каждого места (TikTok, Instagram, группа, видео) — так видно, что приводит клиентов. Ссылок без ограничений, любую можно выключить.',
-    where: 'Где вы её опубликуете?',
+    where: 'Введите название',
     wherePh: 'напр. TikTok, профиль Instagram, группа Facebook',
     to: 'Куда она ведёт?',
     main: 'Главная страница',

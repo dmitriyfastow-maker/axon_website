@@ -2,13 +2,13 @@
 // One AI prompt in the partner cabinet: the page script fills in the offer and link, and sets the open links.
 import type { Prompt } from '../data/ai-toolkit';
 
-interface Props { prompt: Prompt; open?: boolean; title?: string; labels?: { open: string; copy: string; show?: string; hide?: string } }
-const { prompt, open = false, title = prompt.title, labels = { open: 'Open in Claude', copy: 'Copy', show: 'Open', hide: 'Close' } } = Astro.props;
+interface Props { prompt: Prompt; open?: boolean; title?: string; text?: string; labels?: { open: string; copy: string; show?: string; hide?: string } }
+const { prompt, open = false, title = prompt.title, text = prompt.text, labels = { open: 'Open in Claude', copy: 'Copy', show: 'Open', hide: 'Close' } } = Astro.props;
 ---
 
 <details class="pc" data-prompt={prompt.id} data-cat={prompt.cat} open={open}>
   <summary><span>{title}</span><span class="tog"><span class="t-show">{labels.show ?? 'Open'} ▾</span><span class="t-hide">{labels.hide ?? 'Close'} ▴</span></span></summary>
-  <pre data-tpl={prompt.text}>{prompt.text}</pre>
+  <pre data-tpl={text}>{text}</pre>
   <div class="pc-btns">
     <a class="pc-main" data-open="claude" href="https://claude.ai/new" target="_blank" rel="noopener">{labels.open}</a>
     <a data-open="chatgpt" href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT</a>

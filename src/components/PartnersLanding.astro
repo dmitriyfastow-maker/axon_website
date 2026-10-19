@@ -11,6 +11,12 @@ import { CALC, PARTNERS_TEXT, RATES } from '../data/partners';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = getDict(lang);
+// Vax reacts to the calculator total: [from $, image, line].
+const VAXCALC = {
+  en: [[0, 'coin', 'Zero so far. Not even enough for a bun — move the sliders 👀'], [1, 'coin', 'Coffee and a donut are covered. Nice start ☕'], [100, 'cash', 'That’s my bakery rent for a month!'], [500, 'rain', 'Wait, wait — I’m already picking a new oven!'], [1500, 'rich', 'Sunglasses on. Time to call an accountant 😎']],
+  ru: [[0, 'coin', 'Пока ноль. Даже на булочку не хватит — двигайте ползунки 👀'], [1, 'coin', 'На кофе с пончиком уже хватает. Неплохое начало ☕'], [100, 'cash', 'Это аренда моей пекарни за месяц!'], [500, 'rain', 'Стоп-стоп, я уже выбираю новую печь!'], [1500, 'rich', 'Я надел очки. Пора звать бухгалтера 😎']],
+  ua: [[0, 'coin', 'Поки нуль. Навіть на булочку не вистачить — рухайте повзунки 👀'], [1, 'coin', 'На каву з пончиком уже вистачає. Непоганий початок ☕'], [100, 'cash', 'Це оренда моєї пекарні за місяць!'], [500, 'rain', 'Стоп-стоп, я вже обираю нову піч!'], [1500, 'rich', 'Я вдягнув окуляри. Час кликати бухгалтера 😎']],
+}[lang];
 const p = PARTNERS_TEXT[lang];
 const home = langPath(lang);
 const cab = lang === 'en' ? '/partner/' : `/${lang}/partner/`;
@@ -109,7 +115,11 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
               </div>
             ))}
           </div>
-          <div class="calc-out">
+          <div class="calc-out" data-vaxcalc={JSON.stringify(VAXCALC)}>
+            <div class="vaxcalc">
+              <p class="vc-say" data-vc-say>{VAXCALC[2][2]}</p>
+              <img src="/mascot/vax-money-cash.webp" alt="Vax" width="242" height="360" data-vc-img data-vax-poke />
+            </div>
             <div class="big">$<span data-total>0</span></div>
             <div class="per">{p.calcMonth}</div>
             <div class="bars" aria-hidden="true">
@@ -249,6 +259,16 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
       }
       roll(box.querySelector('[data-total]')!, total);
       roll(box.querySelector('[data-year]')!, Math.round(total) * 12);
+      // Vax's reaction: the highest tier the total reached.
+      const out = box.querySelector<HTMLElement>('[data-vaxcalc]');
+      if (out) {
+        const tiers = JSON.parse(out.dataset.vaxcalc!) as [number, string, string][];
+        const [, img, say] = [...tiers].reverse().find(([from]) => total >= from) ?? tiers[0];
+        const im = out.querySelector<HTMLImageElement>('[data-vc-img]')!;
+        const src = `/mascot/vax-money-${img}.webp`;
+        if (!im.src.endsWith(src)) { im.src = src; im.classList.remove('vax-wiggle'); void im.offsetWidth; im.classList.add('vax-wiggle'); }
+        out.querySelector('[data-vc-say]')!.textContent = say;
+      }
     };
     box.querySelectorAll('input').forEach((i) => i.addEventListener('input', update));
     box.querySelectorAll<HTMLButtonElement>('[data-pkg]').forEach((b) =>
@@ -341,6 +361,11 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
   .year { font-size: 20px; font-weight: 600; }
   .note { color: var(--deepMut); font-size: 13px; margin: 16px 0 20px; }
   .calc-out .btn { align-self: flex-start; }
+  .calc-out { position: relative; }
+  .vaxcalc { position: absolute; top: 18px; right: 18px; width: 150px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .vaxcalc img { width: 118px; height: auto; filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.35)); }
+  .vc-say { margin: 0; background: var(--acc); color: var(--dark-ink); font-size: 13px; font-weight: 700; line-height: 1.3; padding: 8px 11px; border-radius: 14px 14px 4px 14px; max-width: 180px; text-align: left; }
+  @media (max-width: 900px) { .vaxcalc { position: static; flex-direction: row-reverse; align-items: center; width: auto; margin-bottom: 12px; } .vaxcalc img { width: 84px; } .vc-say { max-width: none; } }
 
   /* academy */
   .modules { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }

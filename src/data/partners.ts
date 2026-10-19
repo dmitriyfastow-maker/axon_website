@@ -79,7 +79,7 @@ const en: Text = {
   sub: 'Share our services and templates. We do the work, train you and give you the AI tools. You get the full commission from your first sale — every week.',
   join: 'Become a partner →',
   login: 'Log in',
-  flow: ['Your link', 'A click', 'A client request', 'We do the work', 'You get paid'],
+  flow: ['Your link', 'A client request', 'We do the work', 'You get paid'],
   stats: [
     [r.agencyOwn, '%', 'on agency services'],
     [r.products, '%', 'on our templates'],
@@ -184,7 +184,7 @@ const ua: Text = {
   sub: 'Рекомендуйте наші послуги та шаблони. Роботу робимо ми, навчаємо вас і даємо ШІ-інструменти. Повна комісія — з першого продажу, щотижня.',
   join: 'Стати партнером →',
   login: 'Увійти',
-  flow: ['Ваше посилання', 'Клік', 'Заявка клієнта', 'Ми робимо роботу', 'Вам виплата'],
+  flow: ['Ваше посилання', 'Заявка клієнта', 'Ми робимо роботу', 'Вам виплата'],
   stats: [
     [r.agencyOwn, '%', 'з послуг агенції'],
     [r.products, '%', 'з наших шаблонів'],
@@ -289,7 +289,7 @@ const ru: Text = {
   sub: 'Рекомендуйте наши услуги и шаблоны. Работу делаем мы, обучаем вас и даём ИИ-инструменты. Полная комиссия — с первой продажи, каждую неделю.',
   join: 'Стать партнёром →',
   login: 'Войти',
-  flow: ['Ваша ссылка', 'Клик', 'Заявка клиента', 'Мы делаем работу', 'Вам выплата'],
+  flow: ['Ваша ссылка', 'Заявка клиента', 'Мы делаем работу', 'Вам выплата'],
   stats: [
     [r.agencyOwn, '%', 'с услуг агентства'],
     [r.products, '%', 'с наших шаблонов'],

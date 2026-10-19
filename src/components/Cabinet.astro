@@ -9,6 +9,7 @@ import { OFFERS, PROMPTS } from '../data/ai-toolkit';
 import { LESSONS } from '../data/academy';
 import { RATES } from '../data/partners';
 import { LEVELS } from '../data/roadmap';
+import { OFFER_TEXT, PROMPT_TEXT } from '../data/ai-toolkit-i18n';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -17,6 +18,9 @@ const base = lang === 'en' ? '/partner/' : `/${lang}/partner/`;
 const landing = lang === 'en' ? '/partners/' : `/${lang}/partners/`;
 const byId = (id: string) => PROMPTS.find((p) => p.id === id)!;
 const title = (id: string) => c.titles[id] ?? byId(id).title;
+// Prompt and offer texts in the interface language (English is the source in ai-toolkit.ts).
+const ptext = (id: string) => (lang === 'en' ? byId(id).text : PROMPT_TEXT[lang][id] ?? byId(id).text);
+const offersLocal = OFFERS.map((o) => ({ ...o, text: lang === 'en' ? o.text : OFFER_TEXT[lang][o.id] ?? o.text }));
 const labels = c.card;
 const tabs: [string, string][] = [['home', '🏠'], ['links', '🔗'], ['academy', '🎓'], ['prompts', '🤖'], ['team', '👥'], ['rules', '💸']];
 const offerSelect = OFFERS.map((o) => ({ id: o.id, name: c.offers[o.id] }));
@@ -44,7 +48,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
 ---
 
 <Base lang={lang} title={c.meta.title} description={c.meta.description} path={base} noindex>
-  <main class="wrap" data-offers={JSON.stringify(OFFERS)} data-t={JSON.stringify(js)}>
+  <main class="wrap" data-offers={JSON.stringify(offersLocal)} data-t={JSON.stringify(js)}>
     <div class="topbar">
       <a href={landing} class="logo">VAXO<span>.</span> <small>Partners</small></a>
       <div class="row tight">
@@ -213,7 +217,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
               {l.prompts.length > 0 && (
                 <div class="lprompts">
                   <b class="small">{c.academy.prompts}</b>
-                  {l.prompts.map((id) => <PromptCard prompt={byId(id)} title={title(id)} labels={labels} />)}
+                  {l.prompts.map((id) => <PromptCard prompt={byId(id)} title={title(id)} text={ptext(id)} labels={labels} />)}
                 </div>
               )}
             </details>
@@ -231,7 +235,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
           <button type="button" data-cat="all" aria-pressed="true">{c.prompts.all}</button>
           {Object.entries(c.cats).map(([id, name]) => <button type="button" data-cat={id} aria-pressed="false">{name}</button>)}
         </div>
-        <div class="plist">{PROMPTS.map((p) => <PromptCard prompt={p} title={title(p.id)} labels={labels} />)}</div>
+        <div class="plist">{PROMPTS.map((p) => <PromptCard prompt={p} title={title(p.id)} text={ptext(p.id)} labels={labels} />)}</div>
         <h2>{c.prompts.tools}</h2>
         <div class="table"><table class="tools">
           <thead><tr>{c.prompts.toolCols.map((h) => <th>{h}</th>)}</tr></thead>
@@ -255,7 +259,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
             <ol class="lsteps">{c.team.steps.map((s) => <li>{s}</li>)}</ol>
           </div>
         </div>
-        <PromptCard prompt={byId('invite')} title={title('invite')} labels={labels} open />
+        <PromptCard prompt={byId('invite')} title={title('invite')} text={ptext('invite')} labels={labels} open />
       </div>
 
       <!-- RULES -->
