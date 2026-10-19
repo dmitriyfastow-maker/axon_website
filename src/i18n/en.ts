@@ -12,6 +12,7 @@ const en = {
   "sub": "Strategy, design, development, marketing and automation — one team and one system, from launch to global markets.",
   "cta1": "Leave a request",
   "cta2": "Services & prices",
+  "cta3": "Starter packages from $149",
   "heroTags": [
     "Strategy session in every tier",
     "Transparent price ranges",
@@ -514,12 +515,28 @@ const en = {
       "a": "Diagnosis of growth points, initial product line, audience segmentation, scaling scenarios and a partnership-fit check. Included in every tier."
     },
     {
-      "q": "How does the work happen?",
-      "a": "Weekly strategic syncs, a shared roadmap, transparent reporting, and a single point of contact across SMM, paid and development."
+      "q": "How does the work go?",
+      "a": "Everything happens in your personal project chat on our site: one manager, files, progress and reports in one place. Calls only when you want them."
     },
     {
       "q": "What are the timelines?",
       "a": "Foundation 30–60 days. Growth compounds month over month. Scale opens new markets within a quarter."
+    },
+    {
+      "q": "Do I need a call to start?",
+      "a": "No. Leave a request or ask Vax in the chat — your manager continues in writing. We schedule a call only if you ask for it."
+    },
+    {
+      "q": "How do I pay?",
+      "a": "After we agree the scope, Vaxo sends a contract and an invoice with a fixed price. You pay Vaxo directly."
+    },
+    {
+      "q": "Who will be my contact?",
+      "a": "One personal manager from the first message to launch and support."
+    },
+    {
+      "q": "Do you work with my country and niche?",
+      "a": "Yes — worldwide, in English, Ukrainian and Russian, any niche: local services, e-commerce, SaaS, apps."
     }
   ],
   "finalTitle": "Ready for systemic growth?",

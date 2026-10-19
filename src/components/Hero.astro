@@ -20,6 +20,7 @@ const { t } = Astro.props;
       <div class="actions">
         <a href="#contact" class="btn-primary">{t.cta1} <span>→</span></a>
         <a href="#services" class="btn-secondary">{t.cta2}</a>
+        <a href={t.vax.startHref} class="btn-tertiary">{t.cta3} →</a>
       </div>
       <div class="tags">
         {t.heroTags.map((h) => <span><span class="check">✓</span>{h}</span>)}
@@ -235,4 +236,5 @@ const { t } = Astro.props;
     line-height: 1.5;
     opacity: 0.75;
   }
+  .btn-tertiary { align-self: center; color: var(--accText); font-weight: 700; text-decoration: underline; text-underline-offset: 4px; padding: 8px 4px; }
 </style>

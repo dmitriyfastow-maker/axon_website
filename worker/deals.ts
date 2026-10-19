@@ -57,7 +57,7 @@ From the request below write, in English, short labelled lines:
 Business: what they do (or "unknown").
 Goal: what they want to achieve.
 Likely service: which Vaxo services fit.
-Budget signal: any hint, else "unknown — ask".
+Budget signal: any hint in the currency the client used (assume USD if no currency), else "unknown — ask".
 Pains and objections to expect.
 Questions to ask on the first call (3).
 Suggested first offer.

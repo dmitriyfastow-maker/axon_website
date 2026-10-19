@@ -70,6 +70,7 @@ export function initContactForm(): void {
       showForm();
       setMode('request');
       setInterest(btn.dataset.chooseTier!);
+      if (btn.dataset.chooseNote && !message.value.trim()) message.value = btn.dataset.chooseNote;
       const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
       document.getElementById('contact')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
     }),
