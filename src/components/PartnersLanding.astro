@@ -13,9 +13,9 @@ const { lang } = Astro.props;
 const t = getDict(lang);
 // Vax reacts to the calculator total: [from $, image, line].
 const VAXCALC = {
-  en: [[0, 'coin', 'Zero so far. Not even enough for a bun — move the sliders 👀'], [1, 'coin', 'Coffee and a donut are covered. Nice start ☕'], [100, 'cash', 'That’s my bakery rent for a month!'], [500, 'rain', 'Wait, wait — I’m already picking a new oven!'], [1500, 'rich', 'Sunglasses on. Time to call an accountant 😎']],
-  ru: [[0, 'coin', 'Пока ноль. Даже на булочку не хватит — двигайте ползунки 👀'], [1, 'coin', 'На кофе с пончиком уже хватает. Неплохое начало ☕'], [100, 'cash', 'Это аренда моей пекарни за месяц!'], [500, 'rain', 'Стоп-стоп, я уже выбираю новую печь!'], [1500, 'rich', 'Я надел очки. Пора звать бухгалтера 😎']],
-  ua: [[0, 'coin', 'Поки нуль. Навіть на булочку не вистачить — рухайте повзунки 👀'], [1, 'coin', 'На каву з пончиком уже вистачає. Непоганий початок ☕'], [100, 'cash', 'Це оренда моєї пекарні за місяць!'], [500, 'rain', 'Стоп-стоп, я вже обираю нову піч!'], [1500, 'rich', 'Я вдягнув окуляри. Час кликати бухгалтера 😎']],
+  en: [[0, 'coin', 'Zero so far. Not even enough for a bun — move the sliders 👀'], [1, 'coin', 'Coffee and a donut are covered. Nice start ☕'], [100, 'cash', 'That’s a month of rent for my latest business!'], [500, 'rain', 'Wait, wait — I’m already picking a new oven!'], [1500, 'rich', 'Sunglasses on. Time to call an accountant 😎']],
+  ru: [[0, 'coin', 'Пока ноль. Даже на булочку не хватит — двигайте ползунки 👀'], [1, 'coin', 'На кофе с пончиком уже хватает. Неплохое начало ☕'], [100, 'cash', 'Это месячная аренда моего нового бизнеса!'], [500, 'rain', 'Стоп-стоп, я уже выбираю новую печь!'], [1500, 'rich', 'Я надел очки. Пора звать бухгалтера 😎']],
+  ua: [[0, 'coin', 'Поки нуль. Навіть на булочку не вистачить — рухайте повзунки 👀'], [1, 'coin', 'На каву з пончиком уже вистачає. Непоганий початок ☕'], [100, 'cash', 'Це місячна оренда мого нового бізнесу!'], [500, 'rain', 'Стоп-стоп, я вже обираю нову піч!'], [1500, 'rich', 'Я вдягнув окуляри. Час кликати бухгалтера 😎']],
 }[lang];
 const p = PARTNERS_TEXT[lang];
 const home = langPath(lang);

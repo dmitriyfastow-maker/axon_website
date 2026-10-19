@@ -546,7 +546,7 @@ const en = {
   },
   "vax": {
     "startHref": "/start/",
-    "bubbles": ["New order 🧁", "Can I book for 9?", "Paid ✓"],
+    "bubbles": ["New order 🔔", "Can I book for 9?", "Paid ✓"],
     "hint": "Psst… tap me 👆",
     "pricing": "I started with the smallest package. Now I have two ovens and a nap schedule.",
     "faq": "Didn’t find your answer? Write to us — a real human replies, not me.",
@@ -556,7 +556,7 @@ const en = {
     "poke": [
       "Hey! That tickles.",
       "My chat answers at 3 AM. I sleep. Best deal ever.",
-      "Ask me about cinnamon rolls. Or conversion rates.",
+      "Ask me about any business. I have tried half of them.",
       "I made every mistake on this site so you don’t have to.",
       "Stop poking, start growing!",
       "I’m not a raccoon. I’m a business consultant in a fur coat."
