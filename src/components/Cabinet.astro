@@ -4,6 +4,7 @@
 import Base from '../layouts/Base.astro';
 import PromptCard from './PromptCard.astro';
 import Deals from './Deals.astro';
+import Coach from './Coach.astro';
 import { LANGS, type Lang } from '../i18n';
 import { CABINET } from '../i18n/cabinet';
 import { OFFERS, PROMPTS } from '../data/ai-toolkit';
@@ -15,6 +16,7 @@ import { OFFER_TEXT, PROMPT_TEXT } from '../data/ai-toolkit-i18n';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const c = CABINET[lang];
+const PLAN = {"en": {"h": "How you are paid", "top": "Bring a client and close the deal on a call yourself — <b>40%</b> of the first payment + 10% of every later payment for life (the top rate).", "opts": [["classic", "I recommend Vaxo to people I know: 30% of the first order + 10% of every later payment, for life"], ["first30", "I post content (clips, videos): 30% of the first sale only"], ["life10", "I post content (clips, videos): 10% of every sale, for life"]], "ok": "Saved"}, "ru": {"h": "Как вам платят", "top": "Привели клиента и сами довели созвон до оплаты — <b>40%</b> первой оплаты + 10% с каждой следующей пожизненно (самая высокая ставка).", "opts": [["classic", "Рекомендую Vaxo знакомым: 30% первого заказа + 10% с каждой следующей оплаты пожизненно"], ["first30", "Выкладываю контент (нарезки, ролики): 30% только с первой продажи"], ["life10", "Выкладываю контент (нарезки, ролики): 10% с каждой продажи пожизненно"]], "ok": "Сохранено"}, "ua": {"h": "Як вам платять", "top": "Привели клієнта і самі довели дзвінок до оплати — <b>40%</b> першої оплати + 10% з кожної наступної довічно (найвища ставка).", "opts": [["classic", "Рекомендую Vaxo знайомим: 30% першого замовлення + 10% з кожної наступної оплати довічно"], ["first30", "Викладаю контент (нарізки, ролики): 30% лише з першого продажу"], ["life10", "Викладаю контент (нарізки, ролики): 10% з кожного продажу довічно"]], "ok": "Збережено"}}[lang];
 const base = lang === 'en' ? '/partner/' : `/${lang}/partner/`;
 const landing = lang === 'en' ? '/partners/' : `/${lang}/partners/`;
 const byId = (id: string) => PROMPTS.find((p) => p.id === id)!;
@@ -108,6 +110,15 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
           <span class="eyebrow-s">{c.home.next}</span>
           <h2 data-next-text>…</h2>
           <button type="button" class="cta" data-next-go>{c.home.doIt}</button>
+        </div>
+
+        <div class="plan card">
+          <span class="eyebrow-s">{PLAN.h}</span>
+          <p set:html={PLAN.top} />
+          <div class="plan-opts" data-plan>
+            {PLAN.opts.map(([k, t]) => <label><input type="radio" name="plan" value={k} /> <span>{t}</span></label>)}
+          </div>
+          <small class="mut" data-plan-ok hidden>{PLAN.ok}</small>
         </div>
 
         <div class="mylink card">
@@ -230,6 +241,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
 
       <!-- PROMPTS -->
       <div data-panel="prompts" hidden>
+        <Coach lang={lang} />
         <h1>{c.prompts.h1}</h1>
         <p class="mut">{c.prompts.p}</p>
         {c.prompts.lang && <p class="tip">🌍 {c.prompts.lang}</p>}
@@ -477,6 +489,11 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   }
 
   // ---- data ----
+  document.querySelector('[data-plan]')?.addEventListener('change', async (e) => {
+    const v = (e.target as HTMLInputElement).value;
+    const r = await api('plan', { plan: v });
+    if (r.ok) { const ok = document.querySelector<HTMLElement>('[data-plan-ok]'); if (ok) { ok.hidden = false; setTimeout(() => (ok.hidden = true), 2000); } }
+  });
   async function load() {
     const res = await api('me');
     if (!res.ok) return show('auth');
@@ -484,6 +501,8 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
     code = data.partner.code;
     $('[data-name]').textContent = data.partner.name;
     $('[data-email]').textContent = data.partner.email ?? '';
+    const planIn = document.querySelector<HTMLInputElement>(`[data-plan] input[value="${(data as any).plan || 'classic'}"]`);
+    if (planIn) planIn.checked = true;
     const clicks = data.links.reduce((n, l) => n + l.clicks, 0);
     const leads = data.links.reduce((n, l) => n + l.leads, 0);
     const sales = data.sales ?? 0;
@@ -765,4 +784,8 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   @media (prefers-reduced-motion: reduce) {
     .next::after, .soon .gift { animation: none; }
   }
+  .plan p { margin: 6px 0 10px; }
+  .plan-opts { display: grid; gap: 8px; }
+  .plan-opts label { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; line-height: 1.4; }
+  .plan-opts input { margin-top: 3px; accent-color: var(--acc); }
 </style>

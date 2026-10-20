@@ -1,0 +1,157 @@
+---
+// Collaboration page (/collab/): one door for every proposal — creators, UGC, agencies, brands, tech partners, jobs.
+// Each proposal gets its own private chat where Vax (AI) negotiates within our rules; money decisions go to the owner.
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getDict, langPath, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = getDict(lang);
+const home = langPath(lang);
+const alts = { en: '/collab/', ua: '/ua/collab/', ru: '/ru/collab/' };
+
+const C = {
+  en: {
+    title: 'Vaxo — Collaborate with us', desc: 'Creators, UGC, agencies, brands and specialists: send a proposal and get an answer in minutes.',
+    eyebrow: 'Collaboration', h1: 'Let’s grow together.', sub: 'Creator, UGC, agency, brand or specialist — send your idea in one minute. Vax, our AI partnerships manager, answers in your private chat within minutes and agrees the details with you.',
+    cta: 'Send a proposal →',
+    types: [
+      ['creator', 'Bloggers and creators', 'Recommend Vaxo to your audience: 30% of the first order + 10% of every later payment for life. Content-only partners choose 30% of the first sale or 10% of every sale for life. Paid on sales, not views.'],
+      ['ugc', 'UGC creators', 'Join our talent base: we bring you paid video work for our clients’ brands, and you can earn commission by recommending us to the brands you shoot for.'],
+      ['agency', 'Agencies and freelancers', 'White-label: we build sites, apps, AI chats and content, you sell them under your brand. Or refer clients and earn commission. Your clients stay yours.'],
+      ['brand', 'Brands and ad offers', 'Cross-promotion, sponsored episodes with our cartoon characters Vax and Roxy, joint giveaways. Tell us your idea and budget.'],
+      ['tech', 'Products and integrations', 'Tools our clients could use, affiliate programs, technical partnerships.'],
+      ['job', 'Work with us', 'Account managers who talk to clients (English), designers, developers, video makers. Most roles are commission or project based.'],
+    ],
+    howH: 'How it works', how: [['Send', 'Pick a type, leave a contact and a short message.'], ['Vax answers', 'A private chat opens at once. Vax asks what matters and replies within minutes, 24/7.'], ['Agree and start', 'Standard terms are agreed right in the chat. Anything unusual goes to the founder.']],
+    formH: 'Your proposal', type: 'Type', name: 'Name or brand', contact: 'Email, phone or @telegram', link: 'Link to your profile, site or portfolio', audience: 'Audience size (if any)', msg: 'Your idea in a few lines', send: 'Send and open my chat', sending: 'Sending…', err: 'Not sent. Check the fields and try again.', other: 'Something else',
+    note: 'Partners and collaborators must be 18+. Every paid post is marked as an ad (#ad).',
+  },
+  ru: {
+    title: 'Vaxo — Сотрудничество', desc: 'Блогеры, UGC, агентства, бренды и специалисты: отправьте предложение и получите ответ за минуты.',
+    eyebrow: 'Сотрудничество', h1: 'Давайте расти вместе.', sub: 'Блогер, UGC-креатор, агентство, бренд или специалист — отправьте идею за минуту. Vax, наш ИИ-менеджер по партнёрствам, ответит в вашем личном чате за несколько минут и согласует детали.',
+    cta: 'Отправить предложение →',
+    types: [
+      ['creator', 'Блогеры и авторы', 'Рекомендуйте Vaxo своей аудитории: 30% первого заказа + 10% с каждой следующей оплаты пожизненно. Те, кто только выкладывает контент, выбирают 30% с первой продажи или 10% с каждой продажи пожизненно. Платим за продажи, не за просмотры.'],
+      ['ugc', 'UGC-креаторы', 'Войдите в нашу базу авторов: мы приводим оплачиваемые заказы на ролики для брендов наших клиентов, а вы можете зарабатывать процент, рекомендуя нас брендам, для которых снимаете.'],
+      ['agency', 'Агентства и фрилансеры', 'Белая марка: мы делаем сайты, приложения, ИИ-чаты и контент, вы продаёте их под своим брендом. Или рекомендуйте клиентов за процент. Ваши клиенты остаются вашими.'],
+      ['brand', 'Бренды и реклама', 'Взаимный пиар, спонсорские серии с нашими героями Vax и Roxy, совместные розыгрыши. Расскажите идею и бюджет.'],
+      ['tech', 'Продукты и интеграции', 'Сервисы для наших клиентов, партнёрские программы, технические партнёрства.'],
+      ['job', 'Работа у нас', 'Менеджеры для общения с клиентами (английский), дизайнеры, разработчики, видеомейкеры. Чаще всего — процент или оплата за проект.'],
+    ],
+    howH: 'Как это работает', how: [['Отправьте', 'Выберите тип, оставьте контакт и пару строк.'], ['Vax отвечает', 'Сразу открывается личный чат. Vax уточнит главное и ответит за минуты, 24/7.'], ['Договариваемся', 'Стандартные условия согласуем прямо в чате. Всё необычное — к основателю.']],
+    formH: 'Ваше предложение', type: 'Тип', name: 'Имя или бренд', contact: 'Email, телефон или @telegram', link: 'Ссылка на профиль, сайт или портфолио', audience: 'Размер аудитории (если есть)', msg: 'Идея в нескольких строках', send: 'Отправить и открыть чат', sending: 'Отправляем…', err: 'Не отправилось. Проверьте поля и попробуйте ещё раз.', other: 'Другое',
+    note: 'Партнёрам и участникам — только 18+. Каждый оплачиваемый пост помечается как реклама (#ad).',
+  },
+  ua: {
+    title: 'Vaxo — Співпраця', desc: 'Блогери, UGC, агенції, бренди та фахівці: надішліть пропозицію й отримайте відповідь за хвилини.',
+    eyebrow: 'Співпраця', h1: 'Зростаймо разом.', sub: 'Блогер, UGC-креатор, агенція, бренд чи фахівець — надішліть ідею за хвилину. Vax, наш ШІ-менеджер з партнерств, відповість у вашому особистому чаті за кілька хвилин і погодить деталі.',
+    cta: 'Надіслати пропозицію →',
+    types: [
+      ['creator', 'Блогери та автори', 'Рекомендуйте Vaxo своїй аудиторії: 30% першого замовлення + 10% з кожної наступної оплати довічно. Ті, хто лише викладає контент, обирають 30% з першого продажу або 10% з кожного продажу довічно. Платимо за продажі, не за перегляди.'],
+      ['ugc', 'UGC-креатори', 'Увійдіть до нашої бази авторів: ми приводимо оплачувані замовлення на ролики для брендів наших клієнтів, а ви можете заробляти відсоток, рекомендуючи нас брендам, для яких знімаєте.'],
+      ['agency', 'Агенції та фрилансери', 'Біла марка: ми робимо сайти, застосунки, ШІ-чати та контент, ви продаєте їх під своїм брендом. Або рекомендуйте клієнтів за відсоток. Ваші клієнти залишаються вашими.'],
+      ['brand', 'Бренди та реклама', 'Взаємний піар, спонсорські серії з нашими героями Vax і Roxy, спільні розіграші. Розкажіть ідею та бюджет.'],
+      ['tech', 'Продукти та інтеграції', 'Сервіси для наших клієнтів, партнерські програми, технічні партнерства.'],
+      ['job', 'Робота в нас', 'Менеджери для спілкування з клієнтами (англійська), дизайнери, розробники, відеомейкери. Найчастіше — відсоток або оплата за проєкт.'],
+    ],
+    howH: 'Як це працює', how: [['Надішліть', 'Оберіть тип, залиште контакт і кілька рядків.'], ['Vax відповідає', 'Одразу відкривається особистий чат. Vax уточнить головне й відповість за хвилини, 24/7.'], ['Домовляємось', 'Стандартні умови погоджуємо прямо в чаті. Усе незвичне — до засновника.']],
+    formH: 'Ваша пропозиція', type: 'Тип', name: 'Імʼя або бренд', contact: 'Email, телефон або @telegram', link: 'Посилання на профіль, сайт або портфоліо', audience: 'Розмір аудиторії (якщо є)', msg: 'Ідея в кількох рядках', send: 'Надіслати й відкрити чат', sending: 'Надсилаємо…', err: 'Не надіслано. Перевірте поля й спробуйте ще раз.', other: 'Інше',
+    note: 'Партнерам і учасникам — лише 18+. Кожен оплачуваний пост позначається як реклама (#ad).',
+  },
+}[lang];
+---
+
+<Base lang={lang} title={C.title} description={C.desc} path={alts[lang]} alts={alts}>
+  <Header lang={lang} t={t} home={home} alts={alts} />
+  <main class="collab">
+    <section class="hero in">
+      <span class="eyebrow">{C.eyebrow}</span>
+      <h1>{C.h1}</h1>
+      <p class="sub">{C.sub}</p>
+      <a class="cta" href="#form">{C.cta}</a>
+    </section>
+
+    <section class="in types">
+      {C.types.map(([k, h, p]) => (
+        <a class="type" href="#form" data-pick={k}><h3>{h}</h3><p>{p}</p></a>
+      ))}
+    </section>
+
+    <section class="in how">
+      <h2>{C.howH}</h2>
+      <ol>{C.how.map(([h, p]) => <li><b>{h}</b><span>{p}</span></li>)}</ol>
+    </section>
+
+    <section class="in" id="form">
+      <form class="card" data-collab>
+        <h2>{C.formH}</h2>
+        <label><span>{C.type}</span>
+          <select name="type">{C.types.map(([k, h]) => <option value={k}>{h}</option>)}<option value="other">{C.other}</option></select>
+        </label>
+        <div class="two">
+          <label><span>{C.name}</span><input name="name" required maxlength="80" /></label>
+          <label><span>{C.contact}</span><input name="contact" required maxlength="120" /></label>
+        </div>
+        <div class="two">
+          <label><span>{C.link}</span><input name="link" maxlength="300" /></label>
+          <label><span>{C.audience}</span><input name="audience" maxlength="40" /></label>
+        </div>
+        <label><span>{C.msg}</span><textarea name="message" rows="4" required maxlength="2000"></textarea></label>
+        <input class="trap" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <button class="cta" type="submit">{C.send}</button>
+        <p class="err" hidden>{C.err}</p>
+        <small class="mut">{C.note}</small>
+      </form>
+    </section>
+  </main>
+  <Footer t={t} home={home} lang={lang} />
+</Base>
+
+<script define:vars={{ lang, sending: C.sending }}>
+  const form = document.querySelector('[data-collab]');
+  const started = Date.now();
+  document.querySelectorAll('[data-pick]').forEach((a) => a.addEventListener('click', () => { form.type.value = a.dataset.pick; }));
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button');
+    const label = btn.textContent;
+    btn.disabled = true; btn.textContent = sending;
+    const body = Object.fromEntries(new FormData(form).entries());
+    const r = await fetch('/api/collab', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, lang, startedAt: started }) }).catch(() => null);
+    const d = r && r.ok ? await r.json().catch(() => null) : null;
+    if (d && d.room) { location.href = `/room/?t=${d.room}`; return; }
+    btn.disabled = false; btn.textContent = label;
+    form.querySelector('.err').hidden = false;
+  });
+</script>
+
+<style>
+  .in { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+  .hero { padding: 120px 16px 40px; }
+  h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0; }
+  .sub { color: var(--mut); font-size: 19px; max-width: 60ch; margin: 0 0 28px; }
+  .cta { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 600; padding: 14px 22px; border-radius: 999px; text-decoration: none; border: 0; font-size: 16px; cursor: pointer; }
+  .types { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; padding-bottom: 48px; }
+  .type { display: block; background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 20px; color: var(--ink); text-decoration: none; transition: border-color 0.2s; }
+  .type:hover { border-color: var(--acc); }
+  .type h3 { margin: 0 0 8px; font-size: 19px; }
+  .type p { margin: 0; color: var(--mut); line-height: 1.5; }
+  .how { padding-bottom: 48px; }
+  .how ol { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; counter-reset: s; }
+  .how li { counter-increment: s; display: flex; flex-direction: column; gap: 4px; border-top: 4px solid var(--acc); padding-top: 10px; }
+  .how li b::before { content: counter(s) '. '; }
+  .how li span { color: var(--mut); }
+  #form { padding-bottom: 80px; }
+  .card { background: var(--surf); border: 1px solid var(--line); border-radius: 22px; padding: 24px; display: grid; gap: 14px; max-width: 760px; }
+  .card h2 { margin: 0; }
+  label { display: grid; gap: 6px; font-size: 14px; color: var(--mut); }
+  input, select, textarea { font: 16px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 11px 12px; width: 100%; box-sizing: border-box; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 640px) { .two { grid-template-columns: 1fr; } .hero { padding-top: 96px; } }
+  .trap { position: absolute; left: -9999px; }
+  .err { color: #c0392b; margin: 0; }
+  .mut { color: var(--mut); }
+</style>

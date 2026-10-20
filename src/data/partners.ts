@@ -7,10 +7,13 @@ export const RATES = {
   agencyOwn: 30, // client the partner found
   agencyGiven: 20, // warm lead Vaxo hands to the partner to close
   agencyRenewal: 10, // every renewal / monthly payment, for life
+  fullCycle: 40, // the partner brought the client AND closed the deal on a call: the top rate
+  clipFirst: 30, // content partner plan A: 30% of the first sale only
+  clipLife: 10, // content partner plan B: 10% of every sale for life
   products: 50, // our digital products
   offers: 70, // share of the payout Vaxo receives from partner offers
   team: 10, // bonus on direct partners' earnings, paid by Vaxo on top
-  holdDays: 7,
+  holdDays: 14, // commission becomes payable after the refund window
 };
 
 /** Real prices from /start/ and /shop/; the calculator uses the middle of each range. */
@@ -101,7 +104,7 @@ const en: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'deals from $149',
       what: 'Automation, websites and AI chatbots for small businesses. Our team does all the work.',
-      points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`],
+      points: [`${r.fullCycle}% — you found the client AND closed the deal on a call (top rate)`, `${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `Posting content only? Choose ${r.clipFirst}% of the first sale or ${r.clipLife}% of every sale for life`],
     },
     {
       name: 'Our templates',
@@ -206,7 +209,7 @@ const ua: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'угоди від $149',
       what: 'Автоматизація, сайти та ШІ-чат-боти для малого бізнесу. Усю роботу робить наша команда.',
-      points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`],
+      points: [`${r.fullCycle}% — ви знайшли клієнта І самі закрили угоду на дзвінку (найвища ставка)`, `${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `Лише викладаєте контент? Оберіть ${r.clipFirst}% з першого продажу або ${r.clipLife}% з кожного продажу довічно`],
     },
     {
       name: 'Наші шаблони',
@@ -311,7 +314,7 @@ const ru: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'сделки от $149',
       what: 'Автоматизация, сайты и ИИ-чат-боты для малого бизнеса. Всю работу делает наша команда.',
-      points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`],
+      points: [`${r.fullCycle}% — вы нашли клиента И сами закрыли сделку на созвоне (самая высокая ставка)`, `${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `Только выкладываете контент? Выберите ${r.clipFirst}% с первой продажи или ${r.clipLife}% с каждой продажи пожизненно`],
     },
     {
       name: 'Наши шаблоны',

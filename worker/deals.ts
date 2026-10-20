@@ -25,6 +25,7 @@ export async function logEvent(db: DB, leadId: number, actor: string, kind: stri
 /** Return overdue leads to the pool; two misses in 30 days pause the closer. Cheap, so it runs on every list request. */
 export async function sweep(db: DB, notify: Notify) {
   await unansweredAlerts(db, notify);
+  await transferFromWeak(db, notify);
   const { results } = await db
     .prepare(`SELECT d.id, d.status, d.closer_id, p.name FROM leads d JOIN partners p ON p.id = d.closer_id
               WHERE d.status IN ${ACTIVE} AND d.due_at IS NOT NULL AND d.due_at < datetime('now')`)
@@ -39,6 +40,21 @@ export async function sweep(db: DB, notify: Notify) {
     if ((misses?.n ?? 0) >= 2) await db.prepare(`UPDATE partners SET closer = 'paused' WHERE id = ?`).bind(l.closer_id).run();
     await notify(`⏰ Lead #${l.id} returned to the pool: ${l.name} missed the deadline (${l.status}).${(misses?.n ?? 0) >= 2 ? ' Closer paused.' : ''}`);
   }
+}
+
+/** A paused manager (strikes, missed deadlines) or one rated 2★ or lower loses their clients: open deals go back to the
+ *  pool, won projects stay with Vax until the owner assigns a new manager — who then gets the lifetime 10%. */
+async function transferFromWeak(db: DB, notify: Notify) {
+  const { results } = await db
+    .prepare(`SELECT d.id, d.status, d.name AS client, p.id AS pid, p.name FROM leads d JOIN partners p ON p.id = d.closer_id
+              WHERE (p.closer = 'paused' OR p.closer_rating <= 2) AND d.status IN ('claimed','contacted','meeting','proposal','won') LIMIT 50`)
+    .all<{ id: number; status: string; client: string; pid: number; name: string }>();
+  for (const l of results) {
+    if (l.status === 'won') await db.prepare(`UPDATE leads SET closer_id = NULL, updated_at = datetime('now') WHERE id = ?`).bind(l.id).run();
+    else await db.prepare(`UPDATE leads SET status = 'open', closer_id = NULL, claimed_at = NULL, due_at = NULL, updated_at = datetime('now') WHERE id = ?`).bind(l.id).run();
+    await logEvent(db, l.id, 'system', 'return', `Manager ${l.name} paused or low-rated [p:${l.pid}] — ${l.status === 'won' ? 'project kept by Vax, assign a new manager' : 'deal back to the pool'}`);
+  }
+  if (results.length) await notify(`🔄 ${results.length} client(s) taken from paused/low-rated managers (${[...new Set(results.map((r) => r.name))].join(', ')}). Vax leads them; assign new managers in HQ if needed.`);
 }
 
 /** How many leads a closer may hold at once: earned through results. */

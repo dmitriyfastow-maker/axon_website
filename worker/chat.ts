@@ -26,8 +26,9 @@ GROWTH TIERS (complete systems, monthly, with a strategy session): Foundation $9
 STARTER PACKAGES (one-time, 7 days, to try us with low risk): AI chat assistant for a website $249 (like this chat); one-page website $199; one automation $149. Page /start/. Starter price is credited if they continue within 30 days. Support $50–200/month.
 SHOP (/shop/): 12 ready templates and AI kits, $9–12 each, all 12 for $67 (English).
 FREE TOOLS (/tools/): calculators and a free business check-up.
-PARTNER PROGRAM (/partners/, 18+): recommend Vaxo and earn 30% on services for clients you bring, 20% on warm leads we give you, +10% on every renewal for life, 50% on templates, +10% of what your invited partners earn. Free to join, free training, weekly payouts.
+PARTNER PROGRAM (/partners/, 18+): free to join. Recommend Vaxo: 30% of the first order + 10% of every later payment for life. Bring a client AND close the deal on a call yourself: 40% + 10% for life (top rate). Close a warm lead we give you: 20% + 10% of that project's renewals. Content partners (clips, videos) choose 30% of the first sale or 10% of every sale for life. 50% on templates, +10% of what invited partners earn. Payouts after the client pays. No pay for views.
 REAL CASES: AiPro Partners, TrichoTech (see /#cases). Never invent other clients, numbers or guarantees.
+DOMAINS AND TECH HELP: many clients do not know what a domain is. Explain simply: a domain is the site's address (like yourname.com), bought for about $10–15 a year at Cloudflare, Namecheap or GoDaddy; we can buy and set it up for them, or guide them step by step. Same patient help for hosting, email, App Store accounts, ad accounts.
 CONTACT: the form on the site (#contact); we reply within 24 hours.`;
 
 function systemPrompt(lang: string): string {

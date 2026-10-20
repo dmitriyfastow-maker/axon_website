@@ -4,9 +4,9 @@ import { NAV_HREFS } from '../data/tiers';
 
 interface Props { t: Dict; home?: string; lang?: Lang }
 const { t, home = '', lang = 'en' } = Astro.props;
-const F = { en: { examples: 'Examples', start: 'Starter packages', shop: 'Templates shop', login: 'Partner login' },
-            ru: { examples: 'Примеры работ', start: 'Стартовые пакеты', shop: 'Магазин шаблонов', login: 'Вход для партнёров' },
-            ua: { examples: 'Приклади робіт', start: 'Стартові пакети', shop: 'Магазин шаблонів', login: 'Вхід для партнерів' } }[lang];
+const F = { en: { examples: 'Examples', start: 'Starter packages', shop: 'Templates shop', login: 'Partner login', collab: 'Collaborate' },
+            ru: { examples: 'Примеры работ', start: 'Стартовые пакеты', shop: 'Магазин шаблонов', login: 'Вход для партнёров', collab: 'Сотрудничество' },
+            ua: { examples: 'Приклади робіт', start: 'Стартові пакети', shop: 'Магазин шаблонів', login: 'Вхід для партнерів', collab: 'Співпраця' } }[lang];
 ---
 
 <footer class="footer">
@@ -17,6 +17,7 @@ const F = { en: { examples: 'Examples', start: 'Starter packages', shop: 'Templa
       <a href={navHref('/examples/', lang)}>{F.examples}</a>
       <a href={navHref('/start/', lang)}>{F.start}</a>
       <a href={navHref('/shop/', lang)}>{F.shop}</a>
+      <a href={navHref('/collab/', lang)}>{F.collab}</a>
       <a href={navHref('/partner/', lang)}>{F.login}</a>
     </nav>
     <span class="copy">© 2026 {t.footer}</span>

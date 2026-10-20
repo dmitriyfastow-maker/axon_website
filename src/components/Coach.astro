@@ -1,0 +1,102 @@
+---
+// Partner AI coach chat (worker/coach.ts): Vax helps the partner find clients and write honest messages. 30 questions a day.
+import type { Lang } from '../i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const T = {
+  en: { h: 'Ask Vax — your AI coach', p: 'Where to find clients, what to write, which offer fits, how payouts work. Honest selling only.', ph: 'For example: write a message to a dental clinic without a website', send: 'Ask', left: 'questions left today', limit: 'Today’s 30 questions are used up — come back tomorrow.', err: 'Vax is busy, try again in a minute.', copy: 'Copy',
+        ex: ['Where can I find my first client?', 'Write a message to a café without a website', 'Client says “too expensive” — what do I answer?', 'How do I invite partners to my team?'] },
+  ru: { h: 'Спросите Vax — ваш ИИ-помощник', p: 'Где искать клиентов, что написать, какое предложение подойдёт, как работают выплаты. Только честные продажи.', ph: 'Например: напиши сообщение стоматологии без сайта', send: 'Спросить', left: 'вопросов осталось на сегодня', limit: '30 вопросов на сегодня закончились — возвращайтесь завтра.', err: 'Vax занят, попробуйте через минуту.', copy: 'Копировать',
+        ex: ['Где найти первого клиента?', 'Напиши сообщение кафе без сайта', 'Клиент говорит «дорого» — что ответить?', 'Как пригласить партнёров в команду?'] },
+  ua: { h: 'Запитайте Vax — ваш ІІ-помічник', p: 'Де шукати клієнтів, що написати, яка пропозиція підійде, як працюють виплати. Лише чесні продажі.', ph: 'Наприклад: напиши повідомлення стоматології без сайту', send: 'Запитати', left: 'питань лишилося на сьогодні', limit: '30 питань на сьогодні закінчилися — повертайтеся завтра.', err: 'Vax зайнятий, спробуйте за хвилину.', copy: 'Копіювати',
+        ex: ['Де знайти першого клієнта?', 'Напиши повідомлення кафе без сайту', 'Клієнт каже «дорого» — що відповісти?', 'Як запросити партнерів у команду?'] },
+}[lang];
+---
+<div class="coach card" data-coach data-lang={lang} data-t={JSON.stringify(T)}>
+  <div class="coach-head"><img src="/mascot/vax-front.webp" alt="" width="48" height="48" /><div><h2>{T.h}</h2><p class="mut small">{T.p}</p></div></div>
+  <div class="coach-log" data-coach-log aria-live="polite"></div>
+  <div class="chips">{T.ex.map((q) => <button type="button" data-coach-ex>{q}</button>)}</div>
+  <form class="coach-form" data-coach-form>
+    <textarea rows="2" maxlength="800" placeholder={T.ph} data-coach-input required></textarea>
+    <button type="submit" class="cta">{T.send}</button>
+  </form>
+  <p class="mut small" data-coach-left></p>
+</div>
+
+<style>
+  .coach { margin-bottom: 24px; }
+  .coach-head { display: flex; gap: 12px; align-items: center; }
+  .coach-head h2 { margin: 0; }
+  .coach-head p { margin: 2px 0 0; }
+  .coach-log { display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; margin: 12px 0; }
+  .coach-log:empty { display: none; }
+  .coach-log .m { padding: 10px 12px; border-radius: 12px; white-space: pre-wrap; max-width: 92%; line-height: 1.45; }
+  .coach-log .u { align-self: flex-end; background: var(--accent, #f60); color: #fff; }
+  .coach-log .a { align-self: flex-start; background: var(--soft, rgba(127,127,127,.12)); }
+  .coach-log .a button { display: block; margin-top: 6px; font-size: 12px; }
+  .coach-form { display: flex; gap: 8px; align-items: flex-end; margin-top: 8px; }
+  .coach-form textarea { flex: 1; min-width: 0; resize: vertical; }
+</style>
+
+<script>
+  const box = document.querySelector<HTMLElement>('[data-coach]');
+  if (box) {
+    const T = JSON.parse(box.dataset.t!) as Record<string, string>;
+    const log = box.querySelector<HTMLElement>('[data-coach-log]')!;
+    const input = box.querySelector<HTMLTextAreaElement>('[data-coach-input]')!;
+    const left = box.querySelector<HTMLElement>('[data-coach-left]')!;
+    const form = box.querySelector<HTMLFormElement>('[data-coach-form]')!;
+    const showLeft = (n: number) => (left.textContent = n > 0 ? `${n} ${T.left}` : T.limit);
+    let link = '';
+    const add = (role: string, raw: string) => {
+      // Vax writes {link} in ready-to-send texts — put the partner's main tracking link there.
+      const text = link ? raw.replaceAll('{link}', link) : raw;
+      const d = document.createElement('div');
+      d.className = `m ${role === 'user' ? 'u' : 'a'}`;
+      d.textContent = text;
+      if (role !== 'user') {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'ghost'; b.textContent = T.copy;
+        b.onclick = () => navigator.clipboard?.writeText(text);
+        d.append(b);
+      }
+      log.append(d);
+      log.scrollTop = log.scrollHeight;
+      return d;
+    };
+    let loaded = false;
+    const load = async () => {
+      if (loaded) return;
+      loaded = true;
+      const me = await fetch('/api/partner/me').then((x) => x.json()).catch(() => null);
+      const main = me?.links?.[me.links.length - 1];
+      if (main) link = `${location.origin}/r/${main.slug}`;
+      const r = await fetch('/api/partner/coach').then((x) => x.json()).catch(() => null);
+      if (!r?.ok) { loaded = false; return; }
+      r.messages.forEach((m: { role: string; text: string }) => add(m.role, m.text));
+      showLeft(r.left);
+    };
+    // Load the history when the cabinet becomes visible (after login).
+    new IntersectionObserver((e) => e.some((x) => x.isIntersecting) && load()).observe(box);
+    box.querySelectorAll<HTMLButtonElement>('[data-coach-ex]').forEach((b) => (b.onclick = () => { input.value = b.textContent!; input.focus(); }));
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = input.value.trim();
+      if (!message) return;
+      const btn = form.querySelector('button')!;
+      btn.disabled = true;
+      add('user', message);
+      input.value = '';
+      const wait = add('assistant', '…');
+      wait.querySelector('button')?.remove();
+      const r = await fetch('/api/partner/coach', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message, lang: box.dataset.lang }) })
+        .then((x) => x.json()).catch(() => null);
+      wait.remove();
+      if (r?.ok) { add('assistant', r.reply); showLeft(r.left); }
+      else if (r?.reason === 'limit') showLeft(0);
+      else add('assistant', T.err);
+      btn.disabled = false;
+    });
+  }
+</script>

@@ -12,6 +12,8 @@ export interface DB {
 }
 
 import { handleDealsApi, type Notify } from './deals.js';
+import { handleCoach } from './coach.js';
+import type { AiBinding } from './chat.js';
 
 const SESSION_DAYS = 30;
 // Free Workers plan allows ~10 ms CPU per request; 25k PBKDF2 rounds stays inside it.
@@ -118,7 +120,7 @@ export async function handleRedirect(db: DB, request: Request, slug: string): Pr
 }
 
 /** /api/partner/* */
-export async function handlePartnerApi(db: DB, request: Request, path: string, notify: Notify = async () => {}): Promise<Response> {
+export async function handlePartnerApi(db: DB, request: Request, path: string, notify: Notify = async () => {}, ai?: AiBinding): Promise<Response> {
   const method = request.method;
 
   if (path === 'register' && method === 'POST') {
@@ -171,6 +173,8 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
   const me = await currentPartner(db, request);
   if (!me) return json(401, { ok: false });
 
+  if (path === 'coach') return handleCoach(db, ai, request, me.id);
+
   if (path === 'deals' || path.startsWith('deals/')) return handleDealsApi(db, request, me, path, notify);
 
   if (path === 'me' && method === 'GET') {
@@ -184,7 +188,15 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
       .bind(me.id)
       .all();
     const team = await db.prepare('SELECT COUNT(*) AS n FROM partners WHERE parent_id = ?').bind(me.id).first<{ n: number }>();
-    return json(200, { ok: true, partner: me, links, team: team?.n ?? 0 });
+    const plan = await db.prepare('SELECT plan FROM partners WHERE id = ?').bind(me.id).first<{ plan: string }>();
+    return json(200, { ok: true, partner: me, links, team: team?.n ?? 0, plan: plan?.plan ?? 'classic' });
+  }
+
+  if (path === 'plan' && method === 'POST') {
+    const b = await readBody(request);
+    if (!['classic', 'first30', 'life10'].includes(String(b.plan))) return json(400, { ok: false });
+    await db.prepare('UPDATE partners SET plan = ? WHERE id = ?').bind(String(b.plan), me.id).run();
+    return json(200, { ok: true });
   }
 
   if (path === 'links' && method === 'POST') {

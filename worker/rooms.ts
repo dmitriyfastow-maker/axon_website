@@ -109,17 +109,14 @@ export async function unansweredAlerts(db: DB, notify: Notify) {
   }
 }
 
-/** Repeat client: a new request from someone a manager already closed goes straight to that manager. */
+/** Repeat client: a new deal is NOT pinned to the previous manager (rule 20.10) — Vax leads it, and a manager earns
+ *  only by closing it again. The previous manager is noted for context. */
 export async function bindReturningClient(db: DB, leadId: number, contact: string, notify: Notify) {
   const prev = await db
     .prepare(`SELECT d.closer_id, p.name FROM leads d JOIN partners p ON p.id = d.closer_id WHERE lower(d.contact) = lower(?) AND d.status = 'won' AND d.id != ? AND p.closer = 'approved' ORDER BY d.id DESC LIMIT 1`)
     .bind(contact, leadId)
     .first<{ closer_id: number; name: string }>();
   if (!prev) return;
-  await db
-    .prepare(`UPDATE leads SET status = 'claimed', closer_id = ?, claimed_at = datetime('now'), due_at = datetime('now', '+24 hours'), updated_at = datetime('now') WHERE id = ?`)
-    .bind(prev.closer_id, leadId)
-    .run();
-  await logEvent(db, leadId, 'system', 'claim', `Returning client — assigned to their manager ${prev.name}`);
-  await notify(`🔁 #${leadId}: returning client assigned to ${prev.name}.`);
+  void notify;
+  await logEvent(db, leadId, 'system', 'note', `Returning client — earlier deal closed by ${prev.name}; this new deal is open to any manager`);
 }

@@ -7,6 +7,7 @@ import { draftBrief, logEvent, sweep, type Notify } from './deals.js';
 import { bindReturningClient, handleRoomApi, newRoom } from './rooms.js';
 import { aiFollowups, aiReply } from './aimanager.js';
 import { configureTelegram, ensureWebhook, handleTelegram } from './telegram.js';
+import { handleCollab } from './collab.js';
 import { configureMail, handleEmail, type IncomingEmail } from './mail.js';
 import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackView, triageLead } from './autopilot.js';
 
@@ -52,7 +53,7 @@ export default {
     if (url.pathname.startsWith('/api/partner/')) {
       if (!env.LEADS) return json(503, { ok: false });
       const ppath = url.pathname.slice('/api/partner/'.length);
-      const res = await handlePartnerApi(env.LEADS, request, ppath, notify);
+      const res = await handlePartnerApi(env.LEADS, request, ppath, notify, env.AI);
       // A new manager application is graded by AI right away.
       if (ppath === 'deals/apply' && res.ok) waitUntil(gradePending(env.LEADS, env.AI, notify));
       return res;
@@ -64,6 +65,10 @@ export default {
     if (url.pathname === '/api/admin' || url.pathname.startsWith('/api/admin/')) {
       if (!env.LEADS) return json(503, { ok: false });
       return handleAdminApi(env.LEADS, request, env.ADMIN_TOKEN, url.pathname.slice('/api/admin'.length).replace(/^\//, ''), notify, env.AI);
+    }
+    if (url.pathname === '/api/collab') {
+      if (!env.LEADS) return json(503, { ok: false });
+      return handleCollab(env.LEADS, request, notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify, { greet: true }).catch((e) => console.error('[ai collab]', e))));
     }
     if (url.pathname === '/api/tg') {
       if (!env.LEADS) return json(503, { ok: false });

@@ -157,7 +157,7 @@ import Base from '../layouts/Base.astro';
   const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s));
   const ST: Record<string, [string, string]> = {
     new: ['Новая', 'b'], open: ['Ждёт менеджера', 'y'], claimed: ['Взята', 'p'], contacted: ['На связи', 'p'], meeting: ['Созвон был', 'p'],
-    proposal: ['Предложение', 'p'], won: ['Клиент ✓', 'g'], lost: ['Проиграна', 'r'], archived: ['Архив', 'n'],
+    proposal: ['Предложение', 'p'], won: ['Клиент ✓', 'g'], lost: ['Проиграна', 'r'], archived: ['Архив', 'n'], collab: ['Сотрудничество', 'b'],
   };
   const CL: Record<string, string> = { none: '—', applied: 'Анкета', approved: 'Менеджер', paused: 'Пауза' };
   const ACTIVE = ['claimed', 'contacted', 'meeting', 'proposal'];
@@ -289,7 +289,8 @@ import Base from '../layouts/Base.astro';
   }
 
   const FILTERS: [string, string, (l: R) => boolean][] = [
-    ['active', 'Активные', (l) => !['won', 'lost', 'archived'].includes(l.status)],
+    ['active', 'Активные', (l) => !['won', 'lost', 'archived', 'collab'].includes(l.status)],
+    ['collab', '🤝 Сотрудничество', (l) => l.status === 'collab'],
     ['new', 'Новые', (l) => l.status === 'new'],
     ['open', 'Ждут менеджера', (l) => l.status === 'open'],
     ['work', 'У менеджеров', (l) => ACTIVE.includes(l.status)],

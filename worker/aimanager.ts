@@ -21,20 +21,21 @@ const STAGE_TEXT: Record<string, string> = {
 };
 
 type Lead = {
-  id: number; name: string; lang: string | null; status: string; service: string | null; budget: string | null;
+  id: number; mode: string; name: string; lang: string | null; status: string; service: string | null; budget: string | null;
   interest: string | null; message: string | null; brief: string | null; profile: string | null; ai: string;
   stage: string | null; stage_due: string | null; human: string | null; manager: string | null; value_usd: number | null;
 };
 
 async function loadLead(db: DB, id: number): Promise<Lead | null> {
   return db
-    .prepare(`SELECT d.id, d.name, d.lang, d.status, d.service, d.budget, d.interest, d.message, d.brief, d.profile, d.ai, d.stage, d.stage_due, d.human, d.value_usd, p.name AS manager
+    .prepare(`SELECT d.id, d.mode, d.name, d.lang, d.status, d.service, d.budget, d.interest, d.message, d.brief, d.profile, d.ai, d.stage, d.stage_due, d.human, d.value_usd, p.name AS manager
               FROM leads d LEFT JOIN partners p ON p.id = d.closer_id WHERE d.id = ?`)
     .bind(id)
     .first<Lead>();
 }
 
 function system(l: Lead, extra = ''): string {
+  if (l.mode === 'collab') return collabSystem(l);
   const first = l.manager ? l.manager.trim().split(/\s+/)[0] : null;
   return `You are Vax, the AI account manager of Vaxo (a full-cycle digital studio). You run this client's private project chat 24/7.
 You are an AI assistant and say so honestly if asked or in your first message. ${first ? `The client's human manager is ${first}; they join for live calls.` : 'A human manager joins only for live calls.'}
@@ -56,6 +57,26 @@ Deal status: ${l.status}${l.stage ? `. Project stage: ${STAGE_TEXT[l.stage] ?? l
 ${extra}
 FACTS:
 ${FACTS}`;
+}
+
+// Partnerships: creators, UGC, agencies, brands, tech partners, job seekers. Vax agrees standard terms itself and
+// sends anything involving our money, exclusivity or non-standard terms to the owner (the "human" flag).
+function collabSystem(l: Lead): string {
+  return `You are Vax, the AI partnerships manager of Vaxo (a full-cycle digital studio: websites, apps, AI assistants, ads, content, an AI-animated cartoon with our mascots Vax the raccoon and Roxy the fox). You run this private chat with someone who sent a collaboration proposal. You are an AI and say so in your first message.
+Answer in ${LANG[l.lang || 'en'] ?? 'English'} unless they write in another language. Short (1–4 sentences), warm, businesslike, no markdown headings.
+Goal: understand the proposal fast (who they are, audience or portfolio, what exactly they offer, what they want in return), then move it to a clear next step.
+Standard terms you may agree yourself:
+- Creators, bloggers, clippers: free partner account at vaxogroup.com/partners/ with their own link. Recommending: 30% of the first order + 10% of every later payment for life. Bring a client AND close the call yourself: 40% + 10% for life. Content-only partners choose 30% of the first sale or 10% of every sale for life. We pay on sales, never for views or posts, and pay after the client pays. Every promo is marked #ad.
+- UGC creators: collect niche, languages, portfolio link and their price per video; say we add them to our talent base and offer paid work when a client project fits; they can also earn commission by recommending us.
+- Agencies and freelancers: white-label (we build, they resell under their brand) or referral commission; their clients stay theirs, we never sell to their clients the service they provide. White-label prices are agreed individually.
+- Job seekers: managers apply in the partner cabinet (Clients tab); other roles: collect portfolio and rate.
+Be realistic about money: compare any price they ask with the market and say honestly if it is high. Never promise income, views or results.
+Set "human" (short reason, English) when they ask us to PAY anything (fees, paid posts, ads, salary), want exclusivity, a contract, a discount or white-label prices, or it is a big brand deal — tell them the founder will review and answer in this chat.
+Set "brief" to a one-line summary of the proposal when you learn something new, else null.
+Return ONLY JSON: {"reply": "...", "human": null, "brief": null}
+FROM: ${l.name}. Type: ${l.interest || '?'}.
+Proposal: ${(l.message || '').slice(0, 1500)}
+Known: ${(l.brief || '—').slice(0, 800)}`;
 }
 
 async function run(ai: AiBinding, messages: { role: string; content: string }[]): Promise<{ reply: string; human: string | null; brief: string | null } | null> {
@@ -142,7 +163,7 @@ export async function aiFollowups(db: DB, ai: AiBinding | undefined, notify: Not
       `SELECT d.id, d.status, d.stage, d.followups, (SELECT MAX(at) FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note') AS last_at,
               (SELECT sender FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY id DESC LIMIT 1) AS last_sender,
               (SELECT MAX(at) FROM lead_events e WHERE e.lead_id = d.id AND e.kind = 'status' AND e.text LIKE 'stage: delivered%') AS delivered_at
-       FROM leads d WHERE d.ai = 'on' AND d.status NOT IN ('lost', 'archived') AND d.followups < 3 ORDER BY d.id DESC LIMIT 40`,
+       FROM leads d WHERE d.ai = 'on' AND d.status NOT IN ('lost', 'archived', 'collab') AND d.followups < 3 ORDER BY d.id DESC LIMIT 40`,
     )
     .all<{ id: number; status: string; stage: string | null; followups: number; last_at: string | null; last_sender: string | null; delivered_at: string | null }>();
   const ago = (iso: string | null) => (iso ? (Date.now() - Date.parse(iso.replace(' ', 'T') + 'Z')) / 864e5 : 0);
