@@ -159,7 +159,7 @@ import Base from '../layouts/Base.astro';
   const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s));
   const ST: Record<string, [string, string]> = {
     new: ['Новая', 'b'], open: ['Ждёт менеджера', 'y'], claimed: ['Взята', 'p'], contacted: ['На связи', 'p'], meeting: ['Созвон был', 'p'],
-    proposal: ['Предложение', 'p'], won: ['Клиент ✓', 'g'], lost: ['Проиграна', 'r'], archived: ['Архив', 'n'], collab: ['Сотрудничество', 'b'],
+    proposal: ['Предложение', 'p'], won: ['Клиент ✓', 'g'], lost: ['Проиграна', 'r'], archived: ['Архив', 'n'], collab: ['Сотрудничество', 'b'], gift: ['Подарок (ожидание)', 'b'],
   };
   const CL: Record<string, string> = { none: '—', applied: 'Анкета', approved: 'Менеджер', paused: 'Пауза' };
   const ACTIVE = ['claimed', 'contacted', 'meeting', 'proposal'];
@@ -286,9 +286,9 @@ import Base from '../layouts/Base.astro';
   }
   function renderPicture() {
     const L = (data.leads as R[]).filter((l) => l.status !== 'archived');
-    const clients = L.filter((l) => l.status !== 'collab');
-    const src = (l: R) => l.mode === 'telegram' ? 'Telegram' : l.mode === 'email' ? 'Почта' : l.mode === 'collab' ? 'Сотрудничество' : l.partner_name ? 'Партнёры' : (l.message || '').startsWith('[Vax chat]') ? 'Чат на сайте' : 'Форма на сайте';
-    const srcNames = ['Форма на сайте', 'Чат на сайте', 'Партнёры', 'Telegram', 'Почта', 'Сотрудничество'];
+    const clients = L.filter((l) => !['collab', 'gift'].includes(l.status));
+    const src = (l: R) => l.status === 'gift' ? 'Подарки' : l.mode === 'telegram' ? 'Telegram' : l.mode === 'email' ? 'Почта' : l.mode === 'collab' ? 'Сотрудничество' : l.partner_name ? 'Партнёры' : (l.message || '').startsWith('[Vax chat]') ? 'Чат на сайте' : 'Форма на сайте';
+    const srcNames = ['Форма на сайте', 'Чат на сайте', 'Партнёры', 'Telegram', 'Почта', 'Сотрудничество', 'Подарки'];
     const months: [string, number][] = [];
     const now = new Date();
     for (let i = 5; i >= 0; i--) {
@@ -361,7 +361,8 @@ import Base from '../layouts/Base.astro';
   }
 
   const FILTERS: [string, string, (l: R) => boolean][] = [
-    ['active', 'Активные', (l) => !['won', 'lost', 'archived', 'collab'].includes(l.status)],
+    ['active', 'Активные', (l) => !['won', 'lost', 'archived', 'collab', 'gift'].includes(l.status)],
+    ['gift', '🎁 Подарки', (l) => l.status === 'gift'],
     ['collab', '🤝 Сотрудничество', (l) => l.status === 'collab'],
     ['new', 'Новые', (l) => l.status === 'new'],
     ['open', 'Ждут менеджера', (l) => l.status === 'open'],

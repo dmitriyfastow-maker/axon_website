@@ -11,7 +11,7 @@ export interface LeadResult {
 
 /** Forms submitted faster than this are treated as bots. */
 const MIN_FILL_MS = 2000;
-const INTEREST_LABEL: Record<string, string> = { single: 'Single service', any: 'Not sure yet' };
+const INTEREST_LABEL: Record<string, string> = { single: 'Single service', any: 'Not sure yet', 'gift-card': '🎁 Gift: video card', 'gift-scene': '🎁 Gift: personal scene', 'gift-series': '🎁 Gift: mini-series', 'gift-business': '🎁 Gift cartoon for business' };
 
 export function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');

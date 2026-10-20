@@ -69,8 +69,10 @@ const DEFAULT_OPEN = 2;
     display: flex;
     flex-direction: column;
     gap: 18px;
-    position: sticky;
-    top: 100px;
+  }
+  /* Sticky copy only when it sits beside the list; stacked on phones it would slide over the accordion. */
+  @media (min-width: 900px) {
+    .copy { position: sticky; top: 100px; }
   }
   h2 {
     margin: 0;

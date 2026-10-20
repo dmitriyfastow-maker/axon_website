@@ -1,0 +1,38 @@
+---
+// Link-in-bio hub (/links/, Decision 15): one link for every social profile — gifts, business, partners, collab.
+import Base from '../layouts/Base.astro';
+import { navHref, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const alts = { en: '/links/', ua: '/ua/links/', ru: '/ru/links/' };
+const C = {
+  en: { title: 'Vaxo — links', desc: 'Cartoon gifts, websites and AI for business, partner program.', sub: 'Vax & Roxy from Vaxo studio', links: [['/gifts/', '🎁 Cartoon gift with your names'], ['/start/', '🚀 Website, app or AI for your business'], ['/examples/', '👀 Our work'], ['/partners/', '💸 Earn with us (partners 18+)'], ['/collab/', '🤝 Collaborate'], ['=/blog/', '📖 Blog']] },
+  ru: { title: 'Vaxo — ссылки', desc: 'Мультики в подарок, сайты и ИИ для бизнеса, партнёрка.', sub: 'Vax и Roxy из студии Vaxo', links: [['/gifts/', '🎁 Мультик-подарок с вашими именами'], ['/start/', '🚀 Сайт, приложение или ИИ для бизнеса'], ['/examples/', '👀 Наши работы'], ['/partners/', '💸 Зарабатывайте с нами (партнёры 18+)'], ['/collab/', '🤝 Сотрудничество'], ['=/blog/', '📖 Блог']] },
+  ua: { title: 'Vaxo — посилання', desc: 'Мультики в подарунок, сайти та ШІ для бізнесу, партнерка.', sub: 'Vax і Roxy зі студії Vaxo', links: [['/gifts/', '🎁 Мультик-подарунок з вашими іменами'], ['/start/', '🚀 Сайт, застосунок або ШІ для бізнесу'], ['/examples/', '👀 Наші роботи'], ['/partners/', '💸 Заробляйте з нами (партнери 18+)'], ['/collab/', '🤝 Співпраця'], ['=/blog/', '📖 Блог']] },
+}[lang];
+const others = (['en', 'ru', 'ua'] as const).filter((l) => l !== lang);
+---
+
+<Base lang={lang} title={C.title} description={C.desc} path={alts[lang]} alts={alts}>
+  <main class="hub">
+    <img src="/mascot/vax-front.webp" alt="Vax" width="120" height="120" />
+    <h1>VAXO<span>.</span></h1>
+    <p>{C.sub}</p>
+    <nav>{C.links.map(([h, label]) => <a href={navHref(h, lang)}>{label}</a>)}</nav>
+    <small>{others.map((l) => <a href={alts[l]}>{l.toUpperCase()}</a>)}</small>
+  </main>
+</Base>
+
+<style>
+  .hub { max-width: 480px; margin: 0 auto; padding: 48px 16px 64px; text-align: center; display: grid; gap: 12px; justify-items: center; }
+  img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: var(--surf); }
+  h1 { margin: 0; font-size: 34px; letter-spacing: -0.02em; }
+  h1 span { color: var(--acc); }
+  p { margin: 0 0 8px; color: var(--mut); }
+  nav { display: grid; gap: 10px; width: 100%; }
+  nav a { display: block; background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 16px; color: var(--ink); text-decoration: none; font-weight: 600; transition: border-color 0.2s; }
+  nav a:hover { border-color: var(--acc); }
+  small { display: flex; gap: 14px; margin-top: 8px; }
+  small a { color: var(--mut); }
+</style>
