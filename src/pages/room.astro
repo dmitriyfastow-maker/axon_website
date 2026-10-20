@@ -22,6 +22,7 @@ const T = {
       <form data-form><textarea name="t" rows="2" maxlength="2000"></textarea><button type="submit" aria-label="Send">➤</button></form>
     </section>
     <p class="save"><span data-save></span> <button type="button" data-copy></button> <a class="tg" data-tg hidden target="_blank" rel="noopener"></a></p>
+    <p class="save"><a href="/terms/" target="_blank" data-terms>Terms &amp; refunds</a> · <a href="/privacy/" target="_blank">Privacy</a></p>
   </main>
   <script type="application/json" id="room-t" set:html={JSON.stringify(T)} />
   <script>
@@ -84,6 +85,7 @@ const T = {
       card.append(av, info);
       $<HTMLTextAreaElement>('textarea').placeholder = T.ph;
       $('[data-save]').textContent = T.save;
+      const tl = document.querySelector<HTMLAnchorElement>('[data-terms]'); if (tl) { tl.href = d.lang === 'en' ? '/terms/' : `/${d.lang}/terms/`; tl.textContent = d.lang === 'ru' ? 'Условия и возвраты' : d.lang === 'ua' ? 'Умови та повернення' : 'Terms & refunds'; }
       $('[data-copy]').textContent = T.copy;
       last = d.messages[d.messages.length - 1];
       if (d.messages.length === count) return;
@@ -155,5 +157,6 @@ const T = {
   .room textarea { flex: 1; resize: none; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 12px; padding: 10px 12px; font: 16px var(--font); }
   .room form button { border: 0; background: var(--acc); color: var(--dark-ink); width: 48px; border-radius: 12px; font-size: 18px; cursor: pointer; }
   .room .save { color: var(--mut); font-size: 14px; }
+  .room .save a:not(.tg) { color: var(--mut); }
   .room .save button { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 4px 10px; cursor: pointer; margin-left: 6px; }
 </style>

@@ -119,6 +119,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
             {PLAN.opts.map(([k, t]) => <label><input type="radio" name="plan" value={k} /> <span>{t}</span></label>)}
           </div>
           <small class="mut" data-plan-ok hidden>{PLAN.ok}</small>
+          <a class="mut small" href={lang === 'en' ? '/partner-terms/' : `/${lang}/partner-terms/`} target="_blank">{lang === 'ru' ? 'Условия партнёрской программы →' : lang === 'ua' ? 'Умови партнерської програми →' : 'Partner terms →'}</a>
         </div>
 
         <div class="mylink card">
