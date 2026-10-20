@@ -112,7 +112,7 @@ export async function handleDealsApi(db: DB, request: Request, me: Me, path: str
     await sweep(db, notify);
     const limit = await limitFor(db, me.id, p?.closer_rating ?? null);
     const mine = await db
-      .prepare(`SELECT id, created_at, status, name, contact, interest, message, lang, country, page, service, budget, brief, value_usd, claimed_at, due_at, room,
+      .prepare(`SELECT id, created_at, status, name, contact, interest, message, lang, country, page, service, budget, brief, value_usd, claimed_at, due_at, room, ai_summary,
                   (SELECT COUNT(*) FROM messages m WHERE m.lead_id = leads.id AND m.sender = 'client' AND m.at > COALESCE(leads.manager_seen_at, '')) AS unread
                 FROM leads WHERE closer_id = ? ORDER BY CASE WHEN status IN ${ACTIVE} THEN 0 ELSE 1 END, id DESC LIMIT 100`)
       .bind(me.id)
@@ -141,6 +141,12 @@ export async function handleDealsApi(db: DB, request: Request, me: Me, path: str
       return json(200, { ok: true });
     }
     const ok = await staffMessage(db, id, `partner:${me.id}`, body);
+    if (ok === 'guard') {
+      await db.prepare('UPDATE partners SET strikes = strikes + 1 WHERE id = ?').bind(me.id).run();
+      await logEvent(db, id, `partner:${me.id}`, 'alert', 'Blocked: tried to share outside contacts or payment details');
+      await notify(`🚫 Blocked message from ${me.name} (#${id}): tried to move the client off the platform.`);
+      return json(400, { ok: false, error: 'guard' });
+    }
     return json(ok ? 200 : 400, { ok });
   }
 
@@ -196,7 +202,7 @@ export async function ownerOverview(db: DB, notify: Notify) {
     db
       .prepare(
         `SELECT d.id, d.created_at, d.mode, d.status, d.name, d.contact, d.interest, d.message, d.lang, d.country, d.page, d.ref,
-           d.service, d.budget, d.brief, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at, d.room,
+           d.service, d.budget, d.brief, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at, d.room, d.score, d.ai_summary,
            (SELECT COUNT(*) FROM messages m WHERE m.lead_id = d.id) AS msgs,
            (SELECT m.at FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY m.id DESC LIMIT 1) AS last_at,
            (SELECT m.sender FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY m.id DESC LIMIT 1) AS last_sender,
@@ -209,7 +215,7 @@ export async function ownerOverview(db: DB, notify: Notify) {
       .all(),
     db
       .prepare(
-        `SELECT p.id, p.name, p.email, p.created_at, p.closer, p.closer_app, p.closer_rating, p.closer_note, par.name AS invited_by,
+        `SELECT p.id, p.name, p.email, p.created_at, p.closer, p.closer_app, p.closer_rating, p.closer_note, p.ai_score, p.strikes, par.name AS invited_by,
            (SELECT COUNT(*) FROM links l WHERE l.partner_id = p.id) AS links,
            (SELECT COUNT(*) FROM clicks c JOIN links l ON l.id = c.link_id WHERE l.partner_id = p.id) AS clicks,
            (SELECT COUNT(*) FROM leads d JOIN links l ON l.slug = d.ref WHERE l.partner_id = p.id) AS leads,

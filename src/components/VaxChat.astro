@@ -163,6 +163,7 @@ const T = {
       q = q.trim();
       if (!q || busy) return;
       busy = true;
+      if (!msgs.some((m) => m.role === 'user')) navigator.sendBeacon?.('/api/ev', new Blob([JSON.stringify({ k: 'chat_msg', p: location.pathname })], { type: 'application/json' }));
       msgs.push({ role: 'user', content: q });
       store.set(KEY, JSON.stringify(msgs));
       bubble('user', q);
@@ -190,6 +191,7 @@ const T = {
       teaser.hidden = true;
       store.set('vaxo_chat_seen', '1');
       if (yes) {
+        if (!openedAt) navigator.sendBeacon?.('/api/ev', new Blob([JSON.stringify({ k: 'chat_open', p: location.pathname })], { type: 'application/json' }));
         openedAt ||= Date.now();
         if (!log.childElementCount) {
           if (!msgs.length) msgs.push({ role: 'assistant', content: T.hello });

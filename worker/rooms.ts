@@ -2,6 +2,7 @@
 // Client ↔ their manager (partner-closer) ↔ owner. The owner sees everything; 'note' messages are internal.
 import type { DB } from './partner.js';
 import { logEvent, type Notify } from './deals.js';
+import { guardMessage } from './autopilot.js';
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -59,7 +60,7 @@ export async function handleRoomApi(db: DB, request: Request, token: string, not
 }
 
 /** A message from the manager or the owner. The first message to the client counts as "contacted". */
-export async function staffMessage(db: DB, leadId: number, sender: string, b: Record<string, unknown>) {
+export async function staffMessage(db: DB, leadId: number, sender: string, b: Record<string, unknown>): Promise<boolean | 'guard'> {
   const kind = ['text', 'note', 'call'].includes(String(b.kind)) ? String(b.kind) : 'text';
   let text = s(b.text, 3000);
   if (kind === 'call') {
@@ -69,6 +70,8 @@ export async function staffMessage(db: DB, leadId: number, sender: string, b: Re
     text = [`📅 ${when}`, link, text].filter(Boolean).join('\n');
   }
   if (!text) return false;
+  // Managers may not move clients to other contacts or payments: such messages never reach the client.
+  if (sender.startsWith('partner:') && kind !== 'note' && guardMessage(kind === 'call' ? s(b.text, 3000) : text)) return 'guard';
   await addMessage(db, leadId, sender, kind, text);
   if (kind !== 'note' && sender.startsWith('partner:')) {
     const l = await db.prepare('SELECT status FROM leads WHERE id = ?').bind(leadId).first<{ status: string }>();

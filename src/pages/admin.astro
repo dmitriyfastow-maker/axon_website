@@ -21,16 +21,19 @@ import Base from '../layouts/Base.astro';
     <div data-app hidden>
       <nav class="tabs" aria-label="Разделы">
         <button type="button" data-view="today" aria-pressed="true">🔥 Сегодня <span class="pill" data-n="today" hidden></span></button>
+        <button type="button" data-view="stats" aria-pressed="false">📊 Аналитика</button>
         <button type="button" data-view="chats" aria-pressed="false">💬 Чаты <span class="pill" data-n="chats" hidden></span></button>
         <button type="button" data-view="leads" aria-pressed="false">📋 Заявки</button>
         <button type="button" data-view="team" aria-pressed="false">👥 Команда <span class="pill" data-n="team" hidden></span></button>
         <button type="button" data-view="pay" aria-pressed="false">💸 Выплаты <span class="pill" data-n="pay" hidden></span></button>
         <button type="button" data-view="cartoon" aria-pressed="false">🎬 Мультик</button>
+        <button type="button" data-view="auto" aria-pressed="false">🤖 Автопилот</button>
         <button type="button" data-view="links" aria-pressed="false">🔗 Все ссылки</button>
         <button type="button" data-view="help" aria-pressed="false">❓ Как это работает</button>
       </nav>
 
       <section data-panel="today">
+        <div class="digest" data-digest hidden><h2>☀️ Сводка дня от автопилота</h2><pre data-digest-text></pre><small class="mut" data-digest-at></small></div>
         <div class="kpis" data-kpis></div>
         <h2>Требует внимания</h2>
         <div class="todo" data-todo></div>
@@ -38,6 +41,39 @@ import Base from '../layouts/Base.astro';
           <div><h2>Ждёт ваших действий</h2><ul class="tasks" data-tasks></ul></div>
           <div><h2>Последний отчёт Claude</h2><pre class="report" data-report></pre></div>
         </div>
+      </section>
+
+      <section data-panel="stats" hidden>
+        <p class="hint">Последние 30 дней. Посещения считаются без cookies и без личных данных.</p>
+        <h2>Воронка</h2>
+        <div class="funnel" data-funnel></div>
+        <div class="cols">
+          <div><h2>Посещения по дням</h2><div class="bars" data-bars></div></div>
+          <div><h2>Откуда приходят</h2><div data-sources></div></div>
+          <div><h2>Страны</h2><div data-countries></div></div>
+          <div><h2>Популярные страницы</h2><div data-pages></div></div>
+        </div>
+        <h2>Менеджеры — рейтинг</h2>
+        <p class="hint">Автоматическая оценка: победы минус пропущенные сроки и замечания контроля качества. Если вы ставите оценку вручную — главная ваша.</p>
+        <div class="table"><table><thead><tr><th>Менеджер</th><th>Взял</th><th>Клиенты</th><th>Выручка</th><th>Пропуски</th><th>Замечания</th><th>Авто-оценка</th></tr></thead><tbody data-mgr></tbody></table></div>
+      </section>
+
+      <section data-panel="auto" hidden class="help">
+        <p class="hint">Автопилот делает работу за вас. Каждую часть можно выключить — тогда это решение будет ждать вас в «Сегодня».</p>
+        <div class="toggles" data-toggles></div>
+        <div class="btns"><button type="button" class="cta" data-digest-now>Сделать сводку сейчас</button></div>
+        <h2>Прошлые сводки</h2>
+        <div data-digests></div>
+        <h2>Что автопилот делает сам</h2>
+        <ul>
+          <li><b>Каждая заявка:</b> ИИ пишет профиль клиента, ставит оценку 1–10, отсеивает спам и сразу отдаёт заявку менеджерам.</li>
+          <li><b>Анкеты менеджеров:</b> ИИ проверяет английский и ответ клиенту. 7+ из 10 и C1/C2 — одобрен сразу; 4 и ниже — получает совет и может подать снова; середина — ждёт вас.</li>
+          <li><b>Защита клиентов:</b> сообщение менеджера с телефоном, почтой, мессенджером или реквизитами не уходит клиенту — менеджер получает предупреждение.</li>
+          <li><b>Контроль качества каждый час:</b> ИИ читает новые сообщения менеджеров (грубость, неверные цены, обещания, увод клиента). Три замечания — менеджер на паузе.</li>
+          <li><b>Сводка по каждому клиенту:</b> что нужно, настроение, следующий шаг, риск — обновляется каждый час.</li>
+          <li><b>Сроки:</b> просрочил — клиент уходит другому менеджеру. Клиент ждёт ответа больше суток — вам сообщение.</li>
+          <li><b>Утром в 08:00</b> — одна сводка дня в Telegram: главное, цифры, проблемы и что сделать.</li>
+        </ul>
       </section>
 
       <section data-panel="chats" hidden>
@@ -50,7 +86,7 @@ import Base from '../layouts/Base.astro';
           <div class="chips" data-filters></div>
           <input type="search" placeholder="Поиск: имя, контакт, текст" data-search />
         </div>
-        <div class="table"><table><thead><tr><th>#</th><th>Дата</th><th>Этап</th><th>Клиент</th><th>Что нужно</th><th>Бюджет</th><th>Менеджер</th><th>Срок</th><th>Откуда</th></tr></thead><tbody data-leads></tbody></table></div>
+        <div class="table"><table><thead><tr><th>#</th><th>Дата</th><th>Этап</th><th>ИИ</th><th>Клиент</th><th>Что нужно</th><th>Бюджет</th><th>Менеджер</th><th>Срок</th><th>Откуда</th></tr></thead><tbody data-leads></tbody></table></div>
       </section>
 
       <section data-panel="team" hidden>
@@ -170,6 +206,41 @@ import Base from '../layouts/Base.astro';
     try { data = await api(''); } catch { return; }
     $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
     renderToday(); renderInbox(); renderLeads(); renderTeam(); renderPay(); renderCartoon(); renderLinks();
+    loadAuto(); loadStats();
+  }
+
+  async function loadAuto() {
+    const a = await api('/autopilot').catch(() => null);
+    if (!a) return;
+    const st = Object.fromEntries((a.settings as R[]).map((x) => [x.key, x.value]));
+    const T: [string, string][] = [['auto_publish', 'Сам публиковать заявки менеджерам'], ['auto_approve', 'Сам одобрять сильных менеджеров'], ['auto_qc', 'Сам проверять переписку менеджеров'], ['digest', 'Присылать сводку дня в 08:00']];
+    $('[data-toggles]').replaceChildren(...T.map(([k, t]) => {
+      const cb = el('input', { type: 'checkbox', checked: st[k] !== '0' }) as HTMLInputElement;
+      cb.onchange = () => api('/autopilot', { [k]: cb.checked });
+      return el('label', { class: 'tg' }, cb, el('span', {}, t));
+    }));
+    const D = a.digests as R[];
+    $('[data-digests]').replaceChildren(...(D.length ? D.map((d) => el('details', { class: 'card' }, el('summary', {}, when(d.at)), el('pre', {}, d.text))) : [el('p', { class: 'mut' }, 'Сводок пока нет — первая придёт завтра в 08:00 или нажмите «Сделать сводку сейчас».')]));
+    if (D[0]) { $('[data-digest]').hidden = false; $('[data-digest-text]').textContent = D[0].text; $('[data-digest-at]').textContent = when(D[0].at); }
+  }
+
+  async function loadStats() {
+    const a = await api('/analytics').catch(() => null);
+    if (!a) return;
+    const f = a.funnel as R;
+    const steps: [string, number][] = [['Посещения', f.views], ['Открыли чат Vax', f.chats], ['Заявки', f.leads], ['Взяли менеджеры', f.taken], ['Предложение', f.proposals], ['Клиенты', f.won]];
+    $('[data-funnel]').replaceChildren(...steps.map(([t, n], i) => {
+      const prev = i ? steps[i - 1][1] : 0;
+      return el('div', { class: 'fstep' }, el('small', {}, t), el('b', {}, String(n || 0)), i ? el('span', {}, prev && (n || 0) <= prev ? `${Math.round(((n || 0) / prev) * 100)}% от предыдущего` : '') : el('span', {}, `выручка ${usd(f.revenue)}`));
+    }));
+    const max = Math.max(1, ...(a.daily as R[]).map((d) => d.views));
+    $('[data-bars]').replaceChildren(...((a.daily as R[]).length ? (a.daily as R[]).map((d) => el('div', { class: 'bar', title: `${d.d}: ${d.views}` }, el('i', { style: `height:${Math.round((d.views / max) * 100)}%` }), el('small', {}, d.d.slice(8)))) : [el('p', { class: 'mut' }, 'Данные начнут собираться с этого момента.')]));
+    const list = (rows: R[], k: string) => rows.length ? el('ol', { class: 'rank' }, ...rows.map((r) => el('li', {}, el('span', {}, String(r[k])), el('b', {}, String(r.n))))) : el('p', { class: 'mut' }, 'Пока нет данных.');
+    $('[data-sources]').replaceChildren(list(a.sources, 's'));
+    $('[data-countries]').replaceChildren(list(a.countries, 'c'));
+    $('[data-pages]').replaceChildren(list(a.pages, 'p'));
+    $('[data-mgr]').replaceChildren(...((a.managers as R[]).length ? (a.managers as R[]).map((m) => el('tr', {}, ...[m.name, m.taken, m.won, usd(m.revenue), m.missed, m.flags, `★ ${m.closer_rating ?? m.auto_rating}`].map((c) => el('td', {}, String(c)))))
+      : [el('tr', {}, el('td', { colspan: '7', class: 'empty' }, 'Менеджеров пока нет.'))]));
   }
 
   const pill = (k: string, n: number) => { const p = $(`[data-n="${k}"]`); p.hidden = !n; p.textContent = String(n); };
@@ -234,11 +305,11 @@ import Base from '../layouts/Base.astro';
     const rows = (data.leads as R[]).filter(f).filter((l) => !q || [l.name, l.contact, l.message, l.service, l.brief].join(' ').toLowerCase().includes(q));
     $('[data-leads]').replaceChildren(...(rows.length ? rows.map((l) =>
       el('tr', { onclick: () => openLead(l.id), class: ACTIVE.includes(l.status) && left(l.due_at) === 'просрочено' ? 'late' : '' },
-        el('td', {}, String(l.id)), el('td', {}, when(l.created_at)), el('td', {}, badge(l.status)),
+        el('td', {}, String(l.id)), el('td', {}, when(l.created_at)), el('td', {}, badge(l.status)), el('td', {}, l.score ? `${l.score}/10` : ''),
         el('td', {}, el('b', {}, l.name), l.msgs ? el('span', { class: 'pill dark' }, `💬 ${l.msgs}`) : null, el('br'), el('small', {}, l.contact)),
         el('td', {}, l.service || l.interest || '—'), el('td', {}, l.budget || '—'), el('td', {}, l.closer_name || '—'),
         el('td', {}, ACTIVE.includes(l.status) ? left(l.due_at) : ''), el('td', {}, l.partner_name ? `партнёр ${l.partner_name}` : (l.message || '').startsWith('[Vax chat]') ? 'чат Vax' : 'форма'))) :
-      [el('tr', {}, el('td', { colspan: '9', class: 'empty' }, 'Здесь пока пусто'))]));
+      [el('tr', {}, el('td', { colspan: '10', class: 'empty' }, 'Здесь пока пусто'))]));
   }
 
   async function openLead(id: number) {
@@ -289,6 +360,7 @@ import Base from '../layouts/Base.astro';
         el('dt', {}, 'Пришла'), el('dd', {}, `${when(l.created_at)} · ${l.lang?.toUpperCase()} · ${l.country ?? ''}`),
         el('dt', {}, 'Менеджер'), el('dd', {}, l.closer_name ?? '—'),
         el('dt', {}, 'Привёл'), el('dd', {}, l.partner_name ?? '—')),
+      l.ai_summary && el('div', { class: 'aisum' }, el('b', {}, `🤖 ИИ-сводка${l.score ? ' · оценка заявки ' + l.score + '/10' : ''}`), el('pre', {}, l.ai_summary)),
       el('h3', {}, 'Переписка'),
       el('p', { class: 'mut' }, el('a', { href: `/room/?t=${l.room}`, target: '_blank' }, 'Открыть чат как видит клиент ↗'), ' · 🔒 — заметки, клиент их не видит'),
       thread, composer,
@@ -310,7 +382,8 @@ import Base from '../layouts/Base.astro';
       return el('article', { class: 'card' },
         el('h3', {}, `${p.name} `, el('span', { class: 'st st-' + (p.closer === 'approved' ? 'g' : p.closer === 'applied' ? 'b' : 'r') }, CL[p.closer])),
         el('p', { class: 'mut' }, `${p.email} · английский: ${app.english || '—'} · ${app.timezone || ''} ${app.hours || ''}`),
-        el('p', {}, `В работе: ${p.active_deals} · клиентов: ${p.won} (${usd(p.won_usd)}) · оценка: ${p.closer_rating ?? '—'}`),
+        el('p', {}, `В работе: ${p.active_deals} · клиентов: ${p.won} (${usd(p.won_usd)}) · оценка: ${p.closer_rating ?? '—'} · замечаний: ${p.strikes ?? 0}`),
+        app.ai && el('p', { class: 'aisum' }, `🤖 ИИ: ${app.ai.score}/10, английский ${app.ai.english || '?'} — ${app.ai.feedback || ''}`),
         app.profile && el('p', {}, el('a', { href: /^https?:/.test(app.profile) ? app.profile : '#', target: '_blank', rel: 'noopener' }, app.profile)),
         el('details', { open: p.closer === 'applied' }, el('summary', {}, 'Анкета и тестовый ответ клиенту'), el('p', {}, el('b', {}, 'Опыт: '), app.experience || '—'), el('p', {}, el('b', {}, 'Ответ клиенту: '), app.pitch || '—')),
         el('div', { class: 'two' }, sel, rating), note,
@@ -360,6 +433,7 @@ import Base from '../layouts/Base.astro';
   $('[data-drawer]').addEventListener('click', (e) => { if (e.target === e.currentTarget) $('[data-drawer]').hidden = true; });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('[data-drawer]').hidden = true; });
   $('[data-reload]').addEventListener('click', load);
+  $('[data-digest-now]').addEventListener('click', async (e) => { (e.currentTarget as HTMLButtonElement).disabled = true; await api('/digest', {}); await loadAuto(); (e.currentTarget as HTMLButtonElement).disabled = false; });
   $('[data-out]').addEventListener('click', logout);
   $<HTMLFormElement>('[data-login]').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -447,4 +521,19 @@ import Base from '../layouts/Base.astro';
   .adm .thread .k-note { background: repeating-linear-gradient(45deg, var(--surf2), var(--surf2) 8px, var(--bg) 8px, var(--bg) 16px); color: var(--ink); }
   .adm .thread .k-call { border: 2px solid var(--accText); }
   .adm .composer { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 4px; }
+  .adm .digest { background: var(--surf); border: 1px solid var(--acc); border-radius: 14px; padding: 4px 16px 12px; margin-bottom: 14px; }
+  .adm .digest pre { white-space: pre-wrap; font: 15px/1.55 var(--font); margin: 0; }
+  .adm .aisum { background: color-mix(in srgb, var(--acc) 12%, var(--surf)); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
+  .adm .aisum pre { background: none; border: 0; padding: 4px 0 0; margin: 0; }
+  .adm .funnel { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+  .adm .fstep { background: var(--surf); border: 1px solid var(--line); border-top: 4px solid var(--acc); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+  .adm .fstep small, .adm .fstep span { color: var(--mut); font-size: 12px; } .adm .fstep b { font-size: 22px; }
+  .adm .bars { display: flex; align-items: flex-end; gap: 3px; height: 160px; background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+  .adm .bar { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 2px; }
+  .adm .bar i { width: 100%; background: var(--acc); border-radius: 4px 4px 0 0; min-height: 2px; }
+  .adm .bar small { font-size: 9px; color: var(--mut); }
+  .adm .rank { margin: 0; padding-left: 20px; } .adm .rank li { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px solid var(--line); } .adm .rank span { overflow-wrap: anywhere; }
+  .adm .toggles { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .adm .tg { display: flex; align-items: center; gap: 10px; background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; }
+  .adm .tg input { width: 20px; height: 20px; }
 </style>

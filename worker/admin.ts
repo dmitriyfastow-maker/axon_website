@@ -4,6 +4,8 @@ import { ownerLead, ownerOverview, ownerUpdateLead, ownerUpdatePartner, type Not
 import { staffMessage } from './rooms.js';
 import { allPayouts, setPayout } from './payouts.js';
 import HQ from './hq.json';
+import { analytics, makeDigest } from './autopilot.js';
+import type { AiBinding } from './chat.js';
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -17,9 +19,23 @@ function authorized(request: Request, token: string | undefined): boolean {
 }
 
 /** /api/admin, /api/admin/lead/<id>, /api/admin/partner/<id> */
-export async function handleAdminApi(db: DB, request: Request, token: string | undefined, path: string, notify: Notify): Promise<Response> {
+export async function handleAdminApi(db: DB, request: Request, token: string | undefined, path: string, notify: Notify, ai?: AiBinding): Promise<Response> {
   if (!authorized(request, token)) return json(401, { ok: false });
   if (path === '' && request.method === 'GET') return json(200, { ok: true, ...(await ownerOverview(db, notify)), payouts: await allPayouts(db), hq: HQ });
+  if (path === 'analytics' && request.method === 'GET') return json(200, { ok: true, ...(await analytics(db)) });
+  if (path === 'autopilot' && request.method === 'GET') {
+    const st = (await db.prepare('SELECT key, value FROM settings').all()).results;
+    const digests = (await db.prepare('SELECT at, text FROM digests ORDER BY id DESC LIMIT 7').all()).results;
+    return json(200, { ok: true, settings: st, digests });
+  }
+  if (path === 'autopilot' && request.method === 'POST') {
+    const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    for (const k of ['auto_publish', 'auto_approve', 'auto_qc', 'digest']) {
+      if (b[k] !== undefined) await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind(k, b[k] ? '1' : '0').run();
+    }
+    return json(200, { ok: true });
+  }
+  if (path === 'digest' && request.method === 'POST') return json(200, { ok: true, text: await makeDigest(db, ai) });
   const pay = path.match(/^payout\/(\d+)$/);
   if (pay && request.method === 'POST') {
     const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;

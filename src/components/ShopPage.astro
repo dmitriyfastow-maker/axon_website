@@ -137,6 +137,24 @@ const C = {
       </div>
     </section>
 
+    <section class="bundle">
+      <div class="in">
+        <div class="box">
+          <div>
+            <div class="eyebrow">{C.best}</div>
+            <h2>{C.bundle}</h2>
+            <p>{C.bundleSub}</p>
+          </div>
+          <div class="buy">
+            <span class="price">{bundle.price} <s>{bundle.old}</s></span>
+            {bundle.url
+              ? <a class="btn" href={bundle.url} target="_blank" rel="noopener">{C.getBundle}</a>
+              : <span class="btn off">{C.soon}</span>}
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="list">
       <div class="in grid">
         {products.map((p) => (
@@ -155,24 +173,6 @@ const C = {
             </div>
           </article>
         ))}
-      </div>
-    </section>
-
-    <section class="bundle">
-      <div class="in">
-        <div class="box">
-          <div>
-            <div class="eyebrow">{C.best}</div>
-            <h2>{C.bundle}</h2>
-            <p>{C.bundleSub}</p>
-          </div>
-          <div class="buy">
-            <span class="price">{bundle.price} <s>{bundle.old}</s></span>
-            {bundle.url
-              ? <a class="btn" href={bundle.url} target="_blank" rel="noopener">{C.getBundle}</a>
-              : <span class="btn off">{C.soon}</span>}
-          </div>
-        </div>
       </div>
     </section>
     <CrossSell lang={lang} items={['done', 'partner']} />
@@ -200,7 +200,7 @@ const C = {
   .price s { font-size: 16px; font-weight: 400; color: var(--mut); }
   .btn { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 600; padding: 12px 20px; border-radius: 999px; text-decoration: none; white-space: nowrap; }
   .btn.off { background: transparent; color: var(--mut); border: 1px solid var(--line); cursor: default; }
-  .bundle { padding: 0 0 80px; }
+  .bundle { padding: 0 0 28px; }
   .box { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 24px; }
   .box h2 { font-size: 26px; margin: 8px 0 4px; }
   .box p { color: var(--mut); margin: 0; }

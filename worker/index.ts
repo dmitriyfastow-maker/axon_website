@@ -5,6 +5,7 @@ import { handleAdminApi } from './admin.js';
 import { handleChat, type AiBinding } from './chat.js';
 import { draftBrief, logEvent, sweep, type Notify } from './deals.js';
 import { bindReturningClient, handleRoomApi, newRoom } from './rooms.js';
+import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackView, triageLead } from './autopilot.js';
 
 interface Env extends LeadEnv {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -44,11 +45,19 @@ export default {
     if (r) return env.LEADS ? handleRedirect(env.LEADS, request, r[1].toLowerCase()) : Response.redirect(new URL('/', url).toString(), 302);
     if (url.pathname.startsWith('/api/partner/')) {
       if (!env.LEADS) return json(503, { ok: false });
-      return handlePartnerApi(env.LEADS, request, url.pathname.slice('/api/partner/'.length), notify);
+      const ppath = url.pathname.slice('/api/partner/'.length);
+      const res = await handlePartnerApi(env.LEADS, request, ppath, notify);
+      // A new manager application is graded by AI right away.
+      if (ppath === 'deals/apply' && res.ok) waitUntil(gradePending(env.LEADS, env.AI, notify));
+      return res;
+    }
+    if (url.pathname === '/api/ev' && request.method === 'POST') {
+      if (env.LEADS) await trackEvent(env.LEADS, request).catch(() => {});
+      return new Response(null, { status: 204 });
     }
     if (url.pathname === '/api/admin' || url.pathname.startsWith('/api/admin/')) {
       if (!env.LEADS) return json(503, { ok: false });
-      return handleAdminApi(env.LEADS, request, env.ADMIN_TOKEN, url.pathname.slice('/api/admin'.length).replace(/^\//, ''), notify);
+      return handleAdminApi(env.LEADS, request, env.ADMIN_TOKEN, url.pathname.slice('/api/admin'.length).replace(/^\//, ''), notify, env.AI);
     }
     const room = url.pathname.match(/^\/api\/room\/([a-f0-9]{24})$/);
     if (room) return env.LEADS ? handleRoomApi(env.LEADS, request, room[1], notify) : json(503, { ok: false });
@@ -74,12 +83,21 @@ export default {
               .run()) as { meta?: { last_row_id?: number } };
             const id = res?.meta?.last_row_id;
             // Background: an AI client profile for the closer and the first line of the lead's history.
-            if (id) waitUntil(Promise.all([logEvent(db, id, 'system', 'note', 'Request received from the site'), draftBrief(db, env.AI, id), bindReturningClient(db, id, l.contact, notify)]));
+            if (id) waitUntil((async () => {
+              await logEvent(db, id, 'system', 'note', 'Request received from the site');
+              await bindReturningClient(db, id, l.contact, notify);
+              await draftBrief(db, env.AI, id);
+              await triageLead(db, env.AI, id, notify);
+            })().catch((e) => console.error('[lead bg]', e)));
           }
         : undefined;
       const { status, body: out } = await handleLead(body, leadEnv, fetch, Date.now(), save);
       // The client gets a link to their private project chat right away.
       return json(status, status === 200 && db ? { ...(out as object), room: roomToken } : out);
+    }
+    // Anonymous page-view analytics for public pages (no cookies, no IP).
+    if (env.LEADS && request.method === 'GET' && !/^\/(admin|room|partner|ua\/partner|ru\/partner|demo)\b/.test(url.pathname) && (url.pathname.endsWith('/') || !url.pathname.includes('.'))) {
+      waitUntil(trackView(env.LEADS, request, url).catch(() => {}));
     }
     return env.ASSETS.fetch(request);
   },
@@ -88,11 +106,15 @@ export default {
     if (!env.LEADS) return;
     const tok = env.TELEGRAM_BOT_TOKEN?.trim();
     const chat = env.TELEGRAM_CHAT_ID?.trim();
-    await sweep(env.LEADS, async (text) => {
+    const notify: Notify = async (text) => {
       if (!tok || !chat) return;
       await fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chat, text }),
       }).catch(() => {});
-    });
+    };
+    // The autopilot's hourly round: deadlines, AI grading, quality control, client summaries, the morning digest.
+    for (const job of [() => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify)]) {
+      await job().catch((e) => console.error('[cron]', e));
+    }
   },
 };
