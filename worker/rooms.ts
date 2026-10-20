@@ -3,6 +3,7 @@
 import type { DB } from './partner.js';
 import { logEvent, type Notify } from './deals.js';
 import { guardMessage } from './autopilot.js';
+import { botLink, relayToClient } from './telegram.js';
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -15,6 +16,8 @@ export function newRoom(): string {
 
 export async function addMessage(db: DB, leadId: number, sender: string, kind: string, text: string) {
   await db.prepare('INSERT INTO messages (lead_id, sender, kind, text) VALUES (?, ?, ?, ?)').bind(leadId, sender, kind, text).run();
+  // Clients who joined via Telegram get every reply there too.
+  if (kind === 'text') await relayToClient(db, leadId, sender, text).catch(() => {});
 }
 
 /** Messages with a display name for every sender. Clients never get internal notes. */
@@ -43,7 +46,7 @@ export async function handleRoomApi(db: DB, request: Request, token: string, not
     // Clients see only the manager's first name; owner messages are signed as the Vaxo team.
     const first = (n: unknown) => (typeof n === 'string' ? n.trim().split(/\s+/)[0] : null);
     const msgs = (await roomMessages(db, lead.id, false)).map((m) => ({ ...m, partner_name: first(m.partner_name) }));
-    return json(200, { ok: true, name: lead.name, lang: lead.lang, status: lead.status, stage: lead.stage, stage_due: lead.stage_due, ai: lead.ai === 'on', manager: first(lead.manager), messages: msgs });
+    return json(200, { ok: true, name: lead.name, lang: lead.lang, status: lead.status, stage: lead.stage, stage_due: lead.stage_due, ai: lead.ai === 'on', manager: first(lead.manager), tg: await botLink(token).catch(() => null), messages: msgs });
   }
   if (request.method !== 'POST') return json(405, { ok: false });
   const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;

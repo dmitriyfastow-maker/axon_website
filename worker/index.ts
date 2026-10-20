@@ -6,6 +6,7 @@ import { handleChat, type AiBinding } from './chat.js';
 import { draftBrief, logEvent, sweep, type Notify } from './deals.js';
 import { bindReturningClient, handleRoomApi, newRoom } from './rooms.js';
 import { aiFollowups, aiReply } from './aimanager.js';
+import { configureTelegram, ensureWebhook, handleTelegram } from './telegram.js';
 import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackView, triageLead } from './autopilot.js';
 
 interface Env extends LeadEnv {
@@ -33,6 +34,8 @@ export default {
       return Response.redirect(new URL('/ua/' + url.search, url).toString(), 302);
     }
     const waitUntil = (p: Promise<unknown>) => (ctx ? ctx.waitUntil(p) : void p);
+    configureTelegram(env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_CHAT_ID);
+    if (env.LEADS && url.hostname === 'vaxogroup.com') waitUntil(ensureWebhook(env.LEADS, url.origin).catch(() => {}));
     const notify: Notify = async (text) => {
       const tok = env.TELEGRAM_BOT_TOKEN?.trim();
       const chat = env.TELEGRAM_CHAT_ID?.trim();
@@ -59,6 +62,10 @@ export default {
     if (url.pathname === '/api/admin' || url.pathname.startsWith('/api/admin/')) {
       if (!env.LEADS) return json(503, { ok: false });
       return handleAdminApi(env.LEADS, request, env.ADMIN_TOKEN, url.pathname.slice('/api/admin'.length).replace(/^\//, ''), notify, env.AI);
+    }
+    if (url.pathname === '/api/tg') {
+      if (!env.LEADS) return json(503, { ok: false });
+      return handleTelegram(env.LEADS, request, notify, (id, greet) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify, { greet }).catch((e) => console.error('[ai tg]', e))));
     }
     const room = url.pathname.match(/^\/api\/room\/([a-f0-9]{24})$/);
     if (room) return env.LEADS ? handleRoomApi(env.LEADS, request, room[1], notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify).catch((e) => console.error('[ai reply]', e)))) : json(503, { ok: false });
@@ -109,6 +116,7 @@ export default {
     if (!env.LEADS) return;
     const tok = env.TELEGRAM_BOT_TOKEN?.trim();
     const chat = env.TELEGRAM_CHAT_ID?.trim();
+    configureTelegram(tok, chat);
     const notify: Notify = async (text) => {
       if (!tok || !chat) return;
       await fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
