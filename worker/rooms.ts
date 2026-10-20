@@ -4,6 +4,7 @@ import type { DB } from './partner.js';
 import { logEvent, type Notify } from './deals.js';
 import { guardMessage } from './autopilot.js';
 import { botLink, relayToClient } from './telegram.js';
+import { relayEmail } from './mail.js';
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -16,8 +17,11 @@ export function newRoom(): string {
 
 export async function addMessage(db: DB, leadId: number, sender: string, kind: string, text: string) {
   await db.prepare('INSERT INTO messages (lead_id, sender, kind, text) VALUES (?, ?, ?, ?)').bind(leadId, sender, kind, text).run();
-  // Clients who joined via Telegram get every reply there too.
-  if (kind === 'text') await relayToClient(db, leadId, sender, text).catch(() => {});
+  // Clients who joined via Telegram or email get every reply there too.
+  if (kind === 'text') {
+    await relayToClient(db, leadId, sender, text).catch(() => {});
+    await relayEmail(db, leadId, sender, text).catch(() => {});
+  }
 }
 
 /** Messages with a display name for every sender. Clients never get internal notes. */

@@ -213,7 +213,7 @@ import Base from '../layouts/Base.astro';
     const a = await api('/autopilot').catch(() => null);
     if (!a) return;
     const st = Object.fromEntries((a.settings as R[]).map((x) => [x.key, x.value]));
-    const T: [string, string][] = [['auto_publish', 'Сам публиковать заявки менеджерам'], ['auto_approve', 'Сам одобрять сильных менеджеров'], ['auto_qc', 'Сам проверять переписку менеджеров'], ['digest', 'Присылать сводку дня в 08:00']];
+    const T: [string, string][] = [['auto_publish', 'Сам публиковать заявки менеджерам'], ['auto_approve', 'Сам одобрять сильных менеджеров'], ['auto_qc', 'Сам проверять переписку менеджеров'], ['digest', 'Присылать сводку дня в 08:00'], ['email_replies', 'Отвечать клиентам на почту (нужен ключ Resend)']];
     $('[data-toggles]').replaceChildren(...T.map(([k, t]) => {
       const cb = el('input', { type: 'checkbox', checked: st[k] !== '0' }) as HTMLInputElement;
       cb.onchange = () => api('/autopilot', { [k]: cb.checked });
@@ -318,6 +318,7 @@ import Base from '../layouts/Base.astro';
     const set = async (b: R) => { await api(`/lead/${id}/ai`, b); await load(); openLead(id); };
     const stageSel = el('select', {}, ...Object.entries(STAGE).map(([k, t]) => el('option', { value: k, selected: k === (l.stage || '') }, t)));
     const due = el('input', { type: 'date', value: (l.stage_due || '').slice(0, 10) });
+    const payIn = el('input', { type: 'number', min: '1', placeholder: '$' });
     let prof: R = {};
     try { prof = JSON.parse(l.profile || '{}'); } catch {}
     return el('div', { class: 'aisum aiman' },
@@ -326,7 +327,10 @@ import Base from '../layouts/Base.astro';
       l.human && el('p', {}, el('b', {}, '🙋 Нужен живой менеджер: '), l.human, ' ', el('button', { class: 'ghost', type: 'button', onclick: () => set({ human: null }) }, 'Решено')),
       prof.tip && el('p', { class: 'mut' }, `Как говорить с клиентом: ${prof.tip}${prof.concerns ? ' · Опасения: ' + prof.concerns : ''}`),
       el('div', { class: 'two' }, el('label', { class: 'f' }, el('span', {}, 'Этап проекта (клиент видит в чате)'), stageSel), el('label', { class: 'f' }, el('span', {}, 'Ожидаемая дата'), due)),
-      el('button', { class: 'cta alt', type: 'button', onclick: () => (stageSel as HTMLSelectElement).value && set({ stage: (stageSel as HTMLSelectElement).value, stage_due: (due as HTMLInputElement).value }) }, 'Сохранить этап и сообщить клиенту'));
+      el('button', { class: 'cta alt', type: 'button', onclick: () => (stageSel as HTMLSelectElement).value && set({ stage: (stageSel as HTMLSelectElement).value, stage_due: (due as HTMLInputElement).value }) }, 'Сохранить этап и сообщить клиенту'),
+      l.status === 'won' && el('div', { class: 'two' },
+        el('label', { class: 'f' }, el('span', {}, 'Повторная оплата клиента, $ (продление, подписка, новый заказ) — менеджеру и приведшему по 10% пожизненно'), payIn),
+        el('button', { class: 'ghost', type: 'button', onclick: async () => { const a = Number((payIn as HTMLInputElement).value); if (a > 0 && confirm(`Записать оплату $${a}?`)) { await api(`/lead/${id}/payment`, { amount: a }); await load(); openLead(id); } } }, 'Записать оплату')));
   }
 
   async function openLead(id: number) {
@@ -422,7 +426,7 @@ import Base from '../layouts/Base.astro';
       el('div', { class: 'kpi' }, el('small', {}, 'Выплачено'), el('b', {}, usd(sum('paid'))), el('span', {}, 'за всё время')));
     $('[data-pay]').replaceChildren(...(P.length ? P.map((p) => el('tr', {},
       el('td', {}, el('b', {}, p.partner), el('br'), el('small', {}, p.partner_email)), el('td', {}, p.client),
-      el('td', {}, p.kind === 'manager' ? 'вёл клиента' : 'привёл клиента'), el('td', {}, usd(p.base_usd)), el('td', {}, `${p.rate}%`), el('td', {}, el('b', {}, usd(p.amount_usd))),
+      el('td', {}, (p.kind.includes('manager') ? 'вёл клиента' : 'привёл клиента') + (p.kind.startsWith('renewal') ? ' · повторная оплата' : '')), el('td', {}, usd(p.base_usd)), el('td', {}, `${p.rate}%`), el('td', {}, el('b', {}, usd(p.amount_usd))),
       el('td', {}, p.status === 'paid' ? el('span', { class: 'st st-g' }, `выплачено ${when(p.paid_at)}`) : p.status === 'due' ? el('span', { class: 'st st-y' }, 'к выплате') : el('span', { class: 'st st-n' }, 'отменено')),
       el('td', {}, p.status === 'due' && el('button', { class: 'cta', type: 'button', onclick: async () => { await api(`/payout/${p.id}`, { status: 'paid' }); load(); } }, 'Выплачено')))) :
       [el('tr', {}, el('td', { colspan: '8', class: 'empty' }, 'Начислений пока нет — они появятся с первым клиентом.'))]));

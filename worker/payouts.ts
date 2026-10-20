@@ -51,3 +51,25 @@ export async function setPayout(db: DB, id: number, status: string) {
   await db.prepare(`UPDATE payouts SET status = ?, paid_at = CASE WHEN ? = 'paid' THEN datetime('now') ELSE NULL END WHERE id = ?`).bind(status, status, id).run();
   return true;
 }
+
+/** A repeat payment from an existing client (renewal, monthly fee, new order): the closing manager and the referrer
+ *  each get the lifetime renewal rate, for as long as the client pays. */
+export async function addRenewal(db: DB, leadId: number, amountUsd: number) {
+  if (!(amountUsd > 0)) return false;
+  const l = await db
+    .prepare(`SELECT d.closer_id, (SELECT l.partner_id FROM links l WHERE l.slug = d.ref) AS referrer_id FROM leads d WHERE d.id = ? AND d.status = 'won'`)
+    .bind(leadId)
+    .first<{ closer_id: number | null; referrer_id: number | null }>();
+  if (!l) return false;
+  const tag = Date.now().toString(36);
+  const rows: [number, string][] = [];
+  if (l.referrer_id) rows.push([l.referrer_id, `renewal-referral:${tag}`]);
+  if (l.closer_id && l.closer_id !== l.referrer_id) rows.push([l.closer_id, `renewal-manager:${tag}`]);
+  for (const [pid, kind] of rows) {
+    await db
+      .prepare('INSERT INTO payouts (partner_id, lead_id, kind, rate, base_usd, amount_usd) VALUES (?, ?, ?, ?, ?, ?)')
+      .bind(pid, leadId, kind, RATES.agencyRenewal, amountUsd, Math.round((amountUsd * RATES.agencyRenewal) / 100))
+      .run();
+  }
+  return true;
+}

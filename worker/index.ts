@@ -7,6 +7,7 @@ import { draftBrief, logEvent, sweep, type Notify } from './deals.js';
 import { bindReturningClient, handleRoomApi, newRoom } from './rooms.js';
 import { aiFollowups, aiReply } from './aimanager.js';
 import { configureTelegram, ensureWebhook, handleTelegram } from './telegram.js';
+import { configureMail, handleEmail, type IncomingEmail } from './mail.js';
 import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackView, triageLead } from './autopilot.js';
 
 interface Env extends LeadEnv {
@@ -35,6 +36,7 @@ export default {
     }
     const waitUntil = (p: Promise<unknown>) => (ctx ? ctx.waitUntil(p) : void p);
     configureTelegram(env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_CHAT_ID);
+    configureMail(env.RESEND_API_KEY, env.LEAD_EMAIL_FROM);
     if (env.LEADS && url.hostname === 'vaxogroup.com') waitUntil(ensureWebhook(env.LEADS, url.origin).catch(() => {}));
     const notify: Notify = async (text) => {
       const tok = env.TELEGRAM_BOT_TOKEN?.trim();
@@ -117,6 +119,7 @@ export default {
     const tok = env.TELEGRAM_BOT_TOKEN?.trim();
     const chat = env.TELEGRAM_CHAT_ID?.trim();
     configureTelegram(tok, chat);
+    configureMail(env.RESEND_API_KEY, env.LEAD_EMAIL_FROM);
     const notify: Notify = async (text) => {
       if (!tok || !chat) return;
       await fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
@@ -127,5 +130,21 @@ export default {
     for (const job of [() => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify)]) {
       await job().catch((e) => console.error('[cron]', e));
     }
+  },  // Letters to hello@vaxogroup.com (Cloudflare Email Routing → this worker) go into the client's project chat.
+  async email(message: IncomingEmail, env: Env, ctx?: { waitUntil(p: Promise<unknown>): void }): Promise<void> {
+    if (!env.LEADS) return;
+    const tok = env.TELEGRAM_BOT_TOKEN?.trim();
+    const chat = env.TELEGRAM_CHAT_ID?.trim();
+    configureTelegram(tok, chat);
+    configureMail(env.RESEND_API_KEY, env.LEAD_EMAIL_FROM);
+    const notify: Notify = async (text) => {
+      if (!tok || !chat) return;
+      await fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chat, text }),
+      }).catch(() => {});
+    };
+    const jobs: Promise<unknown>[] = [];
+    await handleEmail(env.LEADS, message, notify, (id, greet) => jobs.push(aiReply(env.LEADS!, env.AI, id, notify, { greet }).catch((e) => console.error('[ai mail]', e))));
+    if (ctx) ctx.waitUntil(Promise.all(jobs)); else await Promise.all(jobs);
   },
 };
