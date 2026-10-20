@@ -1,0 +1,41 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getDict } from '../../i18n';
+import { POSTS, type Post } from '../../data/blog';
+
+export function getStaticPaths() {
+  return POSTS.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+const { post } = Astro.props as { post: Post };
+const t = getDict('en');
+const path = `/blog/${post.slug}/`;
+const alts = { en: path };
+const ld = { '@context': 'https://schema.org', '@type': 'Article', headline: post.title, description: post.desc, datePublished: post.date, author: { '@type': 'Organization', name: 'Vaxo', url: 'https://vaxogroup.com/' }, publisher: { '@type': 'Organization', name: 'Vaxo' } };
+---
+
+<Base lang="en" title={`${post.title} — Vaxo`} description={post.desc} path={path} alts={alts}>
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <Header lang="en" t={t} home="/" alts={alts} />
+  <main class="article">
+    <a href="/blog/" class="back">← Blog</a>
+    <h1>{post.title}</h1>
+    <p class="mut">{post.date} · Vaxo</p>
+    {post.body.map(([h, ps]) => (
+      <section><h2>{h}</h2>{ps.length > 2 ? <ul>{ps.map((x) => <li>{x}</li>)}</ul> : ps.map((x) => <p>{x}</p>)}</section>
+    ))}
+    <div class="cta-box"><b>Have a question about your project?</b><p>Vax, our AI manager, answers in seconds. Or start with a starter package from $149.</p><a class="cta" href="/#contact">Get a quote →</a> <a class="ghost" href="/start/">Starter packages</a></div>
+  </main>
+  <Footer t={t} home="/" lang="en" />
+</Base>
+
+<style>
+  .article { max-width: 760px; margin: 0 auto; padding: 110px 16px 80px; line-height: 1.65; font-size: 17px; }
+  .back { color: var(--mut); text-decoration: none; }
+  h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.15; letter-spacing: -0.02em; margin: 12px 0 6px; }
+  h2 { font-size: 22px; margin: 28px 0 8px; } .mut { color: var(--mut); } li { margin: 6px 0; }
+  .cta-box { margin-top: 36px; background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+  .cta { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 600; padding: 12px 20px; border-radius: 999px; text-decoration: none; }
+  .ghost { color: var(--ink); margin-left: 10px; }
+</style>

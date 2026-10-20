@@ -1,0 +1,41 @@
+---
+// Terms / Privacy / Partner terms: one template, text in src/data/legal.ts.
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getDict, langPath, type Lang } from '../i18n';
+import { LEGAL, type Doc } from '../data/legal';
+
+interface Props { lang: Lang; doc: Doc }
+const { lang, doc } = Astro.props;
+const t = getDict(lang);
+const home = langPath(lang);
+const slug = { terms: 'terms', privacy: 'privacy', partner: 'partner-terms' }[doc];
+const alts = { en: `/${slug}/`, ua: `/ua/${slug}/`, ru: `/ru/${slug}/` };
+const P = LEGAL[doc][lang];
+---
+
+<Base lang={lang} title={`Vaxo — ${P.title}`} description={P.desc} path={alts[lang]} alts={alts}>
+  <Header lang={lang} t={t} home={home} alts={alts} />
+  <main class="legal">
+    <h1>{P.title}</h1>
+    <p class="mut">{P.updated}</p>
+    <p class="note">{P.note}</p>
+    {P.sections.map(([h, ps]) => (
+      <section>
+        <h2>{h}</h2>
+        {ps.length > 2 ? <ul>{ps.map((x) => <li>{x}</li>)}</ul> : ps.map((x) => <p>{x}</p>)}
+      </section>
+    ))}
+  </main>
+  <Footer t={t} home={home} lang={lang} />
+</Base>
+
+<style>
+  .legal { max-width: 760px; margin: 0 auto; padding: 110px 16px 72px; line-height: 1.6; }
+  h1 { font-size: clamp(30px, 5vw, 44px); margin: 0 0 6px; letter-spacing: -0.02em; }
+  h2 { font-size: 20px; margin: 28px 0 8px; }
+  .mut { color: var(--mut); margin: 0 0 14px; }
+  .note { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+  li { margin: 6px 0; }
+</style>

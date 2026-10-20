@@ -3,9 +3,10 @@ const en = {
   "nav": [
     "Services",
     "Cases",
-    "Free tools",
+    "About",
     "Shop",
-    "Partners"
+    "Partners",
+    "Collaborate"
   ],
   "eyebrow": "Full-cycle digital studio",
   "h1": "Websites, apps, ads and AI that bring you clients.",

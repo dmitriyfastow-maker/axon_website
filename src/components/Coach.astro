@@ -1,14 +1,14 @@
 ---
-// Partner AI coach chat (worker/coach.ts): Vax helps the partner find clients and write honest messages. 30 questions a day.
+// Partner AI coach chat (worker/coach.ts): Vax helps the partner find clients and write honest messages. 20 questions a day.
 import type { Lang } from '../i18n';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const T = {
-  en: { h: 'Ask Vax — your AI coach', p: 'Where to find clients, what to write, which offer fits, how payouts work. Honest selling only.', ph: 'For example: write a message to a dental clinic without a website', send: 'Ask', left: 'questions left today', limit: 'Today’s 30 questions are used up — come back tomorrow.', err: 'Vax is busy, try again in a minute.', copy: 'Copy',
+  en: { h: 'Ask Vax — your AI coach', p: '20 questions a day — ask what really matters. Vax gives you ready prompts so you can do repeat tasks in your own AI (Claude, ChatGPT, Gemini) without limits.', ph: 'For example: write a message to a dental clinic without a website', send: 'Ask', left: 'questions left today', limit: 'Today’s 20 questions are used up — come back tomorrow.', err: 'Vax is busy, try again in a minute.', copy: 'Copy',
         ex: ['Where can I find my first client?', 'Write a message to a café without a website', 'Client says “too expensive” — what do I answer?', 'How do I invite partners to my team?'] },
-  ru: { h: 'Спросите Vax — ваш ИИ-помощник', p: 'Где искать клиентов, что написать, какое предложение подойдёт, как работают выплаты. Только честные продажи.', ph: 'Например: напиши сообщение стоматологии без сайта', send: 'Спросить', left: 'вопросов осталось на сегодня', limit: '30 вопросов на сегодня закончились — возвращайтесь завтра.', err: 'Vax занят, попробуйте через минуту.', copy: 'Копировать',
+  ru: { h: 'Спросите Vax — ваш ИИ-помощник', p: '20 вопросов в день — спрашивайте главное. Vax даёт готовые промпты, чтобы повторяющиеся задачи вы делали в своём ИИ (Claude, ChatGPT, Gemini) без ограничений.', ph: 'Например: напиши сообщение стоматологии без сайта', send: 'Спросить', left: 'вопросов осталось на сегодня', limit: '20 вопросов на сегодня закончились — возвращайтесь завтра.', err: 'Vax занят, попробуйте через минуту.', copy: 'Копировать',
         ex: ['Где найти первого клиента?', 'Напиши сообщение кафе без сайта', 'Клиент говорит «дорого» — что ответить?', 'Как пригласить партнёров в команду?'] },
-  ua: { h: 'Запитайте Vax — ваш ІІ-помічник', p: 'Де шукати клієнтів, що написати, яка пропозиція підійде, як працюють виплати. Лише чесні продажі.', ph: 'Наприклад: напиши повідомлення стоматології без сайту', send: 'Запитати', left: 'питань лишилося на сьогодні', limit: '30 питань на сьогодні закінчилися — повертайтеся завтра.', err: 'Vax зайнятий, спробуйте за хвилину.', copy: 'Копіювати',
+  ua: { h: 'Запитайте Vax — ваш ІІ-помічник', p: '20 питань на день — питайте головне. Vax дає готові промпти, щоб повторювані задачі ви робили у своєму ШІ (Claude, ChatGPT, Gemini) без обмежень.', ph: 'Наприклад: напиши повідомлення стоматології без сайту', send: 'Запитати', left: 'питань лишилося на сьогодні', limit: '20 питань на сьогодні закінчилися — повертайтеся завтра.', err: 'Vax зайнятий, спробуйте за хвилину.', copy: 'Копіювати',
         ex: ['Де знайти першого клієнта?', 'Напиши повідомлення кафе без сайту', 'Клієнт каже «дорого» — що відповісти?', 'Як запросити партнерів у команду?'] },
 }[lang];
 ---

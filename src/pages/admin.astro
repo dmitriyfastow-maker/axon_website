@@ -35,6 +35,8 @@ import Base from '../layouts/Base.astro';
       <section data-panel="today">
         <div class="digest" data-digest hidden><h2>☀️ Сводка дня от автопилота</h2><pre data-digest-text></pre><small class="mut" data-digest-at></small></div>
         <div class="kpis" data-kpis></div>
+        <h2>Картина компании</h2>
+        <div class="pic" data-pic></div>
         <h2>Требует внимания</h2>
         <div class="todo" data-todo></div>
         <div class="cols">
@@ -213,7 +215,7 @@ import Base from '../layouts/Base.astro';
     const a = await api('/autopilot').catch(() => null);
     if (!a) return;
     const st = Object.fromEntries((a.settings as R[]).map((x) => [x.key, x.value]));
-    const T: [string, string][] = [['auto_publish', 'Сам публиковать заявки менеджерам'], ['auto_approve', 'Сам одобрять сильных менеджеров'], ['auto_qc', 'Сам проверять переписку менеджеров'], ['digest', 'Присылать сводку дня в 08:00'], ['email_replies', 'Отвечать клиентам на почту (нужен ключ Resend)']];
+    const T: [string, string][] = [['auto_publish', 'Сам публиковать заявки менеджерам'], ['auto_approve', 'Сам одобрять сильных менеджеров'], ['auto_qc', 'Сам проверять переписку менеджеров'], ['ai_manager', 'ИИ-менеджер Vax сам отвечает клиентам'], ['digest', 'Присылать сводку дня в 08:00'], ['email_replies', 'Отвечать клиентам на почту (нужен ключ Resend)']];
     $('[data-toggles]').replaceChildren(...T.map(([k, t]) => {
       const cb = el('input', { type: 'checkbox', checked: st[k] !== '0' }) as HTMLInputElement;
       cb.onchange = () => api('/autopilot', { [k]: cb.checked });
@@ -245,7 +247,77 @@ import Base from '../layouts/Base.astro';
 
   const pill = (k: string, n: number) => { const p = $(`[data-n="${k}"]`); p.hidden = !n; p.textContent = String(n); };
 
+  // ---- visual picture of the company: funnel, sources, who leads clients, money by month ----
+  const PAL = ['#E0A84F', '#5B8DEF', '#3FB68B', '#E46F6F', '#A77BE0', '#4FB8C9', '#9AA0A6'];
+  const NS = 'http://www.w3.org/2000/svg';
+  const svgEl = (tag: string, attrs: R) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, String(v)); return e; };
+  function donut(title: string, parts: [string, number][]) {
+    const total = parts.reduce((a, [, n]) => a + n, 0);
+    const svg = svgEl('svg', { viewBox: '0 0 120 120', width: 120, height: 120, role: 'img', 'aria-label': title });
+    let a0 = -Math.PI / 2;
+    parts.forEach(([, n], i) => {
+      if (!n) return;
+      const a1 = a0 + (n / total) * Math.PI * 2 - (n === total ? 0.0001 : 0);
+      const big = a1 - a0 > Math.PI ? 1 : 0;
+      const p = (a: number, rr: number) => `${60 + rr * Math.cos(a)} ${60 + rr * Math.sin(a)}`;
+      svg.append(svgEl('path', { d: `M${p(a0, 54)}A54 54 0 ${big} 1 ${p(a1, 54)}L${p(a1, 32)}A32 32 0 ${big} 0 ${p(a0, 32)}Z`, fill: PAL[i % PAL.length] }));
+      a0 = a1;
+    });
+    const tx = svgEl('text', { x: 60, y: 66, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 700, fill: 'currentColor' });
+    tx.textContent = String(total);
+    svg.append(tx);
+    return el('div', { class: 'pcard' }, el('b', {}, title),
+      el('div', { class: 'prow' }, total ? svg : el('p', { class: 'mut' }, 'пока нет данных'),
+        el('ul', { class: 'legend' }, ...parts.filter(([, n]) => n).map(([k, n], i) => el('li', {}, el('i', { style: `background:${PAL[parts.findIndex((x) => x[0] === k) % PAL.length]}` }), `${k} — ${n}`)))));
+  }
+  function funnel(title: string, steps: [string, number][]) {
+    const max = Math.max(1, ...steps.map(([, n]) => n));
+    return el('div', { class: 'pcard wide' }, el('b', {}, title), ...steps.map(([k, n], i) => {
+      const prev = i ? steps[i - 1][1] : 0;
+      return el('div', { class: 'pfrow' }, el('span', { class: 'pfl' }, k),
+        el('span', { class: 'pfbar' }, el('span', { style: `width:${Math.max(2, (n / max) * 100)}%;background:${PAL[i % PAL.length]}` })),
+        el('span', { class: 'pfn' }, `${n}${i && prev ? ` · ${Math.round((n / prev) * 100)}%` : ''}`));
+    }));
+  }
+  function bars(title: string, rows: [string, number][]) {
+    const max = Math.max(1, ...rows.map(([, n]) => n));
+    return el('div', { class: 'pcard wide' }, el('b', {}, title), el('div', { class: 'vbars' }, ...rows.map(([k, n]) =>
+      el('div', { class: 'vb' }, el('small', {}, n ? usd(n) : ''), el('span', { style: `height:${(n / max) * 100}%` }), el('small', {}, k)))));
+  }
+  function renderPicture() {
+    const L = (data.leads as R[]).filter((l) => l.status !== 'archived');
+    const clients = L.filter((l) => l.status !== 'collab');
+    const src = (l: R) => l.mode === 'telegram' ? 'Telegram' : l.mode === 'email' ? 'Почта' : l.mode === 'collab' ? 'Сотрудничество' : l.partner_name ? 'Партнёры' : (l.message || '').startsWith('[Vax chat]') ? 'Чат на сайте' : 'Форма на сайте';
+    const srcNames = ['Форма на сайте', 'Чат на сайте', 'Партнёры', 'Telegram', 'Почта', 'Сотрудничество'];
+    const months: [string, number][] = [];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const won = clients.filter((l) => l.status === 'won' && String(l.updated_at || l.created_at).slice(0, 7) === key).reduce((a, l) => a + (l.value_usd || 0), 0);
+      const ren = ((data.payouts || []) as R[]).filter((p) => String(p.kind).startsWith('renewal') && String(p.created_at).slice(0, 7) === key).reduce((a, p) => a + (p.base_usd || 0), 0);
+      months.push([d.toLocaleString('ru', { month: 'short' }), won + ren]);
+    }
+    $('[data-pic]').replaceChildren(
+      funnel('Воронка клиентов', [
+        ['Обратились', clients.length],
+        ['Идёт разговор', clients.filter((l) => l.msgs > 0).length],
+        ['Предложение', clients.filter((l) => ['proposal', 'won'].includes(l.status)).length],
+        ['Оплатили', clients.filter((l) => l.status === 'won').length],
+      ]),
+      donut('Откуда приходят', srcNames.map((k) => [k, L.filter((l) => src(l) === k).length] as [string, number])),
+      donut('Кто ведёт клиентов', [
+        ['ИИ сам', clients.filter((l) => l.ai !== 'paused' && !l.closer_id && !l.human).length],
+        ['ИИ + менеджер', clients.filter((l) => l.ai !== 'paused' && l.closer_id).length],
+        ['Только человек', clients.filter((l) => l.ai === 'paused').length],
+        ['Ждут человека', clients.filter((l) => l.human && !l.closer_id).length],
+      ]),
+      bars('Деньги по месяцам (новые сделки + продления)', months),
+    );
+  }
+
   function renderToday() {
+    renderPicture();
     const L = data.leads as R[];
     const by = (f: (l: R) => boolean) => L.filter(f).length;
     const wonUsd = L.filter((l) => l.status === 'won').reduce((a, l) => a + (l.value_usd || 0), 0);
@@ -559,4 +631,18 @@ import Base from '../layouts/Base.astro';
   .adm .toggles { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
   .adm .tg { display: flex; align-items: center; gap: 10px; background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; }
   .adm .tg input { width: 20px; height: 20px; }
+  .pic { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .pcard { background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .pcard.wide { grid-column: span 2; }
+  @media (max-width: 700px) { .pcard.wide { grid-column: auto; } }
+  .prow { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .legend { list-style: none; margin: 0; padding: 0; font-size: 13px; display: grid; gap: 4px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+  .pfrow { display: grid; grid-template-columns: 120px 1fr 90px; gap: 8px; align-items: center; font-size: 14px; }
+  .pfbar { background: var(--bg); border-radius: 6px; height: 16px; overflow: hidden; }
+  .pfbar span { display: block; height: 100%; border-radius: 6px; }
+  .pfn { color: var(--mut); text-align: right; }
+  .vbars { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; height: 150px; align-items: end; }
+  .vb { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; gap: 4px; font-size: 12px; color: var(--mut); }
+  .vb span { width: 70%; background: #E0A84F; border-radius: 6px 6px 0 0; min-height: 2px; }
 </style>

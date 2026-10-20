@@ -1,0 +1,96 @@
+---
+// About Vaxo: the whole company on one page — who we are, what we do, how we work, and a door for every visitor.
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getDict, langPath, navHref, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = getDict(lang);
+const home = langPath(lang);
+const alts = { en: '/about/', ua: '/ua/about/', ru: '/ru/about/' };
+const h = (p: string) => navHref(p, lang, home);
+
+const C = {
+  en: {
+    title: 'About Vaxo — a full-cycle digital studio run with AI', desc: 'Who we are, what we build and how we work: websites, apps, AI assistants, ads, content and our own cartoon.',
+    eyebrow: 'About Vaxo', h1: 'One team for everything your business needs online.',
+    sub: 'Vaxo is a full-cycle digital studio where AI does most of the work and people step in where a human touch matters. That is why we are fast, open 24/7 and affordable for a first business and a growing company alike.',
+    whatH: 'What we do', what: [['Websites and stores', 'From a one-page site in 7 days to e-commerce.'], ['Apps and SaaS', 'From MVP to a full product with payments and accounts.'], ['AI assistants and automation', 'Chats that answer clients 24/7, CRM, auto-replies.'], ['Ads, SMM and SEO', 'Meta, Google, TikTok, content plans and search.'], ['Video and characters', 'Short videos, brand mascots and AI-animated series — like our own Vax and Roxy.'], ['Design and branding', 'Logos, UI/UX, copywriting.']],
+    howH: 'How we work', how: [['Vax answers in seconds', 'Our AI manager talks to you in your language, 24/7 — on the site, in Telegram or by email.'], ['Everything in one chat', 'Brief, price, stages and the result live in your private project chat.'], ['Checked before you see it', 'Every piece of work goes through quality checks. A human joins for calls.'], ['Clear terms', 'Fixed scope and price, honest refund rules, no hidden fees.']],
+    whoH: 'Who we work with', who: [['Business owners', 'Order a project or start small from $149.', 'Get a quote', '/#contact'], ['Partners', 'Recommend Vaxo and earn up to 40% + 10% for life.', 'Become a partner', '/partners/'], ['Creators, UGC, agencies, brands', 'Collaborations, ads, white-label, jobs.', 'Send a proposal', '/collab/']],
+    casesH: 'Real work', cases: 'See our cases — AiPro Partners and TrichoTech — on the main page.', casesCta: 'See cases',
+    values: 'We are honest about prices and results, we keep your accounts in your name, and we never spam.',
+  },
+  ru: {
+    title: 'О Vaxo — digital-студия полного цикла на ИИ', desc: 'Кто мы, что делаем и как работаем: сайты, приложения, ИИ-ассистенты, реклама, контент и свой мультик.',
+    eyebrow: 'О Vaxo', h1: 'Одна команда для всего, что нужно бизнесу в интернете.',
+    sub: 'Vaxo — digital-студия полного цикла, где большую часть работы делает ИИ, а люди подключаются там, где важен человек. Поэтому мы быстрые, работаем 24/7 и доступны и для первого бизнеса, и для растущей компании.',
+    whatH: 'Что мы делаем', what: [['Сайты и магазины', 'От одностраничника за 7 дней до интернет-магазина.'], ['Приложения и SaaS', 'От MVP до полного продукта с оплатой и кабинетами.'], ['ИИ-ассистенты и автоматизация', 'Чаты, которые отвечают клиентам 24/7, CRM, автоответы.'], ['Реклама, SMM и SEO', 'Meta, Google, TikTok, контент-планы и поиск.'], ['Видео и персонажи', 'Короткие ролики, маскоты брендов и ИИ-мультсериалы — как наши Vax и Roxy.'], ['Дизайн и брендинг', 'Логотипы, UI/UX, тексты.']],
+    howH: 'Как мы работаем', how: [['Vax отвечает за секунды', 'Наш ИИ-менеджер общается на вашем языке 24/7 — на сайте, в Telegram или по почте.'], ['Всё в одном чате', 'Задача, цена, этапы и результат — в личном чате вашего проекта.'], ['Проверено до того, как вы увидите', 'Каждая работа проходит проверку качества. Человек подключается на созвоны.'], ['Понятные условия', 'Фиксированный объём и цена, честные правила возврата, без скрытых платежей.']],
+    whoH: 'С кем мы работаем', who: [['Владельцы бизнеса', 'Закажите проект или начните с малого — от $149.', 'Узнать цену', '/#contact'], ['Партнёры', 'Рекомендуйте Vaxo и получайте до 40% + 10% пожизненно.', 'Стать партнёром', '/partners/'], ['Блогеры, UGC, агентства, бренды', 'Коллаборации, реклама, белая марка, работа.', 'Отправить предложение', '/collab/']],
+    casesH: 'Реальные работы', cases: 'Наши кейсы — AiPro Partners и TrichoTech — на главной странице.', casesCta: 'Смотреть кейсы',
+    values: 'Мы честны в ценах и результатах, оформляем ваши аккаунты на вас и никогда не спамим.',
+  },
+  ua: {
+    title: 'Про Vaxo — digital-студія повного циклу на ШІ', desc: 'Хто ми, що робимо і як працюємо: сайти, застосунки, ШІ-асистенти, реклама, контент і власний мультик.',
+    eyebrow: 'Про Vaxo', h1: 'Одна команда для всього, що потрібно бізнесу в інтернеті.',
+    sub: 'Vaxo — digital-студія повного циклу, де більшу частину роботи робить ШІ, а люди підключаються там, де важлива людина. Тому ми швидкі, працюємо 24/7 і доступні і для першого бізнесу, і для компанії, що росте.',
+    whatH: 'Що ми робимо', what: [['Сайти та магазини', 'Від односторінкового сайту за 7 днів до інтернет-магазину.'], ['Застосунки та SaaS', 'Від MVP до повного продукту з оплатою і кабінетами.'], ['ШІ-асистенти та автоматизація', 'Чати, що відповідають клієнтам 24/7, CRM, автовідповіді.'], ['Реклама, SMM і SEO', 'Meta, Google, TikTok, контент-плани і пошук.'], ['Відео та персонажі', 'Короткі ролики, маскоти брендів і ШІ-мультсеріали — як наші Vax і Roxy.'], ['Дизайн і брендинг', 'Логотипи, UI/UX, тексти.']],
+    howH: 'Як ми працюємо', how: [['Vax відповідає за секунди', 'Наш ШІ-менеджер спілкується вашою мовою 24/7 — на сайті, в Telegram або поштою.'], ['Усе в одному чаті', 'Задача, ціна, етапи і результат — в особистому чаті вашого проєкту.'], ['Перевірено до того, як ви побачите', 'Кожна робота проходить перевірку якості. Людина підключається на дзвінки.'], ['Зрозумілі умови', 'Фіксований обсяг і ціна, чесні правила повернення, без прихованих платежів.']],
+    whoH: 'З ким ми працюємо', who: [['Власники бізнесу', 'Замовте проєкт або почніть з малого — від $149.', 'Дізнатися ціну', '/#contact'], ['Партнери', 'Рекомендуйте Vaxo й отримуйте до 40% + 10% довічно.', 'Стати партнером', '/partners/'], ['Блогери, UGC, агенції, бренди', 'Колаборації, реклама, біла марка, робота.', 'Надіслати пропозицію', '/collab/']],
+    casesH: 'Реальні роботи', cases: 'Наші кейси — AiPro Partners і TrichoTech — на головній сторінці.', casesCta: 'Дивитися кейси',
+    values: 'Ми чесні в цінах і результатах, оформлюємо ваші акаунти на вас і ніколи не спамимо.',
+  },
+}[lang];
+---
+
+<Base lang={lang} title={C.title} description={C.desc} path={alts[lang]} alts={alts}>
+  <Header lang={lang} t={t} home={home} alts={alts} />
+  <main class="about">
+    <section class="in hero">
+      <span class="eyebrow">{C.eyebrow}</span>
+      <h1>{C.h1}</h1>
+      <p class="sub">{C.sub}</p>
+      <img src="/mascot/vax-happy.webp" alt="Vax, the Vaxo raccoon" width="120" height="120" class="mascot" />
+    </section>
+    <section class="in">
+      <h2>{C.whatH}</h2>
+      <div class="grid">{C.what.map(([a, b]) => <div class="card"><b>{a}</b><p>{b}</p></div>)}</div>
+    </section>
+    <section class="in">
+      <h2>{C.howH}</h2>
+      <ol class="how">{C.how.map(([a, b]) => <li><b>{a}</b><span>{b}</span></li>)}</ol>
+    </section>
+    <section class="in">
+      <h2>{C.whoH}</h2>
+      <div class="grid three">{C.who.map(([a, b, c, href]) => <a class="card door" href={h(href)}><b>{a}</b><p>{b}</p><span class="go">{c} →</span></a>)}</div>
+    </section>
+    <section class="in last">
+      <h2>{C.casesH}</h2>
+      <p>{C.cases} <a href={h('/#cases')}>{C.casesCta} →</a></p>
+      <p class="mut">{C.values}</p>
+    </section>
+  </main>
+  <Footer t={t} home={home} lang={lang} />
+</Base>
+
+<style>
+  .in { max-width: 1120px; margin: 0 auto; padding: 0 16px 48px; }
+  .hero { padding-top: 120px; position: relative; }
+  h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0; max-width: 18ch; }
+  .sub { color: var(--mut); font-size: 19px; max-width: 62ch; }
+  .mascot { position: absolute; right: 16px; top: 110px; border-radius: 50%; }
+  @media (max-width: 760px) { .mascot { position: static; margin-top: 12px; width: 80px; height: 80px; } .hero { padding-top: 96px; } }
+  h2 { font-size: clamp(24px, 3.5vw, 32px); margin: 0 0 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .card { background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 18px; color: var(--ink); text-decoration: none; }
+  .card b { font-size: 18px; } .card p { color: var(--mut); margin: 6px 0 0; line-height: 1.5; }
+  .door { display: flex; flex-direction: column; transition: border-color 0.2s; } .door:hover { border-color: var(--acc); }
+  .door .go { margin-top: auto; padding-top: 12px; font-weight: 600; color: var(--accText, var(--ink)); }
+  .how { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; counter-reset: s; }
+  .how li { counter-increment: s; display: flex; flex-direction: column; gap: 4px; border-top: 4px solid var(--acc); padding-top: 10px; }
+  .how li b::before { content: counter(s) '. '; } .how li span { color: var(--mut); }
+  .last { padding-bottom: 80px; } .last a { color: var(--ink); font-weight: 600; } .mut { color: var(--mut); }
+</style>

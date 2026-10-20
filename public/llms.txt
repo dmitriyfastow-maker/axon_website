@@ -1,0 +1,21 @@
+# Vaxo
+
+> Vaxo (vaxogroup.com) is a full-cycle digital studio run with AI: websites and online stores, mobile apps and SaaS, AI chat assistants and automation, paid ads (Meta, Google, TikTok), SMM, SEO, design, short-form video and AI-animated brand characters. Clients worldwide; English, Ukrainian and Russian.
+
+## Key facts
+- AI manager "Vax" answers clients 24/7 on the site, in Telegram and by email; a human manager joins for calls.
+- Starter packages (one-time, 7 days): one automation $149, one-page website $199, AI chat assistant for a website $249.
+- Typical ranges: landing page $1,000–5,000; multi-page site $2,000–10,000; online store $3,000–20,000; app MVP $5,000–15,000; ads management $700–7,000/month.
+- Payment: starter packages 100% upfront; projects from $1,000 — 50/50. Refund rules: https://vaxogroup.com/terms/
+- Partner program (18+): 30% of the first order + 10% of later payments for life; 40% if the partner also closes the deal. https://vaxogroup.com/partners/
+- Real cases: AiPro Partners, TrichoTech.
+
+## Pages
+- [Services and prices](https://vaxogroup.com/#services)
+- [Starter packages](https://vaxogroup.com/start/)
+- [About](https://vaxogroup.com/about/)
+- [Partner program](https://vaxogroup.com/partners/)
+- [Collaborate (creators, UGC, agencies, brands)](https://vaxogroup.com/collab/)
+- [Blog](https://vaxogroup.com/blog/)
+- [Terms and refunds](https://vaxogroup.com/terms/)
+- [Contact](https://vaxogroup.com/#contact)

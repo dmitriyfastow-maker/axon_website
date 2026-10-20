@@ -316,8 +316,9 @@
   "NAV_HREFS": [
     "#services",
     "#cases",
-    "/tools/",
+    "/about/",
     "/shop/",
-    "/partners/"
+    "/partners/",
+    "/collab/"
   ]
 }

@@ -4,9 +4,9 @@ import { NAV_HREFS } from '../data/tiers';
 
 interface Props { t: Dict; home?: string; lang?: Lang }
 const { t, home = '', lang = 'en' } = Astro.props;
-const F = { en: { examples: 'Examples', start: 'Starter packages', shop: 'Templates shop', login: 'Partner login', collab: 'Collaborate' },
-            ru: { examples: 'Примеры работ', start: 'Стартовые пакеты', shop: 'Магазин шаблонов', login: 'Вход для партнёров', collab: 'Сотрудничество' },
-            ua: { examples: 'Приклади робіт', start: 'Стартові пакети', shop: 'Магазин шаблонів', login: 'Вхід для партнерів', collab: 'Співпраця' } }[lang];
+const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start: 'Starter packages', shop: 'Templates shop', login: 'Partner login', collab: 'Collaborate', terms: 'Terms & refunds', privacy: 'Privacy', pterms: 'Partner terms' },
+            ru: { examples: 'Примеры работ', tools: 'Бесплатные инструменты', blog: 'Блог', start: 'Стартовые пакеты', shop: 'Магазин шаблонов', login: 'Вход для партнёров', collab: 'Сотрудничество', terms: 'Условия и возвраты', privacy: 'Конфиденциальность', pterms: 'Условия партнёрки' },
+            ua: { examples: 'Приклади робіт', tools: 'Безкоштовні інструменти', blog: 'Блог', start: 'Стартові пакети', shop: 'Магазин шаблонів', login: 'Вхід для партнерів', collab: 'Співпраця', terms: 'Умови та повернення', privacy: 'Конфіденційність', pterms: 'Умови партнерки' } }[lang];
 ---
 
 <footer class="footer">
@@ -17,8 +17,14 @@ const F = { en: { examples: 'Examples', start: 'Starter packages', shop: 'Templa
       <a href={navHref('/examples/', lang)}>{F.examples}</a>
       <a href={navHref('/start/', lang)}>{F.start}</a>
       <a href={navHref('/shop/', lang)}>{F.shop}</a>
-      <a href={navHref('/collab/', lang)}>{F.collab}</a>
+      <a href={navHref('/tools/', lang)}>{F.tools}</a>
+      <a href="/blog/">{F.blog}</a>
       <a href={navHref('/partner/', lang)}>{F.login}</a>
+    </nav>
+    <nav class="legal-links" aria-label="Legal">
+      <a href={navHref('/terms/', lang)}>{F.terms}</a>
+      <a href={navHref('/privacy/', lang)}>{F.privacy}</a>
+      <a href={navHref('/partner-terms/', lang)}>{F.pterms}</a>
     </nav>
     <span class="copy">© 2026 {t.footer}</span>
   </div>
@@ -46,6 +52,7 @@ const F = { en: { examples: 'Examples', start: 'Starter packages', shop: 'Templa
   .logo span {
     color: var(--acc);
   }
+  .legal-links a { font-size: 13px; opacity: 0.75; }
   nav {
     display: flex;
     flex-wrap: wrap;
