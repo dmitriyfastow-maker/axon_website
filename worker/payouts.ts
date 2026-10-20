@@ -8,13 +8,16 @@ import { RATES } from '../src/data/partners.js';
 export async function createPayouts(db: DB, leadId: number) {
   const l = await db
     .prepare(
-      `SELECT d.value_usd, d.closer_id, r.partner_id AS referrer_id, rp.plan AS referrer_plan
+      `SELECT d.value_usd, d.closer_id, r.partner_id AS referrer_id, rp.plan AS referrer_plan,
+              (lower(trim(d.contact)) = lower(trim(rp.email))) AS self_ref
        FROM leads d LEFT JOIN links r ON r.slug = d.ref LEFT JOIN partners rp ON rp.id = r.partner_id
        WHERE d.id = ? AND d.status = 'won' AND d.value_usd > 0`,
     )
     .bind(leadId)
-    .first<{ value_usd: number; closer_id: number | null; referrer_id: number | null; referrer_plan: string | null }>();
+    .first<{ value_usd: number; closer_id: number | null; referrer_id: number | null; referrer_plan: string | null; self_ref: number | null }>();
   if (!l) return;
+  // Buying through your own link earns nothing (partner terms).
+  if (l.self_ref) { if (l.closer_id === l.referrer_id) l.closer_id = null; l.referrer_id = null; }
   const rows: [number, string, number][] = [];
   if (l.referrer_id && l.referrer_id === l.closer_id) rows.push([l.referrer_id, 'referral', RATES.fullCycle]);
   else if (l.referrer_id) rows.push([l.referrer_id, 'referral', l.referrer_plan === 'life10' ? RATES.clipLife : l.referrer_plan === 'first30' ? RATES.clipFirst : RATES.agencyOwn]);
