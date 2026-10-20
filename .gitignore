@@ -10,3 +10,4 @@ playwright-report/
 tests/visual/out/
 .wrangler/
 .dev.vars
+worker/hq.json

@@ -39,7 +39,10 @@ export async function handleRoomApi(db: DB, request: Request, token: string, not
   if (!lead) return json(404, { ok: false });
   if (request.method === 'GET') {
     await db.prepare(`UPDATE leads SET client_seen_at = datetime('now') WHERE id = ?`).bind(lead.id).run();
-    return json(200, { ok: true, name: lead.name, lang: lead.lang, manager: lead.manager, messages: await roomMessages(db, lead.id, false) });
+    // Clients see only the manager's first name; owner messages are signed as the Vaxo team.
+    const first = (n: unknown) => (typeof n === 'string' ? n.trim().split(/\s+/)[0] : null);
+    const msgs = (await roomMessages(db, lead.id, false)).map((m) => ({ ...m, partner_name: first(m.partner_name) }));
+    return json(200, { ok: true, name: lead.name, lang: lead.lang, status: lead.status, manager: first(lead.manager), messages: msgs });
   }
   if (request.method !== 'POST') return json(405, { ok: false });
   const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;

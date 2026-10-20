@@ -1,63 +1,112 @@
 ---
-// Owner dashboard: lead pipeline, lead exchange for partner-closers, partners and closer approvals.
+// Owner HQ: everything in one place — what needs attention today, client chats, leads, team, payouts,
+// the cartoon pipeline, every link and decision, and how the whole system works. Data comes only from /api/admin (key).
 import Base from '../layouts/Base.astro';
 ---
 
-<Base lang="en" title="Vaxo — панель владельца" description="Owner dashboard" path="/admin/" noindex noChat>
+<Base lang="ru" title="Vaxo — штаб" description="Owner HQ" path="/admin/" noindex noChat>
   <main class="adm">
     <header class="top">
-      <h1>Vaxo · панель</h1>
+      <h1>Vaxo <span>· штаб</span></h1>
       <div class="top-r" data-on hidden>
         <button type="button" class="ghost" data-reload>Обновить</button>
         <button type="button" class="ghost" data-out>Выйти</button>
       </div>
     </header>
     <form data-login class="login" hidden>
-      <input type="password" name="token" placeholder="Ключ владельца" autocomplete="off" />
-      <button class="cta">Открыть</button>
+      <p>Это ваш штаб: заявки, чаты с клиентами, партнёры, выплаты, мультик и все ссылки в одном месте.</p>
+      <input type="password" name="token" placeholder="Ключ владельца" autocomplete="current-password" />
+      <button class="cta">Открыть штаб</button>
     </form>
     <div data-app hidden>
-      <section class="kpis" data-kpis></section>
-      <nav class="tabs">
-        <button type="button" data-view="leads" aria-pressed="true">Заявки</button>
-        <button type="button" data-view="closers" aria-pressed="false">Закрывающие <span class="pill" data-apps hidden></span></button>
-        <button type="button" data-view="partners" aria-pressed="false">Партнёры</button>
-        <button type="button" data-view="help" aria-pressed="false">Как это работает</button>
+      <nav class="tabs" aria-label="Разделы">
+        <button type="button" data-view="today" aria-pressed="true">🔥 Сегодня <span class="pill" data-n="today" hidden></span></button>
+        <button type="button" data-view="chats" aria-pressed="false">💬 Чаты <span class="pill" data-n="chats" hidden></span></button>
+        <button type="button" data-view="leads" aria-pressed="false">📋 Заявки</button>
+        <button type="button" data-view="team" aria-pressed="false">👥 Команда <span class="pill" data-n="team" hidden></span></button>
+        <button type="button" data-view="pay" aria-pressed="false">💸 Выплаты <span class="pill" data-n="pay" hidden></span></button>
+        <button type="button" data-view="cartoon" aria-pressed="false">🎬 Мультик</button>
+        <button type="button" data-view="links" aria-pressed="false">🔗 Все ссылки</button>
+        <button type="button" data-view="help" aria-pressed="false">❓ Как это работает</button>
       </nav>
 
-      <section data-panel="leads">
+      <section data-panel="today">
+        <div class="kpis" data-kpis></div>
+        <h2>Требует внимания</h2>
+        <div class="todo" data-todo></div>
+        <div class="cols">
+          <div><h2>Ждёт ваших действий</h2><ul class="tasks" data-tasks></ul></div>
+          <div><h2>Последний отчёт Claude</h2><pre class="report" data-report></pre></div>
+        </div>
+      </section>
+
+      <section data-panel="chats" hidden>
+        <p class="hint">Вся переписка менеджеров с клиентами. «Ждёт ответа» — последним написал клиент. Нажмите на чат, чтобы прочитать и ответить от имени Vaxo.</p>
+        <div class="inbox" data-inbox></div>
+      </section>
+
+      <section data-panel="leads" hidden>
         <div class="bar">
           <div class="chips" data-filters></div>
           <input type="search" placeholder="Поиск: имя, контакт, текст" data-search />
         </div>
-        <div class="table"><table><thead><tr><th>#</th><th>Дата</th><th>Статус</th><th>Клиент</th><th>Что нужно</th><th>Бюджет</th><th>Закрывающий</th><th>Срок</th><th>Откуда</th></tr></thead><tbody data-leads></tbody></table></div>
+        <div class="table"><table><thead><tr><th>#</th><th>Дата</th><th>Этап</th><th>Клиент</th><th>Что нужно</th><th>Бюджет</th><th>Менеджер</th><th>Срок</th><th>Откуда</th></tr></thead><tbody data-leads></tbody></table></div>
       </section>
 
-      <section data-panel="closers" hidden>
-        <p class="hint">Заявки агентства видят только одобренные вами партнёры. Перед одобрением прочитайте анкету и питч. Рейтинг 1–5 ставите после каждой сделки: от рейтинга и побед зависит, сколько заявок партнёр может держать одновременно (2 → 3 → 5). Два пропущенных срока за 30 дней — автоматическая пауза.</p>
+      <section data-panel="team" hidden>
+        <p class="hint">Менеджеры клиентов — партнёры с хорошим английским, которых вы одобрили. Они видят только своих клиентов и описания новых заявок. Оценка 1–5 после каждого клиента: от неё зависит, сколько клиентов менеджер ведёт одновременно (2 → 3 → 5). Два пропущенных срока за 30 дней — автоматическая пауза.</p>
+        <h2>Менеджеры и анкеты</h2>
         <div data-closers></div>
+        <h2>Все партнёры</h2>
+        <div class="table"><table><thead><tr><th>Имя</th><th>Email</th><th>С</th><th>Пригласил</th><th>Ссылки</th><th>Клики</th><th>Заявки</th><th>Команда</th><th>Менеджер</th></tr></thead><tbody data-partners></tbody></table></div>
       </section>
 
-      <section data-panel="partners" hidden>
-        <div class="table"><table><thead><tr><th>Имя</th><th>Email</th><th>С</th><th>Пригласил</th><th>Ссылки</th><th>Клики</th><th>Заявки</th><th>Команда</th><th>Закрывающий</th></tr></thead><tbody data-partners></tbody></table></div>
+      <section data-panel="pay" hidden>
+        <p class="hint">Начисления появляются сами, когда клиент отмечен «Выиграна» с суммой: менеджеру — 20%, партнёру, чья ссылка привела клиента, — 30%. Выплатите и нажмите «Выплачено» — партнёр сразу увидит это у себя.</p>
+        <div class="kpis" data-pay-kpis></div>
+        <div class="table"><table><thead><tr><th>Партнёр</th><th>Клиент</th><th>За что</th><th>Сделка</th><th>%</th><th>К выплате</th><th>Статус</th><th></th></tr></thead><tbody data-pay></tbody></table></div>
+      </section>
+
+      <section data-panel="cartoon" hidden>
+        <p class="hint">Серии про енота Vax: что готово, что дальше. Видео и превью лежат у вас на Mac в папке «Завод (VAXO) → Мультик». Публикация — после создания аккаунтов TikTok / Instagram / YouTube.</p>
+        <div class="eps" data-eps></div>
+      </section>
+
+      <section data-panel="links" hidden>
+        <div class="linkgrid" data-links></div>
+        <h2>Решения (документы с вариантами и галочками)</h2>
+        <ul class="decisions" data-decisions></ul>
       </section>
 
       <section data-panel="help" hidden class="help">
-        <h2>Путь заявки</h2>
+        <h2>Кто что видит</h2>
+        <div class="table"><table><thead><tr><th>Кто</th><th>Где</th><th>Видит</th><th>Может</th></tr></thead><tbody>
+          <tr><td><b>Вы</b></td><td>vaxogroup.com/admin/ (ключ)</td><td>Всё: заявки, все чаты, партнёров, выплаты, мультик, ссылки</td><td>Публиковать и назначать заявки, писать клиентам, одобрять менеджеров, отмечать выплаты</td></tr>
+          <tr><td><b>Менеджер клиентов</b> (одобренный партнёр)</td><td>Кабинет → «Клиенты агентства»</td><td>Только своих клиентов и описания новых заявок</td><td>Брать клиентов, переписываться от имени Vaxo с подписью «Имя · Account Manager», назначать созвоны, вести этапы</td></tr>
+          <tr><td><b>Партнёр</b></td><td>Кабинет партнёра</td><td>Свои ссылки, клики, заявки, команду, начисления</td><td>Делиться ссылками, учиться, подать анкету менеджера</td></tr>
+          <tr><td><b>Клиент</b></td><td>Личный чат проекта (ссылка после заявки)</td><td>Свой проект: этап, менеджера, переписку</td><td>Писать менеджеру в любое время</td></tr>
+          <tr><td><b>Vax (ИИ)</b></td><td>Чат на сайте</td><td>Вопросы посетителей</td><td>Отвечать, советовать услугу, принимать заявки</td></tr>
+        </tbody></table></div>
+        <h2>Путь клиента</h2>
         <ol>
-          <li><b>Новая</b> — пришла с сайта, из чата Vax или формы. ИИ сам пишет профиль клиента (бизнес, цель, бюджет, вопросы для звонка). Вы проверяете и дополняете.</li>
-          <li><b>Опубликовать</b> — заявка появляется у одобренных закрывающих. Они видят только описание, без контактов.</li>
-          <li><b>Взята</b> — партнёр забрал заявку и получил все данные. На первый контакт — 24 часа.</li>
-          <li><b>Контакт → Встреча → Предложение</b> — на каждый шаг свой срок (72 ч, 5 дней, 10 дней), к каждому шагу обязательный комментарий. Просрочил — заявка сама вернётся в общий список, вам придёт сообщение.</li>
-          <li><b>Выиграна / Проиграна</b> — партнёр указывает сумму или причину. Деньги клиент платит только Vaxo, договор и счёт выставляете вы. Партнёр получает 20% (ставка «тёплый лид»).</li>
+          <li><b>Заявка</b> — с сайта, из чата Vax или по ссылке партнёра. ИИ сам пишет профиль клиента, клиент сразу получает ссылку на свой чат проекта.</li>
+          <li><b>Публикация</b> — вы нажимаете «Опубликовать» (или повторный клиент сам уходит своему менеджеру). Менеджеры видят только описание, без контактов.</li>
+          <li><b>Менеджер берёт клиента</b> — получает контакты и готовое первое сообщение. Первый ответ — за 24 часа.</li>
+          <li><b>Общение</b> — только в чате проекта, вы видите каждое сообщение. Клиент ждёт ответа больше 24 часов — вам сообщение в Telegram.</li>
+          <li><b>Предложение и оплата</b> — договор и счёт от Vaxo, клиент платит только Vaxo.</li>
+          <li><b>Клиент</b> — менеджер ведёт его дальше: поддержка, созвоны, новые заказы. Начисления партнёрам появляются сами.</li>
         </ol>
-        <p><b>Чат проекта.</b> У каждого клиента сразу после заявки есть личный чат (ссылку он получает на экране). Партнёр, который взял клиента, становится его личным менеджером навсегда: продажа, созвоны, поддержка, новые заказы. Вся переписка — в этом чате, вы видите каждое сообщение и можете написать сами. Заметки с 🔒 клиент не видит. Если клиент ждёт ответа больше 24 часов — вам приходит сообщение. Повторная заявка от того же клиента сама уходит его менеджеру.</p>
-        <p>Вы в любой момент можете забрать заявку, отдать её конкретному партнёру или вернуть в список. Каждое действие видно в журнале заявки.</p>
+        <h2>Что работает само, без вас</h2>
+        <ul>
+          <li>Каждый час — проверка сроков: просроченные клиенты возвращаются в общий список, нарушители уходят на паузу.</li>
+          <li>Telegram-сообщения: новая заявка, анкета менеджера, клиент ждёт ответа, сделка выиграна или проиграна.</li>
+          <li>ИИ-профиль каждого нового клиента, ИИ-чат Vax на сайте 24/7.</li>
+        </ul>
       </section>
     </div>
 
     <div class="drawer" data-drawer hidden>
-      <div class="sheet" role="dialog" aria-label="Заявка">
+      <div class="sheet" role="dialog" aria-label="Клиент">
         <button type="button" class="x" data-close aria-label="Закрыть">×</button>
         <div data-detail></div>
       </div>
@@ -71,14 +120,15 @@ import Base from '../layouts/Base.astro';
   const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s)!;
   const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s));
   const ST: Record<string, [string, string]> = {
-    new: ['Новая', 'b'], open: ['В общем списке', 'y'], claimed: ['Взята', 'p'], contacted: ['Контакт', 'p'], meeting: ['Встреча', 'p'],
-    proposal: ['Предложение', 'p'], won: ['Выиграна', 'g'], lost: ['Проиграна', 'r'], archived: ['Архив', 'n'],
+    new: ['Новая', 'b'], open: ['Ждёт менеджера', 'y'], claimed: ['Взята', 'p'], contacted: ['На связи', 'p'], meeting: ['Созвон был', 'p'],
+    proposal: ['Предложение', 'p'], won: ['Клиент ✓', 'g'], lost: ['Проиграна', 'r'], archived: ['Архив', 'n'],
   };
-  const CL: Record<string, string> = { none: '—', applied: 'Анкета', approved: 'Одобрен', paused: 'Пауза' };
+  const CL: Record<string, string> = { none: '—', applied: 'Анкета', approved: 'Менеджер', paused: 'Пауза' };
+  const ACTIVE = ['claimed', 'contacted', 'meeting', 'proposal'];
   let token = '';
-  let data: { leads: R[]; partners: R[]; stats: R[] } = { leads: [], partners: [], stats: [] };
+  let data: R = { leads: [], partners: [], stats: [], payouts: [], hq: {} };
   let filter = 'active';
-  try { token = sessionStorage.getItem(KEY) ?? ''; } catch {}
+  try { token = sessionStorage.getItem(KEY) ?? localStorage.getItem(KEY) ?? ''; } catch {}
 
   const api = async (path: string, body?: unknown) => {
     const r = await fetch('/api/admin' + path, {
@@ -89,24 +139,28 @@ import Base from '../layouts/Base.astro';
     if (r.status === 401) { logout(); throw new Error('auth'); }
     return r.json();
   };
-  const el = (tag: string, attrs: R = {}, ...kids: (Node | string | null | undefined)[]) => {
+  const el = (tag: string, attrs: R = {}, ...kids: (Node | string | null | undefined | false)[]) => {
     const e = document.createElement(tag);
     for (const [k, v] of Object.entries(attrs)) {
-      if (k === 'class') e.className = v; else if (k.startsWith('on')) (e as any)[k] = v; else if (v != null) e.setAttribute(k, String(v));
+      if (k === 'class') e.className = v; else if (k.startsWith('on')) (e as any)[k] = v; else if (v != null && v !== false) e.setAttribute(k, String(v));
     }
-    for (const k of kids) if (k != null) e.append(k);
+    for (const k of kids) if (k != null && k !== false) e.append(k);
     return e;
   };
   const badge = (s: string) => el('span', { class: 'st st-' + (ST[s]?.[1] ?? 'n') }, ST[s]?.[0] ?? s);
-  const when = (iso?: string) => (iso ? new Date(iso.replace(' ', 'T') + 'Z').toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '');
+  const ts = (iso?: string) => (iso ? Date.parse(iso.replace(' ', 'T') + 'Z') : 0);
+  const when = (iso?: string) => (iso ? new Date(ts(iso)).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '');
   const left = (iso?: string) => {
     if (!iso) return '';
-    const h = Math.round((Date.parse(iso.replace(' ', 'T') + 'Z') - Date.now()) / 36e5);
+    const h = Math.round((ts(iso) - Date.now()) / 36e5);
     return h < 0 ? 'просрочено' : h < 24 ? `${h} ч` : `${Math.round(h / 24)} дн`;
   };
+  const usd = (n: number) => '$' + Number(n || 0).toLocaleString('en-US');
+  const waitingReply = (l: R) => l.last_sender === 'client' && Date.now() - ts(l.last_at) > 2 * 36e5;
+  const show = (view: string) => $<HTMLButtonElement>(`[data-view="${view}"]`).click();
 
   function logout() {
-    try { sessionStorage.removeItem(KEY); } catch {}
+    try { sessionStorage.removeItem(KEY); localStorage.removeItem(KEY); } catch {}
     token = '';
     $('[data-app]').hidden = true; $('[data-on]').hidden = true; $('[data-login]').hidden = false;
   }
@@ -115,31 +169,60 @@ import Base from '../layouts/Base.astro';
     if (!token) return logout();
     try { data = await api(''); } catch { return; }
     $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
-    renderKpis(); renderLeads(); renderClosers(); renderPartners();
+    renderToday(); renderInbox(); renderLeads(); renderTeam(); renderPay(); renderCartoon(); renderLinks();
   }
 
-  function renderKpis() {
-    const by = Object.fromEntries(data.stats.map((s) => [s.status, s]));
-    const n = (k: string[]) => k.reduce((a, s) => a + (by[s]?.n ?? 0), 0);
+  const pill = (k: string, n: number) => { const p = $(`[data-n="${k}"]`); p.hidden = !n; p.textContent = String(n); };
+
+  function renderToday() {
+    const L = data.leads as R[];
+    const by = (f: (l: R) => boolean) => L.filter(f).length;
+    const wonUsd = L.filter((l) => l.status === 'won').reduce((a, l) => a + (l.value_usd || 0), 0);
     const tiles: [string, string | number, string][] = [
-      ['Новые', n(['new']), 'Проверить и опубликовать'],
-      ['В общем списке', n(['open']), 'Ждут закрывающего'],
-      ['В работе', n(['claimed', 'contacted', 'meeting', 'proposal']), 'У партнёров'],
-      ['Выиграно', `${n(['won'])} · $${(by.won?.usd ?? 0).toLocaleString('en-US')}`, 'Сделки и сумма'],
-      ['Проиграно', n(['lost']), 'Причины — в журнале'],
+      ['Новые заявки', by((l) => l.status === 'new'), 'проверить и опубликовать'],
+      ['У менеджеров', by((l) => ACTIVE.includes(l.status)), 'в работе сейчас'],
+      ['Клиенты', `${by((l) => l.status === 'won')} · ${usd(wonUsd)}`, 'выиграно, сумма'],
+      ['Менеджеры', data.partners.filter((p: R) => p.closer === 'approved').length, 'одобрены'],
+      ['Партнёры', data.partners.length, 'всего в программе'],
     ];
     $('[data-kpis]').replaceChildren(...tiles.map(([t, v, h]) => el('div', { class: 'kpi' }, el('small', {}, t), el('b', {}, String(v)), el('span', {}, h))));
-    const apps = data.partners.filter((p) => p.closer === 'applied').length;
-    const pill = $('[data-apps]');
-    pill.hidden = !apps; pill.textContent = String(apps);
+    const due = (data.payouts as R[]).filter((p) => p.status === 'due');
+    const todo: [number, string, string, () => void][] = [
+      [by((l) => l.status === 'new'), 'Новые заявки — проверьте профиль и нажмите «Опубликовать»', '📋', () => { filter = 'new'; renderLeads(); show('leads'); }],
+      [by(waitingReply), 'Клиенты ждут ответа', '💬', () => show('chats')],
+      [by((l) => ACTIVE.includes(l.status) && left(l.due_at) === 'просрочено'), 'Просрочен этап у менеджера', '⏰', () => { filter = 'work'; renderLeads(); show('leads'); }],
+      [by((l) => l.status === 'open'), 'Заявки ждут менеджера (никто не взял)', '🙋', () => { filter = 'open'; renderLeads(); show('leads'); }],
+      [data.partners.filter((p: R) => p.closer === 'applied').length, 'Анкеты менеджеров на проверке', '📝', () => show('team')],
+      [due.length, `Выплаты партнёрам к оплате: ${usd(due.reduce((a, p) => a + p.amount_usd, 0))}`, '💸', () => show('pay')],
+    ];
+    const active = todo.filter(([n]) => n > 0);
+    $('[data-todo]').replaceChildren(...(active.length ? active.map(([n, t, i, go]) => el('button', { type: 'button', class: 'todo-i', onclick: go }, el('span', { class: 'ico' }, i), el('b', {}, String(n)), el('span', {}, t), el('span', { class: 'go' }, '→'))) :
+      [el('p', { class: 'ok' }, '✅ Всё под контролем — срочных дел нет.')]));
+    pill('today', active.reduce((a, [n]) => a + n, 0));
+    pill('chats', by(waitingReply));
+    pill('team', data.partners.filter((p: R) => p.closer === 'applied').length);
+    pill('pay', due.length);
+    const hq = data.hq || {};
+    $('[data-tasks]').replaceChildren(...((hq.waiting || []) as string[]).map((t) => el('li', {}, t.replace(/\*\*/g, ''))));
+    $('[data-report]').textContent = (hq.status || '').slice(0, 1600);
+  }
+
+  function renderInbox() {
+    const L = (data.leads as R[]).filter((l) => l.msgs > 0).sort((a, b) => ts(b.last_at) - ts(a.last_at));
+    $('[data-inbox]').replaceChildren(...(L.length ? L.map((l) =>
+      el('button', { type: 'button', class: 'chat-i' + (waitingReply(l) ? ' wait' : ''), onclick: () => openLead(l.id) },
+        el('div', { class: 'who' }, el('b', {}, l.name), ' ', badge(l.status), waitingReply(l) && el('span', { class: 'st st-r' }, 'ждёт ответа')),
+        el('div', { class: 'meta' }, `${l.closer_name ? 'Менеджер: ' + l.closer_name : 'Без менеджера'} · ${when(l.last_at)}`),
+        el('div', { class: 'last' }, `${l.last_sender === 'client' ? l.name : l.last_sender === 'owner' ? 'Vaxo' : l.closer_name || 'Менеджер'}: ${l.last_text || ''}`))) :
+      [el('p', { class: 'mut' }, 'Переписок пока нет. Как только клиент или менеджер напишет в чат проекта — он появится здесь.')]));
   }
 
   const FILTERS: [string, string, (l: R) => boolean][] = [
     ['active', 'Активные', (l) => !['won', 'lost', 'archived'].includes(l.status)],
     ['new', 'Новые', (l) => l.status === 'new'],
-    ['open', 'В списке', (l) => l.status === 'open'],
-    ['work', 'В работе', (l) => ['claimed', 'contacted', 'meeting', 'proposal'].includes(l.status)],
-    ['won', 'Выиграны', (l) => l.status === 'won'],
+    ['open', 'Ждут менеджера', (l) => l.status === 'open'],
+    ['work', 'У менеджеров', (l) => ACTIVE.includes(l.status)],
+    ['won', 'Клиенты', (l) => l.status === 'won'],
     ['lost', 'Проиграны', (l) => l.status === 'lost'],
     ['all', 'Все', () => true],
   ];
@@ -148,38 +231,37 @@ import Base from '../layouts/Base.astro';
       el('button', { type: 'button', 'aria-pressed': String(k === filter), onclick: () => { filter = k; renderLeads(); } }, `${t} ${data.leads.filter(f).length}`)));
     const q = $<HTMLInputElement>('[data-search]').value.trim().toLowerCase();
     const f = FILTERS.find((x) => x[0] === filter)![2];
-    const rows = data.leads.filter(f).filter((l) => !q || [l.name, l.contact, l.message, l.service, l.brief].join(' ').toLowerCase().includes(q));
+    const rows = (data.leads as R[]).filter(f).filter((l) => !q || [l.name, l.contact, l.message, l.service, l.brief].join(' ').toLowerCase().includes(q));
     $('[data-leads]').replaceChildren(...(rows.length ? rows.map((l) =>
-      el('tr', { onclick: () => openLead(l.id), class: l.due_at && left(l.due_at) === 'просрочено' ? 'late' : '' },
+      el('tr', { onclick: () => openLead(l.id), class: ACTIVE.includes(l.status) && left(l.due_at) === 'просрочено' ? 'late' : '' },
         el('td', {}, String(l.id)), el('td', {}, when(l.created_at)), el('td', {}, badge(l.status)),
         el('td', {}, el('b', {}, l.name), l.msgs ? el('span', { class: 'pill dark' }, `💬 ${l.msgs}`) : null, el('br'), el('small', {}, l.contact)),
         el('td', {}, l.service || l.interest || '—'), el('td', {}, l.budget || '—'), el('td', {}, l.closer_name || '—'),
-        el('td', {}, left(l.due_at)), el('td', {}, l.partner_name ? `партнёр ${l.partner_name}` : (l.message || '').startsWith('[Vax chat]') ? 'чат Vax' : 'форма'))) :
+        el('td', {}, ACTIVE.includes(l.status) ? left(l.due_at) : ''), el('td', {}, l.partner_name ? `партнёр ${l.partner_name}` : (l.message || '').startsWith('[Vax chat]') ? 'чат Vax' : 'форма'))) :
       [el('tr', {}, el('td', { colspan: '9', class: 'empty' }, 'Здесь пока пусто'))]));
   }
 
   async function openLead(id: number) {
-    const l = data.leads.find((x) => x.id === id)!;
+    const l = data.leads.find((x: R) => x.id === id)!;
     const { events, messages } = await api(`/lead/${id}`);
-    const closers = data.partners.filter((p) => p.closer === 'approved');
+    const closers = data.partners.filter((p: R) => p.closer === 'approved');
     const field = (label: string, name: string, value: string, area = false) =>
-      el('label', { class: 'f' }, el('span', {}, label), area ? el('textarea', { name, rows: '9' }, value || '') : el('input', { name, value: value || '' }));
-    const statusSel = el('select', { name: 'status' }, ...Object.entries(ST).map(([k, [t]]) => el('option', { value: k, ...(k === l.status ? { selected: '' } : {}) }, t)));
+      el('label', { class: 'f' }, el('span', {}, label), area ? el('textarea', { name, rows: '9' }, value || '') : el('input', { name, value: value ?? '' }));
+    const statusSel = el('select', { name: 'status' }, ...Object.entries(ST).map(([k, [t]]) => el('option', { value: k, selected: k === l.status }, t)));
     const closerSel = el('select', { name: 'closer_id' }, el('option', { value: '' }, '— не назначен —'),
-      ...closers.map((p) => el('option', { value: p.id, ...(p.id === l.closer_id ? { selected: '' } : {}) }, `${p.name} · ★${p.closer_rating ?? '—'} · в работе ${p.active_deals}`)));
+      ...closers.map((p: R) => el('option', { value: p.id, selected: p.id === l.closer_id }, `${p.name} · ★${p.closer_rating ?? '—'} · в работе ${p.active_deals}`)));
     const form = el('form', { class: 'edit' },
       field('Что нужно клиенту', 'service', l.service), field('Бюджет', 'budget', l.budget),
-      field('Профиль клиента для закрывающего (видят партнёры; без контактов — их увидит только тот, кто взял заявку)', 'brief', l.brief, true),
-      el('div', { class: 'two' }, el('label', { class: 'f' }, el('span', {}, 'Статус'), statusSel), el('label', { class: 'f' }, el('span', {}, 'Закрывающий'), closerSel)),
-      field('Сумма сделки, $', 'value_usd', l.value_usd ?? ''),
+      field('Профиль клиента (видят менеджеры; контакты — только тот, кто взял клиента)', 'brief', l.brief, true),
+      el('div', { class: 'two' }, el('label', { class: 'f' }, el('span', {}, 'Этап'), statusSel), el('label', { class: 'f' }, el('span', {}, 'Менеджер'), closerSel)),
+      field('Сумма сделки, $ (для «Клиент ✓» — начисления партнёрам посчитаются сами)', 'value_usd', l.value_usd ?? ''),
       field('Комментарий в журнал', 'note', ''),
       el('div', { class: 'btns' },
         el('button', { class: 'cta', type: 'submit' }, 'Сохранить'),
-        l.status === 'new' ? el('button', { class: 'cta alt', type: 'button', onclick: () => save({ status: 'open' }) }, 'Опубликовать партнёрам') : null,
+        l.status === 'new' && el('button', { class: 'cta alt', type: 'button', onclick: () => save({ status: 'open' }) }, 'Опубликовать менеджерам'),
         el('button', { class: 'ghost', type: 'button', onclick: () => save({ status: 'archived' }) }, 'В архив')));
     async function save(extra: R = {}) {
-      const fd = new FormData(form as HTMLFormElement);
-      const b: R = Object.fromEntries(fd.entries());
+      const b: R = Object.fromEntries(new FormData(form as HTMLFormElement).entries());
       if (b.closer_id === String(l.closer_id ?? '')) delete b.closer_id;
       if (b.status === l.status) delete b.status;
       if (b.value_usd === String(l.value_usd ?? '')) delete b.value_usd;
@@ -189,61 +271,84 @@ import Base from '../layouts/Base.astro';
     }
     form.addEventListener('submit', (e) => { e.preventDefault(); save(); });
     const thread = el('div', { class: 'thread' }, ...(messages.length ? messages.map((m: R) => el('div', { class: `m ${m.sender === 'client' ? 'them' : 'us'} k-${m.kind}` },
-      el('small', {}, `${m.sender === 'client' ? l.name : m.sender === 'owner' ? 'Вы (Vaxo)' : m.partner_name || 'менеджер'}${m.kind === 'note' ? ' · 🔒 заметка' : m.kind === 'call' ? ' · 📅 созвон' : ''} · ${when(m.at)}`),
+      el('small', {}, `${m.sender === 'client' ? l.name : m.sender === 'owner' ? 'Вы (Vaxo Team)' : (m.partner_name || 'менеджер') + ' · Account Manager'}${m.kind === 'note' ? ' · 🔒 заметка' : m.kind === 'call' ? ' · 📅 созвон' : ''} · ${when(m.at)}`),
       el('div', {}, m.text))) : [el('p', { class: 'mut' }, 'Сообщений пока нет.')]));
-    const msgKind = el('select', {}, el('option', { value: 'text' }, 'Клиенту (от имени Vaxo)'), el('option', { value: 'note' }, '🔒 Заметка для менеджера'));
-    const msgText = el('textarea', { rows: '3', placeholder: 'Сообщение…' });
+    const msgKind = el('select', {}, el('option', { value: 'text' }, 'Клиенту (подпись «Vaxo Team»)'), el('option', { value: 'note' }, '🔒 Заметка для менеджера'));
+    const msgText = el('textarea', { rows: '3', placeholder: 'Сообщение… (клиенту пишите на его языке)' });
     const composer = el('div', { class: 'composer' }, msgKind, msgText, el('button', { class: 'cta', type: 'button', onclick: async () => {
       const text = (msgText as HTMLTextAreaElement).value.trim();
       if (!text) return;
       await api(`/lead/${id}/msg`, { kind: (msgKind as HTMLSelectElement).value, text });
-      openLead(id);
+      await load(); openLead(id);
     } }, 'Отправить'));
     requestAnimationFrame(() => (thread.scrollTop = thread.scrollHeight));
     $('[data-detail]').replaceChildren(
       el('h2', {}, `#${l.id} · ${l.name}`, ' ', badge(l.status)),
       el('dl', {},
         el('dt', {}, 'Контакт'), el('dd', {}, l.contact),
-        el('dt', {}, 'Пришла'), el('dd', {}, `${when(l.created_at)} · ${l.lang?.toUpperCase()} · ${l.country ?? ''} · ${l.page ?? ''}`),
-        el('dt', {}, 'Интерес'), el('dd', {}, l.interest || '—'),
+        el('dt', {}, 'Пришла'), el('dd', {}, `${when(l.created_at)} · ${l.lang?.toUpperCase()} · ${l.country ?? ''}`),
+        el('dt', {}, 'Менеджер'), el('dd', {}, l.closer_name ?? '—'),
         el('dt', {}, 'Привёл'), el('dd', {}, l.partner_name ?? '—')),
+      el('h3', {}, 'Переписка'),
+      el('p', { class: 'mut' }, el('a', { href: `/room/?t=${l.room}`, target: '_blank' }, 'Открыть чат как видит клиент ↗'), ' · 🔒 — заметки, клиент их не видит'),
+      thread, composer,
       el('details', {}, el('summary', {}, 'Первая заявка / диалог с Vax'), el('pre', {}, l.message || '—')),
-      el('h3', {}, 'Переписка с клиентом'),
-      el('p', { class: 'mut' }, 'Чат клиента: ', el('a', { href: `/room/?t=${l.room}`, target: '_blank' }, 'открыть как клиент'), ' · 🔒 — внутренние заметки, клиент их не видит'),
-      thread,
-      composer,
-      el('h3', {}, 'Карточка'),
-      form,
+      el('h3', {}, 'Карточка'), form,
       el('h3', {}, 'Журнал'),
-      el('ol', { class: 'log' }, ...events.map((e: R) => el('li', {}, el('small', {}, `${when(e.at)} · ${e.actor === 'owner' ? 'вы' : e.actor === 'system' ? 'система' : 'партнёр'}`), el('div', {}, e.text || e.kind)))));
+      el('ol', { class: 'log' }, ...events.map((e: R) => el('li', {}, el('small', {}, `${when(e.at)} · ${e.actor === 'owner' ? 'вы' : e.actor === 'system' ? 'система' : 'менеджер'}`), el('div', {}, e.text || e.kind)))));
     $('[data-drawer]').hidden = false;
   }
 
-  function renderClosers() {
-    const list = data.partners.filter((p) => p.closer !== 'none');
+  function renderTeam() {
+    const list = (data.partners as R[]).filter((p) => p.closer !== 'none');
     $('[data-closers]').replaceChildren(...(list.length ? list.map((p) => {
       let app: R = {};
       try { app = JSON.parse(p.closer_app || '{}'); } catch {}
-      const sel = el('select', {}, ...Object.entries(CL).map(([k, t]) => el('option', { value: k, ...(k === p.closer ? { selected: '' } : {}) }, t)));
-      const rating = el('input', { type: 'number', min: '1', max: '5', step: '0.5', value: p.closer_rating ?? '', placeholder: '★' });
+      const sel = el('select', {}, ...Object.entries(CL).map(([k, t]) => el('option', { value: k, selected: k === p.closer }, t)));
+      const rating = el('input', { type: 'number', min: '1', max: '5', step: '0.5', value: p.closer_rating ?? '', placeholder: '★ 1–5' });
       const note = el('input', { value: p.closer_note ?? '', placeholder: 'Заметка для себя' });
       return el('article', { class: 'card' },
         el('h3', {}, `${p.name} `, el('span', { class: 'st st-' + (p.closer === 'approved' ? 'g' : p.closer === 'applied' ? 'b' : 'r') }, CL[p.closer])),
         el('p', { class: 'mut' }, `${p.email} · английский: ${app.english || '—'} · ${app.timezone || ''} ${app.hours || ''}`),
-        el('p', {}, `В работе: ${p.active_deals} · выиграно: ${p.won} ($${Number(p.won_usd).toLocaleString('en-US')}) · рейтинг: ${p.closer_rating ?? '—'}`),
-        app.profile ? el('p', {}, el('a', { href: /^https?:/.test(app.profile) ? app.profile : '#', target: '_blank', rel: 'noopener' }, app.profile)) : null,
-        el('details', {}, el('summary', {}, 'Анкета и питч'), el('p', {}, el('b', {}, 'Опыт: '), app.experience || '—'), el('p', {}, el('b', {}, 'Питч: '), app.pitch || '—')),
+        el('p', {}, `В работе: ${p.active_deals} · клиентов: ${p.won} (${usd(p.won_usd)}) · оценка: ${p.closer_rating ?? '—'}`),
+        app.profile && el('p', {}, el('a', { href: /^https?:/.test(app.profile) ? app.profile : '#', target: '_blank', rel: 'noopener' }, app.profile)),
+        el('details', { open: p.closer === 'applied' }, el('summary', {}, 'Анкета и тестовый ответ клиенту'), el('p', {}, el('b', {}, 'Опыт: '), app.experience || '—'), el('p', {}, el('b', {}, 'Ответ клиенту: '), app.pitch || '—')),
         el('div', { class: 'two' }, sel, rating), note,
         el('button', { class: 'cta', type: 'button', onclick: async () => {
           await api(`/partner/${p.id}`, { closer: (sel as HTMLSelectElement).value, rating: (rating as HTMLInputElement).value || null, note: (note as HTMLInputElement).value });
           load();
         } }, 'Сохранить'));
-    }) : [el('p', { class: 'mut' }, 'Анкет пока нет. Партнёры подают их в кабинете → «Заявки агентства».')]));
+    }) : [el('p', { class: 'mut' }, 'Анкет пока нет. Партнёры подают их в кабинете → «Клиенты агентства».')]));
+    $('[data-partners]').replaceChildren(...(data.partners as R[]).map((p) =>
+      el('tr', {}, ...[p.name, p.email, when(p.created_at), p.invited_by ?? '—', p.links, p.clicks, p.leads, p.team, CL[p.closer] ?? '—'].map((c) => el('td', {}, String(c ?? ''))))));
   }
 
-  function renderPartners() {
-    $('[data-partners]').replaceChildren(...data.partners.map((p) =>
-      el('tr', {}, ...[p.name, p.email, when(p.created_at), p.invited_by ?? '—', p.links, p.clicks, p.leads, p.team, CL[p.closer] ?? '—'].map((c) => el('td', {}, String(c ?? ''))))));
+  function renderPay() {
+    const P = data.payouts as R[];
+    const sum = (s: string) => P.filter((p) => p.status === s).reduce((a, p) => a + p.amount_usd, 0);
+    $('[data-pay-kpis]').replaceChildren(
+      el('div', { class: 'kpi' }, el('small', {}, 'К выплате'), el('b', {}, usd(sum('due'))), el('span', {}, `${P.filter((p) => p.status === 'due').length} начислений`)),
+      el('div', { class: 'kpi' }, el('small', {}, 'Выплачено'), el('b', {}, usd(sum('paid'))), el('span', {}, 'за всё время')));
+    $('[data-pay]').replaceChildren(...(P.length ? P.map((p) => el('tr', {},
+      el('td', {}, el('b', {}, p.partner), el('br'), el('small', {}, p.partner_email)), el('td', {}, p.client),
+      el('td', {}, p.kind === 'manager' ? 'вёл клиента' : 'привёл клиента'), el('td', {}, usd(p.base_usd)), el('td', {}, `${p.rate}%`), el('td', {}, el('b', {}, usd(p.amount_usd))),
+      el('td', {}, p.status === 'paid' ? el('span', { class: 'st st-g' }, `выплачено ${when(p.paid_at)}`) : p.status === 'due' ? el('span', { class: 'st st-y' }, 'к выплате') : el('span', { class: 'st st-n' }, 'отменено')),
+      el('td', {}, p.status === 'due' && el('button', { class: 'cta', type: 'button', onclick: async () => { await api(`/payout/${p.id}`, { status: 'paid' }); load(); } }, 'Выплачено')))) :
+      [el('tr', {}, el('td', { colspan: '8', class: 'empty' }, 'Начислений пока нет — они появятся с первым клиентом.'))]));
+  }
+
+  function renderCartoon() {
+    const eps = ((data.hq || {}).episodes || []) as R[];
+    $('[data-eps]').replaceChildren(...eps.map((e) => el('article', { class: 'card' },
+      el('h3', {}, `Серия ${e.n}: ${e.title}`), el('p', {}, el('span', { class: 'st st-' + (/готова/.test(e.status) ? 'g' : 'b') }, e.status), ' ', e.published ? el('span', { class: 'st st-g' }, 'опубликована') : el('span', { class: 'st st-n' }, 'не опубликована')),
+      el('p', { class: 'mut' }, `Реклама внутри: ${e.topic}`), el('p', { class: 'mut' }, `Файл: ${e.file}${e.previews ? ' · превью: ' + e.previews : ''}`), el('p', {}, el('b', {}, 'Дальше: '), e.next))));
+  }
+
+  function renderLinks() {
+    const hq = data.hq || {};
+    $('[data-links]').replaceChildren(...((hq.links || []) as R[]).map((g) => el('div', { class: 'card' }, el('h3', {}, g.group),
+      el('ul', {}, ...g.items.map((i: R) => el('li', {}, el('a', { href: i.url, target: '_blank', rel: 'noopener' }, i.t)))))));
+    $('[data-decisions]').replaceChildren(...((hq.decisions || []) as R[]).map((d) => el('li', {}, el('a', { href: d.url, target: '_blank', rel: 'noopener' }, d.t))));
   }
 
   $$<HTMLButtonElement>('[data-view]').forEach((b) => b.addEventListener('click', () => {
@@ -259,40 +364,54 @@ import Base from '../layouts/Base.astro';
   $<HTMLFormElement>('[data-login]').addEventListener('submit', (e) => {
     e.preventDefault();
     token = String(new FormData(e.currentTarget as HTMLFormElement).get('token') ?? '');
-    try { sessionStorage.setItem(KEY, token); } catch {}
+    // Remembered on this device so the owner does not paste the key every time.
+    try { localStorage.setItem(KEY, token); } catch {}
     load();
   });
   load();
+  setInterval(() => { if (!document.hidden && token && $('[data-drawer]').hidden) load(); }, 60000);
 </script>
 
 <style is:global>
-  .adm { max-width: 1280px; margin: 0 auto; padding: 24px 16px 80px; font-family: var(--font); color: var(--ink); }
-  .adm .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
-  .adm h1 { margin: 0; font-size: 26px; }
+  .adm { max-width: 1280px; margin: 0 auto; padding: 20px 16px 80px; font-family: var(--font); color: var(--ink); }
+  .adm .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .adm h1 { margin: 0; font-size: 26px; } .adm h1 span { color: var(--mut); font-weight: 500; }
+  .adm h2 { font-size: 18px; margin: 22px 0 10px; }
   .adm .top-r { display: flex; gap: 8px; }
-  .adm .login { display: flex; gap: 8px; max-width: 420px; }
+  .adm .login { display: flex; flex-direction: column; gap: 10px; max-width: 420px; }
   .adm input, .adm select, .adm textarea { font: 15px var(--font); color: var(--ink); background: var(--surf); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; width: 100%; box-sizing: border-box; }
-  .adm textarea { font-family: var(--font); line-height: 1.45; resize: vertical; }
   .adm .cta { background: var(--acc); color: var(--dark-ink); border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 700; cursor: pointer; white-space: nowrap; }
   .adm .cta.alt { background: var(--ink); color: var(--bg); }
   .adm .ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 9px 14px; cursor: pointer; }
-  .adm .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 18px; }
+  .adm .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 8px; }
   .adm .kpi { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 2px; }
-  .adm .kpi small, .adm .kpi span { color: var(--mut); font-size: 12px; }
-  .adm .kpi b { font-size: 24px; }
+  .adm .kpi small, .adm .kpi span { color: var(--mut); font-size: 12px; } .adm .kpi b { font-size: 24px; }
   .adm .tabs, .adm .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-  .adm .tabs { margin-bottom: 14px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+  .adm .tabs { margin-bottom: 16px; border-bottom: 1px solid var(--line); padding-bottom: 10px; position: sticky; top: 0; background: var(--bg); z-index: 5; padding-top: 6px; }
   .adm .tabs button, .adm .chips button { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 7px 13px; cursor: pointer; font: 600 14px var(--font); }
   .adm [aria-pressed='true'] { background: var(--ink) !important; color: var(--bg) !important; }
   .adm .pill { background: var(--error); color: #fff; border-radius: 999px; padding: 0 7px; font-size: 12px; margin-left: 4px; }
+  .adm .pill[hidden] { display: none; }
+  .adm .pill.dark { background: var(--ink); color: var(--bg); }
+  .adm .todo { display: flex; flex-direction: column; gap: 8px; }
+  .adm .todo-i { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 12px; background: var(--surf); border: 1px solid var(--line); border-left: 4px solid var(--acc); border-radius: 12px; padding: 12px 14px; cursor: pointer; }
+  .adm .todo-i:hover { border-color: var(--acc); }
+  .adm .todo-i b { font-size: 20px; min-width: 28px; } .adm .todo-i .ico { font-size: 20px; } .adm .todo-i .go { margin-left: auto; color: var(--accText); font-size: 20px; }
+  .adm .ok { background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin: 0; }
+  .adm .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+  .adm .tasks { padding-left: 20px; line-height: 1.5; display: flex; flex-direction: column; gap: 6px; }
+  .adm .report { white-space: pre-wrap; font: 13px/1.5 var(--font); background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 12px; max-height: 420px; overflow: auto; }
+  .adm .inbox { display: flex; flex-direction: column; gap: 8px; }
+  .adm .chat-i { all: unset; box-sizing: border-box; background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+  .adm .chat-i.wait { border-left: 4px solid var(--error); }
+  .adm .chat-i .meta { font-size: 12px; color: var(--mut); } .adm .chat-i .last { font-size: 14px; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .adm .bar { display: flex; gap: 10px; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
   .adm .bar input { max-width: 300px; }
   .adm .table { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surf); }
   .adm table { width: 100%; border-collapse: collapse; font-size: 14px; }
   .adm th { text-align: left; font-size: 12px; color: var(--mut); font-weight: 600; padding: 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
   .adm td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  .adm tbody tr { cursor: pointer; }
-  .adm tbody tr:hover { background: var(--bg); }
+  .adm [data-leads] tr { cursor: pointer; } .adm [data-leads] tr:hover { background: var(--bg); }
   .adm tr.late td { background: color-mix(in srgb, var(--error) 10%, transparent); }
   .adm .empty { text-align: center; color: var(--mut); padding: 30px; }
   .adm .st { display: inline-block; border-radius: 999px; padding: 2px 9px; font-size: 12px; font-weight: 700; white-space: nowrap; }
@@ -301,11 +420,15 @@ import Base from '../layouts/Base.astro';
   .adm .hint, .adm .mut { color: var(--mut); }
   .adm .card { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
   .adm .card h3, .adm .card p { margin: 0; }
+  .adm .card ul { margin: 0; padding-left: 18px; line-height: 1.7; }
+  .adm .eps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 12px; }
+  .adm .linkgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 12px; }
+  .adm .decisions { line-height: 1.8; }
   .adm .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .adm .help { max-width: 760px; line-height: 1.6; }
+  .adm .help { max-width: 980px; line-height: 1.6; }
   .adm .drawer { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.35); z-index: 80; display: flex; justify-content: flex-end; }
   .adm .drawer[hidden] { display: none; }
-  .adm .sheet { width: min(640px, 100vw); height: 100dvh; overflow-y: auto; background: var(--bg); padding: 22px 20px 60px; box-sizing: border-box; position: relative; }
+  .adm .sheet { width: min(680px, 100vw); height: 100dvh; overflow-y: auto; background: var(--bg); padding: 22px 20px 60px; box-sizing: border-box; position: relative; }
   .adm .x { position: absolute; top: 10px; right: 12px; border: 0; background: none; font-size: 28px; cursor: pointer; color: var(--ink); }
   .adm .sheet h2 { margin: 0 30px 12px 0; font-size: 22px; }
   .adm dl { display: grid; grid-template-columns: 90px 1fr; gap: 4px 10px; margin: 0 0 12px; font-size: 14px; }
@@ -316,7 +439,6 @@ import Base from '../layouts/Base.astro';
   .adm .btns { display: flex; gap: 8px; flex-wrap: wrap; }
   .adm .log { padding-left: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 8px; }
   .adm .log small { color: var(--mut); }
-  .adm .pill.dark { background: var(--ink); color: var(--bg); }
   .adm .thread { max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
   .adm .thread .m { max-width: 85%; padding: 8px 11px; border-radius: 14px; font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; display: flex; flex-direction: column; gap: 2px; }
   .adm .thread .m small { font-size: 11px; color: var(--mut); }

@@ -2,6 +2,8 @@
 import type { DB } from './partner.js';
 import { ownerLead, ownerOverview, ownerUpdateLead, ownerUpdatePartner, type Notify } from './deals.js';
 import { staffMessage } from './rooms.js';
+import { allPayouts, setPayout } from './payouts.js';
+import HQ from './hq.json';
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -17,7 +19,12 @@ function authorized(request: Request, token: string | undefined): boolean {
 /** /api/admin, /api/admin/lead/<id>, /api/admin/partner/<id> */
 export async function handleAdminApi(db: DB, request: Request, token: string | undefined, path: string, notify: Notify): Promise<Response> {
   if (!authorized(request, token)) return json(401, { ok: false });
-  if (path === '' && request.method === 'GET') return json(200, { ok: true, ...(await ownerOverview(db, notify)) });
+  if (path === '' && request.method === 'GET') return json(200, { ok: true, ...(await ownerOverview(db, notify)), payouts: await allPayouts(db), hq: HQ });
+  const pay = path.match(/^payout\/(\d+)$/);
+  if (pay && request.method === 'POST') {
+    const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    return json((await setPayout(db, Number(pay[1]), String(b.status))) ? 200 : 400, { ok: true });
+  }
   const mm = path.match(/^lead\/(\d+)\/msg$/);
   if (mm && request.method === 'POST') {
     const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;

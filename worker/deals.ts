@@ -4,6 +4,7 @@
 import type { DB } from './partner.js';
 import type { AiBinding } from './chat.js';
 import { roomMessages, staffMessage, unansweredAlerts } from './rooms.js';
+import { createPayouts, partnerPayouts } from './payouts.js';
 
 export type Notify = (text: string) => Promise<void>;
 
@@ -127,7 +128,7 @@ export async function handleDealsApi(db: DB, request: Request, me: Me, path: str
     const active = mine.results.filter((l) => ['claimed', 'contacted', 'meeting', 'proposal'].includes(String(l.status))).length;
     const messages = [];
     for (const id of ids.slice(0, 30)) for (const m of await roomMessages(db, id, true)) messages.push({ ...m, lead_id: id });
-    return json(200, { ok: true, closer, rating: p?.closer_rating ?? null, limit, active, open, mine: mine.results, events, messages, sla: SLA_HOURS });
+    return json(200, { ok: true, closer, rating: p?.closer_rating ?? null, limit, active, open, mine: mine.results, events, messages, payouts: await partnerPayouts(db, me.id), sla: SLA_HOURS });
   }
 
   const msg = path.match(/^deals\/(\d+)\/(msg|seen)$/);
@@ -180,6 +181,7 @@ export async function handleDealsApi(db: DB, request: Request, me: Me, path: str
       .bind(to, value, id)
       .run();
     await logEvent(db, id, `partner:${me.id}`, 'status', `${to}: ${note}`);
+    if (to === 'won') await createPayouts(db, id);
     await notify(`${to === 'won' ? '🏆' : to === 'lost' ? '❌' : '➡️'} Lead #${id} → ${to}${value ? ` ($${value})` : ''} by ${me.name}: ${note.slice(0, 300)}`);
     return json(200, { ok: true });
   }
@@ -196,6 +198,9 @@ export async function ownerOverview(db: DB, notify: Notify) {
         `SELECT d.id, d.created_at, d.mode, d.status, d.name, d.contact, d.interest, d.message, d.lang, d.country, d.page, d.ref,
            d.service, d.budget, d.brief, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at, d.room,
            (SELECT COUNT(*) FROM messages m WHERE m.lead_id = d.id) AS msgs,
+           (SELECT m.at FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY m.id DESC LIMIT 1) AS last_at,
+           (SELECT m.sender FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY m.id DESC LIMIT 1) AS last_sender,
+           (SELECT substr(m.text, 1, 120) FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY m.id DESC LIMIT 1) AS last_text,
            c.name AS closer_name, p.name AS partner_name
          FROM leads d LEFT JOIN partners c ON c.id = d.closer_id
            LEFT JOIN links l ON l.slug = d.ref LEFT JOIN partners p ON p.id = l.partner_id
@@ -261,6 +266,7 @@ export async function ownerUpdateLead(db: DB, id: number, b: Record<string, unkn
     await logEvent(db, id, 'owner', 'note', note);
   }
   if (sets.length && !status && !note) await logEvent(db, id, 'owner', 'edit', 'Profile updated');
+  await createPayouts(db, id);
   return true;
 }
 
