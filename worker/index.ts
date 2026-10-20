@@ -102,6 +102,12 @@ export default {
               await logEvent(db, id, 'system', 'note', 'Request received from the site');
               await bindReturningClient(db, id, l.contact, notify);
               // Vax greets first (the client is looking at the chat right now), then the brief and triage.
+              // Gift waitlist: Vax talks to them, but it is not a sales lead for managers.
+              if (l.interest?.startsWith('gift-') && l.interest !== 'gift-business') {
+                await db.prepare(`UPDATE leads SET status = 'gift' WHERE id = ?`).bind(id).run();
+                await aiReply(db, env.AI, id, notify, { greet: true });
+                return;
+              }
               await aiReply(db, env.AI, id, notify, { greet: true });
               await draftBrief(db, env.AI, id);
               await triageLead(db, env.AI, id, notify);

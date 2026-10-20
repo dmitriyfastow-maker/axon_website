@@ -54,7 +54,7 @@ First request: ${(l.message || '').slice(0, 600)}
 Known brief: ${(l.brief || '—').slice(0, 1200)}
 Communication profile: ${l.profile || 'unknown yet — mirror their style'}
 Deal status: ${l.status}${l.stage ? `. Project stage: ${STAGE_TEXT[l.stage] ?? l.stage}${l.stage_due ? `, expected by ${l.stage_due.slice(0, 10)}` : ''}` : ''}.
-${extra}
+${l.interest?.startsWith('gift-') && l.interest !== 'gift-business' ? `GIFT WAITLIST: this person joined the waitlist for a personal cartoon gift with Vax & Roxy (video card $7.99, personal scene $19–39, mini-series $79–129). Orders and payment are NOT open yet: never take an order, payment or deadline. Thank them, ask the occasion, names and date if missing, and say we write to them first when orders open. Do not offer websites or other services unless they ask.\n` : ''}${extra}
 FACTS:
 ${FACTS}`;
 }
@@ -71,7 +71,7 @@ Standard terms you may agree yourself:
 - Agencies and freelancers: white-label (we build, they resell under their brand) or referral commission; their clients stay theirs, we never sell to their clients the service they provide. White-label prices are agreed individually.
 - Job seekers: managers apply in the partner cabinet (Clients tab); other roles: collect portfolio and rate.
 Be realistic about money: compare any price they ask with the market and say honestly if it is high. Never promise income, views or results.
-Set "human" (short reason, English) when they ask us to PAY anything (fees, paid posts, ads, salary), want exclusivity, a contract, a discount or white-label prices, or it is a big brand deal — tell them the founder will review and answer in this chat.
+Set "human" (short reason, English) when they ask us to PAY anything (fees, paid posts, ads, salary), want exclusivity, a contract, a discount or white-label prices, or it is a big brand deal — tell them the Vaxo team will review it and answer in this chat.
 Set "brief" to a one-line summary of the proposal when you learn something new, else null.
 Return ONLY JSON: {"reply": "...", "human": null, "brief": null}
 FROM: ${l.name}. Type: ${l.interest || '?'}.
@@ -163,7 +163,7 @@ export async function aiFollowups(db: DB, ai: AiBinding | undefined, notify: Not
       `SELECT d.id, d.status, d.stage, d.followups, (SELECT MAX(at) FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note') AS last_at,
               (SELECT sender FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY id DESC LIMIT 1) AS last_sender,
               (SELECT MAX(at) FROM lead_events e WHERE e.lead_id = d.id AND e.kind = 'status' AND e.text LIKE 'stage: delivered%') AS delivered_at
-       FROM leads d WHERE d.ai = 'on' AND d.status NOT IN ('lost', 'archived', 'collab') AND d.followups < 3 ORDER BY d.id DESC LIMIT 40`,
+       FROM leads d WHERE d.ai = 'on' AND d.status NOT IN ('lost', 'archived', 'collab', 'gift') AND d.followups < 3 ORDER BY d.id DESC LIMIT 40`,
     )
     .all<{ id: number; status: string; stage: string | null; followups: number; last_at: string | null; last_sender: string | null; delivered_at: string | null }>();
   const ago = (iso: string | null) => (iso ? (Date.now() - Date.parse(iso.replace(' ', 'T') + 'Z')) / 864e5 : 0);

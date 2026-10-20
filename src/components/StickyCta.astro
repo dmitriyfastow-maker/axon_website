@@ -19,6 +19,8 @@ const { t } = Astro.props;
     const tick = () => {
       const nearForm = !!form && form.getBoundingClientRect().top < window.innerHeight;
       bar.hidden = window.scrollY < 600 || nearForm;
+      // The chat teaser bubble would sit on top of the bar: hide it while the bar is shown.
+      document.body.classList.toggle('has-sticky-cta', !bar.hidden);
     };
     window.addEventListener('scroll', tick, { passive: true });
     tick();
