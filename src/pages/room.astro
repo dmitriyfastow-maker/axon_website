@@ -2,9 +2,9 @@
 // The client's private project chat: vaxogroup.com/room/?t=<room>. Language follows the client's request.
 import Base from '../layouts/Base.astro';
 const T = {
-  en: { h: 'Your project with Vaxo', role: 'Account Manager, Vaxo', steps: ['Request received', 'Talking with your manager', 'Proposal', 'Working together'], mgrWait: 'Your manager is being assigned', reply: 'Replies within 24 hours', mgr: 'Your manager', wait: 'Your personal manager will join this chat within 24 hours.', ph: 'Write a message…', send: 'Send', save: 'Save this page — it is your private project chat. Everything about your project stays here.', copy: 'Copy link', copied: 'Copied', team: 'Vaxo team', you: 'You', call: 'Call', bad: 'This chat link is not valid. Write to us at vaxogroup.com.', err: 'Not sent. Try again.', hello: 'Hi {name}! This is your project chat. Write your questions here at any time — a manager replies within 24 hours.' },
-  ru: { h: 'Ваш проект с Vaxo', role: 'Account Manager, Vaxo', steps: ['Заявка получена', 'Общение с менеджером', 'Предложение', 'Работаем вместе'], mgrWait: 'Назначаем вашего менеджера', reply: 'Отвечает в течение 24 часов', mgr: 'Ваш менеджер', wait: 'Личный менеджер подключится к этому чату в течение 24 часов.', ph: 'Напишите сообщение…', send: 'Отправить', save: 'Сохраните эту страницу — это личный чат вашего проекта. Всё о проекте остаётся здесь.', copy: 'Скопировать ссылку', copied: 'Скопировано', team: 'Команда Vaxo', you: 'Вы', call: 'Созвон', bad: 'Ссылка на чат неверная. Напишите нам на vaxogroup.com.', err: 'Не отправилось. Попробуйте ещё раз.', hello: 'Здравствуйте, {name}! Это чат вашего проекта. Пишите сюда вопросы в любое время — менеджер отвечает в течение 24 часов.' },
-  ua: { h: 'Ваш проєкт з Vaxo', role: 'Account Manager, Vaxo', steps: ['Заявку отримано', 'Спілкування з менеджером', 'Пропозиція', 'Працюємо разом'], mgrWait: 'Призначаємо вашого менеджера', reply: 'Відповідає протягом 24 годин', mgr: 'Ваш менеджер', wait: 'Особистий менеджер приєднається до цього чату протягом 24 годин.', ph: 'Напишіть повідомлення…', send: 'Надіслати', save: 'Збережіть цю сторінку — це особистий чат вашого проєкту. Усе про проєкт залишається тут.', copy: 'Скопіювати посилання', copied: 'Скопійовано', team: 'Команда Vaxo', you: 'Ви', call: 'Дзвінок', bad: 'Посилання на чат неправильне. Напишіть нам на vaxogroup.com.', err: 'Не надіслано. Спробуйте ще раз.', hello: 'Вітаємо, {name}! Це чат вашого проєкту. Пишіть сюди питання будь-коли — менеджер відповідає протягом 24 годин.' },
+  en: { h: 'Your project with Vaxo', role: 'Account Manager, Vaxo', steps: ['Request received', 'Your task', 'Proposal', 'In progress', 'Review', 'Delivered'], ai: 'Vax · AI manager', aiSub: 'Replies in seconds, 24/7 · a human joins for calls', stage: { work: 'Your project is in progress', review: 'Ready for your review — see the link above', revisions: 'Applying your revisions', delivered: 'Project delivered' }, until: 'expected by', typing: 'Vax is typing…', mgrWait: 'Your manager is being assigned', reply: 'Replies within 24 hours', mgr: 'Your manager', wait: 'Your personal manager will join this chat within 24 hours.', ph: 'Write a message…', send: 'Send', save: 'Save this page — it is your private project chat. Everything about your project stays here.', copy: 'Copy link', copied: 'Copied', team: 'Vaxo team', you: 'You', call: 'Call', bad: 'This chat link is not valid. Write to us at vaxogroup.com.', err: 'Not sent. Try again.', hello: 'Hi {name}! This is your project chat. Write your questions here at any time — a manager replies within 24 hours.' },
+  ru: { h: 'Ваш проект с Vaxo', role: 'Account Manager, Vaxo', steps: ['Заявка получена', 'Ваша задача', 'Предложение', 'В работе', 'Проверка', 'Сдано'], ai: 'Vax · ИИ-менеджер', aiSub: 'Отвечает за секунды, 24/7 · человек подключается на созвон', stage: { work: 'Проект в работе', review: 'Готово к проверке — ссылка выше', revisions: 'Вносим ваши правки', delivered: 'Проект сдан' }, until: 'ожидаемая дата', typing: 'Vax печатает…', mgrWait: 'Назначаем вашего менеджера', reply: 'Отвечает в течение 24 часов', mgr: 'Ваш менеджер', wait: 'Личный менеджер подключится к этому чату в течение 24 часов.', ph: 'Напишите сообщение…', send: 'Отправить', save: 'Сохраните эту страницу — это личный чат вашего проекта. Всё о проекте остаётся здесь.', copy: 'Скопировать ссылку', copied: 'Скопировано', team: 'Команда Vaxo', you: 'Вы', call: 'Созвон', bad: 'Ссылка на чат неверная. Напишите нам на vaxogroup.com.', err: 'Не отправилось. Попробуйте ещё раз.', hello: 'Здравствуйте, {name}! Это чат вашего проекта. Пишите сюда вопросы в любое время — менеджер отвечает в течение 24 часов.' },
+  ua: { h: 'Ваш проєкт з Vaxo', role: 'Account Manager, Vaxo', steps: ['Заявку отримано', 'Ваше завдання', 'Пропозиція', 'В роботі', 'Перевірка', 'Здано'], ai: 'Vax · ШІ-менеджер', aiSub: 'Відповідає за секунди, 24/7 · людина підключається на дзвінок', stage: { work: 'Проєкт у роботі', review: 'Готово до перевірки — посилання вище', revisions: 'Вносимо ваші правки', delivered: 'Проєкт здано' }, until: 'очікувана дата', typing: 'Vax друкує…', mgrWait: 'Призначаємо вашого менеджера', reply: 'Відповідає протягом 24 годин', mgr: 'Ваш менеджер', wait: 'Особистий менеджер приєднається до цього чату протягом 24 годин.', ph: 'Напишіть повідомлення…', send: 'Надіслати', save: 'Збережіть цю сторінку — це особистий чат вашого проєкту. Усе про проєкт залишається тут.', copy: 'Скопіювати посилання', copied: 'Скопійовано', team: 'Команда Vaxo', you: 'Ви', call: 'Дзвінок', bad: 'Посилання на чат неправильне. Напишіть нам на vaxogroup.com.', err: 'Не надіслано. Спробуйте ще раз.', hello: 'Вітаємо, {name}! Це чат вашого проєкту. Пишіть сюди питання будь-коли — менеджер відповідає протягом 24 годин.' },
 };
 ---
 
@@ -31,13 +31,20 @@ const T = {
     const $ = <E extends Element = HTMLElement>(s: string) => document.querySelector<E>(s)!;
     let T = ALL.en;
     let count = -1;
+    let last: R | undefined;
     const when = (iso: string) => new Date(iso.replace(' ', 'T') + 'Z').toLocaleString(undefined, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
     const bubble = (m: R, d: R) => {
       const me = m.sender === 'client';
       const el = document.createElement('div');
+      const sm = typeof m.text === 'string' && m.sender === 'system' ? m.text.match(/^stage:(\w+)(?::(\d{4}-\d{2}-\d{2}))?$/) : null;
+      if (sm) {
+        el.className = 'm stage';
+        el.textContent = `${T.stage[sm[1]] || sm[1]}${sm[2] ? ` · ${T.until} ${new Date(sm[2]).toLocaleDateString()}` : ''}`;
+        return el;
+      }
       el.className = 'm ' + (me ? 'me' : 'them') + (m.kind === 'call' ? ' call' : '');
       const who = document.createElement('small');
-      who.textContent = `${me ? T.you : m.partner_name ? m.partner_name + ' · ' + T.role : T.team}${m.kind === 'call' ? ' · ' + T.call : ''} · ${when(m.at)}`;
+      who.textContent = `${me ? T.you : m.sender === 'ai' ? T.ai : m.partner_name ? m.partner_name + ' · ' + T.role : T.team}${m.kind === 'call' ? ' · ' + T.call : ''} · ${when(m.at)}`;
       const body = document.createElement('div');
       body.textContent = m.text;
       // Links in messages (call links, files) are clickable.
@@ -53,7 +60,7 @@ const T = {
       document.documentElement.lang = d.lang === 'ua' ? 'uk' : d.lang;
       $('[data-h]').textContent = T.h;
       $('[data-who]').textContent = '';
-      const stage = ({ new: 0, open: 0, claimed: 1, contacted: 1, meeting: 1, proposal: 2, won: 3 } as Record<string, number>)[d.status] ?? 1;
+      const stage = d.status === 'won' ? ({ work: 3, qa: 3, review: 4, revisions: 4, delivered: 5 } as Record<string, number>)[d.stage] ?? 3 : d.status === 'proposal' ? 2 : d.messages.some((m: R) => m.sender !== 'client') ? 1 : 0;
       $('[data-steps]').replaceChildren(...T.steps.map((s: string, i: number) => {
         const li = document.createElement('li');
         li.className = i < stage ? 'done' : i === stage ? 'now' : '';
@@ -64,21 +71,22 @@ const T = {
       card.replaceChildren();
       const av = document.createElement('span');
       av.className = 'av';
-      av.textContent = d.manager ? d.manager[0].toUpperCase() : 'V';
+      av.textContent = d.ai || !d.manager ? 'V' : d.manager[0].toUpperCase();
       const info = document.createElement('div');
       const b = document.createElement('b');
-      b.textContent = d.manager ? `${d.manager} · ${T.role}` : T.mgrWait;
+      b.textContent = d.ai ? T.ai + (d.manager ? ` + ${d.manager}` : '') : d.manager ? `${d.manager} · ${T.role}` : T.mgrWait;
       const sm = document.createElement('small');
-      sm.textContent = d.manager ? `${T.mgr} · ${T.reply}` : T.reply;
+      sm.textContent = d.ai ? T.aiSub : d.manager ? `${T.mgr} · ${T.reply}` : T.reply;
       info.append(b, sm);
       card.append(av, info);
       $<HTMLTextAreaElement>('textarea').placeholder = T.ph;
       $('[data-save]').textContent = T.save;
       $('[data-copy]').textContent = T.copy;
+      last = d.messages[d.messages.length - 1];
       if (d.messages.length === count) return;
       count = d.messages.length;
       const log = $('[data-log]');
-      const intro = { sender: 'system', kind: 'text', text: T.hello.replace('{name}', d.name) + (d.manager ? '' : '\n' + T.wait), at: new Date().toISOString().slice(0, 19).replace('T', ' ') };
+      const intro = { sender: 'system', kind: 'text', text: d.ai ? T.hello.replace('{name}', d.name).split(/ — | – /)[0] + '.' : T.hello.replace('{name}', d.name) + (d.manager ? '' : '\n' + T.wait), at: new Date().toISOString().slice(0, 19).replace('T', ' ') };
       log.replaceChildren(bubble(intro, d), ...d.messages.map((m: R) => bubble(m, d)));
       log.scrollTop = log.scrollHeight;
     }
@@ -90,7 +98,16 @@ const T = {
       const r = await fetch(`/api/room/${token}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
       if (!r.ok) return alert(T.err);
       ta.value = '';
-      load(true);
+      await load(true);
+      // Vax answers in a few seconds: poll faster until the reply arrives.
+      const log = $('[data-log]');
+      const dots = document.createElement('div');
+      dots.className = 'm them typing';
+      dots.textContent = T.typing;
+      log.append(dots);
+      log.scrollTop = log.scrollHeight;
+      for (let i = 0; i < 12 && last?.sender === 'client'; i++) { await new Promise((ok) => setTimeout(ok, 2500)); await load(true); }
+      dots.remove();
     });
     $<HTMLTextAreaElement>('textarea').addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $<HTMLFormElement>('[data-form]').requestSubmit(); }
@@ -110,7 +127,7 @@ const T = {
   .room .logo span { color: var(--acc); }
   .room .who { color: var(--mut); font-size: 14px; }
   .room h1 { font-size: clamp(24px, 5vw, 34px); margin: 18px 0 12px; }
-  .room .steps { list-style: none; padding: 0; margin: 0 0 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; counter-reset: s; }
+  .room .steps { list-style: none; padding: 0; margin: 0 0 14px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; counter-reset: s; }
   .room .steps li { counter-increment: s; font-size: 12px; color: var(--mut); border-top: 4px solid var(--line); padding-top: 6px; }
   .room .steps li::before { content: counter(s) '. '; font-weight: 700; }
   .room .steps li.done { border-color: var(--acc); color: var(--ink); }
@@ -126,6 +143,9 @@ const T = {
   .room .m.me { align-self: flex-end; background: var(--acc); color: var(--dark-ink); border-bottom-right-radius: 4px; }
   .room .m.me small { color: rgba(0, 0, 0, 0.55); }
   .room .m.call { border: 2px solid var(--acc); }
+  .room .m.stage { align-self: center; max-width: 100%; background: none; border: 1px dashed var(--line); color: var(--mut); font-size: 13px; text-align: center; }
+  .room .m.typing { color: var(--mut); font-style: italic; }
+  @media (max-width: 520px) { .room .steps { grid-template-columns: repeat(3, 1fr); } }
   .room .m a { color: inherit; text-decoration: underline; }
   .room form { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line); }
   .room textarea { flex: 1; resize: none; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 12px; padding: 10px 12px; font: 16px var(--font); }

@@ -13,7 +13,7 @@ const MAX_CHARS = 600;
 
 const LANG_NAME: Record<string, string> = { en: 'English', ua: 'Ukrainian', ru: 'Russian' };
 
-const FACTS = `
+export const FACTS = `
 ABOUT VAXO (vaxogroup.com): a full-cycle digital studio. One team for everything a business needs to grow: strategy, websites and e-commerce, mobile apps and SaaS, AI assistants and automations, CRM, paid ads, SMM, SEO, design and branding, copywriting, viral short-form video. We work with anyone — from a first business to companies scaling into EU/UAE/US markets. Unique: we create brand characters and AI-animated series (like me, Vax — our own cartoon raccoon).
 SERVICE PRICE RANGES (final price fixed after a strategy session; it is included in every tier):
 - Websites: landing page $1,000–5,000; multi-page site $2,000–10,000; e-commerce store $3,000–20,000; complex features and integrations — custom quote.

@@ -22,7 +22,7 @@ export async function askAi(ai: AiBinding | undefined, prompt: string, max = 400
 }
 
 /** First JSON object in a model answer. */
-function json<T>(t: string): T | null {
+export function json<T>(t: string): T | null {
   const m = t.match(/\{[\s\S]*\}/);
   if (!m) return null;
   try { return JSON.parse(m[0]) as T; } catch { return null; }
@@ -127,7 +127,7 @@ export async function summarizeClients(db: DB, ai: AiBinding | undefined) {
     .all<{ id: number; name: string; status: string; service: string }>();
   for (const l of results) {
     const { results: msgs } = await db.prepare(`SELECT sender, kind, text FROM messages WHERE lead_id = ? ORDER BY id DESC LIMIT 30`).bind(l.id).all<{ sender: string; kind: string; text: string }>();
-    const chat = msgs.reverse().map((m) => `${m.sender === 'client' ? 'Client' : m.sender === 'owner' ? 'Vaxo' : 'Manager'}${m.kind === 'note' ? ' (internal note)' : ''}: ${m.text.slice(0, 400)}`).join('\n');
+    const chat = msgs.reverse().map((m) => `${m.sender === 'client' ? 'Client' : m.sender === 'owner' ? 'Vaxo' : m.sender === 'ai' ? 'Vax (AI manager)' : 'Manager'}${m.kind === 'note' ? ' (internal note)' : ''}: ${m.text.slice(0, 400)}`).join('\n');
     const t = await askAi(ai, `Summarize this sales conversation for the business owner in Russian, 4 short lines:
 Нужно: … / Настроение и готовность: … / Следующий шаг: … / Риск: … (например, клиент пропал, менеджер медлит, просит скидку, хочет уйти на другую платформу).
 Client: ${l.name}, stage: ${l.status}, service: ${l.service || '?'}.

@@ -2,6 +2,7 @@
 import type { DB } from './partner.js';
 import { ownerLead, ownerOverview, ownerUpdateLead, ownerUpdatePartner, type Notify } from './deals.js';
 import { staffMessage } from './rooms.js';
+import { setAiState } from './aimanager.js';
 import { allPayouts, setPayout } from './payouts.js';
 import HQ from './hq.json';
 import { analytics, makeDigest } from './autopilot.js';
@@ -30,7 +31,7 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   }
   if (path === 'autopilot' && request.method === 'POST') {
     const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
-    for (const k of ['auto_publish', 'auto_approve', 'auto_qc', 'digest']) {
+    for (const k of ['auto_publish', 'auto_approve', 'auto_qc', 'digest', 'ai_manager']) {
       if (b[k] !== undefined) await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind(k, b[k] ? '1' : '0').run();
     }
     return json(200, { ok: true });
@@ -40,6 +41,11 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   if (pay && request.method === 'POST') {
     const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     return json((await setPayout(db, Number(pay[1]), String(b.status))) ? 200 : 400, { ok: true });
+  }
+  const ac = path.match(/^lead\/(\d+)\/ai$/);
+  if (ac && request.method === 'POST') {
+    await setAiState(db, Number(ac[1]), 'owner', (await request.json().catch(() => ({}))) as Record<string, unknown>);
+    return json(200, { ok: true });
   }
   const mm = path.match(/^lead\/(\d+)\/msg$/);
   if (mm && request.method === 'POST') {

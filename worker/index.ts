@@ -5,6 +5,7 @@ import { handleAdminApi } from './admin.js';
 import { handleChat, type AiBinding } from './chat.js';
 import { draftBrief, logEvent, sweep, type Notify } from './deals.js';
 import { bindReturningClient, handleRoomApi, newRoom } from './rooms.js';
+import { aiFollowups, aiReply } from './aimanager.js';
 import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackView, triageLead } from './autopilot.js';
 
 interface Env extends LeadEnv {
@@ -60,7 +61,7 @@ export default {
       return handleAdminApi(env.LEADS, request, env.ADMIN_TOKEN, url.pathname.slice('/api/admin'.length).replace(/^\//, ''), notify, env.AI);
     }
     const room = url.pathname.match(/^\/api\/room\/([a-f0-9]{24})$/);
-    if (room) return env.LEADS ? handleRoomApi(env.LEADS, request, room[1], notify) : json(503, { ok: false });
+    if (room) return env.LEADS ? handleRoomApi(env.LEADS, request, room[1], notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify).catch((e) => console.error('[ai reply]', e)))) : json(503, { ok: false });
     if (url.pathname === '/api/chat') return handleChat(env, request, ctx ? (p) => ctx.waitUntil(p) : undefined);
     if (url.pathname === '/api/lead') {
       if (request.method !== 'POST') return json(405, { ok: false });
@@ -86,6 +87,8 @@ export default {
             if (id) waitUntil((async () => {
               await logEvent(db, id, 'system', 'note', 'Request received from the site');
               await bindReturningClient(db, id, l.contact, notify);
+              // Vax greets first (the client is looking at the chat right now), then the brief and triage.
+              await aiReply(db, env.AI, id, notify, { greet: true });
               await draftBrief(db, env.AI, id);
               await triageLead(db, env.AI, id, notify);
             })().catch((e) => console.error('[lead bg]', e)));
@@ -113,7 +116,7 @@ export default {
       }).catch(() => {});
     };
     // The autopilot's hourly round: deadlines, AI grading, quality control, client summaries, the morning digest.
-    for (const job of [() => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify)]) {
+    for (const job of [() => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify)]) {
       await job().catch((e) => console.error('[cron]', e));
     }
   },

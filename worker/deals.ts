@@ -4,6 +4,7 @@
 import type { DB } from './partner.js';
 import type { AiBinding } from './chat.js';
 import { roomMessages, staffMessage, unansweredAlerts } from './rooms.js';
+import { setAiState } from './aimanager.js';
 import { createPayouts, partnerPayouts } from './payouts.js';
 
 export type Notify = (text: string) => Promise<void>;
@@ -112,7 +113,7 @@ export async function handleDealsApi(db: DB, request: Request, me: Me, path: str
     await sweep(db, notify);
     const limit = await limitFor(db, me.id, p?.closer_rating ?? null);
     const mine = await db
-      .prepare(`SELECT id, created_at, status, name, contact, interest, message, lang, country, page, service, budget, brief, value_usd, claimed_at, due_at, room, ai_summary,
+      .prepare(`SELECT id, created_at, status, name, contact, interest, message, lang, country, page, service, budget, brief, value_usd, claimed_at, due_at, room, ai_summary, ai, stage, stage_due, human,
                   (SELECT COUNT(*) FROM messages m WHERE m.lead_id = leads.id AND m.sender = 'client' AND m.at > COALESCE(leads.manager_seen_at, '')) AS unread
                 FROM leads WHERE closer_id = ? ORDER BY CASE WHEN status IN ${ACTIVE} THEN 0 ELSE 1 END, id DESC LIMIT 100`)
       .bind(me.id)
@@ -129,6 +130,15 @@ export async function handleDealsApi(db: DB, request: Request, me: Me, path: str
     const messages = [];
     for (const id of ids.slice(0, 30)) for (const m of await roomMessages(db, id, true)) messages.push({ ...m, lead_id: id });
     return json(200, { ok: true, closer, rating: p?.closer_rating ?? null, limit, active, open, mine: mine.results, events, messages, payouts: await partnerPayouts(db, me.id), sla: SLA_HOURS });
+  }
+
+  const aiCtl = path.match(/^deals\/(\d+)\/ai$/);
+  if (aiCtl && method === 'POST') {
+    const id = Number(aiCtl[1]);
+    const own = await db.prepare('SELECT id FROM leads WHERE id = ? AND closer_id = ?').bind(id, me.id).first();
+    if (!own) return json(404, { ok: false });
+    await setAiState(db, id, `partner:${me.id}`, body);
+    return json(200, { ok: true });
   }
 
   const msg = path.match(/^deals\/(\d+)\/(msg|seen)$/);
@@ -202,7 +212,7 @@ export async function ownerOverview(db: DB, notify: Notify) {
     db
       .prepare(
         `SELECT d.id, d.created_at, d.mode, d.status, d.name, d.contact, d.interest, d.message, d.lang, d.country, d.page, d.ref,
-           d.service, d.budget, d.brief, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at, d.room, d.score, d.ai_summary,
+           d.service, d.budget, d.brief, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at, d.room, d.score, d.ai_summary, d.ai, d.stage, d.stage_due, d.human, d.profile,
            (SELECT COUNT(*) FROM messages m WHERE m.lead_id = d.id) AS msgs,
            (SELECT m.at FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY m.id DESC LIMIT 1) AS last_at,
            (SELECT m.sender FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY m.id DESC LIMIT 1) AS last_sender,

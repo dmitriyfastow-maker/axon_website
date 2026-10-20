@@ -31,19 +31,19 @@ export async function roomMessages(db: DB, leadId: number, withNotes: boolean) {
 }
 
 /** /api/room/<token>: the client's side. */
-export async function handleRoomApi(db: DB, request: Request, token: string, notify: Notify): Promise<Response> {
+export async function handleRoomApi(db: DB, request: Request, token: string, notify: Notify, onClient?: (leadId: number) => void): Promise<Response> {
   if (!ROOM_RE.test(token)) return json(404, { ok: false });
   const lead = await db
-    .prepare(`SELECT d.id, d.name, d.lang, d.status, d.closer_id, p.name AS manager FROM leads d LEFT JOIN partners p ON p.id = d.closer_id WHERE d.room = ?`)
+    .prepare(`SELECT d.id, d.name, d.lang, d.status, d.closer_id, d.ai, d.stage, d.stage_due, p.name AS manager FROM leads d LEFT JOIN partners p ON p.id = d.closer_id WHERE d.room = ?`)
     .bind(token)
-    .first<{ id: number; name: string; lang: string; status: string; closer_id: number | null; manager: string | null }>();
+    .first<{ id: number; name: string; lang: string; status: string; closer_id: number | null; ai: string; stage: string | null; stage_due: string | null; manager: string | null }>();
   if (!lead) return json(404, { ok: false });
   if (request.method === 'GET') {
     await db.prepare(`UPDATE leads SET client_seen_at = datetime('now') WHERE id = ?`).bind(lead.id).run();
     // Clients see only the manager's first name; owner messages are signed as the Vaxo team.
     const first = (n: unknown) => (typeof n === 'string' ? n.trim().split(/\s+/)[0] : null);
     const msgs = (await roomMessages(db, lead.id, false)).map((m) => ({ ...m, partner_name: first(m.partner_name) }));
-    return json(200, { ok: true, name: lead.name, lang: lead.lang, status: lead.status, manager: first(lead.manager), messages: msgs });
+    return json(200, { ok: true, name: lead.name, lang: lead.lang, status: lead.status, stage: lead.stage, stage_due: lead.stage_due, ai: lead.ai === 'on', manager: first(lead.manager), messages: msgs });
   }
   if (request.method !== 'POST') return json(405, { ok: false });
   const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
@@ -55,7 +55,9 @@ export async function handleRoomApi(db: DB, request: Request, token: string, not
     .first<{ n: number }>();
   if ((recent?.n ?? 0) >= 40) return json(429, { ok: false });
   await addMessage(db, lead.id, 'client', 'text', text);
-  await notify(`💬 #${lead.id} ${lead.name}${lead.manager ? ` (manager ${lead.manager})` : ' (no manager yet)'}: ${text.slice(0, 300)}`);
+  // Vax answers by itself; the owner hears about client messages only when the AI is paused for this client.
+  if (lead.ai === 'on' && onClient) onClient(lead.id);
+  else await notify(`💬 #${lead.id} ${lead.name}${lead.manager ? ` (manager ${lead.manager})` : ' (no manager yet)'}: ${text.slice(0, 300)}`);
   return json(200, { ok: true });
 }
 

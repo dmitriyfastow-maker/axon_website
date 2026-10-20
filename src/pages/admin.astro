@@ -282,9 +282,9 @@ import Base from '../layouts/Base.astro';
     const L = (data.leads as R[]).filter((l) => l.msgs > 0).sort((a, b) => ts(b.last_at) - ts(a.last_at));
     $('[data-inbox]').replaceChildren(...(L.length ? L.map((l) =>
       el('button', { type: 'button', class: 'chat-i' + (waitingReply(l) ? ' wait' : ''), onclick: () => openLead(l.id) },
-        el('div', { class: 'who' }, el('b', {}, l.name), ' ', badge(l.status), waitingReply(l) && el('span', { class: 'st st-r' }, 'ждёт ответа')),
+        el('div', { class: 'who' }, el('b', {}, l.name), ' ', badge(l.status), waitingReply(l) && el('span', { class: 'st st-r' }, 'ждёт ответа'), l.human && el('span', { class: 'st st-r' }, '🙋 нужен человек'), l.ai === 'paused' && el('span', { class: 'st' }, '⏸ ИИ')),
         el('div', { class: 'meta' }, `${l.closer_name ? 'Менеджер: ' + l.closer_name : 'Без менеджера'} · ${when(l.last_at)}`),
-        el('div', { class: 'last' }, `${l.last_sender === 'client' ? l.name : l.last_sender === 'owner' ? 'Vaxo' : l.closer_name || 'Менеджер'}: ${l.last_text || ''}`))) :
+        el('div', { class: 'last' }, `${l.last_sender === 'client' ? l.name : l.last_sender === 'owner' ? 'Vaxo' : l.last_sender === 'ai' ? 'Vax (ИИ)' : l.closer_name || 'Менеджер'}: ${l.last_text || ''}`))) :
       [el('p', { class: 'mut' }, 'Переписок пока нет. Как только клиент или менеджер напишет в чат проекта — он появится здесь.')]));
   }
 
@@ -310,6 +310,23 @@ import Base from '../layouts/Base.astro';
         el('td', {}, l.service || l.interest || '—'), el('td', {}, l.budget || '—'), el('td', {}, l.closer_name || '—'),
         el('td', {}, ACTIVE.includes(l.status) ? left(l.due_at) : ''), el('td', {}, l.partner_name ? `партнёр ${l.partner_name}` : (l.message || '').startsWith('[Vax chat]') ? 'чат Vax' : 'форма'))) :
       [el('tr', {}, el('td', { colspan: '10', class: 'empty' }, 'Здесь пока пусто'))]));
+  }
+
+  const STAGE: Record<string, string> = { '': '— проект ещё не начат —', work: 'В работе', qa: 'Проверка качества (клиент видит «в работе»)', review: 'На согласовании у клиента', revisions: 'Правки', delivered: 'Сдано' };
+  function aiPanel(l: R) {
+    const id = l.id;
+    const set = async (b: R) => { await api(`/lead/${id}/ai`, b); await load(); openLead(id); };
+    const stageSel = el('select', {}, ...Object.entries(STAGE).map(([k, t]) => el('option', { value: k, selected: k === (l.stage || '') }, t)));
+    const due = el('input', { type: 'date', value: (l.stage_due || '').slice(0, 10) });
+    let prof: R = {};
+    try { prof = JSON.parse(l.profile || '{}'); } catch {}
+    return el('div', { class: 'aisum aiman' },
+      el('b', {}, l.ai === 'paused' ? '⏸ ИИ-менеджер на паузе — клиента ведёт человек' : '🤖 Клиента ведёт ИИ-менеджер Vax'), ' ',
+      el('button', { class: 'ghost', type: 'button', onclick: () => set({ ai: l.ai === 'paused' ? 'on' : 'paused' }) }, l.ai === 'paused' ? 'Включить ИИ' : 'Поставить ИИ на паузу'),
+      l.human && el('p', {}, el('b', {}, '🙋 Нужен живой менеджер: '), l.human, ' ', el('button', { class: 'ghost', type: 'button', onclick: () => set({ human: null }) }, 'Решено')),
+      prof.tip && el('p', { class: 'mut' }, `Как говорить с клиентом: ${prof.tip}${prof.concerns ? ' · Опасения: ' + prof.concerns : ''}`),
+      el('div', { class: 'two' }, el('label', { class: 'f' }, el('span', {}, 'Этап проекта (клиент видит в чате)'), stageSel), el('label', { class: 'f' }, el('span', {}, 'Ожидаемая дата'), due)),
+      el('button', { class: 'cta alt', type: 'button', onclick: () => (stageSel as HTMLSelectElement).value && set({ stage: (stageSel as HTMLSelectElement).value, stage_due: (due as HTMLInputElement).value }) }, 'Сохранить этап и сообщить клиенту'));
   }
 
   async function openLead(id: number) {
@@ -342,7 +359,7 @@ import Base from '../layouts/Base.astro';
     }
     form.addEventListener('submit', (e) => { e.preventDefault(); save(); });
     const thread = el('div', { class: 'thread' }, ...(messages.length ? messages.map((m: R) => el('div', { class: `m ${m.sender === 'client' ? 'them' : 'us'} k-${m.kind}` },
-      el('small', {}, `${m.sender === 'client' ? l.name : m.sender === 'owner' ? 'Вы (Vaxo Team)' : (m.partner_name || 'менеджер') + ' · Account Manager'}${m.kind === 'note' ? ' · 🔒 заметка' : m.kind === 'call' ? ' · 📅 созвон' : ''} · ${when(m.at)}`),
+      el('small', {}, `${m.sender === 'client' ? l.name : m.sender === 'owner' ? 'Вы (Vaxo Team)' : m.sender === 'ai' ? 'Vax · ИИ-менеджер' : m.sender === 'system' ? 'Система' : (m.partner_name || 'менеджер') + ' · Account Manager'}${m.kind === 'note' ? ' · 🔒 заметка' : m.kind === 'call' ? ' · 📅 созвон' : ''} · ${when(m.at)}`),
       el('div', {}, m.text))) : [el('p', { class: 'mut' }, 'Сообщений пока нет.')]));
     const msgKind = el('select', {}, el('option', { value: 'text' }, 'Клиенту (подпись «Vaxo Team»)'), el('option', { value: 'note' }, '🔒 Заметка для менеджера'));
     const msgText = el('textarea', { rows: '3', placeholder: 'Сообщение… (клиенту пишите на его языке)' });
@@ -353,13 +370,14 @@ import Base from '../layouts/Base.astro';
       await load(); openLead(id);
     } }, 'Отправить'));
     requestAnimationFrame(() => (thread.scrollTop = thread.scrollHeight));
-    $('[data-detail]').replaceChildren(
+    $('[data-detail]').replaceChildren(...[
       el('h2', {}, `#${l.id} · ${l.name}`, ' ', badge(l.status)),
       el('dl', {},
         el('dt', {}, 'Контакт'), el('dd', {}, l.contact),
         el('dt', {}, 'Пришла'), el('dd', {}, `${when(l.created_at)} · ${l.lang?.toUpperCase()} · ${l.country ?? ''}`),
         el('dt', {}, 'Менеджер'), el('dd', {}, l.closer_name ?? '—'),
         el('dt', {}, 'Привёл'), el('dd', {}, l.partner_name ?? '—')),
+      aiPanel(l),
       l.ai_summary && el('div', { class: 'aisum' }, el('b', {}, `🤖 ИИ-сводка${l.score ? ' · оценка заявки ' + l.score + '/10' : ''}`), el('pre', {}, l.ai_summary)),
       el('h3', {}, 'Переписка'),
       el('p', { class: 'mut' }, el('a', { href: `/room/?t=${l.room}`, target: '_blank' }, 'Открыть чат как видит клиент ↗'), ' · 🔒 — заметки, клиент их не видит'),
@@ -367,7 +385,7 @@ import Base from '../layouts/Base.astro';
       el('details', {}, el('summary', {}, 'Первая заявка / диалог с Vax'), el('pre', {}, l.message || '—')),
       el('h3', {}, 'Карточка'), form,
       el('h3', {}, 'Журнал'),
-      el('ol', { class: 'log' }, ...events.map((e: R) => el('li', {}, el('small', {}, `${when(e.at)} · ${e.actor === 'owner' ? 'вы' : e.actor === 'system' ? 'система' : 'менеджер'}`), el('div', {}, e.text || e.kind)))));
+      el('ol', { class: 'log' }, ...events.map((e: R) => el('li', {}, el('small', {}, `${when(e.at)} · ${e.actor === 'owner' ? 'вы' : e.actor === 'system' ? 'система' : e.actor === 'ai' ? 'ИИ Vax' : 'менеджер'}`), el('div', {}, e.text || e.kind))))].filter(Boolean) as Node[]);
     $('[data-drawer]').hidden = false;
   }
 
