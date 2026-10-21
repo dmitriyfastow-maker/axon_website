@@ -21,8 +21,9 @@ import Base from '../layouts/Base.astro';
     <div data-app hidden>
       <nav class="tabs" aria-label="Разделы">
         <button type="button" data-view="today" aria-pressed="true">🔥 Сегодня <span class="pill" data-n="today" hidden></span></button>
+        <button type="button" data-view="chats" aria-pressed="false">💬 Переписки с клиентами <span class="pill" data-n="chats" hidden></span></button>
+        <button type="button" data-view="claude" aria-pressed="false">🧠 Claude <span class="pill" data-n="claude" hidden></span></button>
         <button type="button" data-view="stats" aria-pressed="false">📊 Аналитика</button>
-        <button type="button" data-view="chats" aria-pressed="false">💬 Чаты <span class="pill" data-n="chats" hidden></span></button>
         <button type="button" data-view="leads" aria-pressed="false">📋 Заявки</button>
         <button type="button" data-view="team" aria-pressed="false">👥 Команда <span class="pill" data-n="team" hidden></span></button>
         <button type="button" data-view="pay" aria-pressed="false">💸 Выплаты <span class="pill" data-n="pay" hidden></span></button>
@@ -36,6 +37,8 @@ import Base from '../layouts/Base.astro';
       <section data-panel="today">
         <div class="digest" data-digest hidden><h2>☀️ Сводка дня от автопилота</h2><pre data-digest-text></pre><small class="mut" data-digest-at></small></div>
         <div class="kpis" data-kpis></div>
+        <h2>Последние переписки <button type="button" class="ghost sm" data-go-chats>Все переписки →</button></h2>
+        <div class="inbox" data-recent></div>
         <h2>Картина компании</h2>
         <div class="pic" data-pic></div>
         <h2>Требует внимания</h2>
@@ -79,8 +82,19 @@ import Base from '../layouts/Base.astro';
         </ul>
       </section>
 
+      <section data-panel="claude" hidden>
+        <p class="hint">Ваш чат со мной (Claude). Вопрос — ответ сразу. Задача («Сделай…», «Добавь…», «Исправь…») — уходит в очередь, я беру её в работу и пишу сюда результат. Мои идеи и вопросы к вам тоже приходят сюда (и в Telegram) с кнопками «Да / Нет / Обсудить».</p>
+        <div class="oc" data-oc></div>
+        <form class="oc-in" data-oc-form>
+          <textarea rows="2" placeholder="Напишите вопрос или задачу… (Enter — отправить)" data-oc-text></textarea>
+          <button type="button" class="ghost oc-mic" data-oc-mic aria-label="Голосовой ввод"></button>
+          <button class="cta">Отправить</button>
+        </form>
+        <label class="mut small"><input type="checkbox" data-oc-task /> Это задача для Claude (если не начинается со «Сделай…»)</label>
+      </section>
+
       <section data-panel="chats" hidden>
-        <p class="hint">Вся переписка менеджеров с клиентами. «Ждёт ответа» — последним написал клиент. Нажмите на чат, чтобы прочитать и ответить от имени Vaxo.</p>
+        <p class="hint">Все переписки с клиентами: Vax (ИИ), менеджеры и вы. «Ждёт ответа» — последним написал клиент. Нажмите на любой чат — откроется переписка, где можно прочитать и ответить от имени Vaxo.</p>
         <div class="inbox" data-inbox></div>
       </section>
 
@@ -161,6 +175,7 @@ import Base from '../layouts/Base.astro';
 
 <script>
   import { renderFinance, FIN_CSS } from '../scripts/finance-view';
+  import { attachMic, MIC_SVG } from '../scripts/voice';
   type R = Record<string, any>;
   const KEY = 'vaxo_admin';
   const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s)!;
@@ -216,9 +231,34 @@ import Base from '../layouts/Base.astro';
     try { data = await api(''); } catch { return; }
     $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
     renderToday(); renderInbox(); renderLeads(); renderTeam(); renderPay(); renderCartoon(); renderLinks();
-    loadAuto(); loadStats(); loadFin();
+    loadAuto(); loadStats(); loadFin(); loadClaude();
   }
 
+  async function loadClaude() {
+    const d = await api('/claude').catch(() => null);
+    if (!d?.ok) return;
+    const box = $('[data-oc]');
+    const open = (d.messages as R[]).filter((m) => m.sender === 'claude' && m.status === 'open').length;
+    const pillEl = document.querySelector<HTMLElement>('[data-n="claude"]'); if (pillEl) { pillEl.textContent = String(open); pillEl.hidden = !open; }
+    box.replaceChildren(...(d.messages.length ? (d.messages as R[]).map((m) => {
+      const who = m.sender === 'owner' ? 'Вы' : m.sender === 'claude' ? (m.kind === 'idea' ? '💡 Claude — идея' : m.kind === 'question' ? '❓ Claude — вопрос' : 'Claude') : 'Помощник (ИИ)';
+      const ask = m.sender === 'claude' && (m.kind === 'idea' || m.kind === 'question') && m.status === 'open';
+      const act = (a: string) => async () => { const note = a === 'discuss' ? prompt('Что обсудить? (можно пусто)') ?? '' : ''; await api(`/claude/${m.id}/${a}`, { note }); loadClaude(); };
+      return el('div', { class: 'ocm ' + (m.sender === 'owner' ? 'me' : 'them') + (m.kind === 'task' && m.sender === 'owner' ? ' task' : '') },
+        el('small', {}, `${who}${m.kind === 'task' && m.sender === 'owner' ? (m.status === 'open' ? ' · задача в очереди' : ' · задача выполнена') : ''} · ${when(m.at)}`),
+        el('div', {}, m.text),
+        ask && el('div', { class: 'btns' }, el('button', { class: 'cta sm', type: 'button', onclick: act('yes') }, 'Да'), el('button', { class: 'ghost sm', type: 'button', onclick: act('no') }, 'Нет'), el('button', { class: 'ghost sm', type: 'button', onclick: act('discuss') }, 'Обсудить')));
+    }) : [el('p', { class: 'mut' }, 'Пока пусто. Спросите что угодно о компании или дайте задачу — например: «Сделай пост для Instagram про подарки».')]));
+    box.scrollTop = box.scrollHeight;
+  }
+  (() => {
+    const f = document.querySelector<HTMLFormElement>('[data-oc-form]'); if (!f) return;
+    const ta = $<HTMLTextAreaElement>('[data-oc-text]');
+    const mic = $<HTMLButtonElement>('[data-oc-mic]'); mic.innerHTML = MIC_SVG; attachMic(mic, ta, () => 'ru');
+    f.onsubmit = async (e) => { e.preventDefault(); const text = ta.value.trim(); if (!text) return; ta.value = ''; const task = $<HTMLInputElement>('[data-oc-task]').checked; $<HTMLInputElement>('[data-oc-task]').checked = false; await api('/claude', { text, task }); loadClaude(); };
+    ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); f.requestSubmit(); } });
+  })();
+  document.querySelector('[data-go-chats]')?.addEventListener('click', () => show('chats'));
   const finStyle = document.createElement('style'); finStyle.textContent = FIN_CSS; document.head.append(finStyle);
   async function loadFin() {
     const d = await api('/finance').catch(() => null);
@@ -421,6 +461,10 @@ import Base from '../layouts/Base.astro';
 
   function renderInbox() {
     const L = (data.leads as R[]).filter((l) => l.msgs > 0).sort((a, b) => ts(b.last_at) - ts(a.last_at));
+    const item = (l: R) => el('button', { type: 'button', class: 'chat-i' + (waitingReply(l) ? ' wait' : ''), onclick: () => openLead(l.id) },
+      el('div', { class: 'who' }, el('b', {}, l.name), ' ', badge(l.status), waitingReply(l) && el('span', { class: 'st st-r' }, 'ждёт ответа')),
+      el('div', { class: 'last' }, `${l.last_sender === 'client' ? l.name : l.last_sender === 'owner' ? 'Vaxo' : l.last_sender === 'ai' ? 'Vax (ИИ)' : l.closer_name || 'Менеджер'}: ${l.last_text || ''}`));
+    $('[data-recent]').replaceChildren(...(L.length ? L.slice(0, 5).map(item) : [el('p', { class: 'mut' }, 'Переписок пока нет.')]));
     $('[data-inbox]').replaceChildren(...(L.length ? L.map((l) =>
       el('button', { type: 'button', class: 'chat-i' + (waitingReply(l) ? ' wait' : ''), onclick: () => openLead(l.id) },
         el('div', { class: 'who' }, el('b', {}, l.name), ' ', badge(l.status), waitingReply(l) && el('span', { class: 'st st-r' }, 'ждёт ответа'), l.human && el('span', { class: 'st st-r' }, '🙋 нужен человек'), l.ai === 'paused' && el('span', { class: 'st' }, '⏸ ИИ')),
@@ -645,6 +689,15 @@ import Base from '../layouts/Base.astro';
   .adm .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 8px; }
   .adm .kpi { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 2px; }
   .adm .kpi small, .adm .kpi span { color: var(--mut); font-size: 12px; } .adm .kpi b { font-size: 24px; }
+  .adm .oc { display: flex; flex-direction: column; gap: 8px; max-height: 60vh; overflow-y: auto; padding: 12px; background: var(--surf); border: 1px solid var(--line); border-radius: 16px; margin-bottom: 10px; }
+  .adm .ocm { max-width: 85%; padding: 9px 12px; border-radius: 14px; white-space: pre-wrap; line-height: 1.45; display: flex; flex-direction: column; gap: 4px; }
+  .adm .ocm small { color: var(--mut); font-size: 11px; }
+  .adm .ocm.them { align-self: flex-start; background: var(--bg); border: 1px solid var(--line); }
+  .adm .ocm.me { align-self: flex-end; background: var(--acc); color: var(--dark-ink); } .adm .ocm.me small { color: rgba(0,0,0,.55); }
+  .adm .ocm.task { border: 2px dashed var(--dark-ink); }
+  .adm .oc-in { display: flex; gap: 8px; align-items: stretch; } .adm .oc-in textarea { flex: 1; }
+  .adm .oc-mic { width: 46px; display: grid; place-items: center; padding: 0; } .adm .oc-mic.rec { background: var(--error, #e5484d); color: #fff; }
+  .adm .sm { padding: 5px 10px; font-size: 13px; }
   .adm .tabs, .adm .chips { display: flex; gap: 6px; flex-wrap: wrap; }
   .adm .tabs { margin-bottom: 16px; border-bottom: 1px solid var(--line); padding-bottom: 10px; position: sticky; top: 0; background: var(--bg); z-index: 5; padding-top: 6px; }
   .adm .tabs button, .adm .chips button { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 7px 13px; cursor: pointer; font: 600 14px var(--font); }

@@ -1,0 +1,159 @@
+---
+// Chat instead of forms (Decision 16): a Vax chat right on the page. The first message starts the project chat
+// (/api/intake), no name or contact needed to begin; Vax asks for them when the talk has substance. The chat is
+// remembered in this browser, so a returning visitor continues the same conversation.
+import type { Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  kind: 'request' | 'collab' | 'gift';
+  chips?: string[];
+  topics?: { v: string; label: string }[]; // collab: who they are (sets interest)
+  title?: string;
+}
+const { lang, kind, chips = [], topics = [], title } = Astro.props;
+const T = {
+  en: { hello: { request: "Hi! I'm Vax 🦝 Tell me in your own words what you want to build or improve — I'll answer right away and suggest options. No forms.", collab: "Hi! I'm Vax 🦝 Tell me who you are and what you'd like to do together — I'll answer right away.", gift: "Hi! I'm Vax 🦝 Who is the gift for and what's the occasion? I'll help you make it special." }, ph: 'Type or tap the mic…', send: 'Send', mic: 'Voice input', typing: 'Vax is typing…', full: 'Open the full project chat →', tg: 'Continue in Telegram', err: 'Not sent. Try again.', who: 'Vax · AI manager · replies in seconds', note: 'Your chat is saved in this browser. A human joins for calls and anything unusual.', restart: 'Start a new conversation', form: 'Prefer a form?' },
+  ru: { hello: { request: 'Привет! Я Vax 🦝 Расскажите своими словами, что хотите сделать или улучшить, — отвечу сразу и предложу варианты. Без анкет.', collab: 'Привет! Я Vax 🦝 Расскажите, кто вы и что хотите сделать вместе, — отвечу сразу.', gift: 'Привет! Я Vax 🦝 Кому подарок и по какому поводу? Помогу сделать его особенным.' }, ph: 'Напишите или нажмите микрофон…', send: 'Отправить', mic: 'Голосовой ввод', typing: 'Vax печатает…', full: 'Открыть полный чат проекта →', tg: 'Продолжить в Telegram', err: 'Не отправилось. Попробуйте ещё раз.', who: 'Vax · ИИ-менеджер · отвечает за секунды', note: 'Разговор сохраняется в этом браузере. Человек подключается на созвон и во всём необычном.', restart: 'Начать новый разговор', form: 'Удобнее формой?' },
+  ua: { hello: { request: 'Привіт! Я Vax 🦝 Розкажіть своїми словами, що хочете зробити чи покращити, — відповім одразу й запропоную варіанти. Без анкет.', collab: 'Привіт! Я Vax 🦝 Розкажіть, хто ви і що хочете зробити разом, — відповім одразу.', gift: 'Привіт! Я Vax 🦝 Кому подарунок і з якої нагоди? Допоможу зробити його особливим.' }, ph: 'Напишіть або натисніть мікрофон…', send: 'Надіслати', mic: 'Голосове введення', typing: 'Vax друкує…', full: 'Відкрити повний чат проєкту →', tg: 'Продовжити в Telegram', err: 'Не надіслано. Спробуйте ще раз.', who: 'Vax · ШІ-менеджер · відповідає за секунди', note: 'Розмова зберігається в цьому браузері. Людина підключається на дзвінок і в усьому незвичному.', restart: 'Почати нову розмову', form: 'Зручніше формою?' },
+}[lang];
+---
+
+<div class="pchat" data-pchat data-kind={kind} data-lang={lang} data-t={JSON.stringify({ ...T, hello: T.hello[kind] })}>
+  <div class="pc-head"><img src="/mascot/vax-happy.webp" alt="" width="40" height="40" /><div><b>{title || 'Vax'}</b><small>{T.who}</small></div></div>
+  {topics.length > 0 && <div class="pc-topics" role="group">{topics.map((x) => <button type="button" data-topic={x.v} aria-pressed="false">{x.label}</button>)}</div>}
+  <div class="pc-log" data-pc-log aria-live="polite"></div>
+  <div class="pc-chips" data-pc-chips>{chips.map((c) => <button type="button">{c}</button>)}</div>
+  <form class="pc-in" data-pc-form>
+    <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+    <textarea rows="2" maxlength="2000" placeholder={T.ph} aria-label={T.ph} data-pc-text></textarea>
+    <button type="button" class="pc-mic" data-pc-mic aria-label={T.mic}></button>
+    <button type="submit" class="pc-send" aria-label={T.send}>➤</button>
+  </form>
+  <div class="pc-foot"><small>{T.note}</small> <a href="#" data-pc-full hidden>{T.full}</a> <a href="#" data-pc-tg hidden target="_blank" rel="noopener">{T.tg}</a> <button type="button" class="pc-link" data-pc-restart hidden>{T.restart}</button> <button type="button" class="pc-link" data-pc-form-toggle hidden>{T.form}</button></div>
+</div>
+
+<script>
+  import { attachMic, MIC_SVG } from '../scripts/voice';
+  type R = Record<string, any>;
+  document.querySelectorAll<HTMLElement>('[data-pchat]').forEach((root) => {
+    const T = JSON.parse(root.dataset.t || '{}');
+    const kind = root.dataset.kind!, lang = root.dataset.lang!;
+    const KEY = `vaxo_room_${kind}`;
+    const started = Date.now();
+    const $ = <E extends Element = HTMLElement>(s: string) => root.querySelector<E>(s)!;
+    const log = $('[data-pc-log]'), ta = $<HTMLTextAreaElement>('[data-pc-text]'), chips = $('[data-pc-chips]');
+    const get = (k: string) => { try { return localStorage.getItem(k) || ''; } catch { return ''; } };
+    const put = (k: string, v: string) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch {} };
+    let room = get(KEY), count = -1, topic = '';
+    // A page can show its old form as a fallback (the toggle appears only if a form is linked).
+    const formSel = root.closest('[data-chat-host]')?.querySelector<HTMLElement>('[data-chat-fallback]');
+    if (formSel) { const b = $('[data-pc-form-toggle]'); b.hidden = false; b.onclick = () => { formSel.hidden = !formSel.hidden; if (!formSel.hidden) formSel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }; }
+    root.querySelectorAll<HTMLButtonElement>('[data-topic]').forEach((b) => b.onclick = () => {
+      topic = b.dataset.topic!; root.querySelectorAll('[data-topic]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); ta.focus();
+    });
+    const bubble = (who: string, text: string) => {
+      const d = document.createElement('div');
+      d.className = 'pc-m ' + who;
+      d.textContent = text;
+      d.innerHTML = d.innerHTML.replace(/https?:\/\/[^\s<]+|vaxogroup\.com\/[^\s<]*/g, (u) => `<a href="${u.startsWith('http') ? u : 'https://' + u}" target="_blank" rel="noopener">${u}</a>`);
+      return d;
+    };
+    const intro = () => bubble('vax', T.hello);
+    async function load(scroll = true) {
+      if (!room) { log.replaceChildren(intro()); return null; }
+      const r = await fetch(`/api/room/${room}`).catch(() => null);
+      if (!r || !r.ok) { room = ''; put(KEY, ''); log.replaceChildren(intro()); return null; }
+      const d: R = await r.json();
+      const full = $<HTMLAnchorElement>('[data-pc-full]'); full.href = `/room/?t=${room}`; full.hidden = false;
+      const tg = $<HTMLAnchorElement>('[data-pc-tg]'); if (d.tg) { tg.href = d.tg; tg.hidden = false; }
+      $('[data-pc-restart]').hidden = false;
+      chips.hidden = true;
+      const msgs = (d.messages as R[]).filter((m) => m.sender !== 'system' || !/^stage:/.test(m.text));
+      if (msgs.length !== count) {
+        count = msgs.length;
+        log.replaceChildren(intro(), ...msgs.map((m) => bubble(m.sender === 'client' ? 'me' : 'vax', m.text)));
+        if (scroll) log.scrollTop = log.scrollHeight;
+      }
+      return msgs[msgs.length - 1];
+    }
+    async function send(text: string) {
+      text = text.trim();
+      if (!text) return;
+      log.append(bubble('me', text));
+      const dots = bubble('vax wait', T.typing); log.append(dots); log.scrollTop = log.scrollHeight;
+      chips.hidden = true;
+      let ok = false;
+      if (!room) {
+        let promo = '', ref = '';
+        try { promo = localStorage.getItem('vaxo_code') || ''; ref = localStorage.getItem('vaxo_ref') || ''; } catch {}
+        const r = await fetch('/api/intake', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind, text, lang, interest: topic, promo, ref, page: location.pathname, startedAt: started, website: $<HTMLInputElement>('.hp').value }) }).catch(() => null);
+        const d = r && r.ok ? await r.json() : null;
+        if (d?.room) { room = d.room; put(KEY, room); ok = true; navigator.sendBeacon?.('/api/ev', new Blob([JSON.stringify({ k: 'chat_start', p: location.pathname })], { type: 'application/json' })); }
+      } else {
+        const r = await fetch(`/api/room/${room}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) }).catch(() => null);
+        ok = !!r?.ok;
+      }
+      if (!ok) { dots.textContent = T.err; return; }
+      // Vax answers in a few seconds: poll until the reply arrives.
+      for (let i = 0; i < 16; i++) {
+        await new Promise((r) => setTimeout(r, 2500));
+        const last = await load(false);
+        if (last && last.sender !== 'client') break;
+        if (!dots.isConnected) log.append(dots);
+      }
+      dots.remove();
+      log.scrollTop = log.scrollHeight;
+    }
+    $<HTMLFormElement>('[data-pc-form]').onsubmit = (e) => { e.preventDefault(); const v = ta.value; ta.value = ''; send(v); };
+    ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $<HTMLFormElement>('[data-pc-form]').requestSubmit(); } });
+    chips.querySelectorAll('button').forEach((b) => b.onclick = () => send(b.textContent || ''));
+    const mic = $<HTMLButtonElement>('[data-pc-mic]'); mic.innerHTML = MIC_SVG; attachMic(mic, ta, () => lang);
+    $('[data-pc-restart]').onclick = () => { room = ''; count = -1; put(KEY, ''); chips.hidden = false; $('[data-pc-full]').hidden = true; $('[data-pc-tg]').hidden = true; $('[data-pc-restart]').hidden = true; load(); };
+    // Cards with data-pick (collab types, gift tiers) choose the topic or start the message.
+    document.addEventListener('click', (e) => {
+      const a = (e.target as Element).closest?.('[data-pick]') as HTMLElement | null;
+      if (!a || !root.isConnected) return;
+      const tb = root.querySelector<HTMLButtonElement>(`[data-topic="${a.dataset.pick}"]`);
+      if (tb) tb.click(); else if (!ta.value) ta.value = (a.querySelector('b,h3')?.textContent || '').trim() + ' — ';
+      setTimeout(() => ta.focus(), 400);
+    });
+    // Other parts of the page can start the chat: <a data-start-chat="text">.
+    document.addEventListener('click', (e) => {
+      const a = (e.target as Element).closest?.('[data-start-chat]') as HTMLElement | null;
+      if (!a || !root.isConnected) return;
+      e.preventDefault(); root.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (a.dataset.startChat) ta.value = a.dataset.startChat; setTimeout(() => ta.focus(), 400);
+    });
+    load();
+    setInterval(() => { if (room && !document.hidden) load(); }, 20000);
+  });
+</script>
+
+<style>
+  .pchat { display: flex; flex-direction: column; background: var(--surf); color: var(--ink); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; min-height: 460px; height: min(620px, 78dvh); text-align: left; }
+  .pc-head { display: flex; gap: 10px; align-items: center; padding: 12px 14px; background: var(--deep); color: var(--deepInk); }
+  .pc-head img { width: 40px; height: 40px; border-radius: 50%; background: var(--acc); object-fit: contain; }
+  .pc-head div { display: flex; flex-direction: column; line-height: 1.25; } .pc-head small { color: var(--deepMut); font-size: 12px; }
+  .pc-topics { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px 0; }
+  .pc-topics button, .pc-chips button { border: 1px solid var(--accText); color: var(--accText); background: transparent; border-radius: 999px; padding: 6px 11px; font: 600 13px var(--font); cursor: pointer; }
+  .pc-topics button[aria-pressed='true'] { background: var(--acc); color: var(--dark-ink); border-color: var(--acc); }
+  .pc-log { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; background: var(--bg); }
+  .pc-m { max-width: 86%; padding: 9px 12px; border-radius: 16px; font-size: 15px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .pc-m.vax { align-self: flex-start; background: var(--surf); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+  .pc-m.me { align-self: flex-end; background: var(--acc); color: var(--dark-ink); border-bottom-right-radius: 4px; }
+  .pc-m.wait { color: var(--mut); font-style: italic; }
+  .pc-m a { color: inherit; text-decoration: underline; }
+  .pc-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; background: var(--bg); }
+  .pc-chips[hidden], .pc-chips:empty { display: none; }
+  .pc-in { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--line); background: var(--surf); }
+  .pc-in textarea { flex: 1; min-width: 0; resize: none; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 12px; padding: 10px 12px; font: 16px var(--font); }
+  .pc-in button { width: 46px; border-radius: 12px; cursor: pointer; display: grid; place-items: center; }
+  .pc-send { border: 0; background: var(--acc); color: var(--dark-ink); font-size: 18px; }
+  .pc-mic { border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  .pc-mic.rec { background: var(--error, #e5484d); color: #fff; border-color: transparent; } .pc-mic.busy { opacity: 0.5; }
+  .pc-foot { padding: 8px 14px 12px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; background: var(--surf); }
+  .pc-foot small { color: var(--mut); font-size: 12px; flex-basis: 100%; }
+  .pc-foot a, .pc-link { color: var(--accText); font: 600 13px var(--font); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+</style>

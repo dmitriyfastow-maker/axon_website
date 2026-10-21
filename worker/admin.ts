@@ -4,6 +4,7 @@ import { ownerLead, ownerOverview, ownerUpdateLead, ownerUpdatePartner, type Not
 import { staffMessage } from './rooms.js';
 import { aiReply, decideOffer, setAiState } from './aimanager.js';
 import { handleFinanceAdmin } from './finance.js';
+import { handleOwnerChat } from './ownerchat.js';
 import { newRoom } from './rooms.js';
 import { addRenewal, allPayouts, setPayout } from './payouts.js';
 import HQ from './hq.json';
@@ -59,6 +60,7 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
     await db.prepare(`UPDATE leads SET status = 'archived' WHERE page = 'test'`).run();
     return json(200, { ok: true });
   }
+  if (path === 'claude' || path.startsWith('claude/')) return handleOwnerChat(db, ai, request, path.slice('claude'.length).replace(/^\//, ''), notify);
   if (path === 'finance' || path.startsWith('finance/')) {
     const got = { id: 0 };
     const res = await handleFinanceAdmin(db, request, path.slice('finance'.length).replace(/^\//, ''), notify, (id) => { got.id = id; });

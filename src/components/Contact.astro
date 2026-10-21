@@ -2,6 +2,7 @@
 
 import type { Dict, Lang } from '../i18n';
 import VaxSays from './VaxSays.astro';
+import PageChat from './PageChat.astro';
 import { TIER_NAMES } from '../data/tiers';
 import { LIMITS } from '../lib/validate';
 
@@ -10,6 +11,7 @@ const { t, lang } = Astro.props;
 const f = t.form;
 const interests = [{ v: 'Starter', label: 'Starter' }, ...TIER_NAMES.map((n) => ({ v: n, label: n })), { v: 'single', label: f.single }, { v: 'any', label: f.any }];
 // Labels the script swaps when the form mode changes.
+const CHIPS = { en: ['I need a website', 'I need an app', 'I need more clients', 'An AI chat for my business', 'Not sure what I need'], ru: ['Хочу сайт', 'Нужно приложение', 'Нужно больше клиентов', 'ИИ-чат для бизнеса', 'Не знаю, что нужно'], ua: ['Хочу сайт', 'Потрібен застосунок', 'Потрібно більше клієнтів', 'ІІ-чат для бізнесу', 'Не знаю, що потрібно'] }[lang];
 const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.sendQ, sending: f.sending };
 ---
 
@@ -24,7 +26,9 @@ const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.
       </div>
       <VaxSays text={t.vax.contact} face="front" big />
     </div>
-    <div class="card">
+    <div class="card chatcard" data-chat-host>
+      <PageChat lang={lang} kind="request" chips={CHIPS} />
+      <div class="fallback" data-chat-fallback hidden>
       <div class="success" data-form-success hidden>
         <img class="vax-ok" src="/mascot/vax-happy.webp" alt="Vax" width="120" height="120" loading="lazy" data-vax-poke />
         <p>{f.success}</p>
@@ -65,6 +69,7 @@ const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.
         <p class="err form-err" data-form-error role="alert" hidden>{f.error}</p>
         <button type="submit" class="submit"><span data-submit-label>{f.send}</span> <span data-submit-arrow>→</span></button>
       </form>
+      </div>
     </div>
   </div>
 </section>
@@ -118,6 +123,8 @@ const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.
     border-radius: 24px;
     padding: clamp(22px, 3vw, 32px);
   }
+  .chatcard { padding: 0; background: transparent; display: flex; flex-direction: column; gap: 14px; }
+  .chatcard .fallback { background: var(--surf); border-radius: 24px; padding: clamp(22px, 3vw, 32px); }
   .success {
     display: flex;
     flex-direction: column;

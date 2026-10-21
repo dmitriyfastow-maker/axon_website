@@ -11,6 +11,7 @@ import { handleCollab } from './collab.js';
 import { configureMail, handleEmail, type IncomingEmail } from './mail.js';
 import { handleStt } from './stt.js';
 import { handleFinancePublic } from './finance.js';
+import { handleIntake } from './intake.js';
 import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackView, triageLead } from './autopilot.js';
 
 interface Env extends LeadEnv {
@@ -78,6 +79,7 @@ export default {
     }
     const room = url.pathname.match(/^\/api\/room\/([a-f0-9]{24})$/);
     if (room) return env.LEADS ? handleRoomApi(env.LEADS, request, room[1], notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify).catch((e) => console.error('[ai reply]', e)))) : json(503, { ok: false });
+    if (url.pathname === '/api/intake') return env.LEADS ? handleIntake(env.LEADS, request, notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify).catch((e) => console.error('[ai intake]', e)))) : json(503, { ok: false });
     if (url.pathname === '/api/fin') return env.LEADS ? handleFinancePublic(env.LEADS, request) : json(503, { ok: false });
     if (url.pathname === '/api/stt') return handleStt(env.AI, request, url.searchParams.get('lang') || '');
     if (url.pathname === '/api/chat') return handleChat(env, request, ctx ? (p) => ctx.waitUntil(p) : undefined);

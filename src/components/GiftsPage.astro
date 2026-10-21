@@ -4,6 +4,7 @@
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
+import PageChat from './PageChat.astro';
 import { getDict, langPath, navHref, type Lang } from '../i18n';
 
 interface Props { lang: Lang }
@@ -91,8 +92,9 @@ const shots = ['/gifts/f13.jpg', '/gifts/f37.jpg', '/gifts/f1.jpg'];
       <ol class="how">{C.how.map(([a, b]) => <li><b>{a}</b><span>{b}</span></li>)}</ol>
     </section>
 
-    <section class="in" id="form">
-      <form class="card" data-gift>
+    <section class="in" id="form" data-chat-host>
+      <PageChat lang={lang} kind="gift" chips={{ en: ['A birthday video card', 'A scene with our names', 'A gift for my team or clients'], ru: ['Видеооткрытка на день рождения', 'Сцена с нашими именами', 'Подарок для команды или клиентов'], ua: ['Відеолистівка на день народження', 'Сцена з нашими іменами', 'Подарунок для команди чи клієнтів'] }[lang]} />
+      <form class="card" data-gift data-chat-fallback hidden>
         <h2>{C.formH}</h2>
         <div class="two">
           <label><span>{C.tier}</span><select name="tier">{C.tiers.map(([k, n, p]) => <option value={k}>{n} · {p}</option>)}</select></label>
@@ -158,6 +160,8 @@ const shots = ['/gifts/f13.jpg', '/gifts/f37.jpg', '/gifts/f1.jpg'];
   #form { padding-bottom: 80px; }
   .card { background: var(--surf); border: 1px solid var(--line); border-radius: 22px; padding: 24px; display: grid; gap: 14px; max-width: 760px; }
   .card h2 { margin: 0; }
+  .card[hidden] { display: none; }
+  #form :global(.pchat) { max-width: 760px; margin-bottom: 14px; }
   label { display: grid; gap: 6px; font-size: 14px; color: var(--mut); }
   input, select, textarea { font: 16px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 11px 12px; width: 100%; box-sizing: border-box; }
   .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }

@@ -12,7 +12,7 @@ const en = {
   "eyebrow": "Full-cycle digital studio",
   "h1": "Websites, apps, ads and AI that bring you clients.",
   "sub": "Strategy, design, development, marketing and automation — one team and one system, from launch to global markets.",
-  "cta1": "Leave a request",
+  "cta1": "Discuss your project",
   "cta2": "Services & prices",
   "cta3": "Starter packages from $149",
   "heroTags": [
@@ -574,7 +574,7 @@ const en = {
     "faq": "Didn't find the answer? Ask me in the chat — or write to the humans on the team.",
     "why": "I tried running a business without a system. Zero stars, would not recommend.",
     "services": "One dish or the whole menu — your call. I usually order the whole menu.",
-    "contact": "A human replies within 24 hours. I'll make sure they don't forget.",
+    "contact": "Just write to me here — I answer in seconds. A human joins when it matters.",
     "success": "Vax is already running to read your message.",
     "notFound": "Even raccoons get lost. Let’s go home.",
     "partners": "Every partner starts as a rookie raccoon. I started by telling my neighbour about Vaxo.",

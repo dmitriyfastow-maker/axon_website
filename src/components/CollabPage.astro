@@ -4,6 +4,7 @@
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
+import PageChat from './PageChat.astro';
 import { getDict, langPath, type Lang } from '../i18n';
 
 interface Props { lang: Lang }
@@ -85,8 +86,9 @@ const C = {
       <ol>{C.how.map(([h, p]) => <li><b>{h}</b><span>{p}</span></li>)}</ol>
     </section>
 
-    <section class="in" id="form">
-      <form class="card" data-collab>
+    <section class="in" id="form" data-chat-host>
+      <PageChat lang={lang} kind="collab" topics={[...C.types.map(([k, h]) => ({ v: k, label: h })), { v: 'other', label: C.other }]} />
+      <form class="card" data-collab data-chat-fallback hidden>
         <h2>{C.formH}</h2>
         <label><span>{C.type}</span>
           <select name="type">{C.types.map(([k, h]) => <option value={k}>{h}</option>)}<option value="other">{C.other}</option></select>
@@ -149,6 +151,8 @@ const C = {
   #form { padding-bottom: 80px; }
   .card { background: var(--surf); border: 1px solid var(--line); border-radius: 22px; padding: 24px; display: grid; gap: 14px; max-width: 760px; }
   .card h2 { margin: 0; }
+  .card[hidden] { display: none; }
+  #form :global(.pchat) { max-width: 760px; margin-bottom: 14px; }
   label { display: grid; gap: 6px; font-size: 14px; color: var(--mut); }
   input, select, textarea { font: 16px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 11px 12px; width: 100%; box-sizing: border-box; }
   .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
