@@ -71,7 +71,7 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
         <div class="grid four">
           {p.alone.map(([icon, h, x]) => <article class="card feat"><span class="ic">{icon}</span><h3>{h}</h3><p>{x}</p></article>)}
         </div>
-        <VaxSays text={t.vax.partners} pose="money-rich" />
+        <VaxSays text={t.vax.partners} pose="partners" />
       </div>
     </section>
 
