@@ -228,7 +228,7 @@ export async function ownerOverview(db: DB, notify: Notify) {
     db
       .prepare(
         `SELECT d.id, d.created_at, d.mode, d.status, d.name, d.contact, d.interest, d.message, d.lang, d.country, d.page, d.ref,
-           d.service, d.budget, d.brief, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at, d.room, d.score, d.ai_summary, d.ai, d.stage, d.stage_due, d.human, d.profile,
+           d.service, d.budget, d.brief, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at, d.room, d.score, d.ai_summary, d.ai, d.stage, d.stage_due, d.human, d.profile, d.offer,
            (SELECT COUNT(*) FROM messages m WHERE m.lead_id = d.id) AS msgs,
            (SELECT m.at FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY m.id DESC LIMIT 1) AS last_at,
            (SELECT m.sender FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY m.id DESC LIMIT 1) AS last_sender,

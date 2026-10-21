@@ -2,7 +2,7 @@
 import type { DB } from './partner.js';
 import { ownerLead, ownerOverview, ownerUpdateLead, ownerUpdatePartner, type Notify } from './deals.js';
 import { staffMessage } from './rooms.js';
-import { aiReply, answerOffer, setAiState } from './aimanager.js';
+import { aiReply, decideOffer, setAiState } from './aimanager.js';
 import { newRoom } from './rooms.js';
 import { addRenewal, allPayouts, setPayout } from './payouts.js';
 import HQ from './hq.json';
@@ -32,9 +32,10 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   }
   if (path === 'autopilot' && request.method === 'POST') {
     const bc = (await request.clone().json().catch(() => ({}))) as Record<string, unknown>;
+    if (typeof bc.vax_lessons === 'string') await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind('vax_lessons', bc.vax_lessons.slice(0, 3000)).run();
     if (typeof bc.friend_codes === 'string') await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind('friend_codes', bc.friend_codes.toUpperCase().replace(/[^A-Z0-9_,-]/g, '').slice(0, 200)).run();
     const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
-    for (const k of ['auto_publish', 'auto_approve', 'auto_qc', 'digest', 'ai_manager', 'email_replies', 'price_owner']) {
+    for (const k of ['auto_publish', 'auto_approve', 'auto_qc', 'digest', 'ai_manager', 'email_replies', 'price_owner', 'vax_learn']) {
       if (b[k] !== undefined) await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind(k, b[k] ? '1' : '0').run();
     }
     return json(200, { ok: true });
@@ -72,7 +73,8 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   if (of && request.method === 'POST') {
     const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     const counter = typeof b.counter === 'string' && b.counter.trim() ? b.counter.trim().slice(0, 60) : null;
-    const ok = await answerOffer(db, ai, Number(of[1]), b.accept === true, counter, notify);
+    const choice = typeof b.choice === 'string' ? b.choice : b.accept === true ? 'a' : counter ? 'own' : 'n';
+    const ok = await decideOffer(db, ai, Number(of[1]), choice, notify, counter);
     return json(200, { ok });
   }
   const ac = path.match(/^lead\/(\d+)\/ai$/);

@@ -142,3 +142,7 @@ img[data-vax-poke]:hover { transform: rotate(-4deg) scale(1.04); }
 @keyframes vax-pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .vax-wiggle, .vax-pop { animation: none; } }
 .vax-hint { position: absolute; z-index: 59; width: 170px; text-align: center; background: var(--surf); color: var(--ink); border: 1px solid var(--acc); font-size: 13px; font-weight: 600; padding: 7px 10px; border-radius: 999px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12); animation: vax-pop 0.3s ease; pointer-events: none; }
+
+/* Soft invitation to the Vax chat under services and prices */
+.ask-vax { display: inline-block; margin-top: 18px; padding: 10px 16px; border: 1px solid var(--accText); border-radius: 999px; color: var(--accText); font-weight: 600; text-decoration: none; line-height: 1.35; }
+.ask-vax:hover { background: var(--acc); color: var(--dark-ink); border-color: var(--acc); }

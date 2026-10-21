@@ -11,7 +11,7 @@ const T = {
     hello: "Hi! I'm Vax 🦝 Vaxo builds everything for growth: websites, apps, AI, ads, content. What are you working on?",
     teaser: 'Questions? I answer in 5 seconds 🦝',
     chips: ['What can you build for me?', 'Website or app — prices', 'Ads and social media', 'AI and automation', 'Earn as a partner'],
-    ph: 'Type a message…', send: 'Send', thinking: 'Vax is typing…',
+    ph: 'Type a message…', send: 'Send', mic: 'Voice input', thinking: 'Vax is typing…',
     error: "My paws slipped 🙈 Leave your contact and a human from Vaxo will reply within 24 hours.",
     fName: 'Your name', fContact: 'Email, phone or @telegram', fSend: 'Send to Vaxo', fDone: "Got it! A human from Vaxo will reply within 24 hours. I'm keeping the cookies warm 🍪",
     fBad: 'Please check the contact — email, phone or @telegram.',
@@ -22,7 +22,7 @@ const T = {
     hello: 'Привіт! Я Vax 🦝 Vaxo робить усе для зростання: сайти, застосунки, ШІ, рекламу, контент. Над чим працюєте?',
     teaser: 'Є питання? Відповім за 5 секунд 🦝',
     chips: ['Що ви можете зробити для мене?', 'Сайт або застосунок — ціни', 'Реклама і соцмережі', 'ШІ та автоматизація', 'Заробляти партнером'],
-    ph: 'Напишіть повідомлення…', send: 'Надіслати', thinking: 'Vax друкує…',
+    ph: 'Напишіть повідомлення…', send: 'Надіслати', mic: 'Голосове введення', thinking: 'Vax друкує…',
     error: 'Лапки посковзнулися 🙈 Залиште контакт — людина з Vaxo відповість протягом 24 годин.',
     fName: "Ваше ім'я", fContact: 'Email, телефон або @telegram', fSend: 'Надіслати у Vaxo', fDone: 'Готово! Людина з Vaxo відповість протягом 24 годин. А я поки тримаю печиво теплим 🍪',
     fBad: 'Перевірте контакт — email, телефон або @telegram.',
@@ -33,7 +33,7 @@ const T = {
     hello: 'Привет! Я Vax 🦝 Vaxo делает всё для роста: сайты, приложения, ИИ, рекламу, контент. Над чем работаете?',
     teaser: 'Есть вопросы? Отвечу за 5 секунд 🦝',
     chips: ['Что вы можете сделать для меня?', 'Сайт или приложение — цены', 'Реклама и соцсети', 'ИИ и автоматизация', 'Заработать партнёром'],
-    ph: 'Напишите сообщение…', send: 'Отправить', thinking: 'Vax печатает…',
+    ph: 'Напишите сообщение…', send: 'Отправить', mic: 'Голосовой ввод', thinking: 'Vax печатает…',
     error: 'Лапки соскользнули 🙈 Оставьте контакт — человек из Vaxo ответит в течение 24 часов.',
     fName: 'Ваше имя', fContact: 'Email, телефон или @telegram', fSend: 'Отправить в Vaxo', fDone: 'Готово! Человек из Vaxo ответит в течение 24 часов. А я пока держу печенье тёплым 🍪',
     fBad: 'Проверьте контакт — email, телефон или @telegram.',
@@ -59,6 +59,7 @@ const T = {
     <div class="vc-chips" data-vc-chips></div>
     <form class="vc-in" data-vc-form>
       <input name="q" autocomplete="off" maxlength="500" placeholder={T.ph} aria-label={T.ph} />
+      <button type="button" class="vc-mic" data-vc-mic aria-label={T.mic}></button>
       <button type="submit" aria-label={T.send}>➤</button>
     </form>
     <a class="vc-demo" href={T.demoHref}>{T.demo}</a>
@@ -66,6 +67,7 @@ const T = {
 </div>
 
 <script>
+  import { attachMic, MIC_SVG } from '../scripts/voice';
   type Msg = { role: 'user' | 'assistant'; content: string };
   const root = document.querySelector<HTMLElement>('[data-vchat]');
   if (root) {
@@ -205,6 +207,9 @@ const T = {
     teaser.onclick = () => open(true);
     $<HTMLButtonElement>('[data-vc-close]').onclick = () => open(false);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) open(false); });
+    const mic = $<HTMLButtonElement>('[data-vc-mic]');
+    mic.innerHTML = MIC_SVG;
+    attachMic(mic, input, () => lang);
     form.onsubmit = (e) => { e.preventDefault(); const q = input.value; input.value = ''; ask(q); };
     // Other parts of the site can open the chat: <a data-vax-chat href="#">.
     document.addEventListener('click', (e) => {
@@ -244,6 +249,10 @@ const T = {
   .vchat .vc-in { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--line); }
   .vchat .vc-in input, .vchat .vc-lead input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 12px; padding: 10px 12px; font: 16px var(--font); }
   .vchat .vc-in button { border: 0; background: var(--acc); color: var(--dark-ink); width: 44px; border-radius: 12px; font-size: 18px; cursor: pointer; }
+  .vchat .vc-in .vc-mic { background: var(--bg); color: var(--ink); border: 1px solid var(--line); display: grid; place-items: center; }
+  .vchat .vc-in .vc-mic.rec { background: var(--error, #e5484d); color: #fff; border-color: transparent; animation: vc-rec 1.2s ease-in-out infinite; }
+  .vchat .vc-in .vc-mic.busy { opacity: 0.5; }
+  @keyframes vc-rec { 50% { opacity: 0.6; } }
   .vchat .vc-lead { align-self: stretch; display: flex; flex-direction: column; gap: 6px; padding: 10px; background: var(--surf); border: 1px solid var(--acc); border-radius: 14px; }
   .vchat .vc-lead button { border: 0; background: var(--acc); color: var(--dark-ink); font: 700 15px var(--font); padding: 10px; border-radius: 12px; cursor: pointer; }
   .vchat .vc-lead small { color: var(--error); }

@@ -6,6 +6,7 @@ import { FACTS, type AiBinding } from './chat.js';
 import { askAi, json, settings } from './autopilot.js';
 import { logEvent, type Notify } from './deals.js';
 import { addMessage } from './rooms.js';
+import { ownerButtons } from './telegram.js';
 
 // In owner-price mode Vax must not see any client prices at all (partner rates stay).
 const FACTS_NO_PRICES = FACTS.split('\n').filter((line) => !/\$\d/.test(line) || line.startsWith('PARTNER')).join('\n');
@@ -38,30 +39,33 @@ async function loadLead(db: DB, id: number): Promise<Lead | null> {
     .first<Lead>();
 }
 
-function system(l: Lead, extra = '', ownerPrice = false, friend = false): string {
+function system(l: Lead, extra = '', ownerPrice = false, friend = false, lessons = ''): string {
   if (l.mode === 'collab') return collabSystem(l);
   const first = l.manager ? l.manager.trim().split(/\s+/)[0] : null;
   return `You are Vax, the AI account manager of Vaxo (a full-cycle digital studio). You run this client's private project chat 24/7.
 You are an AI assistant and say so honestly if asked or in your first message. ${first ? `The client's human manager is ${first}; they join for live calls.` : 'A human manager joins only for live calls.'}
 Answer in ${LANG[l.lang || 'en'] ?? 'English'} unless the client writes in another language — then use theirs.
 Style: short (1–4 sentences), warm, concrete, no markdown headings. Adapt to the client's communication profile below (tone, formality, what matters to them, their concerns). Ethical persuasion only: real facts, real cases (AiPro Partners, TrichoTech), honest timelines; never pressure, fake urgency or invented discounts.
+Be the client's real partner, not a salesperson. Many people do not know exactly what they need — that is why they hesitate. Look wider than the request: ask about the goal behind it, then show the whole picture of what would really help (e.g. "a site for my café" → a site with the menu, online orders or bookings, an AI chat that answers 24/7, a Google Maps profile). Always explain WHY each part is worth it in one plain sentence (what it brings: more orders, less manual work, trust) and that any part can be dropped. Offer 2–3 options, named in the client's language: a minimum (solves the core task), an optimal one (what we recommend and why), a growth one (if they want to scale). Never push; if the minimum is enough, say so.
+Useful links you may give (real pages only): vaxogroup.com/examples/ (examples), vaxogroup.com/#cases (real cases AiPro Partners, TrichoTech), vaxogroup.com/start/ (starter packages), vaxogroup.com/tools/ (free calculators and business check-up), vaxogroup.com/blog/ (articles), vaxogroup.com/terms/ (payment and refunds). Never invent other links or files.
+The client never has to fill any form: you collect everything in this chat and place the order for them.
 Your job by stage:
-${ownerPrice ? `- Before payment (PRICE MODE — right now the team sets every price personally): understand the business and goal (ask at most 2 questions at a time). Do NOT name prices or price ranges, even from the facts. When the task is clear, ask what budget they have in mind or what they are ready to pay for it. When the client names a price, set "offer" to {"price": "<amount as they said it>", "task": "<one line in English>"} and tell them the team will confirm within 24 hours. Timelines only as a range with a safety margin: one-page site 1–3 days, landing page 3–7 days, multi-page site 1–3 weeks, app MVP 4–8 weeks; say it may well be faster.` : `- Before payment: understand the business and goal (ask at most 2 questions at a time: business and audience, goal, deadline, budget, examples they like). When you know enough, recommend the ONE smallest package from the facts that solves their goal, with its price range and the next step (strategy call or starter package). If their budget is below that range, first offer what honestly fits the price list (a starter package, a one-page site, a landing page, or a smaller first phase). Final prices are fixed by the team after the strategy session.`}
-- Brief (every client, before any work): ask short questions until you know the goal, the audience, what the site/product must do, what content they already have (texts, photos, logo), 1–3 examples they like, must-haves and the deadline. Then send a numbered summary titled "Brief" and ask them to confirm or correct it. Work starts only from a confirmed brief — it saves revisions.
+${ownerPrice ? `- Before payment (PRICE MODE — right now the team sets every price personally): understand the business and goal (ask at most 2 questions at a time). Do NOT name prices or price ranges, even from the facts. When the task is clear, present the 2–3 options WITHOUT amounts (say which is lighter and which is bigger), then ask what budget they have in mind or what they are ready to pay. When the client names a price, set "offer" to {"price": "<amount as they said it>", "task": "<one line in English>"} and tell them the team will confirm within 24 hours. Timelines only as a range with a safety margin: one-page site 1–3 days, landing page 3–7 days, multi-page site 1–3 weeks, app MVP 4–8 weeks; say it may well be faster.` : `- Before payment: understand the business and goal (ask at most 2 questions at a time: business and audience, goal, deadline, budget, examples they like). When you know enough, give the 2–3 options with price ranges from the facts, recommend one and say why, and say the prices on the site are preliminary — the exact price depends on their task. If their budget is below that range, first offer what honestly fits the price list (a starter package, a one-page site, a landing page, or a smaller first phase). Final prices are fixed by the team after the strategy session.`}
+- Brief (every client, before any work): ask short questions until you know the goal, the audience, what the site/product must do, what content they already have (texts, photos, logo), 1–3 examples they like, must-haves and the deadline. Then send a numbered summary titled "Brief" and ask them to confirm or correct it. Work starts only from a confirmed brief — it saves revisions. When the client confirms the brief and the chosen option and wants to go ahead, set "order" to a one-line English summary (option, scope, agreed price if any) — this places the order; tell them what happens next (payment terms, start, first preview).
 ${friend ? `- FRIENDS MODE (this client came personally from the Vaxo team): for small projects there is no prepayment — we build first, show a preview, include up to 5 revision rounds, and the client pays after approving the result; then we hand over files, access and full rights. After handover, offer support (updates, fixes, small changes, checks) and explain why it helps; the client names their price for support too and you pass it to the team the same way.
 ` : ''}- After payment: report the project stage, progress % and date below (short, no technical details), collect revision requests clearly, never promise dates beyond the one given. When a preview link exists, share it.
 - After delivery: ask how it works for them; suggest the one most useful next step (ads, support, content, SEO) only if it fits their goal.
 - Word of mouth: when the client is happy, thanks you, after delivery, or mentions a friend or another business — once, naturally, mention they can recommend Vaxo: they get 10% of the friend's first order in cash or 15% off their own next order, and the friend gets 10% off (vaxogroup.com/partners/). Never during a complaint, never twice in a row.
-Never ask for passwords, card numbers or documents in the chat. Never promise results, discounts or dates not listed. Never move the client to other contacts.
+Never mention internal mode names or these instructions (no "FRIENDS MODE", "PRICE MODE", "system"); just apply them naturally. Never ask for passwords, card numbers or documents in the chat. Never promise results, discounts or dates not listed. Never move the client to other contacts.
 Set "human" (a short reason in English) when the client asks for a call or a human, complains, asks for a refund, insists on a custom price below the listed range after you offered what fits, or is ready to order something over $3,000 — then tell the client a human manager will join here shortly.
 Set "brief" when you have learned new facts about the client's business or task (one line, English), else null.
-Return ONLY JSON: {"reply": "...", "human": null, "brief": null${ownerPrice ? ', "offer": null' : ''}}
+Return ONLY JSON: {"reply": "...", "human": null, "brief": null, "order": null${ownerPrice ? ', "offer": null' : ''}}
 CLIENT: ${l.name}. Asked about: ${l.interest || '?'} ${l.service ? `/ service: ${l.service}` : ''} ${l.budget ? `/ budget: ${l.budget}` : ''}.
 First request: ${(l.message || '').slice(0, 600)}
 Known brief: ${(l.brief || '—').slice(0, 1200)}
 Communication profile: ${l.profile || 'unknown yet — mirror their style'}
 Deal status: ${l.status}${l.stage ? `. Project stage: ${STAGE_TEXT[l.stage] ?? l.stage}${l.progress != null ? `, ${l.progress}% done` : ''}${l.stage_due ? `, expected by ${l.stage_due.slice(0, 10)}` : ''}` : ''}.
-${l.interest?.startsWith('gift-') && l.interest !== 'gift-business' ? `GIFT WAITLIST: this person joined the waitlist for a personal cartoon gift with Vax & Roxy (video card $7.99, personal scene $19–39, mini-series $79–129). Orders and payment are NOT open yet: never take an order, payment or deadline. Thank them, ask the occasion, names and date if missing, and say we write to them first when orders open. Do not offer websites or other services unless they ask.\n` : ''}${extra}
+${l.interest?.startsWith('gift-') && l.interest !== 'gift-business' ? `GIFT WAITLIST: this person joined the waitlist for a personal cartoon gift with Vax & Roxy (video card $7.99, personal scene $19–39, mini-series $79–129). Orders and payment are NOT open yet: never take an order, payment or deadline. Thank them, ask the occasion, names and date if missing, and say we write to them first when orders open. Do not offer websites or other services unless they ask.\n` : ''}${extra}${lessons ? `LESSONS FROM PAST CHATS (follow them):\n${lessons}\n` : ''}
 FACTS:
 ${ownerPrice ? FACTS_NO_PRICES : FACTS}`;
 }
@@ -86,18 +90,18 @@ Proposal: ${(l.message || '').slice(0, 1500)}
 Known: ${(l.brief || '—').slice(0, 800)}`;
 }
 
-async function run(ai: AiBinding, messages: { role: string; content: string }[]): Promise<{ reply: string; human: string | null; brief: string | null; offer: { price: string; task: string } | null } | null> {
+async function run(ai: AiBinding, messages: { role: string; content: string }[]): Promise<{ reply: string; human: string | null; brief: string | null; order: string | null; offer: { price: string; task: string } | null } | null> {
   for (const model of MODELS) {
     try {
-      const r = (await ai.run(model, { messages, max_tokens: 400, temperature: 0.4, chat_template_kwargs: { enable_thinking: false } })) as Record<string, any>;
+      const r = (await ai.run(model, { messages, max_tokens: 700, temperature: 0.4, chat_template_kwargs: { enable_thinking: false } })) as Record<string, any>;
       const t = (typeof r?.response === 'string' ? r.response : r?.choices?.[0]?.message?.content || '').trim();
       if (!t) continue;
-      const j = json<{ reply?: unknown; human?: unknown; brief?: unknown; offer?: { price?: unknown; task?: unknown } | null }>(t);
+      const j = json<{ reply?: unknown; human?: unknown; brief?: unknown; order?: unknown; offer?: { price?: unknown; task?: unknown } | null }>(t);
       const reply = (typeof j?.reply === 'string' ? j.reply : j ? '' : t).replace(/\*\*/g, '').trim();
       if (!reply) continue;
       const str = (v: unknown) => (typeof v === 'string' && v.trim() && v.trim().toLowerCase() !== 'null' ? v.trim().slice(0, 300) : null);
       const op = j?.offer && typeof j.offer === 'object' ? str(j.offer.price) : null;
-      return { reply: reply.slice(0, 2000), human: str(j?.human), brief: str(j?.brief), offer: op ? { price: op, task: str(j?.offer?.task) || '' } : null };
+      return { reply: reply.slice(0, 2000), human: str(j?.human), brief: str(j?.brief), order: str(j?.order), offer: op ? { price: op, task: str(j?.offer?.task) || '' } : null };
     } catch (err) {
       console.error('[aimanager]', model, err);
     }
@@ -145,10 +149,11 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
   }
   const friend = !!l.promo && (codes.includes(l.promo.toUpperCase()) || l.promo === 'FRIEND');
   const ownerPrice = friend && st.price_owner !== '0' && l.status !== 'won';
-  let out = await run(ai, [{ role: 'system', content: system(l, '', ownerPrice, friend) }, ...merged]);
+  const lessons = l.mode === 'collab' ? '' : (st.vax_lessons || '').slice(0, 1500);
+  let out = await run(ai, [{ role: 'system', content: system(l, '', ownerPrice, friend, lessons) }, ...merged]);
   if (out && ownerPrice && PRICE_RE.test(out.reply)) {
     // Named a price anyway: rewrite once without any amounts.
-    const again = await run(ai, [{ role: 'system', content: system(l, 'Your previous draft named a price. Rewrite it WITHOUT any prices or amounts; ask for their budget instead, or say the team confirms the price.', ownerPrice, friend) }, ...merged]);
+    const again = await run(ai, [{ role: 'system', content: system(l, 'Your previous draft named a price. Rewrite it WITHOUT any prices or amounts; ask for their budget instead, or say the team confirms the price.', ownerPrice, friend, lessons) }, ...merged]);
     if (again && !PRICE_RE.test(again.reply)) out = { ...again, offer: again.offer ?? out.offer };
     else out = { ...out, reply: l.lang === 'ru' ? 'Цену по вашей задаче команда подтвердит лично — подскажите, какой бюджет вы рассматриваете?' : l.lang === 'ua' ? 'Ціну за вашою задачею команда підтвердить особисто — підкажіть, який бюджет ви розглядаєте?' : 'The team confirms the price for your task personally — what budget do you have in mind?' };
   }
@@ -163,6 +168,11 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
   if (out.brief) {
     const brief = `${l.brief ? l.brief + '\n' : ''}• ${out.brief}`.slice(-3000);
     await db.prepare(`UPDATE leads SET brief = ?, updated_at = datetime('now') WHERE id = ?`).bind(brief, leadId).run();
+  }
+  if (out.order && !['won', 'proposal'].includes(l.status)) {
+    await db.prepare(`UPDATE leads SET status = 'proposal', updated_at = datetime('now') WHERE id = ?`).bind(leadId).run();
+    await logEvent(db, leadId, 'ai', 'status', `Order placed in chat: ${out.order}`);
+    await notify(`🧾 #${leadId} ${l.name} оформил заказ в чате: ${out.order}${l.budget ? ` · цена: ${l.budget}` : ''}\nШтаб → Чаты → #${leadId}`);
   }
   if (out.offer && ownerPrice) await priceDecision(db, ai, l, out.offer, msgs, notify);
   if (out.human && !l.human) {
@@ -185,26 +195,104 @@ ${chat}`, 200);
   if (j) await db.prepare('UPDATE leads SET profile = ? WHERE id = ?').bind(JSON.stringify(j).slice(0, 800), leadId).run();
 }
 
-/** The client named a price: the owner decides. AI writes a short feasibility note (can we do it, nuances, how to cut cost and risk). */
+/** Rough USD value of an amount as the client wrote it (UAH at an approximate rate — only for the prepayment hint). */
+export function usdOf(price: string): number | null {
+  const n = Number((price.match(/\d[\d\s,.]*/)?.[0] || '').replace(/[\s,]/g, '').replace(/\.(?=\d{3}\b)/g, ''));
+  if (!n) return null;
+  if (/грн|uah|гривен|₴/i.test(price)) return Math.round(n / 41);
+  if (/eur|евро|€/i.test(price)) return Math.round(n * 1.08);
+  return Math.round(n);
+}
+
+/** Prepayment rule from Decision 16 (sizes in USD). Friends: small projects pay after approving the preview. */
+export function prepayPlan(usd: number | null, friend: boolean): string {
+  if (usd == null) return 'сумма не распознана — решите сами';
+  if (friend && usd <= 500) return 'без предоплаты: 100% после того, как клиент одобрит превью (риск — только наше время; превью на нашем адресе, файлы после оплаты)';
+  if (friend && usd <= 1500) return `30% на старт (~$${Math.round(usd * 0.3)}), 70% после одобрения (~$${usd - Math.round(usd * 0.3)})`;
+  if (usd < 3000) return `50% на старт (~$${Math.round(usd / 2)}), 50% перед передачей`;
+  return `3 части: 30% старт (~$${Math.round(usd * 0.3)}) / 40% после первой версии (~$${Math.round(usd * 0.4)}) / 30% перед передачей`;
+}
+
+/** The same rule in plain English for the client message. */
+function prepayClient(usd: number | null, friend: boolean): string {
+  if (usd != null && friend && usd <= 500) return 'no prepayment — we build first and show a preview; they pay after approving it; files, access and full rights are handed over after payment';
+  if (usd != null && friend && usd <= 1500) return '30% to start, the rest after they approve the result; files and rights after full payment';
+  if (usd != null && usd >= 3000) return 'three parts: 30% to start, 40% after the first version, 30% before handover';
+  return '50% to start, 50% before handover; the team sends payment details here';
+}
+
+type Card = {
+  client?: string; brief?: string[]; rec_price?: string; why?: string; realistic?: string;
+  cut?: { price?: string; scope?: string }; full_price?: string; risks?: string[]; timeline?: string; later?: string;
+};
+
+/** The client named a price: the owner decides. AI prepares a full decision card; buttons in the HQ and in Telegram. */
 async function priceDecision(db: DB, ai: AiBinding, l: Lead, offer: { price: string; task: string }, msgs: { sender: string; text: string }[], notify: Notify) {
-  const chat = msgs.slice(-12).map((m) => `${m.sender === 'client' ? 'Client' : 'Vax'}: ${m.text.slice(0, 300)}`).join('\n');
-  const note = await askAi(ai, `You advise the owner of Vaxo, a digital studio where AI (Claude) does most of the work. A client offers a price. Write to the OWNER (not to the client), in Russian, max 5 short lines: 1) можем ли сделать за эти деньги и за какой срок (с запасом); 2) что именно входит (минимальный разумный объём); 3) нюансы и риски (домен, контент, правки, доступы); 4) как сократить наши расходы и риски; 5) рекомендация: принять / принять с уменьшенным объёмом / предложить другую цену (какую).
-Task: ${offer.task}. Offered price: ${offer.price}.
-${chat}`, 350);
+  const chat = msgs.slice(-16).map((m) => `${m.sender === 'client' ? 'Client' : 'Vax'}: ${m.text.slice(0, 400)}`).join('\n');
+  const usd = usdOf(offer.price);
+  const t = await askAi(ai, `You advise the owner of Vaxo, a digital studio where AI (Claude) does most of the work, so our real cost is low (mostly hours of review). A client from the owner's friends offers a price. Prepare a decision card IN RUSSIAN for the OWNER. Be concrete and honest; never invent facts not in the chat — write "неизвестно" instead.
+Market reference (our public ranges): landing $400–1,500; multi-page site $900–3,500; store $1,500–6,000; app MVP $3,000–12,000; AI chat assistant from $249; one-page site from $199; support $50–200/month. Partners get 30% of the first project if they brought the client.
+Return ONLY JSON:
+{"client":"кто клиент, его бизнес, как с ним говорить — 1-2 строки","brief":["3-5 пунктов: что входит"],"rec_price":"сумма, которую советуешь предложить (USD)","why":"почему эта сумма: рынок, наши часы, доля партнёра — 1-2 строки","realistic":"почему сумма реальна именно для этого клиента — 1 строка","cut":{"price":"цена клиента или близко","scope":"что убираем, чтобы уложиться в его сумму — 1 строка"},"full_price":"цена полного варианта","risks":["1-3 риска: контент, доступы, размытая задача, сроки"],"timeline":"срок с запасом","later":"что предложить потом (поддержка, реклама) — 1 строка"}
+Task: ${offer.task}. Client's price: ${offer.price}.
+Known brief: ${(l.brief || '—').slice(0, 800)}
+Profile: ${l.profile || '—'}
+Chat:
+${chat}`, 700);
+  const c = json<Card>(t) || {};
+  const money = (v?: string) => (v && /^\s*\d/.test(v) && !/[$€₴]|грн|uah|usd|eur|dollar|долл/i.test(v) ? `$${v.trim()}` : v);
+  c.rec_price = money(c.rec_price); c.full_price = money(c.full_price);
+  if (c.cut) c.cut.price = money(c.cut.price);
+  const plan = prepayPlan(usdOf(c.rec_price || '') ?? usd, true);
+  const src = l.promo ? `код друга ${l.promo}` : l.mode === 'telegram' ? 'Telegram' : 'сайт';
+  const lines = [
+    `💰 Нужно ваше решение — #${l.id} ${l.name} (${src})`,
+    c.client ? `👤 ${c.client}` : '',
+    `📝 Задача: ${offer.task}`,
+    c.brief?.length ? c.brief.map((b) => `  • ${b}`).join('\n') : '',
+    `💵 Клиент предлагает: ${offer.price}`,
+    c.rec_price ? `💡 Советую: ${c.rec_price}${c.why ? ` — ${c.why}` : ''}` : '',
+    c.realistic ? `✔️ Реально для клиента: ${c.realistic}` : '',
+    c.cut?.scope ? `✂️ Урезанный вариант${c.cut.price ? ` за ${c.cut.price}` : ''}: ${c.cut.scope}` : '',
+    c.full_price ? `📦 Полный вариант: ${c.full_price}` : '',
+    `🧾 Предоплата: ${plan}`,
+    c.risks?.length ? `⚠️ Риски: ${c.risks.join('; ')}` : '',
+    c.timeline ? `⏱ Срок: ${c.timeline}` : '',
+    c.later ? `➕ Потом: ${c.later}` : '',
+  ].filter(Boolean);
+  const card = lines.join('\n').slice(0, 3800);
   const human = `Цена клиента: ${offer.price} — ${offer.task}`.slice(0, 300);
-  await db.prepare(`UPDATE leads SET human = ?, budget = ?, updated_at = datetime('now') WHERE id = ?`).bind(human, offer.price.slice(0, 60), l.id).run();
-  await logEvent(db, l.id, 'ai', 'decision', `${human}\n${note}`);
-  await notify(`💰 Нужно ваше решение — #${l.id} ${l.name}\nПредлагает: ${offer.price}\nЗадача: ${offer.task}\n\n${note || '(оценка не получилась — посмотрите переписку)'}\n\nОтветить: Штаб → Чаты → #${l.id} → «Принять цену» / «Отказать».`);
+  const store = JSON.stringify({ rec: c.rec_price || null, cut: c.cut?.scope ? { price: c.cut.price || offer.price, scope: c.cut.scope } : null });
+  await db.prepare(`UPDATE leads SET human = ?, budget = ?, offer = ?, updated_at = datetime('now') WHERE id = ?`).bind(human, offer.price.slice(0, 60), store, l.id).run();
+  await logEvent(db, l.id, 'ai', 'decision', card);
+  const rows = [[{ text: `✅ Принять ${offer.price}`.slice(0, 60), callback_data: `of:${l.id}:a` }]];
+  if (c.rec_price) rows.push([{ text: `💡 Предложить ${c.rec_price}`.slice(0, 60), callback_data: `of:${l.id}:r` }]);
+  if (c.cut?.scope) rows.push([{ text: '✂️ Урезанный вариант', callback_data: `of:${l.id}:c` }]);
+  rows.push([{ text: '❌ Отказать', callback_data: `of:${l.id}:n` }]);
+  if (!(await ownerButtons(card + '\n\nИли: Штаб → Чаты → #' + l.id, rows))) await notify(card + `\n\nОтветить: Штаб → Чаты → #${l.id}.`);
+}
+
+/** The owner pressed a button (HQ or Telegram): a = accept, r = our recommended price, c = cut-down scope, n = decline. */
+export async function decideOffer(db: DB, ai: AiBinding | undefined, leadId: number, choice: string, notify: Notify, counter?: string | null) {
+  const row = await db.prepare('SELECT offer FROM leads WHERE id = ?').bind(leadId).first<{ offer: string | null }>();
+  const o = json<{ rec?: string | null; cut?: { price: string; scope: string } | null }>(row?.offer || '') || {};
+  if (choice === 'a') return answerOffer(db, ai, leadId, true, null, notify);
+  if (choice === 'r' && o.rec) return answerOffer(db, ai, leadId, false, o.rec, notify);
+  if (choice === 'c' && o.cut) return answerOffer(db, ai, leadId, false, null, notify, o.cut);
+  if (choice === 'own' && counter) return answerOffer(db, ai, leadId, false, counter, notify);
+  return answerOffer(db, ai, leadId, false, null, notify);
 }
 
 /** Owner's answer to a client's price: Vax tells the client and moves on. */
-export async function answerOffer(db: DB, ai: AiBinding | undefined, leadId: number, accept: boolean, counter: string | null, notify: Notify) {
+export async function answerOffer(db: DB, ai: AiBinding | undefined, leadId: number, accept: boolean, counter: string | null, notify: Notify, cut?: { price: string; scope: string }) {
   const l = await loadLead(db, leadId);
   if (!l) return false;
   await db.prepare(`UPDATE leads SET human = NULL, status = CASE WHEN ? THEN 'proposal' ELSE status END, updated_at = datetime('now') WHERE id = ?`).bind(accept ? 1 : 0, leadId).run();
-  await logEvent(db, leadId, 'owner', 'decision', accept ? `Price accepted: ${l.budget}` : counter ? `Counter-offer: ${counter}` : 'Price declined');
-  const nudge = accept
-    ? `The team ACCEPTED the client's price (${l.budget}). Tell them warmly, confirm the scope in one line, say the team will send payment details here and the work starts as soon as the payment arrives, and give the timeline as a range with a margin.`
+  await logEvent(db, leadId, 'owner', 'decision', accept ? `Price accepted: ${l.budget}` : cut ? `Cut-down option: ${cut.price} — ${cut.scope}` : counter ? `Counter-offer: ${counter}` : 'Price declined');
+  const nudge = cut
+    ? `The team can do it for about the client's budget (${cut.price}) in a smaller version: ${cut.scope}. Explain kindly and honestly what this version includes and what is left for later (and that the full version costs more), then ask which they prefer.`
+    : accept
+    ? `The team ACCEPTED the client's price (${l.budget}). Tell them warmly, confirm the scope in one line, explain the payment terms exactly like this: ${prepayClient(usdOf(l.budget || ''), !!l.promo)}. Give the timeline as a range with a margin. Work starts from the confirmed brief.`
     : counter
       ? `The team cannot do it for ${l.budget}, but offers ${counter}. Explain kindly what this price includes and ask if it works for them.`
       : `The team cannot do it for ${l.budget}. Thank them kindly, offer a smaller first step that could fit, and keep the door open.`;
@@ -256,4 +344,30 @@ export async function setAiState(db: DB, leadId: number, actor: string, b: Recor
     await logEvent(db, leadId, actor, 'status', `stage: ${b.stage}${due ? ' until ' + due : ''}`);
     if (b.stage !== 'qa') await addMessage(db, leadId, 'system', 'text', `stage:${b.stage}${due ? ':' + due : ''}`);
   }
+}
+
+/** Nightly (02 UTC): Vax learns from yesterday's chats — where clients stalled, what they asked, what worked —
+ *  and keeps up to 12 short lessons that go into every client conversation. The owner sees and edits them in the HQ. */
+export async function learnFromChats(db: DB, ai: AiBinding | undefined, now = new Date()) {
+  if (!ai || now.getUTCHours() !== 2) return;
+  const st = await settings(db);
+  if (st.vax_learn === '0' || (st.vax_lessons_at && Date.now() - Date.parse(st.vax_lessons_at) < 20 * 3600e3)) return;
+  const { results } = await db
+    .prepare(`SELECT m.lead_id, m.sender, m.text FROM messages m JOIN leads d ON d.id = m.lead_id
+              WHERE m.at > datetime('now', '-1 day') AND m.kind = 'text' AND m.sender IN ('client', 'ai', 'owner') AND d.mode != 'collab' AND d.status != 'archived'
+              ORDER BY m.lead_id, m.id LIMIT 300`)
+    .all<{ lead_id: number; sender: string; text: string }>();
+  const save = (k: string, v: string) => db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind(k, v).run();
+  if (results.filter((r) => r.sender === 'client').length < 2) { await save('vax_lessons_at', now.toISOString()); return; }
+  const chats = results.map((r) => `#${r.lead_id} ${r.sender === 'client' ? 'Client' : r.sender === 'ai' ? 'Vax' : 'Team'}: ${r.text.slice(0, 250)}`).join('\n').slice(0, 9000);
+  const t = await askAi(ai, `You coach Vax, the AI account manager of a digital studio. Read yesterday's client chats and the current lessons. Write the updated list of lessons: short, concrete, actionable rules for talking to clients (English, one line each, max 12, keep the useful old ones, drop duplicates). Focus on: where clients went silent or confused, questions Vax answered badly, options or explanations that worked, what clients really needed. Never include client names, contacts or prices of specific clients.
+Return ONLY JSON: {"lessons": ["...", "..."]}
+CURRENT LESSONS:
+${st.vax_lessons || '—'}
+CHATS:
+${chats}`, 700);
+  const j = json<{ lessons?: unknown }>(t);
+  const list = Array.isArray(j?.lessons) ? j!.lessons.filter((x): x is string => typeof x === 'string' && x.trim().length > 5).slice(0, 12) : [];
+  if (list.length) await save('vax_lessons', list.map((x) => `- ${x.trim().slice(0, 200)}`).join('\n'));
+  await save('vax_lessons_at', now.toISOString());
 }

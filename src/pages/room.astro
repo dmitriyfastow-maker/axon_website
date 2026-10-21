@@ -2,9 +2,9 @@
 // The client's private project chat: vaxogroup.com/room/?t=<room>. Language follows the client's request.
 import Base from '../layouts/Base.astro';
 const T = {
-  en: { tg: 'Continue in Telegram', h: 'Your project with Vaxo', collabH: 'Your collaboration with Vaxo', progress: 'Project progress',  giftH: 'Your cartoon gift', giftHello: 'Hi {name}! This is your chat about the cartoon gift. Vax will ask a couple of details here.',  collabHello: 'Hi {name}! This is your private chat with Vaxo about your proposal.', role: 'Account Manager, Vaxo', steps: ['Request received', 'Your task', 'Proposal', 'In progress', 'Review', 'Delivered'], ai: 'Vax · AI manager', aiSub: 'Replies in seconds, 24/7 · a human joins for calls', stage: { work: 'Your project is in progress', review: 'Ready for your review — see the link above', revisions: 'Applying your revisions', delivered: 'Project delivered' }, until: 'expected by', typing: 'Vax is typing…', mgrWait: 'Your manager is being assigned', reply: 'Replies within 24 hours', mgr: 'Your manager', wait: 'Your personal manager will join this chat within 24 hours.', ph: 'Write a message…', send: 'Send', save: 'Save this page — it is your private project chat. Everything about your project stays here.', copy: 'Copy link', copied: 'Copied', team: 'Vaxo team', you: 'You', call: 'Call', bad: 'This chat link is not valid. Write to us at vaxogroup.com.', err: 'Not sent. Try again.', hello: 'Hi {name}! This is your project chat. Write your questions here at any time — a manager replies within 24 hours.' },
-  ru: { tg: 'Продолжить в Telegram', h: 'Ваш проект с Vaxo', collabH: 'Сотрудничество с Vaxo', progress: 'Готовность проекта',  giftH: 'Ваш мультик в подарок', giftHello: 'Здравствуйте, {name}! Это чат о вашем мультике в подарок. Vax уточнит здесь пару деталей.',  collabHello: 'Здравствуйте, {name}! Это ваш личный чат с Vaxo по вашему предложению.', role: 'Account Manager, Vaxo', steps: ['Заявка получена', 'Ваша задача', 'Предложение', 'В работе', 'Проверка', 'Сдано'], ai: 'Vax · ИИ-менеджер', aiSub: 'Отвечает за секунды, 24/7 · человек подключается на созвон', stage: { work: 'Проект в работе', review: 'Готово к проверке — ссылка выше', revisions: 'Вносим ваши правки', delivered: 'Проект сдан' }, until: 'ожидаемая дата', typing: 'Vax печатает…', mgrWait: 'Назначаем вашего менеджера', reply: 'Отвечает в течение 24 часов', mgr: 'Ваш менеджер', wait: 'Личный менеджер подключится к этому чату в течение 24 часов.', ph: 'Напишите сообщение…', send: 'Отправить', save: 'Сохраните эту страницу — это личный чат вашего проекта. Всё о проекте остаётся здесь.', copy: 'Скопировать ссылку', copied: 'Скопировано', team: 'Команда Vaxo', you: 'Вы', call: 'Созвон', bad: 'Ссылка на чат неверная. Напишите нам на vaxogroup.com.', err: 'Не отправилось. Попробуйте ещё раз.', hello: 'Здравствуйте, {name}! Это чат вашего проекта. Пишите сюда вопросы в любое время — менеджер отвечает в течение 24 часов.' },
-  ua: { tg: 'Продовжити в Telegram', h: 'Ваш проєкт з Vaxo', collabH: 'Співпраця з Vaxo', progress: 'Готовність проєкту',  giftH: 'Ваш мультик у подарунок', giftHello: 'Вітаємо, {name}! Це чат про ваш мультик у подарунок. Vax уточнить тут кілька деталей.',  collabHello: 'Вітаємо, {name}! Це ваш особистий чат з Vaxo щодо вашої пропозиції.', role: 'Account Manager, Vaxo', steps: ['Заявку отримано', 'Ваше завдання', 'Пропозиція', 'В роботі', 'Перевірка', 'Здано'], ai: 'Vax · ШІ-менеджер', aiSub: 'Відповідає за секунди, 24/7 · людина підключається на дзвінок', stage: { work: 'Проєкт у роботі', review: 'Готово до перевірки — посилання вище', revisions: 'Вносимо ваші правки', delivered: 'Проєкт здано' }, until: 'очікувана дата', typing: 'Vax друкує…', mgrWait: 'Призначаємо вашого менеджера', reply: 'Відповідає протягом 24 годин', mgr: 'Ваш менеджер', wait: 'Особистий менеджер приєднається до цього чату протягом 24 годин.', ph: 'Напишіть повідомлення…', send: 'Надіслати', save: 'Збережіть цю сторінку — це особистий чат вашого проєкту. Усе про проєкт залишається тут.', copy: 'Скопіювати посилання', copied: 'Скопійовано', team: 'Команда Vaxo', you: 'Ви', call: 'Дзвінок', bad: 'Посилання на чат неправильне. Напишіть нам на vaxogroup.com.', err: 'Не надіслано. Спробуйте ще раз.', hello: 'Вітаємо, {name}! Це чат вашого проєкту. Пишіть сюди питання будь-коли — менеджер відповідає протягом 24 годин.' },
+  en: { tg: 'Continue in Telegram', h: 'Your project with Vaxo', collabH: 'Your collaboration with Vaxo', progress: 'Project progress',  giftH: 'Your cartoon gift', giftHello: 'Hi {name}! This is your chat about the cartoon gift. Vax will ask a couple of details here.',  collabHello: 'Hi {name}! This is your private chat with Vaxo about your proposal.', role: 'Account Manager, Vaxo', steps: ['Request received', 'Your task', 'Proposal', 'In progress', 'Review', 'Delivered'], ai: 'Vax · AI manager', aiSub: 'Replies in seconds, 24/7 · a human joins for calls', stage: { work: 'Your project is in progress', review: 'Ready for your review — see the link above', revisions: 'Applying your revisions', delivered: 'Project delivered' }, until: 'expected by', typing: 'Vax is typing…', mgrWait: 'Your manager is being assigned', reply: 'Replies within 24 hours', mgr: 'Your manager', wait: 'Your personal manager will join this chat within 24 hours.', ph: 'Write a message…', send: 'Send', save: 'Save this page — it is your private project chat. Everything about your project stays here.', copy: 'Copy link', copied: 'Copied', team: 'Vaxo team', human: 'a real person', you: 'You', call: 'Call', bad: 'This chat link is not valid. Write to us at vaxogroup.com.', err: 'Not sent. Try again.', live: 'You are now talking to a Vaxo manager', liveTeam: 'You are now talking to the Vaxo team', mic: 'Voice input', hello: 'Hi {name}! This is your project chat. Write your questions here at any time — a manager replies within 24 hours.' },
+  ru: { tg: 'Продолжить в Telegram', h: 'Ваш проект с Vaxo', collabH: 'Сотрудничество с Vaxo', progress: 'Готовность проекта',  giftH: 'Ваш мультик в подарок', giftHello: 'Здравствуйте, {name}! Это чат о вашем мультике в подарок. Vax уточнит здесь пару деталей.',  collabHello: 'Здравствуйте, {name}! Это ваш личный чат с Vaxo по вашему предложению.', role: 'Account Manager, Vaxo', steps: ['Заявка получена', 'Ваша задача', 'Предложение', 'В работе', 'Проверка', 'Сдано'], ai: 'Vax · ИИ-менеджер', aiSub: 'Отвечает за секунды, 24/7 · человек подключается на созвон', stage: { work: 'Проект в работе', review: 'Готово к проверке — ссылка выше', revisions: 'Вносим ваши правки', delivered: 'Проект сдан' }, until: 'ожидаемая дата', typing: 'Vax печатает…', mgrWait: 'Назначаем вашего менеджера', reply: 'Отвечает в течение 24 часов', mgr: 'Ваш менеджер', wait: 'Личный менеджер подключится к этому чату в течение 24 часов.', ph: 'Напишите сообщение…', send: 'Отправить', save: 'Сохраните эту страницу — это личный чат вашего проекта. Всё о проекте остаётся здесь.', copy: 'Скопировать ссылку', copied: 'Скопировано', team: 'Команда Vaxo', human: 'живой человек', you: 'Вы', call: 'Созвон', bad: 'Ссылка на чат неверная. Напишите нам на vaxogroup.com.', err: 'Не отправилось. Попробуйте ещё раз.', live: 'Сейчас с вами общается менеджер Vaxo', liveTeam: 'Сейчас с вами общается команда Vaxo', mic: 'Голосовой ввод', hello: 'Здравствуйте, {name}! Это чат вашего проекта. Пишите сюда вопросы в любое время — менеджер отвечает в течение 24 часов.' },
+  ua: { tg: 'Продовжити в Telegram', h: 'Ваш проєкт з Vaxo', collabH: 'Співпраця з Vaxo', progress: 'Готовність проєкту',  giftH: 'Ваш мультик у подарунок', giftHello: 'Вітаємо, {name}! Це чат про ваш мультик у подарунок. Vax уточнить тут кілька деталей.',  collabHello: 'Вітаємо, {name}! Це ваш особистий чат з Vaxo щодо вашої пропозиції.', role: 'Account Manager, Vaxo', steps: ['Заявку отримано', 'Ваше завдання', 'Пропозиція', 'В роботі', 'Перевірка', 'Здано'], ai: 'Vax · ШІ-менеджер', aiSub: 'Відповідає за секунди, 24/7 · людина підключається на дзвінок', stage: { work: 'Проєкт у роботі', review: 'Готово до перевірки — посилання вище', revisions: 'Вносимо ваші правки', delivered: 'Проєкт здано' }, until: 'очікувана дата', typing: 'Vax друкує…', mgrWait: 'Призначаємо вашого менеджера', reply: 'Відповідає протягом 24 годин', mgr: 'Ваш менеджер', wait: 'Особистий менеджер приєднається до цього чату протягом 24 годин.', ph: 'Напишіть повідомлення…', send: 'Надіслати', save: 'Збережіть цю сторінку — це особистий чат вашого проєкту. Усе про проєкт залишається тут.', copy: 'Скопіювати посилання', copied: 'Скопійовано', team: 'Команда Vaxo', human: 'жива людина', you: 'Ви', call: 'Дзвінок', bad: 'Посилання на чат неправильне. Напишіть нам на vaxogroup.com.', err: 'Не надіслано. Спробуйте ще раз.', live: 'Зараз з вами спілкується менеджер Vaxo', liveTeam: 'Зараз з вами спілкується команда Vaxo', mic: 'Голосове введення', hello: 'Вітаємо, {name}! Це чат вашого проєкту. Пишіть сюди питання будь-коли — менеджер відповідає протягом 24 годин.' },
 };
 ---
 
@@ -20,18 +20,21 @@ const T = {
     <div class="mcard" data-mcard></div>
     <section class="box">
       <div class="log" data-log aria-live="polite"></div>
-      <form data-form><textarea name="t" rows="2" maxlength="2000"></textarea><button type="submit" aria-label="Send">➤</button></form>
+      <div class="live" data-live hidden></div>
+      <form data-form><textarea name="t" rows="2" maxlength="2000"></textarea><button type="button" class="mic" data-mic aria-label="Voice input"></button><button type="submit" aria-label="Send">➤</button></form>
     </section>
     <p class="save"><span data-save></span> <button type="button" data-copy></button> <a class="tg" data-tg hidden target="_blank" rel="noopener"></a></p>
     <p class="save"><a href="/terms/" target="_blank" data-terms>Terms &amp; refunds</a> · <a href="/privacy/" target="_blank" data-privacy>Privacy</a></p>
   </main>
   <script type="application/json" id="room-t" set:html={JSON.stringify(T)} />
   <script>
+    import { attachMic, MIC_SVG } from '../scripts/voice';
     type R = Record<string, any>;
     const ALL = JSON.parse(document.getElementById('room-t')!.textContent || '{}');
     const token = new URLSearchParams(location.search).get('t') || '';
     const $ = <E extends Element = HTMLElement>(s: string) => document.querySelector<E>(s)!;
     let T = ALL.en;
+    let lang = 'en';
     let count = -1;
     let last: R | undefined;
     const when = (iso: string) => new Date(iso.replace(' ', 'T') + 'Z').toLocaleString(undefined, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
@@ -46,7 +49,7 @@ const T = {
       }
       el.className = 'm ' + (me ? 'me' : 'them') + (m.kind === 'call' ? ' call' : '');
       const who = document.createElement('small');
-      who.textContent = `${me ? T.you : m.sender === 'ai' ? T.ai : m.partner_name ? m.partner_name + ' · ' + T.role : T.team}${m.kind === 'call' ? ' · ' + T.call : ''} · ${when(m.at)}`;
+      who.textContent = `${me ? T.you : m.sender === 'ai' ? T.ai : m.partner_name ? m.partner_name + ' · ' + T.role : m.sender === 'owner' ? T.team + ' · ' + T.human : T.team}${m.kind === 'call' ? ' · ' + T.call : ''} · ${when(m.at)}`;
       const body = document.createElement('div');
       body.textContent = m.text;
       // Links in messages (call links, files) are clickable.
@@ -91,6 +94,13 @@ const T = {
       $('[data-save]').textContent = T.save;
       const tl = document.querySelector<HTMLAnchorElement>('[data-terms]'); if (tl) { tl.href = d.lang === 'en' ? '/terms/' : `/${d.lang}/terms/`; tl.textContent = d.lang === 'ru' ? 'Условия и возвраты' : d.lang === 'ua' ? 'Умови та повернення' : 'Terms & refunds'; } const pl = document.querySelector<HTMLAnchorElement>('[data-privacy]'); if (pl) { pl.href = d.lang === 'en' ? '/privacy/' : `/${d.lang}/privacy/`; pl.textContent = d.lang === 'ru' ? 'Конфиденциальность' : d.lang === 'ua' ? 'Конфіденційність' : 'Privacy'; }
       $('[data-copy]').textContent = T.copy;
+      // A human is talking (manager or team wrote in the last 30 minutes): a clear banner with their name.
+      const lastHuman = [...d.messages].reverse().find((m: R) => m.sender === 'owner' || String(m.sender).startsWith('partner:'));
+      const live = $('[data-live]');
+      live.hidden = !lastHuman || Date.now() - Date.parse(lastHuman.at.replace(' ', 'T') + 'Z') > 30 * 60000;
+      if (!live.hidden) live.textContent = lastHuman.partner_name ? `${T.live} — ${lastHuman.partner_name}` : T.liveTeam;
+      $('[data-mic]').setAttribute('aria-label', T.mic);
+      lang = d.lang;
       last = d.messages[d.messages.length - 1];
       if (d.messages.length === count) return;
       count = d.messages.length;
@@ -124,6 +134,9 @@ const T = {
     $('[data-copy]').addEventListener('click', async () => {
       try { await navigator.clipboard.writeText(location.href); $('[data-copy]').textContent = T.copied; } catch {}
     });
+    const mic = $<HTMLButtonElement>('[data-mic]');
+    mic.innerHTML = MIC_SVG;
+    attachMic(mic, $<HTMLTextAreaElement>('textarea'), () => lang);
     load(true);
     setInterval(() => { if (!document.hidden) load(); }, 15000);
   </script>
@@ -161,6 +174,11 @@ const T = {
   .room .m a { color: inherit; text-decoration: underline; }
   .room form { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line); }
   .room textarea { flex: 1; resize: none; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 12px; padding: 10px 12px; font: 16px var(--font); }
+  .room .live { padding: 7px 14px; background: var(--acc); color: var(--dark-ink); font-size: 13px; font-weight: 700; text-align: center; }
+  .room form .mic { background: var(--bg); color: var(--ink); border: 1px solid var(--line); display: grid; place-items: center; }
+  .room form .mic.rec { background: var(--error, #e5484d); color: #fff; border-color: transparent; animation: micpulse 1.2s ease-in-out infinite; }
+  .room form .mic.busy { opacity: 0.5; }
+  @keyframes micpulse { 50% { opacity: 0.6; } }
   .room form button { border: 0; background: var(--acc); color: var(--dark-ink); width: 48px; border-radius: 12px; font-size: 18px; cursor: pointer; }
   .room .save { color: var(--mut); font-size: 14px; }
   .room .save a:not(.tg) { color: var(--mut); }

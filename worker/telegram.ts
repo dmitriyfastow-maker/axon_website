@@ -23,6 +23,13 @@ async function api(method: string, body: unknown): Promise<Record<string, any> |
   return r ? ((await r.json().catch(() => null)) as Record<string, any> | null) : null;
 }
 
+/** A message with buttons to the owner's chat (price decisions). False when Telegram is not set up. */
+export async function ownerButtons(text: string, rows: { text: string; callback_data: string }[][]): Promise<boolean> {
+  if (!token || !ownerChat) return false;
+  const r = await api('sendMessage', { chat_id: ownerChat, text: text.slice(0, 4000), disable_web_page_preview: true, reply_markup: { inline_keyboard: rows } });
+  return !!r?.ok;
+}
+
 /** Secret for the webhook header, derived from the bot token (no extra secret to set). */
 async function secret(): Promise<string> {
   const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('vaxo-tg:' + token));
@@ -41,9 +48,10 @@ export async function ensureWebhook(db: DB, origin: string) {
   if (!token) return;
   const st = await settings(db);
   const url = `${origin}/api/tg`;
-  if (st.tg_webhook === url) return;
-  const r = await api('setWebhook', { url, secret_token: await secret(), allowed_updates: ['message'] });
-  if (r?.ok) await db.prepare(`INSERT OR REPLACE INTO settings (key, value) VALUES ('tg_webhook', ?)`).bind(url).run();
+  const mark = url + '#buttons';
+  if (st.tg_webhook === mark) return;
+  const r = await api('setWebhook', { url, secret_token: await secret(), allowed_updates: ['message', 'callback_query'] });
+  if (r?.ok) await db.prepare(`INSERT OR REPLACE INTO settings (key, value) VALUES ('tg_webhook', ?)`).bind(mark).run();
 }
 
 /** Called for every new message in a project chat: client-visible replies go to the client's Telegram. */
@@ -71,10 +79,27 @@ const TEXT_ONLY: Record<string, string> = {
 const langOf = (code?: string) => (code === 'uk' ? 'ua' : code === 'ru' ? 'ru' : 'en');
 
 /** POST /api/tg — Telegram webhook. onClient(leadId, greet) asks Vax to answer. */
-export async function handleTelegram(db: DB, request: Request, notify: Notify, onClient: (leadId: number, greet: boolean) => void): Promise<Response> {
+export async function handleTelegram(db: DB, request: Request, notify: Notify, onClient: (leadId: number, greet: boolean) => void, onDecision?: (leadId: number, choice: string) => Promise<unknown>): Promise<Response> {
   const ok = new Response('ok');
   if (!token || request.method !== 'POST' || request.headers.get('X-Telegram-Bot-Api-Secret-Token') !== (await secret())) return new Response('no', { status: 403 });
   const u = (await request.json().catch(() => ({}))) as Record<string, any>;
+  // The owner pressed a price-decision button. Only the owner's chat may decide.
+  const cq = u.callback_query;
+  if (cq) {
+    const from = String(cq.message?.chat?.id ?? '');
+    const d = typeof cq.data === 'string' ? cq.data.match(/^of:(\d+):([arcn])$/) : null;
+    if (!d || !ownerChat || from !== ownerChat || !onDecision) { await api('answerCallbackQuery', { callback_query_id: cq.id }); return ok; }
+    const pending = await db.prepare(`SELECT human FROM leads WHERE id = ?`).bind(Number(d[1])).first<{ human: string | null }>();
+    if (!pending?.human?.startsWith('Цена клиента')) {
+      await api('answerCallbackQuery', { callback_query_id: cq.id, text: 'Уже решено' });
+      return ok;
+    }
+    const label = { a: '✅ Приняли цену клиента', r: '💡 Предложили вашу цену', c: '✂️ Предложили урезанный вариант', n: '❌ Отказали' }[d[2] as 'a'];
+    await api('answerCallbackQuery', { callback_query_id: cq.id, text: label });
+    await api('editMessageReplyMarkup', { chat_id: from, message_id: cq.message?.message_id, reply_markup: { inline_keyboard: [[{ text: `${label} — Vax пишет клиенту`, callback_data: 'done' }]] } });
+    await onDecision(Number(d[1]), d[2]);
+    return ok;
+  }
   const m = u.message;
   const chat = m?.chat?.id != null ? String(m.chat.id) : '';
   // Private chats with clients only; the owner's chat stays for notifications.

@@ -566,6 +566,7 @@ const en = {
     "error": "Couldn't send. Please try again."
   },
   "vax": {
+    "askVax": "Prices are a guide — Vax tells you the exact price for your task in a minute, right in the chat. Ask Vax →",
     "startHref": "/start/",
     "bubbles": ["New order 🔔", "Can I book for 9?", "Paid ✓"],
     "hint": "Psst… tap me 👆",

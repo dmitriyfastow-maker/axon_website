@@ -222,7 +222,7 @@ import Base from '../layouts/Base.astro';
     const a = await api('/autopilot').catch(() => null);
     if (!a) return;
     const st = Object.fromEntries((a.settings as R[]).map((x) => [x.key, x.value]));
-    const T: [string, string][] = [['auto_publish', 'Сам публиковать заявки менеджерам'], ['auto_approve', 'Сам одобрять сильных менеджеров'], ['auto_qc', 'Сам проверять переписку менеджеров'], ['ai_manager', 'ИИ-менеджер Vax сам отвечает клиентам'], ['price_owner', 'Дружеский режим для промокодов: цену предлагает клиент, решаете вы; без предоплаты, до 5 правок, оплата после одобрения'], ['digest', 'Присылать сводку дня в 08:00'], ['email_replies', 'Отвечать клиентам на почту (нужен ключ Resend)']];
+    const T: [string, string][] = [['auto_publish', 'Сам публиковать заявки менеджерам'], ['auto_approve', 'Сам одобрять сильных менеджеров'], ['auto_qc', 'Сам проверять переписку менеджеров'], ['ai_manager', 'ИИ-менеджер Vax сам отвечает клиентам'], ['price_owner', 'Дружеский режим для промокодов: цену предлагает клиент, решаете вы; без предоплаты, до 5 правок, оплата после одобрения'], ['vax_learn', 'Vax учится на переписках каждую ночь (уроки — ниже, можно править)'], ['digest', 'Присылать сводку дня в 08:00'], ['email_replies', 'Отвечать клиентам на почту (нужен ключ Resend)']];
     $('[data-toggles]').replaceChildren(...T.map(([k, t]) => {
       const cb = el('input', { type: 'checkbox', checked: st[k] !== '0' }) as HTMLInputElement;
       cb.onchange = () => api('/autopilot', { [k]: cb.checked });
@@ -235,6 +235,13 @@ import Base from '../layouts/Base.astro';
         el('p', { class: 'mut' }, 'Дайте знакомым код или ссылку — Vax включит для них дружеский режим. Без кода — обычный режим с ценами сайта.'),
         el('div', { class: 'two' }, inp, el('button', { class: 'cta', type: 'button', onclick: async () => { await api('/autopilot', { friend_codes: inp.value }); ok.textContent = 'Сохранено'; } }, 'Сохранить')),
         el('p', {}, 'Ссылка для знакомых: ', el('code', {}, `vaxogroup.com/ru/?code=${(inp.value.split(',')[0] || 'DIMA').trim()}`), ' — или Telegram-бот @vaxo_hq_bot, написав код в первом сообщении.'), ok);
+    })(), (() => {
+      const ta = el('textarea', { rows: '8', placeholder: 'Пока пусто — первые уроки появятся после ночи с переписками.' }, st.vax_lessons || '') as HTMLTextAreaElement;
+      const ok = el('small', { class: 'mut' }, st.vax_lessons_at ? `Обновлено: ${new Date(st.vax_lessons_at).toLocaleString()}` : '');
+      return el('div', { class: 'card codes' },
+        el('b', {}, '🎓 Чему Vax научился'),
+        el('p', { class: 'mut' }, 'Каждую ночь ИИ разбирает переписки за день и обновляет эти правила. Vax учитывает их в каждом разговоре с клиентом. Лишнее — удалите строку и сохраните.'),
+        ta, el('div', { class: 'btns' }, el('button', { class: 'cta', type: 'button', onclick: async () => { await api('/autopilot', { vax_lessons: ta.value }); ok.textContent = 'Сохранено'; } }, 'Сохранить')), ok);
     })(), el('div', { class: 'card codes' },
       el('b', {}, '🧪 Режим тестировщика'),
       el('p', { class: 'mut' }, 'Создаёт тестового клиента и открывает его чат в новой вкладке — пишите как клиент, а здесь (Чаты → ТЕСТ) управляйте: принять цену, этап, прогресс. Тестовые клиенты помечены «ТЕСТ» и не попадают к менеджерам.'),
@@ -416,15 +423,19 @@ import Base from '../layouts/Base.astro';
     const payIn = el('input', { type: 'number', min: '1', placeholder: '$' });
     let prof: R = {};
     try { prof = JSON.parse(l.profile || '{}'); } catch {}
+    let offer: any = {};
+    try { offer = JSON.parse(l.offer || '{}') || {}; } catch {}
     return el('div', { class: 'aisum aiman' },
       el('b', {}, l.ai === 'paused' ? '⏸ ИИ-менеджер на паузе — клиента ведёт человек' : '🤖 Клиента ведёт ИИ-менеджер Vax'), ' ',
       el('button', { class: 'ghost', type: 'button', onclick: () => set({ ai: l.ai === 'paused' ? 'on' : 'paused' }) }, l.ai === 'paused' ? 'Включить ИИ' : 'Поставить ИИ на паузу'),
       l.human && String(l.human).startsWith('Цена клиента') ? el('div', { class: 'offer' }, el('p', {}, el('b', {}, '💰 Нужно ваше решение: '), l.human),
         el('div', { class: 'btns' },
           el('button', { class: 'cta', type: 'button', onclick: async () => { if (confirm('Принять цену клиента? Vax сообщит ему.')) { await api(`/lead/${id}/offer`, { accept: true }); await load(); openLead(id); } } }, 'Принять цену'),
-          el('button', { class: 'ghost', type: 'button', onclick: async () => { const c = prompt('Ваша цена (например, $250):'); if (c) { await api(`/lead/${id}/offer`, { accept: false, counter: c }); await load(); openLead(id); } } }, 'Предложить свою'),
+          offer.rec && el('button', { class: 'ghost', type: 'button', onclick: async () => { if (confirm(`Предложить клиенту ${offer.rec}? Vax объяснит, что входит.`)) { await api(`/lead/${id}/offer`, { choice: 'r' }); await load(); openLead(id); } } }, `Предложить ${offer.rec}`),
+          offer.cut && el('button', { class: 'ghost', type: 'button', title: offer.cut.scope, onclick: async () => { if (confirm(`Урезанный вариант за ${offer.cut.price}: ${offer.cut.scope}`)) { await api(`/lead/${id}/offer`, { choice: 'c' }); await load(); openLead(id); } } }, 'Урезанный вариант'),
+          el('button', { class: 'ghost', type: 'button', onclick: async () => { const c = prompt('Ваша цена (например, $250):'); if (c) { await api(`/lead/${id}/offer`, { accept: false, counter: c }); await load(); openLead(id); } } }, 'Своя цена'),
           el('button', { class: 'ghost', type: 'button', onclick: async () => { if (confirm('Отказать? Vax вежливо предложит меньший шаг.')) { await api(`/lead/${id}/offer`, { accept: false }); await load(); openLead(id); } } }, 'Отказать')),
-        el('small', { class: 'mut' }, 'Оценка ИИ (можем ли сделать, риски, как сэкономить) — в журнале ниже и в Telegram.'))
+        el('small', { class: 'mut' }, 'Полная карточка (клиент, бриф, рекомендуемая цена и почему, предоплата, риски, срок) — в журнале ниже и в Telegram, там те же кнопки.'))
       : l.human && el('p', {}, el('b', {}, '🙋 Нужен живой менеджер: '), l.human, ' ', el('button', { class: 'ghost', type: 'button', onclick: () => set({ human: null }) }, 'Решено')),
       prof.tip && el('p', { class: 'mut' }, `Как говорить с клиентом: ${prof.tip}${prof.concerns ? ' · Опасения: ' + prof.concerns : ''}`),
       el('div', { class: 'two' }, el('label', { class: 'f' }, el('span', {}, 'Этап проекта (клиент видит в чате)'), stageSel), el('label', { class: 'f' }, el('span', {}, 'Ожидаемая дата'), due)),
