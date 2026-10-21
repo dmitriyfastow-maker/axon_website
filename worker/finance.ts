@@ -148,6 +148,18 @@ export async function handleFinancePublic(db: DB, request: Request): Promise<Res
   if (!st.fin_code || !code || (await sha(code.trim())) !== st.fin_code) return json(401, { ok: false });
   const url = new URL(request.url);
   const year = Number(url.searchParams.get('year')) || new Date().getUTCFullYear();
-  if (url.searchParams.get('csv')) return csv(db, year, false);
-  return json(200, await financeView(db, year, false));
+  if (url.searchParams.get('csv')) return csv(db, year, true);
+  // Agreed with the owner: the FOP holder sees the full money picture and every order (no chats, no client contacts).
+  const v = await financeView(db, year, true);
+  const orders = (await db
+    .prepare(`SELECT d.id, d.created_at, d.name AS client, d.service, d.interest, d.status, d.stage, d.progress, d.stage_due, d.value_usd, d.budget, d.country,
+                     (SELECT COALESCE(SUM(p.amount_uah), 0) FROM payments p WHERE p.lead_id = d.id AND p.status = 'ok') AS paid_uah
+              FROM leads d WHERE d.status IN ('proposal', 'won', 'claimed', 'contacted', 'meeting') AND COALESCE(d.page, '') != 'test'
+              ORDER BY d.updated_at DESC LIMIT 100`)
+    .all<Record<string, unknown>>()).results;
+  const payouts = (await db
+    .prepare(`SELECT po.id, po.created_at, po.kind, po.rate, po.base_usd, po.amount_usd, po.status, po.paid_at, po.lead_id, pr.name AS partner
+              FROM payouts po LEFT JOIN partners pr ON pr.id = po.partner_id ORDER BY po.id DESC LIMIT 200`)
+    .all<Record<string, unknown>>()).results;
+  return json(200, { ...v, orders, payouts });
 }

@@ -73,3 +73,21 @@ export const FIN_CSS = `
 .flegend { color: var(--mut); font-size: 13px; } .flegend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; }
 td.num, th.num { text-align: right; white-space: nowrap; } tr.off td { opacity: 0.45; text-decoration: line-through; }
 `;
+
+const STATUS: R = { proposal: 'Предложение', won: 'В работе / клиент', claimed: 'Ведёт менеджер', contacted: 'На связи', meeting: 'Был созвон' };
+const STAGE: R = { work: 'в работе', qa: 'проверка качества', review: 'у клиента на проверке', revisions: 'правки', delivered: 'сдано' };
+
+/** FOP view extras: every active order (no chats, no contacts) and partner payouts. */
+export function renderOrders(box: HTMLElement, orders: R[], payouts: R[]) {
+  box.replaceChildren(
+    el('h3', {}, 'Заказы'),
+    orders.length ? el('div', { class: 'table' }, el('table', {}, el('thead', {}, el('tr', {}, el('th', {}, 'Заказ'), el('th', {}, 'Клиент'), el('th', {}, 'Что делаем'), el('th', {}, 'Статус'), el('th', {}, 'Готовность'), el('th', { class: 'num' }, 'Сумма сделки'), el('th', { class: 'num' }, 'Оплачено'))),
+      el('tbody', {}, ...orders.map((o) => el('tr', {}, el('td', {}, `#${o.id}`), el('td', {}, o.client || '—'), el('td', {}, o.service || o.interest || '—'),
+        el('td', {}, (STATUS[o.status] || o.status) + (o.stage ? ` · ${STAGE[o.stage] || o.stage}` : '')),
+        el('td', {}, o.progress != null ? `${o.progress}%${o.stage_due ? ` · до ${String(o.stage_due).slice(0, 10)}` : ''}` : '—'),
+        el('td', { class: 'num' }, o.value_usd ? `$${o.value_usd}` : o.budget || '—'), el('td', { class: 'num' }, uah(o.paid_uah))))))) : el('p', { class: 'mut' }, 'Активных заказов пока нет.'),
+    el('h3', {}, 'Партнёрам (комиссии)'),
+    payouts.length ? el('div', { class: 'table' }, el('table', {}, el('thead', {}, el('tr', {}, el('th', {}, 'Дата'), el('th', {}, 'Партнёр'), el('th', {}, 'Заказ'), el('th', {}, '%'), el('th', { class: 'num' }, 'Сумма'), el('th', {}, 'Статус'))),
+      el('tbody', {}, ...payouts.map((p) => el('tr', {}, el('td', {}, String(p.created_at).slice(0, 10)), el('td', {}, p.partner || '—'), el('td', {}, `#${p.lead_id}`), el('td', {}, `${p.rate}%`), el('td', { class: 'num' }, `$${p.amount_usd}`), el('td', {}, p.status === 'paid' ? `выплачено ${String(p.paid_at || '').slice(0, 10)}` : p.status === 'due' ? 'к выплате' : 'отменено')))))) : el('p', { class: 'mut' }, 'Комиссий пока нет.'),
+  );
+}
