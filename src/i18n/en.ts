@@ -545,7 +545,7 @@ const en = {
   "submit": "Submit request",
   "ask": "Ask a question",
   "footer": "STRATEGIC GROWTH STUDIO. LONDON · DUBAI · NEW YORK.",
-  "footerCities": "London · Dubai · New York",
+  "footerCities": "Online worldwide: Ukraine · Europe · USA",
   "form": {
     "name": "Your name",
     "contact": "Telegram, phone or email",

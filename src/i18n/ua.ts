@@ -547,7 +547,7 @@ const ua: Dict = {
   "submit": "Залишити заявку",
   "ask": "Поставити запитання",
   "footer": "STRATEGIC GROWTH STUDIO. ЛОНДОН · ДУБАЙ · НЬЮ-ЙОРК.",
-  "footerCities": "Лондон · Дубай · Нью-Йорк",
+  "footerCities": "Працюємо онлайн: Україна · Європа · США",
   "form": {
     "name": "Ваше ім’я",
     "contact": "Telegram, телефон або email",

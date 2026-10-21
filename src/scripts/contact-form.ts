@@ -66,15 +66,18 @@ export function initContactForm(): void {
 
   document.querySelector('[data-form-again]')?.addEventListener('click', showForm);
 
-  // Tier CTAs preselect the tier and jump to the form.
+  // Tier CTAs start the conversation with Vax (chat instead of the form): the tier goes into the chat box.
   document.querySelectorAll<HTMLElement>('[data-choose-tier]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      showForm();
-      setMode('request');
-      setInterest(btn.dataset.chooseTier!);
-      if (btn.dataset.chooseNote && !message.value.trim()) message.value = btn.dataset.chooseNote;
+    btn.addEventListener('click', (e) => {
+      const box = document.querySelector<HTMLTextAreaElement>('#contact [data-pc-text]');
       const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      document.getElementById('contact')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+      if (!box) { showForm(); setMode('request'); setInterest(btn.dataset.chooseTier!); if (btn.dataset.chooseNote && !message.value.trim()) message.value = btn.dataset.chooseNote; document.getElementById('contact')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); return; }
+      e.preventDefault();
+      const lang = form.dataset.lang || 'en';
+      const lead = lang === 'ru' ? 'Интересует' : lang === 'ua' ? 'Цікавить' : 'I am interested in';
+      box.value = btn.dataset.chooseNote || `${lead}: ${btn.dataset.chooseTier}. `;
+      box.closest('[data-pchat]')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+      setTimeout(() => box.focus(), 500);
     }),
   );
 
