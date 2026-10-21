@@ -3,6 +3,7 @@ import type { DB } from './partner.js';
 import { ownerLead, ownerOverview, ownerUpdateLead, ownerUpdatePartner, type Notify } from './deals.js';
 import { staffMessage } from './rooms.js';
 import { aiReply, decideOffer, setAiState } from './aimanager.js';
+import { handleFinanceAdmin } from './finance.js';
 import { newRoom } from './rooms.js';
 import { addRenewal, allPayouts, setPayout } from './payouts.js';
 import HQ from './hq.json';
@@ -57,6 +58,12 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   if (path === 'test-lead/clear' && request.method === 'POST') {
     await db.prepare(`UPDATE leads SET status = 'archived' WHERE page = 'test'`).run();
     return json(200, { ok: true });
+  }
+  if (path === 'finance' || path.startsWith('finance/')) {
+    const got = { id: 0 };
+    const res = await handleFinanceAdmin(db, request, path.slice('finance'.length).replace(/^\//, ''), notify, (id) => { got.id = id; });
+    if (got.id) await aiReply(db, ai, got.id, notify, { nudge: 'The team has just RECEIVED the client\'s payment. Thank them warmly in one or two sentences, say the payment arrived and what happens next (work starts / continues, next preview or step). No amounts unless they ask.' }).catch(() => false);
+    return res;
   }
   if (path === 'digest' && request.method === 'POST') return json(200, { ok: true, text: await makeDigest(db, ai) });
   const pay = path.match(/^payout\/(\d+)$/);

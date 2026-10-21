@@ -1,0 +1,66 @@
+---
+// Read-only finance view for the FOP holder: vaxogroup.com/fin/ + a personal code (set by the owner in the HQ).
+// Shows money only — payments by order number, outgoing amounts, taxes, the income limit. No client names or chats.
+import Base from '../layouts/Base.astro';
+---
+
+<Base lang="ru" title="Vaxo — финансы" description="Прозрачный отчёт по деньгам Vaxo." noindex noChat>
+  <main class="finp">
+    <header><a href="/" class="logo">VAXO<span>.</span></a><button type="button" class="ghost" data-out hidden>Выйти</button></header>
+    <h1>Финансы Vaxo</h1>
+    <p class="mut">Всё, что пришло и ушло, налоги ФОП 3 группы и лимит за год. Только просмотр: изменить здесь ничего нельзя.</p>
+    <form data-login class="login">
+      <input type="password" name="code" placeholder="Ваш личный код" autocomplete="current-password" required />
+      <button class="cta">Открыть</button>
+      <small data-err class="err" hidden>Код не подошёл.</small>
+    </form>
+    <div data-app hidden>
+      <div class="bar"><label>Год <select data-year></select></label> <button type="button" class="ghost" data-csv>⬇️ Выгрузка для бухгалтера (CSV)</button></div>
+      <div data-fin></div>
+    </div>
+  </main>
+  <script>
+    import { renderFinance, FIN_CSS } from '../scripts/finance-view';
+    const KEY = 'vaxo_fin';
+    const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+    const st = document.createElement('style'); st.textContent = FIN_CSS; document.head.append(st);
+    let code = '';
+    try { code = sessionStorage.getItem(KEY) || ''; } catch {}
+    const ys = $<HTMLSelectElement>('[data-year]');
+    for (let y = new Date().getFullYear(); y >= 2026; y--) ys.append(new Option(String(y), String(y)));
+    async function load() {
+      if (!code) return;
+      const r = await fetch(`/api/fin?year=${ys.value}`, { headers: { 'X-Fin-Code': code } });
+      if (r.status === 401) { $('[data-err]').hidden = false; code = ''; try { sessionStorage.removeItem(KEY); } catch {} return; }
+      const d = await r.json();
+      try { sessionStorage.setItem(KEY, code); } catch {}
+      $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-out]').hidden = false;
+      renderFinance($('[data-fin]'), d, false);
+    }
+    $<HTMLFormElement>('[data-login]').addEventListener('submit', (e) => { e.preventDefault(); code = (new FormData(e.target as HTMLFormElement).get('code') as string).trim(); load(); });
+    ys.onchange = load;
+    $('[data-out]').onclick = () => { try { sessionStorage.removeItem(KEY); } catch {} location.reload(); };
+    $('[data-csv]').onclick = async () => {
+      const r = await fetch(`/api/fin?year=${ys.value}&csv=1`, { headers: { 'X-Fin-Code': code } });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(await r.blob()); a.download = `vaxo-finance-${ys.value}.csv`; a.click();
+    };
+    load();
+  </script>
+</Base>
+
+<style is:global>
+  .finp { max-width: 1040px; margin: 0 auto; padding: 18px 16px 48px; font-family: var(--font); color: var(--ink); }
+  .finp header { display: flex; justify-content: space-between; align-items: center; }
+  .finp .logo { font-weight: 800; font-size: 22px; color: var(--ink); text-decoration: none; } .finp .logo span { color: var(--acc); }
+  .finp h1 { font-size: clamp(26px, 5vw, 38px); margin: 18px 0 6px; } .finp h3 { margin: 22px 0 8px; }
+  .finp .mut, .finp .hint { color: var(--mut); }
+  .finp .login { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0; max-width: 460px; }
+  .finp input, .finp select { font: 16px var(--font); color: var(--ink); background: var(--surf); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; }
+  .finp .login input { flex: 1; min-width: 200px; }
+  .finp .cta { border: 0; background: var(--acc); color: var(--dark-ink); font: 700 15px var(--font); padding: 10px 16px; border-radius: 12px; cursor: pointer; }
+  .finp .ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 7px 13px; cursor: pointer; font: 600 14px var(--font); }
+  .finp .err { color: var(--error); width: 100%; }
+  .finp .bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 8px 0; }
+  .finp .table { overflow-x: auto; } .finp table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .finp th, .finp td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); } .finp th { color: var(--mut); font-weight: 600; }
+</style>

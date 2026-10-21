@@ -26,6 +26,7 @@ import Base from '../layouts/Base.astro';
         <button type="button" data-view="leads" aria-pressed="false">📋 Заявки</button>
         <button type="button" data-view="team" aria-pressed="false">👥 Команда <span class="pill" data-n="team" hidden></span></button>
         <button type="button" data-view="pay" aria-pressed="false">💸 Выплаты <span class="pill" data-n="pay" hidden></span></button>
+        <button type="button" data-view="fin" aria-pressed="false">💰 Финансы</button>
         <button type="button" data-view="cartoon" aria-pressed="false">🎬 Мультик</button>
         <button type="button" data-view="auto" aria-pressed="false">🤖 Автопилот</button>
         <button type="button" data-view="links" aria-pressed="false">🔗 Все ссылки</button>
@@ -105,6 +106,12 @@ import Base from '../layouts/Base.astro';
         <div class="table"><table><thead><tr><th>Партнёр</th><th>Клиент</th><th>За что</th><th>Сделка</th><th>%</th><th>К выплате</th><th>Статус</th><th></th></tr></thead><tbody data-pay></tbody></table></div>
       </section>
 
+      <section data-panel="fin" hidden>
+        <p class="hint">Все деньги компании: что пришло, что ушло, налоги ФОП 3 группы и лимит. Подруга с ФОП видит то же на vaxogroup.com/fin/ по своему коду — без имён клиентов и переписок, только смотреть.</p>
+        <div class="fin-forms" data-fin-forms></div>
+        <div data-fin></div>
+      </section>
+
       <section data-panel="cartoon" hidden>
         <p class="hint">Серии про енота Vax: что готово, что дальше. Видео и превью лежат у вас на Mac в папке «Завод (VAXO) → Мультик». Публикация — после создания аккаунтов TikTok / Instagram / YouTube.</p>
         <div class="eps" data-eps></div>
@@ -153,6 +160,7 @@ import Base from '../layouts/Base.astro';
 </Base>
 
 <script>
+  import { renderFinance, FIN_CSS } from '../scripts/finance-view';
   type R = Record<string, any>;
   const KEY = 'vaxo_admin';
   const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s)!;
@@ -208,7 +216,40 @@ import Base from '../layouts/Base.astro';
     try { data = await api(''); } catch { return; }
     $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
     renderToday(); renderInbox(); renderLeads(); renderTeam(); renderPay(); renderCartoon(); renderLinks();
-    loadAuto(); loadStats();
+    loadAuto(); loadStats(); loadFin();
+  }
+
+  const finStyle = document.createElement('style'); finStyle.textContent = FIN_CSS; document.head.append(finStyle);
+  async function loadFin() {
+    const d = await api('/finance').catch(() => null);
+    if (!d?.ok) return;
+    renderFinance($('[data-fin]'), d, true, async (kind, id) => {
+      if (!confirm(kind === 'payment' ? 'Отменить это поступление? (останется зачёркнутым)' : 'Отменить этот расход?')) return;
+      await api(`/finance/${kind}/${id}/cancel`, {}); loadFin();
+    });
+    const f = $('[data-fin-forms]');
+    if (f.childElementCount) return;
+    const inp = (name: string, ph: string, type = 'text') => el('input', { name, placeholder: ph, type }) as HTMLInputElement;
+    const sel = (name: string, opts: [string, string][]) => el('select', { name }, ...opts.map(([v, t]) => el('option', { value: v }, t))) as HTMLSelectElement;
+    const cur = () => sel('currency', [['USD', '$'], ['EUR', '€'], ['UAH', '₴']]);
+    const msg = el('small', { class: 'mut' }, '');
+    const pay = el('form', { class: 'card' }, el('b', {}, '➕ Деньги пришли'),
+      el('div', { class: 'two' }, inp('amount', 'Сумма', 'number'), cur()),
+      el('div', { class: 'two' }, inp('lead_id', 'Номер заказа (#)', 'number'), sel('part', [['prepay', 'Предоплата'], ['stage', 'Этап'], ['final', 'Остаток'], ['full', 'Полная оплата'], ['support', 'Поддержка'], ['micro', 'Микрозадача'], ['strategy', 'Стратегия'], ['product', 'Шаблон / набор'], ['other', 'Другое']])),
+      el('div', { class: 'two' }, inp('at', 'Дата', 'date'), sel('method', [['bank', 'Банк'], ['card', 'Карта'], ['payoneer', 'Payoneer'], ['wise', 'Wise'], ['other', 'Другое']])),
+      inp('note', 'Заметка (необязательно)'), el('button', { class: 'cta' }, 'Записать')) as HTMLFormElement;
+    pay.onsubmit = async (e) => { e.preventDefault(); const b = Object.fromEntries(new FormData(pay)); const r = await api('/finance/payment', b); msg.textContent = r.ok ? `Записано (курс НБУ ${r.rate}). Если указан заказ — Vax поблагодарит клиента.` : 'Не записалось: проверьте сумму.'; if (r.ok) { pay.reset(); loadFin(); } };
+    const exp = el('form', { class: 'card' }, el('b', {}, '➖ Деньги ушли'),
+      el('div', { class: 'two' }, inp('amount', 'Сумма', 'number'), (() => { const c = cur(); c.value = 'UAH'; return c; })()),
+      el('div', { class: 'two' }, sel('category', [['partner', 'Партнёру'], ['owner', 'Владельцу'], ['tax', 'Налог (ЕН + ВС)'], ['esv', 'ЕСВ'], ['service', 'Сервисы'], ['ads', 'Реклама'], ['refund', 'Возврат'], ['bank', 'Комиссия банка'], ['other', 'Другое']]), inp('at', 'Дата', 'date')),
+      inp('note', 'Кому / за что'), el('button', { class: 'cta' }, 'Записать')) as HTMLFormElement;
+    exp.onsubmit = async (e) => { e.preventDefault(); const b = Object.fromEntries(new FormData(exp)); const r = await api('/finance/expense', b); msg.textContent = r.ok ? 'Записано.' : 'Не записалось: проверьте сумму.'; if (r.ok) { exp.reset(); loadFin(); } };
+    const codeIn = inp('code', 'Новый код для подруги (от 8 символов)');
+    const code = el('div', { class: 'card' }, el('b', {}, '🔑 Доступ для ФОП'),
+      el('p', { class: 'mut' }, 'Придумайте код и передайте лично. Она открывает vaxogroup.com/fin/ и вводит его — видит только деньги.'),
+      el('div', { class: 'two' }, codeIn, el('button', { class: 'cta', type: 'button', onclick: async () => { const r = await api('/finance/code', { code: codeIn.value }); msg.textContent = r.ok ? 'Код сохранён. Старый код больше не работает.' : 'Код слишком короткий (нужно от 8 символов).'; if (r.ok) codeIn.value = ''; } }, 'Сохранить')),
+      el('button', { class: 'ghost', type: 'button', onclick: async () => { const r = await fetch('/api/admin/finance/csv', { headers: { Authorization: `Bearer ${token}` } }); const a = el('a', { href: URL.createObjectURL(await r.blob()), download: `vaxo-finance-${new Date().getFullYear()}.csv` }) as HTMLAnchorElement; a.click(); } }, '⬇️ Выгрузка для бухгалтера (CSV)'));
+    f.append(el('div', { class: 'cols' }, pay, exp, code), msg);
   }
 
   async function testLead(friend: boolean) {
@@ -428,6 +469,16 @@ import Base from '../layouts/Base.astro';
     return el('div', { class: 'aisum aiman' },
       el('b', {}, l.ai === 'paused' ? '⏸ ИИ-менеджер на паузе — клиента ведёт человек' : '🤖 Клиента ведёт ИИ-менеджер Vax'), ' ',
       el('button', { class: 'ghost', type: 'button', onclick: () => set({ ai: l.ai === 'paused' ? 'on' : 'paused' }) }, l.ai === 'paused' ? 'Включить ИИ' : 'Поставить ИИ на паузу'),
+      el('button', { class: 'ghost', type: 'button', onclick: async () => {
+        const v = prompt('Сколько пришло? Например: 300 USD, 250 EUR или 9000 UAH');
+        const m = v?.trim().match(/^([\d.,\s]+)\s*(usd|\$|eur|€|uah|грн|₴)?$/i);
+        if (!m) return;
+        const c = /eur|€/i.test(m[2] || '') ? 'EUR' : /uah|грн|₴/i.test(m[2] || '') ? 'UAH' : 'USD';
+        const part = l.status === 'won' ? 'final' : 'prepay';
+        const r = await api('/finance/payment', { lead_id: id, amount: Number(m[1].replace(/[\s,]/g, '')), currency: c, part });
+        alert(r.ok ? `Записано в «Финансы» (${part === 'prepay' ? 'предоплата' : 'остаток'}). Vax поблагодарит клиента.` : 'Не записалось.');
+        loadFin(); openLead(id);
+      } }, '💰 Деньги пришли'),
       l.human && String(l.human).startsWith('Цена клиента') ? el('div', { class: 'offer' }, el('p', {}, el('b', {}, '💰 Нужно ваше решение: '), l.human),
         el('div', { class: 'btns' },
           el('button', { class: 'cta', type: 'button', onclick: async () => { if (confirm('Принять цену клиента? Vax сообщит ему.')) { await api(`/lead/${id}/offer`, { accept: true }); await load(); openLead(id); } } }, 'Принять цену'),
