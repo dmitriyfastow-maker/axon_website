@@ -7,6 +7,11 @@ import CaseCard from './CaseCard.astro';
 interface Props { t: Dict }
 const { t } = Astro.props;
 const filters = [{ label: t.all, v: -1 }, ...TIER_NAMES.map((n, i) => ({ label: n, v: i }))];
+const all = CASE_META.map((m, i) => ({ m, i }));
+const top = all.filter((x) => x.m.real);
+const rest = all.filter((x) => !x.m.real);
+const L = Astro.url.pathname.startsWith('/ru/') ? 'ru' : Astro.url.pathname.startsWith('/ua/') ? 'ua' : 'en';
+const more = { en: `Show ${rest.length} more cases`, ru: `Показать ещё ${rest.length} кейсов`, ua: `Показати ще ${rest.length} кейсів` }[L];
 ---
 
 <section id="cases" class="cases">
@@ -27,11 +32,29 @@ const filters = [{ label: t.all, v: -1 }, ...TIER_NAMES.map((n, i) => ({ label: 
     </div>
   </div>
   <div class="grid" data-acc-group="cases">
-    {CASE_META.map((m, i) => <CaseCard meta={m} copy={t.cases[i]} labels={t.labels} index={i} />)}
+    {top.map(({ m, i }) => <CaseCard meta={m} copy={t.cases[i]} labels={t.labels} index={i} />)}
   </div>
+  {rest.length > 0 && <>
+    <button type="button" class="more-btn" data-cases-more>{more} ↓</button>
+    <div class="grid more" data-cases-rest data-acc-group="cases" hidden>
+      {rest.map(({ m, i }) => <CaseCard meta={m} copy={t.cases[i]} labels={t.labels} index={i} />)}
+    </div>
+  </>}
 </section>
 
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-cases-more]');
+  const rest = document.querySelector<HTMLElement>('[data-cases-rest]');
+  const open = () => { if (rest) rest.hidden = false; if (btn) btn.hidden = true; };
+  btn?.addEventListener('click', open);
+  // Picking a tier filter shows every matching case, including the folded ones.
+  document.querySelectorAll('[data-case-filter]').forEach((b) => b.addEventListener('click', open));
+</script>
+
 <style>
+  .more-btn { display: block; margin: 20px auto 0; background: var(--surf); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 12px 22px; font: 600 15px var(--font); cursor: pointer; }
+  .more-btn:hover { border-color: var(--acc); }
+  .grid.more { margin-top: 20px; }
   .cases {
     max-width: 1280px;
     margin: 0 auto;

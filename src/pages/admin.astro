@@ -215,7 +215,7 @@ import Base from '../layouts/Base.astro';
     const a = await api('/autopilot').catch(() => null);
     if (!a) return;
     const st = Object.fromEntries((a.settings as R[]).map((x) => [x.key, x.value]));
-    const T: [string, string][] = [['auto_publish', 'Сам публиковать заявки менеджерам'], ['auto_approve', 'Сам одобрять сильных менеджеров'], ['auto_qc', 'Сам проверять переписку менеджеров'], ['ai_manager', 'ИИ-менеджер Vax сам отвечает клиентам'], ['digest', 'Присылать сводку дня в 08:00'], ['email_replies', 'Отвечать клиентам на почту (нужен ключ Resend)']];
+    const T: [string, string][] = [['auto_publish', 'Сам публиковать заявки менеджерам'], ['auto_approve', 'Сам одобрять сильных менеджеров'], ['auto_qc', 'Сам проверять переписку менеджеров'], ['ai_manager', 'ИИ-менеджер Vax сам отвечает клиентам'], ['price_owner', 'Цены только по вашему решению (режим до ФОП): Vax спрашивает бюджет клиента и ждёт вашего «да»'], ['digest', 'Присылать сводку дня в 08:00'], ['email_replies', 'Отвечать клиентам на почту (нужен ключ Resend)']];
     $('[data-toggles]').replaceChildren(...T.map(([k, t]) => {
       const cb = el('input', { type: 'checkbox', checked: st[k] !== '0' }) as HTMLInputElement;
       cb.onchange = () => api('/autopilot', { [k]: cb.checked });
@@ -398,7 +398,13 @@ import Base from '../layouts/Base.astro';
     return el('div', { class: 'aisum aiman' },
       el('b', {}, l.ai === 'paused' ? '⏸ ИИ-менеджер на паузе — клиента ведёт человек' : '🤖 Клиента ведёт ИИ-менеджер Vax'), ' ',
       el('button', { class: 'ghost', type: 'button', onclick: () => set({ ai: l.ai === 'paused' ? 'on' : 'paused' }) }, l.ai === 'paused' ? 'Включить ИИ' : 'Поставить ИИ на паузу'),
-      l.human && el('p', {}, el('b', {}, '🙋 Нужен живой менеджер: '), l.human, ' ', el('button', { class: 'ghost', type: 'button', onclick: () => set({ human: null }) }, 'Решено')),
+      l.human && String(l.human).startsWith('Цена клиента') ? el('div', { class: 'offer' }, el('p', {}, el('b', {}, '💰 Нужно ваше решение: '), l.human),
+        el('div', { class: 'btns' },
+          el('button', { class: 'cta', type: 'button', onclick: async () => { if (confirm('Принять цену клиента? Vax сообщит ему.')) { await api(`/lead/${id}/offer`, { accept: true }); await load(); openLead(id); } } }, 'Принять цену'),
+          el('button', { class: 'ghost', type: 'button', onclick: async () => { const c = prompt('Ваша цена (например, $250):'); if (c) { await api(`/lead/${id}/offer`, { accept: false, counter: c }); await load(); openLead(id); } } }, 'Предложить свою'),
+          el('button', { class: 'ghost', type: 'button', onclick: async () => { if (confirm('Отказать? Vax вежливо предложит меньший шаг.')) { await api(`/lead/${id}/offer`, { accept: false }); await load(); openLead(id); } } }, 'Отказать')),
+        el('small', { class: 'mut' }, 'Оценка ИИ (можем ли сделать, риски, как сэкономить) — в журнале ниже и в Telegram.'))
+      : l.human && el('p', {}, el('b', {}, '🙋 Нужен живой менеджер: '), l.human, ' ', el('button', { class: 'ghost', type: 'button', onclick: () => set({ human: null }) }, 'Решено')),
       prof.tip && el('p', { class: 'mut' }, `Как говорить с клиентом: ${prof.tip}${prof.concerns ? ' · Опасения: ' + prof.concerns : ''}`),
       el('div', { class: 'two' }, el('label', { class: 'f' }, el('span', {}, 'Этап проекта (клиент видит в чате)'), stageSel), el('label', { class: 'f' }, el('span', {}, 'Ожидаемая дата'), due)),
       el('button', { class: 'cta alt', type: 'button', onclick: () => (stageSel as HTMLSelectElement).value && set({ stage: (stageSel as HTMLSelectElement).value, stage_due: (due as HTMLInputElement).value }) }, 'Сохранить этап и сообщить клиенту'),
@@ -646,4 +652,5 @@ import Base from '../layouts/Base.astro';
   .vbars { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; height: 150px; align-items: end; }
   .vb { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; gap: 4px; font-size: 12px; color: var(--mut); }
   .vb span { width: 70%; background: #E0A84F; border-radius: 6px 6px 0 0; min-height: 2px; }
+  .adm .offer { background: var(--bg); border: 2px solid var(--acc); border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
 </style>

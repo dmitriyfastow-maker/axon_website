@@ -90,6 +90,7 @@ const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?
     font-weight: 500;
   }
   .nav-desktop a {
+    white-space: nowrap;
     padding: 8px 14px;
     border-radius: 999px;
     color: var(--mut);
@@ -172,7 +173,7 @@ const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?
     font-weight: 600;
     border-bottom: 0;
   }
-  @media (max-width: 1039.98px) {
+  @media (max-width: 1239.98px) {
     .nav-desktop,
     .cta {
       display: none;
@@ -181,7 +182,7 @@ const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?
       display: grid;
     }
   }
-  @media (min-width: 1040px) {
+  @media (min-width: 1240px) {
     .nav-mobile {
       display: none !important;
     }

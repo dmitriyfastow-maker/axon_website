@@ -4,9 +4,9 @@ import { NAV_HREFS } from '../data/tiers';
 
 interface Props { t: Dict; home?: string; lang?: Lang }
 const { t, home = '', lang = 'en' } = Astro.props;
-const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', gifts: '🎁 Cartoon gifts', start: 'Starter packages', shop: 'Templates shop', login: 'Partner login', collab: 'Collaborate', terms: 'Terms & refunds', privacy: 'Privacy', pterms: 'Partner terms' },
-            ru: { examples: 'Примеры работ', tools: 'Бесплатные инструменты', blog: 'Блог', gifts: '🎁 Мультик в подарок', start: 'Стартовые пакеты', shop: 'Магазин шаблонов', login: 'Вход для партнёров', collab: 'Сотрудничество', terms: 'Условия и возвраты', privacy: 'Конфиденциальность', pterms: 'Условия партнёрки' },
-            ua: { examples: 'Приклади робіт', tools: 'Безкоштовні інструменти', blog: 'Блог', gifts: '🎁 Мультик у подарунок', start: 'Стартові пакети', shop: 'Магазин шаблонів', login: 'Вхід для партнерів', collab: 'Співпраця', terms: 'Умови та повернення', privacy: 'Конфіденційність', pterms: 'Умови партнерки' } }[lang];
+const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start: 'Starter packages', shop: 'Templates shop', login: 'Partner login', collab: 'Collaborate', terms: 'Terms & refunds', privacy: 'Privacy', pterms: 'Partner terms' },
+            ru: { examples: 'Примеры работ', tools: 'Бесплатные инструменты', blog: 'Блог', start: 'Стартовые пакеты', shop: 'Магазин шаблонов', login: 'Вход для партнёров', collab: 'Сотрудничество', terms: 'Условия и возвраты', privacy: 'Конфиденциальность', pterms: 'Условия партнёрки' },
+            ua: { examples: 'Приклади робіт', tools: 'Безкоштовні інструменти', blog: 'Блог', start: 'Стартові пакети', shop: 'Магазин шаблонів', login: 'Вхід для партнерів', collab: 'Співпраця', terms: 'Умови та повернення', privacy: 'Конфіденційність', pterms: 'Умови партнерки' } }[lang];
 ---
 
 <footer class="footer">
@@ -16,7 +16,6 @@ const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', gifts
       {t.nav.map((label, i) => <a href={navHref(NAV_HREFS[i], lang, home)}>{label}</a>)}
       <a href={navHref('/examples/', lang)}>{F.examples}</a>
       <a href={navHref('/start/', lang)}>{F.start}</a>
-      <a href={navHref('/gifts/', lang)}>{F.gifts}</a>
       <a href={navHref('/shop/', lang)}>{F.shop}</a>
       <a href={navHref('/tools/', lang)}>{F.tools}</a>
       <a href="/blog/">{F.blog}</a>

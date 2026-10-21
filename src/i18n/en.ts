@@ -4,6 +4,7 @@ const en = {
     "Services",
     "Cases",
     "About",
+    "Gifts 🎁",
     "Shop",
     "Partners",
     "Collaborate"

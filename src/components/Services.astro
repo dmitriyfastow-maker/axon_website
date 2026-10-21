@@ -7,6 +7,16 @@ interface Props { t: Dict }
 const { t } = Astro.props;
 const c = t.cat;
 const DEFAULT_OPEN = 2;
+// "See it live" links: real things a visitor can open and try for a category (index in t.cat.items).
+const L = Astro.url.pathname.startsWith('/ru/') ? 'ru' : Astro.url.pathname.startsWith('/ua/') ? 'ua' : 'en';
+const pre = L === 'en' ? '' : `/${L}`;
+const DEMO_TXT = { en: { web: 'See website examples', chat: 'Try an AI chat: talk to Vax', video: 'Watch our cartoon clips', design: 'See design examples' }, ru: { web: 'Посмотреть примеры сайтов', chat: 'Попробовать ИИ-чат: напишите Vax', video: 'Посмотреть наши мультики', design: 'Посмотреть примеры дизайна' }, ua: { web: 'Переглянути приклади сайтів', chat: 'Спробувати ШІ-чат: напишіть Vax', video: 'Переглянути наші мультики', design: 'Переглянути приклади дизайну' } }[L];
+const DEMOS: Record<number, [string, string][]> = {
+  2: [[`${pre}/examples/`, DEMO_TXT.web], ['#vax-chat', DEMO_TXT.chat]],
+  3: [['#vax-chat', DEMO_TXT.chat]],
+  5: [[`${pre}/examples/`, DEMO_TXT.design]],
+  7: [[`${pre}/gifts/`, DEMO_TXT.video]],
+};
 ---
 
 <section id="services" class="services">
@@ -41,6 +51,7 @@ const DEFAULT_OPEN = 2;
                     <span class="p">{SVC_PRICES[i][k] || c.custom}</span>
                   </div>
                 ))}
+                {DEMOS[i] && <div class="demos">{DEMOS[i].map(([h, l]) => <a href={h} data-demo={h === '#vax-chat' ? 'chat' : undefined}>{l} →</a>)}</div>}
               </div>
             </div>
           );
@@ -50,7 +61,18 @@ const DEFAULT_OPEN = 2;
   </div>
 </section>
 
+<script>
+  // "Try an AI chat" opens Vax right here instead of jumping.
+  document.querySelectorAll<HTMLAnchorElement>('[data-demo="chat"]').forEach((a) => a.addEventListener('click', (e) => {
+    const open = document.querySelector<HTMLElement>('[data-vc-open], .vchat .vc-btn, .vchat button');
+    if (open) { e.preventDefault(); open.click(); }
+  }));
+</script>
+
 <style>
+  .demos { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 12px; }
+  .demos a { font-size: 14px; font-weight: 600; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; text-decoration: none; }
+  .demos a:hover { border-color: var(--acc); }
   .services {
     background: var(--surf);
     border-top: 1px solid var(--line);
