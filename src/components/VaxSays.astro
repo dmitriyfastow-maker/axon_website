@@ -1,12 +1,13 @@
 ---
 // Vax the raccoon with a speech bubble — a small brand moment in context (monobank-cat style).
 // Click Vax for a random joke (see scripts/vax.ts).
-interface Props { text: string; face?: 'happy' | 'shocked' | 'smug' | 'front'; flip?: boolean; big?: boolean }
-const { text, face = 'happy', flip = false, big = false } = Astro.props;
+interface Props { text: string; face?: 'happy' | 'shocked' | 'smug' | 'front'; pose?: string; flip?: boolean; big?: boolean }
+// pose = a section-specific raccoon (/mascot/vax-<pose>.webp, transparent, full body), e.g. chef, calc, checklist.
+const { text, face = 'happy', pose, flip = false, big = false } = Astro.props;
 ---
 
-<div class:list={['vax-says', { flip, big }]}>
-  <img src={`/mascot/vax-${face}.webp`} alt="Vax, the Vaxo raccoon" width="120" height="120" loading="lazy" data-vax-poke />
+<div class:list={['vax-says', { flip, big, pose: !!pose }]}>
+  {pose ? <img src={`/mascot/vax-${pose}.webp`} alt="Vax, the Vaxo raccoon" width="300" height="400" loading="lazy" class="posed" /> : <img src={`/mascot/vax-${face}.webp`} alt="Vax, the Vaxo raccoon" width="120" height="120" loading="lazy" data-vax-poke />}
   <p class="vax-bubble">{text}</p>
 </div>
 
@@ -20,5 +21,7 @@ const { text, face = 'happy', flip = false, big = false } = Astro.props;
   .vax-says.big { flex-direction: column-reverse; align-items: flex-start; margin: 28px 0 0; max-width: 340px; gap: 10px; }
   .big img { width: clamp(110px, 14vw, 170px); transform: rotate(-3deg); }
   .big .vax-bubble::before { left: 36px; top: auto; bottom: -7px; transform: rotate(-45deg); }
-  @media (max-width: 760px) { .vax-says.big { flex-direction: row; align-items: center; max-width: none; } .big img { width: 84px; } .big .vax-bubble::before { left: -7px; top: 50%; bottom: auto; transform: translateY(-50%) rotate(45deg); } }
+  .pose img.posed { width: 110px; height: auto; filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.18)); }
+  .big.pose img.posed { width: clamp(150px, 18vw, 220px); transform: none; }
+  @media (max-width: 760px) { .vax-says.big { flex-direction: row; align-items: center; max-width: none; } .big img { width: 84px; } .big.pose img.posed { width: 120px; } .big .vax-bubble::before { left: -7px; top: 50%; bottom: auto; transform: translateY(-50%) rotate(45deg); } }
 </style>
