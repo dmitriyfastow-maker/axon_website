@@ -8,7 +8,7 @@ import Base from '../layouts/Base.astro';
   <main class="finp">
     <header><a href="/" class="logo">VAXO<span>.</span></a><button type="button" class="ghost" data-out hidden>Выйти</button></header>
     <h1>Финансы Vaxo</h1>
-    <p class="mut">Полная картина денег: все поступления и выплаты, заказы и их готовность, комиссии партнёров, налоги ФОП 3 группы и лимит. Только просмотр — изменить здесь ничего нельзя. Переписки и контакты клиентов не показываются (это их личные данные).</p>
+    <p class="mut">Полная картина: все деньги, каждый клиент и вся переписка с ним, готовность заказов, комиссии партнёров, налоги ФОП 3 группы и лимит. Только просмотр — изменить здесь ничего нельзя. Контакты клиентов — их личные данные: используйте только для работы Vaxo.</p>
     <form data-login class="login">
       <input type="password" name="code" placeholder="Ваш личный код" autocomplete="current-password" required />
       <button class="cta">Открыть</button>
@@ -21,7 +21,7 @@ import Base from '../layouts/Base.astro';
     </div>
   </main>
   <script>
-    import { renderFinance, renderOrders, FIN_CSS } from '../scripts/finance-view';
+    import { renderFinance, renderOrders, renderChat, FIN_CSS } from '../scripts/finance-view';
     const KEY = 'vaxo_fin';
     const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
     const st = document.createElement('style'); st.textContent = FIN_CSS; document.head.append(st);
@@ -37,7 +37,13 @@ import Base from '../layouts/Base.astro';
       try { sessionStorage.setItem(KEY, code); } catch {}
       $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-out]').hidden = false;
       renderFinance($('[data-fin]'), d, true);
-      renderOrders($('[data-orders]'), d.orders || [], d.payouts || []);
+      const openChat = async (id: number) => {
+        const r = await fetch(`/api/fin?lead=${id}`, { headers: { 'X-Fin-Code': code } });
+        if (!r.ok) return;
+        $('[data-fin]').hidden = true;
+        renderChat($('[data-orders]'), await r.json(), () => { $('[data-fin]').hidden = false; load(); });
+      };
+      renderOrders($('[data-orders]'), d.orders || [], d.payouts || [], openChat);
     }
     $<HTMLFormElement>('[data-login]').addEventListener('submit', (e) => { e.preventDefault(); code = (new FormData(e.target as HTMLFormElement).get('code') as string).trim(); load(); });
     ys.onchange = load;

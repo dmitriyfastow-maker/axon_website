@@ -3,6 +3,7 @@
 import type { DB } from './partner.js';
 import { logEvent, type Notify } from './deals.js';
 import { settings } from './autopilot.js';
+import { roomMessages } from './rooms.js';
 
 // FOP group 3, 2026 (bip.net.ua/articles/fop-3-grupa/, checked 21.10.2026). Show to the accountant before relying on it.
 export const FOP = { year: 2026, singleTax: 0.05, militaryLevy: 0.01, esvMonth: 1902.34, limitUah: 10_091_049 };
@@ -149,13 +150,20 @@ export async function handleFinancePublic(db: DB, request: Request): Promise<Res
   const url = new URL(request.url);
   const year = Number(url.searchParams.get('year')) || new Date().getUTCFullYear();
   if (url.searchParams.get('csv')) return csv(db, year, true);
-  // Agreed with the owner: the FOP holder sees the full money picture and every order (no chats, no client contacts).
+  // One client's conversation (read-only), as the owner sees it, without internal notes.
+  const lid = Number(url.searchParams.get('lead'));
+  if (lid) {
+    const lead = await db.prepare(`SELECT id, created_at, name, contact, service, interest, status, stage, progress, value_usd, budget, brief, country FROM leads WHERE id = ?`).bind(lid).first();
+    if (!lead) return json(404, { ok: false });
+    return json(200, { ok: true, lead, messages: await roomMessages(db, lid, false) });
+  }
+  // Agreed with the owner: the FOP holder is a full partner — she sees all money, every client and their chats\n  // (read-only). Not shown: the owner's internal chat with Claude, internal notes and problem flags.
   const v = await financeView(db, year, true);
   const orders = (await db
-    .prepare(`SELECT d.id, d.created_at, d.name AS client, d.service, d.interest, d.status, d.stage, d.progress, d.stage_due, d.value_usd, d.budget, d.country,
+    .prepare(`SELECT d.id, d.created_at, d.name AS client, d.contact, d.service, d.interest, d.status, d.stage, d.progress, d.stage_due, d.value_usd, d.budget, d.country,
                      (SELECT COALESCE(SUM(p.amount_uah), 0) FROM payments p WHERE p.lead_id = d.id AND p.status = 'ok') AS paid_uah
-              FROM leads d WHERE d.status IN ('proposal', 'won', 'claimed', 'contacted', 'meeting') AND COALESCE(d.page, '') != 'test'
-              ORDER BY d.updated_at DESC LIMIT 100`)
+              FROM leads d WHERE d.status NOT IN ('archived') AND COALESCE(d.page, '') != 'test'
+              ORDER BY d.updated_at DESC LIMIT 300`)
     .all<Record<string, unknown>>()).results;
   const payouts = (await db
     .prepare(`SELECT po.id, po.created_at, po.kind, po.rate, po.base_usd, po.amount_usd, po.status, po.paid_at, po.lead_id, pr.name AS partner

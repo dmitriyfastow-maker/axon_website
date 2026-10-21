@@ -71,23 +71,38 @@ export const FIN_CSS = `
 .fcol i { display: block; width: 40%; border-radius: 4px 4px 0 0; min-height: 1px; }
 .fin { background: var(--acc); } .fout { background: var(--mut); opacity: 0.6; }
 .flegend { color: var(--mut); font-size: 13px; } .flegend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; }
-td.num, th.num { text-align: right; white-space: nowrap; } tr.off td { opacity: 0.45; text-decoration: line-through; }
+td.num, th.num { text-align: right; white-space: nowrap; } tr.off td { opacity: 0.45; text-decoration: line-through; } tr.click { cursor: pointer; } tr.click:hover td { background: var(--surf); }
+.fchat { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; } .fm { max-width: 85%; padding: 9px 12px; border-radius: 14px; white-space: pre-wrap; line-height: 1.45; display: flex; flex-direction: column; gap: 3px; } .fm small { color: var(--mut); font-size: 11px; } .fm.c { align-self: flex-end; background: var(--acc); color: var(--dark-ink); } .fm.c small { color: rgba(0,0,0,.55); } .fm.v { align-self: flex-start; background: var(--surf); border: 1px solid var(--line); } pre.brief { white-space: pre-wrap; font: 14px var(--font); color: var(--mut); }
 `;
 
-const STATUS: R = { proposal: 'Предложение', won: 'В работе / клиент', claimed: 'Ведёт менеджер', contacted: 'На связи', meeting: 'Был созвон' };
+const STATUS: R = { new: 'Новый', open: 'Ждёт менеджера', proposal: 'Предложение', won: 'Клиент', claimed: 'Ведёт менеджер', contacted: 'На связи', meeting: 'Был созвон', lost: 'Не состоялось', collab: 'Сотрудничество', gift: 'Подарок (ожидание)' };
 const STAGE: R = { work: 'в работе', qa: 'проверка качества', review: 'у клиента на проверке', revisions: 'правки', delivered: 'сдано' };
 
 /** FOP view extras: every active order (no chats, no contacts) and partner payouts. */
-export function renderOrders(box: HTMLElement, orders: R[], payouts: R[]) {
+export function renderOrders(box: HTMLElement, orders: R[], payouts: R[], onOpen?: (id: number) => void) {
   box.replaceChildren(
-    el('h3', {}, 'Заказы'),
-    orders.length ? el('div', { class: 'table' }, el('table', {}, el('thead', {}, el('tr', {}, el('th', {}, 'Заказ'), el('th', {}, 'Клиент'), el('th', {}, 'Что делаем'), el('th', {}, 'Статус'), el('th', {}, 'Готовность'), el('th', { class: 'num' }, 'Сумма сделки'), el('th', { class: 'num' }, 'Оплачено'))),
-      el('tbody', {}, ...orders.map((o) => el('tr', {}, el('td', {}, `#${o.id}`), el('td', {}, o.client || '—'), el('td', {}, o.service || o.interest || '—'),
+    el('h3', {}, 'Клиенты и заказы'), el('p', { class: 'mut' }, 'Нажмите на клиента — откроется вся переписка с ним.'),
+    orders.length ? el('div', { class: 'table' }, el('table', {}, el('thead', {}, el('tr', {}, el('th', {}, '№'), el('th', {}, 'Клиент'), el('th', {}, 'Что делаем'), el('th', {}, 'Статус'), el('th', {}, 'Готовность'), el('th', { class: 'num' }, 'Сумма сделки'), el('th', { class: 'num' }, 'Оплачено'))),
+      el('tbody', {}, ...orders.map((o) => el('tr', { class: 'click', onclick: () => onOpen?.(o.id) }, el('td', {}, `#${o.id}`), el('td', {}, el('b', {}, o.client || '—'), o.contact ? el('div', { class: 'mut small' }, o.contact) : null), el('td', {}, o.service || o.interest || '—'),
         el('td', {}, (STATUS[o.status] || o.status) + (o.stage ? ` · ${STAGE[o.stage] || o.stage}` : '')),
         el('td', {}, o.progress != null ? `${o.progress}%${o.stage_due ? ` · до ${String(o.stage_due).slice(0, 10)}` : ''}` : '—'),
-        el('td', { class: 'num' }, o.value_usd ? `$${o.value_usd}` : o.budget || '—'), el('td', { class: 'num' }, uah(o.paid_uah))))))) : el('p', { class: 'mut' }, 'Активных заказов пока нет.'),
+        el('td', { class: 'num' }, o.value_usd ? `$${o.value_usd}` : o.budget || '—'), el('td', { class: 'num' }, uah(o.paid_uah))))))) : el('p', { class: 'mut' }, 'Клиентов пока нет.'),
     el('h3', {}, 'Партнёрам (комиссии)'),
     payouts.length ? el('div', { class: 'table' }, el('table', {}, el('thead', {}, el('tr', {}, el('th', {}, 'Дата'), el('th', {}, 'Партнёр'), el('th', {}, 'Заказ'), el('th', {}, '%'), el('th', { class: 'num' }, 'Сумма'), el('th', {}, 'Статус'))),
       el('tbody', {}, ...payouts.map((p) => el('tr', {}, el('td', {}, String(p.created_at).slice(0, 10)), el('td', {}, p.partner || '—'), el('td', {}, `#${p.lead_id}`), el('td', {}, `${p.rate}%`), el('td', { class: 'num' }, `$${p.amount_usd}`), el('td', {}, p.status === 'paid' ? `выплачено ${String(p.paid_at || '').slice(0, 10)}` : p.status === 'due' ? 'к выплате' : 'отменено')))))) : el('p', { class: 'mut' }, 'Комиссий пока нет.'),
   );
+}
+
+/** One client's conversation, read-only (FOP view). */
+export function renderChat(box: HTMLElement, d: R, onBack: () => void) {
+  const l = d.lead;
+  const who = (m: R) => m.sender === 'client' ? l.name : m.sender === 'ai' ? 'Vax (ИИ)' : m.sender === 'owner' ? 'Команда Vaxo' : m.partner_name ? `${m.partner_name} (менеджер)` : 'Система';
+  box.replaceChildren(
+    el('button', { class: 'ghost', type: 'button', onclick: onBack }, '← Ко всем клиентам'),
+    el('h3', {}, `#${l.id} ${l.name}`),
+    el('p', { class: 'mut' }, [l.contact, l.service || l.interest, STATUS[l.status] || l.status, l.progress != null ? `готовность ${l.progress}%` : '', l.value_usd ? `сделка $${l.value_usd}` : l.budget ? `бюджет ${l.budget}` : '', l.country].filter(Boolean).join(' · ')),
+    l.brief ? el('details', {}, el('summary', {}, 'Что известно о задаче'), el('pre', { class: 'brief' }, l.brief)) : null,
+    el('div', { class: 'fchat' }, ...(d.messages as R[]).filter((m) => !/^stage:/.test(m.text)).map((m) => el('div', { class: 'fm ' + (m.sender === 'client' ? 'c' : 'v') }, el('small', {}, `${who(m)} · ${String(m.at).slice(0, 16)}`), el('div', {}, m.text)))),
+  );
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
