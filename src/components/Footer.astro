@@ -18,7 +18,7 @@ const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start
       <a href={navHref('/start/', lang)}>{F.start}</a>
       <a href={navHref('/shop/', lang)}>{F.shop}</a>
       <a href={navHref('/tools/', lang)}>{F.tools}</a>
-      <a href="/blog/">{F.blog}</a>
+      <a href={navHref("/blog/", lang)}>{F.blog}</a>
       <a href={navHref('/partner/', lang)}>{F.login}</a>
     </nav>
     <nav class="legal-links" aria-label="Legal">

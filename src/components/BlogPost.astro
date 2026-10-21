@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getDict, langPath, type Lang } from '../i18n';
+import { BLOG_UI, type Post } from '../data/blog';
+
+interface Props { lang: Lang; post: Post }
+const { lang, post } = Astro.props;
+const t = getDict(lang);
+const home = langPath(lang);
+const pre = lang === 'en' ? '' : `/${lang}`;
+const alts = { en: `/blog/${post.slug}/`, ru: `/ru/blog/${post.slug}/`, ua: `/ua/blog/${post.slug}/` };
+const U = BLOG_UI[lang];
+const P = post.t[lang];
+const ld = { '@context': 'https://schema.org', '@type': 'Article', headline: P.title, description: P.desc, inLanguage: lang === 'ua' ? 'uk' : lang, datePublished: post.date, author: { '@type': 'Organization', name: 'Vaxo', url: 'https://vaxogroup.com/' }, publisher: { '@type': 'Organization', name: 'Vaxo' } };
+---
+
+<Base lang={lang} title={`${P.title} — Vaxo`} description={P.desc} path={alts[lang]} alts={alts}>
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <Header lang={lang} t={t} home={home} alts={alts} />
+  <main class="article">
+    <a href={`${pre}/blog/`} class="back">{U.back}</a>
+    <h1>{P.title}</h1>
+    <p class="mut">{post.date} · Vaxo</p>
+    {P.body.map(([h, ps]) => (
+      <section><h2>{h}</h2>{ps.length > 2 ? <ul>{ps.map((x) => <li>{x}</li>)}</ul> : ps.map((x) => <p>{x}</p>)}</section>
+    ))}
+    <div class="cta-box"><b>{U.ctaH}</b><p>{U.ctaP}</p><a class="cta" href={`${home}#contact`}>{U.cta}</a> <a class="ghost" href={`${pre}/start/`}>{U.starter}</a></div>
+  </main>
+  <Footer t={t} home={home} lang={lang} />
+</Base>
+
+<style>
+  .article { max-width: 760px; margin: 0 auto; padding: 110px 16px 80px; line-height: 1.65; font-size: 17px; }
+  .back { color: var(--mut); text-decoration: none; }
+  h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.15; letter-spacing: -0.02em; margin: 12px 0 6px; }
+  h2 { font-size: 22px; margin: 28px 0 8px; } .mut { color: var(--mut); } li { margin: 6px 0; }
+  .cta-box { margin-top: 36px; background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+  .cta { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 600; padding: 12px 20px; border-radius: 999px; text-decoration: none; }
+  .ghost { color: var(--ink); margin-left: 10px; }
+</style>

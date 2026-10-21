@@ -16,13 +16,13 @@ const LANG_NAME: Record<string, string> = { en: 'English', ua: 'Ukrainian', ru: 
 export const FACTS = `
 ABOUT VAXO (vaxogroup.com): a full-cycle digital studio. One team for everything a business needs to grow: strategy, websites and e-commerce, mobile apps and SaaS, AI assistants and automations, CRM, paid ads, SMM, SEO, design and branding, copywriting, viral short-form video. We work with anyone — from a first business to companies scaling into EU/UAE/US markets. Unique: we create brand characters and AI-animated series (like me, Vax — our own cartoon raccoon).
 SERVICE PRICE RANGES (final price fixed after a strategy session; it is included in every tier):
-- Websites: landing page $1,000–5,000; multi-page site $2,000–10,000; e-commerce store $3,000–20,000; complex features and integrations — custom quote.
-- Apps: MVP $5,000–15,000; full app (UX/UI, accounts, payments, push, analytics) $15,000–40,000; app + backend $25,000–70,000; AI features, maps, streaming, marketplaces, high-load — custom.
-- Paid ads (Meta, Google, TikTok): $700–7,000/month management. SMM: $700–4,000/month. Short-form video (TikTok/Reels/Shorts): $500–3,000/month.
-- SEO: audit $500–2,500; strategy and execution $1,000–4,000/month; content $100–600/page.
-- Design: logo $300–1,500; UI/UX $500–4,000; 2D $300–1,500; 3D $500–3,000; website design $500–4,000. Copywriting $20–80 per 500 words.
+- Websites: landing page $400–1,500; multi-page site $900–3,500; e-commerce store $1,500–6,000; complex features and integrations — custom quote.
+- Apps: MVP $3,000–12,000; full app (UX/UI, accounts, payments, push, analytics) $10,000–30,000; app + backend $18,000–50,000; AI features, maps, streaming, marketplaces, high-load — custom.
+- Paid ads (Meta, Google, TikTok): $300–1,500/month management (ad budget separate). SMM: $250–1,200/month. Short-form video (TikTok/Reels/Shorts): $250–1,500/month.
+- SEO: audit $150–800; strategy and execution $400–1,500/month; content $50–200/page.
+- Design: logo $100–600; UI/UX $300–2,000; 2D $150–800; 3D $300–1,500; website design $300–1,500. Copywriting $10–40 per 500 words.
 - Brand mascot / AI-animated series for a brand: custom quote.
-GROWTH TIERS (complete systems, monthly, with a strategy session): Foundation $900–1,300/month (first 30–60 days: profile packaging and 10–14 video scripts, first paid traffic with retargeting, link hub, CRM and inquiry forms); Growth $1,500–2,400/month (3–6 months: 12–20 videos/month, multi-segment ads with A/B tests, landing page, payments, CRM, chatbot, referral system); Scale $3,000–5,500/month (12 months: 20–40 videos/month, ads from $3,000/month budget, e-commerce/SaaS/app, integrations, entry to EU/UAE/US markets, multi-level partner program).
+GROWTH TIERS (complete systems, monthly, with a strategy session): Foundation $500–900/month (first 30–60 days: profile packaging and 10–14 video scripts, first paid traffic with retargeting, link hub, CRM and inquiry forms); Growth $1,000–1,800/month (3–6 months: 12–20 videos/month, multi-segment ads with A/B tests, landing page, payments, CRM, chatbot, referral system); Scale $2,000–4,000/month (12 months: 20–40 videos/month, ads from $3,000/month budget, e-commerce/SaaS/app, integrations, entry to EU/UAE/US markets, multi-level partner program).
 STARTER PACKAGES (one-time, 7 days, to try us with low risk): AI chat assistant for a website $249 (like this chat); one-page website $199; one automation $149. Page /start/. Starter price is credited if they continue within 30 days. Support $50–200/month.
 SHOP (/shop/): 12 ready templates and AI kits, $9–12 each, all 12 for $67 (English).
 FREE TOOLS (/tools/): calculators and a free business check-up.

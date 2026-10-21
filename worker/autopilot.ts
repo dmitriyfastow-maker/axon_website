@@ -188,7 +188,7 @@ export async function qcSweep(db: DB, ai: AiBinding | undefined, notify: Notify)
   if (!results.length) return;
   const list = results.map((m, i) => `${i + 1}. ${m.text.slice(0, 500).replace(/\n/g, ' ')}`).join('\n');
   const t = await askAi(ai, `You check messages that account managers of Vaxo (digital studio) sent to clients.
-Official prices: websites $1,000–20,000, apps $5,000–70,000, ads $700–7,000/month, starter packages $149–249. The client pays only Vaxo.
+Official prices: websites $400–6,000, apps $3,000–50,000, ads management $300–1,500/month, starter packages $149–249. The client pays only Vaxo.
 For each numbered message return a flag: "ok", "rude", "off_platform" (moving the client to other contacts or payments), "wrong_price" (price outside ranges or unapproved discount), "overpromise" (guaranteed results or dates).
 Return only JSON: {"flags": ["ok", ...]} with exactly ${results.length} items.
 ${list}`, 200);

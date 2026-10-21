@@ -27,18 +27,18 @@ const STAGE_TEXT: Record<string, string> = {
 type Lead = {
   id: number; mode: string; name: string; lang: string | null; status: string; service: string | null; budget: string | null;
   interest: string | null; message: string | null; brief: string | null; profile: string | null; ai: string;
-  stage: string | null; stage_due: string | null; human: string | null; progress: number | null; manager: string | null; value_usd: number | null;
+  stage: string | null; stage_due: string | null; human: string | null; progress: number | null; promo: string | null; manager: string | null; value_usd: number | null;
 };
 
 async function loadLead(db: DB, id: number): Promise<Lead | null> {
   return db
-    .prepare(`SELECT d.id, d.mode, d.name, d.lang, d.status, d.service, d.budget, d.interest, d.message, d.brief, d.profile, d.ai, d.stage, d.stage_due, d.human, d.progress, d.value_usd, p.name AS manager
+    .prepare(`SELECT d.id, d.mode, d.name, d.lang, d.status, d.service, d.budget, d.interest, d.message, d.brief, d.profile, d.ai, d.stage, d.stage_due, d.human, d.progress, d.promo, d.value_usd, p.name AS manager
               FROM leads d LEFT JOIN partners p ON p.id = d.closer_id WHERE d.id = ?`)
     .bind(id)
     .first<Lead>();
 }
 
-function system(l: Lead, extra = '', ownerPrice = false): string {
+function system(l: Lead, extra = '', ownerPrice = false, friend = false): string {
   if (l.mode === 'collab') return collabSystem(l);
   const first = l.manager ? l.manager.trim().split(/\s+/)[0] : null;
   return `You are Vax, the AI account manager of Vaxo (a full-cycle digital studio). You run this client's private project chat 24/7.
@@ -47,7 +47,9 @@ Answer in ${LANG[l.lang || 'en'] ?? 'English'} unless the client writes in anoth
 Style: short (1–4 sentences), warm, concrete, no markdown headings. Adapt to the client's communication profile below (tone, formality, what matters to them, their concerns). Ethical persuasion only: real facts, real cases (AiPro Partners, TrichoTech), honest timelines; never pressure, fake urgency or invented discounts.
 Your job by stage:
 ${ownerPrice ? `- Before payment (PRICE MODE — right now the team sets every price personally): understand the business and goal (ask at most 2 questions at a time). Do NOT name prices or price ranges, even from the facts. When the task is clear, ask what budget they have in mind or what they are ready to pay for it. When the client names a price, set "offer" to {"price": "<amount as they said it>", "task": "<one line in English>"} and tell them the team will confirm within 24 hours. Timelines only as a range with a safety margin: one-page site 1–3 days, landing page 3–7 days, multi-page site 1–3 weeks, app MVP 4–8 weeks; say it may well be faster.` : `- Before payment: understand the business and goal (ask at most 2 questions at a time: business and audience, goal, deadline, budget, examples they like). When you know enough, recommend the ONE smallest package from the facts that solves their goal, with its price range and the next step (strategy call or starter package). If their budget is below that range, first offer what honestly fits the price list (a starter package, a one-page site, a landing page, or a smaller first phase). Final prices are fixed by the team after the strategy session.`}
-- After payment: report the project stage, progress % and date below (short, no technical details), collect revision requests clearly, never promise dates beyond the one given. When a preview link exists, share it.
+- Brief (every client, before any work): ask short questions until you know the goal, the audience, what the site/product must do, what content they already have (texts, photos, logo), 1–3 examples they like, must-haves and the deadline. Then send a numbered summary titled "Brief" and ask them to confirm or correct it. Work starts only from a confirmed brief — it saves revisions.
+${friend ? `- FRIENDS MODE (this client came personally from the Vaxo team): for small projects there is no prepayment — we build first, show a preview, include up to 5 revision rounds, and the client pays after approving the result; then we hand over files, access and full rights. After handover, offer support (updates, fixes, small changes, checks) and explain why it helps; the client names their price for support too and you pass it to the team the same way.
+` : ''}- After payment: report the project stage, progress % and date below (short, no technical details), collect revision requests clearly, never promise dates beyond the one given. When a preview link exists, share it.
 - After delivery: ask how it works for them; suggest the one most useful next step (ads, support, content, SEO) only if it fits their goal.
 - Word of mouth: when the client is happy, thanks you, after delivery, or mentions a friend or another business — once, naturally, mention they can recommend Vaxo: they get 10% of the friend's first order in cash or 15% off their own next order, and the friend gets 10% off (vaxogroup.com/partners/). Never during a complaint, never twice in a row.
 Never ask for passwords, card numbers or documents in the chat. Never promise results, discounts or dates not listed. Never move the client to other contacts.
@@ -134,11 +136,19 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
     else merged.push({ ...m });
   }
   if (merged[0]?.role !== 'user') merged.unshift({ role: 'user', content: '(conversation start)' });
-  const ownerPrice = st.price_owner !== '0' && l.status !== 'won';
-  let out = await run(ai, [{ role: 'system', content: system(l, '', ownerPrice) }, ...merged]);
+  // Friend promo code: from the form/link, or written in the chat.
+  const codes = (st.friend_codes || 'DIMA').split(',').map((c) => c.trim().toUpperCase()).filter(Boolean);
+  if (!l.promo) {
+    const said = msgs.filter((m) => m.sender === 'client').map((m) => m.text.toUpperCase()).join(' ');
+    const hit = codes.find((c) => new RegExp(`(^|[^A-Z0-9])${c}([^A-Z0-9]|$)`).test(said));
+    if (hit) { l.promo = hit; await db.prepare('UPDATE leads SET promo = ? WHERE id = ?').bind(hit, leadId).run(); await logEvent(db, leadId, 'ai', 'note', `Friend promo code: ${hit}`); }
+  }
+  const friend = !!l.promo && codes.includes(l.promo.toUpperCase());
+  const ownerPrice = friend && st.price_owner !== '0' && l.status !== 'won';
+  let out = await run(ai, [{ role: 'system', content: system(l, '', ownerPrice, friend) }, ...merged]);
   if (out && ownerPrice && PRICE_RE.test(out.reply)) {
     // Named a price anyway: rewrite once without any amounts.
-    const again = await run(ai, [{ role: 'system', content: system(l, 'Your previous draft named a price. Rewrite it WITHOUT any prices or amounts; ask for their budget instead, or say the team confirms the price.', ownerPrice) }, ...merged]);
+    const again = await run(ai, [{ role: 'system', content: system(l, 'Your previous draft named a price. Rewrite it WITHOUT any prices or amounts; ask for their budget instead, or say the team confirms the price.', ownerPrice, friend) }, ...merged]);
     if (again && !PRICE_RE.test(again.reply)) out = { ...again, offer: again.offer ?? out.offer };
     else out = { ...out, reply: l.lang === 'ru' ? 'Цену по вашей задаче команда подтвердит лично — подскажите, какой бюджет вы рассматриваете?' : l.lang === 'ua' ? 'Ціну за вашою задачею команда підтвердить особисто — підкажіть, який бюджет ви розглядаєте?' : 'The team confirms the price for your task personally — what budget do you have in mind?' };
   }

@@ -2,7 +2,8 @@
 import type { DB } from './partner.js';
 import { ownerLead, ownerOverview, ownerUpdateLead, ownerUpdatePartner, type Notify } from './deals.js';
 import { staffMessage } from './rooms.js';
-import { answerOffer, setAiState } from './aimanager.js';
+import { aiReply, answerOffer, setAiState } from './aimanager.js';
+import { newRoom } from './rooms.js';
 import { addRenewal, allPayouts, setPayout } from './payouts.js';
 import HQ from './hq.json';
 import { analytics, makeDigest } from './autopilot.js';
@@ -30,10 +31,30 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
     return json(200, { ok: true, settings: st, digests });
   }
   if (path === 'autopilot' && request.method === 'POST') {
+    const bc = (await request.clone().json().catch(() => ({}))) as Record<string, unknown>;
+    if (typeof bc.friend_codes === 'string') await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind('friend_codes', bc.friend_codes.toUpperCase().replace(/[^A-Z0-9_,-]/g, '').slice(0, 200)).run();
     const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     for (const k of ['auto_publish', 'auto_approve', 'auto_qc', 'digest', 'ai_manager', 'email_replies', 'price_owner']) {
       if (b[k] !== undefined) await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind(k, b[k] ? '1' : '0').run();
     }
+    return json(200, { ok: true });
+  }
+  // Tester mode: a fake client to walk the whole client path. Marked ТЕСТ, kept away from managers.
+  if (path === 'test-lead' && request.method === 'POST') {
+    const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const st = Object.fromEntries(((await db.prepare('SELECT key, value FROM settings').all()).results as { key: string; value: string }[]).map((x) => [x.key, x.value]));
+    const code = (st.friend_codes || 'DIMA').split(',')[0].trim().toUpperCase();
+    const room = newRoom();
+    const res = (await db
+      .prepare(`INSERT INTO leads (mode, name, contact, interest, message, lang, page, room, promo, status) VALUES ('request', ?, 'test@vaxo.test', 'single', ?, 'ru', 'test', ?, ?, 'test')`)
+      .bind(b.friend ? 'ТЕСТ Друг' : 'ТЕСТ Клиент', 'Тестовая заявка владельца: пройти путь клиента', room, b.friend ? code : null)
+      .run()) as { meta?: { last_row_id?: number } };
+    const id = res?.meta?.last_row_id;
+    if (id) await aiReply(db, ai, id, notify, { greet: true });
+    return json(200, { ok: true, room, id });
+  }
+  if (path === 'test-lead/clear' && request.method === 'POST') {
+    await db.prepare(`UPDATE leads SET status = 'archived' WHERE page = 'test'`).run();
     return json(200, { ok: true });
   }
   if (path === 'digest' && request.method === 'POST') return json(200, { ok: true, text: await makeDigest(db, ai) });

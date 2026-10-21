@@ -16,7 +16,8 @@ export async function handleCollab(db: DB, request: Request, notify: Notify, onN
   if (b.website || Date.now() - Number(b.startedAt) < 3000) return json(200, { ok: true });
   const type = TYPES.includes(String(b.type)) ? String(b.type) : 'other';
   const name = s(b.name, 80), contact = s(b.contact, 120), message = s(b.message, 2000);
-  if (name.length < 2 || contact.length < 3 || message.length < 5) return json(400, { ok: false });
+  const bad = [name.length < 1 && 'name', contact.length < 3 && 'contact', message.length < 2 && 'message'].filter(Boolean);
+  if (bad.length) return json(400, { ok: false, fields: bad });
   const lang = ['en', 'ru', 'ua'].includes(String(b.lang)) ? String(b.lang) : 'en';
   const link = s(b.link, 300), audience = s(b.audience, 40);
   const full = [message, link && `Link: ${link}`, audience && `Audience: ${audience}`].filter(Boolean).join('\n');

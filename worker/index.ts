@@ -93,8 +93,8 @@ export default {
       const save = db
         ? async (l: LeadInput) => {
             const res = (await db
-              .prepare('INSERT INTO leads (mode, name, contact, interest, message, lang, ref, country, page, room) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-              .bind(l.mode, l.name, l.contact, l.interest, l.message, l.lang, l.ref ?? null, country, page, roomToken)
+              .prepare('INSERT INTO leads (mode, name, contact, interest, message, lang, ref, country, page, room, promo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+              .bind(l.mode, l.name, l.contact, l.interest, l.message, l.lang, l.ref ?? null, country, page, roomToken, l.promo ?? null)
               .run()) as { meta?: { last_row_id?: number } };
             const id = res?.meta?.last_row_id;
             // Background: an AI client profile for the closer and the first line of the lead's history.

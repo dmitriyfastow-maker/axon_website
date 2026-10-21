@@ -121,9 +121,11 @@ const C = {
     btn.disabled = true; btn.textContent = sending;
     const body = Object.fromEntries(new FormData(form).entries());
     const r = await fetch('/api/collab', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, lang, startedAt: started }) }).catch(() => null);
-    const d = r && r.ok ? await r.json().catch(() => null) : null;
+    const d = r ? await r.json().catch(() => null) : null;
     if (d && d.room) { location.href = `/room/?t=${d.room}`; return; }
     btn.disabled = false; btn.textContent = label;
+    form.querySelectorAll('.bad').forEach((x) => x.classList.remove('bad'));
+    (d?.fields || []).forEach((f) => form[f]?.classList.add('bad'));
     form.querySelector('.err').hidden = false;
   });
 </script>
@@ -153,5 +155,6 @@ const C = {
   @media (max-width: 640px) { .two { grid-template-columns: 1fr; } .hero { padding-top: 96px; } }
   .trap { position: absolute; left: -9999px; }
   .err { color: #c0392b; margin: 0; }
+  .bad { border-color: #c0392b !important; }
   .mut { color: var(--mut); }
 </style>

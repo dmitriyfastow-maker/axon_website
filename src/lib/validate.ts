@@ -12,6 +12,8 @@ export interface LeadInput {
   lang: Lang;
   /** Partner code from a ?ref= link (first touch, kept for life). */
   ref?: string;
+  /** Friend promo code (owner's people get the friends mode). */
+  promo?: string;
 }
 
 export type LeadErrors = Partial<Record<keyof LeadInput, true>>;
@@ -44,6 +46,6 @@ export function validateLead(x: unknown): LeadValidation {
   if (Object.keys(errors).length) return { ok: false, errors };
   return {
     ok: true,
-    value: { mode: o.mode as LeadInput['mode'], name: name!, contact: contact!, interest: interest!, message: message!, lang: o.lang as Lang, ...(/^[A-Za-z0-9_-]{1,64}$/.test(ref) ? { ref } : {}) },
+    value: { mode: o.mode as LeadInput['mode'], name: name!, contact: contact!, interest: interest!, message: message!, lang: o.lang as Lang, ...(/^[A-Za-z0-9_-]{1,64}$/.test(ref) ? { ref } : {}), ...(/^[A-Za-z0-9_-]{2,20}$/.test(String(o.promo ?? '').trim()) ? { promo: String(o.promo).trim().toUpperCase() } : {}) },
   };
 }

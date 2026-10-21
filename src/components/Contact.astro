@@ -57,6 +57,10 @@ const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.
           <span data-message-label>{f.message}</span>
           <textarea name="message" rows="4" maxlength={LIMITS.message}></textarea>
         </label>
+        <label class="field promo">
+          <span>{lang === 'ru' ? 'Промокод (если есть)' : lang === 'ua' ? 'Промокод (якщо є)' : 'Promo code (if you have one)'}</span>
+          <input name="promo" maxlength="20" autocomplete="off" data-promo />
+        </label>
         <input class="trap" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <p class="err form-err" data-form-error role="alert" hidden>{f.error}</p>
         <button type="submit" class="submit"><span data-submit-label>{f.send}</span> <span data-submit-arrow>→</span></button>

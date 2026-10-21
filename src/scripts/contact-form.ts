@@ -15,6 +15,8 @@ export function initContactForm(): void {
   const form = document.querySelector<HTMLFormElement>('[data-lead-form]');
   const success = document.querySelector<HTMLElement>('[data-form-success]');
   if (!form || !success) return;
+  // A friend link (?code=…) pre-fills the promo code.
+  try { const c = localStorage.getItem('vaxo_code'); const p = form.querySelector<HTMLInputElement>('[name=promo]'); if (c && p && !p.value) p.value = c; } catch {}
 
   const copy = JSON.parse(form.dataset.copy!) as Copy;
   const $ = <T extends Element>(sel: string) => form.querySelector<T>(sel)!;
@@ -104,6 +106,7 @@ export function initContactForm(): void {
           website: trap.value,
           startedAt,
           ref: readRef(),
+          promo: (form.querySelector<HTMLInputElement>('[name=promo]')?.value || '').trim(),
         }),
       });
       if (!res.ok) throw new Error(String(res.status));

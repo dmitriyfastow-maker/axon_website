@@ -1,32 +1,5 @@
 ---
-import Base from '../../layouts/Base.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import { getDict } from '../../i18n';
-import { POSTS } from '../../data/blog';
-const t = getDict('en');
-const alts = { en: '/blog/' };
+import BlogIndex from '../../components/BlogIndex.astro';
 ---
 
-<Base lang="en" title="Vaxo Blog — websites, AI and growth, explained simply" description="Plain answers about website prices, domains, AI chat assistants, ads and growing a business online." path="/blog/" alts={alts}>
-  <Header lang="en" t={t} home="/" alts={alts} />
-  <main class="blog">
-    <span class="eyebrow">Blog</span>
-    <h1>Websites, AI and growth — explained simply</h1>
-    <div class="list">
-      {POSTS.map((p) => (
-        <a class="post" href={`/blog/${p.slug}/`}><h2>{p.title}</h2><p>{p.desc}</p><small>{p.date}</small></a>
-      ))}
-    </div>
-  </main>
-  <Footer t={t} home="/" lang="en" />
-</Base>
-
-<style>
-  .blog { max-width: 860px; margin: 0 auto; padding: 110px 16px 80px; }
-  h1 { font-size: clamp(32px, 5vw, 48px); letter-spacing: -0.02em; margin: 12px 0 24px; }
-  .list { display: grid; gap: 12px; }
-  .post { display: block; background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 18px; color: var(--ink); text-decoration: none; }
-  .post:hover { border-color: var(--acc); }
-  .post h2 { margin: 0 0 6px; font-size: 21px; } .post p { color: var(--mut); margin: 0 0 8px; } .post small { color: var(--mut); }
-</style>
+<BlogIndex lang="en" />
