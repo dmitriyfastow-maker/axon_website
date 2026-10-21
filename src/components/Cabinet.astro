@@ -196,6 +196,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
               <option value={lang === 'en' ? '/' : `/${lang}/`}>{c.links.main}</option>
             </select>
           </label>
+          <label class="friendopt" data-friend-opt hidden><input type="checkbox" name="friend" /> <span>{lang === 'ru' ? 'Для своих: клиент сам предлагает цену (без предоплаты за небольшие проекты)' : lang === 'ua' ? 'Для своїх: клієнт сам пропонує ціну (без передоплати за невеликі проєкти)' : 'For friends: the client names the price (no prepayment for small projects)'}</span></label>
           <button type="submit" class="cta">{c.links.create}</button>
         </form>
         <div class="table"><table>
@@ -296,7 +297,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
 </Base>
 
 <script>
-  type Link = { id: number; slug: string; name: string; target: string; active: number; clicks: number; leads: number };
+  type Link = { id: number; slug: string; name: string; target: string; active: number; clicks: number; leads: number; friend?: number };
   type Offer = { id: string; target: string; text: string };
   type Check = { id: string; text: string; tab: string; lesson?: string };
   const $ = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
@@ -533,6 +534,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
     renderBadges(have.map(([icon, n, goal], i) => [icon, T.badges[i][0], T.badges[i][1], n, goal]));
     renderPrompts();
 
+    const fo = document.querySelector<HTMLElement>('[data-friend-opt]'); if (fo) fo.hidden = !(data as any).friend;
     $('[data-links]').replaceChildren(
       ...data.links.map((l) => {
         const tr = document.createElement('tr');
@@ -556,7 +558,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
           load();
         };
         actTd.append(toggle);
-        tr.append(cell(l.name), linkTd, cell(String(l.clicks)), cell(String(l.leads)), actTd);
+        tr.append(cell(l.friend ? `🤝 ${l.name}` : l.name), linkTd, cell(String(l.clicks)), cell(String(l.leads)), actTd);
         return tr;
       }),
     );
@@ -581,7 +583,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
       e.preventDefault();
       const fd = new FormData(form);
       const body: Record<string, unknown> = Object.fromEntries(fd.entries());
-      if (kind === 'register') Object.assign(body, { adult: fd.has('adult'), rules: fd.has('rules'), invite });
+      if (kind === 'register') Object.assign(body, { adult: fd.has('adult'), rules: fd.has('rules'), invite, code: (() => { try { return localStorage.getItem('vaxo_code') || ''; } catch { return ''; } })() });
       const err = form.querySelector<HTMLElement>('[data-err]')!;
       const res = await api(kind, body);
       if (res.ok) return load();
@@ -595,7 +597,8 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   $<HTMLFormElement>('[data-form="link"]').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
-    await api('links', Object.fromEntries(new FormData(form).entries()));
+    const fd = Object.fromEntries(new FormData(form).entries());
+    await api('links', { ...fd, friend: fd.friend === 'on' });
     form.reset();
     load();
   });

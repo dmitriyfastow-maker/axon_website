@@ -97,6 +97,11 @@ export default {
               .bind(l.mode, l.name, l.contact, l.interest, l.message, l.lang, l.ref ?? null, country, page, roomToken, l.promo ?? null)
               .run()) as { meta?: { last_row_id?: number } };
             const id = res?.meta?.last_row_id;
+            // A client from a partner's "for friends" link gets the friends mode.
+            if (id && l.ref && !l.promo) {
+              const fl = await db.prepare('SELECT friend FROM links WHERE slug = ?').bind(l.ref).first<{ friend: number }>();
+              if (fl?.friend) await db.prepare(`UPDATE leads SET promo = 'FRIEND' WHERE id = ?`).bind(id).run();
+            }
             // Background: an AI client profile for the closer and the first line of the lead's history.
             if (id) waitUntil((async () => {
               await logEvent(db, id, 'system', 'note', 'Request received from the site');

@@ -143,7 +143,7 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
     const hit = codes.find((c) => new RegExp(`(^|[^A-Z0-9])${c}([^A-Z0-9]|$)`).test(said));
     if (hit) { l.promo = hit; await db.prepare('UPDATE leads SET promo = ? WHERE id = ?').bind(hit, leadId).run(); await logEvent(db, leadId, 'ai', 'note', `Friend promo code: ${hit}`); }
   }
-  const friend = !!l.promo && codes.includes(l.promo.toUpperCase());
+  const friend = !!l.promo && (codes.includes(l.promo.toUpperCase()) || l.promo === 'FRIEND');
   const ownerPrice = friend && st.price_owner !== '0' && l.status !== 'won';
   let out = await run(ai, [{ role: 'system', content: system(l, '', ownerPrice, friend) }, ...merged]);
   if (out && ownerPrice && PRICE_RE.test(out.reply)) {

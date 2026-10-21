@@ -92,11 +92,11 @@ function safeTarget(v: unknown): string {
   return /^\/[A-Za-z0-9/_\-.#?=&]*$/.test(t) && !t.startsWith('//') ? t : '/start/';
 }
 
-async function createLink(db: DB, partnerId: number, name: string, target: string) {
+async function createLink(db: DB, partnerId: number, name: string, target: string, friend = 0) {
   for (let i = 0; i < 5; i++) {
     const slug = randomId(7);
     try {
-      await db.prepare('INSERT INTO links (partner_id, slug, name, target) VALUES (?, ?, ?, ?)').bind(partnerId, slug, name, target).run();
+      await db.prepare('INSERT INTO links (partner_id, slug, name, target, friend) VALUES (?, ?, ?, ?, ?)').bind(partnerId, slug, name, target, friend).run();
       return slug;
     } catch {
       // slug collision: try another
@@ -138,17 +138,22 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
     const exists = await db.prepare('SELECT id FROM partners WHERE email = ?').bind(email).first();
     if (exists) return json(409, { ok: false, errors: { email: true }, reason: 'exists' });
     const parent = s(b.invite, 20)
-      ? await db.prepare('SELECT id FROM partners WHERE code = ?').bind(s(b.invite, 20)).first<{ id: number }>()
+      ? await db.prepare('SELECT id, friend FROM partners WHERE code = ?').bind(s(b.invite, 20)).first<{ id: number; friend: number }>()
       : null;
+    // Friends chain: joined with the owner's friend code, or invited by a friend partner.
+    const codesRow = await db.prepare(`SELECT value FROM settings WHERE key = 'friend_codes'`).first<{ value: string }>();
+    const codes = (codesRow?.value || 'DIMA').split(',').map((c) => c.trim().toUpperCase()).filter(Boolean);
+    const friend = codes.includes(s(b.code, 20).toUpperCase()) || parent?.friend === 1 ? 1 : 0;
     const salt = hex(crypto.getRandomValues(new Uint8Array(16)));
     const hash = await hashPassword(password, salt);
     const code = randomId(8);
     await db
-      .prepare('INSERT INTO partners (email, name, pass_hash, salt, code, parent_id) VALUES (?, ?, ?, ?, ?, ?)')
-      .bind(email, name, hash, salt, code, parent?.id ?? null)
+      .prepare('INSERT INTO partners (email, name, pass_hash, salt, code, parent_id, friend) VALUES (?, ?, ?, ?, ?, ?, ?)')
+      .bind(email, name, hash, salt, code, parent?.id ?? null, friend)
       .run();
     const p = await db.prepare('SELECT id FROM partners WHERE email = ?').bind(email).first<{ id: number }>();
     await createLink(db, p!.id, 'Main link', '/start/');
+    if (friend) await createLink(db, p!.id, 'For friends (they name the price)', '/', 1);
     return startSession(db, p!.id);
   }
 
@@ -180,7 +185,7 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
   if (path === 'me' && method === 'GET') {
     const { results: links } = await db
       .prepare(
-        `SELECT l.id, l.slug, l.name, l.target, l.active, l.created_at,
+        `SELECT l.id, l.slug, l.name, l.target, l.active, l.created_at, l.friend,
            (SELECT COUNT(*) FROM clicks c WHERE c.link_id = l.id) AS clicks,
            (SELECT COUNT(*) FROM leads d WHERE d.ref = l.slug) AS leads
          FROM links l WHERE l.partner_id = ? ORDER BY l.id DESC`,
@@ -188,8 +193,8 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
       .bind(me.id)
       .all();
     const team = await db.prepare('SELECT COUNT(*) AS n FROM partners WHERE parent_id = ?').bind(me.id).first<{ n: number }>();
-    const plan = await db.prepare('SELECT plan FROM partners WHERE id = ?').bind(me.id).first<{ plan: string }>();
-    return json(200, { ok: true, partner: me, links, team: team?.n ?? 0, plan: plan?.plan ?? 'classic' });
+    const plan = await db.prepare('SELECT plan, friend FROM partners WHERE id = ?').bind(me.id).first<{ plan: string; friend: number }>();
+    return json(200, { ok: true, partner: me, links, team: team?.n ?? 0, plan: plan?.plan ?? 'classic', friend: plan?.friend === 1 });
   }
 
   if (path === 'plan' && method === 'POST') {
@@ -202,7 +207,8 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
   if (path === 'links' && method === 'POST') {
     const b = await readBody(request);
     const name = s(b.name, 60) || 'New link';
-    const slug = await createLink(db, me.id, name, safeTarget(b.target));
+    const fr = b.friend === true || b.friend === 'on' ? ((await db.prepare('SELECT friend FROM partners WHERE id = ?').bind(me.id).first<{ friend: number }>())?.friend ?? 0) : 0;
+    const slug = await createLink(db, me.id, name, safeTarget(b.target), fr);
     return json(200, { ok: true, slug });
   }
 
