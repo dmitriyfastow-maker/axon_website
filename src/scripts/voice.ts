@@ -17,33 +17,19 @@ export function attachMic(button: HTMLButtonElement, field: Field, lang: () => s
     field.dispatchEvent(new Event('input', { bubbles: true }));
   };
 
-  button.addEventListener('click', async () => {
-    if (stop) { stop(); return; }
-    const base = field.value;
-    if (SR) {
-      const rec = new SR();
-      rec.lang = LOCALE[lang()] || navigator.language || 'en-US';
-      rec.interimResults = true;
-      rec.continuous = true;
-      let done = '';
-      rec.onresult = (e: any) => {
-        let interim = '';
-        for (let i = e.resultIndex; i < e.results.length; i++) {
-          if (e.results[i].isFinal) done += e.results[i][0].transcript + ' ';
-          else interim += e.results[i][0].transcript;
-        }
-        put(base, done + interim);
-      };
-      rec.onend = () => { stop = null; setOn(false); field.focus(); };
-      rec.onerror = (e: any) => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') button.hidden = !canRecord; };
-      stop = () => rec.stop();
-      setOn(true);
-      try { rec.start(); } catch { stop = null; setOn(false); }
-      return;
-    }
-    // Fallback: record, then transcribe on the server.
+  const HINT: Record<string, string> = {
+    en: 'Allow the microphone: click the lock icon next to the address and turn it on',
+    ru: 'Разрешите микрофон: значок замка слева от адреса сайта → Микрофон → Разрешить',
+    ua: 'Дозвольте мікрофон: значок замка ліворуч від адреси сайту → Мікрофон → Дозволити',
+  };
+  const hint = () => { field.placeholder = HINT[lang()] || HINT.en; field.focus(); };
+  // Browser recognition first (live text); if it fails (blocked, offline, Google service down) we record and use Whisper.
+  let useRecorder = !SR;
+
+  async function record() {
     let stream: MediaStream;
-    try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch { return; }
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch { hint(); return; }
+    const base = field.value;
     const chunks: Blob[] = [];
     const mr = new MediaRecorder(stream);
     mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
@@ -52,6 +38,7 @@ export function attachMic(button: HTMLButtonElement, field: Field, lang: () => s
       clearTimeout(timer);
       stream.getTracks().forEach((t) => t.stop());
       stop = null;
+      setOn(false);
       button.classList.add('busy');
       try {
         const r = await fetch(`/api/stt?lang=${encodeURIComponent(lang())}`, { method: 'POST', body: new Blob(chunks, { type: mr.mimeType || 'audio/webm' }) });
@@ -59,12 +46,46 @@ export function attachMic(button: HTMLButtonElement, field: Field, lang: () => s
         if (d?.text) put(base, d.text);
       } catch {}
       button.classList.remove('busy');
-      setOn(false);
       field.focus();
     };
     stop = () => mr.state !== 'inactive' && mr.stop();
     setOn(true);
     mr.start();
+  }
+
+  button.addEventListener('click', async () => {
+    if (stop) { stop(); return; }
+    if (useRecorder) { if (canRecord) record(); return; }
+    const base = field.value;
+    const rec = new SR();
+    rec.lang = LOCALE[lang()] || navigator.language || 'en-US';
+    rec.interimResults = true;
+    rec.continuous = true;
+    let done = '', heard = false, failed = '';
+    rec.onresult = (e: any) => {
+      heard = true;
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) done += e.results[i][0].transcript + ' ';
+        else interim += e.results[i][0].transcript;
+      }
+      put(base, done + interim);
+    };
+    rec.onerror = (e: any) => { failed = e.error || 'error'; };
+    rec.onend = () => {
+      stop = null; setOn(false);
+      if (!heard && failed && failed !== 'no-speech' && failed !== 'aborted') {
+        if (failed === 'not-allowed' && !canRecord) { hint(); return; }
+        // Switch to recording for good and start right away, so one click is enough.
+        useRecorder = true;
+        if (canRecord) record(); else hint();
+        return;
+      }
+      field.focus();
+    };
+    stop = () => rec.stop();
+    setOn(true);
+    try { rec.start(); } catch { stop = null; setOn(false); useRecorder = true; if (canRecord) record(); }
   });
 }
 

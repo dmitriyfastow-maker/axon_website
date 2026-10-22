@@ -15,7 +15,7 @@ export async function handleIntake(db: DB, request: Request, notify: Notify, onN
   const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
   // Bots: honeypot or typed faster than 2 seconds after the page opened.
   if (b.website || Date.now() - Number(b.startedAt) < 2000) return json(200, { ok: true });
-  const text = s(b.text, 2000);
+  const text = s(b.text, 4000);
   if (text.length < 2) return json(400, { ok: false });
   // Flood guard: at most 40 new chats an hour for the whole site.
   const n = await db.prepare(`SELECT COUNT(*) AS n FROM leads WHERE page LIKE 'chat:%' AND created_at > datetime('now', '-1 hour')`).first<{ n: number }>();

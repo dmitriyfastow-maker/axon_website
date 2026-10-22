@@ -4,6 +4,8 @@ import type { DB } from './partner.js';
 import { logEvent, type Notify } from './deals.js';
 import { settings } from './autopilot.js';
 import { roomMessages } from './rooms.js';
+import type { AiBinding } from './chat.js';
+import { handleFopChat, handleFopChatAdmin } from './fopchat.js';
 
 // FOP group 3, 2026 (bip.net.ua/articles/fop-3-grupa/, checked 21.10.2026). Show to the accountant before relying on it.
 export const FOP = { year: 2026, singleTax: 0.05, militaryLevy: 0.01, esvMonth: 1902.34, limitUah: 10_091_049 };
@@ -128,6 +130,7 @@ export async function handleFinanceAdmin(db: DB, request: Request, path: string,
     await notify('🔑 Код доступа к «Финансам» для ФОП обновлён.');
     return json(200, { ok: true });
   }
+  if (path === 'fopchat') return handleFopChatAdmin(db, request);
   if (path === 'csv' && request.method === 'GET') return csv(db, Number(url.searchParams.get('year')) || new Date().getUTCFullYear(), true);
   return json(404, { ok: false });
 }
@@ -142,12 +145,14 @@ async function csv(db: DB, year: number, full: boolean): Promise<Response> {
 }
 
 /** FOP holder: GET /api/fin?year= with header X-Fin-Code. Read-only, no client names, no chats. */
-export async function handleFinancePublic(db: DB, request: Request): Promise<Response> {
-  if (request.method !== 'GET') return json(405, { ok: false });
+export async function handleFinancePublic(db: DB, request: Request, ai?: AiBinding, notify?: Notify): Promise<Response> {
   const st = await settings(db);
   const code = request.headers.get('X-Fin-Code') || '';
   if (!st.fin_code || !code || (await sha(code.trim())) !== st.fin_code) return json(401, { ok: false });
   const url = new URL(request.url);
+  // Her assistant: GET ?chat=1 reads the chat, POST asks.
+  if (request.method === 'POST' || url.searchParams.get('chat')) return handleFopChat(db, ai, request, notify || (async () => {}));
+  if (request.method !== 'GET') return json(405, { ok: false });
   const year = Number(url.searchParams.get('year')) || new Date().getUTCFullYear();
   if (url.searchParams.get('csv')) return csv(db, year, true);
   // One client's conversation (read-only), as the owner sees it, without internal notes.

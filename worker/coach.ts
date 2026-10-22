@@ -7,7 +7,7 @@ import { json as parse } from './autopilot.js';
 const MODELS = ['@cf/google/gemma-4-26b-a4b-it', '@cf/meta/llama-3.1-8b-instruct-fp8-fast'];
 export const COACH_DAILY = 20;
 const HISTORY = 12;
-const MAX_CHARS = 800;
+const MAX_CHARS = 2000;
 
 const SYSTEM = `You are Vax, the AI coach of Vaxo's partner program. You help one partner (an adult who recommends Vaxo for commission) earn honestly.
 Help with: where and how to find businesses that need our services (local businesses without a site, weak ads, no AI chat; niches; communities; their own network), what to write to a business owner (short personal messages, 3–6 sentences, with one real reason and their partner link placeholder {link}), how to answer objections, which Vaxo offer fits a business (start with the smallest: starter packages $149–249, then services), how commissions and payouts work, short-form video ideas, inviting other partners.

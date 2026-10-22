@@ -54,7 +54,7 @@ export async function handleRoomApi(db: DB, request: Request, token: string, not
   }
   if (request.method !== 'POST') return json(405, { ok: false });
   const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
-  const text = s(b.text, 2000);
+  const text = s(b.text, 4000);
   if (!text) return json(400, { ok: false });
   const recent = await db
     .prepare(`SELECT COUNT(*) AS n FROM messages WHERE lead_id = ? AND sender = 'client' AND at > datetime('now', '-1 hour')`)

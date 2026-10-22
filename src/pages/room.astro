@@ -21,7 +21,7 @@ const T = {
     <section class="box">
       <div class="log" data-log aria-live="polite"></div>
       <div class="live" data-live hidden></div>
-      <form data-form><textarea name="t" rows="2" maxlength="2000"></textarea><button type="button" class="mic" data-mic aria-label="Voice input"></button><button type="submit" aria-label="Send">➤</button></form>
+      <form data-form><button type="button" class="mic clip" data-clip aria-label="Attach files"></button><textarea name="t" rows="2" maxlength="4000"></textarea><button type="button" class="mic" data-mic aria-label="Voice input"></button><button type="submit" aria-label="Send">➤</button></form>
     </section>
     <p class="save"><span data-save></span> <button type="button" data-copy></button> <a class="tg" data-tg hidden target="_blank" rel="noopener"></a></p>
     <p class="save"><a href="/terms/" target="_blank" data-terms>Terms &amp; refunds</a> · <a href="/privacy/" target="_blank" data-privacy>Privacy</a></p>
@@ -29,6 +29,7 @@ const T = {
   <script type="application/json" id="room-t" set:html={JSON.stringify(T)} />
   <script>
     import { attachMic, MIC_SVG } from '../scripts/voice';
+    import { attachFiles, linkify } from '../scripts/attach';
     type R = Record<string, any>;
     const ALL = JSON.parse(document.getElementById('room-t')!.textContent || '{}');
     const token = new URLSearchParams(location.search).get('t') || '';
@@ -51,9 +52,7 @@ const T = {
       const who = document.createElement('small');
       who.textContent = `${me ? T.you : m.sender === 'ai' ? T.ai : m.partner_name ? m.partner_name + ' · ' + T.role : m.sender === 'owner' ? T.team + ' · ' + T.human : T.team}${m.kind === 'call' ? ' · ' + T.call : ''} · ${when(m.at)}`;
       const body = document.createElement('div');
-      body.textContent = m.text;
-      // Links in messages (call links, files) are clickable.
-      body.innerHTML = body.innerHTML.replace(/https?:\/\/[^\s<]+/g, (u) => `<a href="${u}" target="_blank" rel="noopener nofollow">${u}</a>`);
+      body.innerHTML = linkify(m.text);
       el.append(who, body);
       return el;
     };
@@ -137,6 +136,7 @@ const T = {
     const mic = $<HTMLButtonElement>('[data-mic]');
     mic.innerHTML = MIC_SVG;
     attachMic(mic, $<HTMLTextAreaElement>('textarea'), () => lang);
+    attachFiles($<HTMLButtonElement>('[data-clip]'), $<HTMLTextAreaElement>('textarea'), () => lang, $('.box'));
     load(true);
     setInterval(() => { if (!document.hidden) load(); }, 15000);
   </script>
@@ -178,6 +178,8 @@ const T = {
   .room form .mic { background: var(--bg); color: var(--ink); border: 1px solid var(--line); display: grid; place-items: center; }
   .room form .mic.rec { background: var(--error, #e5484d); color: #fff; border-color: transparent; animation: micpulse 1.2s ease-in-out infinite; }
   .room form .mic.busy { opacity: 0.5; }
+  .room .box.drop { outline: 3px dashed var(--acc); outline-offset: -3px; }
+  .room .file { font-weight: 600; } .room .file.img img { display: block; max-width: 240px; max-height: 240px; border-radius: 10px; margin-top: 4px; }
   @keyframes micpulse { 50% { opacity: 0.6; } }
   .room form button { border: 0; background: var(--acc); color: var(--dark-ink); width: 48px; border-radius: 12px; font-size: 18px; cursor: pointer; }
   .room .save { color: var(--mut); font-size: 14px; }

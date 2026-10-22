@@ -1,6 +1,6 @@
 ---
-// Read-only finance view for the FOP holder: vaxogroup.com/fin/ + a personal code (set by the owner in the HQ).
-// Shows money only — payments by order number, outgoing amounts, taxes, the income limit. No client names or chats.
+// The FOP holder's cabinet: vaxogroup.com/fin/ + a personal code (set by the owner in the HQ). Her assistant chat on top
+// (answers 24/7, hands Dmitry what only he can decide), then all money, clients and their chats, read-only.
 import Base from '../layouts/Base.astro';
 ---
 
@@ -8,13 +8,29 @@ import Base from '../layouts/Base.astro';
   <main class="finp">
     <header><a href="/" class="logo">VAXO<span>.</span></a><button type="button" class="ghost" data-out hidden>Выйти</button></header>
     <h1>Финансы Vaxo</h1>
-    <p class="mut">Полная картина: все деньги, каждый клиент и вся переписка с ним, готовность заказов, комиссии партнёров, налоги ФОП 3 группы и лимит. Только просмотр — изменить здесь ничего нельзя. Контакты клиентов — их личные данные: используйте только для работы Vaxo.</p>
+    <p class="mut">Здесь всё по Vaxo: ваш помощник (отвечает 24/7), все деньги, каждый клиент и переписка с ним, готовность заказов, комиссии партнёров, налоги ФОП 3 группы и лимит. Цифры — только просмотр. Контакты клиентов — их личные данные: используйте только для работы Vaxo.</p>
     <form data-login class="login">
       <input type="password" name="code" placeholder="Ваш личный код" autocomplete="current-password" required />
       <button class="cta">Открыть</button>
       <small data-err class="err" hidden>Код не подошёл.</small>
     </form>
     <div data-app hidden>
+      <section class="fhelp">
+        <div class="fh-head"><img src="/mascot/vax-happy.webp" alt="" width="44" height="44" /><div><b>Ваш помощник Vax</b><small>Отвечает сразу, 24/7. Что решает только Дмитрий — передаю ему, и он ответит здесь же.</small></div></div>
+        <div class="fh-log" data-fh-log aria-live="polite"></div>
+        <div class="fh-chips" data-fh-chips>
+          <button type="button">Сколько налогов платить в этом квартале и до какого числа?</button>
+          <button type="button">Сколько денег пришло в этом месяце?</button>
+          <button type="button">Что мне делать, когда клиент прислал деньги?</button>
+          <button type="button">Как подать декларацию? По шагам</button>
+        </div>
+        <form class="fh-in" data-fh-form>
+          <button type="button" class="fh-tool" data-fh-clip aria-label="Прикрепить файлы" title="Прикрепить файлы"></button>
+          <textarea rows="2" maxlength="4000" placeholder="Спросите что угодно: налоги, деньги, клиенты, банк… Можно голосом 🎤 и с файлами 📎" data-fh-text></textarea>
+          <button type="button" class="fh-tool" data-fh-mic aria-label="Голосовой ввод"></button>
+          <button class="cta" aria-label="Отправить">➤</button>
+        </form>
+      </section>
       <div class="bar"><label>Год <select data-year></select></label> <button type="button" class="ghost" data-csv>⬇️ Выгрузка для бухгалтера (CSV)</button></div>
       <div data-fin></div>
       <div data-orders></div>
@@ -22,6 +38,8 @@ import Base from '../layouts/Base.astro';
   </main>
   <script>
     import { renderFinance, renderOrders, renderChat, FIN_CSS } from '../scripts/finance-view';
+    import { attachMic, MIC_SVG } from '../scripts/voice';
+    import { attachFiles, linkify } from '../scripts/attach';
     const KEY = 'vaxo_fin';
     const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
     const st = document.createElement('style'); st.textContent = FIN_CSS; document.head.append(st);
@@ -44,7 +62,41 @@ import Base from '../layouts/Base.astro';
         renderChat($('[data-orders]'), await r.json(), () => { $('[data-fin]').hidden = false; load(); });
       };
       renderOrders($('[data-orders]'), d.orders || [], d.payouts || [], openChat);
+      loadHelp();
     }
+    // Her assistant.
+    const fhLog = $('[data-fh-log]'), fhText = $<HTMLTextAreaElement>('[data-fh-text]');
+    let fhCount = -1;
+    const fhBubble = (sender: string, text: string) => {
+      const d = document.createElement('div'); d.className = 'fh-m ' + (sender === 'fop' ? 'me' : sender === 'owner' ? 'dm' : 'ai');
+      const who = document.createElement('small'); who.textContent = sender === 'fop' ? 'Вы' : sender === 'owner' ? 'Дмитрий' : 'Vax · помощник';
+      const body = document.createElement('div'); body.innerHTML = linkify(text);
+      d.append(who, body); return d;
+    };
+    async function loadHelp() {
+      const r = await fetch('/api/fin?chat=1', { headers: { 'X-Fin-Code': code } }).catch(() => null);
+      if (!r?.ok) return;
+      const m = (await r.json()).messages as { sender: string; text: string }[];
+      if (m.length === fhCount) return;
+      fhCount = m.length;
+      fhLog.replaceChildren(fhBubble('ai', 'Привет! Я Vax, ваш помощник по ФОП и делам Vaxo. Спрашивайте что угодно — про налоги, сроки, деньги, клиентов, банк. Объясню просто и по шагам. 🦝'), ...m.map((x) => fhBubble(x.sender, x.text)));
+      $('[data-fh-chips]').hidden = m.length > 0;
+      fhLog.scrollTop = fhLog.scrollHeight;
+    }
+    async function ask(text: string) {
+      text = text.trim(); if (!text) return;
+      fhLog.append(fhBubble('fop', text)); const wait = fhBubble('ai', 'Думаю…'); wait.classList.add('wait'); fhLog.append(wait); fhLog.scrollTop = fhLog.scrollHeight;
+      $('[data-fh-chips]').hidden = true;
+      const r = await fetch('/api/fin', { method: 'POST', headers: { 'X-Fin-Code': code, 'Content-Type': 'application/json' }, body: JSON.stringify({ ask: text }) }).catch(() => null);
+      if (!r?.ok) { wait.lastElementChild!.textContent = 'Не отправилось, попробуйте ещё раз.'; return; }
+      fhCount = -1; await loadHelp();
+    }
+    $<HTMLFormElement>('[data-fh-form]').onsubmit = (e) => { e.preventDefault(); const v = fhText.value; fhText.value = ''; ask(v); };
+    fhText.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $<HTMLFormElement>('[data-fh-form]').requestSubmit(); } });
+    document.querySelectorAll<HTMLButtonElement>('[data-fh-chips] button').forEach((b) => b.onclick = () => ask(b.textContent || ''));
+    const fhMic = $<HTMLButtonElement>('[data-fh-mic]'); fhMic.innerHTML = MIC_SVG; attachMic(fhMic, fhText, () => 'ru');
+    attachFiles($<HTMLButtonElement>('[data-fh-clip]'), fhText, () => 'ru', $('.fhelp'));
+    setInterval(() => { if (code && !document.hidden) loadHelp(); }, 30000);
     $<HTMLFormElement>('[data-login]').addEventListener('submit', (e) => { e.preventDefault(); code = (new FormData(e.target as HTMLFormElement).get('code') as string).trim(); load(); });
     ys.onchange = load;
     $('[data-out]').onclick = () => { try { sessionStorage.removeItem(KEY); } catch {} location.reload(); };
@@ -68,6 +120,18 @@ import Base from '../layouts/Base.astro';
   .finp .cta { border: 0; background: var(--acc); color: var(--dark-ink); font: 700 15px var(--font); padding: 10px 16px; border-radius: 12px; cursor: pointer; }
   .finp .ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 7px 13px; cursor: pointer; font: 600 14px var(--font); }
   .finp .err { color: var(--error); width: 100%; }
+  .fhelp { border: 2px solid var(--acc); border-radius: 20px; overflow: hidden; margin: 14px 0 22px; background: var(--surf); box-shadow: 0 14px 40px rgba(0,0,0,.12); }
+  .fh-head { display: flex; gap: 10px; align-items: center; padding: 12px 14px; background: var(--deep); color: var(--deepInk); }
+  .fh-head img { border-radius: 50%; background: var(--acc); object-fit: contain; } .fh-head div { display: flex; flex-direction: column; } .fh-head small { color: var(--deepMut); }
+  .fh-log { max-height: 420px; min-height: 160px; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; background: var(--bg); }
+  .fh-m { max-width: 88%; padding: 9px 12px; border-radius: 16px; font-size: 15px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--surf); border: 1px solid var(--line); align-self: flex-start; }
+  .fh-m small { display: block; color: var(--mut); font-size: 11px; margin-bottom: 2px; } .fh-m.me { align-self: flex-end; background: var(--acc); color: var(--dark-ink); border: 0; } .fh-m.me small { color: inherit; opacity: .7; }
+  .fh-m.dm { border-color: var(--accText); } .fh-m.wait { opacity: .7; font-style: italic; } .fh-m a { color: inherit; } .fh-m .file.img img { display: block; max-width: 220px; border-radius: 10px; }
+  .fh-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; background: var(--bg); } .fh-chips[hidden] { display: none; }
+  .fh-chips button { border: 1px solid var(--accText); color: var(--accText); background: transparent; border-radius: 999px; padding: 7px 11px; font: 600 13px var(--font); cursor: pointer; text-align: left; }
+  .fh-in { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--line); } .fh-in textarea { flex: 1; min-width: 0; resize: none; font: 16px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 9px 11px; }
+  .fh-tool { width: 44px; flex: none; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 12px; display: grid; place-items: center; cursor: pointer; } .fh-tool.rec { background: var(--error, #e5484d); color: #fff; } .fh-tool.busy { opacity: .5; }
+  .fhelp.drop { outline: 3px dashed var(--acc); }
   .finp .bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 8px 0; }
   .finp .table { overflow-x: auto; } .finp table { width: 100%; border-collapse: collapse; font-size: 14px; }
   .finp th, .finp td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); } .finp th { color: var(--mut); font-weight: 600; }

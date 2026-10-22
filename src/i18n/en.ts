@@ -42,23 +42,38 @@ const en = {
       "d": "Custom IT solutions, automation and process scaling to take you into global markets."
     }
   ],
-  "whyTitle": "Why us",
-  "whySub": "Principles that work in every project.",
+  "whyTitle": "Why it's faster and better value with us",
+  "whySub": "A new kind of studio: AI makes the work many times faster, our team owns the result.",
   "why": [
     {
       "n": "01",
-      "t": "Strategic thinking",
-      "d": "We map a 3–12 month growth path before a single launch."
+      "t": "Answers in seconds, 24/7",
+      "d": "Vax, our AI manager, replies instantly — at night, on weekends, in your language. No \"we'll call you tomorrow\", no lost leads."
     },
     {
       "n": "02",
-      "t": "Systemic approach",
-      "d": "SMM, paid traffic, development and automation run as one system."
+      "t": "No bureaucracy",
+      "d": "Brief, price, payment, revisions and result — all in one chat. No forms, pointless calls or weeks of approvals."
     },
     {
       "n": "03",
-      "t": "Partnership model",
-      "d": "Strategic mindset and proactive ownership in delivering your projects."
+      "t": "Launch from 7 days",
+      "d": "AI handles the routine, the team does what takes experience. So timelines are days, not months."
+    },
+    {
+      "n": "04",
+      "t": "Less than an agency",
+      "d": "No office, no bloated staff — a lower price, and every piece of work is quality-checked before delivery."
+    },
+    {
+      "n": "05",
+      "t": "Fully transparent",
+      "d": "Project progress in %, revision counter, dates and payments — visible to you at any moment."
+    },
+    {
+      "n": "06",
+      "t": "People where it matters",
+      "d": "A 3–12 month strategy and a system where site, ads and AI work together. Our manager joins calls and key decisions."
     }
   ],
   "casesEyebrow": "Selected cases",
@@ -545,7 +560,7 @@ const en = {
   "submit": "Submit request",
   "ask": "Ask a question",
   "footer": "STRATEGIC GROWTH STUDIO. LONDON · DUBAI · NEW YORK.",
-  "footerCities": "Online worldwide: Ukraine · Europe · USA",
+  "footerCities": "Online worldwide: Ukraine · Europe · USA · UAE",
   "form": {
     "name": "Your name",
     "contact": "Telegram, phone or email",
@@ -574,7 +589,7 @@ const en = {
     "faq": "Didn't find the answer? Ask me in the chat — or write to the humans on the team.",
     "why": "I tried running a business without a system. Zero stars, would not recommend.",
     "services": "One dish or the whole menu — your call. I usually order the whole menu.",
-    "contact": "Just write to me here — I answer in seconds. A human joins when it matters.",
+    "contact": "Write to me right here — I answer in seconds. Our manager joins for calls and important decisions.",
     "success": "Vax is already running to read your message.",
     "notFound": "Even raccoons get lost. Let’s go home.",
     "partners": "Every partner starts as a rookie raccoon. I started by telling my neighbour about Vaxo.",

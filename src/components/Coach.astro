@@ -17,7 +17,8 @@ const T = {
   <div class="coach-log" data-coach-log aria-live="polite"></div>
   <div class="chips">{T.ex.map((q) => <button type="button" data-coach-ex>{q}</button>)}</div>
   <form class="coach-form" data-coach-form>
-    <textarea rows="2" maxlength="800" placeholder={T.ph} data-coach-input required></textarea>
+    <textarea rows="2" maxlength="2000" placeholder={T.ph} data-coach-input required></textarea>
+    <button type="button" class="coach-mic" data-coach-clip aria-label="📎"></button>
     <button type="button" class="coach-mic" data-coach-mic aria-label={T.mic}></button>
     <button type="submit" class="cta">{T.send}</button>
   </form>
@@ -44,11 +45,13 @@ const T = {
 
 <script>
   import { attachMic, MIC_SVG } from '../scripts/voice';
+  import { attachFiles } from '../scripts/attach';
   const box = document.querySelector<HTMLElement>('[data-coach]');
   if (box) {
     const mic = box.querySelector<HTMLButtonElement>('[data-coach-mic]')!;
     mic.innerHTML = MIC_SVG;
     attachMic(mic, box.querySelector<HTMLTextAreaElement>('[data-coach-input]')!, () => box.dataset.lang || 'en');
+    attachFiles(box.querySelector<HTMLButtonElement>('[data-coach-clip]')!, box.querySelector<HTMLTextAreaElement>('[data-coach-input]')!, () => box.dataset.lang || 'en');
     const T = JSON.parse(box.dataset.t!) as Record<string, string>;
     const log = box.querySelector<HTMLElement>('[data-coach-log]')!;
     const input = box.querySelector<HTMLTextAreaElement>('[data-coach-input]')!;

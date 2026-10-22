@@ -87,6 +87,7 @@ import Base from '../layouts/Base.astro';
         <div class="oc" data-oc></div>
         <form class="oc-in" data-oc-form>
           <textarea rows="2" placeholder="Напишите вопрос или задачу… (Enter — отправить)" data-oc-text></textarea>
+          <button type="button" class="ghost oc-mic" data-oc-clip aria-label="Прикрепить файлы" title="Прикрепить файлы"></button>
           <button type="button" class="ghost oc-mic" data-oc-mic aria-label="Голосовой ввод"></button>
           <button class="cta">Отправить</button>
         </form>
@@ -121,7 +122,8 @@ import Base from '../layouts/Base.astro';
       </section>
 
       <section data-panel="fin" hidden>
-        <p class="hint">Все деньги компании: что пришло, что ушло, налоги ФОП 3 группы и лимит. Подруга с ФОП видит то же на vaxogroup.com/fin/ по своему коду — без имён клиентов и переписок, только смотреть.</p>
+        <p class="hint">Все деньги компании: что пришло, что ушло, налоги ФОП 3 группы и лимит. Подруга с ФОП видит то же на vaxogroup.com/fin/ по своему коду (все деньги, клиенты и переписки — только смотреть) и может спросить помощника в любое время.</p>
+        <div class="card fopc"><b>👩‍💼 Чат с ФОП</b> <small class="mut">Её вопросы и ответы помощника. Что решаете только вы — придёт в Telegram; ответ отсюда она увидит у себя.</small><div class="oc" data-fopc></div><form class="oc-in" data-fopc-form><textarea rows="2" placeholder="Ответить ей от вашего имени…" data-fopc-text></textarea><button type="button" class="ghost oc-mic" data-fopc-mic aria-label="Голосовой ввод"></button><button class="cta">Ответить</button></form></div>
         <div class="fin-forms" data-fin-forms></div>
         <div data-fin></div>
       </section>
@@ -176,6 +178,7 @@ import Base from '../layouts/Base.astro';
 <script>
   import { renderFinance, FIN_CSS } from '../scripts/finance-view';
   import { attachMic, MIC_SVG } from '../scripts/voice';
+  import { attachFiles, linkify } from '../scripts/attach';
   type R = Record<string, any>;
   const KEY = 'vaxo_admin';
   const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s)!;
@@ -200,6 +203,7 @@ import Base from '../layouts/Base.astro';
     if (r.status === 401) { logout(); throw new Error('auth'); }
     return r.json();
   };
+  const rich = (text: string) => { const d = document.createElement('div'); d.innerHTML = linkify(String(text ?? '')); return d; };
   const el = (tag: string, attrs: R = {}, ...kids: (Node | string | null | undefined | false)[]) => {
     const e = document.createElement(tag);
     for (const [k, v] of Object.entries(attrs)) {
@@ -246,7 +250,7 @@ import Base from '../layouts/Base.astro';
       const act = (a: string) => async () => { const note = a === 'discuss' ? prompt('Что обсудить? (можно пусто)') ?? '' : ''; await api(`/claude/${m.id}/${a}`, { note }); loadClaude(); };
       return el('div', { class: 'ocm ' + (m.sender === 'owner' ? 'me' : 'them') + (m.kind === 'task' && m.sender === 'owner' ? ' task' : '') },
         el('small', {}, `${who}${m.kind === 'task' && m.sender === 'owner' ? (m.status === 'open' ? ' · задача в очереди' : ' · задача выполнена') : ''} · ${when(m.at)}`),
-        el('div', {}, m.text),
+        rich(m.text),
         ask && el('div', { class: 'btns' }, el('button', { class: 'cta sm', type: 'button', onclick: act('yes') }, 'Да'), el('button', { class: 'ghost sm', type: 'button', onclick: act('no') }, 'Нет'), el('button', { class: 'ghost sm', type: 'button', onclick: act('discuss') }, 'Обсудить')));
     }) : [el('p', { class: 'mut' }, 'Пока пусто. Спросите что угодно о компании или дайте задачу — например: «Сделай пост для Instagram про подарки».')]));
     box.scrollTop = box.scrollHeight;
@@ -254,13 +258,28 @@ import Base from '../layouts/Base.astro';
   (() => {
     const f = document.querySelector<HTMLFormElement>('[data-oc-form]'); if (!f) return;
     const ta = $<HTMLTextAreaElement>('[data-oc-text]');
-    const mic = $<HTMLButtonElement>('[data-oc-mic]'); mic.innerHTML = MIC_SVG; attachMic(mic, ta, () => 'ru');
+    const mic = $<HTMLButtonElement>('[data-oc-mic]'); mic.innerHTML = MIC_SVG; attachMic(mic, ta, () => 'ru'); attachFiles($<HTMLButtonElement>('[data-oc-clip]'), ta, () => 'ru', f);
     f.onsubmit = async (e) => { e.preventDefault(); const text = ta.value.trim(); if (!text) return; ta.value = ''; const task = $<HTMLInputElement>('[data-oc-task]').checked; $<HTMLInputElement>('[data-oc-task]').checked = false; await api('/claude', { text, task }); loadClaude(); };
     ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); f.requestSubmit(); } });
   })();
   document.querySelector('[data-go-chats]')?.addEventListener('click', () => show('chats'));
   const finStyle = document.createElement('style'); finStyle.textContent = FIN_CSS; document.head.append(finStyle);
+  async function loadFopChat() {
+    const r = await fetch('/api/admin/finance/fopchat', { headers: { Authorization: `Bearer ${token}` } }).catch(() => null);
+    if (!r?.ok) return;
+    const m = (await r.json()).messages as R[];
+    const box = $('[data-fopc]');
+    box.replaceChildren(...(m.length ? m.map((x) => el('div', { class: 'ocm ' + (x.sender === 'owner' ? 'me' : 'them') }, el('small', {}, `${x.sender === 'fop' ? 'Подруга' : x.sender === 'owner' ? 'Вы' : 'Помощник (ИИ)'} · ${when(x.at)}`), rich(x.text))) : [el('p', { class: 'mut' }, 'Пока она ничего не спрашивала.')]));
+    box.scrollTop = box.scrollHeight;
+  }
+  (() => {
+    const f = document.querySelector<HTMLFormElement>('[data-fopc-form]'); if (!f) return;
+    const ta = $<HTMLTextAreaElement>('[data-fopc-text]');
+    const mic = $<HTMLButtonElement>('[data-fopc-mic]'); mic.innerHTML = MIC_SVG; attachMic(mic, ta, () => 'ru');
+    f.onsubmit = async (e) => { e.preventDefault(); const text = ta.value.trim(); if (!text) return; ta.value = ''; await api('/finance/fopchat', { text }); loadFopChat(); };
+  })();
   async function loadFin() {
+    loadFopChat();
     const d = await api('/finance').catch(() => null);
     if (!d?.ok) return;
     renderFinance($('[data-fin]'), d, true, async (kind, id) => {
@@ -286,7 +305,7 @@ import Base from '../layouts/Base.astro';
     exp.onsubmit = async (e) => { e.preventDefault(); const b = Object.fromEntries(new FormData(exp)); const r = await api('/finance/expense', b); msg.textContent = r.ok ? 'Записано.' : 'Не записалось: проверьте сумму.'; if (r.ok) { exp.reset(); loadFin(); } };
     const codeIn = inp('code', 'Новый код для подруги (от 8 символов)');
     const code = el('div', { class: 'card' }, el('b', {}, '🔑 Доступ для ФОП'),
-      el('p', { class: 'mut' }, 'Придумайте код и передайте лично. Она открывает vaxogroup.com/fin/ и вводит его — видит только деньги.'),
+      el('p', { class: 'mut' }, 'Придумайте код и передайте лично. Она открывает vaxogroup.com/fin/ и вводит его — видит деньги, клиентов и переписки (только смотреть) и может спрашивать помощника.'),
       el('div', { class: 'two' }, codeIn, el('button', { class: 'cta', type: 'button', onclick: async () => { const r = await api('/finance/code', { code: codeIn.value }); msg.textContent = r.ok ? 'Код сохранён. Старый код больше не работает.' : 'Код слишком короткий (нужно от 8 символов).'; if (r.ok) codeIn.value = ''; } }, 'Сохранить')),
       el('button', { class: 'ghost', type: 'button', onclick: async () => { const r = await fetch('/api/admin/finance/csv', { headers: { Authorization: `Bearer ${token}` } }); const a = el('a', { href: URL.createObjectURL(await r.blob()), download: `vaxo-finance-${new Date().getFullYear()}.csv` }) as HTMLAnchorElement; a.click(); } }, '⬇️ Выгрузка для бухгалтера (CSV)'));
     f.append(el('div', { class: 'cols' }, pay, exp, code), msg);
@@ -571,15 +590,19 @@ import Base from '../layouts/Base.astro';
     form.addEventListener('submit', (e) => { e.preventDefault(); save(); });
     const thread = el('div', { class: 'thread' }, ...(messages.length ? messages.map((m: R) => el('div', { class: `m ${m.sender === 'client' ? 'them' : 'us'} k-${m.kind}` },
       el('small', {}, `${m.sender === 'client' ? l.name : m.sender === 'owner' ? 'Вы (Vaxo Team)' : m.sender === 'ai' ? 'Vax · ИИ-менеджер' : m.sender === 'system' ? 'Система' : (m.partner_name || 'менеджер') + ' · Account Manager'}${m.kind === 'note' ? ' · 🔒 заметка' : m.kind === 'call' ? ' · 📅 созвон' : ''} · ${when(m.at)}`),
-      el('div', {}, m.text))) : [el('p', { class: 'mut' }, 'Сообщений пока нет.')]));
+      rich(m.text))) : [el('p', { class: 'mut' }, 'Сообщений пока нет.')]));
     const msgKind = el('select', {}, el('option', { value: 'text' }, 'Клиенту (подпись «Vaxo Team»)'), el('option', { value: 'note' }, '🔒 Заметка для менеджера'));
     const msgText = el('textarea', { rows: '3', placeholder: 'Сообщение… (клиенту пишите на его языке)' });
-    const composer = el('div', { class: 'composer' }, msgKind, msgText, el('button', { class: 'cta', type: 'button', onclick: async () => {
+    const cMic = el('button', { type: 'button', class: 'ghost oc-mic', 'aria-label': 'Голосовой ввод' }) as HTMLButtonElement;
+    const cClip = el('button', { type: 'button', class: 'ghost oc-mic', 'aria-label': 'Прикрепить файлы', title: 'Прикрепить файлы' }) as HTMLButtonElement;
+    cMic.innerHTML = MIC_SVG;
+    const composer = el('div', { class: 'composer' }, msgKind, msgText, el('div', { class: 'oc-in' }, cClip, cMic), el('button', { class: 'cta', type: 'button', onclick: async () => {
       const text = (msgText as HTMLTextAreaElement).value.trim();
       if (!text) return;
       await api(`/lead/${id}/msg`, { kind: (msgKind as HTMLSelectElement).value, text });
       await load(); openLead(id);
     } }, 'Отправить'));
+    attachMic(cMic, msgText as HTMLTextAreaElement, () => 'ru'); attachFiles(cClip, msgText as HTMLTextAreaElement, () => 'ru', composer as HTMLElement);
     requestAnimationFrame(() => (thread.scrollTop = thread.scrollHeight));
     $('[data-detail]').replaceChildren(...[
       el('h2', {}, `#${l.id} · ${l.name}`, ' ', badge(l.status)),
@@ -758,7 +781,10 @@ import Base from '../layouts/Base.astro';
   .adm .thread .us { align-self: flex-end; background: var(--acc); color: var(--dark-ink); }
   .adm .thread .k-note { background: repeating-linear-gradient(45deg, var(--surf2), var(--surf2) 8px, var(--bg) 8px, var(--bg) 16px); color: var(--ink); }
   .adm .thread .k-call { border: 2px solid var(--accText); }
+  .adm .fopc { margin-bottom: 16px; } .adm .fopc .oc { max-height: 320px; margin: 8px 0; }
   .adm .composer { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 4px; }
+  .adm .file { font-weight: 600; } .adm .file.img img { display: block; max-width: 220px; max-height: 220px; border-radius: 10px; margin-top: 4px; }
+  .adm .drop { outline: 3px dashed var(--acc); outline-offset: 2px; }
   .adm .digest { background: var(--surf); border: 1px solid var(--acc); border-radius: 14px; padding: 4px 16px 12px; margin-bottom: 14px; }
   .adm .digest pre { white-space: pre-wrap; font: 15px/1.55 var(--font); margin: 0; }
   .adm .aisum { background: color-mix(in srgb, var(--acc) 12%, var(--surf)); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 8px 0; }

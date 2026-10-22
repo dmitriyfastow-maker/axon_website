@@ -10,6 +10,7 @@ import { configureTelegram, ensureWebhook, handleTelegram } from './telegram.js'
 import { handleCollab } from './collab.js';
 import { configureMail, handleEmail, type IncomingEmail } from './mail.js';
 import { handleStt } from './stt.js';
+import { handleFileUpload, serveFile, type KV } from './files.js';
 import { handleFinancePublic } from './finance.js';
 import { handleIntake } from './intake.js';
 import { notifyOwnerChat } from './ownerchat.js';
@@ -20,6 +21,7 @@ interface Env extends LeadEnv {
   LEADS?: DB;
   ADMIN_TOKEN?: string;
   AI?: AiBinding;
+  FILES?: KV;
 }
 
 const ENV_KEYS = ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'RESEND_API_KEY', 'LEAD_EMAIL_TO', 'LEAD_EMAIL_FROM'] as const;
@@ -81,7 +83,10 @@ export default {
     const room = url.pathname.match(/^\/api\/room\/([a-f0-9]{24})$/);
     if (room) return env.LEADS ? handleRoomApi(env.LEADS, request, room[1], notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify).catch((e) => console.error('[ai reply]', e)))) : json(503, { ok: false });
     if (url.pathname === '/api/intake') return env.LEADS ? handleIntake(env.LEADS, request, notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify).catch((e) => console.error('[ai intake]', e)))) : json(503, { ok: false });
-    if (url.pathname === '/api/fin') return env.LEADS ? handleFinancePublic(env.LEADS, request) : json(503, { ok: false });
+    if (url.pathname === '/api/fin') return env.LEADS ? handleFinancePublic(env.LEADS, request, env.AI, notify) : json(503, { ok: false });
+    if (url.pathname === '/api/file') return env.LEADS ? handleFileUpload(env.FILES, env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
+    const file = url.pathname.match(/^\/f\/([a-f0-9]{20})(?:\/|$)/);
+    if (file) return serveFile(env.FILES, file[1]);
     if (url.pathname === '/api/stt') return handleStt(env.AI, request, url.searchParams.get('lang') || '');
     if (url.pathname === '/api/chat') return handleChat(env, request, ctx ? (p) => ctx.waitUntil(p) : undefined);
     if (url.pathname === '/api/lead') {

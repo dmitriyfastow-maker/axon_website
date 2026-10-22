@@ -162,6 +162,8 @@ const T = {
 </div>
 
 <script>
+  import { attachMic, MIC_SVG } from '../scripts/voice';
+  import { attachFiles, linkify } from '../scripts/attach';
   type R = Record<string, any>;
   const root = document.querySelector<HTMLElement>('[data-deals]');
   if (root) {
@@ -233,7 +235,7 @@ const T = {
       // Chat with the client (notes are shaded and never reach the client).
       const thread = el('div', { class: 'thread' }, ...msgs.map((m) => el('div', { class: `m ${m.sender === 'client' ? 'them' : 'us'} k-${m.kind}` },
         el('small', {}, `${m.sender === 'client' ? l.name : m.sender === 'owner' ? 'Vaxo Team' : m.sender === 'ai' ? T.aiT.name : m.sender === 'system' ? 'Vaxo' : (m.partner_name || '').split(' ')[0] + ' · Account Manager'}${m.kind === 'note' ? ' · 🔒' : m.kind === 'call' ? ' · 📅' : ''} · ${when(m.at)}`),
-        el('div', {}, m.text))));
+        (() => { const d = document.createElement('div'); d.innerHTML = linkify(String(m.text ?? '')); return d; })())));
       let mode = 'text';
       const ta = el('textarea', { rows: '3', maxlength: '3000', placeholder: T.phClient }) as HTMLTextAreaElement;
       const whenIn = el('input', { type: 'datetime-local', hidden: true }) as HTMLInputElement;
@@ -245,7 +247,10 @@ const T = {
           ta.placeholder = k === 'note' ? T.phNote : T.phClient;
           whenIn.hidden = linkIn.hidden = k !== 'call';
         } }, t)));
-      const composer = el('div', { class: 'composer' }, el('small', { class: 'mut' }, T.extra.asYou.replace('{name}', (me || '').split(' ')[0])), tabs, whenIn, linkIn, ta,
+      const dMic = el('button', { type: 'button', class: 'tool', 'aria-label': 'Voice' }) as HTMLButtonElement;
+      const dClip = el('button', { type: 'button', class: 'tool', 'aria-label': 'Files' }) as HTMLButtonElement;
+      dMic.innerHTML = MIC_SVG;
+      const composer = el('div', { class: 'composer' }, el('small', { class: 'mut' }, T.extra.asYou.replace('{name}', (me || '').split(' ')[0])), tabs, whenIn, linkIn, ta, el('div', { class: 'tools' }, dClip, dMic),
         el('button', { class: 'cta', type: 'button', onclick: async () => {
           const r = await post(`deals/${l.id}/msg`, { kind: mode, text: ta.value, when: whenIn.value.replace('T', ' '), link: linkIn.value });
           if (r.ok) return load();
@@ -290,6 +295,8 @@ const T = {
               openId = null; load();
             } }, T.release))),
         el('details', {}, el('summary', {}, T.log), el('ol', { class: 'log' }, ...events.map((e) => el('li', {}, el('small', {}, when(e.at)), ' ', e.text || e.kind)))));
+      const pl = () => (document.documentElement.lang === 'uk' ? 'ua' : document.documentElement.lang || 'en');
+      attachMic(dMic, ta, pl); attachFiles(dClip, ta, pl, composer as HTMLElement);
       const ws = el('div', { class: 'ws' }, el('div', { class: 'chat' }, thread, composer), side);
       requestAnimationFrame(() => (thread.scrollTop = thread.scrollHeight));
       return el('div', { class: 'client open' }, head, ws);
@@ -376,4 +383,7 @@ const T = {
   .deals .book div { margin-top: 10px; }
   .deals .book p { margin: 4px 0 0; color: var(--mut); }
   .deals .log { font-size: 13px; }
+  .deals .tools { display: flex; gap: 6px; } .deals .tool { width: 44px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); display: grid; place-items: center; cursor: pointer; }
+  .deals .tool.rec { background: var(--error, #e5484d); color: #fff; } .deals .tool.busy { opacity: .5; } .deals .drop { outline: 3px dashed var(--acc); }
+  .deals .file { font-weight: 600; } .deals .file.img img { display: block; max-width: 220px; max-height: 220px; border-radius: 10px; margin-top: 4px; }
 </style>

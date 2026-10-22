@@ -28,6 +28,7 @@ const DEMOS: Record<number, [string, string][]> = {
       <p>{c.sub}</p>
       <p class="note">◆ {c.note}</p>
       <VaxSays text={t.vax.services} pose="chef" big />
+      <a href="#" class="ask-vax" data-vax-chat>{t.vax.askVax}</a>
     </div>
     <div class="list" data-acc-group="services">
       {
@@ -58,7 +59,6 @@ const DEMOS: Record<number, [string, string][]> = {
         })
       }
     </div>
-    <a href="#" class="ask-vax" data-vax-chat>{t.vax.askVax}</a>
   </div>
 </section>
 
@@ -74,6 +74,7 @@ const DEMOS: Record<number, [string, string][]> = {
   .demos { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 12px; }
   .demos a { font-size: 14px; font-weight: 600; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; text-decoration: none; }
   .demos a:hover { border-color: var(--acc); }
+  .copy .ask-vax { align-self: flex-start; margin-top: 0; }
   .services {
     background: var(--surf);
     border-top: 1px solid var(--line);
@@ -94,7 +95,8 @@ const DEMOS: Record<number, [string, string][]> = {
     gap: 18px;
   }
   /* Sticky copy only when it sits beside the list; stacked on phones it would slide over the accordion. */
-  @media (min-width: 900px) {
+  /* …and only on screens tall enough to show the whole column, so the raccoon never covers the link below it. */
+  @media (min-width: 900px) and (min-height: 880px) {
     .copy { position: sticky; top: 100px; }
   }
   h2 {

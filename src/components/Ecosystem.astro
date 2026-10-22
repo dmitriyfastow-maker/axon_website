@@ -9,29 +9,32 @@ const p = (path: string) => (lang === 'en' ? path : `/${lang}${path}`);
 const C = {
   en: {
     hi: 'Meet Vax', lead: 'Our raccoon tries a new small business every week — bakery, car wash, cleaning — and makes every mistake — so you don’t have to. Pick where to start:',
+    talk: ['Tell us about your project', 'Describe the task in your own words — Vax answers in seconds, suggests options and a price. Voice and files welcome, no forms.', 'Write to Vax'],
     cards: [
-      ['Free tools', 'Count how much missed messages cost you and what to charge. 1 minute, no sign-up.', p('/tools/'), 'happy'],
-      ['Start small', 'AI chat, one-page site or one automation from $149. Ready in 7 days.', p('/start/'), 'smug'],
-      ['Templates', '12 ready-made templates for small business from $9.', p('/shop/'), 'front'],
-      ['Earn with us', 'Recommend Vaxo and earn up to 40% of the first payment + 10% for life.', p('/partners/'), 'shocked'],
+      ['Free tools', 'Count how much missed messages cost you and what to charge. 1 minute, no sign-up.', p('/tools/'), 'tools'],
+      ['Start small', 'AI chat, one-page site or one automation from $149. Ready in 7 days.', p('/start/'), 'sprout'],
+      ['Templates', '12 ready-made templates for small business from $9.', p('/shop/'), 'templates'],
+      ['Earn with us', 'Recommend Vaxo and earn up to 40% of the first payment + 10% for life.', p('/partners/'), 'earn'],
     ],
   },
   ru: {
     hi: 'Знакомьтесь — Vax', lead: 'Наш енот каждую неделю пробует новый бизнес — пекарня, автомойка, клининг — и совершает все ошибки — чтобы не пришлось вам. С чего начнём?',
+    talk: ['Обсудить свой проект', 'Опишите задачу своими словами — Vax ответит за секунды, предложит варианты и цену. Можно голосом и с файлами, без анкет.', 'Написать Vax'],
     cards: [
-      ['Бесплатные инструменты', 'Посчитайте, сколько теряете на неотвеченных сообщениях и сколько брать за услугу. 1 минута.', p('/tools/'), 'happy'],
-      ['Начать с малого', 'ИИ-чат, сайт-визитка или одна автоматизация от $149. Готово за 7 дней.', p('/start/'), 'smug'],
-      ['Шаблоны', '12 готовых шаблонов для малого бизнеса от $9 (на английском).', p('/shop/'), 'front'],
-      ['Зарабатывайте с нами', 'Рекомендуйте Vaxo и получайте до 40% первой оплаты + 10% пожизненно.', p('/partners/'), 'shocked'],
+      ['Бесплатные инструменты', 'Посчитайте, сколько теряете на неотвеченных сообщениях и сколько брать за услугу. 1 минута.', p('/tools/'), 'tools'],
+      ['Начать с малого', 'ИИ-чат, сайт-визитка или одна автоматизация от $149. Готово за 7 дней.', p('/start/'), 'sprout'],
+      ['Шаблоны', '12 готовых шаблонов для малого бизнеса от $9 (на английском).', p('/shop/'), 'templates'],
+      ['Зарабатывайте с нами', 'Рекомендуйте Vaxo и получайте до 40% первой оплаты + 10% пожизненно.', p('/partners/'), 'earn'],
     ],
   },
   ua: {
     hi: 'Знайомтеся — Vax', lead: 'Наш єнот щотижня пробує новий бізнес — пекарня, автомийка, клінінг — і робить усі помилки — щоб не довелося вам. З чого почнемо?',
+    talk: ['Обговорити свій проєкт', 'Опишіть задачу своїми словами — Vax відповість за секунди, запропонує варіанти й ціну. Можна голосом і з файлами, без анкет.', 'Написати Vax'],
     cards: [
-      ['Безкоштовні інструменти', 'Порахуйте, скільки втрачаєте на повідомленнях без відповіді і скільки брати за послугу. 1 хвилина.', p('/tools/'), 'happy'],
-      ['Почати з малого', 'ШІ-чат, сайт-візитка або одна автоматизація від $149. Готово за 7 днів.', p('/start/'), 'smug'],
-      ['Шаблони', '12 готових шаблонів для малого бізнесу від $9 (англійською).', p('/shop/'), 'front'],
-      ['Заробляйте з нами', 'Рекомендуйте Vaxo і отримуйте до 40% першої оплати + 10% довічно.', p('/partners/'), 'shocked'],
+      ['Безкоштовні інструменти', 'Порахуйте, скільки втрачаєте на повідомленнях без відповіді і скільки брати за послугу. 1 хвилина.', p('/tools/'), 'tools'],
+      ['Почати з малого', 'ШІ-чат, сайт-візитка або одна автоматизація від $149. Готово за 7 днів.', p('/start/'), 'sprout'],
+      ['Шаблони', '12 готових шаблонів для малого бізнесу від $9 (англійською).', p('/shop/'), 'templates'],
+      ['Заробляйте з нами', 'Рекомендуйте Vaxo і отримуйте до 40% першої оплати + 10% довічно.', p('/partners/'), 'earn'],
     ],
   },
 }[lang];
@@ -46,6 +49,11 @@ const C = {
         <p>{C.lead}</p>
       </div>
     </div>
+    <a class="talk" href={`${p('/')}#contact`} data-start-chat="">
+      <img src="/mascot/vax-talk.webp" alt="" width="200" height="200" loading="lazy" />
+      <div><h3>{C.talk[0]}</h3><p>{C.talk[1]}</p></div>
+      <span class="go">{C.talk[2]} →</span>
+    </a>
     <div class="cards">
       {C.cards.map(([title, text, href, face]) => (
         <a class="card" href={href}>
@@ -72,4 +80,10 @@ const C = {
   h3 { font-size: 19px; margin: 0 0 8px; }
   h3 span { color: var(--accText); }
   .card p { color: var(--mut); font-size: 15px; margin: 0; }
+  .talk { display: flex; align-items: center; gap: 18px; background: var(--deep); color: var(--deepInk); border: 2px solid var(--acc); border-radius: 22px; padding: 16px 22px; margin-bottom: 16px; text-decoration: none; transition: transform 0.2s; }
+  .talk:hover { transform: translateY(-3px); }
+  .talk img { width: 96px; height: auto; flex: none; }
+  .talk div { flex: 1; } .talk h3 { font-size: 22px; } .talk p { color: var(--deepMut); margin: 0; font-size: 16px; }
+  .talk .go { flex: none; background: var(--acc); color: var(--dark-ink); font-weight: 700; padding: 12px 18px; border-radius: 999px; white-space: nowrap; }
+  @media (max-width: 700px) { .talk { flex-wrap: wrap; } .talk img { width: 72px; } .talk div { flex-basis: calc(100% - 90px); } .talk .go { width: 100%; text-align: center; } }
 </style>

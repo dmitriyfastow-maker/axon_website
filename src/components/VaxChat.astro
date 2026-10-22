@@ -12,8 +12,8 @@ const T = {
     teaser: 'Questions? I answer in 5 seconds 🦝',
     chips: ['What can you build for me?', 'Website or app — prices', 'Ads and social media', 'AI and automation', 'Earn as a partner'],
     ph: 'Type a message…', send: 'Send', mic: 'Voice input', thinking: 'Vax is typing…',
-    error: "My paws slipped 🙈 Leave your contact and a human from Vaxo will reply within 24 hours.",
-    fName: 'Your name', fContact: 'Email, phone or @telegram', fSend: 'Send to Vaxo', fDone: "Got it! A human from Vaxo will reply within 24 hours. I'm keeping the cookies warm 🍪",
+    error: "My paws slipped 🙈 Leave your contact and our manager will reply within 24 hours (usually much sooner).",
+    fName: 'Your name', fContact: 'Email, phone or @telegram', fSend: 'Send to Vaxo', fDone: "Got it! Our manager will reply within 24 hours (usually much sooner). I'm keeping the cookies warm 🍪",
     fBad: 'Please check the contact — email, phone or @telegram.',
     room: 'Here is your private project chat — your manager will write there:', demo: 'Built by Vaxo: AI assistant + brand character. Want one?', demoHref: '/#contact', close: 'Close chat',
   },
@@ -24,7 +24,7 @@ const T = {
     chips: ['Що ви можете зробити для мене?', 'Сайт або застосунок — ціни', 'Реклама і соцмережі', 'ШІ та автоматизація', 'Заробляти партнером'],
     ph: 'Напишіть повідомлення…', send: 'Надіслати', mic: 'Голосове введення', thinking: 'Vax друкує…',
     error: 'Лапки посковзнулися 🙈 Залиште контакт — людина з Vaxo відповість протягом 24 годин.',
-    fName: "Ваше ім'я", fContact: 'Email, телефон або @telegram', fSend: 'Надіслати у Vaxo', fDone: 'Готово! Людина з Vaxo відповість протягом 24 годин. А я поки тримаю печиво теплим 🍪',
+    fName: "Ваше ім'я", fContact: 'Email, телефон або @telegram', fSend: 'Надіслати у Vaxo', fDone: 'Готово! Наш менеджер відповість протягом 24 годин (зазвичай набагато швидше). А я поки тримаю печиво теплим 🍪',
     fBad: 'Перевірте контакт — email, телефон або @telegram.',
     room: 'Ось особистий чат вашого проєкту — менеджер напише туди:', demo: 'Зроблено у Vaxo: ШІ-помічник + персонаж бренду. Хочете такий?', demoHref: '/ua/#contact', close: 'Закрити чат',
   },
@@ -35,7 +35,7 @@ const T = {
     chips: ['Что вы можете сделать для меня?', 'Сайт или приложение — цены', 'Реклама и соцсети', 'ИИ и автоматизация', 'Заработать партнёром'],
     ph: 'Напишите сообщение…', send: 'Отправить', mic: 'Голосовой ввод', thinking: 'Vax печатает…',
     error: 'Лапки соскользнули 🙈 Оставьте контакт — человек из Vaxo ответит в течение 24 часов.',
-    fName: 'Ваше имя', fContact: 'Email, телефон или @telegram', fSend: 'Отправить в Vaxo', fDone: 'Готово! Человек из Vaxo ответит в течение 24 часов. А я пока держу печенье тёплым 🍪',
+    fName: 'Ваше имя', fContact: 'Email, телефон или @telegram', fSend: 'Отправить в Vaxo', fDone: 'Готово! Наш менеджер ответит в течение 24 часов (обычно гораздо быстрее). А я пока держу печенье тёплым 🍪',
     fBad: 'Проверьте контакт — email, телефон или @telegram.',
     room: 'Вот личный чат вашего проекта — менеджер напишет туда:', demo: 'Сделано в Vaxo: ИИ-помощник + персонаж бренда. Хотите такой?', demoHref: '/ru/#contact', close: 'Закрыть чат',
   },
@@ -58,7 +58,8 @@ const T = {
     <div class="vc-log" data-vc-log aria-live="polite"></div>
     <div class="vc-chips" data-vc-chips></div>
     <form class="vc-in" data-vc-form>
-      <input name="q" autocomplete="off" maxlength="500" placeholder={T.ph} aria-label={T.ph} />
+      <button type="button" class="vc-mic" data-vc-clip aria-label="📎"></button>
+      <input name="q" autocomplete="off" maxlength="1500" placeholder={T.ph} aria-label={T.ph} />
       <button type="button" class="vc-mic" data-vc-mic aria-label={T.mic}></button>
       <button type="submit" aria-label={T.send}>➤</button>
     </form>
@@ -68,6 +69,7 @@ const T = {
 
 <script>
   import { attachMic, MIC_SVG } from '../scripts/voice';
+  import { attachFiles, linkify } from '../scripts/attach';
   type Msg = { role: 'user' | 'assistant'; content: string };
   const root = document.querySelector<HTMLElement>('[data-vchat]');
   if (root) {
@@ -95,7 +97,7 @@ const T = {
     const bubble = (role: string, text: string) => {
       const d = document.createElement('div');
       d.className = 'vc-m ' + (role === 'user' ? 'me' : 'vax');
-      d.textContent = text;
+      d.innerHTML = linkify(text);
       log.appendChild(d);
       log.scrollTop = log.scrollHeight;
       return d;
@@ -210,6 +212,7 @@ const T = {
     const mic = $<HTMLButtonElement>('[data-vc-mic]');
     mic.innerHTML = MIC_SVG;
     attachMic(mic, input, () => lang);
+    attachFiles($<HTMLButtonElement>('[data-vc-clip]'), input, () => lang, form);
     form.onsubmit = (e) => { e.preventDefault(); const q = input.value; input.value = ''; ask(q); };
     // Other parts of the site can open the chat: <a data-vax-chat href="#">.
     document.addEventListener('click', (e) => {
