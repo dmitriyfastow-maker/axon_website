@@ -64,6 +64,15 @@ ${history}`, 450)).trim() || 'Не получилось ответить сей�
 
 /** Claude Code (through D1) or the autopilot asks the owner something: shown in the HQ chat with buttons + Telegram. */
 export async function askOwner(db: DB, notify: Notify, text: string, kind: 'idea' | 'question' = 'question') {
-  await db.prepare('INSERT INTO owner_chat (sender, kind, text) VALUES (?, ?, ?)').bind('claude', kind, text.slice(0, 3000)).run();
+  await db.prepare('INSERT INTO owner_chat (sender, kind, text, notified) VALUES (?, ?, ?, 1)').bind('claude', kind, text.slice(0, 3000)).run();
   await notify(`${kind === 'idea' ? '💡 Идея' : '❓ Вопрос'} от Claude:\n${text.slice(0, 1500)}\n\nОтветить: Штаб → 🧠 Claude.`);
+}
+
+/** Hourly: Claude's new questions, ideas and messages (written by Claude Code sessions) go to the owner's Telegram. */
+export async function notifyOwnerChat(db: DB, notify: Notify) {
+  const { results } = await db.prepare(`SELECT id, kind, text FROM owner_chat WHERE sender = 'claude' AND notified = 0 ORDER BY id LIMIT 10`).all<{ id: number; kind: string; text: string }>();
+  for (const r of results) {
+    await notify(`${r.kind === 'idea' ? '💡 Идея от Claude' : r.kind === 'question' ? '❓ Вопрос от Claude' : '🧠 Claude'}:\n${r.text.slice(0, 1500)}\n\nОтветить: Штаб → 🧠 Claude${r.kind === 'msg' ? '' : ' (кнопки Да / Нет / Обсудить)'}.`);
+    await db.prepare('UPDATE owner_chat SET notified = 1 WHERE id = ?').bind(r.id).run();
+  }
 }
