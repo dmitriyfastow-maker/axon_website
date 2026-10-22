@@ -6,6 +6,7 @@ import { settings } from './autopilot.js';
 import { roomMessages } from './rooms.js';
 import type { AiBinding } from './chat.js';
 import { handleFopChat, handleFopChatAdmin } from './fopchat.js';
+import { cashback } from './cabinet.js';
 
 // FOP group 3, 2026 (bip.net.ua/articles/fop-3-grupa/, checked 21.10.2026). Show to the accountant before relying on it.
 export const FOP = { year: 2026, singleTax: 0.05, militaryLevy: 0.01, esvMonth: 1902.34, limitUah: 10_091_049 };
@@ -105,6 +106,10 @@ export async function handleFinanceAdmin(db: DB, request: Request, path: string,
       .bind(at, lead, amount, currency, rate, Math.round(amount * rate * 100) / 100, part, METHODS.includes(String(b.method)) ? String(b.method) : 'bank', typeof b.note === 'string' ? b.note.slice(0, 200) : null).run();
     if (lead) {
       await logEvent(db, lead, 'owner', 'note', `Payment received: ${amount} ${currency} (${part})`);
+      // Decision 16: 5% of every payment comes back to the client as bonuses.
+      const usd = currency === 'USD' ? amount : (amount * rate) / ((await nbuRate(db, 'USD', at)) || 41.5);
+      const pid = (await db.prepare('SELECT MAX(id) AS id FROM payments WHERE lead_id = ?').bind(lead).first<{ id: number }>())?.id ?? null;
+      await cashback(db, lead, usd, pid).catch((e) => console.error('[cashback]', e));
       onPaid?.(lead);
     }
     return json(200, { ok: true, rate });
@@ -121,6 +126,8 @@ export async function handleFinanceAdmin(db: DB, request: Request, path: string,
   const cancel = path.match(/^(payment|expense)\/(\d+)\/cancel$/);
   if (cancel && request.method === 'POST') {
     await db.prepare(`UPDATE ${cancel[1] === 'payment' ? 'payments' : 'expenses'} SET status = ? WHERE id = ?`).bind(b.refunded ? 'refunded' : 'cancelled', Number(cancel[2])).run();
+    // A cancelled or refunded payment takes its cashback back.
+    if (cancel[1] === 'payment') await db.prepare(`DELETE FROM bonuses WHERE kind = 'cashback' AND note = ?`).bind(`payment:${cancel[2]}`).run();
     return json(200, { ok: true });
   }
   if (path === 'code' && request.method === 'POST') {

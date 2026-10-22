@@ -2,6 +2,7 @@
 // brief, recommends one package, reports project status, follows up after silence and after delivery.
 // A human manager joins only when the client needs a live conversation (call, complaint, refund, special price).
 import { filesForAi } from './files.js';
+import { bonusBalance } from './cabinet.js';
 import type { DB } from './partner.js';
 import { FACTS, type AiBinding } from './chat.js';
 import { askAi, json, settings, triageLead } from './autopilot.js';
@@ -30,11 +31,12 @@ type Lead = {
   id: number; mode: string; name: string; lang: string | null; status: string; service: string | null; budget: string | null;
   interest: string | null; message: string | null; brief: string | null; profile: string | null; ai: string;
   stage: string | null; stage_due: string | null; human: string | null; progress: number | null; promo: string | null; manager: string | null; value_usd: number | null; contact: string | null;
+  revisions_used: number | null; revisions_total: number | null; brief_confirmed_at: string | null; client_id: number | null; bonus?: number;
 };
 
 async function loadLead(db: DB, id: number): Promise<Lead | null> {
   return db
-    .prepare(`SELECT d.id, d.mode, d.name, d.contact, d.lang, d.status, d.service, d.budget, d.interest, d.message, d.brief, d.profile, d.ai, d.stage, d.stage_due, d.human, d.progress, d.promo, d.value_usd, p.name AS manager
+    .prepare(`SELECT d.id, d.mode, d.name, d.contact, d.lang, d.status, d.service, d.budget, d.interest, d.message, d.brief, d.profile, d.ai, d.stage, d.stage_due, d.human, d.progress, d.promo, d.value_usd, d.revisions_used, d.revisions_total, d.brief_confirmed_at, d.client_id, p.name AS manager
               FROM leads d LEFT JOIN partners p ON p.id = d.closer_id WHERE d.id = ?`)
     .bind(id)
     .first<Lead>();
@@ -52,7 +54,7 @@ Useful links you may give (real pages only): vaxogroup.com/examples/ (examples),
 The client never has to fill any form: you collect everything in this chat and place the order for them.
 Your job by stage:
 ${ownerPrice ? `- Before payment (PRICE MODE — right now the team sets every price personally): understand the business and goal (ask at most 2 questions at a time). Do NOT name prices or price ranges, even from the facts. When the task is clear, present the 2–3 options WITHOUT amounts (say which is lighter and which is bigger), then ask what budget they have in mind or what they are ready to pay. When the client names a price, set "offer" to {"price": "<amount as they said it>", "task": "<one line in English>"} and tell them the team will confirm within 24 hours. Timelines only as a range with a safety margin: one-page site 1–3 days, landing page 3–7 days, multi-page site 1–3 weeks, app MVP 4–8 weeks; say it may well be faster.` : `- Before payment: understand the business and goal (ask at most 2 questions at a time: business and audience, goal, deadline, budget, examples they like). When you know enough, give the 2–3 options with price ranges from the facts, recommend one and say why, and say the prices on the site are preliminary — the exact price depends on their task. If their budget is below that range, first offer what honestly fits the price list (a starter package, a one-page site, a landing page, or a smaller first phase). Final prices are fixed by the team after the strategy session.`}
-- Brief (every client, before any work): ask short questions until you know the goal, the audience, what the site/product must do, what content they already have (texts, photos, logo), 1–3 examples they like, must-haves and the deadline. Then send a numbered summary titled "Brief" and ask them to confirm or correct it. Work starts only from a confirmed brief — it saves revisions. When the client confirms the brief and the chosen option and wants to go ahead, set "order" to a one-line English summary (option, scope, agreed price if any) — this places the order; tell them what happens next (payment terms, start, first preview).
+- Brief (every client, before any work): ask short questions until you know the goal, the audience, what the site/product must do, what content they already have (texts, photos, logo), 1–3 examples they like, must-haves and the deadline. Then send a numbered summary whose FIRST word is "Brief" ("Бриф" in Russian and Ukrainian) and ask them to press the "✅ All correct" button under it or write what to correct — the confirmed brief is the contract (saved with date and time). Work starts only from a confirmed brief — it saves revisions. When the client confirms the brief and the chosen option and wants to go ahead, set "order" to a one-line English summary (option, scope, agreed price if any) — this places the order; tell them what happens next (payment terms, start, first preview).
 ${friend ? `- FRIENDS MODE (this client came personally from the Vaxo team): for small projects there is no prepayment — we build first, show a preview, include up to 5 revision rounds, and the client pays after approving the result; then we hand over files, access and full rights. After handover, offer support (updates, fixes, small changes, checks) and explain why it helps; the client names their price for support too and you pass it to the team the same way.
 ` : ''}- After payment: report the project stage, progress % and date below (short, no technical details), collect revision requests clearly, never promise dates beyond the one given. When a preview link exists, share it.
 - After delivery: ask how it works for them; suggest the one most useful next step (ads, support, content, SEO) only if it fits their goal.
@@ -67,6 +69,8 @@ First request: ${(l.message || '').slice(0, 600)}
 Known brief: ${(l.brief || '—').slice(0, 1200)}
 Communication profile: ${l.profile || 'unknown yet — mirror their style'}
 Deal status: ${l.status}${l.stage ? `. Project stage: ${STAGE_TEXT[l.stage] ?? l.stage}${l.progress != null ? `, ${l.progress}% done` : ''}${l.stage_due ? `, expected by ${l.stage_due.slice(0, 10)}` : ''}` : ''}.
+Brief: ${l.brief_confirmed_at ? `confirmed by the client on ${l.brief_confirmed_at.slice(0, 16)} (this is the contract)` : 'not confirmed yet'}. Revision rounds: ${l.revisions_used ?? 0} of ${l.revisions_total ?? (l.promo ? 5 : 2)} used — when collecting revisions say the counter ("Revisions: 1 of 2"); a request that is not in the confirmed brief is an add-on with its own price; when the rounds are used up offer a revision pack or monthly support.
+Bonuses: ${l.bonus ? `$${l.bonus} on the client's bonus account (5% cashback of every payment; can cover up to 20% of the next order; expire after 12 months; never paid out)` : '5% of every payment comes back as bonuses for the next order'}. Personal cabinet with all projects, payments and bonuses: vaxogroup.com/me/ (sign in with Google, an email code, or email + password — whatever is easier).
 ${l.interest?.startsWith('gift-') && l.interest !== 'gift-business' ? `GIFT WAITLIST: this person joined the waitlist for a personal cartoon gift with Vax & Roxy (video card $7.99, personal scene $19–39, mini-series $79–129). Orders and payment are NOT open yet: never take an order, payment or deadline. Thank them, ask the occasion, names and date if missing, and say we write to them first when orders open. Do not offer websites or other services unless they ask.\n` : ''}${!l.contact ? `CONTACT: this visitor started the chat right on the site and has not given a name or a way to reach them yet. Do not ask at the very start. Once the conversation has substance (after 2–3 exchanges), or before any order, strategy, price decision or preview, ask once, naturally: their name and an email, phone or @telegram — "so our conversation is saved and I can send you the preview / updates". When they give them, set "contact" to {"name": "...", "contact": "..."}. Never insist; if they refuse, continue helping.\n` : ''}${extra}${lessons ? `LESSONS FROM PAST CHATS (follow them):\n${lessons}\n` : ''}
 FACTS:
 ${ownerPrice ? FACTS_NO_PRICES : FACTS}`;
@@ -119,6 +123,7 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
   const st = await settings(db);
   if (st.ai_manager === '0') return false;
   const l = await loadLead(db, leadId);
+  if (l) l.bonus = await bonusBalance(db, l.client_id, [l.id]).catch(() => 0);
   if (!l || l.ai === 'paused' || ['lost', 'archived'].includes(l.status)) return false;
   const { results } = await db
     .prepare(`SELECT sender, kind, text, at FROM messages WHERE lead_id = ? AND kind != 'note' ORDER BY id DESC LIMIT 20`)
@@ -306,6 +311,7 @@ export async function decideOffer(db: DB, ai: AiBinding | undefined, leadId: num
 /** Owner's answer to a client's price: Vax tells the client and moves on. */
 export async function answerOffer(db: DB, ai: AiBinding | undefined, leadId: number, accept: boolean, counter: string | null, notify: Notify, cut?: { price: string; scope: string }) {
   const l = await loadLead(db, leadId);
+  if (l) l.bonus = await bonusBalance(db, l.client_id, [l.id]).catch(() => 0);
   if (!l) return false;
   await db.prepare(`UPDATE leads SET human = NULL, status = CASE WHEN ? THEN 'proposal' ELSE status END, updated_at = datetime('now') WHERE id = ?`).bind(accept ? 1 : 0, leadId).run();
   await logEvent(db, leadId, 'owner', 'decision', accept ? `Price accepted: ${l.budget}` : cut ? `Cut-down option: ${cut.price} — ${cut.scope}` : counter ? `Counter-offer: ${counter}` : 'Price declined');

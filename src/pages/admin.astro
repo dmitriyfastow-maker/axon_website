@@ -573,6 +573,9 @@ import Base from '../layouts/Base.astro';
       field('Профиль клиента (видят менеджеры; контакты — только тот, кто взял клиента)', 'brief', l.brief, true),
       el('div', { class: 'two' }, el('label', { class: 'f' }, el('span', {}, 'Этап'), statusSel), el('label', { class: 'f' }, el('span', {}, 'Менеджер'), closerSel)),
       field('Сумма сделки, $ (для «Клиент ✓» — начисления партнёрам посчитаются сами)', 'value_usd', l.value_usd ?? ''),
+      el('div', { class: 'two' }, field(`Правок использовано (из ${l.revisions_total ?? (l.promo ? 5 : 2)})`, 'revisions_used', String(l.revisions_used ?? 0)), field('Кругов правок всего (пусто = 2, своим 5)', 'revisions_total', l.revisions_total ?? '')),
+      field('Документ стратегии (ссылка https://…) — клиент увидит его в кабинете', 'strategy_url', l.strategy_url ?? ''),
+      field(`Бонусы клиента: $${Math.max(0, Math.round((l.bonus_usd || 0) * 100) / 100)} (можно списать до 20% заказа). Начислить +5 / списать -20, $`, 'bonus_usd', ''),
       field('Комментарий в журнал', 'note', ''),
       el('div', { class: 'btns' },
         el('button', { class: 'cta', type: 'submit' }, 'Сохранить'),
@@ -583,6 +586,10 @@ import Base from '../layouts/Base.astro';
       if (b.closer_id === String(l.closer_id ?? '')) delete b.closer_id;
       if (b.status === l.status) delete b.status;
       if (b.value_usd === String(l.value_usd ?? '')) delete b.value_usd;
+      if (b.revisions_used === String(l.revisions_used ?? 0)) delete b.revisions_used;
+      if (b.revisions_total === String(l.revisions_total ?? '')) delete b.revisions_total;
+      if (b.strategy_url === String(l.strategy_url ?? '')) delete b.strategy_url;
+      if (!b.bonus_usd) delete b.bonus_usd;
       Object.assign(b, extra);
       await api(`/lead/${id}`, b);
       await load(); openLead(id);
@@ -610,6 +617,8 @@ import Base from '../layouts/Base.astro';
         el('dt', {}, 'Контакт'), el('dd', {}, l.contact),
         el('dt', {}, 'Пришла'), el('dd', {}, `${when(l.created_at)} · ${l.lang?.toUpperCase()} · ${l.country ?? ''}`),
         el('dt', {}, 'Менеджер'), el('dd', {}, l.closer_name ?? '—'),
+        el('dt', {}, 'Бриф'), el('dd', {}, l.brief_confirmed_at ? `✅ подтверждён ${when(l.brief_confirmed_at)} (это договор)` : 'ещё не подтверждён'),
+        el('dt', {}, 'Кабинет'), el('dd', {}, l.client_id ? 'клиент вошёл в кабинет' : 'ещё не входил'),
         el('dt', {}, 'Привёл'), el('dd', {}, l.partner_name ?? '—')),
       aiPanel(l),
       l.ai_summary && el('div', { class: 'aisum' }, el('b', {}, `🤖 ИИ-сводка${l.score ? ' · оценка заявки ' + l.score + '/10' : ''}`), el('pre', {}, l.ai_summary)),

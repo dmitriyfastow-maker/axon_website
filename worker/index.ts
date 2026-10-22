@@ -11,12 +11,13 @@ import { handleCollab } from './collab.js';
 import { configureMail, handleEmail, type IncomingEmail } from './mail.js';
 import { handleStt } from './stt.js';
 import { handleFileUpload, serveFile, type KV } from './files.js';
+import { handleCabinet, type CabinetEnv } from './cabinet.js';
 import { handleFinancePublic } from './finance.js';
 import { handleIntake } from './intake.js';
 import { notifyOwnerChat } from './ownerchat.js';
 import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackView, triageLead } from './autopilot.js';
 
-interface Env extends LeadEnv {
+interface Env extends LeadEnv, CabinetEnv {
   ASSETS: { fetch(request: Request): Promise<Response> };
   LEADS?: DB;
   ADMIN_TOKEN?: string;
@@ -84,6 +85,7 @@ export default {
     if (room) return env.LEADS ? handleRoomApi(env.LEADS, request, room[1], notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify).catch((e) => console.error('[ai reply]', e)))) : json(503, { ok: false });
     if (url.pathname === '/api/intake') return env.LEADS ? handleIntake(env.LEADS, request, notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify).catch((e) => console.error('[ai intake]', e)))) : json(503, { ok: false });
     if (url.pathname === '/api/fin') return env.LEADS ? handleFinancePublic(env.LEADS, request, env.AI, notify) : json(503, { ok: false });
+    if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify) : json(503, { ok: false });
     if (url.pathname === '/api/file') return env.LEADS ? handleFileUpload(env.FILES, env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     const file = url.pathname.match(/^\/f\/([a-f0-9]{20})(?:\/|$)/);
     if (file) return serveFile(env.FILES, file[1]);

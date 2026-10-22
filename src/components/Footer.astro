@@ -4,9 +4,9 @@ import { NAV_HREFS } from '../data/tiers';
 
 interface Props { t: Dict; home?: string; lang?: Lang }
 const { t, home = '', lang = 'en' } = Astro.props;
-const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start: 'Starter packages', shop: 'Templates shop', login: 'Partner login', collab: 'Collaborate', terms: 'Terms & refunds', privacy: 'Privacy', pterms: 'Partner terms' },
-            ru: { examples: 'Примеры работ', tools: 'Бесплатные инструменты', blog: 'Блог', start: 'Стартовые пакеты', shop: 'Магазин шаблонов', login: 'Вход для партнёров', collab: 'Сотрудничество', terms: 'Условия и возвраты', privacy: 'Конфиденциальность', pterms: 'Условия партнёрки' },
-            ua: { examples: 'Приклади робіт', tools: 'Безкоштовні інструменти', blog: 'Блог', start: 'Стартові пакети', shop: 'Магазин шаблонів', login: 'Вхід для партнерів', collab: 'Співпраця', terms: 'Умови та повернення', privacy: 'Конфіденційність', pterms: 'Умови партнерки' } }[lang];
+const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start: 'Starter packages', shop: 'Templates shop', me: 'Client cabinet', login: 'Partner login', collab: 'Collaborate', terms: 'Terms & refunds', privacy: 'Privacy', pterms: 'Partner terms' },
+            ru: { examples: 'Примеры работ', tools: 'Бесплатные инструменты', blog: 'Блог', start: 'Стартовые пакеты', shop: 'Магазин шаблонов', me: 'Кабинет клиента', login: 'Вход для партнёров', collab: 'Сотрудничество', terms: 'Условия и возвраты', privacy: 'Конфиденциальность', pterms: 'Условия партнёрки' },
+            ua: { examples: 'Приклади робіт', tools: 'Безкоштовні інструменти', blog: 'Блог', start: 'Стартові пакети', shop: 'Магазин шаблонів', me: 'Кабінет клієнта', login: 'Вхід для партнерів', collab: 'Співпраця', terms: 'Умови та повернення', privacy: 'Конфіденційність', pterms: 'Умови партнерки' } }[lang];
 ---
 
 <footer class="footer">
@@ -19,6 +19,7 @@ const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start
       <a href={navHref('/shop/', lang)}>{F.shop}</a>
       <a href={navHref('/tools/', lang)}>{F.tools}</a>
       <a href={navHref("/blog/", lang)}>{F.blog}</a>
+      <a href={navHref('/me/', lang)}>{F.me}</a>
       <a href={navHref('/partner/', lang)}>{F.login}</a>
     </nav>
     <nav class="legal-links" aria-label="Legal">

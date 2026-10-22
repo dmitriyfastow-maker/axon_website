@@ -229,6 +229,8 @@ export async function ownerOverview(db: DB, notify: Notify) {
       .prepare(
         `SELECT d.id, d.created_at, d.mode, d.status, d.name, d.contact, d.interest, d.message, d.lang, d.country, d.page, d.ref,
            d.service, d.budget, d.brief, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at, d.room, d.score, d.ai_summary, d.ai, d.stage, d.stage_due, d.human, d.profile, d.offer,
+           d.revisions_used, d.revisions_total, d.brief_confirmed_at, d.strategy_url, d.client_id, d.promo,
+           (SELECT COALESCE(SUM(b.amount_usd), 0) FROM bonuses b WHERE b.lead_id = d.id OR (d.client_id IS NOT NULL AND b.client_id = d.client_id)) AS bonus_usd,
            (SELECT COUNT(*) FROM messages m WHERE m.lead_id = d.id) AS msgs,
            (SELECT m.at FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY m.id DESC LIMIT 1) AS last_at,
            (SELECT m.sender FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY m.id DESC LIMIT 1) AS last_sender,
@@ -272,6 +274,14 @@ export async function ownerUpdateLead(db: DB, id: number, b: Record<string, unkn
     if (typeof b[k] === 'string') { sets.push(`${k} = ?`); vals.push(s(b[k], 4000) || null); }
   }
   if (b.value_usd !== undefined) { sets.push('value_usd = ?'); vals.push(Math.round(Number(b.value_usd)) || null); }
+  // Decision 16: revision counter, the strategy document, manual bonuses (+ earned / − spent, in USD).
+  if (b.revisions_used !== undefined && b.revisions_used !== '') { sets.push('revisions_used = ?'); vals.push(Math.max(0, Math.round(Number(b.revisions_used)) || 0)); }
+  if (b.revisions_total !== undefined && b.revisions_total !== '') { sets.push('revisions_total = ?'); vals.push(Math.max(0, Math.round(Number(b.revisions_total)) || 0)); }
+  if (typeof b.strategy_url === 'string') { sets.push('strategy_url = ?'); vals.push(/^https:\/\//.test(b.strategy_url.trim()) ? b.strategy_url.trim().slice(0, 500) : null); }
+  const bonus = Math.round(Number(b.bonus_usd) * 100) / 100;
+  if (bonus) {
+    await db.prepare(`INSERT INTO bonuses (client_id, lead_id, kind, amount_usd, note) SELECT client_id, id, ?, ?, ? FROM leads WHERE id = ?`).bind(bonus < 0 ? 'spend' : 'manual', bonus, s(b.note, 200) || null, id).run();
+  }
   let status = typeof b.status === 'string' && (OWNER_STATUSES as readonly string[]).includes(b.status) ? b.status : null;
   if (b.closer_id !== undefined) {
     const cid = Number(b.closer_id) || null;

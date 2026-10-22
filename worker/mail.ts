@@ -96,3 +96,16 @@ export async function relayEmail(db: DB, leadId: number, sender: string, text: s
     body: JSON.stringify({ from: fromAddr, to: [l.email_addr], subject: `Your Vaxo project #${leadId}`, text: text.slice(0, 8000) + link }),
   }).catch(() => null);
 }
+
+/** Any letter from hello@vaxogroup.com (sign-in codes, notices). False when Resend is not connected yet. */
+export async function sendMail(to: string, subject: string, text: string, html?: string): Promise<boolean> {
+  if (!resendKey || !fromAddr) return false;
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
+    body: JSON.stringify({ from: fromAddr, to: [to], subject, text, ...(html ? { html } : {}) }),
+  }).catch(() => null);
+  return !!r?.ok;
+}
+
+export const mailReady = () => !!resendKey && !!fromAddr;

@@ -1,0 +1,308 @@
+---
+// Client cabinet (Decision 16): vaxogroup.com/me/. Sign-in by Google, an email code or email + password; every project with
+// progress, revision counter, confirmed brief, strategy, payments; bonus account, level and tasks. Data: /api/me.
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getDict, langPath, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = getDict(lang);
+const home = langPath(lang);
+const alts = { en: '/me/', ua: '/ua/me/', ru: '/ru/me/' };
+const T = {
+  en: {
+    tabIn: 'Sign in', tabUp: 'Create an account', or: 'or', pass: 'Password', pass8: 'Password (at least 8 characters)', name: 'Your name', phone: 'Phone (optional)', signIn: 'Sign in', signUp: 'Create an account', byCode: 'Sign in with a code from email instead', consent: 'I accept the <a href="/terms/" target="_blank">Terms</a> and the <a href="/privacy/" target="_blank">Privacy Policy</a>', news: 'Send me news, offers and bonus reminders (optional)', errWrong: 'Wrong email or password.', errNoPass: 'This account signs in with Google or a code from email.', errExists: 'An account with this email already exists — sign in.', errPass: 'The password must be at least 8 characters.', errConsent: 'Please accept the Terms and the Privacy Policy.', errMany: 'Too many attempts — wait 15 minutes.', account: 'Account', export: 'Download my data (JSON)', del: 'Delete account', delQ: 'Delete your cabinet? Projects and payment records stay with Vaxo (tax law), but your login, profile and bonuses will be deleted. This cannot be undone.', newsOn: 'Send me news and bonus reminders', verify: 'Confirm your email to see all projects linked to it: sign in once with a code from email or with Google.', 
+    title: 'Your cabinet', lead: 'All your projects, payments and bonuses in one place. Sign in the way you like: with Google, a code from your email, or your email and password.',
+    google: 'Sign in with Google', email: 'Your email', getCode: 'Get a code', code: 'Code from the email', enter: 'Sign in', sent: 'We sent a 6-digit code to {email}. It works for 15 minutes.',
+    off: 'Sign-in by email and Google switches on in the next few days. Until then your project opens by the personal link from your chat — nothing is lost.',
+    errCode: 'The code did not match. Check it or ask for a new one.', errExpired: 'The code expired — ask for a new one.', errWait: 'A code was just sent — wait a minute.', errEmail: 'Check the email address.', errGoogle: 'Google sign-in did not work. Try again or use email.',
+    saveHint: 'Sign in to keep this project, your bonuses and all future projects in one cabinet.',
+    hi: 'Hi', out: 'Sign out', level: 'Level', levels: { start: 'Start', pro: 'Pro', vip: 'VIP' }, toNext: '${n} more to {lvl}', vipPerks: 'VIP: a personal call every quarter and priority in the queue.',
+    bonus: 'Bonus account', bonusRule: '5% of every payment comes back as bonuses. They cover up to 20% of your next order and stay for 12 months. Bonuses are not paid out as money.',
+    tasks: 'Earn bonuses', tProfile: 'Fill in your business profile', tReview: 'Leave an honest review after delivery', tFriend: 'Bring a friend — 10% in money or 15% off', done: 'done',
+    pBusiness: 'Business name', pSite: 'Website or Instagram', pNiche: 'Niche', pCity: 'City / country', pGoal: 'Main goal for the next 3 months', pName: 'Your name', save: 'Save',
+    projects: 'Your projects', none: 'No projects yet. Tell Vax what you need — it takes a minute.', start: 'Discuss a project',
+    chat: 'Open the project chat →', progress: 'Ready', revisions: 'Revisions: {u} of {t}', brief: 'Brief confirmed {d} — this is your contract', briefNo: 'Brief not confirmed yet',
+    strategy: 'Strategy document →', payments: 'Payments', review: 'Leave a review (+$10)', stars: 'Rating', reviewText: 'What was good and what can we do better?', publicOk: 'You can show it on the site', send: 'Send',
+    history: 'Bonus history', kinds: { cashback: 'Cashback 5%', profile: 'Business profile', review: 'Review', spend: 'Paid with bonuses', manual: 'Bonus from the team' },
+    parts: { prepay: 'Prepayment', stage: 'Stage', final: 'Final payment', full: 'Full payment', support: 'Support', micro: 'Micro-task', strategy: 'Strategy', product: 'Product', other: 'Payment' },
+    next: { new: 'Vax is clarifying your task', open: 'Vax is clarifying your task', claimed: 'Your manager is preparing options', contacted: 'We are discussing your task', proposal: 'An offer is waiting for your decision', gift: 'You are on the gift waitlist', collab: 'We are discussing the collaboration', lost: 'Paused', work: 'In progress', qa: 'Quality check', review: 'The preview is waiting for your check', revisions: 'Applying your revisions', delivered: 'Done — thank you!' },
+  },
+  ru: {
+    tabIn: 'Войти', tabUp: 'Регистрация', or: 'или', pass: 'Пароль', pass8: 'Пароль (не меньше 8 символов)', name: 'Ваше имя', phone: 'Телефон (необязательно)', signIn: 'Войти', signUp: 'Создать кабинет', byCode: 'Войти по коду из письма', consent: 'Я принимаю <a href="/ru/terms/" target="_blank">Условия</a> и <a href="/ru/privacy/" target="_blank">Политику конфиденциальности</a>', news: 'Присылать новости, предложения и напоминания о бонусах (необязательно)', errWrong: 'Неверная почта или пароль.', errNoPass: 'Этот кабинет входит через Google или по коду из письма.', errExists: 'Кабинет с этой почтой уже есть — войдите.', errPass: 'Пароль — не меньше 8 символов.', errConsent: 'Отметьте согласие с Условиями и Политикой конфиденциальности.', errMany: 'Слишком много попыток — подождите 15 минут.', account: 'Аккаунт', export: 'Скачать мои данные (JSON)', del: 'Удалить аккаунт', delQ: 'Удалить кабинет? Проекты и записи об оплатах останутся у Vaxo (налоговый закон), а вход, профиль и бонусы будут удалены. Отменить нельзя.', newsOn: 'Присылать новости и напоминания о бонусах', verify: 'Подтвердите почту, чтобы увидеть все проекты на неё: один раз войдите по коду из письма или через Google.', 
+    title: 'Личный кабинет', lead: 'Все ваши проекты, оплаты и бонусы в одном месте. Входите, как удобно: через Google, по коду из письма или по почте и паролю.',
+    google: 'Войти через Google', email: 'Ваша почта', getCode: 'Получить код', code: 'Код из письма', enter: 'Войти', sent: 'Мы отправили 6-значный код на {email}. Он действует 15 минут.',
+    off: 'Вход по почте и через Google включится в ближайшие дни. А пока ваш проект открывается по личной ссылке из чата — ничего не потеряется.',
+    errCode: 'Код не подошёл. Проверьте его или запросите новый.', errExpired: 'Код устарел — запросите новый.', errWait: 'Код только что отправлен — подождите минуту.', errEmail: 'Проверьте адрес почты.', errGoogle: 'Вход через Google не получился. Попробуйте ещё раз или войдите по почте.',
+    saveHint: 'Войдите, чтобы этот проект, ваши бонусы и все будущие проекты были в одном кабинете.',
+    hi: 'Здравствуйте', out: 'Выйти', level: 'Уровень', levels: { start: 'Старт', pro: 'Про', vip: 'VIP' }, toNext: 'ещё ${n} до уровня {lvl}', vipPerks: 'VIP: личный созвон раз в квартал и приоритет в очереди.',
+    bonus: 'Бонусный счёт', bonusRule: '5% с каждой оплаты возвращаются бонусами. Ими можно оплатить до 20% следующего заказа, хранятся 12 месяцев. В деньги не выводятся.',
+    tasks: 'Получить бонусы', tProfile: 'Заполнить профиль бизнеса', tReview: 'Оставить честный отзыв после сдачи', tFriend: 'Привести друга — 10% деньгами или 15% скидки', done: 'готово',
+    pBusiness: 'Название бизнеса', pSite: 'Сайт или Instagram', pNiche: 'Ниша', pCity: 'Город / страна', pGoal: 'Главная цель на 3 месяца', pName: 'Ваше имя', save: 'Сохранить',
+    projects: 'Ваши проекты', none: 'Проектов пока нет. Расскажите Vax, что нужно, — это займёт минуту.', start: 'Обсудить проект',
+    chat: 'Открыть чат проекта →', progress: 'Готовность', revisions: 'Правки: {u} из {t}', brief: 'Бриф подтверждён {d} — это ваш договор', briefNo: 'Бриф ещё не подтверждён',
+    strategy: 'Документ стратегии →', payments: 'Оплаты', review: 'Оставить отзыв (+$10)', stars: 'Оценка', reviewText: 'Что понравилось и что нам сделать лучше?', publicOk: 'Можно показать на сайте', send: 'Отправить',
+    history: 'История бонусов', kinds: { cashback: 'Кэшбэк 5%', profile: 'Профиль бизнеса', review: 'Отзыв', spend: 'Оплачено бонусами', manual: 'Бонус от команды' },
+    parts: { prepay: 'Предоплата', stage: 'Этап', final: 'Остаток', full: 'Полная оплата', support: 'Поддержка', micro: 'Микрозадача', strategy: 'Стратегия', product: 'Продукт', other: 'Оплата' },
+    next: { new: 'Vax уточняет задачу', open: 'Vax уточняет задачу', claimed: 'Менеджер готовит варианты', contacted: 'Обсуждаем задачу', proposal: 'Предложение ждёт вашего решения', gift: 'Вы в списке ожидания подарка', collab: 'Обсуждаем сотрудничество', lost: 'На паузе', work: 'В работе', qa: 'Проверка качества', review: 'Превью ждёт вашей проверки', revisions: 'Вносим ваши правки', delivered: 'Готово — спасибо!' },
+  },
+  ua: {
+    tabIn: 'Увійти', tabUp: 'Реєстрація', or: 'або', pass: 'Пароль', pass8: 'Пароль (щонайменше 8 символів)', name: "Ваше ім'я", phone: "Телефон (необов'язково)", signIn: 'Увійти', signUp: 'Створити кабінет', byCode: 'Увійти за кодом з листа', consent: 'Я приймаю <a href="/ua/terms/" target="_blank">Умови</a> та <a href="/ua/privacy/" target="_blank">Політику конфіденційності</a>', news: "Надсилати новини, пропозиції та нагадування про бонуси (необов'язково)", errWrong: 'Невірна пошта або пароль.', errNoPass: 'Цей кабінет входить через Google або за кодом з листа.', errExists: 'Кабінет із цією поштою вже є — увійдіть.', errPass: 'Пароль — щонайменше 8 символів.', errConsent: 'Позначте згоду з Умовами та Політикою конфіденційності.', errMany: 'Забагато спроб — зачекайте 15 хвилин.', account: 'Акаунт', export: 'Завантажити мої дані (JSON)', del: 'Видалити акаунт', delQ: 'Видалити кабінет? Проєкти й записи про оплати залишаться у Vaxo (податковий закон), а вхід, профіль і бонуси буде видалено. Скасувати не можна.', newsOn: 'Надсилати новини й нагадування про бонуси', verify: 'Підтвердіть пошту, щоб побачити всі проєкти на неї: один раз увійдіть за кодом з листа або через Google.', 
+    title: 'Особистий кабінет', lead: 'Усі ваші проєкти, оплати й бонуси в одному місці. Входьте, як зручно: через Google, за кодом з листа або поштою й паролем.',
+    google: 'Увійти через Google', email: 'Ваша пошта', getCode: 'Отримати код', code: 'Код з листа', enter: 'Увійти', sent: 'Ми надіслали 6-значний код на {email}. Він діє 15 хвилин.',
+    off: 'Вхід поштою і через Google увімкнеться найближчими днями. А поки ваш проєкт відкривається за особистим посиланням із чату — нічого не загубиться.',
+    errCode: 'Код не підійшов. Перевірте його або запросіть новий.', errExpired: 'Код застарів — запросіть новий.', errWait: 'Код щойно надіслано — зачекайте хвилину.', errEmail: 'Перевірте адресу пошти.', errGoogle: 'Вхід через Google не вдався. Спробуйте ще раз або увійдіть поштою.',
+    saveHint: 'Увійдіть, щоб цей проєкт, ваші бонуси й усі майбутні проєкти були в одному кабінеті.',
+    hi: 'Вітаємо', out: 'Вийти', level: 'Рівень', levels: { start: 'Старт', pro: 'Про', vip: 'VIP' }, toNext: 'ще ${n} до рівня {lvl}', vipPerks: 'VIP: особистий дзвінок раз на квартал і пріоритет у черзі.',
+    bonus: 'Бонусний рахунок', bonusRule: '5% з кожної оплати повертаються бонусами. Ними можна оплатити до 20% наступного замовлення, зберігаються 12 місяців. У гроші не виводяться.',
+    tasks: 'Отримати бонуси', tProfile: 'Заповнити профіль бізнесу', tReview: 'Залишити чесний відгук після здачі', tFriend: 'Привести друга — 10% грошима або 15% знижки', done: 'готово',
+    pBusiness: 'Назва бізнесу', pSite: 'Сайт або Instagram', pNiche: 'Ніша', pCity: 'Місто / країна', pGoal: 'Головна мета на 3 місяці', pName: "Ваше ім'я", save: 'Зберегти',
+    projects: 'Ваші проєкти', none: 'Проєктів поки немає. Розкажіть Vax, що потрібно, — це хвилина.', start: 'Обговорити проєкт',
+    chat: 'Відкрити чат проєкту →', progress: 'Готовність', revisions: 'Правки: {u} з {t}', brief: 'Бриф підтверджено {d} — це ваш договір', briefNo: 'Бриф ще не підтверджено',
+    strategy: 'Документ стратегії →', payments: 'Оплати', review: 'Залишити відгук (+$10)', stars: 'Оцінка', reviewText: 'Що сподобалося і що нам зробити краще?', publicOk: 'Можна показати на сайті', send: 'Надіслати',
+    history: 'Історія бонусів', kinds: { cashback: 'Кешбек 5%', profile: 'Профіль бізнесу', review: 'Відгук', spend: 'Оплачено бонусами', manual: 'Бонус від команди' },
+    parts: { prepay: 'Передоплата', stage: 'Етап', final: 'Залишок', full: 'Повна оплата', support: 'Підтримка', micro: 'Мікрозадача', strategy: 'Стратегія', product: 'Продукт', other: 'Оплата' },
+    next: { new: 'Vax уточнює задачу', open: 'Vax уточнює задачу', claimed: 'Менеджер готує варіанти', contacted: 'Обговорюємо задачу', proposal: 'Пропозиція чекає вашого рішення', gift: 'Ви в списку очікування подарунка', collab: 'Обговорюємо співпрацю', lost: 'На паузі', work: 'У роботі', qa: 'Перевірка якості', review: 'Превʼю чекає вашої перевірки', revisions: 'Вносимо ваші правки', delivered: 'Готово — дякуємо!' },
+  },
+}[lang];
+---
+
+<Base lang={lang} title={`Vaxo — ${T.title}`} description={T.lead} path={alts[lang]} alts={alts} noindex>
+  <Header lang={lang} t={t} home={home} alts={alts} />
+  <main class="me" data-me data-lang={lang} data-home={home}>
+    <script type="application/json" data-me-t set:html={JSON.stringify(T)} />
+    <div class="me-top"><h1>{T.title}</h1><button type="button" class="ghost" data-out hidden>{T.out}</button></div>
+    <p class="mut lead" data-lead>{T.lead}</p>
+
+    <section class="card login" data-login hidden>
+      <img src="/mascot/vax-talk.webp" alt="" width="120" height="134" />
+      <div>
+        <p class="hint" data-save-hint hidden>{T.saveHint}</p>
+        <div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-tab="in">{T.tabIn}</button><button type="button" role="tab" aria-selected="false" data-tab="up">{T.tabUp}</button></div>
+        <a class="gbtn" href="/api/me/google" data-google hidden><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>{T.google}</a>
+        <form class="stack" data-in>
+          <input type="email" name="email" required autocomplete="email" placeholder={T.email} />
+          <input type="password" name="password" required autocomplete="current-password" placeholder={T.pass} />
+          <button class="cta">{T.signIn}</button>
+          <button type="button" class="link" data-bycode hidden>{T.byCode}</button>
+        </form>
+        <form class="stack" data-up hidden>
+          <input name="name" required maxlength="80" autocomplete="name" placeholder={T.name} />
+          <input type="email" name="email" required autocomplete="email" placeholder={T.email} />
+          <input type="tel" name="phone" maxlength="40" autocomplete="tel" placeholder={T.phone} />
+          <input type="password" name="password" required minlength="8" autocomplete="new-password" placeholder={T.pass8} />
+          <label class="check"><input type="checkbox" name="consent" required /> <span set:html={T.consent} /></label>
+          <label class="check"><input type="checkbox" name="marketing" /> <span>{T.news}</span></label>
+          <button class="cta">{T.signUp}</button>
+        </form>
+        <form class="row" data-email hidden><input type="email" required autocomplete="email" placeholder={T.email} /><button class="cta">{T.getCode}</button></form>
+        <form class="row" data-code hidden><input inputmode="numeric" autocomplete="one-time-code" maxlength="6" required placeholder={T.code} /><button class="cta">{T.enter}</button></form>
+        <p class="msg" data-msg></p>
+      </div>
+    </section>
+
+    <section data-dash hidden>
+      <div class="grid3">
+        <div class="card stat"><small>{T.level}</small><b data-level></b><span class="mut small" data-next></span></div>
+        <div class="card stat"><small>{T.bonus}</small><b data-bonus></b><span class="mut small">{T.bonusRule}</span></div>
+        <div class="card tasks"><small>{T.tasks}</small><ul data-tasks></ul></div>
+      </div>
+      <form class="card profile" data-profile hidden>
+        <div class="two"><input name="business" placeholder={T.pBusiness} /><input name="name" placeholder={T.pName} /></div>
+        <div class="two"><input name="niche" placeholder={T.pNiche} /><input name="city" placeholder={T.pCity} /></div>
+        <input name="site" placeholder={T.pSite} />
+        <textarea name="goal" rows="2" placeholder={T.pGoal}></textarea>
+        <button class="cta">{T.save} (+$5)</button>
+      </form>
+    </section>
+
+    <h2 data-ph hidden>{T.projects}</h2>
+    <div data-projects></div>
+    <p class="none" data-none hidden>{T.none} <a class="cta" href={`${home}#contact`}>{T.start} →</a></p>
+    <details class="card hist" data-hist hidden><summary>{T.history}</summary><ul data-hist-list></ul></details>
+    <section class="card acct" data-acct hidden>
+      <b>{T.account}</b>
+      <p class="mut small" data-verify hidden>{T.verify}</p>
+      <label class="check"><input type="checkbox" data-news /> <span>{T.newsOn}</span></label>
+      <div class="btns"><a class="ghost" href="/api/me/export" download>{T.export}</a><button type="button" class="ghost danger" data-del>{T.del}</button></div>
+    </section>
+  </main>
+  <Footer t={t} home={home} lang={lang} />
+</Base>
+
+<script>
+  type R = Record<string, any>;
+  const root = document.querySelector<HTMLElement>('[data-me]')!;
+  const T: R = JSON.parse(root.querySelector('[data-me-t]')!.textContent || '{}');
+  const lang = root.dataset.lang!;
+  const $ = <E extends Element = HTMLElement>(s: string) => root.querySelector<E>(s)!;
+  const el = (tag: string, attrs: R = {}, ...kids: (Node | string | null | undefined | false)[]) => {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) { if (k === 'class') e.className = v; else if (k.startsWith('on')) (e as any)[k] = v; else if (v != null && v !== false) e.setAttribute(k, String(v)); }
+    for (const k of kids) if (k != null && k !== false) e.append(k);
+    return e;
+  };
+  const q = new URLSearchParams(location.search);
+  const room = q.get('t') || '';
+  const money = (n: number) => '$' + (Math.round(n * 100) / 100).toLocaleString('en-US');
+  const day = (s: string) => new Date(String(s).replace(' ', 'T') + (String(s).length > 10 ? 'Z' : '')).toLocaleDateString(lang === 'ua' ? 'uk-UA' : lang === 'ru' ? 'ru-RU' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const msg = (s: string) => { $('[data-msg]').textContent = s; };
+  let email = '';
+
+  function project(p: R, signedIn: boolean) {
+    const stepKey = p.status === 'won' ? (p.stage || 'work') : p.status;
+    const pct = p.status === 'won' ? (p.progress ?? 0) : null;
+    const card = el('article', { class: 'card proj' },
+      el('div', { class: 'ph' }, el('b', {}, p.what || `#${p.id}`), el('span', { class: 'badge' }, T.next[stepKey] || stepKey)),
+      pct != null && el('div', { class: 'bar' }, el('i', { style: `width:${pct}%` }), el('span', {}, `${T.progress}: ${pct}%`)),
+      el('ul', { class: 'facts' },
+        p.status === 'won' && el('li', {}, '✏️ ' + T.revisions.replace('{u}', p.revisions_used ?? 0).replace('{t}', p.revisions_total)),
+        el('li', {}, p.brief_confirmed_at ? '✅ ' + T.brief.replace('{d}', day(p.brief_confirmed_at)) : '📝 ' + T.briefNo),
+        p.strategy_url && el('li', {}, el('a', { href: p.strategy_url, target: '_blank', rel: 'noopener' }, '🧭 ' + T.strategy))),
+      p.payments?.length > 0 && el('div', { class: 'pays' }, el('small', {}, T.payments), ...p.payments.map((x: R) => el('div', {}, `${day(x.at)} · ${T.parts[x.part] || x.part} · ${x.amount} ${x.currency}`))),
+      el('div', { class: 'btns' }, p.room && el('a', { class: 'cta', href: `/room/?t=${p.room}` }, T.chat)));
+    if (signedIn && p.stage === 'delivered' && !p.reviewed) {
+      const f = el('form', { class: 'rev' },
+        el('label', {}, T.stars + ' ', el('select', { name: 'stars' }, ...[5, 4, 3, 2, 1].map((n) => el('option', { value: n }, '★'.repeat(n))))),
+        el('textarea', { name: 'text', rows: '3', required: true, minlength: '20', placeholder: T.reviewText }),
+        el('label', { class: 'small' }, el('input', { type: 'checkbox', name: 'public' }), ' ' + T.publicOk),
+        el('button', { class: 'cta' }, T.send)) as HTMLFormElement;
+      f.hidden = true;
+      f.onsubmit = async (e) => { e.preventDefault(); const d = Object.fromEntries(new FormData(f)); const r = await fetch('/api/me/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lead_id: p.id, stars: Number(d.stars), text: d.text, public: !!d.public }) }); if (r.ok) load(); };
+      card.append(el('button', { type: 'button', class: 'ghost', onclick: () => { f.hidden = !f.hidden; } }, '⭐ ' + T.review), f);
+    }
+    return card;
+  }
+
+  async function load() {
+    const r = await fetch(`/api/me${room ? `?t=${room}` : ''}`).catch(() => null);
+    const d: R = r?.ok ? await r.json() : { ok: false, signedIn: false, ways: {}, projects: [] };
+    const err = q.get('err');
+    if (err) msg(err === 'google_off' ? T.off : T.errGoogle);
+    $('[data-out]').hidden = !d.signedIn;
+    $('[data-login]').hidden = !!d.signedIn;
+    $('[data-dash]').hidden = !d.signedIn;
+    $('[data-acct]').hidden = !d.signedIn;
+    if (d.signedIn) { $<HTMLInputElement>('[data-news]').checked = !!d.me?.marketing; $('[data-verify]').hidden = !!d.me?.verified; }
+    if (!d.signedIn) {
+      const g = $<HTMLAnchorElement>('[data-google]'); g.hidden = !d.ways?.google; if (room) g.href = `/api/me/google?back=${room}`;
+      $('[data-bycode]').hidden = !d.ways?.email;
+      $('[data-save-hint]').hidden = !d.projects?.length;
+    } else {
+      const lv = d.level, next = lv === 'start' ? ['pro', 1000] : lv === 'pro' ? ['vip', 5000] : null;
+      $('[data-level]').textContent = T.levels[lv];
+      $('[data-next]').textContent = next ? T.toNext.replace('${n}', '$' + Math.max(0, (next[1] as number) - d.paidUsd)).replace('{lvl}', T.levels[next[0] as string]) : T.vipPerks;
+      $('[data-bonus]').textContent = money(d.bonus);
+      const prof = d.me?.profile || {};
+      const profDone = !!(prof.business && prof.niche && (prof.goal || '').length >= 10);
+      const delivered = d.projects.filter((p: R) => p.stage === 'delivered');
+      $('[data-tasks]').replaceChildren(
+        el('li', {}, el('button', { type: 'button', class: 'link', onclick: () => { $('[data-profile]').hidden = !$('[data-profile]').hidden; } }, `${profDone ? '✅' : '⬜'} ${T.tProfile} (+$5)`)),
+        el('li', {}, `${delivered.length && delivered.every((p: R) => p.reviewed) ? '✅' : '⬜'} ${T.tReview} (+$10)`),
+        el('li', {}, el('a', { href: `${root.dataset.home === '/' ? '' : root.dataset.home!.replace(/\/$/, '')}/partners/` }, `🤝 ${T.tFriend} →`)));
+      const pf = $<HTMLFormElement>('[data-profile]');
+      for (const [k, v] of Object.entries({ ...prof, name: d.me?.name || '' })) { const i = pf.elements.namedItem(k) as HTMLInputElement | null; if (i && !i.value) i.value = String(v || ''); }
+      const hist = d.bonusHistory || [];
+      $('[data-hist]').hidden = !hist.length;
+      $('[data-hist-list]').replaceChildren(...hist.map((h: R) => el('li', {}, `${day(h.at)} · ${T.kinds[h.kind] || h.kind} · ${h.amount_usd > 0 ? '+' : ''}${money(h.amount_usd)}`)));
+      $('[data-lead]').textContent = `${T.hi}${d.me?.name ? ', ' + d.me.name : ''}! ${d.me?.email || ''}`;
+    }
+    $('[data-ph]').hidden = !d.projects?.length;
+    $('[data-none]').hidden = !!d.projects?.length || !d.signedIn;
+    $('[data-projects]').replaceChildren(...(d.projects || []).map((p: R) => project(p, !!d.signedIn)));
+  }
+
+  $<HTMLFormElement>('[data-email]').onsubmit = async (e) => {
+    e.preventDefault();
+    email = ($<HTMLInputElement>('[data-email] input').value || '').trim();
+    const r = await fetch('/api/me/code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, lang }) });
+    const d = await r.json().catch(() => ({}));
+    if (r.ok) { msg(T.sent.replace('{email}', email)); $('[data-code]').hidden = false; $<HTMLInputElement>('[data-code] input').focus(); }
+    else msg(d.error === 'wait' ? T.errWait : d.error === 'mail_off' ? T.off : T.errEmail);
+  };
+  $<HTMLFormElement>('[data-code]').onsubmit = async (e) => {
+    e.preventDefault();
+    const code = $<HTMLInputElement>('[data-code] input').value;
+    const r = await fetch('/api/me/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, code, room, lang }) });
+    const d = await r.json().catch(() => ({}));
+    if (r.ok) { msg(''); load(); } else msg(d.error === 'expired' ? T.errExpired : T.errCode);
+  };
+  $<HTMLFormElement>('[data-profile]').onsubmit = async (e) => {
+    e.preventDefault();
+    await fetch('/api/me/profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(e.target as HTMLFormElement))) });
+    $('[data-profile]').hidden = true; load();
+  };
+
+  root.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) => b.onclick = () => {
+    root.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+    $('[data-in]').hidden = b.dataset.tab !== 'in'; $('[data-up]').hidden = b.dataset.tab !== 'up'; msg('');
+  });
+  $('[data-bycode]').onclick = () => { $('[data-email]').hidden = false; $<HTMLInputElement>('[data-email] input').focus(); };
+  const ERR: R = { wrong: T.errWrong, no_password: T.errNoPass, exists: T.errExists, password: T.errPass, consent: T.errConsent, email: T.errEmail, wait: T.errMany };
+  const post = (u: string, body: R) => fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, room, lang }) });
+  $<HTMLFormElement>('[data-in]').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = Object.fromEntries(new FormData(e.target as HTMLFormElement));
+    const r = await post('/api/me/login', f); const d = await r.json().catch(() => ({}));
+    if (r.ok) { msg(''); load(); } else msg(ERR[d.error] || T.errWrong);
+  };
+  $<HTMLFormElement>('[data-up]').onsubmit = async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target as HTMLFormElement);
+    const r = await post('/api/me/register', { ...Object.fromEntries(fd), consent: fd.has('consent'), marketing: fd.has('marketing') }); const d = await r.json().catch(() => ({}));
+    if (r.ok) { msg(''); load(); } else msg(ERR[d.error] || T.errEmail);
+  };
+  $<HTMLInputElement>('[data-news]').onchange = (e) => { post('/api/me/marketing', { on: (e.target as HTMLInputElement).checked }); };
+  $('[data-del]').onclick = async () => { if (!confirm(T.delQ)) return; await fetch('/api/me/delete', { method: 'POST' }); location.href = location.pathname; };
+  $('[data-out]').onclick = async () => { await fetch('/api/me/logout', { method: 'POST' }); location.href = location.pathname; };
+  load();
+</script>
+
+<style is:global>
+.me .tabs { display: inline-flex; gap: 4px; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 4px; align-self: flex-start; }
+.me .tabs button { border: 0; background: none; padding: 8px 14px; border-radius: 999px; font: 600 14px var(--font); color: var(--mut); cursor: pointer; }
+.me .tabs button[aria-selected='true'] { background: var(--ink); color: var(--bg); }
+.me .stack { display: flex; flex-direction: column; gap: 8px; max-width: 460px; } .me .stack[hidden] { display: none; }
+.me .stack input:not([type='checkbox']) { font: 16px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; }
+.me .check { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: var(--mut); } .me .check input { margin-top: 3px; width: 18px; height: 18px; flex: none; } .me .check a { color: var(--accText); }
+.me .msg { margin: 0; font-size: 14px; font-weight: 600; color: var(--accText); } .me .msg:empty { display: none; }
+.me .acct { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; } .me .acct .btns { display: flex; gap: 8px; flex-wrap: wrap; } .me .acct a.ghost { text-decoration: none; }
+.me .danger { color: var(--error, #d33); border-color: currentColor; }
+
+.me { max-width: 1040px; margin: 0 auto; padding: 120px 20px 64px; }
+.me .me-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.me h1 { font-size: clamp(30px, 5vw, 46px); letter-spacing: -0.03em; margin: 0; }
+.me h2 { margin: 32px 0 12px; }
+.me .lead { font-size: 17px; max-width: 680px; }
+.me .mut { color: var(--mut); }.me .small { font-size: 13px; }
+.me .card { background: var(--surf); border: 1px solid var(--line); border-radius: 20px; padding: 18px 20px; }
+.me .login { display: flex; gap: 20px; align-items: center; margin-top: 18px; border: 2px solid var(--acc); }
+.me .login img { width: 110px; height: auto; flex: none; }
+.me .login > div { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.me .row { display: flex; gap: 8px; flex-wrap: wrap; }
+.me .row input, .me .profile input, .me .profile textarea, .me .rev textarea, .me .rev select { flex: 1; min-width: 200px; font: 16px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; }
+.me .cta { display: inline-flex; align-items: center; justify-content: center; border: 0; background: var(--acc); color: var(--dark-ink); font: 700 15px var(--font); padding: 11px 18px; border-radius: 12px; cursor: pointer; text-decoration: none; }
+.me .ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; font: 600 14px var(--font); }
+.me .gbtn { display: inline-flex; gap: 10px; align-items: center; align-self: flex-start; padding: 11px 18px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-weight: 700; text-decoration: none; }
+.me .gbtn[hidden], .me .row[hidden] { display: none; }
+.me .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 14px; margin-top: 20px; }
+.me .stat { display: flex; flex-direction: column; gap: 4px; }.me .stat small, .me .tasks small { color: var(--mut); }.me .stat b { font-size: 30px; }
+.me .tasks ul { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-direction: column; gap: 8px; }
+.me .link { background: none; border: 0; padding: 0; color: var(--accText); font: 600 15px var(--font); cursor: pointer; text-align: left; }
+.me .tasks a { color: var(--accText); font-weight: 600; }
+.me .profile { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }.me .profile[hidden] { display: none; }
+.me .two { display: flex; gap: 8px; flex-wrap: wrap; }
+.me .proj { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.me .ph { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }.me .ph b { font-size: 18px; }
+.me .badge { background: var(--bg); border: 1px solid var(--accText); color: var(--accText); border-radius: 999px; padding: 4px 10px; font-size: 13px; font-weight: 600; }
+.me .bar { position: relative; height: 26px; background: var(--bg); border-radius: 999px; overflow: hidden; border: 1px solid var(--line); }
+.me .bar i { position: absolute; inset: 0 auto 0 0; background: var(--acc); }.me .bar span { position: relative; padding: 0 12px; line-height: 26px; font-size: 13px; font-weight: 700; }
+.me .facts { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; font-size: 15px; }.me .facts a { color: var(--accText); font-weight: 600; }
+.me .pays { font-size: 14px; color: var(--mut); }.me .pays small { font-weight: 700; color: var(--ink); }
+.me .rev { display: flex; flex-direction: column; gap: 8px; }.me .rev[hidden] { display: none; }
+.me .none { margin-top: 18px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.me .hist { margin-top: 18px; }.me .hist ul { margin: 10px 0 0; padding-left: 18px; color: var(--mut); }
+  @media (max-width: 600px) {.me { padding-top: 96px; }.me .login { flex-direction: column; align-items: stretch; }.me .login img { width: 84px; align-self: center; } }
+</style>
