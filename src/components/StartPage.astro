@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Contact from './Contact.astro';
 import Footer from './Footer.astro';
+import AiPluses from './AiPluses.astro';
 import CrossSell from './CrossSell.astro';
 import { getDict, langPath, type Lang } from '../i18n';
 
@@ -130,6 +131,7 @@ const C = {
 
     <CrossSell lang={lang} items={['tools', 'partner']} />
     <Contact t={t} lang={lang} />
+    <AiPluses t={t} />
   </main>
   <Footer t={t} home={home} lang={lang} />
 </Base>
