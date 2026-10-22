@@ -80,7 +80,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
             <label>{c.auth.email}<input name="email" type="email" required autocomplete="email" /></label>
             <label>{c.auth.pass}<input name="password" type="password" required minlength="8" autocomplete="new-password" /></label>
             <label class="check"><input type="checkbox" name="adult" required /> {c.auth.adult}</label>
-            <label class="check"><input type="checkbox" name="rules" required /> {c.auth.rules1} <a href="#rules">{c.auth.rules2}</a></label>
+            <label class="check"><input type="checkbox" name="rules" required /> {c.auth.rules1} <a href="#rules">{c.auth.rules2}</a> {c.auth.and} <a href={c.auth.privacyHref} target="_blank">{c.auth.privacy}</a></label>
             <button type="submit" class="cta">{c.auth.create}</button>
             <p class="err" data-err hidden></p>
           </form>

@@ -16,7 +16,7 @@ const en = {
   "cta2": "Services & prices",
   "cta3": "Starter packages from $149",
   "heroTags": [
-    "Strategy session in every tier",
+    "Answers in seconds, 24/7 — no bureaucracy",
     "Transparent price ranges",
     "Launch from 7 days"
   ],
@@ -559,7 +559,7 @@ const en = {
   "finalTitle": "Ready for systemic growth?",
   "submit": "Submit request",
   "ask": "Ask a question",
-  "footer": "STRATEGIC GROWTH STUDIO. LONDON · DUBAI · NEW YORK.",
+  "footer": "VAXO — FULL-CYCLE DIGITAL STUDIO. ONLINE, WORLDWIDE.",
   "footerCities": "Online worldwide: Ukraine · Europe · USA · UAE",
   "form": {
     "name": "Your name",

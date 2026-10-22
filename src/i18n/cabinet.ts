@@ -21,6 +21,9 @@ const en = {
     adult: 'I am 18 or older',
     rules1: 'I accept the',
     rules2: 'partner rules',
+    and: 'and the',
+    privacy: 'Privacy Policy',
+    privacyHref: '/privacy/',
   },
   tabs: { home: 'Home', deals: 'Agency clients', links: 'Links', academy: 'Academy', prompts: 'AI prompts', team: 'Team', rules: 'Payouts & rules' },
   home: {
@@ -153,6 +156,9 @@ const ua: CabinetText = {
     adult: 'Мені є 18 років',
     rules1: 'Я приймаю',
     rules2: 'правила партнерів',
+    and: 'та',
+    privacy: 'Політику конфіденційності',
+    privacyHref: '/ua/privacy/',
   },
   tabs: { home: 'Головна', deals: 'Клієнти агенції', links: 'Посилання', academy: 'Навчання', prompts: 'ШІ-промпти', team: 'Команда', rules: 'Виплати і правила' },
   home: {
@@ -301,6 +307,9 @@ const ru: CabinetText = {
     adult: 'Мне есть 18 лет',
     rules1: 'Я принимаю',
     rules2: 'правила партнёров',
+    and: 'и',
+    privacy: 'Политику конфиденциальности',
+    privacyHref: '/ru/privacy/',
   },
   tabs: { home: 'Главная', deals: 'Клиенты агентства', links: 'Ссылки', academy: 'Обучение', prompts: 'ИИ-промпты', team: 'Команда', rules: 'Выплаты и правила' },
   home: {

@@ -216,6 +216,8 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
       if (k < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
+    // Animation frames pause in background tabs: make sure the final number is always there.
+    setTimeout(() => { if (el.getAttribute('data-now') === String(to)) el.textContent = fmt(to); }, 600);
   }
 
   // Reveal sections and count up the stats when they scroll into view.
