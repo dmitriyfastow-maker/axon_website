@@ -338,24 +338,27 @@ export async function aiFollowups(db: DB, ai: AiBinding | undefined, notify: Not
       `SELECT d.id, d.status, d.stage, d.followups, (SELECT MAX(at) FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note') AS last_at,
               (SELECT sender FROM messages m WHERE m.lead_id = d.id AND m.kind != 'note' ORDER BY id DESC LIMIT 1) AS last_sender,
               (SELECT MAX(at) FROM lead_events e WHERE e.lead_id = d.id AND e.kind = 'status' AND e.text LIKE 'stage: delivered%') AS delivered_at
-       FROM leads d WHERE d.ai = 'on' AND d.status NOT IN ('lost', 'archived', 'collab', 'gift') AND d.followups < 3 ORDER BY d.id DESC LIMIT 40`,
+       FROM leads d WHERE d.ai = 'on' AND d.status NOT IN ('lost', 'archived', 'collab', 'gift') AND (d.followups < 3 OR d.status = 'won') ORDER BY d.id DESC LIMIT 40`,
     )
     .all<{ id: number; status: string; stage: string | null; followups: number; last_at: string | null; last_sender: string | null; delivered_at: string | null }>();
   const ago = (iso: string | null) => (iso ? (Date.now() - Date.parse(iso.replace(' ', 'T') + 'Z')) / 864e5 : 0);
   for (const r of results) {
     let nudge = '';
+    let report = false;
     if (r.stage === 'delivered' && r.delivered_at) {
       const d = ago(r.delivered_at);
       if (r.followups < 2 && d >= 7 && ago(r.last_at) >= 5) nudge = 'It has been a week since delivery. Ask how it works for them and whether anything needs fixing. Ask for a short review if they are happy.';
       else if (r.followups < 3 && d >= 30 && ago(r.last_at) >= 14) nudge = 'A month since delivery. Ask about results and suggest the one most useful next step for their goal, with its price range.';
     } else if (r.status === 'won' && (r.stage === 'work' || r.stage === 'qa' || r.stage === 'revisions') && ago(r.last_at) >= 3) {
-      nudge = 'No news for 3 days while the project is in progress. Send a short status update: what stage it is at, the % done and the expected date. No technical details. If a preview link exists in the chat, mention it.';
+      // Progress reports are part of the service, not follow-ups: they never run out.
+      report = true;
+      nudge = 'Progress report (no news for 3 days while the project is in progress). Short, 4 lines max: ✅ what is done since the last report, ➡️ what comes next, 🙋 what we need from the client (or "nothing needed"), 📊 progress % and the expected date. No technical jargon. If a preview link exists in the chat, mention it. Add that everything is also in the cabinet vaxogroup.com/me/.';
     } else if (r.status !== 'won' && r.last_sender === 'ai' && r.followups === 0 && ago(r.last_at) >= 2) {
       nudge = 'The client has not answered for 2 days. Send one short, friendly follow-up with value (an idea or a relevant real case). Make it easy to answer. Never pressure.';
     }
     if (!nudge) continue;
     if (await aiReply(db, ai, r.id, notify, { nudge })) {
-      await db.prepare('UPDATE leads SET followups = followups + 1 WHERE id = ?').bind(r.id).run();
+      if (!report) await db.prepare('UPDATE leads SET followups = followups + 1 WHERE id = ?').bind(r.id).run();
       await logEvent(db, r.id, 'ai', 'note', 'AI follow-up sent');
     }
   }

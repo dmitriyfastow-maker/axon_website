@@ -11,6 +11,8 @@ interface Props {
 }
 const { lang, t, home = '', alts } = Astro.props;
 const nav = t.nav.map((label, i) => ({ label, href: navHref(NAV_HREFS[i], lang, home) }));
+const ME = { en: 'Sign in / Sign up', ru: 'Вход / регистрация', ua: 'Вхід / реєстрація' }[lang];
+const meHref = navHref('/me/', lang);
 const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?.[l] ?? langPath(l) }));
 ---
 
@@ -39,6 +41,7 @@ const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?
       <button class="icon-btn theme-btn" type="button" title="Theme" aria-label="Toggle theme" data-theme-toggle>
         <span class="icon-light">☾</span><span class="icon-dark">☀</span>
       </button>
+      <a href={meHref} class="icon-btn me-btn" title={ME} aria-label={ME}><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm0 2.2c-4.1 0-8 2.1-8 5.3V21h16v-1.5c0-3.2-3.9-5.3-8-5.3Z"/></svg><span class="me-txt">{ME}</span></a>
       <a href={`${home}#contact`} class="cta">{t.cta1}</a>
       <button class="icon-btn menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
         <span class="sign-closed">≡</span><span class="sign-open">×</span>
@@ -47,6 +50,7 @@ const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?
   </div>
   <nav id="mobile-nav" class="nav-mobile" aria-label="Main" data-menu hidden>
     {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+    <a href={meHref}>👤 {ME}</a>
     <a href={`${home}#contact`} class="nav-mobile-cta">{t.cta1}</a>
   </nav>
 </header>
@@ -139,6 +143,8 @@ const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?
   :global([data-theme='dark']) .icon-dark {
     display: inline;
   }
+  .me-btn { display: inline-flex; align-items: center; gap: 6px; width: auto; padding: 0 12px; font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; }
+  @media (max-width: 1499.98px) { .me-txt { display: none; } .me-btn { padding: 0; width: 38px; justify-content: center; } }
   .cta {
     background: var(--ink);
     color: var(--bg);

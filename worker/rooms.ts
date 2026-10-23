@@ -12,7 +12,7 @@ const s = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0
 const ROOM_RE = /^[a-f0-9]{24}$/;
 // Vax titles the brief summary "Brief" / "Бриф" (see the brief rule in aimanager).
 const BRIEF_RE = /^\s*(?:\*\*)?(?:📋\s*)?(?:brief|бриф)(?=[\s:.,!*—-]|$)/im;
-const BRIEF_OK: Record<string, string> = { en: '✅ All correct — I confirm the brief.', ru: '✅ Всё верно — подтверждаю бриф.', ua: '✅ Усе вірно — підтверджую бриф.' };
+const BRIEF_OK: Record<string, string> = { en: '✅ All correct — I confirm the brief, accept the terms (vaxogroup.com/terms/) and ask you to start the work.', ru: '✅ Всё верно — подтверждаю бриф, принимаю условия (vaxogroup.com/ru/terms/) и прошу начать работу.', ua: '✅ Усе вірно — підтверджую бриф, приймаю умови (vaxogroup.com/ua/terms/) і прошу почати роботу.' };
 
 export function newRoom(): string {
   return Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => b.toString(16).padStart(2, '0')).join('');
