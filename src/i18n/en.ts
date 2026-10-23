@@ -427,7 +427,8 @@ const en = {
         "name": "Web Development",
         "rows": [
           {
-            "l": "Landing page (single)"
+            "l": "Landing page (single)",
+            "d": "Basic SEO, Google Business Profile and analytics included — people find you in search from day one."
           },
           {
             "l": "Multi-page website"
