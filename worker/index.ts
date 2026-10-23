@@ -12,6 +12,7 @@ import { configureMail, handleEmail, type IncomingEmail } from './mail.js';
 import { handleStt } from './stt.js';
 import { handleFileUpload, servePreview, serveFile, type KV } from './files.js';
 import { handleCabinet, type CabinetEnv } from './cabinet.js';
+import { handleInvoicePublic } from './invoices.js';
 import { handleFinancePublic } from './finance.js';
 import { handleIntake } from './intake.js';
 import { notifyOwnerChat } from './ownerchat.js';
@@ -86,6 +87,8 @@ export default {
     if (url.pathname === '/api/intake') return env.LEADS ? handleIntake(env.LEADS, request, notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify).catch((e) => console.error('[ai intake]', e)))) : json(503, { ok: false });
     if (url.pathname === '/api/fin') return env.LEADS ? handleFinancePublic(env.LEADS, request, env.AI, notify) : json(503, { ok: false });
     if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify) : json(503, { ok: false });
+    const invm = url.pathname.match(/^\/api\/invoice\/([a-f0-9]{32})$/);
+    if (invm) return env.LEADS ? handleInvoicePublic(env.LEADS, invm[1]) : json(503, { ok: false });
     if (url.pathname === '/api/file') return env.LEADS ? handleFileUpload(env.FILES, env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     const file = url.pathname.match(/^\/f\/([a-f0-9]{20})(?:\/|$)/);
     if (file) return serveFile(env.FILES, file[1]);

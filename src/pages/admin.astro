@@ -130,6 +130,7 @@ import Base from '../layouts/Base.astro';
       <section data-panel="fin" hidden>
         <p class="hint">Все деньги компании: что пришло, что ушло, налоги ФОП 3 группы и лимит. Подруга с ФОП видит то же на vaxogroup.com/fin/ по своему коду (все деньги, клиенты и переписки — только смотреть) и может спросить помощника в любое время.</p>
         <div class="card fopc"><b>👩‍💼 Чат с ФОП</b> <small class="mut">Её вопросы и ответы помощника. Что решаете только вы — придёт в Telegram; ответ отсюда она увидит у себя.</small><div class="oc" data-fopc></div><form class="oc-in" data-fopc-form><textarea rows="2" placeholder="Ответить ей от вашего имени…" data-fopc-text></textarea><button type="button" class="ghost oc-mic" data-fopc-mic aria-label="Голосовой ввод"></button><button class="cta">Ответить</button></form></div>
+        <div class="card" data-invoices></div>
         <div class="fin-forms" data-fin-forms></div>
         <div data-fin></div>
       </section>
@@ -318,8 +319,18 @@ import Base from '../layouts/Base.astro';
     const mic = $<HTMLButtonElement>('[data-fopc-mic]'); mic.innerHTML = MIC_SVG; attachMic(mic, ta, () => 'ru');
     f.onsubmit = async (e) => { e.preventDefault(); const text = ta.value.trim(); if (!text) return; ta.value = ''; await api('/finance/fopchat', { text }); loadFopChat(); };
   })();
+  async function loadInvoices() {
+    const d = await api('/invoice').catch(() => null);
+    const box = document.querySelector<HTMLElement>('[data-invoices]'); if (!box || !d?.ok) return;
+    const ST2: R = { open: ['ждёт оплаты', 'y'], paid: ['оплачен', 'g'], cancelled: ['отменён', 'n'] };
+    box.replaceChildren(el('h3', {}, '🧾 Счета клиентам'), ...(d.invoices.length ? (d.invoices as R[]).map((i) => el('div', { class: 'inv-row' },
+      el('b', {}, i.number), ` ${i.client || i.buyer || '—'} · ${i.amount} ${i.currency} · ${i.description} `, el('span', { class: 'st st-' + (ST2[i.status]?.[1] || 'n') }, ST2[i.status]?.[0] || i.status), ' ',
+      el('a', { href: `/invoice/?t=${i.token}`, target: '_blank', class: 'ghost sm' }, 'Открыть'),
+      i.status === 'open' && el('button', { class: 'cta sm', type: 'button', onclick: async () => { if (!confirm(`Деньги по счёту ${i.number} пришли на счёт ФОП?`)) return; await api(`/invoice/${i.id}/paid`, {}); loadFin(); } }, '💰 Оплачен'),
+      i.status === 'open' && el('button', { class: 'ghost sm', type: 'button', onclick: async () => { await api(`/invoice/${i.id}/cancel`, {}); loadInvoices(); } }, 'Отменить'))) : [el('p', { class: 'mut' }, 'Счетов пока нет. Выставить: Заявки → клиент → «🧾 Выставить счёт».')]));
+  }
   async function loadFin() {
-    loadFopChat();
+    loadFopChat(); loadInvoices();
     const d = await api('/finance').catch(() => null);
     if (!d?.ok) return;
     renderFinance($('[data-fin]'), d, true, async (kind, id) => {
@@ -638,6 +649,18 @@ import Base from '../layouts/Base.astro';
     const thread = el('div', { class: 'thread' }, ...(messages.length ? messages.map((m: R) => el('div', { class: `m ${m.sender === 'client' ? 'them' : 'us'} k-${m.kind}` },
       el('small', {}, `${m.sender === 'client' ? l.name : m.sender === 'owner' ? 'Вы (Vaxo Team)' : m.sender === 'ai' ? 'Vax · ИИ-менеджер' : m.sender === 'system' ? 'Система' : (m.partner_name || 'менеджер') + ' · Account Manager'}${m.kind === 'note' ? ' · 🔒 заметка' : m.kind === 'call' ? ' · 📅 созвон' : ''} · ${when(m.at)}`),
       rich(m.text))) : [el('p', { class: 'mut' }, 'Сообщений пока нет.')]));
+    const invAmt = el('input', { type: 'number', min: '1', step: '0.01', placeholder: 'Сумма' }) as HTMLInputElement;
+    const invCur = el('select', {}, ...['USD', 'EUR', 'UAH'].map((c) => el('option', { value: c }, c))) as HTMLSelectElement;
+    const invPart = el('select', {}, ...[['prepay', 'Предоплата'], ['full', 'Полная оплата'], ['final', 'Остаток'], ['stage', 'Этап'], ['micro', 'Микрозадача'], ['strategy', 'Стратегия'], ['support', 'Поддержка']].map(([v, t]) => el('option', { value: v }, t))) as HTMLSelectElement;
+    const invDesc = el('input', { placeholder: 'За что (по-английски для иностранцев), напр. Website development — 50% prepayment', value: l.service || '' }) as HTMLInputElement;
+    const invMsg = el('small', { class: 'mut' }, '');
+    const invoiceBox = el('details', { class: 'card' }, el('summary', {}, '🧾 Выставить счёт (уйдёт клиенту в чат)'),
+      el('div', { class: 'two' }, invAmt, invCur), el('div', { class: 'two' }, invPart, invDesc),
+      el('button', { class: 'cta', type: 'button', onclick: async () => {
+        const r = await api('/invoice', { lead_id: id, amount: invAmt.value, currency: invCur.value, part: invPart.value, description: invDesc.value });
+        invMsg.textContent = r.ok ? `Счёт ${r.number} отправлен в чат: ${r.url}` : 'Не получилось: проверьте сумму и описание.';
+        if (r.ok) { await load(); openLead(id); }
+      } }, 'Выставить и отправить'), invMsg);
     const msgKind = el('select', {}, el('option', { value: 'text' }, 'Клиенту (подпись «Vaxo Team»)'), el('option', { value: 'note' }, '🔒 Заметка для менеджера'));
     const msgText = el('textarea', { rows: '3', placeholder: 'Сообщение… (клиенту пишите на его языке)' });
     const cMic = el('button', { type: 'button', class: 'ghost oc-mic', 'aria-label': 'Голосовой ввод' }) as HTMLButtonElement;
@@ -664,7 +687,7 @@ import Base from '../layouts/Base.astro';
       l.ai_summary && el('div', { class: 'aisum' }, el('b', {}, `🤖 ИИ-сводка${l.score ? ' · оценка заявки ' + l.score + '/10' : ''}`), el('pre', {}, l.ai_summary)),
       el('h3', {}, 'Переписка'),
       el('p', { class: 'mut' }, el('a', { href: `/room/?t=${l.room}`, target: '_blank' }, 'Открыть чат как видит клиент ↗'), ' · 🔒 — заметки, клиент их не видит'),
-      thread, composer,
+      thread, invoiceBox, composer,
       el('details', {}, el('summary', {}, 'Первая заявка / диалог с Vax'), el('pre', {}, l.message || '—')),
       el('h3', {}, 'Карточка'), form,
       el('h3', {}, 'Журнал'),
@@ -841,6 +864,7 @@ import Base from '../layouts/Base.astro';
   .adm .wcard details div { white-space: pre-wrap; font-size: 14px; line-height: 1.5; max-height: 420px; overflow: auto; }
   .adm .pv iframe { width: 100%; height: 520px; border: 1px solid var(--line); border-radius: 12px; margin-top: 8px; background: #fff; }
   .adm .wact { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; margin-top: auto; } .adm .wact textarea { grid-column: 1 / -1; order: -1; } .adm .st-y { background: #fde68a; color: #713f12; } .adm .st-g { background: #bbf7d0; color: #14532d; } .adm .st-b { background: #bfdbfe; color: #1e3a8a; }
+  .adm .inv-row { padding: 8px 0; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .adm .composer { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 4px; }
   .adm .file { font-weight: 600; } .adm .file.img img { display: block; max-width: 220px; max-height: 220px; border-radius: 10px; margin-top: 4px; }
   .adm .drop { outline: 3px dashed var(--acc); outline-offset: 2px; }

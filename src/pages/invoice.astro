@@ -1,0 +1,70 @@
+---
+// Invoice for bank transfer: /invoice/?t=<token>. The data comes from /api/invoice/<token> (requisites only for the
+// invoice's currency). Printable: the client saves it as PDF.
+import Base from '../layouts/Base.astro';
+---
+
+<Base lang="en" title="Vaxo — Invoice" description="Invoice from Vaxo." noindex noChat>
+  <main class="inv" data-inv>
+    <div class="bar"><a href="/" class="logo">VAXO<span>.</span></a><button type="button" data-print>⬇️ PDF / Print</button></div>
+    <p data-msg class="msg">Loading…</p>
+    <article data-doc hidden></article>
+  </main>
+  <script>
+    type R = Record<string, any>;
+    const T: R = {
+      en: { inv: 'Invoice', date: 'Date', due: 'Pay by', seller: 'Seller', buyer: 'Bill to', item: 'Description', total: 'Total', pay: 'How to pay', purpose: 'Payment purpose (copy exactly)', recv: 'Receiver', addr: 'Address', bank: 'Bank', iban: 'IBAN', swift: 'SWIFT / BIC', sepa: 'Within Europe (SEPA, in EUR)', swiftT: 'From anywhere (SWIFT)', uah: 'In Ukraine (UAH)', tax: 'The seller is a Ukrainian sole proprietor, single tax payer (group 3), not a VAT payer.', terms: 'Paying this invoice means you accept the public offer at vaxogroup.com/terms/. Work starts when the payment arrives.', paid: 'PAID', cancelled: 'CANCELLED', bad: 'Invoice not found.', fees: 'Intermediary banks may charge a fee — please choose "OUR" or pay the fees so the full amount arrives.', edrpou: 'Tax ID', mfo: 'MFO' },
+      ua: { inv: 'Рахунок', date: 'Дата', due: 'Сплатити до', seller: 'Продавець', buyer: 'Покупець', item: 'Опис', total: 'Разом', pay: 'Як сплатити', purpose: 'Призначення платежу (скопіюйте точно)', recv: 'Отримувач', addr: 'Адреса', bank: 'Банк', iban: 'IBAN', swift: 'SWIFT / BIC', sepa: 'У межах Європи (SEPA, EUR)', swiftT: 'З будь-якої країни (SWIFT)', uah: 'В Україні (гривня)', tax: 'Продавець — ФОП, платник єдиного податку 3 групи, не платник ПДВ.', terms: 'Оплата рахунку означає прийняття публічної оферти vaxogroup.com/ua/terms/. Робота починається після надходження оплати.', paid: 'СПЛАЧЕНО', cancelled: 'СКАСОВАНО', bad: 'Рахунок не знайдено.', fees: 'Банки-посередники можуть брати комісію — оберіть «OUR», щоб надійшла повна сума.', edrpou: 'ІПН / ЄДРПОУ', mfo: 'МФО' },
+      ru: { inv: 'Счёт', date: 'Дата', due: 'Оплатить до', seller: 'Продавец', buyer: 'Покупатель', item: 'Описание', total: 'Итого', pay: 'Как оплатить', purpose: 'Назначение платежа (скопируйте точно)', recv: 'Получатель', addr: 'Адрес', bank: 'Банк', iban: 'IBAN', swift: 'SWIFT / BIC', sepa: 'В пределах Европы (SEPA, EUR)', swiftT: 'Из любой страны (SWIFT)', uah: 'В Украине (гривна)', tax: 'Продавец — ФОП (Украина), плательщик единого налога 3 группы, не плательщик НДС.', terms: 'Оплата счёта означает принятие публичной оферты vaxogroup.com/ru/terms/. Работа начинается после поступления оплаты.', paid: 'ОПЛАЧЕН', cancelled: 'ОТМЕНЁН', bad: 'Счёт не найден.', fees: 'Банки-посредники могут брать комиссию — выберите «OUR», чтобы пришла полная сумма.', edrpou: 'ИНН / ЕДРПОУ', mfo: 'МФО' },
+    };
+    const esc = (s: unknown) => String(s ?? '').replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
+    const q = new URLSearchParams(location.search).get('t') || '';
+    const $ = (s: string) => document.querySelector<HTMLElement>(s)!;
+    $('[data-print]').onclick = () => print();
+    (async () => {
+      const r = await fetch(`/api/invoice/${q}`).catch(() => null);
+      const d: R | null = r?.ok ? await r.json() : null;
+      if (!d) { $('[data-msg]').textContent = T.en.bad; return; }
+      const i = d.invoice, s = d.seller || {}, b = d.bank || {}, t = T[i.lang] || T.en;
+      document.documentElement.lang = i.lang === 'ua' ? 'uk' : i.lang;
+      document.title = `${t.inv} ${i.number} — Vaxo`;
+      const date = String(i.at).slice(0, 10), sum = `${Number(i.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })} ${i.currency}`;
+      const purpose = `Payment for ${i.description} by the invoice № ${i.number} from ${date}`;
+      const row = (k: string, v: unknown) => (v ? `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>` : '');
+      let pay = '';
+      if (i.currency === 'UAH') pay = `<h3>${t.uah}</h3><table>${row(t.recv, s.name_ua)}${row(t.iban, b.iban)}${row(t.edrpou, s.tax_id)}${row(t.bank, b.bank)}${row(t.mfo, b.mfo)}</table>`;
+      if (i.currency === 'USD') pay = `<h3>${t.swiftT}</h3><table>${row(t.recv, s.name_en)}${row(t.iban, b.iban)}${row(t.swift, b.swift)}${row(t.bank, b.bank)}${row(t.addr, s.address_en)}</table><p class="note">${t.fees}</p>`;
+      if (i.currency === 'EUR') pay = `<h3>${t.sepa}</h3><table>${row(t.recv, b.sepa_receiver)}${row(t.iban, b.sepa_iban)}${row(t.swift, b.sepa_bic)}</table><h3>${t.swiftT}</h3><table>${row(t.recv, s.name_en)}${row(t.iban, b.iban)}${row(t.swift, b.swift)}${row(t.bank, b.bank)}${row(t.addr, s.address_en)}</table><p class="note">${t.fees}</p>`;
+      const stamp = i.status === 'paid' ? `<div class="stamp ok">${t.paid}</div>` : i.status === 'cancelled' ? `<div class="stamp no">${t.cancelled}</div>` : '';
+      $('[data-doc]').innerHTML = `${stamp}
+        <header><div><h1>${t.inv} ${esc(i.number)}</h1><p>${t.date}: ${date}${i.due ? ` · ${t.due}: ${esc(i.due)}` : ''}</p></div><div class="brand">Vaxo · vaxogroup.com</div></header>
+        <div class="parties"><div><small>${t.seller}</small><b>${esc(i.lang === 'en' ? s.name_en : s.name_ua)}</b>${i.lang === 'en' ? `<span>${esc(s.address_en || '')}</span>` : ''}</div><div><small>${t.buyer}</small><b>${esc(i.buyer || '—')}</b></div></div>
+        <table class="items"><tr><th>${t.item}</th><th class="r">${t.total}</th></tr><tr><td>${esc(i.description)}</td><td class="r">${sum}</td></tr><tr class="sum"><td>${t.total}</td><td class="r">${sum}</td></tr></table>
+        <section><h2>${t.pay}</h2>${pay}<div class="purpose"><small>${t.purpose}</small><code data-purpose>${esc(purpose)}</code><button type="button" data-copy>Copy</button></div></section>
+        <p class="note">${t.tax}</p><p class="note">${t.terms}</p>`;
+      $('[data-msg]').hidden = true; $('[data-doc]').hidden = false;
+      $('[data-copy]').onclick = async () => { try { await navigator.clipboard.writeText(purpose); $('[data-copy]').textContent = '✓'; } catch {} };
+    })();
+  </script>
+</Base>
+
+<style is:global>
+  .inv { max-width: 820px; margin: 0 auto; padding: 20px 16px 60px; font-family: var(--font); color: var(--ink); }
+  .inv .bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .inv .logo { font-weight: 800; font-size: 22px; color: var(--ink); text-decoration: none; } .inv .logo span { color: var(--acc); }
+  .inv .bar button, .inv [data-copy] { border: 1px solid var(--line); background: var(--surf); color: var(--ink); border-radius: 999px; padding: 8px 14px; font: 600 14px var(--font); cursor: pointer; }
+  .inv article { position: relative; background: #fff; color: #111; border: 1px solid #e5e5e5; border-radius: 16px; padding: 32px; }
+  .inv header { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-bottom: 2px solid #111; padding-bottom: 14px; }
+  .inv h1 { margin: 0; font-size: 28px; } .inv h2 { font-size: 20px; margin: 26px 0 8px; } .inv h3 { font-size: 15px; margin: 16px 0 6px; color: #444; }
+  .inv header p { margin: 4px 0 0; color: #555; } .inv .brand { font-weight: 700; color: #555; }
+  .inv .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 18px 0; } .inv .parties small { display: block; color: #777; } .inv .parties span { display: block; color: #555; font-size: 14px; }
+  .inv table { width: 100%; border-collapse: collapse; font-size: 15px; } .inv th, .inv td { text-align: left; padding: 8px 6px; border-bottom: 1px solid #eee; vertical-align: top; } .inv th { color: #666; font-weight: 600; width: 38%; }
+  .inv .items th { width: auto; } .inv .r { text-align: right; } .inv .sum td { font-weight: 800; font-size: 18px; border-bottom: 0; }
+  .inv td { word-break: break-all; }
+  .inv .purpose { background: #f6f6f6; border-radius: 10px; padding: 12px; margin-top: 14px; display: grid; gap: 6px; } .inv .purpose small { color: #666; } .inv code { font-size: 14px; word-break: break-word; }
+  .inv .note { color: #666; font-size: 13px; margin: 10px 0 0; }
+  .inv .stamp { position: absolute; right: 24px; top: 70px; transform: rotate(-12deg); border: 3px solid; border-radius: 10px; padding: 6px 14px; font-weight: 900; font-size: 22px; } .inv .stamp.ok { color: #16a34a; } .inv .stamp.no { color: #dc2626; }
+  .inv .msg { color: var(--mut); }
+  @media print { .inv .bar, [data-chat], .vchat { display: none !important; } .inv article { border: 0; padding: 0; } body { background: #fff; } }
+  @media (max-width: 600px) { .inv .parties { grid-template-columns: 1fr; } .inv article { padding: 18px; } }
+</style>

@@ -4,6 +4,7 @@ import { ownerLead, ownerOverview, ownerUpdateLead, ownerUpdatePartner, type Not
 import { staffMessage } from './rooms.js';
 import { aiReply, decideOffer, setAiState } from './aimanager.js';
 import { handleFinanceAdmin } from './finance.js';
+import { handleInvoiceAdmin, invoiceForPayment } from './invoices.js';
 import { handleOwnerChat } from './ownerchat.js';
 import { newRoom } from './rooms.js';
 import { addRenewal, allPayouts, setPayout } from './payouts.js';
@@ -75,6 +76,18 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
     return json(200, { ok: true });
   }
   if (path === 'claude' || path.startsWith('claude/')) return handleOwnerChat(db, ai, request, path.slice('claude'.length).replace(/^\//, ''), notify);
+  // 🧾 Invoices: create/list/cancel; "paid" records the payment through Finance (taxes, cashback, Vax thanks the client).
+  const ip = path.match(/^invoice\/(\d+)\/paid$/);
+  if (ip && request.method === 'POST') {
+    const inv = await invoiceForPayment(db, Number(ip[1]));
+    if (!inv) return json(400, { ok: false });
+    const fake = new Request(request.url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: inv.amount, currency: inv.currency, lead_id: inv.lead_id, part: inv.part, method: 'bank', note: `Invoice ${inv.number}` }) });
+    const got = { id: 0 };
+    const res = await handleFinanceAdmin(db, fake, 'payment', notify, (id) => { got.id = id; });
+    if (got.id) await aiReply(db, ai, got.id, notify, { nudge: 'The team has just RECEIVED the client\'s payment. Thank them warmly in one or two sentences, say the payment arrived and what happens next (work starts / continues, next preview or step). No amounts unless they ask.' }).catch(() => false);
+    return res;
+  }
+  if (path === 'invoice' || path.startsWith('invoice/')) return handleInvoiceAdmin(db, request, path.slice('invoice'.length).replace(/^\//, ''), new URL(request.url).origin);
   if (path === 'finance' || path.startsWith('finance/')) {
     const got = { id: 0 };
     const res = await handleFinanceAdmin(db, request, path.slice('finance'.length).replace(/^\//, ''), notify, (id) => { got.id = id; });

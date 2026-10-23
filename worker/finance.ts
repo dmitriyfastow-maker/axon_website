@@ -65,6 +65,8 @@ export async function financeView(db: DB, year: number, full: boolean) {
   }));
   const out = exps.filter(ok).reduce((s, r) => s + r.amount_uah, 0);
   const now = new Date();
+  // Income the FOP had this year before Vaxo (the limit is shared). Set in settings for the current year.
+  const prior = year === 2026 ? Number((await db.prepare(`SELECT value FROM settings WHERE key = 'fop_prior_income_uah'`).first<{ value: string }>())?.value || 0) : 0;
   const months = year === now.getUTCFullYear() ? now.getUTCMonth() + 1 : 12;
   const taxes = {
     singleTax: Math.round(income * FOP.singleTax * 100) / 100,
@@ -77,7 +79,7 @@ export async function financeView(db: DB, year: number, full: boolean) {
   const due = (await db.prepare(`SELECT COALESCE(SUM(amount_usd), 0) AS n FROM payouts WHERE status = 'due'`).first<{ n: number }>())?.n ?? 0;
   const res: Record<string, unknown> = {
     ok: true, year, fop: FOP, income: Math.round(income * 100) / 100, out: Math.round(out * 100) / 100, byQuarter: byQ, byMonth,
-    limitLeft: Math.round((FOP.limitUah - income) * 100) / 100, taxes, deadlines: deadlines(now), partnersDueUsd: due,
+    limitLeft: Math.round((FOP.limitUah - income - prior) * 100) / 100, priorIncome: prior, taxes, deadlines: deadlines(now), partnersDueUsd: due,
     payments: pays.map((r) => ({ ...r, order: r.lead_id ? `#${r.lead_id}` : '—' })),
     expenses: exps,
   };
