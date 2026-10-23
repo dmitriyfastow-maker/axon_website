@@ -60,6 +60,20 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
     await db.prepare(`UPDATE leads SET status = 'archived' WHERE page = 'test'`).run();
     return json(200, { ok: true });
   }
+  // 📋 Claude's work log: everything done, with previews; the owner can leave a note or a decision on any item.
+  if (path === 'work' && request.method === 'GET') {
+    const { results } = await db.prepare('SELECT * FROM claude_work ORDER BY id DESC LIMIT 400').all();
+    return json(200, { ok: true, items: results });
+  }
+  const wk = path.match(/^work\/(\d+)$/);
+  if (wk && request.method === 'POST') {
+    const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const note = typeof b.note === 'string' ? b.note.trim().slice(0, 1000) : null;
+    const status = ['ready', 'waiting', 'sent', 'rejected', 'done'].includes(String(b.status)) ? String(b.status) : null;
+    await db.prepare('UPDATE claude_work SET note = COALESCE(?, note), status = COALESCE(?, status) WHERE id = ?').bind(note, status, Number(wk[1])).run();
+    if (note) await db.prepare(`INSERT INTO owner_chat (sender, kind, text) VALUES ('owner', 'task', ?)`).bind(`Комментарий к работе #${wk[1]}: ${note}`).run();
+    return json(200, { ok: true });
+  }
   if (path === 'claude' || path.startsWith('claude/')) return handleOwnerChat(db, ai, request, path.slice('claude'.length).replace(/^\//, ''), notify);
   if (path === 'finance' || path.startsWith('finance/')) {
     const got = { id: 0 };

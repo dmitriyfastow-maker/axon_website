@@ -88,3 +88,11 @@ export async function filesForAi(db: DB, text: string): Promise<string> {
     return f ? `[client attached file "${f.name}" (${f.type})${f.descr ? `: ${f.descr}` : ''}]` : m;
   });
 }
+
+/** GET /p/<id>: a site draft (HTML in KV) shown as a page — only for whoever has the unguessable link (HQ previews). */
+export async function servePreview(kv: KV | undefined, id: string): Promise<Response> {
+  if (!kv || !/^[a-f0-9]{20}$/.test(id)) return new Response('Not found', { status: 404 });
+  const { value, metadata } = await kv.getWithMetadata<{ name: string; type: string }>(id, 'stream');
+  if (!value || !/html/.test(metadata?.type || '')) return new Response('Not found', { status: 404 });
+  return new Response(value, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'private, max-age=300', 'Content-Security-Policy': "sandbox allow-scripts allow-popups allow-forms; frame-ancestors 'self'" } });
+}

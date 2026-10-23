@@ -204,6 +204,11 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
     await db.prepare(`UPDATE leads SET human = ?, updated_at = datetime('now') WHERE id = ?`).bind(out.human, leadId).run();
     await logEvent(db, leadId, 'ai', 'note', `Live manager needed: ${out.human}`);
     await notify(`🙋 #${leadId} ${l.name}: нужен живой менеджер — ${out.human}${l.manager ? ` (менеджер ${l.manager})` : ' (менеджер не назначен)'}`);
+    // A big custom project (a game, a complex app): Claude prepares the estimate, Dmitry approves it, then the client gets it.
+    if (/^ESTIMATE:/i.test(out.human)) {
+      await db.prepare(`INSERT INTO owner_chat (sender, kind, text) VALUES ('ai', 'task', ?)`)
+        .bind(`Смета для #${leadId} ${l.name}: ${out.human.replace(/^ESTIMATE:\s*/i, '')}. Claude: оценить объём, этапы, сроки и цену, отправить клиенту смету в чат; Дмитрию — только если нужен тариф Claude выше или что-то рискованное.`).run();
+    }
   }
   // Every 3rd client message: refresh the communication profile.
   const n = msgs.filter((m) => m.sender === 'client').length;

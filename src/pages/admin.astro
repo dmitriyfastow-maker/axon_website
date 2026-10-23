@@ -23,6 +23,7 @@ import Base from '../layouts/Base.astro';
         <button type="button" data-view="today" aria-pressed="true">🔥 Сегодня <span class="pill" data-n="today" hidden></span></button>
         <button type="button" data-view="chats" aria-pressed="false">💬 Переписки с клиентами <span class="pill" data-n="chats" hidden></span></button>
         <button type="button" data-view="claude" aria-pressed="false">🧠 Claude <span class="pill" data-n="claude" hidden></span></button>
+        <button type="button" data-view="work" aria-pressed="false">📋 Работа Claude</button>
         <button type="button" data-view="stats" aria-pressed="false">📊 Аналитика</button>
         <button type="button" data-view="leads" aria-pressed="false">📋 Заявки</button>
         <button type="button" data-view="team" aria-pressed="false">👥 Команда <span class="pill" data-n="team" hidden></span></button>
@@ -94,6 +95,11 @@ import Base from '../layouts/Base.astro';
         <label class="mut small"><input type="checkbox" data-oc-task /> Это задача для Claude (если не начинается со «Сделай…»)</label>
       </section>
 
+      <section data-panel="work" hidden>
+        <p class="hint">Всё, что я сделал, — как отчёт сотрудника: найденные клиенты и готовые сообщения им, черновики сайтов (можно открыть), ролики, документы, списки партнёров, изменения сайта. «Ждёт вашего да» — то, что уйдёт наружу только после вашего решения. Комментарий к любой карточке приходит мне задачей.</p>
+        <div class="wf" data-wf></div>
+        <div class="work" data-work></div>
+      </section>
       <section data-panel="chats" hidden>
         <p class="hint">Все переписки с клиентами: Vax (ИИ), менеджеры и вы. «Ждёт ответа» — последним написал клиент. Нажмите на любой чат — откроется переписка, где можно прочитать и ответить от имени Vaxo.</p>
         <div class="inbox" data-inbox></div>
@@ -235,7 +241,7 @@ import Base from '../layouts/Base.astro';
     try { data = await api(''); } catch { return; }
     $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
     renderToday(); renderInbox(); renderLeads(); renderTeam(); renderPay(); renderCartoon(); renderLinks();
-    loadAuto(); loadStats(); loadFin(); loadClaude();
+    loadAuto(); loadStats(); loadFin(); loadClaude(); loadWork();
   }
 
   async function loadClaude() {
@@ -264,6 +270,40 @@ import Base from '../layouts/Base.astro';
   })();
   document.querySelector('[data-go-chats]')?.addEventListener('click', () => show('chats'));
   const finStyle = document.createElement('style'); finStyle.textContent = FIN_CSS; document.head.append(finStyle);
+  const WK: R = { clients: ['🎯', 'Клиенты'], partners: ['🤝', 'Партнёры'], draft: ['🖥', 'Черновики сайтов'], video: ['🎬', 'Ролики'], doc: ['📄', 'Документы'], site: ['🛠', 'Сайт и Штаб'], research: ['🔎', 'Исследования'], outreach: ['✉️', 'Рассылки'] };
+  const WS: R = { ready: ['готово', 'g'], waiting: ['ждёт вашего «да»', 'y'], sent: ['отправлено', 'b'], rejected: ['забраковано', 'r'], done: ['закрыто', 'n'] };
+  let workFilter = '';
+  async function loadWork() {
+    const d = await api('/work').catch(() => null);
+    if (!d?.ok) return;
+    const items = d.items as R[];
+    const counts: R = {}; for (const i of items) counts[i.kind] = (counts[i.kind] || 0) + 1;
+    const waiting = items.filter((i) => i.status === 'waiting').length;
+    $('[data-wf]').replaceChildren(
+      el('button', { type: 'button', class: 'chip' + (workFilter === '' ? ' on' : ''), onclick: () => { workFilter = ''; loadWork(); } }, `Всё · ${items.length}`),
+      waiting > 0 && el('button', { type: 'button', class: 'chip warn' + (workFilter === 'waiting' ? ' on' : ''), onclick: () => { workFilter = 'waiting'; loadWork(); } }, `Ждёт вашего «да» · ${waiting}`),
+      ...Object.entries(WK).filter(([k]) => counts[k]).map(([k, [ic, t]]) => el('button', { type: 'button', class: 'chip' + (workFilter === k ? ' on' : ''), onclick: () => { workFilter = k; loadWork(); } }, `${ic} ${t} · ${counts[k]}`)));
+    const shown = items.filter((i) => !workFilter || i.kind === workFilter || (workFilter === 'waiting' && i.status === 'waiting'));
+    $('[data-work]').replaceChildren(...shown.map((i) => {
+      const [ic, kt] = WK[i.kind] || ['•', i.kind];
+      const [st, sc] = WS[i.status] || [i.status, 'n'];
+      const f = String(i.file || '');
+      const media = /\.(mp4|webm|mov)$/i.test(f) ? el('video', { src: f, controls: true, preload: 'none', playsinline: true })
+        : /\.(png|jpe?g|webp|gif)$/i.test(f) ? el('img', { src: f, loading: 'lazy', alt: '' })
+        : /\/p\/[a-f0-9]{20}/.test(f) ? (() => { const box = el('div', { class: 'pv' }); const btn = el('button', { type: 'button', class: 'ghost sm', onclick: () => { box.replaceChildren(el('iframe', { src: f, loading: 'lazy', title: i.title })); } }, '👁 Показать сайт здесь'); return el('div', {}, btn, ' ', el('a', { href: f, target: '_blank', class: 'ghost sm' }, '↗ Открыть в новой вкладке'), box); })()
+        : null;
+      const note = el('textarea', { rows: '1', placeholder: 'Комментарий или решение (придёт мне задачей)…' }, '') as HTMLTextAreaElement;
+      const sel = el('select', {}, ...Object.entries(WS).map(([k, [t]]) => el('option', { value: k, selected: k === i.status }, t))) as HTMLSelectElement;
+      return el('article', { class: 'wcard' },
+        el('div', { class: 'wh' }, el('span', { class: 'wk' }, `${ic} ${kt}`), el('span', { class: 'st st-' + sc }, st), el('small', { class: 'mut' }, when(i.at))),
+        el('h3', {}, i.title),
+        media,
+        i.body && el('details', { open: i.body.length < 500 }, el('summary', {}, 'Подробно'), rich(i.body)),
+        i.link && el('a', { href: i.link, target: '_blank', rel: 'noopener', class: 'ghost sm' }, '↗ Открыть'),
+        i.note && el('p', { class: 'mut' }, `Ваш комментарий: ${i.note}`),
+        el('div', { class: 'wact' }, sel, note, el('button', { type: 'button', class: 'cta sm', onclick: async () => { await api(`/work/${i.id}`, { status: sel.value, note: note.value.trim() || undefined }); loadWork(); } }, 'Сохранить')));
+    }));
+  }
   async function loadFopChat() {
     const r = await fetch('/api/admin/finance/fopchat', { headers: { Authorization: `Bearer ${token}` } }).catch(() => null);
     if (!r?.ok) return;
@@ -791,6 +831,16 @@ import Base from '../layouts/Base.astro';
   .adm .thread .k-note { background: repeating-linear-gradient(45deg, var(--surf2), var(--surf2) 8px, var(--bg) 8px, var(--bg) 16px); color: var(--ink); }
   .adm .thread .k-call { border: 2px solid var(--accText); }
   .adm .fopc { margin-bottom: 16px; } .adm .fopc .oc { max-height: 320px; margin: 8px 0; }
+  .adm .wf { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 14px; }
+  .adm .chip { border: 1px solid var(--line); background: var(--surf); color: var(--ink); border-radius: 999px; padding: 7px 12px; font: 600 13px var(--font); cursor: pointer; }
+  .adm .chip.on { background: var(--ink); color: var(--bg); } .adm .chip.warn { border-color: var(--accText); color: var(--accText); } .adm .chip.warn.on { background: var(--acc); color: var(--dark-ink); }
+  .adm .work { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 14px; }
+  .adm .wcard { background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .adm .wcard h3 { margin: 0; font-size: 17px; } .adm .wh { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } .adm .wk { font-weight: 700; font-size: 13px; }
+  .adm .wcard video, .adm .wcard img { width: 100%; max-height: 420px; border-radius: 12px; background: #000; object-fit: contain; }
+  .adm .wcard details div { white-space: pre-wrap; font-size: 14px; line-height: 1.5; max-height: 420px; overflow: auto; }
+  .adm .pv iframe { width: 100%; height: 520px; border: 1px solid var(--line); border-radius: 12px; margin-top: 8px; background: #fff; }
+  .adm .wact { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; margin-top: auto; } .adm .wact textarea { grid-column: 1 / -1; order: -1; } .adm .st-y { background: #fde68a; color: #713f12; } .adm .st-g { background: #bbf7d0; color: #14532d; } .adm .st-b { background: #bfdbfe; color: #1e3a8a; }
   .adm .composer { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 4px; }
   .adm .file { font-weight: 600; } .adm .file.img img { display: block; max-width: 220px; max-height: 220px; border-radius: 10px; margin-top: 4px; }
   .adm .drop { outline: 3px dashed var(--acc); outline-offset: 2px; }

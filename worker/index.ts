@@ -10,7 +10,7 @@ import { configureTelegram, ensureWebhook, handleTelegram } from './telegram.js'
 import { handleCollab } from './collab.js';
 import { configureMail, handleEmail, type IncomingEmail } from './mail.js';
 import { handleStt } from './stt.js';
-import { handleFileUpload, serveFile, type KV } from './files.js';
+import { handleFileUpload, servePreview, serveFile, type KV } from './files.js';
 import { handleCabinet, type CabinetEnv } from './cabinet.js';
 import { handleFinancePublic } from './finance.js';
 import { handleIntake } from './intake.js';
@@ -89,6 +89,8 @@ export default {
     if (url.pathname === '/api/file') return env.LEADS ? handleFileUpload(env.FILES, env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     const file = url.pathname.match(/^\/f\/([a-f0-9]{20})(?:\/|$)/);
     if (file) return serveFile(env.FILES, file[1]);
+    const prev = url.pathname.match(/^\/p\/([a-f0-9]{20})\/?$/);
+    if (prev) return servePreview(env.FILES, prev[1]);
     if (url.pathname === '/api/stt') return handleStt(env.AI, request, url.searchParams.get('lang') || '');
     if (url.pathname === '/api/chat') return handleChat(env, request, ctx ? (p) => ctx.waitUntil(p) : undefined);
     if (url.pathname === '/api/lead') {
