@@ -188,6 +188,13 @@ const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?
       display: grid;
     }
   }
+  /* Narrow phones (≤400px): logo + languages + 3 buttons must fit without a horizontal scroll. */
+  @media (max-width: 400px) {
+    .tools { gap: 6px; }
+    .lang { padding: 6px 8px; }
+    .icon-btn { width: 34px; height: 34px; }
+    .me-btn { width: 34px; }
+  }
   @media (min-width: 1240px) {
     .nav-mobile {
       display: none !important;

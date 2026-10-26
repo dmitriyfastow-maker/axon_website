@@ -2,44 +2,95 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,follow">
-<title>Bright Oak Family Dental | Your City</title>
+<title>Bright Oak Dental — Gentle, modern dentistry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--a:#2563eb;--ink:#1b1f24;--mute:#5b6470;--bg:#fff;--soft:#f4f6f8}
-*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg)}
-.w{max-width:1040px;margin:0 auto;padding:0 16px}
-.draft{background:#fff4d6;color:#6b4e00;text-align:center;font-size:13px;padding:6px 16px}
-header{display:flex;justify-content:space-between;align-items:center;padding:16px 0;gap:12px}
-.logo{font-weight:800;font-size:20px}.logo span{color:var(--a)}
-.call{background:var(--a);color:#fff;text-decoration:none;padding:10px 16px;border-radius:10px;font-weight:700;white-space:nowrap}
-.hero{background:var(--soft);padding:56px 0}.hero h1{font-size:clamp(28px,5vw,44px);line-height:1.15;margin:0 0 12px}
-.hero p{font-size:18px;color:var(--mute);max-width:620px;margin:0 0 24px}
-.badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}.badges span{background:#fff;border:1px solid #dde2e8;border-radius:99px;padding:4px 12px;font-size:14px}
-.btn{display:inline-block;background:var(--a);color:#fff;text-decoration:none;padding:14px 22px;border-radius:12px;font-weight:700}
-section{padding:48px 0}h2{font-size:28px;margin:0 0 20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.card{border:1px solid #e3e7ec;border-radius:14px;padding:18px}.card h3{margin:0 0 6px;font-size:18px}.card p{margin:0;color:var(--mute)}
-.ph{background:repeating-linear-gradient(45deg,#eef1f4,#eef1f4 10px,#e6eaee 10px,#e6eaee 20px);border-radius:14px;aspect-ratio:4/3;display:grid;place-items:center;color:#7a8490;font-size:14px;text-align:center;padding:8px}
-.special{background:var(--a);color:#fff;border-radius:18px;padding:28px}.special p{color:#ffffffde}
-form{display:grid;gap:12px;max-width:520px}input,select,textarea{font:inherit;padding:12px;border:1px solid #cfd6de;border-radius:10px;width:100%}
-footer{background:var(--ink);color:#c9d1d9;padding:28px 0;font-size:14px}footer a{color:#fff}
+:root{--ink:#0f2233;--mut:#5b6b7a;--bg:#f7fafc;--card:#fff;--a:#1e6fd9;--a2:#e8f1fc;--line:#e3eaf2}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:16px/1.6 Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+img{display:block;max-width:100%}a{color:inherit}
+.w{max-width:1180px;margin:0 auto;padding:0 20px}
+.concept{background:var(--ink);color:#cfe0f2;font-size:13px;text-align:center;padding:8px 16px}.concept a{color:#fff;font-weight:600}
+header{position:sticky;top:0;z-index:10;background:rgba(247,250,252,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:72px;gap:16px}
+.logo{font:600 22px Fraunces,serif;display:flex;align-items:center;gap:10px;text-decoration:none}.logo i{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7fb3f5,var(--a));display:inline-block}
+.links{display:flex;gap:28px;font-weight:500;color:var(--mut)}.links a{text-decoration:none}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--a);color:#fff;text-decoration:none;font-weight:600;padding:14px 22px;border-radius:999px;border:0;cursor:pointer;font-size:16px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.hero{padding:64px 0 40px}.hgrid{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;background:var(--a2);color:var(--a);font-weight:600;font-size:14px;padding:6px 14px;border-radius:999px}
+h1{font:600 clamp(40px,5.6vw,68px)/1.04 Fraunces,serif;letter-spacing:-.02em;margin:18px 0}
+h1 em{font-style:italic;color:var(--a)}
+.lead{font-size:19px;color:var(--mut);max-width:520px;margin:0 0 28px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.trust{display:flex;gap:28px;margin-top:36px;flex-wrap:wrap}.trust b{display:block;font:600 28px Fraunces,serif}.trust span{color:var(--mut);font-size:14px}
+.pic{position:relative}.pic img{border-radius:28px;aspect-ratio:4/5;object-fit:cover;width:100%;box-shadow:0 30px 60px -30px rgba(15,34,51,.45)}
+.float{position:absolute;left:-24px;bottom:32px;background:var(--card);border-radius:18px;padding:16px 18px;box-shadow:0 20px 40px -20px rgba(15,34,51,.35);display:flex;gap:12px;align-items:center;max-width:260px}
+.float i{width:44px;height:44px;border-radius:12px;background:var(--a2);display:grid;place-items:center;font-style:normal;font-size:22px}
+.float small{color:var(--mut);display:block}
+section{padding:72px 0}h2{font:600 clamp(30px,3.6vw,44px)/1.1 Fraunces,serif;letter-spacing:-.01em;margin:0 0 14px}.sub{color:var(--mut);font-size:18px;max-width:620px;margin:0 0 36px}
+.services{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.svc{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;transition:.2s}.svc:hover{transform:translateY(-4px);box-shadow:0 24px 40px -28px rgba(15,34,51,.5)}
+.svc .ic{width:48px;height:48px;border-radius:14px;background:var(--a2);display:grid;place-items:center;margin-bottom:16px}
+.svc h3{margin:0 0 6px;font-size:18px}.svc p{margin:0;color:var(--mut);font-size:15px}.svc .price{margin-top:14px;font-weight:600;color:var(--a)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.split img{border-radius:24px;aspect-ratio:4/3;object-fit:cover;width:100%}
+.steps{counter-reset:s;display:grid;gap:18px;margin-top:8px}.step{display:flex;gap:16px}.step::before{counter-increment:s;content:counter(s);flex:none;width:40px;height:40px;border-radius:50%;background:var(--a);color:#fff;display:grid;place-items:center;font-weight:600}
+.step h4{margin:4px 0 2px;font-size:17px}.step p{margin:0;color:var(--mut)}
+.reviews{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.rev{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px}.rev .st{color:#f5a623;letter-spacing:2px}.rev p{margin:12px 0 16px}.rev b{font-size:15px}.rev span{color:var(--mut);font-size:14px}
+.book{background:linear-gradient(135deg,#0f2233,#16416e);color:#fff;border-radius:32px;padding:56px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.book h2{color:#fff}.book p{color:#c7d8ea}
+form{display:grid;gap:12px}input,select{font:inherit;padding:15px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff}
+input::placeholder{color:#a9bfd6}select option{color:#0f2233}
+.slots{display:flex;gap:8px;flex-wrap:wrap}.slots label{cursor:pointer}.slots input{display:none}.slots span{display:inline-block;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.25)}.slots input:checked+span{background:#fff;color:var(--ink)}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 22px;margin-bottom:12px}.faq summary{font-weight:600;cursor:pointer}.faq p{color:var(--mut);margin:10px 0 0}
+footer{padding:40px 0;color:var(--mut);font-size:14px;border-top:1px solid var(--line)}
+.sticky{display:none}
+@media(max-width:900px){.hgrid,.split,.book{grid-template-columns:1fr}.services{grid-template-columns:repeat(2,minmax(0,1fr))}.reviews{grid-template-columns:1fr}.links{display:none}.book{padding:32px 22px}.float{left:12px}
+.sticky{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:20;justify-content:center}.sticky .btn{width:100%;justify-content:center;box-shadow:0 12px 30px -10px rgba(30,111,217,.6)}body{padding-bottom:76px}}
+@media(max-width:520px){.services{grid-template-columns:1fr}.nav .btn{display:none}}
 </style></head><body>
-<div class="draft">Example design by Vaxo. Fictional business: names, prices and contacts are made up.</div>
-<div class="w"><header><div class="logo">Bright Oak Family <span>Dental</span></div><a class="call" href="tel:(555) 010-0300">Call (555) 010-0300</a></header></div>
-<div class="hero"><div class="w">
-<h1>Gentle dental care for the whole family</h1><p>Check-ups, cleanings and same-week appointments. Request a time online, we confirm by text.</p>
-<div class="badges"><span>New patients welcome</span><span>Kids &amp; adults</span><span>Most insurance accepted</span></div>
-<a class="btn" href="#quote">Request an appointment</a>
-</div></div>
-<section><div class="w"><h2>Services</h2><div class="grid"><div class="card"><h3>Check-up &amp; cleaning</h3><p>Exam, X-rays and a professional cleaning in one visit.</p></div><div class="card"><h3>Fillings &amp; crowns</h3><p>Tooth-colored fillings and crowns that look natural.</p></div><div class="card"><h3>Whitening</h3><p>A brighter smile in a single appointment.</p></div></div></div></section>
-<section><div class="w"><div class="special"><h2>New patient visit</h2><p>Exam, X-rays and cleaning for new patients without insurance at one simple price. Ask in the form below.</p></div></div></section>
-<section><div class="w"><h2>Our office</h2><div class="grid"><div class="ph">Reception photo</div><div class="ph">Treatment room photo</div><div class="ph">Team photo</div></div></div></section>
-<section><div class="w"><h2>What customers say</h2><div class="grid">
-<div class="ph">Your real reviews go here<br>(Google, Yelp, Facebook)</div><div class="ph">Your real reviews go here</div><div class="ph">Your real reviews go here</div>
+<div class="concept">Concept design by Vaxo · fictional clinic, names and prices are examples · <a href="https://vaxogroup.com/?utm_source=example_dental">Want a site like this?</a></div>
+<header><div class="w nav"><a class="logo" href="#"><i></i>Bright Oak Dental</a><nav class="links"><a href="#services">Treatments</a><a href="#how">Your visit</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a></nav><a class="btn" href="#book">Book a visit</a></div></header>
+<main>
+<section class="hero"><div class="w hgrid">
+<div><span class="eyebrow">✦ New patients welcome this week</span>
+<h1>Dentistry that feels <em>calm</em>, not clinical.</h1>
+<p class="lead">Gentle check-ups, invisible aligners and same-day emergency care in a bright, quiet studio. Book online in 60 seconds.</p>
+<div class="cta"><a class="btn" href="#book">Book a free consultation →</a><a class="btn ghost" href="tel:5550100100">(555) 010-0100</a></div>
+<div class="trust"><div><b>4.9★</b><span>Google reviews</span></div><div><b>12 yrs</b><span>in the neighborhood</span></div><div><b>Same day</b><span>emergency slots</span></div></div></div>
+<div class="pic"><img src="/examples/img/dental-hero.webp" alt="Bright modern dental treatment room"><div class="float"><i>🦷</i><div><b>Next free slot</b><small>Today, 4:30 PM · Dr. Lee</small></div></div></div>
+</div></section>
+<section id="services"><div class="w"><h2>Everything for a healthy smile</h2><p class="sub">Clear prices before we start. Most insurance plans accepted.</p>
+<div class="services">
+<div class="svc"><div class="ic">✓</div><h3>Check-up &amp; cleaning</h3><p>Exam, X-rays and a gentle polish in one visit.</p><div class="price">from $89</div></div>
+<div class="svc"><div class="ic">◐</div><h3>Invisible aligners</h3><p>Straighter teeth without metal braces.</p><div class="price">from $2,900</div></div>
+<div class="svc"><div class="ic">✧</div><h3>Whitening</h3><p>Up to 8 shades brighter in a single session.</p><div class="price">from $249</div></div>
+<div class="svc"><div class="ic">⚡</div><h3>Emergency care</h3><p>Pain today? We keep same-day slots open.</p><div class="price">from $120</div></div>
 </div></div></section>
-<section id="quote" style="background:var(--soft)"><div class="w"><h2>Request an appointment</h2>
-<form onsubmit="event.preventDefault();this.innerHTML='<p><b>Thanks!</b> In the live site this request goes straight to your phone by text.</p>'">
-<input placeholder="Your name" required><input placeholder="Phone" type="tel" required>
-<select><option>Check-up &amp; cleaning</option><option>Tooth pain</option><option>Fillings &amp; crowns</option><option>Whitening</option><option>Kids visit</option></select><textarea rows="3" placeholder="Preferred days and times, insurance (optional)"></textarea>
-<button class="btn" style="border:0;cursor:pointer">Send request</button></form></div></section>
-<footer><div class="w">Bright Oak Family Dental · Example city · (555) 010-0300<br>Example by Vaxo · <a href="https://vaxogroup.com">vaxogroup.com</a></div></footer>
+<section id="how"><div class="w split"><img src="/examples/img/dental-2.webp" alt="Dentist explaining a treatment with a tooth model" loading="lazy">
+<div><h2>Your first visit, step by step</h2><p class="sub">No surprises, no pressure — just a clear plan.</p>
+<div class="steps"><div class="step"><div><h4>Book online</h4><p>Pick a time that suits you; reminders come by text.</p></div></div><div class="step"><div><h4>Meet your dentist</h4><p>A relaxed check-up and a digital scan of your smile.</p></div></div><div class="step"><div><h4>Get a written plan</h4><p>Options, timing and exact prices — you decide.</p></div></div></div></div></div></section>
+<section id="reviews"><div class="w"><h2>Patients who stopped being nervous</h2><p class="sub">Sample reviews for this concept.</p>
+<div class="reviews">
+<div class="rev"><div class="st">★★★★★</div><p>“I hadn't been to a dentist in six years. They were so kind I actually booked my next cleaning on the spot.”</p><b>Anna R.</b> <span>· check-up</span></div>
+<div class="rev"><div class="st">★★★★★</div><p>“Aligners done in 11 months. The app reminders and quick check-ins made it easy.”</p><b>Marcus T.</b> <span>· aligners</span></div>
+<div class="rev"><div class="st">★★★★★</div><p>“Broke a tooth on Saturday, was seen the same morning. Painless and fair price.”</p><b>Priya S.</b> <span>· emergency</span></div>
+</div></div></section>
+<section id="book"><div class="w"><div class="book">
+<div><h2>Book a free consultation</h2><p>Choose a time — we confirm by text within 15 minutes during opening hours.</p><p>Mon–Fri 8 AM–7 PM · Sat 9 AM–2 PM</p></div>
+<form onsubmit="event.preventDefault();this.innerHTML='<h3>Request sent ✓</h3><p>On a live site this lands in the clinic’s CRM and the patient gets a text confirmation.</p>'">
+<input placeholder="Full name" required><input type="tel" placeholder="Phone" required>
+<select><option>Check-up &amp; cleaning</option><option>Invisible aligners</option><option>Whitening</option><option>Emergency</option></select>
+<div class="slots"><label><input type="radio" name="t" checked><span>Today 4:30</span></label><label><input type="radio" name="t"><span>Tomorrow 9:00</span></label><label><input type="radio" name="t"><span>Tomorrow 12:15</span></label></div>
+<button class="btn" style="background:#fff;color:#0f2233;justify-content:center">Request appointment</button></form></div></div></section>
+<section id="faq" class="faq"><div class="w"><h2>Questions</h2>
+<details><summary>Do you take my insurance?</summary><p>We accept most PPO plans and offer a membership plan if you have none.</p></details>
+<details><summary>Is it painful?</summary><p>We use numbing gel, gentle tools and you can pause any time — just raise a hand.</p></details>
+<details><summary>Can I pay monthly?</summary><p>Yes, treatments over $500 can be split into monthly payments.</p></details>
+</div></section>
+</main>
+<footer><div class="w">Bright Oak Dental · 120 Oak Street, Your City · Concept by <a href="https://vaxogroup.com/?utm_source=example_dental">Vaxo</a> — websites, apps, ads &amp; AI that bring you clients.</div></footer>
+<div class="sticky"><a class="btn" href="#book">Book a free consultation</a></div>
 </body></html>

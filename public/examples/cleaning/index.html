@@ -2,44 +2,76 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,follow">
-<title>Sunny Nest Cleaning | Your City</title>
+<title>Sunny Nest Cleaning — Book a spotless home in 60 seconds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--a:#0e7490;--ink:#1b1f24;--mute:#5b6470;--bg:#fff;--soft:#f4f6f8}
-*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg)}
-.w{max-width:1040px;margin:0 auto;padding:0 16px}
-.draft{background:#fff4d6;color:#6b4e00;text-align:center;font-size:13px;padding:6px 16px}
-header{display:flex;justify-content:space-between;align-items:center;padding:16px 0;gap:12px}
-.logo{font-weight:800;font-size:20px}.logo span{color:var(--a)}
-.call{background:var(--a);color:#fff;text-decoration:none;padding:10px 16px;border-radius:10px;font-weight:700;white-space:nowrap}
-.hero{background:var(--soft);padding:56px 0}.hero h1{font-size:clamp(28px,5vw,44px);line-height:1.15;margin:0 0 12px}
-.hero p{font-size:18px;color:var(--mute);max-width:620px;margin:0 0 24px}
-.badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}.badges span{background:#fff;border:1px solid #dde2e8;border-radius:99px;padding:4px 12px;font-size:14px}
-.btn{display:inline-block;background:var(--a);color:#fff;text-decoration:none;padding:14px 22px;border-radius:12px;font-weight:700}
-section{padding:48px 0}h2{font-size:28px;margin:0 0 20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.card{border:1px solid #e3e7ec;border-radius:14px;padding:18px}.card h3{margin:0 0 6px;font-size:18px}.card p{margin:0;color:var(--mute)}
-.ph{background:repeating-linear-gradient(45deg,#eef1f4,#eef1f4 10px,#e6eaee 10px,#e6eaee 20px);border-radius:14px;aspect-ratio:4/3;display:grid;place-items:center;color:#7a8490;font-size:14px;text-align:center;padding:8px}
-.special{background:var(--a);color:#fff;border-radius:18px;padding:28px}.special p{color:#ffffffde}
-form{display:grid;gap:12px;max-width:520px}input,select,textarea{font:inherit;padding:12px;border:1px solid #cfd6de;border-radius:10px;width:100%}
-footer{background:var(--ink);color:#c9d1d9;padding:28px 0;font-size:14px}footer a{color:#fff}
+:root{--ink:#10302b;--mut:#587069;--bg:#fffdf8;--a:#0f9d7a;--a2:#e3f6ef;--sun:#ffc53d;--line:#e7ece8}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:16px/1.6 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+img{display:block;max-width:100%}a{color:inherit}.w{max-width:1180px;margin:0 auto;padding:0 20px}
+.concept{background:var(--ink);color:#cfe3dc;font-size:13px;text-align:center;padding:8px 16px}.concept a{color:#fff;font-weight:700}
+header{position:sticky;top:0;z-index:10;background:rgba(255,253,248,.92);backdrop-filter:blur(10px)}
+.nav{display:flex;justify-content:space-between;align-items:center;height:72px}
+.logo{font-weight:800;font-size:21px;text-decoration:none;display:flex;gap:8px;align-items:center}.logo i{width:28px;height:28px;border-radius:9px;background:var(--sun);display:grid;place-items:center;font-style:normal}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--a);color:#fff;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:14px;border:0;cursor:pointer;font:inherit;font-weight:700}
+.btn.out{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.hero{padding:40px 0 64px}.hg{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.pill{display:inline-flex;gap:8px;align-items:center;background:var(--a2);color:var(--a);font-weight:700;font-size:14px;padding:6px 12px;border-radius:999px}
+h1{font-weight:800;font-size:clamp(38px,5.4vw,64px);line-height:1.03;letter-spacing:-.03em;margin:16px 0}
+h1 mark{background:linear-gradient(transparent 60%,var(--sun) 60%);color:inherit}
+.lead{font-size:19px;color:var(--mut);margin:0 0 24px;max-width:520px}
+.rating{display:flex;gap:10px;align-items:center;color:var(--mut);font-size:15px;margin-top:22px}.rating b{color:var(--ink)}
+.calc{background:#fff;border:1px solid var(--line);border-radius:26px;padding:26px;box-shadow:0 30px 60px -35px rgba(16,48,43,.45)}
+.calc h3{margin:0 0 4px;font-size:22px}.calc p{margin:0 0 18px;color:var(--mut);font-size:15px}
+.f{display:grid;gap:6px;margin-bottom:14px}.f label{font-size:14px;font-weight:700}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.seg button{font:inherit;padding:11px 0;border-radius:12px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-weight:700}.seg button.on{border-color:var(--a);background:var(--a2);color:var(--a)}
+.price{display:flex;justify-content:space-between;align-items:end;background:var(--a2);border-radius:16px;padding:16px 18px;margin:6px 0 14px}.price b{font-size:34px;letter-spacing:-.02em}.price s{color:var(--mut);font-size:15px}
+.price small{display:block;color:var(--a);font-weight:700}
+section{padding:72px 0}h2{font-weight:800;font-size:clamp(30px,3.8vw,44px);letter-spacing:-.02em;line-height:1.1;margin:0 0 12px}.sub{color:var(--mut);font-size:18px;margin:0 0 32px;max-width:620px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{border-radius:24px;overflow:hidden;background:#fff;border:1px solid var(--line)}.card img{aspect-ratio:16/10;object-fit:cover;width:100%}.card div{padding:22px}.card h3{margin:0 0 6px}.card p{margin:0;color:var(--mut)}
+.promise{background:var(--ink);color:#fff;border-radius:30px;padding:48px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px}.promise b{display:block;font-size:30px;color:var(--sun)}.promise span{color:#bcd3cc}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.how div{background:var(--a2);border-radius:22px;padding:26px}.how em{font-style:normal;font-weight:800;color:var(--a);font-size:14px}.how h3{margin:6px 0}.how p{margin:0;color:var(--mut)}
+.revs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.rev{border:1px solid var(--line);border-radius:22px;padding:24px;background:#fff}.rev .s{color:#f5a623}
+footer{padding:36px 0;color:var(--mut);font-size:14px;border-top:1px solid var(--line)}
+.mob{display:none}
+@media(max-width:900px){.hg,.promise{grid-template-columns:1fr 1fr}.hg{grid-template-columns:1fr}.cards,.how,.revs{grid-template-columns:1fr}.promise{padding:28px}.nav .out{display:none}
+.mob{display:flex;position:fixed;bottom:12px;left:12px;right:12px;gap:8px;z-index:20}.mob .btn{flex:1}body{padding-bottom:76px}}
 </style></head><body>
-<div class="draft">Example design by Vaxo. Fictional business: names, prices and contacts are made up.</div>
-<div class="w"><header><div class="logo">Sunny Nest <span>Cleaning</span></div><a class="call" href="tel:(555) 010-0100">Call (555) 010-0100</a></header></div>
-<div class="hero"><div class="w">
-<h1>A spotless home, without lifting a finger</h1><p>Friendly local house cleaners. Book a one-time deep clean or a regular visit in under a minute.</p>
-<div class="badges"><span>Insured &amp; background-checked</span><span>No contracts</span><span>Same cleaner every visit</span></div>
-<a class="btn" href="#quote">Get a free quote</a>
-</div></div>
-<section><div class="w"><h2>Services</h2><div class="grid"><div class="card"><h3>Regular cleaning</h3><p>Weekly, every two weeks or monthly. Your home, your schedule.</p></div><div class="card"><h3>Deep cleaning</h3><p>Baseboards, inside the oven and fridge, every corner.</p></div><div class="card"><h3>Move-in / move-out</h3><p>Get the deposit back and start fresh in a clean home.</p></div></div></div></section>
-<section><div class="w"><div class="special"><h2>First clean: 15% off</h2><p>New customers get 15% off the first visit. Just mention it in the form below.</p></div></div></section>
-<section><div class="w"><h2>Before &amp; after</h2><div class="grid"><div class="ph">Kitchen photo</div><div class="ph">Bathroom photo</div><div class="ph">Living room photo</div></div></div></section>
-<section><div class="w"><h2>What customers say</h2><div class="grid">
-<div class="ph">Your real reviews go here<br>(Google, Yelp, Facebook)</div><div class="ph">Your real reviews go here</div><div class="ph">Your real reviews go here</div>
-</div></div></section>
-<section id="quote" style="background:var(--soft)"><div class="w"><h2>Get a free quote</h2>
-<form onsubmit="event.preventDefault();this.innerHTML='<p><b>Thanks!</b> In the live site this request goes straight to your phone by text.</p>'">
-<input placeholder="Your name" required><input placeholder="Phone" type="tel" required>
-<select><option>Regular cleaning</option><option>Deep cleaning</option><option>Move-in / move-out</option><option>Office cleaning</option></select><textarea rows="3" placeholder="Home size, how often, and anything we should know"></textarea>
-<button class="btn" style="border:0;cursor:pointer">Send request</button></form></div></section>
-<footer><div class="w">Sunny Nest Cleaning · Example city · (555) 010-0100<br>Example by Vaxo · <a href="https://vaxogroup.com">vaxogroup.com</a></div></footer>
+<div class="concept">Concept design by Vaxo · fictional business, prices are examples · <a href="https://vaxogroup.com/?utm_source=example_cleaning">Want a site like this?</a></div>
+<header><div class="w nav"><a class="logo" href="#"><i>☀</i>Sunny Nest</a><div style="display:flex;gap:10px"><a class="btn out" href="tel:5550100100">(555) 010-0100</a><a class="btn" href="#calc">Get my price</a></div></div></header>
+<main>
+<section class="hero"><div class="w hg">
+<div><span class="pill">✓ Insured · background-checked · same cleaner every time</span>
+<h1>Come home to a <mark>spotless</mark> place. Every time.</h1>
+<p class="lead">Instant price, online booking, and a 200% happiness guarantee: not perfect? We come back free.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#calc">See my price in 10 sec →</a><a class="btn out" href="#how">How it works</a></div>
+<div class="rating"><span style="color:#f5a623">★★★★★</span><span><b>4.9</b> from 1,200+ homes (sample)</span></div></div>
+<div class="calc" id="calc"><h3>Your instant price</h3><p>No calls, no surprises.</p>
+<div class="f"><label>Bedrooms</label><div class="seg" data-k="bed"><button class="on" data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4+</button></div></div>
+<div class="f"><label>Type of clean</label><div class="seg" data-k="type" style="grid-template-columns:repeat(3,1fr)"><button class="on" data-v="1">Standard</button><button data-v="1.6">Deep</button><button data-v="1.9">Move-out</button></div></div>
+<div class="f"><label>How often</label><div class="seg" data-k="freq" style="grid-template-columns:repeat(3,1fr)"><button data-v="1">Once</button><button class="on" data-v=".85">Biweekly</button><button data-v=".8">Weekly</button></div></div>
+<div class="price"><div><small>First clean −20%</small><b id="p">$0</b></div><s id="o">$0</s></div>
+<a class="btn" style="width:100%" href="#book" onclick="document.getElementById('bk').scrollIntoView({behavior:'smooth'});return false">Book this clean</a></div>
+</div></section>
+<section><div class="w"><h2>Pick your clean</h2><p class="sub">Eco-friendly products included. Pets welcome.</p>
+<div class="cards"><div class="card"><img src="/examples/img/home-hero.webp" alt="Tidy living room with beige sofa" loading="lazy"><div><h3>Standard</h3><p>Kitchen, bathrooms, dusting, floors — the weekly reset.</p></div></div>
+<div class="card"><img src="/examples/img/home-3.webp" alt="Bright modern living room" loading="lazy"><div><h3>Deep clean</h3><p>Inside oven and fridge, baseboards, every corner.</p></div></div>
+<div class="card"><img src="/examples/img/home-2.webp" alt="Empty clean apartment with large windows" loading="lazy"><div><h3>Move-in / move-out</h3><p>Get the deposit back. Landlord-ready checklist.</p></div></div></div></div></section>
+<section><div class="w promise"><div><b>60 sec</b><span>to book online</span></div><div><b>200%</b><span>happiness guarantee</span></div><div><b>$1M</b><span>insurance cover</span></div><div><b>0</b><span>contracts, cancel anytime</span></div></div></section>
+<section id="how"><div class="w"><h2>How it works</h2><p class="sub">Three steps, then you never think about cleaning again.</p>
+<div class="how"><div><em>STEP 1</em><h3>Get your price</h3><p>Choose rooms and frequency — the price is fixed.</p></div><div><em>STEP 2</em><h3>Pick a time</h3><p>Morning, afternoon or weekend. Text reminders.</p></div><div><em>STEP 3</em><h3>Relax</h3><p>Same trusted cleaner every visit. Rate after each clean.</p></div></div></div></section>
+<section><div class="w"><h2>Neighbors love us</h2><p class="sub">Sample reviews for this concept.</p>
+<div class="revs"><div class="rev"><div class="s">★★★★★</div><p>“Booked at midnight, they came at 9 AM. My apartment hasn't looked this good since I moved in.”</p><b>Jess M.</b></div><div class="rev"><div class="s">★★★★★</div><p>“Same cleaner every two weeks, she knows exactly how we like it. Worth every penny.”</p><b>Omar K.</b></div><div class="rev"><div class="s">★★★★★</div><p>“Move-out clean got us the full deposit back. The checklist is gold.”</p><b>Lauren P.</b></div></div></div></section>
+<section id="bk"><div class="w"><div class="calc" style="max-width:640px;margin:0 auto"><h3>Book your clean</h3><p>We confirm by text in 5 minutes.</p>
+<form style="display:grid;gap:10px" onsubmit="event.preventDefault();this.innerHTML='<h3>Booked ✓</h3><p>On a live site this goes into the booking calendar and the customer pays the deposit by card.</p>'">
+<input style="font:inherit;padding:14px;border:1.5px solid #e7ece8;border-radius:12px" placeholder="Name" required><input style="font:inherit;padding:14px;border:1.5px solid #e7ece8;border-radius:12px" type="tel" placeholder="Phone" required><input style="font:inherit;padding:14px;border:1.5px solid #e7ece8;border-radius:12px" placeholder="Address / ZIP" required><button class="btn">Confirm booking</button></form></div></div></section>
+</main>
+<footer><div class="w">Sunny Nest Cleaning · Your City · Concept by <a href="https://vaxogroup.com/?utm_source=example_cleaning">Vaxo</a> — websites, apps, ads &amp; AI that bring you clients.</div></footer>
+<div class="mob"><a class="btn out" href="tel:5550100100">Call</a><a class="btn" href="#calc">Get my price</a></div>
+<script>
+const st={bed:1,type:1,freq:.85},base={1:110,2:140,3:175,4:215};
+function upd(){const full=Math.round(base[st.bed]*st.type*st.freq);document.getElementById('o').textContent='$'+full;document.getElementById('p').textContent='$'+Math.round(full*.8)}
+document.querySelectorAll('.seg').forEach(s=>s.querySelectorAll('button').forEach(b=>b.onclick=()=>{s.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');st[s.dataset.k]=+b.dataset.v;upd()}));upd();
+</script>
 </body></html>

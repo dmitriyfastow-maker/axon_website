@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,follow">
+<title>Lumen — Clean skincare that works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe8;--ink:#2a2420;--mut:#7a6f66;--card:#fbf8f4;--a:#8a5a3c;--line:#e4dbd0}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:16px/1.6 'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+img{display:block;max-width:100%}a{color:inherit}.w{max-width:1240px;margin:0 auto;padding:0 22px}
+.concept{background:var(--ink);color:#d9cfc4;font-size:13px;text-align:center;padding:8px 16px}.concept a{color:#fff;font-weight:700}
+.promo{background:#e9dfd3;text-align:center;font-size:14px;padding:9px}
+header{position:sticky;top:0;z-index:10;background:rgba(244,239,232,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:70px}
+.links{display:flex;gap:24px;font-size:15px}.links a{text-decoration:none}
+.logo{font:400 34px 'Instrument Serif',serif;text-decoration:none;letter-spacing:.02em}
+.icons{justify-self:end;display:flex;gap:18px;align-items:center}
+.cart{position:relative;background:none;border:0;font:inherit;cursor:pointer;display:flex;gap:6px;align-items:center}.cart b{background:var(--ink);color:#fff;border-radius:999px;font-size:12px;min-width:20px;height:20px;display:grid;place-items:center}
+.hero{display:grid;grid-template-columns:1fr 1.15fr;min-height:78vh}
+.hero .txt{padding:72px 56px 72px 22px;display:flex;flex-direction:column;justify-content:center;max-width:620px;margin-left:auto}
+h1{font:400 clamp(48px,6.4vw,92px)/.98 'Instrument Serif',serif;margin:0 0 22px;letter-spacing:-.01em}h1 i{color:var(--a)}
+.hero p{font-size:18px;color:var(--mut);max-width:440px;margin:0 0 30px}
+.hero img{width:100%;height:100%;object-fit:cover}
+.btn{display:inline-flex;justify-content:center;align-items:center;background:var(--ink);color:#fff;text-decoration:none;padding:16px 28px;border-radius:999px;font-weight:700;border:0;cursor:pointer;font:inherit;font-weight:700}
+.btn.light{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.usp{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}.usp div{padding:22px;text-align:center;font-size:15px;border-right:1px solid var(--line)}.usp div:last-child{border:0}
+section{padding:84px 0}h2{font:400 clamp(36px,4.4vw,58px)/1.02 'Instrument Serif',serif;margin:0 0 10px}.sub{color:var(--mut);margin:0 0 36px}
+.head{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.p{background:var(--card);border-radius:20px;padding:14px;display:flex;flex-direction:column}
+.p .img{aspect-ratio:1;border-radius:14px;overflow:hidden;background:#ece3d8;margin-bottom:14px;position:relative}.p .img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}.p:hover .img img{transform:scale(1.05)}
+.tag{position:absolute;top:10px;left:10px;background:#fff;border-radius:999px;font-size:12px;padding:4px 10px;font-weight:700}
+.p h3{margin:0;font-size:17px}.p small{color:var(--mut)}.p .buy{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:14px}.p .buy b{font-size:18px}
+.add{background:var(--ink);color:#fff;border:0;border-radius:999px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer}
+.ritual{display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--card);border-radius:28px;overflow:hidden}.ritual img{width:100%;height:100%;object-fit:cover}.ritual div{padding:56px}
+.ritual ol{padding-left:20px;color:var(--mut)}.ritual li{margin:10px 0}.ritual li b{color:var(--ink)}
+.reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.reviews blockquote{margin:0;background:var(--card);border-radius:20px;padding:26px;font:400 22px/1.35 'Instrument Serif',serif}.reviews cite{display:block;margin-top:14px;font:500 14px 'DM Sans',sans-serif;color:var(--mut)}
+.news{background:var(--ink);color:#f4efe8;border-radius:28px;padding:56px;display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:center}
+.news form{display:flex;gap:10px;flex-wrap:wrap}.news input{font:inherit;padding:15px 18px;border-radius:999px;border:0;min-width:260px}
+footer{padding:40px 0;color:var(--mut);font-size:14px}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--ink);color:#fff;padding:14px 18px;border-radius:14px;opacity:0;transform:translateY(10px);transition:.3s;z-index:30}.toast.on{opacity:1;transform:none}
+@media(max-width:980px){.hero,.ritual{grid-template-columns:1fr}.hero .txt{padding:48px 22px;margin:0}.hero img{max-height:460px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.reviews{grid-template-columns:1fr}.usp{grid-template-columns:repeat(2,1fr)}.links{display:none}.nav{grid-template-columns:1fr auto}.logo{justify-self:start}.ritual div,.news{padding:32px 22px}}
+</style></head><body>
+<div class="concept">Concept design by Vaxo · fictional brand, products and prices are examples · <a href="https://vaxogroup.com/?utm_source=example_skincare">Want a store like this?</a></div>
+<div class="promo">Free shipping over $50 · 30-day “love it or return it”</div>
+<header><div class="w nav"><nav class="links"><a href="#shop">Shop</a><a href="#ritual">Ritual</a><a href="#reviews">Reviews</a></nav><a class="logo" href="#">lumen</a><div class="icons"><button class="cart" type="button" aria-label="Cart">Bag <b id="n">0</b></button></div></div></header>
+<main>
+<section class="hero" style="padding:0"><div class="txt"><small style="letter-spacing:.2em;text-transform:uppercase;color:var(--a)">New · Barrier Repair Serum</small>
+<h1>Skin that looks <i>rested</i>, even when you're not.</h1>
+<p>Five clean formulas, dermatologist-tested, made in small batches. Find your routine in a 30-second quiz.</p>
+<div class="row"><a class="btn" href="#shop">Shop bestsellers</a><a class="btn light" href="#ritual">Take the skin quiz</a></div></div>
+<img src="/examples/img/skin-hero.webp" alt="Skincare bottles on a tray with flowers"></section>
+<div class="usp"><div>🌿 Clean ingredients</div><div>🧪 Dermatologist-tested</div><div>🐰 Cruelty-free</div><div>♻️ Refillable glass</div></div>
+<section id="shop"><div class="w"><div class="head"><div><h2>Bestsellers</h2><p class="sub">Loved by sensitive and busy skin.</p></div><a class="btn light" href="#shop">View all</a></div>
+<div class="grid">
+<div class="p"><div class="img"><span class="tag">Bestseller</span><img src="/examples/img/skin-2.webp" alt="Skincare serum bottles" loading="lazy"></div><h3>Barrier Repair Serum</h3><small>ceramides + niacinamide · 30 ml</small><div class="buy"><b>$38</b><button class="add" type="button">Add</button></div></div>
+<div class="p"><div class="img"><img src="/examples/img/skin-3.webp" alt="Two tubes of cream" loading="lazy"></div><h3>Cloud Gel Cleanser</h3><small>gentle, pH 5.5 · 150 ml</small><div class="buy"><b>$24</b><button class="add" type="button">Add</button></div></div>
+<div class="p"><div class="img"><span class="tag">New</span><img src="/examples/img/skin-hero.webp" alt="Bottles on a tray" loading="lazy"></div><h3>Night Recovery Oil</h3><small>squalane + bakuchiol · 30 ml</small><div class="buy"><b>$42</b><button class="add" type="button">Add</button></div></div>
+<div class="p"><div class="img"><img src="/examples/img/skin-2.webp" alt="Set of skincare products" loading="lazy" style="object-position:20% 50%"></div><h3>The Daily Ritual Set</h3><small>cleanser · serum · SPF · save 20%</small><div class="buy"><b>$79</b><button class="add" type="button">Add</button></div></div>
+</div></div></section>
+<section id="ritual"><div class="w ritual"><img src="/examples/img/skin-3.webp" alt="Cream tubes on a white box" loading="lazy"><div><h2>A routine in three steps</h2><p class="sub">Two minutes, morning and night.</p><ol><li><b>Cleanse</b> — Cloud Gel, never tight.</li><li><b>Treat</b> — Barrier Serum for calm, plump skin.</li><li><b>Protect</b> — SPF by day, Recovery Oil by night.</li></ol><a class="btn" href="#shop">Build my routine</a></div></div></section>
+<section id="reviews"><div class="w"><h2>What our skin club says</h2><p class="sub">Sample reviews for this concept.</p>
+<div class="reviews"><blockquote>“Redness gone in two weeks. I've stopped wearing foundation.”<cite>— Chloe, sensitive skin</cite></blockquote><blockquote>“Finally a cleanser that doesn't strip my skin. Refill pouches are genius.”<cite>— Daniel, combination skin</cite></blockquote><blockquote>“The quiz picked exactly what I needed. Beautiful packaging too.”<cite>— Mei, dry skin</cite></blockquote></div></div></section>
+<section><div class="w news"><div><h2 style="color:#f4efe8">Get 15% off your first order</h2><p style="color:#cfc5ba;margin:0">Skin tips once a week. No spam, unsubscribe anytime.</p></div>
+<form onsubmit="event.preventDefault();this.innerHTML='<b>You\'re in ✓ Your code is on its way.</b>'"><input type="email" placeholder="Your email" required><button class="btn" style="background:#f4efe8;color:#2a2420">Get my code</button></form></div></section>
+</main>
+<footer><div class="w">lumen skincare · Concept by <a href="https://vaxogroup.com/?utm_source=example_skincare">Vaxo</a> — websites, stores, ads &amp; AI that bring you clients.</div></footer>
+<div class="toast" id="t">Added to bag ✓ — on a live store this opens checkout with Apple Pay / card.</div>
+<script>let n=0;document.querySelectorAll('.add').forEach(b=>b.onclick=()=>{n++;document.getElementById('n').textContent=n;const t=document.getElementById('t');t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)});</script>
+</body></html>

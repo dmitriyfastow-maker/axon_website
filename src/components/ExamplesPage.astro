@@ -1,5 +1,6 @@
 ---
-// Examples of work: anonymized demo sites by niche (fictional businesses, clearly labeled). EN / UA / RU.
+// "Our work": real projects first (TrichoTech, AiPro Partners, Vaxo itself), then design benchmarks — concept sites in
+// different styles, clearly labeled as concepts (fictional brands). EN / UA / RU.
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Contact from './Contact.astro';
@@ -7,59 +8,85 @@ import Footer from './Footer.astro';
 import AiPluses from './AiPluses.astro';
 import CrossSell from './CrossSell.astro';
 import { getDict, langPath, type Lang } from '../i18n';
+import tricho from '../assets/images/tricho-laptop.png';
+import aipro from '../assets/images/aipro-laptop.webp';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = getDict(lang);
 const home = langPath(lang);
 const alts = { en: '/examples/', ua: '/ua/examples/', ru: '/ru/examples/' };
-const SITES = [
-  { slug: 'cleaning', color: '#0e7490' },
-  { slug: 'landscaping', color: '#15803d' },
-  { slug: 'dental', color: '#2563eb' },
-];
+const CONCEPTS = ['dental', 'restaurant', 'skincare', 'cleaning', 'coach'] as const;
 
 const C = {
   en: {
-    title: 'Vaxo — Website examples for small businesses', desc: 'See what a Vaxo one-page website looks like: examples for cleaning, landscaping and dental offices.',
-    eyebrow: 'Examples', h1: 'This is what your new website can look like',
-    sub: 'Three sample sites for popular small-business niches. The businesses are made up, the design and the quote form are exactly what you get.',
-    note: 'Fictional businesses: names, prices and phone numbers are examples.',
-    open: 'Open example →', cta: 'Want one like this? $199 →',
-    sites: [
-      { niche: 'House cleaning', name: 'Sunny Nest Cleaning', what: 'Quote form, first-visit offer, before & after gallery.' },
-      { niche: 'Landscaping', name: 'Green Acre Landscaping', what: 'Free estimate form, seasonal special, project photos.' },
-      { niche: 'Dental office', name: 'Bright Oak Family Dental', what: 'Appointment request, new patient offer, office photos.' },
+    title: 'Vaxo — Our work: real projects and design benchmarks', desc: 'Real Vaxo projects (AI medical platform, partner platform, our own AI-powered site) and concept sites for clinics, restaurants, stores, services and personal brands.',
+    eyebrow: 'Our work', h1: 'Real projects and the level we build at',
+    sub: 'First — systems we built and run. Below — concept sites in five different styles, so you can see the quality your site gets.',
+    realH: 'Real projects', realSub: 'Built by our team and working today.',
+    real: [
+      { tag: 'MedTech · AI platform', name: 'TrichoTech', what: 'An AI platform that helps dermatologists and trichologists diagnose faster: image analysis, treatment plans, patient records.', href: `${home}#cases`, cta: 'See the case →' },
+      { tag: 'Partner platform · 2024', name: 'AiPro Partners', what: 'A partner program for digital marketplaces: partners, referral links, analytics and a promo store in one platform.', href: `${home}#cases`, cta: 'See the case →' },
+      { tag: 'Our own system', name: 'Vaxo + Vax AI', what: 'This site: an AI manager that answers in seconds 24/7, client cabinets, project chats, invoices and a CRM — the same tech we set up for clients.', href: home, cta: 'Try Vax in the corner ↘' },
     ],
-    incl: 'Every site includes', inclList: ['Works great on phones', 'Click-to-call button', 'Requests sent straight to your phone', 'Your real photos and reviews', 'Ready in 7 days'],
+    conH: 'Design benchmarks', conSub: 'Concept sites in different styles. Brands are fictional — your site is designed for your business, with your photos and texts.',
+    concepts: [
+      ['Clinic · premium', 'Bright Oak Dental', 'Online booking with time slots, prices, reviews, sticky “Book” on phones.'],
+      ['Restaurant · dark luxury', 'Ember & Salt', 'Full-screen photography, menu, chef\'s table, table reservations.'],
+      ['Online store · minimal', 'Lumen Skincare', 'Product catalog, cart, routine quiz, email signup with a discount.'],
+      ['Home services · local', 'Sunny Nest Cleaning', 'Instant price calculator, booking, guarantee, call button.'],
+      ['Personal brand · bold', 'Maya Reed Coaching', 'Programs with prices, results, story, free-call funnel.'],
+    ],
+    open: 'Open the site →', concept: 'Concept',
+    incl: 'Every site includes', inclList: ['Fast and made for phones', 'Basic SEO and Google Business Profile', 'Requests straight to your phone and CRM', 'AI chat on request', 'Launch from 7 days'],
+    cta: 'Get a free quote for your site →',
   },
   ru: {
-    title: 'Vaxo — Примеры сайтов для малого бизнеса', desc: 'Как выглядит сайт-визитка от Vaxo: примеры для клининга, ландшафтного дизайна и стоматологии.',
-    eyebrow: 'Примеры работ', h1: 'Так может выглядеть ваш новый сайт',
-    sub: 'Три примера для популярных ниш малого бизнеса. Бизнесы вымышленные, а дизайн и форма заявки — ровно то, что вы получите.',
-    note: 'Бизнесы вымышленные: названия, цены и телефоны — для примера. Сайты на английском (для клиентов в США).',
-    open: 'Открыть пример →', cta: 'Хочу такой же — $199 →',
-    sites: [
-      { niche: 'Клининг', name: 'Sunny Nest Cleaning', what: 'Форма расчёта, скидка на первую уборку, фото «до и после».' },
-      { niche: 'Ландшафт', name: 'Green Acre Landscaping', what: 'Форма бесплатной оценки, сезонное предложение, фото работ.' },
-      { niche: 'Стоматология', name: 'Bright Oak Family Dental', what: 'Запись на приём, предложение для новых пациентов, фото клиники.' },
+    title: 'Vaxo — Наши работы: реальные проекты и эталоны дизайна', desc: 'Реальные проекты Vaxo (ИИ-платформа для медицины, партнёрская платформа, наш сайт с ИИ) и концепт-сайты для клиник, ресторанов, магазинов, услуг и личных брендов.',
+    eyebrow: 'Наши работы', h1: 'Реальные проекты и уровень, на котором мы делаем',
+    sub: 'Сначала — системы, которые мы построили и которые работают. Ниже — концепт-сайты в пяти разных стилях: так выглядит качество, которое получит ваш сайт.',
+    realH: 'Реальные проекты', realSub: 'Сделаны нашей командой и работают сегодня.',
+    real: [
+      { tag: 'Медтех · ИИ-платформа', name: 'TrichoTech', what: 'ИИ-платформа, которая помогает дерматологам и трихологам ставить диагноз быстрее: анализ снимков, планы лечения, карты пациентов.', href: `${home}#cases`, cta: 'Смотреть кейс →' },
+      { tag: 'Партнёрская платформа · 2024', name: 'AiPro Partners', what: 'Партнёрская программа для маркетплейсов цифровых товаров: партнёры, реферальные ссылки, аналитика и промо-магазин в одной платформе.', href: `${home}#cases`, cta: 'Смотреть кейс →' },
+      { tag: 'Наша собственная система', name: 'Vaxo + ИИ-менеджер Vax', what: 'Этот сайт: ИИ-менеджер отвечает за секунды 24/7, кабинеты клиентов, чаты проектов, счета и CRM — та же технология, что мы ставим клиентам.', href: home, cta: 'Попробуйте Vax в углу ↘' },
     ],
-    incl: 'В каждом сайте', inclList: ['Удобно с телефона', 'Звонок в один клик', 'Заявки сразу на ваш телефон', 'Ваши настоящие фото и отзывы', 'Готово за 7 дней'],
+    conH: 'Эталоны дизайна', conSub: 'Концепт-сайты в разных стилях. Бренды вымышленные — ваш сайт делаем под ваш бизнес, с вашими фото и текстами.',
+    concepts: [
+      ['Клиника · премиум', 'Bright Oak Dental', 'Онлайн-запись со слотами времени, цены, отзывы, кнопка «Записаться» на телефоне.'],
+      ['Ресторан · тёмный люкс', 'Ember & Salt', 'Фото на весь экран, меню, стол шефа, бронь столика.'],
+      ['Интернет-магазин · минимализм', 'Lumen Skincare', 'Каталог, корзина, подбор ухода, подписка со скидкой.'],
+      ['Услуги · локальный бизнес', 'Sunny Nest Cleaning', 'Калькулятор цены за 10 секунд, бронь, гарантия, кнопка звонка.'],
+      ['Личный бренд · смелый', 'Maya Reed Coaching', 'Программы с ценами, результаты, история, воронка на бесплатный созвон.'],
+    ],
+    open: 'Открыть сайт →', concept: 'Концепт',
+    incl: 'В каждом сайте', inclList: ['Быстрый и удобный с телефона', 'Базовое SEO и Google-карточка', 'Заявки сразу на телефон и в CRM', 'ИИ-чат по желанию', 'Запуск от 7 дней'],
+    cta: 'Бесплатная оценка вашего сайта →',
   },
   ua: {
-    title: 'Vaxo — Приклади сайтів для малого бізнесу', desc: 'Який вигляд має сайт-візитка від Vaxo: приклади для клінінгу, ландшафтного дизайну і стоматології.',
-    eyebrow: 'Приклади робіт', h1: 'Ось який вигляд може мати ваш новий сайт',
-    sub: 'Три приклади для популярних ніш малого бізнесу. Бізнеси вигадані, а дизайн і форма заявки — саме те, що ви отримаєте.',
-    note: 'Бізнеси вигадані: назви, ціни й телефони — для прикладу. Сайти англійською (для клієнтів у США).',
-    open: 'Відкрити приклад →', cta: 'Хочу такий самий — $199 →',
-    sites: [
-      { niche: 'Клінінг', name: 'Sunny Nest Cleaning', what: 'Форма розрахунку, знижка на перше прибирання, фото «до і після».' },
-      { niche: 'Ландшафт', name: 'Green Acre Landscaping', what: 'Форма безкоштовної оцінки, сезонна пропозиція, фото робіт.' },
-      { niche: 'Стоматологія', name: 'Bright Oak Family Dental', what: 'Запис на прийом, пропозиція для нових пацієнтів, фото клініки.' },
+    title: 'Vaxo — Наші роботи: реальні проєкти та еталони дизайну', desc: 'Реальні проєкти Vaxo (ШІ-платформа для медицини, партнерська платформа, наш сайт із ШІ) і концепт-сайти для клінік, ресторанів, магазинів, послуг та особистих брендів.',
+    eyebrow: 'Наші роботи', h1: 'Реальні проєкти й рівень, на якому ми робимо',
+    sub: 'Спершу — системи, які ми побудували і які працюють. Нижче — концепт-сайти у п’яти різних стилях: така якість буде у вашого сайту.',
+    realH: 'Реальні проєкти', realSub: 'Зроблені нашою командою і працюють сьогодні.',
+    real: [
+      { tag: 'Медтех · ШІ-платформа', name: 'TrichoTech', what: 'ШІ-платформа, що допомагає дерматологам і трихологам ставити діагноз швидше: аналіз знімків, плани лікування, картки пацієнтів.', href: `${home}#cases`, cta: 'Дивитися кейс →' },
+      { tag: 'Партнерська платформа · 2024', name: 'AiPro Partners', what: 'Партнерська програма для маркетплейсів цифрових товарів: партнери, реферальні посилання, аналітика і промо-магазин в одній платформі.', href: `${home}#cases`, cta: 'Дивитися кейс →' },
+      { tag: 'Наша власна система', name: 'Vaxo + ШІ-менеджер Vax', what: 'Цей сайт: ШІ-менеджер відповідає за секунди 24/7, кабінети клієнтів, чати проєктів, рахунки і CRM — та сама технологія, яку ми ставимо клієнтам.', href: home, cta: 'Спробуйте Vax у куті ↘' },
     ],
-    incl: 'У кожному сайті', inclList: ['Зручно з телефона', 'Дзвінок в один клік', 'Заявки одразу на ваш телефон', 'Ваші справжні фото й відгуки', 'Готово за 7 днів'],
+    conH: 'Еталони дизайну', conSub: 'Концепт-сайти в різних стилях. Бренди вигадані — ваш сайт робимо під ваш бізнес, з вашими фото й текстами.',
+    concepts: [
+      ['Клініка · преміум', 'Bright Oak Dental', 'Онлайн-запис зі слотами часу, ціни, відгуки, кнопка «Записатися» на телефоні.'],
+      ['Ресторан · темний люкс', 'Ember & Salt', 'Фото на весь екран, меню, стіл шефа, бронювання столика.'],
+      ['Інтернет-магазин · мінімалізм', 'Lumen Skincare', 'Каталог, кошик, підбір догляду, підписка зі знижкою.'],
+      ['Послуги · локальний бізнес', 'Sunny Nest Cleaning', 'Калькулятор ціни за 10 секунд, бронювання, гарантія, кнопка дзвінка.'],
+      ['Особистий бренд · сміливий', 'Maya Reed Coaching', 'Програми з цінами, результати, історія, воронка на безкоштовний дзвінок.'],
+    ],
+    open: 'Відкрити сайт →', concept: 'Концепт',
+    incl: 'У кожному сайті', inclList: ['Швидкий і зручний з телефона', 'Базове SEO і Google-картка', 'Заявки одразу на телефон і в CRM', 'ШІ-чат за бажанням', 'Запуск від 7 днів'],
+    cta: 'Безкоштовна оцінка вашого сайту →',
   },
 }[lang];
+const realImg = [tricho.src, aipro.src, '/examples/thumbs/vaxo.jpg'];
 ---
 
 <Base lang={lang} title={C.title} description={C.desc} path={alts[lang]} alts={alts}>
@@ -73,21 +100,42 @@ const C = {
       </div>
     </section>
 
-    <section class="list">
-      <div class="in grid">
-        {C.sites.map((s, i) => (
-          <a class="card" href={`/examples/${SITES[i].slug}/`} target="_blank" rel="noopener">
-            <div class="thumb" style={`--c:${SITES[i].color}`}>
-              <span class="bar"></span><span class="h"></span><span class="l"></span><span class="b"></span>
-            </div>
-            <div class="niche">{s.niche}</div>
-            <h2>{s.name}</h2>
-            <p>{s.what}</p>
-            <span class="open">{C.open}</span>
-          </a>
-        ))}
+    <section class="block">
+      <div class="in">
+        <h2 class="h2">{C.realH}</h2>
+        <p class="bsub">{C.realSub}</p>
+        <div class="real">
+          {C.real.map((r, i) => (
+            <a class="rcard" href={r.href} data-vax-chat={i === 2 ? '' : undefined}>
+              <div class="rimg"><img src={realImg[i]} alt={r.name} loading="lazy" /></div>
+              <div class="rtxt">
+                <div class="tag">{r.tag}</div>
+                <h3>{r.name}</h3>
+                <p>{r.what}</p>
+                <span class="open">{r.cta}</span>
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
-      <p class="in note">{C.note}</p>
+    </section>
+
+    <section class="block">
+      <div class="in">
+        <h2 class="h2">{C.conH}</h2>
+        <p class="bsub">{C.conSub}</p>
+        <div class="grid">
+          {C.concepts.map(([style, name, what], i) => (
+            <a class="card" href={`/examples/${CONCEPTS[i]}/`} target="_blank" rel="noopener">
+              <div class="thumb"><img src={`/examples/thumbs/${CONCEPTS[i]}.jpg`} alt={name} loading="lazy" /><span class="badge">{C.concept}</span></div>
+              <div class="niche">{style}</div>
+              <h3>{name}</h3>
+              <p>{what}</p>
+              <span class="open">{C.open}</span>
+            </a>
+          ))}
+        </div>
+      </div>
     </section>
 
     <section class="incl">
@@ -107,26 +155,34 @@ const C = {
 
 <style>
   .in { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
-  .hero { padding: 120px 0 40px; }
-  h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0; max-width: 18ch; }
-  .sub { color: var(--mut); font-size: 19px; max-width: 58ch; margin: 0; }
-  .list { padding: 16px 0 48px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-  .card { display: block; background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 16px 16px 22px; color: inherit; text-decoration: none; transition: transform .2s, border-color .2s; }
+  .hero { padding: 120px 0 24px; }
+  h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0; max-width: 20ch; }
+  .sub { color: var(--mut); font-size: 19px; max-width: 62ch; margin: 0; }
+  .block { padding: 40px 0; }
+  .bsub { color: var(--mut); margin: 6px 0 22px; max-width: 70ch; }
+  .real { display: grid; gap: 16px; }
+  .rcard { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 0; background: var(--surf); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; color: inherit; text-decoration: none; transition: transform .2s, border-color .2s; }
+  .rcard:hover { transform: translateY(-3px); border-color: var(--acc); }
+  .rimg { background: var(--surf2, #f1ece3); display: grid; place-items: center; padding: 18px; min-height: 240px; }
+  .rimg img { width: 100%; height: 100%; max-height: 300px; object-fit: contain; border-radius: 12px; }
+  .rtxt { padding: 26px 28px; display: flex; flex-direction: column; justify-content: center; }
+  .rtxt h3 { font-size: 26px; margin: 6px 0 8px; }
+  .rtxt p { color: var(--mut); margin: 0 0 14px; }
+  .tag, .niche { font-family: var(--mono); font-size: 13px; color: var(--accText); text-transform: uppercase; letter-spacing: .04em; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+  .card { display: block; background: var(--surf); border: 1px solid var(--line); border-radius: 20px; padding: 12px 12px 22px; color: inherit; text-decoration: none; transition: transform .2s, border-color .2s; }
   .card:hover { transform: translateY(-3px); border-color: var(--acc); }
-  .thumb { aspect-ratio: 16 / 10; border-radius: 12px; background: #f4f6f8; position: relative; overflow: hidden; margin-bottom: 16px; }
-  .thumb span { position: absolute; left: 8%; border-radius: 6px; }
-  .thumb .bar { top: 0; left: 0; right: 0; height: 12%; background: #fff; border-radius: 0; }
-  .thumb .h { top: 26%; width: 62%; height: 12%; background: #1b1f24; opacity: .85; }
-  .thumb .l { top: 44%; width: 48%; height: 6%; background: #9aa3ad; }
-  .thumb .b { top: 60%; width: 26%; height: 12%; background: var(--c); }
-  .niche { font-family: var(--mono); font-size: 13px; color: var(--accText); text-transform: uppercase; letter-spacing: .04em; }
-  .card h2 { font-size: 21px; margin: 6px 0 8px; }
-  .card p { color: var(--mut); margin: 0 0 14px; }
+  .thumb { aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden; position: relative; margin-bottom: 14px; background: #eee; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform .6s; }
+  .card:hover .thumb img { transform: scale(1.04); }
+  .badge { position: absolute; top: 10px; left: 10px; background: rgba(23, 21, 15, .82); color: #fff; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
+  .card .niche, .card h3, .card p, .card .open { margin-left: 6px; margin-right: 6px; }
+  .card h3 { font-size: 21px; margin-top: 6px; margin-bottom: 8px; }
+  .card p { color: var(--mut); margin-top: 0; margin-bottom: 14px; }
   .open { color: var(--accText); font-weight: 600; }
-  .note { color: var(--mut); font-size: 14px; margin-top: 16px; }
-  .incl { padding: 16px 0 72px; }
+  .incl { padding: 24px 0 72px; }
   .incl ul { list-style: none; padding: 0; margin: 20px 0 28px; display: flex; flex-wrap: wrap; gap: 10px; }
   .incl li { background: var(--surf); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; }
   .cta { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 600; padding: 14px 22px; border-radius: 999px; text-decoration: none; }
+  @media (max-width: 760px) { .rcard { grid-template-columns: 1fr; } .rimg { min-height: 180px; } .rtxt { padding: 20px; } }
 </style>

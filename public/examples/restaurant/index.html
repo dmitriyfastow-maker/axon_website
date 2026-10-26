@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,follow">
+<title>Ember &amp; Salt — Wood-fire tasting kitchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0b09;--ink:#f3ead9;--mut:#b5a88f;--gold:#c9a25d;--line:rgba(243,234,217,.14)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:16px/1.65 Manrope,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+img{display:block;max-width:100%}a{color:inherit}.w{max-width:1200px;margin:0 auto;padding:0 22px}
+.concept{background:#1c1712;color:var(--mut);font-size:13px;text-align:center;padding:8px 16px}.concept a{color:var(--gold);font-weight:700}
+header{position:absolute;left:0;right:0;z-index:5}.nav{display:flex;justify-content:space-between;align-items:center;height:84px}
+.logo{font:600 26px 'Cormorant Garamond',serif;letter-spacing:.06em;text-decoration:none}.logo span{color:var(--gold)}
+.links{display:flex;gap:30px;font-size:14px;letter-spacing:.14em;text-transform:uppercase}.links a{text-decoration:none;opacity:.85}
+.btn{display:inline-block;border:1px solid var(--gold);color:var(--ink);padding:14px 26px;text-decoration:none;letter-spacing:.14em;text-transform:uppercase;font-size:13px;font-weight:700;background:transparent;cursor:pointer;font-family:inherit}
+.btn.solid{background:var(--gold);color:#1a140c}
+.hero{position:relative;min-height:92vh;display:flex;align-items:flex-end;padding-bottom:80px}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,9,.55),rgba(13,11,9,.1) 40%,var(--bg))}
+.hero .w{position:relative;z-index:2}
+.kicker{color:var(--gold);letter-spacing:.3em;text-transform:uppercase;font-size:13px}
+h1{font:500 clamp(48px,8vw,112px)/.95 'Cormorant Garamond',serif;margin:18px 0 22px;max-width:12ch}
+h1 i{color:var(--gold)}
+.hero p{max-width:480px;color:var(--mut);font-size:18px;margin:0 0 30px}
+section{padding:96px 0}h2{font:500 clamp(36px,4.6vw,60px)/1.05 'Cormorant Garamond',serif;margin:0 0 18px}
+.intro{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}.intro p{color:var(--mut);font-size:18px}
+.stack{display:grid;grid-template-columns:1fr 1fr;gap:16px}.stack img{aspect-ratio:3/4;object-fit:cover;width:100%}.stack img:last-child{margin-top:48px}
+.menu{border-top:1px solid var(--line)}.course{display:grid;grid-template-columns:120px 1fr auto;gap:24px;padding:26px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.course small{color:var(--gold);letter-spacing:.2em;text-transform:uppercase;font-size:12px}.course h3{font:500 28px 'Cormorant Garamond',serif;margin:0}.course p{margin:4px 0 0;color:var(--mut)}.course b{font:600 24px 'Cormorant Garamond',serif;color:var(--gold)}
+.tasting{display:grid;grid-template-columns:1.1fr 1fr;gap:0;border:1px solid var(--line)}.tasting img{width:100%;height:100%;object-fit:cover;min-height:420px}
+.tasting div{padding:56px}.tasting ul{list-style:none;padding:0;margin:24px 0;color:var(--mut)}.tasting li{padding:8px 0;border-bottom:1px dashed var(--line)}
+.quote{text-align:center}.quote blockquote{font:italic 500 clamp(28px,3.4vw,44px)/1.25 'Cormorant Garamond',serif;max-width:900px;margin:0 auto 18px}.quote cite{color:var(--gold);font-style:normal;letter-spacing:.2em;text-transform:uppercase;font-size:13px}
+.reserve{background:#17120d;border:1px solid var(--line);padding:56px;display:grid;grid-template-columns:1fr 1.2fr;gap:48px}
+form{display:grid;grid-template-columns:1fr 1fr;gap:14px}form .full{grid-column:1/-1}
+input,select{font:inherit;padding:15px;background:transparent;border:1px solid var(--line);color:var(--ink)}select option{color:#111}input::placeholder{color:var(--mut)}
+footer{padding:48px 0;color:var(--mut);font-size:14px;border-top:1px solid var(--line)}
+@media(max-width:900px){.links{display:none}.intro,.tasting,.reserve{grid-template-columns:1fr}.reserve,.tasting div{padding:30px 22px}.course{grid-template-columns:1fr auto}.course small{grid-column:1/-1}form{grid-template-columns:1fr}.hero{min-height:80vh}}
+</style></head><body>
+<div class="concept">Concept design by Vaxo · fictional restaurant · <a href="https://vaxogroup.com/?utm_source=example_restaurant">Want a site like this?</a></div>
+<header><div class="w nav"><a class="logo" href="#">EMBER <span>&amp;</span> SALT</a><nav class="links"><a href="#menu">Menu</a><a href="#tasting">Tasting</a><a href="#reserve">Reserve</a></nav><a class="btn" href="#reserve">Book a table</a></div></header>
+<main>
+<section class="hero"><img src="/examples/img/food-hero.webp" alt="Candle-lit table with wine and plated dishes"><div class="w">
+<div class="kicker">Wood-fire tasting kitchen · since 2019</div>
+<h1>Slow fire. <i>Bold</i> flavour.</h1>
+<p>Seasonal plates cooked over oak embers, natural wines and a seven-course chef's table every Friday.</p>
+<a class="btn solid" href="#reserve">Reserve tonight</a> &nbsp; <a class="btn" href="#menu">See the menu</a>
+</div></section>
+<section><div class="w intro"><div><div class="kicker">Our kitchen</div><h2>Everything touches the fire.</h2><p>Our chefs cook on a single open hearth. Vegetables from two local farms, fish delivered at dawn, bread proofed for 48 hours. The menu changes when the season does.</p><a class="btn" href="#tasting">The chef's table →</a></div>
+<div class="stack"><img src="/examples/img/food-3.webp" alt="Seared beef with grilled vegetables" loading="lazy"><img src="/examples/img/food-2.webp" alt="Colourful plated starter" loading="lazy"></div></div></section>
+<section id="menu"><div class="w"><div class="kicker">À la carte</div><h2>Tonight's menu</h2>
+<div class="menu">
+<div class="course"><small>Start</small><div><h3>Ember-roasted beets</h3><p>smoked labneh, hazelnut, burnt honey</p></div><b>$16</b></div>
+<div class="course"><small>Sea</small><div><h3>Line-caught bream</h3><p>fennel, brown butter, sea herbs</p></div><b>$34</b></div>
+<div class="course"><small>Fire</small><div><h3>Dry-aged ribeye</h3><p>bone marrow, charred leek, black garlic</p></div><b>$52</b></div>
+<div class="course"><small>Sweet</small><div><h3>Smoked chocolate</h3><p>salted caramel, oak ice cream</p></div><b>$14</b></div>
+</div></div></section>
+<section id="tasting"><div class="w tasting"><img src="/examples/img/food-4.webp" alt="Tasting menu course on a dark plate" loading="lazy"><div><div class="kicker">Fridays · 8 seats</div><h2>Chef's table</h2><p style="color:var(--mut)">Seven courses at the hearth, with the chef explaining every plate.</p><ul><li>Seven seasonal courses</li><li>Optional natural-wine pairing</li><li>Two seatings: 6:30 and 9:00 PM</li></ul><a class="btn solid" href="#reserve">$95 per guest — reserve</a></div></div></section>
+<section class="quote"><div class="w"><blockquote>“The kind of dinner you keep talking about for a week.”</blockquote><cite>Sample review for this concept</cite></div></section>
+<section id="reserve"><div class="w reserve"><div><div class="kicker">Reservations</div><h2>Book a table</h2><p style="color:var(--mut)">Tue–Sun, 5 PM–11 PM · 48 Ember Lane<br>Groups of 7+ — private dining on request.</p></div>
+<form onsubmit="event.preventDefault();this.innerHTML='<h3 class=full>Table requested ✓</h3><p class=full style=color:#b5a88f>On a live site this goes to the booking system and the guest gets an SMS with a deposit link.</p>'">
+<input placeholder="Name" required><input type="tel" placeholder="Phone" required><input type="date" required><select><option>2 guests</option><option>3 guests</option><option>4 guests</option><option>5–6 guests</option></select>
+<select class="full"><option>À la carte</option><option>Chef's table (Friday)</option></select><button class="btn solid full">Request a table</button></form></div></section>
+</main>
+<footer><div class="w">Ember &amp; Salt · 48 Ember Lane, Your City · Concept by <a href="https://vaxogroup.com/?utm_source=example_restaurant">Vaxo</a> — websites, apps, ads &amp; AI that bring you clients.</div></footer>
+</body></html>
