@@ -163,6 +163,7 @@ const T = {
 
 <script>
   import { attachMic, MIC_SVG } from '../scripts/voice';
+  import { grow } from '../scripts/compose';
   import { attachFiles, linkify } from '../scripts/attach';
   type R = Record<string, any>;
   const root = document.querySelector<HTMLElement>('[data-deals]');
@@ -297,6 +298,7 @@ const T = {
         el('details', {}, el('summary', {}, T.log), el('ol', { class: 'log' }, ...events.map((e) => el('li', {}, el('small', {}, when(e.at)), ' ', e.text || e.kind)))));
       const pl = () => (document.documentElement.lang === 'uk' ? 'ua' : document.documentElement.lang || 'en');
       attachMic(dMic, ta, pl); attachFiles(dClip, ta, pl, composer as HTMLElement);
+      grow(ta as HTMLTextAreaElement, () => (composer.querySelector('button.cta, button[type=submit]') as HTMLButtonElement | null)?.click());
       const ws = el('div', { class: 'ws' }, el('div', { class: 'chat' }, thread, composer), side);
       requestAnimationFrame(() => (thread.scrollTop = thread.scrollHeight));
       return el('div', { class: 'client open' }, head, ws);

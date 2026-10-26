@@ -93,17 +93,27 @@ export async function relayEmail(db: DB, leadId: number, sender: string, text: s
   await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
-    body: JSON.stringify({ from: fromAddr, to: [l.email_addr], subject: `Your Vaxo project #${leadId}`, text: text.slice(0, 8000) + link }),
+    body: JSON.stringify({ from: fromAddr, to: [l.email_addr], subject: `Your Vaxo project #${leadId}`, text: text.slice(0, 8000) + link, html: brandHtml(text.slice(0, 8000) + link) }),
   }).catch(() => null);
 }
 
 /** Any letter from hello@vaxogroup.com (sign-in codes, notices). False when Resend is not connected yet. */
+const escHtml = (t: string) => t.replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
+/** Letters get the Vax avatar header and the brand look; the plain text is always sent along. */
+export function brandHtml(text: string): string {
+  return `<div style="background:#f6f2ea;padding:24px 12px;font-family:Arial,Helvetica,sans-serif"><div style="max-width:520px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;border:1px solid #e8e1d3">` +
+    `<div style="background:#e4a93f;padding:20px;text-align:center"><img src="https://vaxogroup.com/mascot/vax-avatar.png" width="88" height="88" alt="Vax" style="border-radius:50%;display:block;margin:0 auto 8px;border:4px solid #fff"><div style="font-size:22px;font-weight:800;color:#17150f">Vaxo<span style="color:#fff">.</span></div></div>` +
+    `<div style="padding:24px;font-size:16px;line-height:1.6;color:#17150f">${escHtml(text).replace(/\n/g, '<br>')}</div>` +
+    `<div style="padding:14px 24px;background:#faf7f1;color:#8a8372;font-size:12px;text-align:center">Vaxo · <a href="https://vaxogroup.com" style="color:#8a8372">vaxogroup.com</a></div></div></div>`;
+}
+
 export async function sendMail(to: string, subject: string, text: string, html?: string): Promise<boolean> {
   if (!resendKey || !fromAddr) return false;
+  html = html ?? brandHtml(text);
   const r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
-    body: JSON.stringify({ from: fromAddr, to: [to], subject, text, ...(html ? { html } : {}) }),
+    body: JSON.stringify({ from: fromAddr, to: [to], subject, text, html }),
   }).catch(() => null);
   return !!r?.ok;
 }

@@ -13,6 +13,7 @@ import { handleStt } from './stt.js';
 import { handleFileUpload, servePreview, serveFile, type KV } from './files.js';
 import { handleCabinet, type CabinetEnv } from './cabinet.js';
 import { handleInvoicePublic } from './invoices.js';
+import { monoCheck, monoPay, monoWebhook } from './mono.js';
 import { handleFinancePublic } from './finance.js';
 import { handleIntake } from './intake.js';
 import { notifyOwnerChat } from './ownerchat.js';
@@ -24,6 +25,7 @@ interface Env extends LeadEnv, CabinetEnv {
   ADMIN_TOKEN?: string;
   AI?: AiBinding;
   FILES?: KV;
+  MONO_ACQ_TOKEN?: string;
 }
 
 const ENV_KEYS = ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'RESEND_API_KEY', 'LEAD_EMAIL_TO', 'LEAD_EMAIL_FROM'] as const;
@@ -72,7 +74,7 @@ export default {
     }
     if (url.pathname === '/api/admin' || url.pathname.startsWith('/api/admin/')) {
       if (!env.LEADS) return json(503, { ok: false });
-      return handleAdminApi(env.LEADS, request, env.ADMIN_TOKEN, url.pathname.slice('/api/admin'.length).replace(/^\//, ''), notify, env.AI);
+      return handleAdminApi(env.LEADS, request, env.ADMIN_TOKEN, url.pathname.slice('/api/admin'.length).replace(/^\//, ''), notify, env.AI, !!env.MONO_ACQ_TOKEN);
     }
     if (url.pathname === '/api/collab') {
       if (!env.LEADS) return json(503, { ok: false });
@@ -88,7 +90,13 @@ export default {
     if (url.pathname === '/api/fin') return env.LEADS ? handleFinancePublic(env.LEADS, request, env.AI, notify) : json(503, { ok: false });
     if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify) : json(503, { ok: false });
     const invm = url.pathname.match(/^\/api\/invoice\/([a-f0-9]{32})$/);
-    if (invm) return env.LEADS ? handleInvoicePublic(env.LEADS, invm[1]) : json(503, { ok: false });
+    if (invm) return env.LEADS ? handleInvoicePublic(env.LEADS, invm[1], !!env.MONO_ACQ_TOKEN) : json(503, { ok: false });
+    const invp = url.pathname.match(/^\/api\/invoice\/([a-f0-9]{32})\/(pay|check)$/);
+    if (invp && env.LEADS) {
+      if (invp[2] === 'pay' && request.method === 'POST') return monoPay(env.LEADS, env.MONO_ACQ_TOKEN, invp[1], url.origin);
+      if (invp[2] === 'check') return monoCheck(env.LEADS, env.MONO_ACQ_TOKEN, env.AI, notify, invp[1], request.url);
+    }
+    if (url.pathname === '/api/mono/webhook') return env.LEADS ? monoWebhook(env.LEADS, env.MONO_ACQ_TOKEN, env.AI, notify, request) : json(503, { ok: false });
     if (url.pathname === '/api/file') return env.LEADS ? handleFileUpload(env.FILES, env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     const file = url.pathname.match(/^\/f\/([a-f0-9]{20})(?:\/|$)/);
     if (file) return serveFile(env.FILES, file[1]);

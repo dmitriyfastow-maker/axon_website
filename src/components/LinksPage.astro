@@ -7,9 +7,9 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const alts = { en: '/links/', ua: '/ua/links/', ru: '/ru/links/' };
 const C = {
-  en: { title: 'Vaxo — links', desc: 'Cartoon gifts, websites and AI for business, partner program.', sub: 'Vax & Roxy from Vaxo studio', links: [['/', '🚀 Website, app or AI for your business'], ['/examples/', '👀 Our work'], ['/gifts/', '🎁 Cartoon gift with your names'], ['/partners/', '💸 Earn with us (partners 18+)'], ['/collab/', '🤝 Collaborate'], ['/blog/', '📖 Blog']] },
-  ru: { title: 'Vaxo — ссылки', desc: 'Мультики в подарок, сайты и ИИ для бизнеса, партнёрка.', sub: 'Vax и Roxy из студии Vaxo', links: [['/', '🚀 Сайт, приложение или ИИ для бизнеса'], ['/examples/', '👀 Наши работы'], ['/gifts/', '🎁 Мультик-подарок с вашими именами'], ['/partners/', '💸 Зарабатывайте с нами (партнёры 18+)'], ['/collab/', '🤝 Сотрудничество'], ['/blog/', '📖 Блог']] },
-  ua: { title: 'Vaxo — посилання', desc: 'Мультики в подарунок, сайти та ШІ для бізнесу, партнерка.', sub: 'Vax і Roxy зі студії Vaxo', links: [['/', '🚀 Сайт, застосунок або ШІ для бізнесу'], ['/examples/', '👀 Наші роботи'], ['/gifts/', '🎁 Мультик-подарунок з вашими іменами'], ['/partners/', '💸 Заробляйте з нами (партнери 18+)'], ['/collab/', '🤝 Співпраця'], ['/blog/', '📖 Блог']] },
+  en: { title: 'Vaxo — links', desc: 'Cartoon gifts, websites and AI for business, partner program.', sub: 'Vax & Roxy from Vaxo studio', cta: 'Get a free quote — chat with Vax in 2 min', hint: 'Pick what you need 👇', links: [['/', '🚀 Website, app or AI for your business'], ['/examples/', '👀 Our work'], ['/gifts/', '🎁 Cartoon gift with your names'], ['/partners/', '💸 Earn with us (partners 18+)'], ['/collab/', '🤝 Collaborate'], ['/blog/', '📖 Blog']] },
+  ru: { title: 'Vaxo — ссылки', desc: 'Мультики в подарок, сайты и ИИ для бизнеса, партнёрка.', sub: 'Vax и Roxy из студии Vaxo', cta: 'Бесплатная оценка — чат с Vax за 2 минуты', hint: 'Выберите, что нужно 👇', links: [['/', '🚀 Сайт, приложение или ИИ для бизнеса'], ['/examples/', '👀 Наши работы'], ['/gifts/', '🎁 Мультик-подарок с вашими именами'], ['/partners/', '💸 Зарабатывайте с нами (партнёры 18+)'], ['/collab/', '🤝 Сотрудничество'], ['/blog/', '📖 Блог']] },
+  ua: { title: 'Vaxo — посилання', desc: 'Мультики в подарунок, сайти та ШІ для бізнесу, партнерка.', sub: 'Vax і Roxy зі студії Vaxo', cta: 'Безкоштовна оцінка — чат із Vax за 2 хвилини', hint: 'Оберіть, що потрібно 👇', links: [['/', '🚀 Сайт, застосунок або ШІ для бізнесу'], ['/examples/', '👀 Наші роботи'], ['/gifts/', '🎁 Мультик-подарунок з вашими іменами'], ['/partners/', '💸 Заробляйте з нами (партнери 18+)'], ['/collab/', '🤝 Співпраця'], ['/blog/', '📖 Блог']] },
 }[lang];
 const langs = ['en', 'ua', 'ru'] as const;
 ---
@@ -17,20 +17,39 @@ const langs = ['en', 'ua', 'ru'] as const;
 <Base lang={lang} title={C.title} description={C.desc} path={alts[lang]} alts={alts}>
   <main class="hub">
     <div class="langs" role="group" aria-label="Language">{langs.map((l) => <a href={alts[l]} aria-current={l === lang ? 'true' : undefined} hreflang={l === 'ua' ? 'uk' : l}>{l.toUpperCase()}</a>)}</div>
-    <span class="av"><img src="/mascot/vax-happy.webp" alt="Vax" width="120" height="120" /></span>
+    <span class="av"><img src="/mascot/vax-avatar.webp" alt="Vax" width="128" height="128" /></span>
     <h1>VAXO<span>.</span></h1>
     <p>{C.sub}</p>
+    <a class="main-cta" href={navHref('/#contact', lang)}>{C.cta} →</a>
+    <p class="hint">{C.hint}</p>
     <nav>{C.links.map(([h, label]) => <a href={navHref(h, lang)}>{label}</a>)}</nav>
+    <script is:inline>
+      // Keep the traffic source (utm_source) on every link of the hub, so the HQ shows which post or ad brought the client.
+      (function () {
+        try {
+          var q = new URLSearchParams(location.search), u = q.get('utm_source');
+          if (!u) return;
+          document.querySelectorAll('.hub a[href^="/"]').forEach(function (a) {
+            if (a.getAttribute('hreflang')) return;
+            var x = new URL(a.getAttribute('href'), location.origin);
+            x.searchParams.set('utm_source', u);
+            a.setAttribute('href', x.pathname + x.search + x.hash);
+          });
+        } catch (e) {}
+      })();
+    </script>
   </main>
 </Base>
 
 <style>
+  .main-cta { display: block; width: 100%; box-sizing: border-box; background: var(--acc); color: #17150f; font-weight: 800; font-size: 17px; padding: 16px 18px; border-radius: 14px; text-decoration: none; box-shadow: 0 8px 22px rgba(228, 169, 63, 0.35); margin-top: 6px; }
+  .hint { margin: 2px 0 0; color: var(--mut); font-size: 14px; }
   .hub { max-width: 480px; margin: 0 auto; padding: 48px 16px 64px; text-align: center; display: grid; gap: 12px; justify-items: center; }
   .langs { display: flex; gap: 4px; padding: 4px; background: var(--surf); border: 1px solid var(--line); border-radius: 999px; margin-bottom: 8px; }
   .langs a { padding: 8px 16px; border-radius: 999px; color: var(--mut); text-decoration: none; font-weight: 700; font-size: 15px; }
   .langs a[aria-current] { background: var(--ink); color: var(--bg); }
   .av { width: 128px; height: 128px; border-radius: 50%; background: var(--acc); display: grid; place-items: center; overflow: hidden; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2); }
-  .av img { width: 112px; height: 112px; object-fit: contain; }
+  .av img { width: 128px; height: 128px; object-fit: cover; }
   h1 { margin: 0; font-size: 34px; letter-spacing: -0.02em; }
   h1 span { color: var(--acc); }
   p { margin: 0 0 8px; color: var(--mut); }

@@ -71,6 +71,15 @@ import Base from '../layouts/Base.astro';
         <div class="btns"><button type="button" class="cta" data-digest-now>Сделать сводку сейчас</button></div>
         <h2>Прошлые сводки</h2>
         <div data-digests></div>
+        <h2>📣 Уведомить клиентов об изменении условий</h2>
+        <form class="card" data-notice>
+          <p class="mut">Письмо и сообщение в чате всем, у кого есть кабинет или активный заказ. Дата — не раньше чем через 14 дней (так требует оферта). Сначала «Проверить» — покажет, сколько людей получит.</p>
+          <textarea name="en" rows="3" required placeholder="Что меняется — по-английски (обязательно)"></textarea>
+          <textarea name="ru" rows="3" placeholder="По-русски (необязательно, иначе — английский)"></textarea>
+          <textarea name="ua" rows="3" placeholder="Українською (необовʼязково)"></textarea>
+          <div class="two"><input name="effective" type="date" required /><button class="ghost" type="submit" value="dry">Проверить</button><button class="cta" type="submit" value="send">Отправить</button></div>
+          <p class="mut" data-notice-msg></p>
+        </form>
         <h2>Что автопилот делает сам</h2>
         <ul>
           <li><b>Каждая заявка:</b> ИИ пишет профиль клиента, ставит оценку 1–10, отсеивает спам и сразу отдаёт заявку менеджерам.</li>
@@ -185,6 +194,7 @@ import Base from '../layouts/Base.astro';
 <script>
   import { renderFinance, FIN_CSS } from '../scripts/finance-view';
   import { attachMic, MIC_SVG } from '../scripts/voice';
+  import { composer, grow } from '../scripts/compose';
   import { attachFiles, linkify } from '../scripts/attach';
   type R = Record<string, any>;
   const KEY = 'vaxo_admin';
@@ -267,7 +277,7 @@ import Base from '../layouts/Base.astro';
     const ta = $<HTMLTextAreaElement>('[data-oc-text]');
     const mic = $<HTMLButtonElement>('[data-oc-mic]'); mic.innerHTML = MIC_SVG; attachMic(mic, ta, () => 'ru'); attachFiles($<HTMLButtonElement>('[data-oc-clip]'), ta, () => 'ru', f);
     f.onsubmit = async (e) => { e.preventDefault(); const text = ta.value.trim(); if (!text) return; ta.value = ''; const task = $<HTMLInputElement>('[data-oc-task]').checked; $<HTMLInputElement>('[data-oc-task]').checked = false; await api('/claude', { text, task }); loadClaude(); };
-    ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); f.requestSubmit(); } });
+    composer(ta, () => f.requestSubmit());
   })();
   document.querySelector('[data-go-chats]')?.addEventListener('click', () => show('chats'));
   const finStyle = document.createElement('style'); finStyle.textContent = FIN_CSS; document.head.append(finStyle);
@@ -673,6 +683,7 @@ import Base from '../layouts/Base.astro';
       await load(); openLead(id);
     } }, 'Отправить'));
     attachMic(cMic, msgText as HTMLTextAreaElement, () => 'ru'); attachFiles(cClip, msgText as HTMLTextAreaElement, () => 'ru', composer as HTMLElement);
+    grow(msgText as HTMLTextAreaElement, () => (composer.querySelector('button.cta') as HTMLButtonElement).click());
     requestAnimationFrame(() => (thread.scrollTop = thread.scrollHeight));
     $('[data-detail]').replaceChildren(...[
       el('h2', {}, `#${l.id} · ${l.name}`, ' ', badge(l.status)),
@@ -758,6 +769,14 @@ import Base from '../layouts/Base.astro';
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('[data-drawer]').hidden = true; });
   $('[data-reload]').addEventListener('click', load);
   $('[data-digest-now]').addEventListener('click', async (e) => { (e.currentTarget as HTMLButtonElement).disabled = true; await api('/digest', {}); await loadAuto(); (e.currentTarget as HTMLButtonElement).disabled = false; });
+  $<HTMLFormElement>('[data-notice]').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = e.currentTarget as HTMLFormElement; const d = Object.fromEntries(new FormData(f)) as Record<string, string>;
+    const send = (e as SubmitEvent).submitter?.getAttribute('value') === 'send';
+    if (send && !confirm('Отправить уведомление всем клиентам?')) return;
+    const r = await api('/terms-notice', { what: { en: d.en, ru: d.ru, ua: d.ua }, effective: d.effective, send });
+    $('[data-notice-msg]').textContent = !r.ok ? `Не отправлено: ${r.error}` : `${r.dry ? 'Получат' : 'Отправлено'}: сообщений в чат — ${r.chats}, писем — ${r.dry ? r.letters : r.letters_sent}${r.mail ? '' : ' (почта Resend не подключена — письма не уйдут)'}`;
+  });
   $('[data-out]').addEventListener('click', logout);
   $<HTMLFormElement>('[data-login]').addEventListener('submit', (e) => {
     e.preventDefault();

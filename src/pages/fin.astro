@@ -40,6 +40,7 @@ import Base from '../layouts/Base.astro';
   <script>
     import { renderFinance, renderOrders, renderChat, FIN_CSS } from '../scripts/finance-view';
     import { attachMic, MIC_SVG } from '../scripts/voice';
+    import { composer } from '../scripts/compose';
     import { attachFiles, linkify } from '../scripts/attach';
     const KEY = 'vaxo_fin';
     const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
@@ -93,7 +94,7 @@ import Base from '../layouts/Base.astro';
       fhCount = -1; await loadHelp();
     }
     $<HTMLFormElement>('[data-fh-form]').onsubmit = (e) => { e.preventDefault(); const v = fhText.value; fhText.value = ''; ask(v); };
-    fhText.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $<HTMLFormElement>('[data-fh-form]').requestSubmit(); } });
+    composer(fhText, () => $<HTMLFormElement>('[data-fh-form]').requestSubmit());
     document.querySelectorAll<HTMLButtonElement>('[data-fh-chips] button').forEach((b) => b.onclick = () => ask(b.textContent || ''));
     const fhMic = $<HTMLButtonElement>('[data-fh-mic]'); fhMic.innerHTML = MIC_SVG; attachMic(fhMic, fhText, () => 'ru');
     attachFiles($<HTMLButtonElement>('[data-fh-clip]'), fhText, () => 'ru', $('.fhelp'));

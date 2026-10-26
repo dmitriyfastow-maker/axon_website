@@ -56,6 +56,8 @@ export function attachFiles(button: HTMLButtonElement, field: Field, lang: () =>
 }
 
 const IMG = /\.(png|jpe?g|gif|webp|avif)$/i;
+const AUD = /\.(m4a|mp3|wav|ogg|oga|webm|aac|opus)$/i;
+const VID = /\.(mp4|mov|m4v)$/i;
 
 /** Turn plain text into safe HTML: links become clickable, our file links become a chip or an image preview. */
 export function linkify(text: string): string {
@@ -64,6 +66,10 @@ export function linkify(text: string): string {
     .replace(/📎 (\S+) (https?:\/\/[^\s<]+\/f\/[a-f0-9]{20}\/[^\s<]+)/g, (_m, name, u) =>
       IMG.test(decodeURIComponent(u))
         ? `<a class="file img" href="${u}" target="_blank" rel="noopener"><img src="${u}" alt="${name}" loading="lazy"></a>`
-        : `<a class="file" href="${u}" target="_blank" rel="noopener">📎 ${name}</a>`)
+        : AUD.test(decodeURIComponent(u))
+          ? `<audio class="file aud" controls preload="none" src="${u}"></audio>`
+          : VID.test(decodeURIComponent(u))
+            ? `<video class="file vid" controls preload="metadata" playsinline src="${u}"></video>`
+            : `<a class="file" href="${u}" target="_blank" rel="noopener">📎 ${name}</a>`)
     .replace(/(^|[\s(])(https?:\/\/[^\s<]+|vaxogroup\.com\/[^\s<]*)/g, (_m, pre, u) => `${pre}<a href="${u.startsWith('http') ? u : 'https://' + u}" target="_blank" rel="noopener">${u}</a>`);
 }

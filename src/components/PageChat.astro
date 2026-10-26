@@ -37,6 +37,7 @@ const T = {
 
 <script>
   import { attachMic, MIC_SVG } from '../scripts/voice';
+  import { composer } from '../scripts/compose';
   import { attachFiles, linkify } from '../scripts/attach';
   type R = Record<string, any>;
   document.querySelectorAll<HTMLElement>('[data-pchat]').forEach((root) => {
@@ -108,7 +109,7 @@ const T = {
       log.scrollTop = log.scrollHeight;
     }
     $<HTMLFormElement>('[data-pc-form]').onsubmit = (e) => { e.preventDefault(); const v = ta.value; ta.value = ''; send(v); };
-    ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $<HTMLFormElement>('[data-pc-form]').requestSubmit(); } });
+    composer(ta, () => $<HTMLFormElement>('[data-pc-form]').requestSubmit());
     chips.querySelectorAll('button').forEach((b) => b.onclick = () => send(b.textContent || ''));
     const mic = $<HTMLButtonElement>('[data-pc-mic]'); mic.innerHTML = MIC_SVG; attachMic(mic, ta, () => lang);
     attachFiles($<HTMLButtonElement>('[data-pc-clip]'), ta, () => lang, root);

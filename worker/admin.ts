@@ -10,7 +10,21 @@ import { newRoom } from './rooms.js';
 import { addRenewal, allPayouts, setPayout } from './payouts.js';
 import HQ from './hq.json';
 import { analytics, makeDigest } from './autopilot.js';
+import { termsNotice } from './notices.js';
 import type { AiBinding } from './chat.js';
+
+/** An invoice was paid (by hand in the HQ, or by card through the mono webhook): record it through Finance (taxes,
+ * cashback) and let Vax thank the client. Returns 400 when the invoice is not open (already paid or cancelled). */
+export async function settleInvoice(db: DB, ai: AiBinding | undefined, notify: Notify, id: number, method: 'bank' | 'card', base: string): Promise<Response> {
+  const inv = await invoiceForPayment(db, id);
+  if (!inv) return json(400, { ok: false });
+  const fake = new Request(base, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: inv.amount, currency: inv.currency, lead_id: inv.lead_id, part: inv.part, method, note: `Invoice ${inv.number}${method === 'card' ? ' (card, mono)' : ''}` }) });
+  const got = { id: 0 };
+  const res = await handleFinanceAdmin(db, fake, 'payment', notify, (lid) => { got.id = lid; });
+  if (got.id) await aiReply(db, ai, got.id, notify, { nudge: PAID_NUDGE }).catch(() => false);
+  return res;
+}
+const PAID_NUDGE = 'The team has just RECEIVED the client\'s payment. Thank them warmly in one or two sentences, say the payment arrived and what happens next (work starts / continues, next preview or step). No amounts unless they ask.';
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -24,7 +38,7 @@ function authorized(request: Request, token: string | undefined): boolean {
 }
 
 /** /api/admin, /api/admin/lead/<id>, /api/admin/partner/<id> */
-export async function handleAdminApi(db: DB, request: Request, token: string | undefined, path: string, notify: Notify, ai?: AiBinding): Promise<Response> {
+export async function handleAdminApi(db: DB, request: Request, token: string | undefined, path: string, notify: Notify, ai?: AiBinding, card = false): Promise<Response> {
   if (!authorized(request, token)) return json(401, { ok: false });
   if (path === '' && request.method === 'GET') return json(200, { ok: true, ...(await ownerOverview(db, notify)), payouts: await allPayouts(db), hq: HQ });
   if (path === 'analytics' && request.method === 'GET') return json(200, { ok: true, ...(await analytics(db)) });
@@ -78,22 +92,15 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   if (path === 'claude' || path.startsWith('claude/')) return handleOwnerChat(db, ai, request, path.slice('claude'.length).replace(/^\//, ''), notify);
   // 🧾 Invoices: create/list/cancel; "paid" records the payment through Finance (taxes, cashback, Vax thanks the client).
   const ip = path.match(/^invoice\/(\d+)\/paid$/);
-  if (ip && request.method === 'POST') {
-    const inv = await invoiceForPayment(db, Number(ip[1]));
-    if (!inv) return json(400, { ok: false });
-    const fake = new Request(request.url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: inv.amount, currency: inv.currency, lead_id: inv.lead_id, part: inv.part, method: 'bank', note: `Invoice ${inv.number}` }) });
-    const got = { id: 0 };
-    const res = await handleFinanceAdmin(db, fake, 'payment', notify, (id) => { got.id = id; });
-    if (got.id) await aiReply(db, ai, got.id, notify, { nudge: 'The team has just RECEIVED the client\'s payment. Thank them warmly in one or two sentences, say the payment arrived and what happens next (work starts / continues, next preview or step). No amounts unless they ask.' }).catch(() => false);
-    return res;
-  }
-  if (path === 'invoice' || path.startsWith('invoice/')) return handleInvoiceAdmin(db, request, path.slice('invoice'.length).replace(/^\//, ''), new URL(request.url).origin);
+  if (ip && request.method === 'POST') return settleInvoice(db, ai, notify, Number(ip[1]), 'bank', request.url);
+  if (path === 'invoice' || path.startsWith('invoice/')) return handleInvoiceAdmin(db, request, path.slice('invoice'.length).replace(/^\//, ''), new URL(request.url).origin, card);
   if (path === 'finance' || path.startsWith('finance/')) {
     const got = { id: 0 };
     const res = await handleFinanceAdmin(db, request, path.slice('finance'.length).replace(/^\//, ''), notify, (id) => { got.id = id; });
     if (got.id) await aiReply(db, ai, got.id, notify, { nudge: 'The team has just RECEIVED the client\'s payment. Thank them warmly in one or two sentences, say the payment arrived and what happens next (work starts / continues, next preview or step). No amounts unless they ask.' }).catch(() => false);
     return res;
   }
+  if (path === 'terms-notice' && request.method === 'POST') return json(200, await termsNotice(db, (await request.json().catch(() => ({}))) as Record<string, unknown>));
   if (path === 'digest' && request.method === 'POST') return json(200, { ok: true, text: await makeDigest(db, ai) });
   const pay = path.match(/^payout\/(\d+)$/);
   if (pay && request.method === 'POST') {

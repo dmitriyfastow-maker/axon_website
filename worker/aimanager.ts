@@ -239,7 +239,7 @@ export function prepayPlan(usd: number | null, friend: boolean): string {
   if (usd == null) return 'сумма не распознана — решите сами';
   if (friend && usd <= 500) return 'без предоплаты: 100% после того, как клиент одобрит превью (риск — только наше время; превью на нашем адресе, файлы после оплаты)';
   if (friend && usd <= 1500) return `30% на старт (~$${Math.round(usd * 0.3)}), 70% после одобрения (~$${usd - Math.round(usd * 0.3)})`;
-  if (usd < 3000) return `50% на старт (~$${Math.round(usd / 2)}), 50% перед передачей`;
+  if (usd < 3000) return `50% на старт (~$${Math.round(usd / 2)}), 50% после утверждения превью, перед передачей`;
   return `3 части: 30% старт (~$${Math.round(usd * 0.3)}) / 40% после первой версии (~$${Math.round(usd * 0.4)}) / 30% перед передачей`;
 }
 
@@ -248,7 +248,7 @@ function prepayClient(usd: number | null, friend: boolean): string {
   if (usd != null && friend && usd <= 500) return 'no prepayment — we build first and show a preview; they pay after approving it; files, access and full rights are handed over after payment';
   if (usd != null && friend && usd <= 1500) return '30% to start, the rest after they approve the result; files and rights after full payment';
   if (usd != null && usd >= 3000) return 'three parts: 30% to start, 40% after the first version, 30% before handover';
-  return '50% to start, 50% before handover; the team sends payment details here';
+  return '50% to start, 50% after the client approves the preview, before handover; the team sends payment details here';
 }
 
 type Card = {

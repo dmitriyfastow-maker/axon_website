@@ -31,6 +31,7 @@ const T = {
   <script type="application/json" id="room-t" set:html={JSON.stringify(T)} />
   <script>
     import { attachMic, MIC_SVG } from '../scripts/voice';
+    import { composer } from '../scripts/compose';
     import { attachFiles, linkify } from '../scripts/attach';
     type R = Record<string, any>;
     const ALL = JSON.parse(document.getElementById('room-t')!.textContent || '{}');
@@ -142,15 +143,13 @@ const T = {
       for (let i = 0; i < 12 && last?.sender === 'client'; i++) { await new Promise((ok) => setTimeout(ok, 2500)); await load(true); }
       dots.remove();
     });
-    $<HTMLTextAreaElement>('textarea').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $<HTMLFormElement>('[data-form]').requestSubmit(); }
-    });
+    composer($<HTMLTextAreaElement>('textarea'), () => $<HTMLFormElement>('[data-form]').requestSubmit());
     $('[data-copy]').addEventListener('click', async () => {
       try { await navigator.clipboard.writeText(location.href); $('[data-copy]').textContent = T.copied; } catch {}
     });
     const mic = $<HTMLButtonElement>('[data-mic]');
     mic.innerHTML = MIC_SVG;
-    attachMic(mic, $<HTMLTextAreaElement>('textarea'), () => lang);
+    attachMic(mic, $<HTMLTextAreaElement>('textarea'), () => lang, { keepAudio: true });
     attachFiles($<HTMLButtonElement>('[data-clip]'), $<HTMLTextAreaElement>('textarea'), () => lang, $('.box'));
     load(true);
     setInterval(() => { if (!document.hidden) load(); }, 15000);

@@ -13,9 +13,9 @@ import Base from '../layouts/Base.astro';
   <script>
     type R = Record<string, any>;
     const T: R = {
-      en: { inv: 'Invoice', date: 'Date', due: 'Pay by', seller: 'Seller', buyer: 'Bill to', item: 'Description', total: 'Total', pay: 'How to pay', purpose: 'Payment purpose (copy exactly)', recv: 'Receiver', addr: 'Address', bank: 'Bank', iban: 'IBAN', swift: 'SWIFT / BIC', sepa: 'Within Europe (SEPA, in EUR)', swiftT: 'From anywhere (SWIFT)', uah: 'In Ukraine (UAH)', tax: 'The seller is a Ukrainian sole proprietor, single tax payer (group 3), not a VAT payer.', terms: 'Paying this invoice means you accept the public offer at vaxogroup.com/terms/. Work starts when the payment arrives.', paid: 'PAID', cancelled: 'CANCELLED', bad: 'Invoice not found.', fees: 'Intermediary banks may charge a fee — please choose "OUR" or pay the fees so the full amount arrives.', edrpou: 'Tax ID', mfo: 'MFO' },
-      ua: { inv: 'Рахунок', date: 'Дата', due: 'Сплатити до', seller: 'Продавець', buyer: 'Покупець', item: 'Опис', total: 'Разом', pay: 'Як сплатити', purpose: 'Призначення платежу (скопіюйте точно)', recv: 'Отримувач', addr: 'Адреса', bank: 'Банк', iban: 'IBAN', swift: 'SWIFT / BIC', sepa: 'У межах Європи (SEPA, EUR)', swiftT: 'З будь-якої країни (SWIFT)', uah: 'В Україні (гривня)', tax: 'Продавець — ФОП, платник єдиного податку 3 групи, не платник ПДВ.', terms: 'Оплата рахунку означає прийняття публічної оферти vaxogroup.com/ua/terms/. Робота починається після надходження оплати.', paid: 'СПЛАЧЕНО', cancelled: 'СКАСОВАНО', bad: 'Рахунок не знайдено.', fees: 'Банки-посередники можуть брати комісію — оберіть «OUR», щоб надійшла повна сума.', edrpou: 'ІПН / ЄДРПОУ', mfo: 'МФО' },
-      ru: { inv: 'Счёт', date: 'Дата', due: 'Оплатить до', seller: 'Продавец', buyer: 'Покупатель', item: 'Описание', total: 'Итого', pay: 'Как оплатить', purpose: 'Назначение платежа (скопируйте точно)', recv: 'Получатель', addr: 'Адрес', bank: 'Банк', iban: 'IBAN', swift: 'SWIFT / BIC', sepa: 'В пределах Европы (SEPA, EUR)', swiftT: 'Из любой страны (SWIFT)', uah: 'В Украине (гривна)', tax: 'Продавец — ФОП (Украина), плательщик единого налога 3 группы, не плательщик НДС.', terms: 'Оплата счёта означает принятие публичной оферты vaxogroup.com/ru/terms/. Работа начинается после поступления оплаты.', paid: 'ОПЛАЧЕН', cancelled: 'ОТМЕНЁН', bad: 'Счёт не найден.', fees: 'Банки-посредники могут брать комиссию — выберите «OUR», чтобы пришла полная сумма.', edrpou: 'ИНН / ЕДРПОУ', mfo: 'МФО' },
+      en: { inv: 'Invoice', date: 'Date', due: 'Pay by', seller: 'Seller', buyer: 'Bill to', item: 'Description', total: 'Total', pay: 'How to pay', purpose: 'Payment purpose (copy exactly)', recv: 'Receiver', addr: 'Address', bank: 'Bank', iban: 'IBAN', swift: 'SWIFT / BIC', sepa: 'Within Europe (SEPA, in EUR)', swiftT: 'From anywhere (SWIFT)', uah: 'In Ukraine (UAH)', tax: 'The seller is a Ukrainian sole proprietor, single tax payer (group 3), not a VAT payer.', terms: 'Paying this invoice means you accept the public offer at vaxogroup.com/terms/. Work starts when the payment arrives.', paid: 'PAID', cancelled: 'CANCELLED', bad: 'Invoice not found.', fees: 'Intermediary banks may charge a fee — please choose "OUR" or pay the fees so the full amount arrives.', edrpou: 'Tax ID', mfo: 'MFO' , card: 'Pay by card · Apple Pay · Google Pay', or: 'or by bank transfer', wait: 'Checking the payment…', ok: 'Payment received — thank you!', err: 'Card payment is unavailable right now — please use a bank transfer.' },
+      ua: { inv: 'Рахунок', date: 'Дата', due: 'Сплатити до', seller: 'Продавець', buyer: 'Покупець', item: 'Опис', total: 'Разом', pay: 'Як сплатити', purpose: 'Призначення платежу (скопіюйте точно)', recv: 'Отримувач', addr: 'Адреса', bank: 'Банк', iban: 'IBAN', swift: 'SWIFT / BIC', sepa: 'У межах Європи (SEPA, EUR)', swiftT: 'З будь-якої країни (SWIFT)', uah: 'В Україні (гривня)', tax: 'Продавець — ФОП, платник єдиного податку 3 групи, не платник ПДВ.', terms: 'Оплата рахунку означає прийняття публічної оферти vaxogroup.com/ua/terms/. Робота починається після надходження оплати.', paid: 'СПЛАЧЕНО', cancelled: 'СКАСОВАНО', bad: 'Рахунок не знайдено.', fees: 'Банки-посередники можуть брати комісію — оберіть «OUR», щоб надійшла повна сума.', edrpou: 'ІПН / ЄДРПОУ', mfo: 'МФО' , card: 'Сплатити карткою · Apple Pay · Google Pay', or: 'або переказом за реквізитами', wait: 'Перевіряємо оплату…', ok: 'Оплату отримано — дякуємо!', err: 'Оплата карткою зараз недоступна — скористайтеся переказом.' },
+      ru: { inv: 'Счёт', date: 'Дата', due: 'Оплатить до', seller: 'Продавец', buyer: 'Покупатель', item: 'Описание', total: 'Итого', pay: 'Как оплатить', purpose: 'Назначение платежа (скопируйте точно)', recv: 'Получатель', addr: 'Адрес', bank: 'Банк', iban: 'IBAN', swift: 'SWIFT / BIC', sepa: 'В пределах Европы (SEPA, EUR)', swiftT: 'Из любой страны (SWIFT)', uah: 'В Украине (гривна)', tax: 'Продавец — ФОП (Украина), плательщик единого налога 3 группы, не плательщик НДС.', terms: 'Оплата счёта означает принятие публичной оферты vaxogroup.com/ru/terms/. Работа начинается после поступления оплаты.', paid: 'ОПЛАЧЕН', cancelled: 'ОТМЕНЁН', bad: 'Счёт не найден.', fees: 'Банки-посредники могут брать комиссию — выберите «OUR», чтобы пришла полная сумма.', edrpou: 'ИНН / ЕДРПОУ', mfo: 'МФО' , card: 'Оплатить картой · Apple Pay · Google Pay', or: 'или переводом по реквизитам', wait: 'Проверяем оплату…', ok: 'Оплата получена — спасибо!', err: 'Оплата картой сейчас недоступна — воспользуйтесь переводом.' },
     };
     const esc = (s: unknown) => String(s ?? '').replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
     const q = new URLSearchParams(location.search).get('t') || '';
@@ -40,9 +40,26 @@ import Base from '../layouts/Base.astro';
         <header><div><h1>${t.inv} ${esc(i.number)}</h1><p>${t.date}: ${date}${i.due ? ` · ${t.due}: ${esc(i.due)}` : ''}</p></div><div class="brand">Vaxo · vaxogroup.com</div></header>
         <div class="parties"><div><small>${t.seller}</small><b>${esc(i.lang === 'en' ? s.name_en : s.name_ua)}</b>${i.lang === 'en' ? `<span>${esc(s.address_en || '')}</span>` : ''}</div><div><small>${t.buyer}</small><b>${esc(i.buyer || '—')}</b></div></div>
         <table class="items"><tr><th>${t.item}</th><th class="r">${t.total}</th></tr><tr><td>${esc(i.description)}</td><td class="r">${sum}</td></tr><tr class="sum"><td>${t.total}</td><td class="r">${sum}</td></tr></table>
-        <section><h2>${t.pay}</h2>${pay}<div class="purpose"><small>${t.purpose}</small><code data-purpose>${esc(purpose)}</code><button type="button" data-copy>Copy</button></div></section>
+        <section><h2>${t.pay}</h2>${d.card ? `<button type="button" class="cardpay" data-card>💳 ${t.card}</button><p class="note" data-cardmsg></p><h3>${t.or}</h3>` : ''}${pay}<div class="purpose"><small>${t.purpose}</small><code data-purpose>${esc(purpose)}</code><button type="button" data-copy>Copy</button></div></section>
         <p class="note">${t.tax}</p><p class="note">${t.terms}</p>`;
       $('[data-msg]').hidden = true; $('[data-doc]').hidden = false;
+      const cm = document.querySelector<HTMLElement>('[data-cardmsg]');
+      const btn = document.querySelector<HTMLButtonElement>('[data-card]');
+      if (btn) btn.onclick = async () => {
+        btn.disabled = true;
+        const p = await fetch(`/api/invoice/${q}/pay`, { method: 'POST' }).then((x) => x.json()).catch(() => null);
+        if (p?.url) location.href = p.url; else { btn.disabled = false; if (cm) cm.textContent = t.err; }
+      };
+      // Back from the mono payment page: confirm right away (the webhook may come a few seconds later).
+      if (new URLSearchParams(location.search).get('paid') && i.status === 'open') {
+        if (cm) cm.textContent = t.wait;
+        for (let n = 0; n < 10; n++) {
+          const c = await fetch(`/api/invoice/${q}/check`).then((x) => x.json()).catch(() => null);
+          if (c?.status === 'success') { if (cm) cm.textContent = t.ok; setTimeout(() => location.replace(`/invoice/?t=${q}`), 1500); break; }
+          if (c && !['created', 'processing', 'hold'].includes(c.status)) { if (cm) cm.textContent = ''; break; }
+          await new Promise((r) => setTimeout(r, 3000));
+        }
+      }
       $('[data-copy]').onclick = async () => { try { await navigator.clipboard.writeText(purpose); $('[data-copy]').textContent = '✓'; } catch {} };
     })();
   </script>
@@ -65,6 +82,7 @@ import Base from '../layouts/Base.astro';
   .inv .note { color: #666; font-size: 13px; margin: 10px 0 0; }
   .inv .stamp { position: absolute; right: 24px; top: 70px; transform: rotate(-12deg); border: 3px solid; border-radius: 10px; padding: 6px 14px; font-weight: 900; font-size: 22px; } .inv .stamp.ok { color: #16a34a; } .inv .stamp.no { color: #dc2626; }
   .inv .msg { color: var(--mut); }
-  @media print { .inv .bar, [data-chat], .vchat { display: none !important; } .inv article { border: 0; padding: 0; } body { background: #fff; } }
+  .inv .cardpay { width: 100%; border: 0; border-radius: 12px; background: #111; color: #fff; padding: 16px; font: 700 17px var(--font); cursor: pointer; margin: 6px 0 4px; } .inv .cardpay:disabled { opacity: .6; }
+  @media print { .inv .cardpay, .inv .bar, [data-chat], .vchat { display: none !important; } .inv article { border: 0; padding: 0; } body { background: #fff; } }
   @media (max-width: 600px) { .inv .parties { grid-template-columns: 1fr; } .inv article { padding: 18px; } }
 </style>
