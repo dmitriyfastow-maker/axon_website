@@ -341,7 +341,7 @@ import Base from '../layouts/Base.astro';
     const block = (title: string, items: string[] | undefined, cls = '') => items?.length ? el('div', { class: 'card plan ' + cls }, el('div', { class: 'ph' }, el('b', {}, title), fix(title)), el('ul', {}, ...items.map((x) => el('li', {}, x)))) : '';
     $('[data-plan]').replaceChildren(...(P ? [
       P.goal ? el('div', { class: 'card plan goal' }, el('small', { class: 'mut' }, 'Главная цель'), el('b', {}, P.goal), P.min ? el('small', { class: 'mut' }, 'Минимум: ' + P.min) : '') : '',
-      el('div', { class: 'plan-grid' }, block('Делаю сейчас', P.now), block('Дальше по шагам', P.next), block('Почему так', P.why, 'why'), block('На что опираюсь (рынок и цифры)', P.basis), block('Что вижу в мире и трендах', P.watch), block('Риски и что я с ними делаю', P.risks, 'risk')),
+      el('div', { class: 'plan-grid' }, block('Сценарии: максимум / база / минимум', P.scenarios, 'goal'), block('Делаю сейчас', P.now), block('Дальше по шагам', P.next), block('Почему так', P.why, 'why'), block('Discord INSIDERS', P.discord), block('Свой продукт (следующий этап)', P.product), block('На что опираюсь (рынок и цифры)', P.basis), block('Что вижу в мире и трендах', P.watch), block('Риски и что я с ними делаю', P.risks, 'risk')),
       el('p', { class: 'mut' }, `Обновлено: ${P.updated || '—'}`),
     ] : [el('p', { class: 'mut' }, 'План ещё не загружен — Claude обновит его в ближайшей рабочей сессии.')]));
     const uah = (n: number) => Math.round(n || 0).toLocaleString('ru-RU') + ' ₴';
