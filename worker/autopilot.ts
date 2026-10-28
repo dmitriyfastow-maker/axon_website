@@ -37,9 +37,14 @@ const on = (s: Record<string, string>, k: string) => s[k] !== '0';
 // ---------- analytics (anonymous) ----------
 
 const BOT = /bot|crawl|spider|slurp|preview|monitor|headless|lighthouse|facebookexternalhit|curl|wget/i;
+const DC = /amazon|aws|google cloud|google llc|microsoft|azure|digitalocean|ovh|hetzner|linode|akamai|alibaba|tencent|oracle|vultr|contabo|leaseweb|scaleway|choopa|m247|datacamp|cloudflare|fastly|hostinger|ionos/i;
 
 export async function trackView(db: DB, request: Request, url: URL) {
   if (BOT.test(request.headers.get('User-Agent') || '')) return;
+  // Bots that pretend to be browsers come from data centers, people do not: skip cloud/hosting networks (28.10:
+  // ~90% of "direct" views were US/IE/SG data centers, which made the numbers useless).
+  const org = String((request as unknown as { cf?: { asOrganization?: string } }).cf?.asOrganization || '');
+  if (DC.test(org)) return;
   let ref: string | null = null;
   try { const r = new URL(request.headers.get('Referer') || ''); if (r.hostname !== url.hostname) ref = r.hostname.replace(/^www\./, ''); } catch {}
   const utm = url.searchParams.get('utm_source') || (url.searchParams.get('ref') ? 'partner' : null);
