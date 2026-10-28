@@ -11,6 +11,8 @@ import { addRenewal, allPayouts, setPayout } from './payouts.js';
 import HQ from './hq.json';
 import { analytics, makeDigest } from './autopilot.js';
 import { termsNotice } from './notices.js';
+import { OWNER_KEY, ROLES, SECTION_NAMES, handleStaffAdmin, sectionOf, staffFromToken, type Me } from './staff.js';
+import { settings } from './autopilot.js';
 import type { AiBinding } from './chat.js';
 
 /** An invoice was paid (by hand in the HQ, or by card through the mono webhook): record it through Finance (taxes,
@@ -37,9 +39,52 @@ function authorized(request: Request, token: string | undefined): boolean {
   return diff === 0;
 }
 
+/** The owner's key, or a team member's session (worker/staff.ts). */
+async function whoIs(db: DB, request: Request, token: string | undefined): Promise<Me | null> {
+  if (authorized(request, token)) return OWNER_KEY;
+  return staffFromToken(db, (request.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, ''));
+}
+
+/** "All processes" for the overview: one number set per process, each with a status light. */
+async function pulse(db: DB) {
+  const one = async <T>(sql: string) => ((await db.prepare(sql).first<T>()) ?? ({} as T));
+  const leads = await one<Record<string, number>>(`SELECT
+    SUM(status = 'new') AS fresh, SUM(status IN ('open','claimed','contacted','meeting')) AS talking, SUM(status = 'proposal') AS proposal,
+    SUM(status = 'won') AS won, SUM(created_at > datetime('now','-7 days')) AS week,
+    SUM(status = 'won' AND COALESCE(stage,'') NOT IN ('', 'delivered')) AS in_work,
+    SUM(status = 'won' AND stage_due IS NOT NULL AND stage_due < datetime('now') AND COALESCE(stage,'') != 'delivered') AS late,
+    ROUND(AVG(CASE WHEN status = 'won' AND COALESCE(stage,'') NOT IN ('', 'delivered') THEN progress END)) AS progress,
+    SUM(human IS NOT NULL AND status NOT IN ('lost','archived')) AS human
+    FROM leads WHERE COALESCE(page,'') != 'test' AND contact NOT LIKE 'test%'`);
+  const money = await one<Record<string, number>>(`SELECT
+    (SELECT COALESCE(SUM(amount_uah),0) FROM payments WHERE status='ok' AND at >= date('now','start of month')) AS month_uah,
+    (SELECT COALESCE(SUM(amount_uah),0) FROM payments WHERE status='ok' AND at >= date('now','start of year')) AS year_uah,
+    (SELECT COUNT(*) FROM invoices WHERE status='open') AS open_inv,
+    (SELECT COUNT(*) FROM payouts WHERE status='due') AS payouts_due`);
+  const partners = await one<Record<string, number>>(`SELECT COUNT(*) AS total, SUM(closer='approved') AS closers, SUM(closer='applied') AS applied FROM partners`);
+  const site = await one<Record<string, number>>(`SELECT
+    (SELECT COUNT(*) FROM pageviews WHERE at > datetime('now','-7 days')) AS views7,
+    (SELECT COUNT(*) FROM events WHERE kind = 'chat_open' AND at > datetime('now','-7 days')) AS chats7`).catch(() => ({} as Record<string, number>));
+  const work = await one<Record<string, number>>(`SELECT SUM(status='waiting') AS waiting, SUM(at > datetime('now','-1 day')) AS today,
+    SUM(kind='video' AND status='waiting') AS videos_waiting, SUM(kind='video' AND status IN ('sent','done')) AS videos_out FROM claude_work`);
+  const claude = await one<Record<string, number>>(`SELECT SUM(sender='owner' AND kind='task' AND status='open') AS tasks, SUM(sender='claude' AND kind IN ('question','idea') AND status='open') AS questions,
+    (SELECT MAX(at) FROM owner_chat WHERE sender='claude') AS last_at FROM owner_chat`);
+  const st = await settings(db);
+  const toggles = ['auto_publish', 'auto_approve', 'auto_qc', 'ai_manager', 'digest', 'vax_learn', 'email_replies'];
+  const auto = { on: toggles.filter((k) => st[k] !== '0').length, total: toggles.length, price_owner: st.price_owner !== '0' };
+  return { leads, money, partners, site, work, claude, auto };
+}
+
 /** /api/admin, /api/admin/lead/<id>, /api/admin/partner/<id> */
 export async function handleAdminApi(db: DB, request: Request, token: string | undefined, path: string, notify: Notify, ai?: AiBinding, card = false): Promise<Response> {
-  if (!authorized(request, token)) return json(401, { ok: false });
+  const me = await whoIs(db, request, token);
+  if (!me) return json(401, { ok: false });
+  const sec = sectionOf(path);
+  if (!me.sections.includes(sec)) return json(403, { ok: false, error: 'section' });
+  if (request.method !== 'GET' && !me.write && sec !== 'today') return json(403, { ok: false, error: 'read_only' });
+  if (path === 'me') return json(200, { ok: true, me: { name: me.name, email: me.email, role: me.role, role_name: ROLES[me.role]?.name, sections: me.sections, write: me.write }, names: SECTION_NAMES });
+  if (path === 'pulse') return json(200, { ok: true, ...(await pulse(db)) });
+  if (path === 'staff' || path.startsWith('staff/')) return handleStaffAdmin(db, request, path.slice('staff'.length).replace(/^\//, ''), me, new URL(request.url).origin);
   if (path === '' && request.method === 'GET') return json(200, { ok: true, ...(await ownerOverview(db, notify)), payouts: await allPayouts(db), hq: HQ });
   if (path === 'analytics' && request.method === 'GET') return json(200, { ok: true, ...(await analytics(db)) });
   if (path === 'autopilot' && request.method === 'GET') {

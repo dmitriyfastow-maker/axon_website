@@ -4,23 +4,34 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base lang="ru" title="Vaxo — штаб" description="Owner HQ" path="/admin/" noindex noChat>
+<Base lang="ru" title="Vaxo CRM" description="Owner HQ" path="/admin/" noindex noChat>
   <main class="adm">
     <header class="top">
-      <h1>Vaxo <span>· штаб</span></h1>
+      <h1>Vaxo <span>· CRM</span> <small class="mut" data-who></small></h1>
       <div class="top-r" data-on hidden>
         <button type="button" class="ghost" data-reload>Обновить</button>
         <button type="button" class="ghost" data-out>Выйти</button>
       </div>
     </header>
-    <form data-login class="login" hidden>
-      <p>Это ваш штаб: заявки, чаты с клиентами, партнёры, выплаты, мультик и все ссылки в одном месте.</p>
-      <input type="password" name="token" placeholder="Ключ владельца" autocomplete="current-password" />
-      <button class="cta">Открыть штаб</button>
-    </form>
+    <div class="login" data-loginbox hidden>
+      <p>Vaxo CRM: заявки, клиенты, деньги, партнёры, соцсети и Claude — в одном месте.</p>
+      <form data-mail class="login">
+        <b>Войти по почте</b>
+        <input type="email" name="email" placeholder="Ваш email" autocomplete="email" required />
+        <button class="cta" data-mail-btn>Получить код</button>
+        <input name="code" inputmode="numeric" autocomplete="one-time-code" placeholder="Код из письма" hidden />
+        <small class="mut" data-mail-msg></small>
+      </form>
+      <details><summary class="mut">Войти ключом владельца</summary>
+        <form data-login class="login">
+          <input type="password" name="token" placeholder="Ключ владельца" autocomplete="current-password" />
+          <button class="cta">Открыть</button>
+        </form>
+      </details>
+    </div>
     <div data-app hidden>
       <nav class="tabs" aria-label="Разделы">
-        <button type="button" data-view="today" aria-pressed="true">🔥 Сегодня <span class="pill" data-n="today" hidden></span></button>
+        <button type="button" data-view="today" aria-pressed="true">📊 Обзор <span class="pill" data-n="today" hidden></span></button>
         <button type="button" data-view="chats" aria-pressed="false">💬 Переписки с клиентами <span class="pill" data-n="chats" hidden></span></button>
         <button type="button" data-view="claude" aria-pressed="false">🧠 Claude <span class="pill" data-n="claude" hidden></span></button>
         <button type="button" data-view="work" aria-pressed="false">📋 Работа Claude</button>
@@ -32,10 +43,18 @@ import Base from '../layouts/Base.astro';
         <button type="button" data-view="cartoon" aria-pressed="false">🎬 Мультик</button>
         <button type="button" data-view="auto" aria-pressed="false">🤖 Автопилот</button>
         <button type="button" data-view="links" aria-pressed="false">🔗 Все ссылки</button>
+        <button type="button" data-view="access" aria-pressed="false" hidden>🔐 Доступы</button>
         <button type="button" data-view="help" aria-pressed="false">❓ Как это работает</button>
       </nav>
 
       <section data-panel="today">
+        <form class="say" data-say>
+          <textarea name="text" rows="1" placeholder="Скажите Claude, что сделать или изменить — например: «сделай 3 ролика про кофейни» или «перестань писать партнёрам по выходным»"></textarea>
+          <button class="cta">Отправить Claude</button>
+        </form>
+        <small class="mut" data-say-msg></small>
+        <h2>Все процессы</h2>
+        <div class="procs" data-procs></div>
         <div class="digest" data-digest hidden><h2>☀️ Сводка дня от автопилота</h2><pre data-digest-text></pre><small class="mut" data-digest-at></small></div>
         <div class="kpis" data-kpis></div>
         <h2>Последние переписки <button type="button" class="ghost sm" data-go-chats>Все переписки →</button></h2>
@@ -155,6 +174,20 @@ import Base from '../layouts/Base.astro';
         <ul class="decisions" data-decisions></ul>
       </section>
 
+      <section data-panel="access" hidden>
+        <p class="hint">Пригласите человека: он входит по своей почте (пароль не нужен) и видит только отмеченные разделы. «Только просмотр» — без кнопок изменения.</p>
+        <form class="card" data-invite>
+          <div class="two"><input name="email" type="email" placeholder="Email" required /><input name="name" placeholder="Имя" /></div>
+          <select name="role" data-role></select>
+          <div class="secs" data-secs></div>
+          <label><input type="checkbox" name="ro" /> Только просмотр</label>
+          <button class="cta">Пригласить / сохранить</button>
+          <small class="mut" data-invite-msg></small>
+        </form>
+        <h2>У кого есть доступ</h2>
+        <div data-staff></div>
+      </section>
+
       <section data-panel="help" hidden class="help">
         <h2>Кто что видит</h2>
         <div class="table"><table><thead><tr><th>Кто</th><th>Где</th><th>Видит</th><th>Может</th></tr></thead><tbody>
@@ -244,13 +277,70 @@ import Base from '../layouts/Base.astro';
   function logout() {
     try { sessionStorage.removeItem(KEY); localStorage.removeItem(KEY); } catch {}
     token = '';
-    $('[data-app]').hidden = true; $('[data-on]').hidden = true; $('[data-login]').hidden = false;
+    $('[data-app]').hidden = true; $('[data-on]').hidden = true; $('[data-loginbox]').hidden = false;
+  }
+
+  let me: R = { sections: [] };
+  // What this person may see: tabs outside their sections are hidden (the server checks it too).
+  async function loadMe() {
+    const r = await api('/me').catch(() => null);
+    if (!r?.ok) return;
+    me = r.me;
+    $('[data-who]').textContent = me.role === 'owner' ? '' : `· ${me.name} (${me.role_name})`;
+    $$<HTMLButtonElement>('[data-view]').forEach((b) => { const v = b.dataset.view!; b.hidden = v !== 'help' && !(me.sections as string[]).includes(v === 'access' ? 'access' : v); });
+    if ((me.sections as string[]).includes('access')) loadAccess();
+  }
+
+  const PROC_LIGHT = (bad: boolean, warn: boolean) => (bad ? 'r' : warn ? 'y' : 'g');
+  async function loadPulse() {
+    const p = await api('/pulse').catch(() => null);
+    if (!p?.ok) return;
+    const L = p.leads || {}, M = p.money || {}, P = p.partners || {}, S = p.site || {}, W = p.work || {}, C = p.claude || {}, A = p.auto || {};
+    const uah = (n: number) => Math.round(n || 0).toLocaleString('ru-RU') + ' ₴';
+    const cards: [string, string, string, string[], string, string][] = [
+      ['🎯', 'Продажи', `${L.fresh || 0} новых`, [`${L.talking || 0} в переговорах`, `${L.proposal || 0} с предложением`, `${L.week || 0} заявок за 7 дней`], PROC_LIGHT(false, (L.fresh || 0) > 0), 'leads'],
+      ['🛠', 'Проекты в работе', `${L.in_work || 0}`, [`средний прогресс ${L.progress ?? 0}%`, `${L.late || 0} просрочено`, `${L.human || 0} ждут человека`], PROC_LIGHT((L.late || 0) > 0, (L.human || 0) > 0), 'chats'],
+      ['💰', 'Деньги', uah(M.month_uah), [`за год ${uah(M.year_uah)}`, `${M.open_inv || 0} неоплаченных счетов`, `${M.payouts_due || 0} выплат партнёрам`], PROC_LIGHT(false, (M.payouts_due || 0) > 0), 'fin'],
+      ['🤝', 'Партнёры', `${P.total || 0}`, [`${P.closers || 0} менеджеров`, `${P.applied || 0} анкет ждут`], PROC_LIGHT(false, (P.applied || 0) > 0), 'team'],
+      ['🌐', 'Сайт', `${S.views7 || 0} визитов`, [`за 7 дней`, `${S.chats7 || 0} чатов с Vax`], PROC_LIGHT(false, false), 'stats'],
+      ['🎬', 'Соцсети и мультик', `${W.videos_waiting || 0} на «да»`, [`${W.videos_out || 0} роликов вышло`, `Instagram · TikTok · YouTube · Threads`], PROC_LIGHT(false, (W.videos_waiting || 0) > 0), 'work'],
+      ['🧠', 'Claude', `${W.today || 0} работ за сутки`, [`${W.waiting || 0} ждут вашего «да»`, `${C.tasks || 0} ваших задач в очереди`, `${C.questions || 0} вопросов к вам`], PROC_LIGHT(false, (W.waiting || 0) + (C.questions || 0) > 0), 'claude'],
+      ['🤖', 'Автопилот', `${A.on || 0} из ${A.total || 0} вкл.`, [A.price_owner ? 'цены решаете вы (до ФОП)' : 'цены по прайсу'], PROC_LIGHT(false, false), 'auto'],
+    ];
+    $('[data-procs]').replaceChildren(...cards.filter((c) => (me.sections as string[]).includes(c[5])).map(([i, t, big, lines, light, go]) =>
+      el('button', { type: 'button', class: 'proc l-' + light, onclick: () => show(go) }, el('div', { class: 'ph' }, el('span', {}, i), el('b', {}, t), el('i', { class: 'dot' })), el('strong', {}, big), ...lines.map((x) => el('small', {}, x)))));
+  }
+
+  async function loadAccess() {
+    const d = await api('/staff').catch(() => null);
+    if (!d?.ok) return;
+    const roleSel = $<HTMLSelectElement>('[data-role]');
+    if (!roleSel.options.length) {
+      roleSel.replaceChildren(...Object.entries(d.roles as R).filter(([k]) => k !== 'owner').map(([k, r]) => el('option', { value: k }, (r as R).name)));
+      const paint = () => { const secs = (d.roles[roleSel.value] as R).sections as string[]; $$<HTMLInputElement>('[data-secs] input').forEach((c) => (c.checked = secs.includes(c.value))); };
+      $('[data-secs]').replaceChildren(...(d.sections as string[]).map((s) => el('label', {}, el('input', { type: 'checkbox', name: 'sec', value: s }), ' ', d.names[s] || s)));
+      roleSel.onchange = paint; roleSel.value = 'manager'; paint();
+      $<HTMLFormElement>('[data-invite]').onsubmit = async (e) => {
+        e.preventDefault();
+        const f = e.currentTarget as HTMLFormElement; const fd = new FormData(f);
+        const r = await api('/staff', { email: fd.get('email'), name: fd.get('name'), role: fd.get('role'), sections: fd.getAll('sec'), write: !fd.get('ro') });
+        $('[data-invite-msg]').textContent = r.ok ? `✅ Готово. ${d.mail ? 'Приглашение ушло на почту.' : 'Почта не подключена — передайте ссылку vaxogroup.com/admin/ сами.'}` : 'Не получилось: проверьте email.';
+        if (r.ok) { f.reset(); roleSel.value = 'manager'; paint(); loadAccess(); }
+      };
+    }
+    const rows = d.staff as R[];
+    $('[data-staff]').replaceChildren(...(rows.length ? rows.map((s) => el('div', { class: 'card staff' + (s.active ? '' : ' off') },
+      el('b', {}, s.name || s.email), ' ', el('span', { class: 'mut' }, s.email), ' · ', (d.roles[s.role] as R)?.name || s.role, s.can_write ? '' : ' · только просмотр',
+      el('div', { class: 'mut' }, (JSON.parse(s.sections || '[]') as string[]).map((x) => d.names[x] || x).join(', ') || '—', s.last_login ? ` · входил ${when(s.last_login)}` : ' · ещё не входил'),
+      s.active && s.role !== 'owner' ? el('button', { type: 'button', class: 'ghost sm', onclick: async () => { if (confirm(`Закрыть доступ для ${s.email}?`)) { await api(`/staff/${s.id}/off`, {}); loadAccess(); } } }, 'Закрыть доступ') : null)) :
+      [el('p', { class: 'mut' }, 'Пока только вы.')]));
   }
 
   async function load() {
     if (!token) return logout();
     try { data = await api(''); } catch { return; }
-    $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
+    loadMe(); loadPulse();
+    $('[data-loginbox]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
     renderToday(); renderInbox(); renderLeads(); renderTeam(); renderPay(); renderCartoon(); renderLinks();
     loadAuto(); loadStats(); loadFin(); loadClaude(); loadWork();
   }
@@ -778,6 +868,32 @@ import Base from '../layouts/Base.astro';
     $('[data-notice-msg]').textContent = !r.ok ? `Не отправлено: ${r.error}` : `${r.dry ? 'Получат' : 'Отправлено'}: сообщений в чат — ${r.chats}, писем — ${r.dry ? r.letters : r.letters_sent}${r.mail ? '' : ' (почта Resend не подключена — письма не уйдут)'}`;
   });
   $('[data-out]').addEventListener('click', logout);
+  // Sign-in by email: first the code is sent, then the same form checks it.
+  $<HTMLFormElement>('[data-mail]').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = e.currentTarget as HTMLFormElement; const d = Object.fromEntries(new FormData(f)) as Record<string, string>;
+    const codeIn = f.querySelector<HTMLInputElement>('[name=code]')!; const msg = $('[data-mail-msg]');
+    if (codeIn.hidden) {
+      const r = await fetch('/api/staff/code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: d.email }) }).then((x) => x.json()).catch(() => null);
+      if (!r?.ok) { msg.textContent = 'Проверьте email.'; return; }
+      codeIn.hidden = false; codeIn.required = true; codeIn.focus(); $('[data-mail-btn]').textContent = 'Войти';
+      msg.textContent = r.mail ? 'Если этот адрес приглашён — код уже в почте (проверьте «Спам»).' : 'Почта для кодов ещё не подключена — войдите ключом владельца.';
+      return;
+    }
+    const r = await fetch('/api/staff/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: d.email, code: d.code }) }).then((x) => x.json()).catch(() => null);
+    if (!r?.token) { msg.textContent = 'Код не подошёл или устарел. Запросите новый.'; codeIn.hidden = true; codeIn.value = ''; $('[data-mail-btn]').textContent = 'Получить код'; return; }
+    token = r.token; try { localStorage.setItem(KEY, token); } catch {}
+    load();
+  });
+  $<HTMLFormElement>('[data-say]').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = e.currentTarget as HTMLFormElement; const text = String(new FormData(f).get('text') || '').trim();
+    if (!text) return;
+    const r = await api('/claude', { text, task: true }).catch(() => null);
+    $('[data-say-msg]').textContent = r?.ok ? '✅ Записал задачу для Claude. Ответ появится во вкладке «🧠 Claude».' : 'Не отправилось — попробуйте ещё раз.';
+    if (r?.ok) f.reset();
+  });
+  composer($<HTMLTextAreaElement>('[data-say] textarea'), () => $<HTMLFormElement>('[data-say]').requestSubmit());
   $<HTMLFormElement>('[data-login]').addEventListener('submit', (e) => {
     e.preventDefault();
     token = String(new FormData(e.currentTarget as HTMLFormElement).get('token') ?? '');
@@ -800,6 +916,19 @@ import Base from '../layouts/Base.astro';
   .adm .cta { background: var(--acc); color: var(--dark-ink); border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 700; cursor: pointer; white-space: nowrap; }
   .adm .cta.alt { background: var(--ink); color: var(--bg); }
   .adm .ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 9px 14px; cursor: pointer; }
+  .adm .say { display: flex; gap: 8px; align-items: flex-end; margin: 4px 0 4px; }
+  .adm .say textarea { resize: none; }
+  .adm .procs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 10px; }
+  .adm .proc { text-align: left; background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 3px; cursor: pointer; color: var(--ink); font: inherit; }
+  .adm .proc:hover { border-color: var(--acc); }
+  .adm .proc .ph { display: flex; align-items: center; gap: 8px; } .adm .proc .ph b { flex: 1; }
+  .adm .proc .dot { width: 10px; height: 10px; border-radius: 50%; background: #2fbf71; }
+  .adm .proc.l-y .dot { background: #f5a623; } .adm .proc.l-r .dot { background: #e5484d; }
+  .adm .proc strong { font-size: 24px; margin: 4px 0 2px; } .adm .proc small { color: var(--mut); }
+  .adm .secs { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 8px 0; } .adm .secs label { display: flex; gap: 6px; align-items: center; }
+  .adm .secs input, .adm [data-invite] input[type=checkbox] { width: auto; }
+  .adm .staff.off { opacity: .5; }
+  @media (max-width: 640px) { .adm .say { flex-direction: column; align-items: stretch; } }
   .adm .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 8px; }
   .adm .kpi { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 2px; }
   .adm .kpi small, .adm .kpi span { color: var(--mut); font-size: 12px; } .adm .kpi b { font-size: 24px; }
