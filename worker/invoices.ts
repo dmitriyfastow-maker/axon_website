@@ -70,7 +70,7 @@ export async function invoiceForPayment(db: DB, id: number) {
 /** Public: GET /api/invoice/<token> — the invoice and only the requisites for its currency. */
 export async function handleInvoicePublic(db: DB, token: string, card = false): Promise<Response> {
   if (!/^[a-f0-9]{32}$/.test(token)) return json(404, { ok: false });
-  const inv = await db.prepare(`SELECT number, at, buyer, currency, amount, description, lang, due, status FROM invoices WHERE token = ?`).bind(token).first<Record<string, any>>();
+  const inv = await db.prepare(`SELECT number, at, buyer, currency, amount, description, lang, due, status, CASE WHEN receipt_url LIKE 'http%' THEN receipt_url END AS receipt_url FROM invoices WHERE token = ?`).bind(token).first<Record<string, any>>();
   if (!inv) return json(404, { ok: false });
   const st = await settings(db);
   let req: Record<string, any> = {};

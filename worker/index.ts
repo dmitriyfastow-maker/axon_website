@@ -13,7 +13,7 @@ import { handleStt } from './stt.js';
 import { handleFileUpload, servePreview, serveFile, type KV } from './files.js';
 import { handleCabinet, type CabinetEnv } from './cabinet.js';
 import { handleInvoicePublic } from './invoices.js';
-import { monoCheck, monoPay, monoWebhook } from './mono.js';
+import { monoCheck, monoPay, monoReceiptSweep, monoWebhook } from './mono.js';
 import { handleFinancePublic } from './finance.js';
 import { handleIntake } from './intake.js';
 import { notifyOwnerChat } from './ownerchat.js';
@@ -170,7 +170,7 @@ export default {
       }).catch(() => {});
     };
     // The autopilot's hourly round: deadlines, AI grading, quality control, client summaries, the morning digest.
-    for (const job of [() => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify)]) {
+    for (const job of [() => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify)]) {
       await job().catch((e) => console.error('[cron]', e));
     }
   },  // Letters to hello@vaxogroup.com (Cloudflare Email Routing → this worker) go into the client's project chat.
