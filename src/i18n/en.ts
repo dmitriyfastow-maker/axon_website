@@ -18,7 +18,7 @@ const en = {
   "heroTags": [
     "Answers in seconds, 24/7 — no bureaucracy",
     "Transparent price ranges",
-    "Launch from 7 days"
+    "Some tasks in minutes, some in days"
   ],
   "time": [
     "days",
@@ -57,7 +57,7 @@ const en = {
     },
     {
       "n": "03",
-      "t": "Launch from 7 days",
+      "t": "Minutes to days, not months",
       "d": "AI handles the routine, the team does what takes experience. So timelines are days, not months."
     },
     {
