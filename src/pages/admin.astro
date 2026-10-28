@@ -58,20 +58,24 @@ import Base from '../layouts/Base.astro';
           <button class="cta">Отправить Claude</button>
         </form>
         <small class="mut" data-say-msg></small>
+        <h2>💰 Путь клиента: от заявки до денег</h2>
+        <div class="pipe" data-pipe></div>
         <h2>Все процессы</h2>
         <div class="procs" data-procs></div>
         <div class="digest" data-digest hidden><h2>☀️ Сводка дня от автопилота</h2><pre data-digest-text></pre><small class="mut" data-digest-at></small></div>
-        <div class="kpis" data-kpis></div>
         <h2>Последние переписки <button type="button" class="ghost sm" data-go-chats>Все переписки →</button></h2>
         <div class="inbox" data-recent></div>
-        <h2>Картина компании</h2>
-        <div class="pic" data-pic></div>
         <h2>Требует внимания</h2>
         <div class="todo" data-todo></div>
+        <details class="tmore"><summary>Подробнее: цифры, картина компании, мой последний отчёт</summary>
+        <div class="kpis" data-kpis></div>
+        <h2>Картина компании</h2>
+        <div class="pic" data-pic></div>
         <div class="cols">
           <div><h2>Ждёт ваших действий</h2><ul class="tasks" data-tasks></ul></div>
           <div><h2>Последний отчёт Claude</h2><pre class="report" data-report></pre></div>
         </div>
+        </details>
       </section>
 
       <section data-panel="stats" hidden>
@@ -696,6 +700,24 @@ import Base from '../layouts/Base.astro';
   function renderToday() {
     renderPicture();
     const L = data.leads as R[];
+    // The client's path in 5 steps — real leads only (test ones hidden); a name opens the client card.
+    const real = L.filter((l) => l.page !== 'test' && !String(l.contact || '').startsWith('test') && !['lost', 'archived'].includes(l.status));
+    const steps: [string, string, (l: R) => boolean][] = [
+      ['🆕', 'Новые', (l) => l.status === 'new' || l.status === 'open'],
+      ['💬', 'В разговоре', (l) => ['claimed', 'contacted', 'meeting'].includes(l.status)],
+      ['🧾', 'Предложение и счёт', (l) => l.status === 'proposal'],
+      ['🛠', 'Оплачено, в работе', (l) => l.status === 'won' && l.stage !== 'delivered'],
+      ['✅', 'Сдано', (l) => l.status === 'won' && l.stage === 'delivered'],
+    ];
+    $('[data-pipe]').replaceChildren(...steps.map(([ic, t, f], k) => {
+      const rows = real.filter(f);
+      const sum = rows.reduce((a, l) => a + (l.value_usd || 0), 0);
+      return el('div', { class: 'pcol' + (rows.length ? '' : ' empty') },
+        el('small', {}, `${k + 1}. ${ic} ${t}`), el('b', {}, String(rows.length)), sum ? el('span', { class: 'mut' }, usd(sum)) : '',
+        ...rows.slice(0, 5).map((l) => el('button', { type: 'button', class: 'pname', onclick: () => openLead(l.id) }, l.name || l.contact || `#${l.id}`)),
+        rows.length > 5 ? el('button', { type: 'button', class: 'ghost sm', onclick: () => show('leads') }, `ещё ${rows.length - 5} →`) : '');
+    }));
+    if (!real.length) $('[data-pipe]').append(el('p', { class: 'mut pnote' }, 'Пока ни одного настоящего клиента в пути — я завожу поток: сообщения бизнесам и ролики каждый день. Первый появится здесь.'));
     const by = (f: (l: R) => boolean) => L.filter(f).length;
     const wonUsd = L.filter((l) => l.status === 'won').reduce((a, l) => a + (l.value_usd || 0), 0);
     const tiles: [string, string | number, string][] = [
@@ -1122,6 +1144,11 @@ import Base from '../layouts/Base.astro';
   .adm .otext { margin: 0; white-space: pre-wrap; font-size: 14px; } .adm .oact { display: flex; gap: 6px; flex-wrap: wrap; }
   .adm .yes, .adm .no { border: 0; border-radius: 999px; padding: 8px 14px; font: 700 14px var(--font); cursor: pointer; } .adm .yes { background: #1f9d55; color: #fff; } .adm .no { background: #fde2e2; color: #a12626; }
   @media (max-width: 560px) { .adm .olist { grid-template-columns: 1fr; } .adm .oall { margin-left: 0; } }
+  .adm .pipe { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-bottom: 18px; }
+  .adm .pcol { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 4px; min-width: 0; } .adm .pcol b { font-size: 28px; line-height: 1.1; } .adm .pcol.empty { opacity: .55; }
+  .adm .pname { text-align: left; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; font: 600 13px var(--font); color: var(--ink); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .adm .pnote { grid-column: 1 / -1; margin: 0; } .adm .tmore { margin-top: 14px; } .adm .tmore > summary { cursor: pointer; font-weight: 700; padding: 8px 0; }
+  @media (max-width: 700px) { .adm .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .adm .wcard { background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
   .adm .wcard h3 { margin: 0; font-size: 17px; } .adm .wh { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } .adm .wk { font-weight: 700; font-size: 13px; }
   .adm .wcard video, .adm .wcard img { width: 100%; max-height: 420px; border-radius: 12px; background: #000; object-fit: contain; }
