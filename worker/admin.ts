@@ -127,11 +127,33 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
     const { results } = await db.prepare('SELECT * FROM claude_work ORDER BY id DESC LIMIT 400').all();
     return json(200, { ok: true, items: results });
   }
+  // 📨 Рассылки: everything that goes (or went) out — Claude's drafts waiting for a yes, approved and sent ones,
+  // what Vax wrote to clients by itself, and Claude's questions to the owner.
+  if (path === 'outbox' && request.method === 'GET') {
+    const work = (await db.prepare(`SELECT id, at, kind, title, body, link, file, status, note FROM claude_work WHERE status IN ('waiting','approved','sent') ORDER BY id DESC LIMIT 600`).all()).results;
+    const auto = (await db.prepare(`SELECT m.id, m.at, m.sender, m.text, l.id AS lead_id, COALESCE(l.name, l.contact) AS name FROM messages m JOIN leads l ON l.id = m.lead_id
+      WHERE m.sender != 'client' AND m.kind = 'text' AND m.at > datetime('now','-60 days') AND COALESCE(l.page,'') != 'test' ORDER BY m.id DESC LIMIT 200`).all()).results;
+    const asks = (await db.prepare(`SELECT id, at, kind, text, status FROM owner_chat WHERE sender = 'claude' AND at > datetime('now','-30 days') ORDER BY id DESC LIMIT 100`).all()).results;
+    return json(200, { ok: true, work, auto, asks });
+  }
+  // One or many decisions at once: "yes" (approved → Claude sends it and marks it sent), "no", or back to waiting.
+  if (path === 'work/bulk' && request.method === 'POST') {
+    const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const ids = (Array.isArray(b.ids) ? b.ids : []).map(Number).filter((n) => n > 0).slice(0, 500);
+    const status = ['approved', 'rejected', 'waiting', 'done'].includes(String(b.status)) ? String(b.status) : null;
+    if (!ids.length || !status) return json(400, { ok: false });
+    await db.prepare(`UPDATE claude_work SET status = ? WHERE id IN (${ids.map(() => '?').join(',')})`).bind(status, ...ids).run();
+    if (status === 'approved' || status === 'rejected') {
+      const verb = status === 'approved' ? 'ДА, можно отправлять/публиковать' : 'НЕТ, не отправлять';
+      await db.prepare(`INSERT INTO owner_chat (sender, kind, text) VALUES ('owner', 'task', ?)`).bind(`Рассылки: ${verb} — работы #${ids.join(', #')}`.slice(0, 1900)).run();
+    }
+    return json(200, { ok: true, n: ids.length });
+  }
   const wk = path.match(/^work\/(\d+)$/);
   if (wk && request.method === 'POST') {
     const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     const note = typeof b.note === 'string' ? b.note.trim().slice(0, 1000) : null;
-    const status = ['ready', 'waiting', 'sent', 'rejected', 'done'].includes(String(b.status)) ? String(b.status) : null;
+    const status = ['ready', 'waiting', 'approved', 'sent', 'rejected', 'done'].includes(String(b.status)) ? String(b.status) : null;
     await db.prepare('UPDATE claude_work SET note = COALESCE(?, note), status = COALESCE(?, status) WHERE id = ?').bind(note, status, Number(wk[1])).run();
     if (note) await db.prepare(`INSERT INTO owner_chat (sender, kind, text) VALUES ('owner', 'task', ?)`).bind(`Комментарий к работе #${wk[1]}: ${note}`).run();
     return json(200, { ok: true });

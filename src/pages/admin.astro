@@ -32,20 +32,24 @@ import Base from '../layouts/Base.astro';
     <div data-app hidden>
       <nav class="tabs" aria-label="Разделы">
         <button type="button" data-view="today" aria-pressed="true">📊 Обзор <span class="pill" data-n="today" hidden></span></button>
-        <button type="button" data-view="plan" aria-pressed="false">🔮 Планы и прогноз</button>
-        <button type="button" data-view="chats" aria-pressed="false">💬 Переписки с клиентами <span class="pill" data-n="chats" hidden></span></button>
+        <button type="button" data-view="outbox" aria-pressed="false">✅ Ждёт вашего «да» и рассылки <span class="pill" data-n="outbox" hidden></span></button>
+        <button type="button" data-view="chats" aria-pressed="false">💬 Клиенты <span class="pill" data-n="chats" hidden></span></button>
         <button type="button" data-view="claude" aria-pressed="false">🧠 Claude <span class="pill" data-n="claude" hidden></span></button>
-        <button type="button" data-view="work" aria-pressed="false">📋 Работа Claude</button>
+        <button type="button" data-view="fin" aria-pressed="false">💰 Деньги</button>
+        <button type="button" class="more" data-more aria-expanded="false">Ещё ▾</button>
+        <span class="sec">
+        <button type="button" data-view="plan" aria-pressed="false">🔮 Планы и прогноз</button>
+        <button type="button" data-view="work" aria-pressed="false">📋 Вся работа Claude</button>
         <button type="button" data-view="stats" aria-pressed="false">📊 Аналитика</button>
-        <button type="button" data-view="leads" aria-pressed="false">📋 Заявки</button>
-        <button type="button" data-view="team" aria-pressed="false">👥 Команда <span class="pill" data-n="team" hidden></span></button>
+        <button type="button" data-view="leads" aria-pressed="false">📋 Все заявки</button>
+        <button type="button" data-view="team" aria-pressed="false">👥 Партнёры <span class="pill" data-n="team" hidden></span></button>
         <button type="button" data-view="pay" aria-pressed="false">💸 Выплаты <span class="pill" data-n="pay" hidden></span></button>
-        <button type="button" data-view="fin" aria-pressed="false">💰 Финансы</button>
         <button type="button" data-view="cartoon" aria-pressed="false">🎬 Мультик</button>
         <button type="button" data-view="auto" aria-pressed="false">🤖 Автопилот</button>
         <button type="button" data-view="links" aria-pressed="false">🔗 Все ссылки</button>
         <button type="button" data-view="access" aria-pressed="false" hidden>🔐 Доступы</button>
         <button type="button" data-view="help" aria-pressed="false">❓ Как это работает</button>
+        </span>
       </nav>
 
       <section data-panel="today">
@@ -124,6 +128,11 @@ import Base from '../layouts/Base.astro';
         <label class="mut small"><input type="checkbox" data-oc-task /> Это задача для Claude (если не начинается со «Сделай…»)</label>
       </section>
 
+      <section data-panel="outbox" hidden>
+        <p class="hint">Одно место для всех ваших решений и всего, что уходит наружу. Вверху — что ждёт вашего «да»: нажмите «✅ Да» (я отправлю или опубликую и перенесу в «Отправлено»), «❌ Нет» или «✏️ Поправить» (напишите, что изменить). Ниже — что уже ушло, что Vax сам пишет клиентам и мои вопросы вам.</p>
+        <div class="obx-sum" data-obx-sum></div>
+        <div data-obx></div>
+      </section>
       <section data-panel="work" hidden>
         <p class="hint">Всё, что я сделал, — как отчёт сотрудника: найденные клиенты и готовые сообщения им, черновики сайтов (можно открыть), ролики, документы, списки партнёров, изменения сайта. «Ждёт вашего да» — то, что уйдёт наружу только после вашего решения. Комментарий к любой карточке приходит мне задачей.</p>
         <div class="wf" data-wf></div>
@@ -296,7 +305,7 @@ import Base from '../layouts/Base.astro';
     if (!r?.ok) return;
     me = r.me;
     $('[data-who]').textContent = me.role === 'owner' ? '' : `· ${me.name} (${me.role_name})`;
-    $$<HTMLButtonElement>('[data-view]').forEach((b) => { const v = b.dataset.view!; b.hidden = v !== 'help' && !(me.sections as string[]).includes(v === 'access' ? 'access' : v); });
+    $$<HTMLButtonElement>('[data-view]').forEach((b) => { const v = b.dataset.view!; b.hidden = v !== 'help' && !(me.sections as string[]).includes(v === 'access' ? 'access' : v === 'outbox' ? 'work' : v); });
     if ((me.sections as string[]).includes('access')) loadAccess();
   }
 
@@ -373,6 +382,7 @@ import Base from '../layouts/Base.astro';
     try { data = await api(''); } catch { return; }
     loadMe(); loadPulse(); loadPlan();
     $('[data-loginbox]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
+    loadOutbox();
     renderToday(); renderInbox(); renderLeads(); renderTeam(); renderPay(); renderCartoon(); renderLinks();
     loadAuto(); loadStats(); loadFin(); loadClaude(); loadWork();
   }
@@ -404,7 +414,7 @@ import Base from '../layouts/Base.astro';
   document.querySelector('[data-go-chats]')?.addEventListener('click', () => show('chats'));
   const finStyle = document.createElement('style'); finStyle.textContent = FIN_CSS; document.head.append(finStyle);
   const WK: R = { clients: ['🎯', 'Клиенты'], partners: ['🤝', 'Партнёры'], draft: ['🖥', 'Черновики сайтов'], video: ['🎬', 'Ролики'], doc: ['📄', 'Документы'], site: ['🛠', 'Сайт и Штаб'], research: ['🔎', 'Исследования'], outreach: ['✉️', 'Рассылки'] };
-  const WS: R = { ready: ['готово', 'g'], waiting: ['ждёт вашего «да»', 'y'], sent: ['отправлено', 'b'], rejected: ['забраковано', 'r'], done: ['закрыто', 'n'] };
+  const WS: R = { ready: ['готово', 'g'], waiting: ['ждёт вашего «да»', 'y'], approved: ['одобрено — отправляю', 'p'], sent: ['отправлено', 'b'], rejected: ['забраковано', 'r'], done: ['закрыто', 'n'] };
   let workFilter = '';
   async function loadWork() {
     const d = await api('/work').catch(() => null);
@@ -436,6 +446,62 @@ import Base from '../layouts/Base.astro';
         i.note && el('p', { class: 'mut' }, `Ваш комментарий: ${i.note}`),
         el('div', { class: 'wact' }, sel, note, el('button', { type: 'button', class: 'cta sm', onclick: async () => { await api(`/work/${i.id}`, { status: sel.value, note: note.value.trim() || undefined }); loadWork(); } }, 'Сохранить')));
     }));
+  }
+  // ✅ Ждёт вашего «да» и рассылки: decisions by group with big buttons, then everything that went out.
+  async function loadOutbox() {
+    const d = await api('/outbox').catch(() => null);
+    if (!d?.ok) return;
+    const work = d.work as R[], auto = d.auto as R[], asks = d.asks as R[];
+    const waiting = work.filter((i) => i.status === 'waiting'), approved = work.filter((i) => i.status === 'approved'), sent = work.filter((i) => i.status === 'sent');
+    const openAsks = asks.filter((a) => a.status === 'open');
+    pill('outbox', waiting.length + openAsks.length);
+    const decide = async (ids: number[], status: string) => { await api('/work/bulk', { ids, status }); loadOutbox(); loadWork(); };
+    const fix = async (i: R) => { const t = prompt(`Что поправить в «${i.title}»?`); if (t?.trim()) { await api(`/work/${i.id}`, { note: t.trim() }); loadOutbox(); } };
+    const card = (i: R, actions = true) => {
+      const [ic, kt] = WK[i.kind] || ['•', i.kind];
+      const f = String(i.file || '');
+      const media = /\.(mp4|webm|mov)$/i.test(f) ? el('video', { src: f, controls: true, preload: 'none', playsinline: true }) : /\.(png|jpe?g|webp|gif)$/i.test(f) ? el('img', { src: f, loading: 'lazy', alt: '' }) : null;
+      return el('article', { class: 'ocard' },
+        el('div', { class: 'wh' }, el('span', { class: 'wk' }, `${ic} ${kt}`), el('small', { class: 'mut' }, when(i.at))),
+        el('h3', {}, i.title), media,
+        i.body && el('details', {}, el('summary', {}, 'Текст / подробно'), rich(i.body)),
+        i.link && el('a', { href: i.link, target: '_blank', rel: 'noopener', class: 'ghost sm' }, '↗ Открыть'),
+        i.note && el('p', { class: 'mut' }, `Ваш комментарий: ${i.note}`),
+        actions && el('div', { class: 'oact' },
+          el('button', { type: 'button', class: 'yes', onclick: () => decide([i.id], 'approved') }, '✅ Да'),
+          el('button', { type: 'button', class: 'ghost sm', onclick: () => fix(i) }, '✏️ Поправить'),
+          el('button', { type: 'button', class: 'no', onclick: () => decide([i.id], 'rejected') }, '❌ Нет')));
+    };
+    const groups: Record<string, R[]> = {}; for (const i of waiting) (groups[i.kind] ||= []).push(i);
+    const sumTile = (n: number, t: string, c: string) => el('div', { class: 'otile ' + c }, el('b', {}, String(n)), el('span', {}, t));
+    $('[data-obx-sum]').replaceChildren(
+      sumTile(waiting.length, 'ждут вашего «да»', waiting.length ? 'y' : 'g'), sumTile(openAsks.length, 'моих вопросов вам', openAsks.length ? 'y' : 'g'),
+      sumTile(approved.length, 'одобрено — отправляю', 'p'), sumTile(sent.length, 'отправлено / опубликовано', 'b'),
+      sumTile(auto.length, 'сообщений Vax клиентам за 60 дней', 'n'));
+    const sec = (title: string, ...kids: unknown[]) => el('section', { class: 'osec' }, el('h2', {}, title), ...(kids as Node[]));
+    const list = (rows: R[], render: (r: R) => Node, empty: string, max = 30) => {
+      if (!rows.length) return el('p', { class: 'mut' }, empty);
+      const box = el('div', { class: 'olist' }, ...rows.slice(0, max).map(render));
+      if (rows.length > max) box.append(el('button', { type: 'button', class: 'ghost sm', onclick: () => box.replaceChildren(...rows.map(render)) }, `Показать все ${rows.length}`));
+      return box;
+    };
+    $('[data-obx]').replaceChildren(
+      sec('✅ Ждёт вашего «да»', ...(waiting.length ? Object.entries(groups).map(([k, rows]) => {
+        const [ic, kt] = WK[k] || ['•', k];
+        const ids = rows.map((r) => r.id as number);
+        return el('details', { class: 'ogrp', open: rows.length <= 6 },
+          el('summary', {}, el('b', {}, `${ic} ${kt} · ${rows.length}`),
+            el('span', { class: 'oall' },
+              el('button', { type: 'button', class: 'yes', onclick: (e: Event) => { e.preventDefault(); if (confirm(`Да всем ${rows.length} (${kt})?`)) decide(ids, 'approved'); } }, '✅ Да всем'),
+              el('button', { type: 'button', class: 'no', onclick: (e: Event) => { e.preventDefault(); if (confirm(`Нет всем ${rows.length} (${kt})?`)) decide(ids, 'rejected'); } }, '❌ Нет всем'))),
+          list(rows, (r) => card(r), '', 20));
+      }) : [el('p', { class: 'mut' }, 'Всё решено — от вас ничего не ждёт. 🎉')])),
+      sec('❓ Мои вопросы вам', list(openAsks, (a) => el('article', { class: 'ocard' }, el('small', { class: 'mut' }, when(a.at)), rich(a.text), el('button', { type: 'button', class: 'ghost sm', onclick: () => show('claude') }, 'Ответить во вкладке Claude')), 'Открытых вопросов нет.')),
+      sec('📤 Одобрено — отправляю', list(approved, (r) => card(r, false), 'Пусто.')),
+      sec('📬 Отправлено и опубликовано', list(sent, (r) => card(r, false), 'Пока ничего не отправлено.')),
+      sec('🦝 Vax сам пишет клиентам', list(auto, (m) => el('article', { class: 'ocard' },
+        el('div', { class: 'wh' }, el('b', {}, m.name || `Клиент #${m.lead_id}`), el('small', { class: 'mut' }, `${m.sender === 'ai' ? 'Vax (ИИ)' : m.sender === 'owner' ? 'Vaxo (вы/система)' : m.sender} · ${when(m.at)}`)),
+        el('p', { class: 'otext' }, String(m.text).slice(0, 400)), el('button', { type: 'button', class: 'ghost sm', onclick: () => show('chats') }, 'Открыть переписки')), 'Vax пока никому не писал.')));
   }
   async function loadFopChat() {
     const r = await fetch('/api/admin/finance/fopchat', { headers: { Authorization: `Bearer ${token}` } }).catch(() => null);
@@ -882,6 +948,7 @@ import Base from '../layouts/Base.astro';
     $('[data-decisions]').replaceChildren(...((hq.decisions || []) as R[]).map((d) => el('li', {}, el('a', { href: d.url, target: '_blank', rel: 'noopener' }, d.t))));
   }
 
+  $('[data-more]').addEventListener('click', (e) => { const n = (e.currentTarget as HTMLElement).closest('.tabs')!; const on = n.classList.toggle('all'); (e.currentTarget as HTMLElement).setAttribute('aria-expanded', String(on)); (e.currentTarget as HTMLElement).textContent = on ? 'Скрыть ▴' : 'Ещё ▾'; });
   $$<HTMLButtonElement>('[data-view]').forEach((b) => b.addEventListener('click', () => {
     $$('[data-view]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     $$<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.view));
@@ -1044,6 +1111,17 @@ import Base from '../layouts/Base.astro';
   .adm .chip { border: 1px solid var(--line); background: var(--surf); color: var(--ink); border-radius: 999px; padding: 7px 12px; font: 600 13px var(--font); cursor: pointer; }
   .adm .chip.on { background: var(--ink); color: var(--bg); } .adm .chip.warn { border-color: var(--accText); color: var(--accText); } .adm .chip.warn.on { background: var(--acc); color: var(--dark-ink); }
   .adm .work { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 14px; }
+  .adm .tabs:not(.all) .sec button:not([aria-pressed="true"]) { display: none; } .adm .tabs .sec { display: contents; } .adm .tabs .more { border-style: dashed; }
+  .adm .obx-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0 18px; }
+  .adm .otile { border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; background: var(--surf); border: 1px solid var(--line); } .adm .otile b { font-size: 28px; line-height: 1; }
+  .adm .otile.y { background: #fff1c9; color: #7a5600; border-color: #f0d68a; } .adm .otile.g { background: #dcf5e3; color: #17643a; border-color: #b6e5c4; } .adm .otile.p { background: #ece2ff; color: #5b2ca8; } .adm .otile.b { background: #dbe8ff; color: #1d4ea8; }
+  .adm .osec { margin: 0 0 22px; } .adm .osec h2 { font-size: 19px; margin: 0 0 10px; }
+  .adm .ogrp { border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; margin-bottom: 10px; background: var(--surf); } .adm .ogrp summary { cursor: pointer; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; } .adm .oall { display: flex; gap: 6px; margin-left: auto; }
+  .adm .olist { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; margin-top: 10px; }
+  .adm .ocard { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; } .adm .ocard h3 { margin: 0; font-size: 16px; } .adm .ocard video, .adm .ocard img { width: 100%; max-height: 360px; border-radius: 10px; background: #000; object-fit: contain; }
+  .adm .otext { margin: 0; white-space: pre-wrap; font-size: 14px; } .adm .oact { display: flex; gap: 6px; flex-wrap: wrap; }
+  .adm .yes, .adm .no { border: 0; border-radius: 999px; padding: 8px 14px; font: 700 14px var(--font); cursor: pointer; } .adm .yes { background: #1f9d55; color: #fff; } .adm .no { background: #fde2e2; color: #a12626; }
+  @media (max-width: 560px) { .adm .olist { grid-template-columns: 1fr; } .adm .oall { margin-left: 0; } }
   .adm .wcard { background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
   .adm .wcard h3 { margin: 0; font-size: 17px; } .adm .wh { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } .adm .wk { font-weight: 700; font-size: 13px; }
   .adm .wcard video, .adm .wcard img { width: 100%; max-height: 420px; border-radius: 12px; background: #000; object-fit: contain; }
