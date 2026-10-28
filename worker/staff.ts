@@ -12,16 +12,16 @@ async function sha(s: string) {
 }
 
 /** HQ sections (tabs). "team" (access management) is the owner's only. */
-export const SECTIONS = ['today', 'chats', 'leads', 'claude', 'work', 'stats', 'team', 'pay', 'fin', 'cartoon', 'auto', 'links'] as const;
-export const SECTION_NAMES: Record<string, string> = { today: 'Обзор', chats: 'Переписки', leads: 'Заявки', claude: 'Claude', work: 'Работа Claude', stats: 'Аналитика', team: 'Партнёры и менеджеры', pay: 'Выплаты', fin: 'Финансы', cartoon: 'Мультик', auto: 'Автопилот', links: 'Ссылки' };
+export const SECTIONS = ['today', 'plan', 'chats', 'leads', 'claude', 'work', 'stats', 'team', 'pay', 'fin', 'cartoon', 'auto', 'links'] as const;
+export const SECTION_NAMES: Record<string, string> = { today: 'Обзор', plan: 'Планы и прогноз', chats: 'Переписки', leads: 'Заявки', claude: 'Claude', work: 'Работа Claude', stats: 'Аналитика', team: 'Партнёры и менеджеры', pay: 'Выплаты', fin: 'Финансы', cartoon: 'Мультик', auto: 'Автопилот', links: 'Ссылки' };
 /** Ready-made roles: a role is just a set of sections; the owner can tick sections by hand too. */
 export const ROLES: Record<string, { name: string; sections: string[]; write: boolean }> = {
   owner: { name: 'Владелец', sections: [...SECTIONS, 'access'], write: true },
   admin: { name: 'Администратор', sections: [...SECTIONS], write: true },
-  manager: { name: 'Менеджер по клиентам', sections: ['today', 'chats', 'leads', 'work'], write: true },
+  manager: { name: 'Менеджер по клиентам', sections: ['today', 'plan', 'chats', 'leads', 'work'], write: true },
   finance: { name: 'Финансы / бухгалтер', sections: ['today', 'fin', 'pay'], write: true },
-  marketing: { name: 'Маркетинг и соцсети', sections: ['today', 'stats', 'work', 'cartoon', 'links'], write: true },
-  viewer: { name: 'Только просмотр', sections: ['today', 'stats'], write: false },
+  marketing: { name: 'Маркетинг и соцсети', sections: ['today', 'plan', 'stats', 'work', 'cartoon', 'links'], write: true },
+  viewer: { name: 'Только просмотр', sections: ['today', 'plan', 'stats'], write: false },
 };
 
 export type Me = { id: number | null; email: string; name: string; role: string; sections: string[]; write: boolean };
@@ -39,8 +39,11 @@ const toMe = (r: Row): Me => {
 /** Bearer value → the signed-in person (a staff session), or null. */
 export async function staffFromToken(db: DB, bearer: string): Promise<Me | null> {
   if (!/^s_[a-f0-9]{48}$/.test(bearer)) return null;
-  const r = await db.prepare(`SELECT s.id, s.email, s.name, s.role, s.sections, s.can_write, s.active FROM staff_sessions x JOIN staff s ON s.id = x.staff_id
-    WHERE x.token = ? AND s.active = 1 AND x.created_at > datetime('now', '-30 days')`).bind(await sha(bearer)).first<Row>();
+  // A sign-in lasts a year and is renewed on every visit (at most once a day): people stay signed in on their devices.
+  const h = await sha(bearer);
+  const r = await db.prepare(`SELECT s.id, s.email, s.name, s.role, s.sections, s.can_write, s.active, x.created_at < datetime('now', '-1 day') AS old FROM staff_sessions x JOIN staff s ON s.id = x.staff_id
+    WHERE x.token = ? AND s.active = 1 AND x.created_at > datetime('now', '-365 days')`).bind(h).first<Row & { old: number }>();
+  if (r?.old) await db.prepare(`UPDATE staff_sessions SET created_at = datetime('now') WHERE token = ?`).bind(h).run();
   return r ? toMe(r) : null;
 }
 
@@ -48,7 +51,7 @@ export async function staffFromToken(db: DB, bearer: string): Promise<Me | null>
 export function sectionOf(path: string): string {
   const p = path.split('/')[0];
   const map: Record<string, string> = {
-    '': 'today', pulse: 'today', me: 'today', analytics: 'stats', autopilot: 'auto', 'test-lead': 'auto', digest: 'auto', 'terms-notice': 'auto',
+    '': 'today', pulse: 'today', me: 'today', plan: 'plan', analytics: 'stats', autopilot: 'auto', 'test-lead': 'auto', digest: 'auto', 'terms-notice': 'auto',
     work: 'work', claude: 'claude', invoice: 'fin', finance: 'fin', payout: 'pay', lead: 'leads', partner: 'team', staff: 'access',
   };
   return map[p] ?? 'access';
@@ -69,7 +72,8 @@ export async function handleStaffLogin(db: DB, request: Request, path: string): 
         const code = String(100000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900000));
         await db.prepare(`INSERT INTO staff_codes (email, code_hash, expires_at, tries, sent_at) VALUES (?, ?, datetime('now', '+15 minutes'), 0, datetime('now'))
           ON CONFLICT (email) DO UPDATE SET code_hash = excluded.code_hash, expires_at = excluded.expires_at, tries = 0, sent_at = excluded.sent_at`).bind(email, await sha(`vaxo-hq:${email}:${code}`)).run();
-        await sendMail(email, `Vaxo CRM: код для входа ${code}`, `Ваш код для входа в Vaxo CRM: ${code}\n\nОн действует 15 минут. Если вы не входили — просто проигнорируйте это письмо.`);
+        const sent = await sendMail(email, `Vaxo CRM: код для входа ${code}`, `Ваш код для входа в Vaxo CRM: ${code}\n\nОн действует 15 минут. Если вы не входили — просто проигнорируйте это письмо.`);
+        if (!sent) console.error('[staff] code email was not sent (Resend)');
       }
     }
     return json(200, { ok: true, mail: mailReady() });
@@ -100,6 +104,14 @@ export async function handleStaffAdmin(db: DB, request: Request, path: string, m
     return json(200, { ok: true, staff: results, roles: ROLES, sections: SECTIONS, names: SECTION_NAMES, mail: mailReady() });
   }
   const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+  const mail = path.match(/^(\d+)\/email$/);
+  if (mail) {
+    // Change a person's sign-in email (the owner's own too). Their sessions stay; the next code goes to the new address.
+    const to = typeof b.email === 'string' ? b.email.trim().toLowerCase().slice(0, 200) : '';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) return json(400, { ok: false, error: 'email' });
+    const r = (await db.prepare('UPDATE OR IGNORE staff SET email = ? WHERE id = ?').bind(to, Number(mail[1])).run()) as { meta?: { changes?: number } };
+    return json(r.meta?.changes ? 200 : 400, { ok: !!r.meta?.changes, error: r.meta?.changes ? undefined : 'taken' });
+  }
   const off = path.match(/^(\d+)\/off$/);
   if (off) {
     const id = Number(off[1]);

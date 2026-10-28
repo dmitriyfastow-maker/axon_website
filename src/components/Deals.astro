@@ -205,7 +205,7 @@ const T = {
       const sum = (st: string) => P.filter((x) => x.status === st).reduce((a, x) => a + x.amount_usd, 0);
       q('[data-d-earn]').replaceChildren(el('h3', {}, T.extra.earnH),
         P.length ? el('div', { class: 'earn-row' }, el('span', {}, el('b', {}, `$${sum('due')}`), ' ', T.extra.earnDue), el('span', {}, el('b', {}, `$${sum('paid')}`), ' ', T.extra.earnPaid)) : el('p', { class: 'mut' }, T.extra.earnNone),
-        P.length ? el('ul', {}, ...P.map((x) => el('li', {}, `${x.client} · ${x.kind.includes('manager') ? T.extra.kindMgr : T.extra.kindRef}${x.kind.startsWith('renewal') ? ' · +' : ''} · ${x.rate}% · $${x.amount_usd} · ${x.status === 'paid' ? T.extra.earnPaid : T.extra.earnDue}`))) : null);
+        P.length ? el('ul', {}, ...P.map((x) => el('li', {}, `${x.client} · ${x.kind.includes('manager') ? T.extra.kindMgr : T.extra.kindRef}${x.kind.startsWith('renewal') ? ' · +' : ''} · ${x.rate}% · $${x.amount_usd} · ${x.status === 'paid' ? T.extra.earnPaid : T.extra.earnDue}`))) : '');
       q("[data-d-stats]").textContent = `${T.mine}: ${d.active} / ${d.limit} · ★ ${d.rating ?? "—"}`;
       q('[data-d-open]').replaceChildren(...(d.open.length ? d.open.map((l: R) =>
         el('article', { class: 'card' },

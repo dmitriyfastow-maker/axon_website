@@ -228,7 +228,7 @@ export async function ownerOverview(db: DB, notify: Notify) {
     db
       .prepare(
         `SELECT d.id, d.created_at, d.mode, d.status, d.name, d.contact, d.interest, d.message, d.lang, d.country, d.page, d.ref,
-           d.service, d.budget, d.brief, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at, d.room, d.score, d.ai_summary, d.ai, d.stage, d.stage_due, d.human, d.profile, d.offer,
+           d.service, d.budget, d.brief, d.plan_note, d.value_usd, d.closer_id, d.claimed_at, d.due_at, d.updated_at, d.room, d.score, d.ai_summary, d.ai, d.stage, d.stage_due, d.human, d.profile, d.offer,
            d.revisions_used, d.revisions_total, d.brief_confirmed_at, d.strategy_url, d.client_id, d.promo,
            (SELECT COALESCE(SUM(b.amount_usd), 0) FROM bonuses b WHERE b.lead_id = d.id OR (d.client_id IS NOT NULL AND b.client_id = d.client_id)) AS bonus_usd,
            (SELECT COUNT(*) FROM messages m WHERE m.lead_id = d.id) AS msgs,
@@ -270,7 +270,7 @@ export async function ownerUpdateLead(db: DB, id: number, b: Record<string, unkn
   if (!lead) return false;
   const sets: string[] = [];
   const vals: unknown[] = [];
-  for (const k of ['service', 'budget', 'brief'] as const) {
+  for (const k of ['service', 'budget', 'brief', 'plan_note'] as const) {
     if (typeof b[k] === 'string') { sets.push(`${k} = ?`); vals.push(s(b[k], 4000) || null); }
   }
   if (b.value_usd !== undefined) { sets.push('value_usd = ?'); vals.push(Math.round(Number(b.value_usd)) || null); }

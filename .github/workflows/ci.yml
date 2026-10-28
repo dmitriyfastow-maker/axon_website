@@ -15,6 +15,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - run: node scripts/hq-data.mjs  # worker/hq.json is generated (gitignored); the HQ API imports it
       - run: npm run check
       - run: npm test
       - run: npm run build

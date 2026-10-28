@@ -32,6 +32,7 @@ import Base from '../layouts/Base.astro';
     <div data-app hidden>
       <nav class="tabs" aria-label="Разделы">
         <button type="button" data-view="today" aria-pressed="true">📊 Обзор <span class="pill" data-n="today" hidden></span></button>
+        <button type="button" data-view="plan" aria-pressed="false">🔮 Планы и прогноз</button>
         <button type="button" data-view="chats" aria-pressed="false">💬 Переписки с клиентами <span class="pill" data-n="chats" hidden></span></button>
         <button type="button" data-view="claude" aria-pressed="false">🧠 Claude <span class="pill" data-n="claude" hidden></span></button>
         <button type="button" data-view="work" aria-pressed="false">📋 Работа Claude</button>
@@ -174,6 +175,14 @@ import Base from '../layouts/Base.astro';
         <ul class="decisions" data-decisions></ul>
       </section>
 
+      <section data-panel="plan" hidden>
+        <p class="hint">Здесь Claude показывает, что делает сейчас, что дальше и почему — и прогноз по реальным цифрам. Не согласны с чем-то — нажмите «Поправить», это уйдёт Claude задачей.</p>
+        <div data-plan></div>
+        <h2>Прогноз на основе цифр</h2>
+        <div class="kpis" data-fc></div>
+        <p class="mut" data-fc-how></p>
+      </section>
+
       <section data-panel="access" hidden>
         <p class="hint">Пригласите человека: он входит по своей почте (пароль не нужен) и видит только отмеченные разделы. «Только просмотр» — без кнопок изменения.</p>
         <form class="card" data-invite>
@@ -311,6 +320,28 @@ import Base from '../layouts/Base.astro';
       el('button', { type: 'button', class: 'proc l-' + light, onclick: () => show(go) }, el('div', { class: 'ph' }, el('span', {}, i), el('b', {}, t), el('i', { class: 'dot' })), el('strong', {}, big), ...lines.map((x) => el('small', {}, x)))));
   }
 
+  async function loadPlan() {
+    const d = await api('/plan').catch(() => null);
+    if (!d?.ok) return;
+    const P = d.plan as R | null, F = d.forecast as R;
+    const fix = (topic: string) => el('button', { type: 'button', class: 'ghost sm', onclick: () => { show('today'); const t = $<HTMLTextAreaElement>('[data-say] textarea'); t.value = `По плану «${topic}»: `; t.focus(); t.dispatchEvent(new Event('input')); } }, 'Поправить');
+    const block = (title: string, items: string[] | undefined, cls = '') => items?.length ? el('div', { class: 'card plan ' + cls }, el('div', { class: 'ph' }, el('b', {}, title), fix(title)), el('ul', {}, ...items.map((x) => el('li', {}, x)))) : '';
+    $('[data-plan]').replaceChildren(...(P ? [
+      P.goal ? el('div', { class: 'card plan goal' }, el('small', { class: 'mut' }, 'Главная цель'), el('b', {}, P.goal), P.min ? el('small', { class: 'mut' }, 'Минимум: ' + P.min) : '') : '',
+      el('div', { class: 'plan-grid' }, block('Делаю сейчас', P.now), block('Дальше по шагам', P.next), block('Почему так', P.why, 'why'), block('На что опираюсь (рынок и цифры)', P.basis), block('Что вижу в мире и трендах', P.watch), block('Риски и что я с ними делаю', P.risks, 'risk')),
+      el('p', { class: 'mut' }, `Обновлено: ${P.updated || '—'}`),
+    ] : [el('p', { class: 'mut' }, 'План ещё не загружен — Claude обновит его в ближайшей рабочей сессии.')]));
+    const uah = (n: number) => Math.round(n || 0).toLocaleString('ru-RU') + ' ₴';
+    const tiles: [string, string, string][] = [
+      ['Заявки за месяц', String(F.leads_month), `за 3 месяца ~${F.leads_quarter}`],
+      ['Новые клиенты за месяц', String(F.won_month), `конверсия ${F.conv}% из заявки`],
+      ['Выручка к концу месяца', uah(F.revenue_month_end), `за последние 30 дней ${uah(F.revenue_30)}`],
+      ['Визиты сайта за месяц', String(F.views_month), `за прошлые 30 дней ${F.views30}`],
+    ];
+    $('[data-fc]').replaceChildren(...tiles.map(([t, v, h]) => el('div', { class: 'kpi' }, el('small', {}, t), el('b', {}, v), el('span', {}, h))));
+    $('[data-fc-how]').textContent = F.how;
+  }
+
   async function loadAccess() {
     const d = await api('/staff').catch(() => null);
     if (!d?.ok) return;
@@ -332,14 +363,15 @@ import Base from '../layouts/Base.astro';
     $('[data-staff]').replaceChildren(...(rows.length ? rows.map((s) => el('div', { class: 'card staff' + (s.active ? '' : ' off') },
       el('b', {}, s.name || s.email), ' ', el('span', { class: 'mut' }, s.email), ' · ', (d.roles[s.role] as R)?.name || s.role, s.can_write ? '' : ' · только просмотр',
       el('div', { class: 'mut' }, (JSON.parse(s.sections || '[]') as string[]).map((x) => d.names[x] || x).join(', ') || '—', s.last_login ? ` · входил ${when(s.last_login)}` : ' · ещё не входил'),
-      s.active && s.role !== 'owner' ? el('button', { type: 'button', class: 'ghost sm', onclick: async () => { if (confirm(`Закрыть доступ для ${s.email}?`)) { await api(`/staff/${s.id}/off`, {}); loadAccess(); } } }, 'Закрыть доступ') : null)) :
+      el('button', { type: 'button', class: 'ghost sm', onclick: async () => { const to = prompt(`Новая почта для входа вместо ${s.email}:`, s.email); if (!to || to === s.email) return; const r = await api(`/staff/${s.id}/email`, { email: to }); alert(r.ok ? 'Готово: следующий код придёт на новую почту.' : 'Не получилось: адрес неверный или уже занят.'); loadAccess(); } }, 'Изменить почту'),
+      s.active && s.role !== 'owner' ? el('button', { type: 'button', class: 'ghost sm', onclick: async () => { if (confirm(`Закрыть доступ для ${s.email}?`)) { await api(`/staff/${s.id}/off`, {}); loadAccess(); } } }, 'Закрыть доступ') : '')) :
       [el('p', { class: 'mut' }, 'Пока только вы.')]));
   }
 
   async function load() {
     if (!token) return logout();
     try { data = await api(''); } catch { return; }
-    loadMe(); loadPulse();
+    loadMe(); loadPulse(); loadPlan();
     $('[data-loginbox]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
     renderToday(); renderInbox(); renderLeads(); renderTeam(); renderPay(); renderCartoon(); renderLinks();
     loadAuto(); loadStats(); loadFin(); loadClaude(); loadWork();
@@ -382,7 +414,7 @@ import Base from '../layouts/Base.astro';
     const waiting = items.filter((i) => i.status === 'waiting').length;
     $('[data-wf]').replaceChildren(
       el('button', { type: 'button', class: 'chip' + (workFilter === '' ? ' on' : ''), onclick: () => { workFilter = ''; loadWork(); } }, `Всё · ${items.length}`),
-      waiting > 0 && el('button', { type: 'button', class: 'chip warn' + (workFilter === 'waiting' ? ' on' : ''), onclick: () => { workFilter = 'waiting'; loadWork(); } }, `Ждёт вашего «да» · ${waiting}`),
+      waiting > 0 ? el('button', { type: 'button', class: 'chip warn' + (workFilter === 'waiting' ? ' on' : ''), onclick: () => { workFilter = 'waiting'; loadWork(); } }, `Ждёт вашего «да» · ${waiting}`) : '',
       ...Object.entries(WK).filter(([k]) => counts[k]).map(([k, [ic, t]]) => el('button', { type: 'button', class: 'chip' + (workFilter === k ? ' on' : ''), onclick: () => { workFilter = k; loadWork(); } }, `${ic} ${t} · ${counts[k]}`)));
     const shown = items.filter((i) => !workFilter || i.kind === workFilter || (workFilter === 'waiting' && i.status === 'waiting'));
     $('[data-work]').replaceChildren(...shown.map((i) => {
@@ -722,6 +754,7 @@ import Base from '../layouts/Base.astro';
     const form = el('form', { class: 'edit' },
       field('Что нужно клиенту', 'service', l.service), field('Бюджет', 'budget', l.budget),
       field('Профиль клиента (видят менеджеры; контакты — только тот, кто взял клиента)', 'brief', l.brief, true),
+      field('🔮 Что дальше и почему — видит клиент в чате проекта (план, прогноз сроков, наши мысли)', 'plan_note', l.plan_note, true),
       el('div', { class: 'two' }, el('label', { class: 'f' }, el('span', {}, 'Этап'), statusSel), el('label', { class: 'f' }, el('span', {}, 'Менеджер'), closerSel)),
       field('Сумма сделки, $ (для «Клиент ✓» — начисления партнёрам посчитаются сами)', 'value_usd', l.value_usd ?? ''),
       el('div', { class: 'two' }, field(`Правок использовано (из ${l.revisions_total ?? (l.promo ? 5 : 2)})`, 'revisions_used', String(l.revisions_used ?? 0)), field('Кругов правок всего (пусто = 2, своим 5)', 'revisions_total', l.revisions_total ?? '')),
@@ -929,6 +962,11 @@ import Base from '../layouts/Base.astro';
   .adm .secs input, .adm [data-invite] input[type=checkbox] { width: auto; }
   .adm .staff.off { opacity: .5; }
   @media (max-width: 640px) { .adm .say { flex-direction: column; align-items: stretch; } }
+  .adm .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 10px; }
+  .adm .plan .ph { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .adm .plan ul { margin: 8px 0 0; padding-left: 18px; } .adm .plan li { margin: 4px 0; }
+  .adm .plan.goal { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; border-color: var(--acc); }
+  .adm .plan.goal b { font-size: 18px; } .adm .plan.why { border-color: var(--accText); } .adm .plan.risk { border-color: #e5484d55; }
   .adm .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 8px; }
   .adm .kpi { background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 2px; }
   .adm .kpi small, .adm .kpi span { color: var(--mut); font-size: 12px; } .adm .kpi b { font-size: 24px; }

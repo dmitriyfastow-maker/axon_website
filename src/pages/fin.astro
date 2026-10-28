@@ -46,15 +46,15 @@ import Base from '../layouts/Base.astro';
     const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
     const st = document.createElement('style'); st.textContent = FIN_CSS; document.head.append(st);
     let code = '';
-    try { code = sessionStorage.getItem(KEY) || ''; } catch {}
+    try { code = (localStorage.getItem(KEY) || sessionStorage.getItem(KEY)) || ''; } catch {}
     const ys = $<HTMLSelectElement>('[data-year]');
     for (let y = new Date().getFullYear(); y >= 2026; y--) ys.append(new Option(String(y), String(y)));
     async function load() {
       if (!code) return;
       const r = await fetch(`/api/fin?year=${ys.value}`, { headers: { 'X-Fin-Code': code } });
-      if (r.status === 401) { $('[data-err]').hidden = false; code = ''; try { sessionStorage.removeItem(KEY); } catch {} return; }
+      if (r.status === 401) { $('[data-err]').hidden = false; code = ''; try { localStorage.removeItem(KEY); } catch {} return; }
       const d = await r.json();
-      try { sessionStorage.setItem(KEY, code); } catch {}
+      try { localStorage.setItem(KEY, code); } catch {}
       $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-out]').hidden = false;
       renderFinance($('[data-fin]'), d, true);
       const openChat = async (id: number) => {
@@ -101,7 +101,7 @@ import Base from '../layouts/Base.astro';
     setInterval(() => { if (code && !document.hidden) loadHelp(); }, 30000);
     $<HTMLFormElement>('[data-login]').addEventListener('submit', (e) => { e.preventDefault(); code = (new FormData(e.target as HTMLFormElement).get('code') as string).trim(); load(); });
     ys.onchange = load;
-    $('[data-out]').onclick = () => { try { sessionStorage.removeItem(KEY); } catch {} location.reload(); };
+    $('[data-out]').onclick = () => { try { localStorage.removeItem(KEY); } catch {} location.reload(); };
     $('[data-csv]').onclick = async () => {
       const r = await fetch(`/api/fin?year=${ys.value}&csv=1`, { headers: { 'X-Fin-Code': code } });
       const a = document.createElement('a'); a.href = URL.createObjectURL(await r.blob()); a.download = `vaxo-finance-${ys.value}.csv`; a.click();

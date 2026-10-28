@@ -14,7 +14,7 @@ describe('dictionaries', () => {
   });
   test('counts match design', () => {
     const t = getDict('en');
-    expect([t.cases.length, t.tiers.length, t.cat.items.length, t.faq.length, t.ref.why.length]).toEqual([8, 3, 8, 5, 4]);
+    expect([t.cases.length, t.tiers.length, t.cat.items.length, t.faq.length, t.ref.why.length]).toEqual([8, 3, 8, 9, 4]);
     expect(CASE_META).toHaveLength(8);
   });
   test('service rows align with prices', () => {

@@ -44,9 +44,9 @@ export async function roomMessages(db: DB, leadId: number, withNotes: boolean) {
 export async function handleRoomApi(db: DB, request: Request, token: string, notify: Notify, onClient?: (leadId: number) => void): Promise<Response> {
   if (!ROOM_RE.test(token)) return json(404, { ok: false });
   const lead = await db
-    .prepare(`SELECT d.id, d.name, d.lang, d.status, d.closer_id, d.ai, d.stage, d.stage_due, d.progress, d.promo, d.revisions_used, d.revisions_total, d.brief_confirmed_at, p.name AS manager FROM leads d LEFT JOIN partners p ON p.id = d.closer_id WHERE d.room = ?`)
+    .prepare(`SELECT d.id, d.name, d.lang, d.status, d.closer_id, d.ai, d.stage, d.stage_due, d.progress, d.promo, d.revisions_used, d.revisions_total, d.brief_confirmed_at, d.plan_note, p.name AS manager FROM leads d LEFT JOIN partners p ON p.id = d.closer_id WHERE d.room = ?`)
     .bind(token)
-    .first<{ id: number; name: string; lang: string; status: string; closer_id: number | null; ai: string; stage: string | null; stage_due: string | null; progress: number | null; promo: string | null; revisions_used: number; revisions_total: number | null; brief_confirmed_at: string | null; manager: string | null }>();
+    .first<{ id: number; name: string; lang: string; status: string; closer_id: number | null; ai: string; stage: string | null; stage_due: string | null; progress: number | null; promo: string | null; revisions_used: number; revisions_total: number | null; brief_confirmed_at: string | null; plan_note: string | null; manager: string | null }>();
   if (!lead) return json(404, { ok: false });
   if (request.method === 'GET') {
     await db.prepare(`UPDATE leads SET client_seen_at = datetime('now') WHERE id = ?`).bind(lead.id).run();
@@ -56,7 +56,7 @@ export async function handleRoomApi(db: DB, request: Request, token: string, not
     // The contract is the confirmed brief: offer the "All correct" button under Vax's latest brief until the client confirms it.
     const briefMsg = ([...msgs] as Record<string, unknown>[]).reverse().find((m) => m.sender !== 'client' && BRIEF_RE.test(String(m.text)));
     const briefPending = !!briefMsg && (!lead.brief_confirmed_at || String(briefMsg.at) > lead.brief_confirmed_at) ? briefMsg.id : null;
-    return json(200, { ok: true, name: lead.name, lang: lead.lang, status: lead.status, stage: lead.stage, stage_due: lead.stage_due, progress: lead.progress, ai: lead.ai === 'on', manager: first(lead.manager), tg: await botLink(token).catch(() => null), messages: msgs,
+    return json(200, { ok: true, name: lead.name, lang: lead.lang, status: lead.status, stage: lead.stage, stage_due: lead.stage_due, progress: lead.progress, plan: lead.plan_note, ai: lead.ai === 'on', manager: first(lead.manager), tg: await botLink(token).catch(() => null), messages: msgs,
       revisions: { used: lead.revisions_used || 0, total: lead.revisions_total ?? (lead.promo ? 5 : 2) }, briefConfirmedAt: lead.brief_confirmed_at, briefPending });
   }
   // POST /api/room/<token>?confirm=<message id>: the client confirms the brief — saved with date and time (the contract).

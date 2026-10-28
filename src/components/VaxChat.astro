@@ -215,7 +215,7 @@ const T = {
         if (matchMedia('(min-width: 761px)').matches) input.focus();
       }
     };
-    fab.onclick = () => open(panel.hidden);
+    fab.onclick = () => open(!!panel.hidden);
     teaser.onclick = () => open(true);
     $<HTMLButtonElement>('[data-vc-close]').onclick = () => open(false);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) open(false); });

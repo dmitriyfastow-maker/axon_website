@@ -101,7 +101,7 @@ export function renderChat(box: HTMLElement, d: R, onBack: () => void) {
     el('button', { class: 'ghost', type: 'button', onclick: onBack }, '← Ко всем клиентам'),
     el('h3', {}, `#${l.id} ${l.name}`),
     el('p', { class: 'mut' }, [l.contact, l.service || l.interest, STATUS[l.status] || l.status, l.progress != null ? `готовность ${l.progress}%` : '', l.value_usd ? `сделка $${l.value_usd}` : l.budget ? `бюджет ${l.budget}` : '', l.country].filter(Boolean).join(' · ')),
-    l.brief ? el('details', {}, el('summary', {}, 'Что известно о задаче'), el('pre', { class: 'brief' }, l.brief)) : null,
+    l.brief ? el('details', {}, el('summary', {}, 'Что известно о задаче'), el('pre', { class: 'brief' }, l.brief)) : '',
     el('div', { class: 'fchat' }, ...(d.messages as R[]).filter((m) => !/^stage:/.test(m.text)).map((m) => el('div', { class: 'fm ' + (m.sender === 'client' ? 'c' : 'v') }, el('small', {}, `${who(m)} · ${String(m.at).slice(0, 16)}`), el('div', {}, m.text)))),
   );
   box.scrollIntoView({ behavior: 'smooth', block: 'start' });
