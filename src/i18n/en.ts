@@ -9,9 +9,9 @@ const en = {
     "Partners",
     "Collaborate"
   ],
-  "eyebrow": "Full-cycle digital studio",
-  "h1": "Websites, apps, ads and AI that bring you clients.",
-  "sub": "Strategy, design, development, marketing and automation — one team and one system, from launch to global markets.",
+  "eyebrow": "Your online team in one chat",
+  "h1": "Any online task — done for you.",
+  "sub": "Clients, a website, an app, ads, content, AI, automation — or something nobody has built yet. Describe it in your own words: Vax gives you a price in a minute, and you watch the progress live.",
   "cta1": "Discuss your project",
   "cta2": "Services & prices",
   "cta3": "Starter packages from $149",

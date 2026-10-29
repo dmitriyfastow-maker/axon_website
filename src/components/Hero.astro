@@ -237,4 +237,6 @@ const { t } = Astro.props;
     opacity: 0.75;
   }
   .btn-tertiary { align-self: center; color: var(--accText); font-weight: 700; text-decoration: underline; text-underline-offset: 4px; padding: 8px 4px; }
+  /* Phone: the tier cascade repeats the Method block right below — hide it so the chat and offer come sooner. */
+  @media (max-width: 700px) { .cascade { display: none; } }
 </style>

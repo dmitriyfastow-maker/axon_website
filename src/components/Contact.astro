@@ -11,7 +11,7 @@ const { t, lang } = Astro.props;
 const f = t.form;
 const interests = [{ v: 'Starter', label: 'Starter' }, ...TIER_NAMES.map((n) => ({ v: n, label: n })), { v: 'single', label: f.single }, { v: 'any', label: f.any }];
 // Labels the script swaps when the form mode changes.
-const CHIPS = { en: ['I need a website', 'I need an app', 'I need more clients', 'An AI chat for my business', 'Not sure what I need'], ru: ['Хочу сайт', 'Нужно приложение', 'Нужно больше клиентов', 'ИИ-чат для бизнеса', 'Не знаю, что нужно'], ua: ['Хочу сайт', 'Потрібен застосунок', 'Потрібно більше клієнтів', 'ІІ-чат для бізнесу', 'Не знаю, що потрібно'] }[lang];
+const CHIPS = { en: ['I need more clients', 'A website or an app', 'Ads & social media', 'Automate my work with AI', 'Something else — I’ll describe it'], ru: ['Нужно больше клиентов', 'Сайт или приложение', 'Реклама и соцсети', 'Автоматизировать работу с ИИ', 'Другое — опишу сам'], ua: ['Потрібно більше клієнтів', 'Сайт або застосунок', 'Реклама і соцмережі', 'Автоматизувати роботу з ШІ', 'Інше — опишу сам'] }[lang];
 const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.sendQ, sending: f.sending };
 ---
 
