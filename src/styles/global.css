@@ -151,3 +151,12 @@ img[data-vax-poke]:hover { transform: rotate(-4deg) scale(1.04); }
 audio.file.aud { display: block; width: min(260px, 100%); height: 40px; margin-top: 4px; }
 video.file.vid { display: block; max-width: min(260px, 100%); max-height: 320px; border-radius: 10px; margin-top: 4px; background: #000; }
 textarea[rows="1"]::placeholder { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Attached files above a chat field (scripts/attach.ts), like Telegram. */
+.att-tray { display: flex; gap: 8px; overflow-x: auto; padding: 8px 10px 0; background: var(--surf); }
+.att-tray[hidden] { display: none; }
+.att-chip { position: relative; flex: none; display: flex; align-items: center; gap: 8px; max-width: 220px; padding: 6px 28px 6px 6px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); font-size: 13px; }
+.att-chip img { width: 44px; height: 44px; object-fit: cover; border-radius: 8px; }
+.att-ic { width: 44px; height: 44px; display: grid; place-items: center; font-size: 22px; background: var(--surf); border-radius: 8px; }
+.att-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+.att-x { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border: 0; border-radius: 50%; background: var(--line); color: var(--ink); cursor: pointer; line-height: 1; }

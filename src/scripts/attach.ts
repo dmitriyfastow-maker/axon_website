@@ -1,8 +1,10 @@
-// Files in every chat: a paperclip button, drag-and-drop and paste. Each file goes to /api/file and its link lands in
-// the text field ("📎 name https://…/f/…"), so the person sends it with their message and everyone sees the same link.
+// Files in every chat: a paperclip button, drag-and-drop and paste. Each file goes to /api/file and shows as a card
+// above the field (preview, name, ×), like Telegram. On send its link ("📎 name https://…/f/…") is added to the message,
+// so everyone sees the same file. A field outside a <form> still gets the link right in the text.
 
 type Field = HTMLInputElement | HTMLTextAreaElement;
 const MAX = 25 * 1024 * 1024;
+const IMG = /\.(png|jpe?g|gif|webp|avif)$/i;
 const T: Record<string, { up: string; big: string; fail: string; drop: string }> = {
   en: { up: 'Uploading', big: 'is over 25 MB — send a Google Drive or WeTransfer link instead', fail: 'did not upload, try again', drop: 'Drop files here' },
   ru: { up: 'Загружаю', big: 'больше 25 МБ — пришлите ссылку на Google Drive или WeTransfer', fail: 'не загрузился, попробуйте ещё раз', drop: 'Отпустите файлы здесь' },
@@ -22,6 +24,34 @@ export function attachFiles(button: HTMLButtonElement, field: Field, lang: () =>
   button.innerHTML ||= CLIP_SVG;
   const note = (s: string) => { field.placeholder = s; };
   const ph = field.placeholder;
+  // The tray of attached files (only for fields inside a form: the form's submit takes them along).
+  const form = field.form;
+  const tray = document.createElement('div');
+  tray.className = 'att-tray';
+  tray.hidden = true;
+  if (form) form.before(tray);
+  const pending: string[] = [];
+  const paint = () => {
+    tray.hidden = !pending.length;
+    tray.replaceChildren(...pending.map((tok, i) => {
+      const [, name, url] = tok.match(/^📎 (\S+) (\S+)$/) || [];
+      const chip = document.createElement('div');
+      chip.className = 'att-chip';
+      if (IMG.test(decodeURIComponent(url || ''))) { const im = document.createElement('img'); im.src = url; im.alt = ''; chip.append(im); }
+      else { const ic = document.createElement('span'); ic.className = 'att-ic'; ic.textContent = '📄'; chip.append(ic); }
+      const nm = document.createElement('span'); nm.className = 'att-name'; nm.textContent = decodeURIComponent(name || ''); chip.append(nm);
+      const x = document.createElement('button'); x.type = 'button'; x.className = 'att-x'; x.textContent = '×'; x.setAttribute('aria-label', 'Remove');
+      x.onclick = () => { pending.splice(i, 1); paint(); };
+      chip.append(x);
+      return chip;
+    }));
+  };
+  // Capture phase: runs before the chat's own submit handler, so the links go out with the text.
+  form?.addEventListener('submit', () => {
+    if (!pending.length) return;
+    field.value = (field.value.trim() ? field.value.trim() + '\n' : '') + pending.join('\n');
+    pending.length = 0; paint();
+  }, true);
   async function upload(files: FileList | File[]) {
     const list = [...files];
     if (!list.length) return;
@@ -33,8 +63,12 @@ export function attachFiles(button: HTMLButtonElement, field: Field, lang: () =>
         const r = await fetch(`/api/file?name=${encodeURIComponent(f.name || 'photo.jpg')}`, { method: 'POST', headers: { 'Content-Type': f.type || 'application/octet-stream' }, body: f });
         const d = r.ok ? await r.json() : null;
         if (!d?.url) throw new Error();
-        field.value = (field.value ? field.value.replace(/\s*$/, field instanceof HTMLTextAreaElement ? '\n' : ' ') : '') + `📎 ${d.name} ${d.url}`;
-        field.dispatchEvent(new Event('input', { bubbles: true }));
+        const tok = `📎 ${String(d.name).replace(/\s+/g, '_')} ${d.url}`;
+        if (form) { pending.push(tok); paint(); }
+        else {
+          field.value = (field.value ? field.value.replace(/\s*$/, field instanceof HTMLTextAreaElement ? '\n' : ' ') : '') + tok;
+          field.dispatchEvent(new Event('input', { bubbles: true }));
+        }
       } catch { alert(`${f.name} ${t().fail}`); }
     }
     note(ph);
@@ -55,7 +89,6 @@ export function attachFiles(button: HTMLButtonElement, field: Field, lang: () =>
   });
 }
 
-const IMG = /\.(png|jpe?g|gif|webp|avif)$/i;
 const AUD = /\.(m4a|mp3|wav|ogg|oga|webm|aac|opus)$/i;
 const VID = /\.(mp4|mov|m4v)$/i;
 

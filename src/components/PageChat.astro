@@ -26,9 +26,11 @@ const T = {
   <div class="pc-chips" data-pc-chips>{chips.map((c) => <button type="button">{c}</button>)}</div>
   <form class="pc-in" data-pc-form>
     <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
-    <button type="button" class="pc-clip" data-pc-clip aria-label={T.clip} title={T.clip}></button>
-    <textarea rows="2" maxlength="4000" placeholder={T.ph} aria-label={T.ph} data-pc-text></textarea>
-    <button type="button" class="pc-mic" data-pc-mic aria-label={T.mic}></button>
+    <div class="pc-box">
+      <button type="button" class="pc-clip" data-pc-clip aria-label={T.clip} title={T.clip}></button>
+      <textarea rows="1" maxlength="4000" placeholder={T.ph} aria-label={T.ph} data-pc-text></textarea>
+      <button type="button" class="pc-mic" data-pc-mic aria-label={T.mic}></button>
+    </div>
     <button type="submit" class="pc-send" aria-label={T.send}>➤</button>
   </form>
   <div class="pc-foot"><small>{T.note}</small> <a href="#" data-pc-full hidden>{T.full}</a> <a href="#" data-pc-tg hidden target="_blank" rel="noopener">{T.tg}</a> <button type="button" class="pc-link" data-pc-restart hidden>{T.restart}</button> </div>
@@ -150,17 +152,21 @@ const T = {
   .pc-m a { color: inherit; text-decoration: underline; }
   .pc-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; background: var(--bg); }
   .pc-chips[hidden], .pc-chips:empty { display: none; }
-  .pc-in { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--line); background: var(--surf); }
-  .pc-in textarea { flex: 1; min-width: 0; resize: none; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 12px; padding: 10px 12px; font: 16px var(--font); }
-  .pc-in button { width: 46px; border-radius: 12px; cursor: pointer; display: grid; place-items: center; }
-  .pc-send { border: 0; background: var(--acc); color: var(--dark-ink); font-size: 18px; }
-  .pc-mic, .pc-clip { border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
-  .pc-in .pc-clip { width: 40px; } .pc-clip.busy { opacity: 0.5; }
+  /* Like Telegram: one rounded field with 📎 and 🎤 inside, a round ➤ outside; buttons keep their size and sit at the
+     bottom while the text grows up to ~6 lines. */
+  .pc-in { display: flex; align-items: flex-end; gap: 8px; padding: 10px; border-top: 1px solid var(--line); background: var(--surf); }
+  .pc-box { flex: 1; min-width: 0; display: flex; align-items: flex-end; gap: 2px; border: 1px solid var(--line); background: var(--bg); border-radius: 22px; padding: 2px 4px; }
+  .pc-box:focus-within { border-color: var(--acc); }
+  .pc-box textarea { flex: 1; min-width: 0; resize: none; border: 0; outline: 0; background: transparent; color: var(--ink); padding: 10px 4px; font: 16px/1.35 var(--font); max-height: 160px; }
+  .pc-box button { flex: none; width: 40px; height: 40px; border: 0; border-radius: 50%; background: transparent; color: var(--mut); cursor: pointer; display: grid; place-items: center; }
+  .pc-box button:hover { color: var(--ink); }
+  .pc-send { flex: none; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--acc); color: var(--dark-ink); font-size: 18px; cursor: pointer; display: grid; place-items: center; }
+  .pc-clip.busy { opacity: 0.5; }
   .pchat.drop { outline: 3px dashed var(--acc); outline-offset: -3px; }
   .pc-m .file { display: inline-block; font-weight: 600; } .pc-m .file.img img { display: block; max-width: 220px; max-height: 220px; border-radius: 10px; margin-top: 4px; }
   .pc-formbtn { margin: 0 14px 14px; padding: 11px 14px; border: 1.5px solid var(--ink); border-radius: 12px; background: var(--bg); color: var(--ink); font: 600 14px var(--font); cursor: pointer; }
   .pc-formbtn:hover { background: var(--acc); color: var(--dark-ink); border-color: var(--acc); } .pc-formbtn[hidden] { display: none; }
-  .pc-mic.rec { background: var(--error, #e5484d); color: #fff; border-color: transparent; } .pc-mic.busy { opacity: 0.5; }
+  .pc-box .pc-mic.rec { background: var(--error, #e5484d); color: #fff; } .pc-mic.busy { opacity: 0.5; }
   .pc-foot { padding: 8px 14px 12px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; background: var(--surf); }
   .pc-foot small { color: var(--mut); font-size: 12px; flex-basis: 100%; }
   .pc-foot a, .pc-link { color: var(--accText); font: 600 13px var(--font); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }

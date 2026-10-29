@@ -89,6 +89,12 @@ const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
     gap: clamp(32px, 5vw, 72px);
   }
+  /* Phone: the chat gets the whole width (a thick frame squeezed the text field to a few words per line). */
+  @media (max-width: 600px) {
+    .contact { padding-left: 8px; padding-right: 8px; }
+    .box { padding: 28px 8px 8px; border-radius: 24px; gap: 24px; }
+    .copy { padding: 0 12px; }
+  }
   .copy {
     display: flex;
     flex-direction: column;
