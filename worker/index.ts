@@ -104,6 +104,22 @@ export default {
     }
     if (url.pathname === '/api/mono/webhook') return env.LEADS ? monoWebhook(env.LEADS, env.MONO_ACQ_TOKEN, env.AI, notify, request) : json(503, { ok: false });
     if (url.pathname === '/api/file') return env.LEADS ? handleFileUpload(env.FILES, env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
+    // Short tracked links for bios (vaxogroup.com/go/<name>): count the click, then send the person on.
+    const go = url.pathname.match(/^\/go\/([a-z0-9-]{2,30})\/?$/);
+    if (go) {
+      const GO: Record<string, string> = {
+        vaxo: '/?utm_source=instagram_dmitriy&utm_content=linktree',
+        insiders: 'https://discord.com/invite/aUgWVKhzSM',
+        'vaxo-yt': '/?utm_source=youtube_dmitriy',
+        'vaxo-tt': '/?utm_source=tiktok_dmitriy',
+        'vaxo-discord': '/?utm_source=discord&utm_content=insiders',
+      };
+      const to = GO[go[1]];
+      if (!to) return Response.redirect(url.origin + '/', 302);
+      if (env.LEADS && !/bot|crawl|spider|preview|facebookexternalhit|curl|wget/i.test(request.headers.get('User-Agent') || ''))
+        waitUntil(env.LEADS.prepare('INSERT INTO events (kind, path, country) VALUES (?, ?, ?)').bind('go', '/go/' + go[1], (request as { cf?: { country?: string } }).cf?.country ?? null).run().catch(() => {}));
+      return Response.redirect(to.startsWith('http') ? to : url.origin + to, 302);
+    }
     const file = url.pathname.match(/^\/f\/([a-f0-9]{20})(?:\/|$)/);
     if (file) return serveFile(env.FILES, file[1]);
     const prev = url.pathname.match(/^\/p\/([a-f0-9]{20})\/?$/);

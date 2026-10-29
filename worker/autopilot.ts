@@ -82,7 +82,7 @@ export async function trackUx(db: DB, request: Request) {
 /** Behaviour summary for the CRM: per page depth/time, what people click, dead and rage clicks, lead sources. */
 async function behaviour(db: DB) {
   const q = async (sql: string) => (await db.prepare(sql).all()).results;
-  const [pages, clicks, dead, rage, leadSrc] = await Promise.all([
+  const [pages, clicks, dead, rage, leadSrc, go] = await Promise.all([
     q(`SELECT path AS p, COUNT(DISTINCT sess) AS visits, ROUND(AVG(CASE WHEN kind='scroll' THEN val END)) AS depth,
          ROUND(100.0 * SUM(kind='scroll' AND val >= 90) / MAX(1, SUM(kind='scroll'))) AS bottom,
          ROUND(AVG(CASE WHEN kind='time' AND val < 3600 THEN val END)) AS secs,
@@ -93,8 +93,9 @@ async function behaviour(db: DB) {
     q(`SELECT path AS p, sel AS s, COUNT(*) AS n FROM ux WHERE kind='rage' AND at > datetime('now','-30 days') GROUP BY path, sel ORDER BY n DESC LIMIT 10`),
     q(`SELECT COALESCE(source, 'не известно') AS s, COUNT(*) AS n, SUM(status='won') AS won FROM leads
        WHERE created_at > datetime('now','-30 days') AND COALESCE(page,'') != 'test' AND contact NOT LIKE 'test%' GROUP BY s ORDER BY n DESC LIMIT 12`),
+    q(`SELECT path AS s, COUNT(*) AS n FROM events WHERE kind='go' AND at > datetime('now','-30 days') GROUP BY path ORDER BY n DESC`),
   ]);
-  return { pages, clicks, dead, rage, leadSrc };
+  return { pages, clicks, dead, rage, leadSrc, go };
 }
 
 export async function analytics(db: DB) {

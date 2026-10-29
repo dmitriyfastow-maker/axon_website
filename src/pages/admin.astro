@@ -91,6 +91,8 @@ import Base from '../layouts/Base.astro';
         <h2>Откуда приходят заявки</h2>
         <p class="hint">Первый источник каждого человека: метка ссылки (utm_source), другой сайт или прямой заход. Ссылки с метками — во вкладке «Ссылки».</p>
         <div data-leadsrc></div>
+        <h2>Переходы по коротким ссылкам (vaxogroup.com/go/…)</h2>
+        <div data-gosrc></div>
         <h2>Поведение на сайте</h2>
         <p class="hint">Своя аналитика без cookies (как Яндекс Метрика / Clarity): докуда листают, сколько сидят, на что жмут. «Мёртвый клик» — жмут на то, что не кнопка (думают, что кликабельно). «Злой клик» — 3+ раза подряд в одно место (что-то не работает). Боты и дата-центры не считаются.</p>
         <div class="table"><table><thead><tr><th>Страница</th><th>Визиты</th><th>Долистали, в среднем</th><th>До конца</th><th>Время, сек</th><th>Клики</th></tr></thead><tbody data-uxpages></tbody></table></div>
@@ -640,6 +642,7 @@ import Base from '../layouts/Base.astro';
       $('[data-uxdead]').replaceChildren(rows(U.dead));
       $('[data-uxrage]').replaceChildren(rows(U.rage));
       $('[data-leadsrc]').replaceChildren((U.leadSrc as R[]).length ? el('ol', { class: 'rank' }, ...(U.leadSrc as R[]).map((x) => el('li', {}, el('span', {}, String(x.s)), el('b', {}, `${x.n}${x.won ? ' · клиентов ' + x.won : ''}`)))) : el('p', { class: 'mut' }, 'Заявок с меткой пока нет — источник пишется с 29.10.'));
+      $('[data-gosrc]').replaceChildren((U.go as R[] || []).length ? el('ol', { class: 'rank' }, ...(U.go as R[]).map((x) => el('li', {}, el('span', {}, 'vaxogroup.com' + x.s), el('b', {}, String(x.n))))) : el('p', { class: 'mut' }, 'Переходов пока нет. Ссылки: /go/vaxo (Instagram Дмитрия → сайт), /go/insiders (→ Discord), /go/vaxo-yt, /go/vaxo-tt, /go/vaxo-discord.'));
       $('[data-uxpages]').replaceChildren(...((U.pages as R[]).length ? (U.pages as R[]).map((x) => el('tr', {}, ...[x.p, x.visits, `${x.depth ?? '—'}%`, `${x.bottom ?? 0}%`, x.secs ?? '—', x.clicks].map((c) => el('td', {}, String(c))))) : [el('tr', {}, el('td', { colspan: '6', class: 'empty' }, 'Пока нет данных — копятся с 29.10.'))]));
     }
     $('[data-mgr]').replaceChildren(...((a.managers as R[]).length ? (a.managers as R[]).map((m) => el('tr', {}, ...[m.name, m.taken, m.won, usd(m.revenue), m.missed, m.flags, `★ ${m.closer_rating ?? m.auto_rating}`].map((c) => el('td', {}, String(c)))))
