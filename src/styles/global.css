@@ -160,3 +160,7 @@ textarea[rows="1"]::placeholder { white-space: nowrap; overflow: hidden; text-ov
 .att-ic { width: 44px; height: 44px; display: grid; place-items: center; font-size: 22px; background: var(--surf); border-radius: 8px; }
 .att-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
 .att-x { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border: 0; border-radius: 50%; background: var(--line); color: var(--ink); cursor: pointer; line-height: 1; }
+
+/* Speed: sections below the first screen are laid out and painted only when they come near the screen
+   (Lighthouse 29.10: 1 227 elements, ~4 s of style & layout on a phone before the first paint). */
+main > section:not(:first-child), main > div > section:not(:first-child) { content-visibility: auto; contain-intrinsic-size: auto 900px; }

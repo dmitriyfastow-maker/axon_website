@@ -159,7 +159,9 @@ const { t } = Astro.props;
     gap: 12px;
   }
   .vax-stage { position: absolute; right: clamp(8px, 3vw, 40px); top: clamp(28px, 5vw, 64px); width: 118px; z-index: 2; pointer-events: none; }
-  .vax-stage img { width: 100%; height: auto; display: block; pointer-events: auto; transform-origin: 50% 100%; filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.18)); animation: vax-idle 6s ease-in-out infinite; }
+  .vax-stage img { width: 100%; height: auto; display: block; pointer-events: auto; transform-origin: 50% 100%; will-change: transform; animation: vax-idle 6s ease-in-out infinite; }
+  /* Static shadow under Vax: an animated drop-shadow filter repainted every frame and cost ~2 s of main thread on phones. */
+  .vax-stage::after { content: ''; position: absolute; left: 18%; right: 18%; bottom: -6px; height: 12px; border-radius: 50%; background: rgba(0, 0, 0, 0.16); filter: blur(6px); z-index: -1; }
   .vb { position: absolute; right: 70%; bottom: 62%; white-space: nowrap; font-size: 13px; font-weight: 700; background: var(--surf); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); opacity: 0; animation: vax-bubble 9s ease-out infinite; }
   .vb1 { animation-delay: 3s; }
   .vb2 { animation-delay: 6s; background: var(--acc); color: var(--dark-ink); border-color: var(--acc); }

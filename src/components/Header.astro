@@ -200,4 +200,6 @@ const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?
       display: none !important;
     }
   }
+  /* Phone: no live blur under the sticky header (expensive on every scroll frame) — a solid background instead. */
+  @media (max-width: 700px) { .header { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--bg); } }
 </style>
