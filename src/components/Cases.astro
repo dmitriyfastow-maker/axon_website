@@ -9,7 +9,8 @@ const { t } = Astro.props;
 const filters = [{ label: t.all, v: -1 }, ...TIER_NAMES.map((n, i) => ({ label: n, v: i }))];
 const all = CASE_META.map((m, i) => ({ m, i }));
 const top = all.filter((x) => x.m.real);
-const rest = all.filter((x) => !x.m.real);
+// Only real projects are shown (29.10: the 6 sample cases from the old AXON site were removed — Dmitry's decision).
+const rest: typeof all = [];
 const L = Astro.url.pathname.startsWith('/ru/') ? 'ru' : Astro.url.pathname.startsWith('/ua/') ? 'ua' : 'en';
 const more = { en: `Show ${rest.length} more cases`, ru: `Показать ещё ${rest.length} кейсов`, ua: `Показати ще ${rest.length} кейсів` }[L];
 ---
@@ -21,6 +22,7 @@ const more = { en: `Show ${rest.length} more cases`, ru: `Показать ещ�
       <h2 class="h2">{t.casesTitle}</h2>
       <p>{t.casesSub}</p>
     </div>
+    {new Set(top.map((x) => x.m.tier)).size > 1 && (
     <div class="filters" role="group" aria-label={t.casesEyebrow}>
       {
         filters.map((f) => (
@@ -30,6 +32,7 @@ const more = { en: `Show ${rest.length} more cases`, ru: `Показать ещ�
         ))
       }
     </div>
+    )}
   </div>
   <div class="grid" data-acc-group="cases">
     {top.map(({ m, i }) => <CaseCard meta={m} copy={t.cases[i]} labels={t.labels} index={i} />)}

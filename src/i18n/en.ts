@@ -78,7 +78,7 @@ const en = {
   ],
   "casesEyebrow": "Selected cases",
   "casesTitle": "Systems that already work",
-  "casesSub": "How premium brands in the EU, UAE and USA grew with a Foundation, Growth or Scale architecture.",
+  "casesSub": "Real projects we built: an AI platform for clinics and a partner platform for digital marketplaces.",
   "all": "All",
   "cases": [
     {
