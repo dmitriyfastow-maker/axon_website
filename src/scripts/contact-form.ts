@@ -98,7 +98,7 @@ export function initContactForm(): void {
     try {
       const res = await fetch('/api/lead', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Vx-Src': (window as unknown as { vxSrc?: () => string }).vxSrc?.() || '' },
         body: JSON.stringify({
           mode,
           name: name.value,

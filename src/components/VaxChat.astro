@@ -142,7 +142,7 @@ const T = {
         const transcript = msgs.map((m) => (m.role === 'user' ? 'Client: ' : 'Vax: ') + m.content).join('\n').slice(-1900);
         try {
           const r = await fetch('/api/lead', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Vx-Src': (window as unknown as { vxSrc?: () => string }).vxSrc?.() || '' },
             body: JSON.stringify({ mode: 'request', name: n.value, contact: c.value, interest: 'any', message: '[Vax chat] ' + location.pathname + '\n' + transcript, lang, ref, startedAt: Math.min(openedAt, Date.now() - 3000) }),
           });
           if (!r.ok) throw new Error(String(r.status));

@@ -128,7 +128,7 @@ const shots = ['/gifts/f13.jpg', '/gifts/f37.jpg', '/gifts/f1.jpg'];
     const f = Object.fromEntries(new FormData(form).entries());
     // Gift waitlist goes through the normal lead form: the person gets a private chat where Vax asks the details.
     const message = [`Occasion: ${f.occasion}`, f.names && `Names: ${f.names}`, f.note].filter(Boolean).join('\n');
-    const r = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'request', interest: `gift-${f.tier}`, name: f.name, contact: f.contact, message, lang, website: f.website, startedAt: started }) }).catch(() => null);
+    const r = await fetch('/api/lead', { method: 'POST', headers: { 'X-Vx-Src': (window as unknown as { vxSrc?: () => string }).vxSrc?.() || '', 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'request', interest: `gift-${f.tier}`, name: f.name, contact: f.contact, message, lang, website: f.website, startedAt: started }) }).catch(() => null);
     const d = r && r.ok ? await r.json().catch(() => null) : null;
     btn.disabled = false;
     if (d && d.room) { form.querySelector('.ok').hidden = false; form.querySelector('.err').hidden = true; setTimeout(() => (location.href = `/room/?t=${d.room}`), 1200); }

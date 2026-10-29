@@ -113,6 +113,8 @@ const jsonLd = {
     <script>
       // Theme toggle, mobile menu, language memory, contact form and accordions — on every page.
       import '../scripts/main';
+      import { startTracking } from '../scripts/track';
+      if (!location.pathname.startsWith('/admin') && !location.pathname.startsWith('/fin')) startTracking();
     </script>
   </body>
 </html>

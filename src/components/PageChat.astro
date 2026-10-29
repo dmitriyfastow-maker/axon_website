@@ -92,7 +92,7 @@ const T = {
       if (!room) {
         let promo = '', ref = '';
         try { promo = localStorage.getItem('vaxo_code') || ''; ref = localStorage.getItem('vaxo_ref') || ''; } catch {}
-        const r = await fetch('/api/intake', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind, text, lang, interest: topic, promo, ref, page: location.pathname, startedAt: started, website: $<HTMLInputElement>('.hp').value }) }).catch(() => null);
+        const r = await fetch('/api/intake', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ src: (window as unknown as { vxSrc?: () => string }).vxSrc?.(), kind, text, lang, interest: topic, promo, ref, page: location.pathname, startedAt: started, website: $<HTMLInputElement>('.hp').value }) }).catch(() => null);
         const d = r && r.ok ? await r.json() : null;
         if (d?.room) { room = d.room; put(KEY, room); ok = true; navigator.sendBeacon?.('/api/ev', new Blob([JSON.stringify({ k: 'chat_start', p: location.pathname })], { type: 'application/json' })); }
       } else {

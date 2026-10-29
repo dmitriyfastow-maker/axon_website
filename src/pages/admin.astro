@@ -88,6 +88,17 @@ import Base from '../layouts/Base.astro';
           <div><h2>Страны</h2><div data-countries></div></div>
           <div><h2>Популярные страницы</h2><div data-pages></div></div>
         </div>
+        <h2>Откуда приходят заявки</h2>
+        <p class="hint">Первый источник каждого человека: метка ссылки (utm_source), другой сайт или прямой заход. Ссылки с метками — во вкладке «Ссылки».</p>
+        <div data-leadsrc></div>
+        <h2>Поведение на сайте</h2>
+        <p class="hint">Своя аналитика без cookies (как Яндекс Метрика / Clarity): докуда листают, сколько сидят, на что жмут. «Мёртвый клик» — жмут на то, что не кнопка (думают, что кликабельно). «Злой клик» — 3+ раза подряд в одно место (что-то не работает). Боты и дата-центры не считаются.</p>
+        <div class="table"><table><thead><tr><th>Страница</th><th>Визиты</th><th>Долистали, в среднем</th><th>До конца</th><th>Время, сек</th><th>Клики</th></tr></thead><tbody data-uxpages></tbody></table></div>
+        <div class="cols">
+          <div><h2>На что жмут</h2><div data-uxclicks></div></div>
+          <div><h2>Мёртвые клики (слепые зоны)</h2><div data-uxdead></div></div>
+          <div><h2>Злые клики</h2><div data-uxrage></div></div>
+        </div>
         <h2>Менеджеры — рейтинг</h2>
         <p class="hint">Автоматическая оценка: победы минус пропущенные сроки и замечания контроля качества. Если вы ставите оценку вручную — главная ваша.</p>
         <div class="table"><table><thead><tr><th>Менеджер</th><th>Взял</th><th>Клиенты</th><th>Выручка</th><th>Пропуски</th><th>Замечания</th><th>Авто-оценка</th></tr></thead><tbody data-mgr></tbody></table></div>
@@ -622,6 +633,15 @@ import Base from '../layouts/Base.astro';
     $('[data-sources]').replaceChildren(list(a.sources, 's'));
     $('[data-countries]').replaceChildren(list(a.countries, 'c'));
     $('[data-pages]').replaceChildren(list(a.pages, 'p'));
+    const U = a.ux as R | null;
+    if (U) {
+      const rows = (r: R[]) => r.length ? el('ol', { class: 'rank' }, ...r.map((x) => el('li', {}, el('span', {}, `${x.s} · ${x.p}`), el('b', {}, String(x.n))))) : el('p', { class: 'mut' }, 'Пока нет данных — копятся с 29.10.');
+      $('[data-uxclicks]').replaceChildren(rows(U.clicks));
+      $('[data-uxdead]').replaceChildren(rows(U.dead));
+      $('[data-uxrage]').replaceChildren(rows(U.rage));
+      $('[data-leadsrc]').replaceChildren((U.leadSrc as R[]).length ? el('ol', { class: 'rank' }, ...(U.leadSrc as R[]).map((x) => el('li', {}, el('span', {}, String(x.s)), el('b', {}, `${x.n}${x.won ? ' · клиентов ' + x.won : ''}`)))) : el('p', { class: 'mut' }, 'Заявок с меткой пока нет — источник пишется с 29.10.'));
+      $('[data-uxpages]').replaceChildren(...((U.pages as R[]).length ? (U.pages as R[]).map((x) => el('tr', {}, ...[x.p, x.visits, `${x.depth ?? '—'}%`, `${x.bottom ?? 0}%`, x.secs ?? '—', x.clicks].map((c) => el('td', {}, String(c))))) : [el('tr', {}, el('td', { colspan: '6', class: 'empty' }, 'Пока нет данных — копятся с 29.10.'))]));
+    }
     $('[data-mgr]').replaceChildren(...((a.managers as R[]).length ? (a.managers as R[]).map((m) => el('tr', {}, ...[m.name, m.taken, m.won, usd(m.revenue), m.missed, m.flags, `★ ${m.closer_rating ?? m.auto_rating}`].map((c) => el('td', {}, String(c)))))
       : [el('tr', {}, el('td', { colspan: '7', class: 'empty' }, 'Менеджеров пока нет.'))]));
   }

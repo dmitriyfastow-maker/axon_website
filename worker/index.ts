@@ -18,7 +18,7 @@ import { monoCheck, monoPay, monoReceiptSweep, monoWebhook } from './mono.js';
 import { handleFinancePublic } from './finance.js';
 import { handleIntake } from './intake.js';
 import { notifyOwnerChat } from './ownerchat.js';
-import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackView, triageLead } from './autopilot.js';
+import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackUx, trackView, triageLead } from './autopilot.js';
 
 interface Env extends LeadEnv, CabinetEnv {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -68,6 +68,10 @@ export default {
       // A new manager application is graded by AI right away.
       if (ppath === 'deals/apply' && res.ok) waitUntil(gradePending(env.LEADS, env.AI, notify));
       return res;
+    }
+    if (url.pathname === '/api/ux' && request.method === 'POST') {
+      if (env.LEADS) await trackUx(env.LEADS, request).catch(() => {});
+      return new Response(null, { status: 204 });
     }
     if (url.pathname === '/api/ev' && request.method === 'POST') {
       if (env.LEADS) await trackEvent(env.LEADS, request).catch(() => {});
@@ -126,6 +130,9 @@ export default {
               .bind(l.mode, l.name, l.contact, l.interest, l.message, l.lang, l.ref ?? null, country, page, roomToken, l.promo ?? null)
               .run()) as { meta?: { last_row_id?: number } };
             const id = res?.meta?.last_row_id;
+            // Where the visitor first came from (scripts/track.ts sends it in a header).
+            const src = (request.headers.get('X-Vx-Src') || '').slice(0, 80);
+            if (id && src) await db.prepare('UPDATE leads SET source = ? WHERE id = ?').bind(src, id).run();
             // A client from a partner's "for friends" link gets the friends mode.
             if (id && l.ref && !l.promo) {
               const fl = await db.prepare('SELECT friend FROM links WHERE slug = ?').bind(l.ref).first<{ friend: number }>();

@@ -39,9 +39,11 @@ export async function handleIntake(db: DB, request: Request, notify: Notify, onN
     const fl = await db.prepare('SELECT friend FROM links WHERE slug = ?').bind(ref).first<{ friend: number }>();
     if (fl?.friend) await db.prepare(`UPDATE leads SET promo = 'FRIEND' WHERE id = ?`).bind(id).run();
   }
+  const source = s(b.src, 80) || null;
+  if (source) await db.prepare('UPDATE leads SET source = ? WHERE id = ?').bind(source, id).run();
   await addMessage(db, id, 'client', 'text', text);
   await logEvent(db, id, 'system', 'note', `Chat started on the site (${kind})`);
-  await notify(`🆕 #${id} новый разговор на сайте (${kind === 'collab' ? 'сотрудничество' : kind === 'gift' ? 'подарок' : 'клиент'}): ${text.slice(0, 300)}`);
+  await notify(`🆕 #${id} новый разговор на сайте (${kind === 'collab' ? 'сотрудничество' : kind === 'gift' ? 'подарок' : 'клиент'}, источник: ${source || 'прямой'}): ${text.slice(0, 300)}`);
   onNew(id);
   return json(200, { ok: true, room });
 }

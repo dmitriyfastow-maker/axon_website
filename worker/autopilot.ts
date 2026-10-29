@@ -62,6 +62,41 @@ export async function trackEvent(db: DB, request: Request) {
   await db.prepare('INSERT INTO events (kind, path, country) VALUES (?, ?, ?)').bind(kind, path, country).run();
 }
 
+/** POST /api/ux: one beacon per page visit from scripts/track.ts (clicks, dead/rage clicks, scroll depth, time). */
+export async function trackUx(db: DB, request: Request) {
+  if (BOT.test(request.headers.get('User-Agent') || '')) return;
+  const org = String((request as unknown as { cf?: { asOrganization?: string } }).cf?.asOrganization || '');
+  if (DC.test(org)) return;
+  const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+  const str = (v: unknown, n: number) => (typeof v === 'string' ? v.slice(0, n) : null);
+  const num = (v: unknown) => (typeof v === 'number' && isFinite(v) ? Math.max(0, Math.min(100000, Math.round(v))) : null);
+  const path = str(b.p, 120), sess = str(b.sess, 12), src = str(b.src, 80);
+  const country = (request as { cf?: { country?: string } }).cf?.country ?? null;
+  const evs = (Array.isArray(b.evs) ? b.evs : []).slice(0, 90) as Record<string, unknown>[];
+  const stmts = evs.filter((e) => ['click', 'dead', 'rage', 'scroll', 'time'].includes(String(e.k))).map((e) =>
+    db.prepare('INSERT INTO ux (sess, path, kind, sel, x, y, val, src, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(sess, path, String(e.k), str(e.sel, 90), num(e.x), num(e.y), num(e.val), src, country));
+  if (stmts.length) await db.batch(stmts);
+}
+
+/** Behaviour summary for the CRM: per page depth/time, what people click, dead and rage clicks, lead sources. */
+async function behaviour(db: DB) {
+  const q = async (sql: string) => (await db.prepare(sql).all()).results;
+  const [pages, clicks, dead, rage, leadSrc] = await Promise.all([
+    q(`SELECT path AS p, COUNT(DISTINCT sess) AS visits, ROUND(AVG(CASE WHEN kind='scroll' THEN val END)) AS depth,
+         ROUND(100.0 * SUM(kind='scroll' AND val >= 90) / MAX(1, SUM(kind='scroll'))) AS bottom,
+         ROUND(AVG(CASE WHEN kind='time' AND val < 3600 THEN val END)) AS secs,
+         SUM(kind IN ('click','dead','rage')) AS clicks
+       FROM ux WHERE at > datetime('now','-30 days') GROUP BY path ORDER BY visits DESC LIMIT 12`),
+    q(`SELECT path AS p, sel AS s, COUNT(*) AS n FROM ux WHERE kind='click' AND at > datetime('now','-30 days') GROUP BY path, sel ORDER BY n DESC LIMIT 15`),
+    q(`SELECT path AS p, sel AS s, COUNT(*) AS n FROM ux WHERE kind='dead' AND at > datetime('now','-30 days') GROUP BY path, sel ORDER BY n DESC LIMIT 10`),
+    q(`SELECT path AS p, sel AS s, COUNT(*) AS n FROM ux WHERE kind='rage' AND at > datetime('now','-30 days') GROUP BY path, sel ORDER BY n DESC LIMIT 10`),
+    q(`SELECT COALESCE(source, 'не известно') AS s, COUNT(*) AS n, SUM(status='won') AS won FROM leads
+       WHERE created_at > datetime('now','-30 days') AND COALESCE(page,'') != 'test' AND contact NOT LIKE 'test%' GROUP BY s ORDER BY n DESC LIMIT 12`),
+  ]);
+  return { pages, clicks, dead, rage, leadSrc };
+}
+
 export async function analytics(db: DB) {
   const q = async (sql: string) => (await db.prepare(sql).all()).results;
   const one = async (sql: string) => (await db.prepare(sql).first<Record<string, number>>()) ?? {};
@@ -92,7 +127,7 @@ export async function analytics(db: DB) {
     const auto = Math.max(1, Math.min(5, Math.round((3.5 + winRate * 2 - m.missed * 0.5 - m.flags * 0.7 - m.strikes * 0.5) * 2) / 2));
     return { ...m, auto_rating: auto };
   });
-  return { daily, sources, countries, pages, funnel, managers: scored };
+  return { daily, sources, countries, pages, funnel, managers: scored, ux: await behaviour(db).catch(() => null) };
 }
 
 // ---------- leads ----------
