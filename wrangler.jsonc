@@ -1,5 +1,6 @@
 {
   "name": "vaxo-site",
+  "account_id": "939511076f702306710cfbf6174adc54",
   "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   "assets": {
