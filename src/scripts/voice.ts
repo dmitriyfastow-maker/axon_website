@@ -43,8 +43,10 @@ export function attachMic(button: HTMLButtonElement, field: Field, lang: () => s
     field.dispatchEvent(new Event('input', { bubbles: true }));
   };
   const hint = (s = t().allow) => { note(s); field.focus(); setTimeout(() => note(ph), 9000); };
-  // Phones always record; computers try live recognition first and fall back to recording if it fails.
-  let useRecorder = !SR || isTouch();
+  // Record a clip and let /api/stt (Whisper) turn it into text everywhere it is possible: live browser recognition on
+  // computers failed silently for owners (30.10: "network" errors, blocked Google speech service), recording is reliable.
+  // Live recognition stays only as a fallback where recording is impossible.
+  let useRecorder = canRecord || !SR || isTouch();
 
   async function record() {
     if (!window.isSecureContext) { hint(t().https); return; }

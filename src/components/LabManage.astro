@@ -1,0 +1,54 @@
+---
+// INSIDERS Lab membership page (/lab/manage/?t=<token>, from every Lab email): status, paid-until date, switch autopay
+// off, pay the next month. The texts follow the language the member joined in (worker/lab.ts handleLabManage).
+import Base from '../layouts/Base.astro';
+---
+
+<Base lang="en" title="INSIDERS Lab — your membership" description="Your INSIDERS Lab membership: status, autopay, next payment." noindex>
+  <main class="lm">
+    <p class="logo">INSIDERS <span>Lab</span></p>
+    <div class="card" data-card><p data-text>…</p></div>
+  </main>
+</Base>
+
+<script>
+  const T: Record<string, Record<string, string>> = {
+    en: { hi: 'Hi, {n}!', active: 'Your membership is active until {d}.', expired: 'Your membership has ended.', pending: 'We are waiting for your first payment.', auto: 'Autopay is on: we charge ${p} on {d} and email you 3 days before.', manual: 'Autopay is off: pay for the next month whenever you are ready.', off: 'Switch autopay off', pay: 'Pay for the next month — ${p}', done: 'Autopay is off. Nothing will be charged.', bad: 'This link is not valid.', err: 'Something went wrong. Please try again.' },
+    ru: { hi: 'Привет, {n}!', active: 'Участие активно до {d}.', expired: 'Срок участия закончился.', pending: 'Ждём первую оплату.', auto: 'Автоплатёж включён: {d} спишем ${p}, письмо придёт за 3 дня.', manual: 'Автоплатёж выключен: оплатите следующий месяц, когда будете готовы.', off: 'Выключить автоплатёж', pay: 'Оплатить следующий месяц — ${p}', done: 'Автоплатёж выключен. Ничего не спишется.', bad: 'Ссылка недействительна.', err: 'Что-то пошло не так. Попробуйте ещё раз.' },
+    ua: { hi: 'Привіт, {n}!', active: 'Участь активна до {d}.', expired: 'Термін участі закінчився.', pending: 'Чекаємо на першу оплату.', auto: 'Автоплатіж увімкнено: {d} спишемо ${p}, лист прийде за 3 дні.', manual: 'Автоплатіж вимкнено: сплатіть наступний місяць, коли будете готові.', off: 'Вимкнути автоплатіж', pay: 'Сплатити наступний місяць — ${p}', done: 'Автоплатіж вимкнено. Нічого не спишеться.', bad: 'Посилання недійсне.', err: 'Щось пішло не так. Спробуйте ще раз.' },
+  };
+  const q = new URLSearchParams(location.search).get('t') || '';
+  const card = document.querySelector<HTMLElement>('[data-card]')!;
+  const api = `/api/lab/manage?t=${encodeURIComponent(q)}`;
+  const fill = (s: string, d: Record<string, unknown>) => s.replace('{n}', String(d.name ?? '')).replace('{d}', String(d.paid_until ?? '')).replace('{p}', String(d.price ?? ''));
+  async function load() {
+    const d = await fetch(api).then((r) => r.json()).catch(() => null);
+    if (!d?.ok) { card.innerHTML = `<p>${T.en.bad}</p>`; return; }
+    const L = T[d.lang] || T.en;
+    const lines = [fill(L.hi, d), fill(L[d.status === 'active' ? 'active' : d.status === 'expired' ? 'expired' : 'pending'], d)];
+    if (d.status === 'active') lines.push(fill(d.autopay ? L.auto : L.manual, d));
+    card.innerHTML = lines.map((l) => `<p>${l.replace(/</g, '&lt;')}</p>`).join('') +
+      (d.autopay ? `<button data-off>${L.off}</button>` : '') + `<button class="pay" data-pay>${fill(L.pay, d)}</button><p class="msg" data-msg></p>`;
+    const msg = card.querySelector<HTMLElement>('[data-msg]')!;
+    card.querySelector('[data-off]')?.addEventListener('click', async () => {
+      const r = await fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'autopay_off' }) }).then((x) => x.json()).catch(() => null);
+      if (r?.ok) { msg.textContent = L.done; card.querySelector('[data-off]')?.remove(); } else msg.textContent = L.err;
+    });
+    card.querySelector('[data-pay]')?.addEventListener('click', async () => {
+      const r = await fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'pay' }) }).then((x) => x.json()).catch(() => null);
+      if (r?.url) location.href = r.url; else msg.textContent = L.err;
+    });
+  }
+  load();
+</script>
+
+<style>
+  .lm { max-width: 520px; margin: 0 auto; padding: 64px 16px; }
+  .logo { font-weight: 900; font-style: italic; letter-spacing: 0.1em; font-size: 22px; margin: 0 0 20px; }
+  .logo span { color: var(--accText); font-style: normal; letter-spacing: 0; }
+  .card { border: 1px solid var(--line); border-radius: 22px; padding: 24px; display: grid; gap: 12px; }
+  .card :global(p) { margin: 0; line-height: 1.5; }
+  .card :global(button) { font: inherit; font-weight: 700; padding: 13px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
+  .card :global(.pay) { background: var(--acc); color: var(--dark-ink); border: 0; }
+  .card :global(.msg) { color: var(--accText); min-height: 1.4em; }
+</style>

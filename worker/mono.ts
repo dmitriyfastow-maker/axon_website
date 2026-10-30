@@ -7,6 +7,8 @@ import type { Notify } from './deals.js';
 import type { AiBinding } from './chat.js';
 import { nbuRate } from './finance.js';
 import { settleInvoice } from './admin.js';
+import { labOnPaid } from './lab.js';
+import { shopOnPaid } from './shop.js';
 
 const API = 'https://api.monobank.ua/api/merchant';
 const json = (status: number, body: unknown) =>
@@ -15,7 +17,7 @@ const json = (status: number, body: unknown) =>
 type Inv = { id: number; number: string; token: string; currency: string; amount: number; description: string; status: string; mono_id: string | null; lead_id: number | null; lang: string | null; receipt_url: string | null };
 const COLS = 'id, number, token, currency, amount, description, status, mono_id, lead_id, lang, receipt_url';
 
-async function mono(token: string, path: string, body?: unknown) {
+export async function mono(token: string, path: string, body?: unknown) {
   const r = await fetch(`${API}/${path}`, {
     method: body ? 'POST' : 'GET',
     headers: { 'X-Token': token, ...(body ? { 'Content-Type': 'application/json' } : {}) },
@@ -27,7 +29,7 @@ async function mono(token: string, path: string, body?: unknown) {
 }
 
 /** POST /api/invoice/<token>/pay → { url } of the mono payment page for this invoice (a new one each time). */
-export async function monoPay(db: DB, token: string | undefined, invToken: string, origin: string): Promise<Response> {
+export async function monoPay(db: DB, token: string | undefined, invToken: string, origin: string, extra: Record<string, unknown> = {}): Promise<Response> {
   if (!token) return json(503, { ok: false, error: 'card_off' });
   const inv = await db.prepare(`SELECT ${COLS} FROM invoices WHERE token = ?`).bind(invToken).first<Inv>();
   if (!inv || inv.status !== 'open') return json(400, { ok: false });
@@ -48,6 +50,7 @@ export async function monoPay(db: DB, token: string | undefined, invToken: strin
     redirectUrl: `${origin}/invoice/?t=${inv.token}&paid=1`,
     webHookUrl: `${origin}/api/mono/webhook`,
     validity: 24 * 3600,
+    ...extra,
   });
   if (!d?.invoiceId || !d.pageUrl) return json(502, { ok: false, error: 'mono' });
   await db.prepare('UPDATE invoices SET mono_id = ? WHERE id = ?').bind(d.invoiceId, inv.id).run();
@@ -62,6 +65,8 @@ async function check(db: DB, token: string, ai: AiBinding | undefined, notify: N
   await db.prepare('UPDATE invoices SET mono_status = ? WHERE id = ?').bind(st, inv.id).run();
   if (st === 'success' && inv.status === 'open') {
     await settleInvoice(db, ai, notify, inv.id, 'card', base);
+    await labOnPaid(db, inv.id, d, notify).catch((e) => console.error('[lab paid]', e));
+    await shopOnPaid(db, inv.id, notify).catch((e) => console.error('[shop paid]', e));
     await notify(`💳 Оплата картой: рахунок ${inv.number}, ${inv.amount} ${inv.currency} (mono)`);
     await monoReceipt(db, token, notify, { ...inv, status: 'paid' }).catch((e) => console.error('[mono receipt]', e));
   }

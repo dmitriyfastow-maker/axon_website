@@ -17,7 +17,8 @@ import { handleStaffLogin } from './staff.js';
 import { monoCheck, monoPay, monoReceiptSweep, monoWebhook } from './mono.js';
 import { handleFinancePublic } from './finance.js';
 import { handleIntake } from './intake.js';
-import { handleLab } from './lab.js';
+import { handleLab, handleLabManage, labSweep } from './lab.js';
+import { handleShopBuy, handleShopDownload } from './shop.js';
 import { notifyOwnerChat } from './ownerchat.js';
 import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackUx, trackView, triageLead } from './autopilot.js';
 
@@ -103,6 +104,9 @@ export default {
       if (invp[2] === 'pay' && request.method === 'POST') return monoPay(env.LEADS, env.MONO_ACQ_TOKEN, invp[1], url.origin);
       if (invp[2] === 'check') return monoCheck(env.LEADS, env.MONO_ACQ_TOKEN, env.AI, notify, invp[1], request.url);
     }
+    if (url.pathname === '/api/shop/buy') return env.LEADS ? handleShopBuy(env.LEADS, request, env.MONO_ACQ_TOKEN, notify, url.origin) : json(503, { ok: false });
+    if (url.pathname === '/api/shop/dl') return env.LEADS ? handleShopDownload(env.LEADS, env.FILES, request) : json(503, { ok: false });
+    if (url.pathname === '/api/lab/manage') return env.LEADS ? handleLabManage(env.LEADS, request, env.MONO_ACQ_TOKEN, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/lab') return env.LEADS ? handleLab(env.LEADS, request, env.MONO_ACQ_TOKEN, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/mono/webhook') return env.LEADS ? monoWebhook(env.LEADS, env.MONO_ACQ_TOKEN, env.AI, notify, request) : json(503, { ok: false });
     if (url.pathname === '/api/file') return env.LEADS ? handleFileUpload(env.FILES, env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
@@ -198,7 +202,7 @@ export default {
       }).catch(() => {});
     };
     // The autopilot's hourly round: deadlines, AI grading, quality control, client summaries, the morning digest.
-    for (const job of [() => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify)]) {
+    for (const job of [() => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => labSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify)]) {
       await job().catch((e) => console.error('[cron]', e));
     }
   },  // Letters to hello@vaxogroup.com (Cloudflare Email Routing → this worker) go into the client's project chat.

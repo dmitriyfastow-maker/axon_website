@@ -116,13 +116,13 @@ const bundle = { name: 'All 12 in one bundle', price: '$67', old: '$120', url: '
 const C = {
   en: { title: 'Vaxo — Templates and guides for small businesses', eyebrow: 'Shop', h1: 'Do it yourself, with ready-made templates.',
         sub: 'Simple tools we use with our own clients. Instant download, from $9. Want us to set it up for you? See', subLink: 'starter packages',
-        buy: 'Buy now →', soon: 'Coming soon', best: 'Best value', bundle: 'All 12 in one bundle', bundleSub: 'Every template above in one download.', getBundle: 'Get the bundle →', langNote: '' },
+        buy: 'Buy now →', mh: 'Where should we send the file?', em: 'Your email', pay: 'Pay', note: 'Instant download link by email after payment. Card, Apple Pay or Google Pay (monobank, charged in UAH at the day’s rate).', offMsg: 'Card payment is paused. Please try later.', errMsg: 'Check the email and try again.', soon: 'Coming soon', best: 'Best value', bundle: 'All 12 in one bundle', bundleSub: 'Every template above in one download.', getBundle: 'Get the bundle →', langNote: '' },
   ru: { title: 'Vaxo — Шаблоны и инструкции для малого бизнеса', eyebrow: 'Магазин', h1: 'Сделайте сами — по готовым шаблонам.',
         sub: 'Простые инструменты, которыми мы пользуемся с нашими клиентами. Скачивание сразу, от $9. Хотите, чтобы мы всё настроили за вас? Смотрите', subLink: 'стартовые пакеты',
-        buy: 'Купить →', soon: 'Скоро', best: 'Выгоднее всего', bundle: 'Все 12 одним набором', bundleSub: 'Все шаблоны выше одной загрузкой.', getBundle: 'Получить набор →', langNote: 'Шаблоны на английском языке.' },
+        buy: 'Купить →', mh: 'Куда прислать файл?', em: 'Ваш email', pay: 'Оплатить', note: 'Ссылка на скачивание придёт на почту сразу после оплаты. Карта, Apple Pay или Google Pay (monobank, в гривнах по курсу дня).', offMsg: 'Оплата картой на паузе. Попробуйте позже.', errMsg: 'Проверьте email и попробуйте ещё раз.', soon: 'Скоро', best: 'Выгоднее всего', bundle: 'Все 12 одним набором', bundleSub: 'Все шаблоны выше одной загрузкой.', getBundle: 'Получить набор →', langNote: 'Шаблоны на английском языке.' },
   ua: { title: 'Vaxo — Шаблони та інструкції для малого бізнесу', eyebrow: 'Магазин', h1: 'Зробіть самі — за готовими шаблонами.',
         sub: 'Прості інструменти, якими ми користуємося з нашими клієнтами. Завантаження одразу, від $9. Хочете, щоб ми все налаштували за вас? Дивіться', subLink: 'стартові пакети',
-        buy: 'Купити →', soon: 'Незабаром', best: 'Найвигідніше', bundle: 'Усі 12 одним набором', bundleSub: 'Усі шаблони вище одним завантаженням.', getBundle: 'Отримати набір →', langNote: 'Шаблони англійською мовою.' },
+        buy: 'Купити →', mh: 'Куди надіслати файл?', em: 'Ваш email', pay: 'Сплатити', note: 'Посилання на завантаження прийде на пошту одразу після оплати. Картка, Apple Pay або Google Pay (monobank, у гривнях за курсом дня).', offMsg: 'Оплата карткою на паузі. Спробуйте пізніше.', errMsg: 'Перевірте email і спробуйте ще раз.', soon: 'Незабаром', best: 'Найвигідніше', bundle: 'Усі 12 одним набором', bundleSub: 'Усі шаблони вище одним завантаженням.', getBundle: 'Отримати набір →', langNote: 'Шаблони англійською мовою.' },
 }[lang];
 
 ---
@@ -148,9 +148,7 @@ const C = {
           </div>
           <div class="buy">
             <span class="price">{bundle.price} <s>{bundle.old}</s></span>
-            {bundle.url
-              ? <a class="btn" href={bundle.url} target="_blank" rel="noopener">{C.getBundle}</a>
-              : <span class="btn off">{C.soon}</span>}
+            <button class="btn" type="button" data-buy="bundle" data-name={C.bundle} data-price={bundle.price}>{C.getBundle}</button>
           </div>
         </div>
       </div>
@@ -167,9 +165,7 @@ const C = {
               <p>{p.what[lang]}</p>
               <div class="buy">
                 <span class="price">{p.price}</span>
-                {p.url
-                  ? <a class="btn" href={p.url} target="_blank" rel="noopener">{C.buy}</a>
-                  : <span class="btn off">{C.soon}</span>}
+                <button class="btn" type="button" data-buy={p.slug} data-name={p.name} data-price={p.price}>{C.buy}</button>
               </div>
             </div>
           </article>
@@ -180,10 +176,59 @@ const C = {
     <AiPluses t={t} />
   </main>
   <Footer t={t} home={home} lang={lang} />
+  <dialog class="buyd" data-buyd data-lang={lang} data-off={C.offMsg} data-err={C.errMsg}>
+    <form method="dialog" data-buyf>
+      <button class="x" value="cancel" aria-label="Close">×</button>
+      <h3>{C.mh}</h3>
+      <p class="what" data-what></p>
+      <label>{C.em}<input type="email" name="email" required maxlength="120" autocomplete="email" /></label>
+      <button class="btn" type="submit" value="pay" data-paybtn>{C.pay}</button>
+      <p class="note">{C.note}</p>
+      <p class="msg" data-msg role="status"></p>
+    </form>
+  </dialog>
 </Base>
+
+<script>
+  const d = document.querySelector<HTMLDialogElement>('[data-buyd]')!;
+  const f = d.querySelector<HTMLFormElement>('[data-buyf]')!;
+  const msg = d.querySelector<HTMLElement>('[data-msg]')!;
+  let slug = '';
+  document.querySelectorAll<HTMLButtonElement>('[data-buy]').forEach((b) => b.addEventListener('click', () => {
+    slug = b.dataset.buy || '';
+    d.querySelector<HTMLElement>('[data-what]')!.textContent = `${b.dataset.name} — ${b.dataset.price}`;
+    msg.textContent = '';
+    d.showModal();
+  }));
+  f.addEventListener('submit', async (e) => {
+    const sub = (e as SubmitEvent).submitter as HTMLButtonElement | null;
+    if (sub?.value === 'cancel') return;
+    e.preventDefault();
+    const btn = d.querySelector<HTMLButtonElement>('[data-paybtn]')!;
+    btn.disabled = true; msg.textContent = '…';
+    try {
+      const r = await fetch('/api/shop/buy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, email: new FormData(f).get('email'), lang: d.dataset.lang, src: (window as unknown as { vxSrc?: () => string }).vxSrc?.() }) });
+      const j = await r.json();
+      if (j?.url) { location.href = j.url; return; }
+      msg.textContent = (j?.error === 'card_off' ? d.dataset.off : d.dataset.err) || '';
+    } catch { msg.textContent = d.dataset.err || ''; }
+    btn.disabled = false;
+  });
+</script>
 
 
 <style>
+  .buyd { border: 0; border-radius: 22px; padding: 0; width: min(420px, calc(100vw - 32px)); background: var(--bg); color: var(--ink); }
+  .buyd::backdrop { background: rgba(0, 0, 0, 0.5); }
+  .buyd form { display: grid; gap: 12px; padding: 24px; position: relative; }
+  .buyd h3 { margin: 0; font-size: 22px; }
+  .buyd .what { margin: 0; color: var(--mut); }
+  .buyd label { display: grid; gap: 6px; font-weight: 600; }
+  .buyd input { font: inherit; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surf); color: var(--ink); }
+  .buyd .note { margin: 0; font-size: 13px; color: var(--mut); line-height: 1.45; }
+  .buyd .msg { margin: 0; color: var(--accText); min-height: 1.2em; }
+  .buyd .x { position: absolute; top: 10px; right: 12px; border: 0; background: none; font-size: 26px; color: var(--mut); cursor: pointer; }
+  button.btn { font: inherit; border: 0; cursor: pointer; }
   .in { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
   .hero { padding: 120px 0 40px; }
   h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0; max-width: 18ch; }

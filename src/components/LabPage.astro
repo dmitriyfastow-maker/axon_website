@@ -1,0 +1,224 @@
+---
+// INSIDERS Lab (/lab/, /ru/lab/, /ua/lab/; Decisions 24–25): the paid tier of the INSIDERS Discord community, built by
+// Vaxo. Card payment through mono invoices (worker/lab.ts); optional autopay with an email 3 days before each charge.
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getDict, langPath, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = getDict(lang);
+const home = langPath(lang);
+const alts = { en: '/lab/', ua: '/ua/lab/', ru: '/ru/lab/' };
+
+const C = {
+  en: {
+    title: 'INSIDERS Lab — the paid room of the INSIDERS Discord', desc: 'Weekly real business briefs, feedback from the Vaxo studio, first call on paid tasks, the AI playbook. $5/month for the first 50 members. 18+.',
+    badge: 'Private Discord room', h1: 'INSIDERS Lab', lead: 'The paid room inside the INSIDERS Discord community. You practise AI and online work on real business problems, get honest feedback from the Vaxo studio and the first call when our client projects need extra hands.',
+    per: '/ month', seats: (n: number) => `Founding price for the first 50 members — ${n} seats left. It stays yours while you stay.`, regular: 'Regular price.', cta: 'Join INSIDERS Lab →',
+    howH: 'How it works', how: [['Pay here', 'By card, Apple Pay or Google Pay. Takes a minute.'], ['Get the Lab role', 'Within a few hours your Discord account gets the Lab role, and the private channels open.'], ['Start this week', 'Take the brief of the week, post your work, get feedback.']],
+    getH: 'What opens in Discord', gets: [
+      ['#lab-room', 'Real briefs every week', 'A real small-business problem from our market research: a clinic without online booking, a café losing reviews, a shop with no follow-up. You solve it with AI; the best work gets a written review.'],
+      ['#lab-tasks', 'First call on paid tasks', 'When Vaxo client projects need extra hands (design, video, research, outreach, no-code builds), Lab members hear first. Paid per task, agreed up front. No task is promised — they come when clients do.'],
+      ['#lab-playbook', 'The Vaxo AI playbook', 'The prompts, templates and workflows we use ourselves to build sites, chats and content. Updated weekly.'],
+      ['monthly', 'Profile review', 'Once a month send your Upwork, Fiverr, LinkedIn or portfolio and get a written teardown: what to cut, what to add, how to price.'],
+      ['24h', 'Answers within a day', 'Ask anything about AI tools, clients or pricing in #lab-room.'],
+    ],
+    formH: 'Join', name: 'Your name', discord: 'Discord username', discordPh: 'e.g. alex_builds', email: 'Email (for the receipt and reminders)',
+    adult: 'I am 18 or older', auto: 'Renew automatically every month', autoNote: 'We email you 3 days before every charge. Switch it off any time with one click from that email.',
+    pay: 'Pay', and: 'and join →', opening: 'Opening the payment page…', off: 'Card payment is paused right now. Please try again later.', err: 'Not sent. Check the fields and try again.', net: 'No connection. Please try again.',
+    fine: 'Payment is processed by monobank; you pay the dollar price in hryvnia at the day’s rate, the payment page shows the amount. Vaxo is a registered Ukrainian business (FOP).', terms: 'Terms', privacy: 'Privacy',
+    faqH: 'Questions', faq: [
+      ['Is this a get-rich course?', 'No. Nobody here promises income. Lab is practice on real problems, honest feedback and a fair chance at paid tasks.'],
+      ['Who can join?', 'Only people 18 or older. If you are younger, you are welcome in the free part of INSIDERS.'],
+      ['What is Vaxo?', 'The studio behind INSIDERS: websites, apps, AI assistants and content for businesses. The payment page shows “vaxo” — that is us.'],
+      ['Can I cancel?', 'Yes. Without autopay nothing is charged — you just don’t pay next month. With autopay, switch it off from any of our emails.'],
+      ['Refunds?', 'Write to us within 14 days of a payment and we return it.'],
+    ],
+  },
+  ru: {
+    title: 'INSIDERS Lab — платная комната Discord-сообщества INSIDERS', desc: 'Реальные задачи бизнеса каждую неделю, разборы от студии Vaxo, первые платные задачи, ИИ-плейбук. $5 в месяц для первых 50. 18+.',
+    badge: 'Закрытая комната в Discord', h1: 'INSIDERS Lab', lead: 'Платная комната внутри Discord-сообщества INSIDERS. Вы тренируетесь в ИИ и онлайн-работе на реальных задачах бизнеса, получаете честные разборы от студии Vaxo и первыми узнаёте, когда нашим клиентским проектам нужны руки.',
+    per: '/ месяц', seats: (n: number) => `Цена основателя для первых 50 участников — осталось мест: ${n}. Она остаётся за вами, пока вы с нами.`, regular: 'Обычная цена.', cta: 'Вступить в INSIDERS Lab →',
+    howH: 'Как это работает', how: [['Оплатите здесь', 'Картой, Apple Pay или Google Pay. Минута.'], ['Получите роль Lab', 'В течение нескольких часов ваш Discord получает роль Lab, и закрытые каналы открываются.'], ['Начните на этой неделе', 'Возьмите задачу недели, выложите работу, получите разбор.']],
+    getH: 'Что откроется в Discord', gets: [
+      ['#lab-room', 'Реальные задачи каждую неделю', 'Настоящая проблема малого бизнеса из нашего исследования рынка: клиника без онлайн-записи, кофейня теряет отзывы, магазин не возвращает покупателей. Вы решаете её с ИИ, лучшие работы получают письменный разбор.'],
+      ['#lab-tasks', 'Первыми — платные задачи', 'Когда клиентским проектам Vaxo нужны руки (дизайн, видео, исследование, поиск клиентов, сборка без кода), участники Lab узнают первыми. Оплата за задачу, договариваемся заранее. Задачи не обещаем — они появляются вместе с клиентами.'],
+      ['#lab-playbook', 'ИИ-плейбук Vaxo', 'Промпты, шаблоны и процессы, которыми мы сами делаем сайты, чаты и контент. Обновляется каждую неделю.'],
+      ['раз в месяц', 'Разбор профиля', 'Раз в месяц пришлите Upwork, Fiverr, LinkedIn или портфолио — получите письменный разбор: что убрать, что добавить, сколько брать.'],
+      ['24 ч', 'Ответ в течение дня', 'Любой вопрос про ИИ-инструменты, клиентов или цены — в #lab-room.'],
+    ],
+    formH: 'Вступить', name: 'Ваше имя', discord: 'Ник в Discord', discordPh: 'например, alex_builds', email: 'Email (для чека и напоминаний)',
+    adult: 'Мне 18 лет или больше', auto: 'Продлевать автоматически каждый месяц', autoNote: 'За 3 дня до каждого списания пришлём письмо. Отключить можно в любой момент одной кнопкой из письма.',
+    pay: 'Оплатить', and: 'и вступить →', opening: 'Открываю страницу оплаты…', off: 'Оплата картой сейчас на паузе. Попробуйте позже.', err: 'Не отправилось. Проверьте поля и попробуйте ещё раз.', net: 'Нет связи. Попробуйте ещё раз.',
+    fine: 'Оплату проводит monobank: цена в долларах списывается в гривнах по курсу дня, сумма видна на странице оплаты. Vaxo — зарегистрированный украинский бизнес (ФОП).', terms: 'Условия', privacy: 'Конфиденциальность',
+    faqH: 'Вопросы', faq: [
+      ['Это курс «как разбогатеть»?', 'Нет. Здесь никто не обещает доход. Lab — практика на реальных задачах, честные разборы и честный шанс на платные задачи.'],
+      ['Кто может вступить?', 'Только с 18 лет. Если вам меньше — добро пожаловать в бесплатную часть INSIDERS.'],
+      ['Что такое Vaxo?', 'Студия, которая стоит за INSIDERS: сайты, приложения, ИИ-помощники и контент для бизнеса. На странице оплаты написано «vaxo» — это мы.'],
+      ['Можно отменить?', 'Да. Без автоплатежа ничего не списывается — просто не платите следующий месяц. С автоплатежом — отключите из любого нашего письма.'],
+      ['Возврат?', 'Напишите нам в течение 14 дней после оплаты — вернём деньги.'],
+    ],
+  },
+  ua: {
+    title: 'INSIDERS Lab — платна кімната Discord-спільноти INSIDERS', desc: 'Реальні задачі бізнесу щотижня, розбори від студії Vaxo, перші платні задачі, ШІ-плейбук. $5 на місяць для перших 50. 18+.',
+    badge: 'Закрита кімната в Discord', h1: 'INSIDERS Lab', lead: 'Платна кімната всередині Discord-спільноти INSIDERS. Ви тренуєтеся в ШІ та онлайн-роботі на реальних задачах бізнесу, отримуєте чесні розбори від студії Vaxo і першими дізнаєтеся, коли нашим клієнтським проєктам потрібні руки.',
+    per: '/ місяць', seats: (n: number) => `Ціна засновника для перших 50 учасників — залишилось місць: ${n}. Вона лишається за вами, поки ви з нами.`, regular: 'Звичайна ціна.', cta: 'Вступити в INSIDERS Lab →',
+    howH: 'Як це працює', how: [['Сплатіть тут', 'Карткою, Apple Pay або Google Pay. Хвилина.'], ['Отримайте роль Lab', 'Протягом кількох годин ваш Discord отримує роль Lab, і закриті канали відкриваються.'], ['Почніть цього тижня', 'Візьміть задачу тижня, викладіть роботу, отримайте розбір.']],
+    getH: 'Що відкриється в Discord', gets: [
+      ['#lab-room', 'Реальні задачі щотижня', 'Справжня проблема малого бізнесу з нашого дослідження ринку: клініка без онлайн-запису, кавʼярня втрачає відгуки, магазин не повертає покупців. Ви розвʼязуєте її з ШІ, найкращі роботи отримують письмовий розбір.'],
+      ['#lab-tasks', 'Першими — платні задачі', 'Коли клієнтським проєктам Vaxo потрібні руки (дизайн, відео, дослідження, пошук клієнтів, збірка без коду), учасники Lab дізнаються першими. Оплата за задачу, домовляємося заздалегідь. Задач не обіцяємо — вони зʼявляються разом із клієнтами.'],
+      ['#lab-playbook', 'ШІ-плейбук Vaxo', 'Промпти, шаблони й процеси, якими ми самі робимо сайти, чати й контент. Оновлюється щотижня.'],
+      ['раз на місяць', 'Розбір профілю', 'Раз на місяць надішліть Upwork, Fiverr, LinkedIn або портфоліо — отримайте письмовий розбір: що прибрати, що додати, скільки брати.'],
+      ['24 год', 'Відповідь протягом дня', 'Будь-яке питання про ШІ-інструменти, клієнтів чи ціни — у #lab-room.'],
+    ],
+    formH: 'Вступити', name: 'Ваше імʼя', discord: 'Нік у Discord', discordPh: 'наприклад, alex_builds', email: 'Email (для чека й нагадувань)',
+    adult: 'Мені 18 років або більше', auto: 'Подовжувати автоматично щомісяця', autoNote: 'За 3 дні до кожного списання надішлемо лист. Вимкнути можна будь-коли однією кнопкою з листа.',
+    pay: 'Сплатити', and: 'і вступити →', opening: 'Відкриваю сторінку оплати…', off: 'Оплата карткою зараз на паузі. Спробуйте пізніше.', err: 'Не надіслано. Перевірте поля й спробуйте ще раз.', net: 'Немає звʼязку. Спробуйте ще раз.',
+    fine: 'Оплату проводить monobank: ціна в доларах списується в гривнях за курсом дня, сума видна на сторінці оплати. Vaxo — зареєстрований український бізнес (ФОП).', terms: 'Умови', privacy: 'Конфіденційність',
+    faqH: 'Питання', faq: [
+      ['Це курс «як розбагатіти»?', 'Ні. Тут ніхто не обіцяє дохід. Lab — практика на реальних задачах, чесні розбори й чесний шанс на платні задачі.'],
+      ['Хто може вступити?', 'Тільки з 18 років. Якщо вам менше — ласкаво просимо в безкоштовну частину INSIDERS.'],
+      ['Що таке Vaxo?', 'Студія, яка стоїть за INSIDERS: сайти, застосунки, ШІ-помічники й контент для бізнесу. На сторінці оплати написано «vaxo» — це ми.'],
+      ['Можна скасувати?', 'Так. Без автоплатежу нічого не списується — просто не платіть наступний місяць. З автоплатежем — вимкніть з будь-якого нашого листа.'],
+      ['Повернення?', 'Напишіть нам протягом 14 днів після оплати — повернемо гроші.'],
+    ],
+  },
+}[lang];
+---
+
+<Base lang={lang} title={C.title} description={C.desc} path={alts[lang]} alts={alts}>
+  <Header lang={lang} t={t} home={home} alts={alts} />
+  <main class="lab" data-lang={lang}>
+    <section class="hero">
+      <div class="brand"><span class="logo">INSIDERS</span><span class="x">×</span><span class="by">Vaxo</span></div>
+      <p class="badge">🔒 {C.badge} · 18+</p>
+      <h1>{C.h1}</h1>
+      <p class="lead">{C.lead}</p>
+      <div class="price"><b data-price>$5</b><span>{C.per}</span><s data-regular hidden>$9</s></div>
+      <p class="seats" data-seats data-tpl={C.seats(999).replace('999', '{n}')} data-reg={C.regular}>{C.seats(50)}</p>
+      <a class="btn" href="#join">{C.cta}</a>
+    </section>
+
+    <section>
+      <h2>{C.howH}</h2>
+      <ol class="how">{C.how.map(([h, p], i) => <li><span>{i + 1}</span><b>{h}</b><p>{p}</p></li>)}</ol>
+    </section>
+
+    <section>
+      <h2>{C.getH}</h2>
+      <div class="disc">
+        <div class="side">
+          <p class="srv">INSIDERS</p>
+          <p class="cat">🧪 INSIDERS LAB</p>
+          {C.gets.filter(([c]) => c.startsWith('#')).map(([c]) => <p class="ch">{c}</p>)}
+        </div>
+        <ul class="gets">
+          {C.gets.map(([c, h, p]) => <li><code>{c}</code><h3>{h}</h3><p>{p}</p></li>)}
+        </ul>
+      </div>
+    </section>
+
+    <section id="join">
+      <h2>{C.formH}</h2>
+      <form data-lab>
+        <label>{C.name}<input name="name" required maxlength="80" autocomplete="name" /></label>
+        <label>{C.discord}<input name="discord" required maxlength="40" placeholder={C.discordPh} /></label>
+        <label>{C.email}<input name="email" type="email" required maxlength="120" autocomplete="email" /></label>
+        <label class="chk"><input type="checkbox" name="adult" required /> {C.adult}</label>
+        <label class="chk"><input type="checkbox" name="autopay" checked /> <span>{C.auto}<small>{C.autoNote}</small></span></label>
+        <button class="btn" type="submit">{C.pay} <span data-price>$5</span> {C.and}</button>
+        <p class="msg" data-msg role="status" data-opening={C.opening} data-off={C.off} data-err={C.err} data-net={C.net}></p>
+        <p class="fine">{C.fine} <a href={lang === 'en' ? '/terms/' : `/${lang}/terms/`}>{C.terms}</a> · <a href={lang === 'en' ? '/privacy/' : `/${lang}/privacy/`}>{C.privacy}</a></p>
+      </form>
+    </section>
+
+    <section>
+      <h2>{C.faqH}</h2>
+      {C.faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+    </section>
+  </main>
+  <Footer t={t} home={home} lang={lang} />
+</Base>
+
+<script>
+  const $ = (s: string) => document.querySelectorAll<HTMLElement>(s);
+  const lang = document.querySelector<HTMLElement>('[data-lang]')?.dataset.lang || 'en';
+  fetch('/api/lab').then((r) => r.json()).then((d) => {
+    if (!d?.ok) return;
+    $('[data-price]').forEach((e) => (e.textContent = `$${d.price}`));
+    const reg = document.querySelector<HTMLElement>('[data-regular]');
+    if (reg && d.founding) reg.hidden = false;
+    const seats = document.querySelector<HTMLElement>('[data-seats]');
+    if (seats) seats.textContent = d.founding ? (seats.dataset.tpl || '').replace('{n}', String(d.seatsLeft)) : seats.dataset.reg || '';
+  }).catch(() => {});
+
+  const form = document.querySelector<HTMLFormElement>('[data-lab]');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = form.querySelector<HTMLElement>('[data-msg]')!;
+    const btn = form.querySelector<HTMLButtonElement>('button')!;
+    const f = new FormData(form);
+    btn.disabled = true; msg.textContent = msg.dataset.opening || '';
+    try {
+      const r = await fetch('/api/lab', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+        name: f.get('name'), discord: f.get('discord'), email: f.get('email'), adult: f.get('adult') === 'on', autopay: f.get('autopay') === 'on', lang,
+        src: (window as unknown as { vxSrc?: () => string }).vxSrc?.(),
+      }) });
+      const d = await r.json();
+      if (d?.url) { location.href = d.url; return; }
+      msg.textContent = (d?.error === 'card_off' ? msg.dataset.off : msg.dataset.err) || '';
+    } catch { msg.textContent = msg.dataset.net || ''; }
+    btn.disabled = false;
+  });
+</script>
+
+<style>
+  .lab { max-width: 820px; margin: 0 auto; padding: 40px 16px 80px; }
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .logo { background: #0d0d10; color: #fff; font-weight: 900; letter-spacing: 0.12em; font-style: italic; padding: 8px 14px; border-radius: 10px; font-size: 15px; }
+  .x { color: var(--mut); }
+  .by { font-weight: 800; letter-spacing: -0.03em; }
+  .badge { display: inline-block; margin: 0 0 14px; padding: 6px 12px; border-radius: 999px; background: color-mix(in srgb, #5865f2 14%, transparent); color: #5865f2; font-weight: 600; font-size: 14px; }
+  h1 { font-size: clamp(38px, 7vw, 60px); line-height: 1; letter-spacing: -0.04em; margin: 0 0 16px; }
+  .lead { font-size: 18px; color: var(--mut); line-height: 1.55; margin: 0 0 24px; }
+  .price { display: flex; align-items: baseline; gap: 8px; }
+  .price b { font-size: 52px; letter-spacing: -0.03em; }
+  .price span { color: var(--mut); }
+  .price s { color: var(--mut); font-size: 20px; }
+  .seats { color: var(--mut); margin: 4px 0 20px; }
+  .btn { display: inline-block; background: var(--acc); color: var(--dark-ink); border: 0; border-radius: 999px; padding: 15px 24px; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+  .btn:disabled { opacity: 0.6; cursor: wait; }
+  section { margin-top: 56px; }
+  .hero { margin-top: 0; }
+  h2 { font-size: 28px; letter-spacing: -0.02em; margin: 0 0 20px; }
+  .how { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .how li { border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+  .how span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--acc); color: var(--dark-ink); font-weight: 700; margin-bottom: 10px; }
+  .how p { color: var(--mut); margin: 6px 0 0; line-height: 1.45; }
+  .disc { display: grid; grid-template-columns: 190px 1fr; gap: 16px; }
+  .side { background: #1e1f22; color: #b5bac1; border-radius: 16px; padding: 14px; font-size: 14px; align-self: start; }
+  .side p { margin: 0 0 8px; }
+  .srv { color: #fff; font-weight: 800; letter-spacing: 0.08em; font-style: italic; }
+  .cat { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; margin-top: 14px !important; }
+  .ch { color: #fff; background: #35373c; border-radius: 6px; padding: 5px 8px; }
+  .gets { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .gets li { border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; }
+  .gets code { font-size: 12px; color: #5865f2; font-weight: 700; }
+  .gets h3 { margin: 4px 0 6px; font-size: 18px; }
+  .gets p { margin: 0; color: var(--mut); line-height: 1.5; }
+  form { display: grid; gap: 14px; border: 1px solid var(--line); border-radius: 22px; padding: 22px; }
+  label { display: grid; gap: 6px; font-weight: 600; font-size: 15px; }
+  input:not([type=checkbox]) { font: inherit; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); }
+  .chk { display: flex; align-items: flex-start; gap: 10px; font-weight: 500; }
+  .chk input { width: 20px; height: 20px; accent-color: var(--acc); flex: none; margin-top: 1px; }
+  .chk small { display: block; color: var(--mut); font-weight: 400; margin-top: 3px; line-height: 1.4; }
+  .msg { margin: 0; min-height: 1.4em; color: var(--accText); }
+  .fine { margin: 0; color: var(--mut); font-size: 13px; line-height: 1.5; }
+  .fine a { color: inherit; }
+  details { border-bottom: 1px solid var(--line); padding: 14px 0; }
+  summary { font-weight: 600; cursor: pointer; }
+  details p { color: var(--mut); line-height: 1.5; margin: 10px 0 0; }
+  @media (max-width: 640px) { .how { grid-template-columns: 1fr; } .disc { grid-template-columns: 1fr; } }
+</style>
