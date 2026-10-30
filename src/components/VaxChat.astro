@@ -228,8 +228,8 @@ const T = {
     if (!isTouch()) input.title = T.hint;
     // Other parts of the site can open the chat: <a data-vax-chat href="#">.
     document.addEventListener('click', (e) => {
-      const a = (e.target as Element).closest?.('[data-vax-chat]');
-      if (a) { e.preventDefault(); open(true); }
+      const a = (e.target as Element).closest?.('[data-vax-chat]') as HTMLElement | null;
+      if (a) { e.preventDefault(); open(true); if (a.dataset.vaxAsk) ask(a.dataset.vaxAsk); }
     });
     // A gentle teaser once per visit, after the visitor has had time to read.
     if (!store.get('vaxo_chat_seen')) setTimeout(() => { if (panel.hidden) teaser.hidden = false; }, 9000);
