@@ -14,6 +14,7 @@ import { handleFileUpload, servePreview, serveFile, type KV } from './files.js';
 import { handleCabinet, type CabinetEnv } from './cabinet.js';
 import { handleInvoicePublic } from './invoices.js';
 import { handleStaffLogin } from './staff.js';
+import { handleLevel } from './level.js';
 import { handleDemoAi } from './demoai.js';
 import { monoCheck, monoPay, monoReceiptSweep, monoWebhook } from './mono.js';
 import { handleFinancePublic } from './finance.js';
@@ -108,6 +109,7 @@ export default {
     }
     if (url.pathname === '/api/shop/buy') return env.LEADS ? handleShopBuy(env.LEADS, request, env.MONO_ACQ_TOKEN, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/shop/dl') return env.LEADS ? handleShopDownload(env.LEADS, env.FILES, request) : json(503, { ok: false });
+    if (url.pathname === '/api/level') return env.LEADS ? handleLevel(env.LEADS, request) : json(503, { ok: false });
     if (url.pathname === '/api/lab/manage') return env.LEADS ? handleLabManage(env.LEADS, request, env.MONO_ACQ_TOKEN, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/lab') return env.LEADS ? handleLab(env.LEADS, request, env.MONO_ACQ_TOKEN, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/mono/webhook') return env.LEADS ? monoWebhook(env.LEADS, env.MONO_ACQ_TOKEN, env.AI, notify, request) : json(503, { ok: false });

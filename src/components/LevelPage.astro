@@ -81,6 +81,13 @@ const spheres = L.spheres.map((s, i) => ({ id: ids[i], icon: icons[i], name: s[0
       </div>
       <div class="lv-bar"><i id="bar"></i></div>
       <p class="lv-first" id="first" data-done={L.done} data-tick={L.tick} data-left={L.left('{h}')}></p>
+      <div class="lv-sync" id="sync" data-lang={lang}>
+        <p id="sync-msg"></p>
+        <form id="sync-form" hidden>
+          <input id="sync-in" type="text" inputmode="email" autocomplete="email" />
+          <button class="lv-btn" type="submit" id="sync-go"></button>
+        </form>
+      </div>
     </section>
 
     <section class="lv-grid">
@@ -116,7 +123,16 @@ const spheres = L.spheres.map((s, i) => ({ id: ids[i], icon: icons[i], name: s[0
   const today = () => new Date().toISOString().slice(0, 10);
   let state: S = { done: {}, days: [], start: Date.now() };
   try { const raw = localStorage.getItem(KEY); if (raw) state = JSON.parse(raw); } catch {}
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+  const SK = 'insiders-level-session';
+  let session = '';
+  try { session = localStorage.getItem(SK) || ''; } catch {}
+  let timer: number | undefined;
+  const push = () => {
+    if (!session) return;
+    clearTimeout(timer);
+    timer = window.setTimeout(() => { fetch('/api/level', { method: 'POST', body: JSON.stringify({ action: 'save', session, state }) }).catch(() => {}); }, 600);
+  };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} push(); };
 
   const streak = () => {
     let n = 0;
@@ -154,6 +170,48 @@ const spheres = L.spheres.map((s, i) => ({ id: ids[i], icon: icons[i], name: s[0
     });
   });
   render();
+
+  const T: Record<string, Record<string, string>> = {
+    en: { off: 'Save your progress across devices — sign in with your email.', on: 'Progress is saved to {e}.', ph: 'your@email.com', go: 'Send code', code: '6-digit code from the email', ok: 'Sign in', bad: 'Wrong or expired code.', err: 'Could not send. Try again in a minute.', out: 'Sign out' },
+    ru: { off: 'Сохрани прогресс на всех устройствах — войди по почте.', on: 'Прогресс сохраняется для {e}.', ph: 'твоя@почта.com', go: 'Отправить код', code: '6 цифр из письма', ok: 'Войти', bad: 'Код неверный или устарел.', err: 'Не вышло отправить. Попробуй через минуту.', out: 'Выйти' },
+    ua: { off: 'Збережи прогрес на всіх пристроях — увійди через пошту.', on: 'Прогрес зберігається для {e}.', ph: 'твоя@пошта.com', go: 'Надіслати код', code: '6 цифр з листа', ok: 'Увійти', bad: 'Код хибний або застарів.', err: 'Не вдалося надіслати. Спробуй за хвилину.', out: 'Вийти' },
+  };
+  const box = document.getElementById('sync')!;
+  const t = T[box.dataset.lang || 'en'] || T.en;
+  const msg = document.getElementById('sync-msg')!;
+  const form = document.getElementById('sync-form') as HTMLFormElement;
+  const inp = document.getElementById('sync-in') as HTMLInputElement;
+  const go = document.getElementById('sync-go') as HTMLButtonElement;
+  let email = '', step: 'mail' | 'code' = 'mail';
+  const setMail = () => { step = 'mail'; inp.value = ''; inp.placeholder = t.ph; go.textContent = t.go; };
+  const show = (who?: string) => {
+    if (who) { msg.textContent = t.on.replace('{e}', who); form.hidden = true; return; }
+    msg.textContent = t.off; form.hidden = false; setMail();
+  };
+  const adopt = (s: any) => { state = s; try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} render(); };
+  if (session) {
+    fetch('/api/level?session=' + encodeURIComponent(session)).then((r) => r.json()).then((d) => {
+      if (d.ok) { adopt(d.state && d.state.done ? { ...state, ...d.state, done: { ...state.done, ...d.state.done } } : state); show(d.email); push(); }
+      else { session = ''; try { localStorage.removeItem(SK); } catch {} show(); }
+    }).catch(() => show());
+  } else show();
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const v = inp.value.trim();
+    if (!v) return;
+    go.disabled = true;
+    try {
+      if (step === 'mail') {
+        const r = await fetch('/api/level', { method: 'POST', body: JSON.stringify({ action: 'code', email: v }) });
+        if (r.ok) { email = v; step = 'code'; inp.value = ''; inp.placeholder = t.code; go.textContent = t.ok; msg.textContent = t.code; } else msg.textContent = t.err;
+      } else {
+        const r = await fetch('/api/level', { method: 'POST', body: JSON.stringify({ action: 'verify', email, code: v, state }) });
+        const d = await r.json();
+        if (d.ok) { session = d.session; try { localStorage.setItem(SK, session); } catch {} adopt(d.state); show(email.toLowerCase()); } else msg.textContent = t.bad;
+      }
+    } catch { msg.textContent = t.err; }
+    go.disabled = false;
+  });
 </script>
 
 <style>
@@ -175,6 +233,10 @@ const spheres = L.spheres.map((s, i) => ({ id: ids[i], icon: icons[i], name: s[0
   .lv-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
   .lv-card label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; font-size: 15px; }
   .lv-card input { margin-top: 4px; }
+  .lv-sync { margin-top: 18px; font-size: 14px; }
+  .lv-sync form { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+  .lv-sync input { padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(127,127,127,.4); background: transparent; color: inherit; min-width: 220px; }
+  .lv-sync .lv-btn { margin-top: 0; padding: 8px 16px; background: transparent; color: inherit; cursor: pointer; }
   .lv-note { margin-top: 40px; text-align: center; }
   .lv-btn { display: inline-block; margin-top: 8px; padding: 10px 20px; border-radius: 999px; border: 1px solid currentColor; text-decoration: none; }
 </style>
