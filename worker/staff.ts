@@ -58,7 +58,7 @@ export function sectionOf(path: string): string {
 }
 
 /** Public: POST /api/staff/code {email} → a 6-digit code by email; POST /api/staff/login {email, code} → {token}. */
-export async function handleStaffLogin(db: DB, request: Request, path: string): Promise<Response> {
+export async function handleStaffLogin(db: DB, request: Request, path: string, notify?: (text: string) => Promise<void>): Promise<Response> {
   if (request.method !== 'POST') return json(405, { ok: false });
   const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
   const email = typeof b.email === 'string' ? b.email.trim().toLowerCase().slice(0, 200) : '';
@@ -73,7 +73,15 @@ export async function handleStaffLogin(db: DB, request: Request, path: string): 
         await db.prepare(`INSERT INTO staff_codes (email, code_hash, expires_at, tries, sent_at) VALUES (?, ?, datetime('now', '+15 minutes'), 0, datetime('now'))
           ON CONFLICT (email) DO UPDATE SET code_hash = excluded.code_hash, expires_at = excluded.expires_at, tries = 0, sent_at = excluded.sent_at`).bind(email, await sha(`vaxo-hq:${email}:${code}`)).run();
         const sent = await sendMail(email, `Vaxo CRM: код для входа ${code}`, `Ваш код для входа в Vaxo CRM: ${code}\n\nОн действует 15 минут. Если вы не входили — просто проигнорируйте это письмо.`);
-        if (!sent) console.error('[staff] code email was not sent (Resend)');
+        if (!sent) { console.error('[staff] code email was not sent (Resend)'); await notify?.(`⚠️ Код входа в CRM для ${email} не отправился (Resend). Войдите ключом владельца.`); }
+      }
+    } else if (!staff?.active) {
+      // The visitor sees the same answer; the owner learns that someone tried a not-invited address (often a typo or a second email).
+      const seen = await db.prepare(`SELECT 1 FROM staff_codes WHERE email = ? AND sent_at > datetime('now', '-10 minutes')`).bind(email).first();
+      if (!seen) {
+        await db.prepare(`INSERT INTO staff_codes (email, code_hash, expires_at, tries, sent_at) VALUES (?, '-', datetime('now'), 5, datetime('now'))
+          ON CONFLICT (email) DO UPDATE SET sent_at = excluded.sent_at`).bind(email).run();
+        await notify?.(`🔐 Попытка входа в CRM с почты ${email} — её нет в «Доступах», код не отправлен. Если это вы или ваш человек — добавьте почту в CRM → Партнёры и менеджеры → Доступы.`);
       }
     }
     return json(200, { ok: true, mail: mailReady() });

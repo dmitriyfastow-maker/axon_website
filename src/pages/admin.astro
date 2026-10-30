@@ -18,9 +18,13 @@ import Base from '../layouts/Base.astro';
       <form data-mail class="login">
         <b>Войти по почте</b>
         <input type="email" name="email" placeholder="Ваш email" autocomplete="email" required />
-        <button class="cta" data-mail-btn>Получить код</button>
-        <input name="code" inputmode="numeric" autocomplete="one-time-code" placeholder="Код из письма" hidden />
+        <input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6 цифр из письма" hidden />
+        <button class="cta" type="submit" data-mail-btn>Получить код</button>
         <small class="mut" data-mail-msg></small>
+        <div class="mut" data-mail-more hidden>
+          <button type="button" class="ghost" data-mail-again disabled>Отправить ещё раз</button>
+          <button type="button" class="ghost" data-mail-change>Другая почта</button>
+        </div>
       </form>
       <details><summary class="mut">Войти ключом владельца</summary>
         <form data-login class="login">
@@ -1013,23 +1017,43 @@ import Base from '../layouts/Base.astro';
     $('[data-notice-msg]').textContent = !r.ok ? `Не отправлено: ${r.error}` : `${r.dry ? 'Получат' : 'Отправлено'}: сообщений в чат — ${r.chats}, писем — ${r.dry ? r.letters : r.letters_sent}${r.mail ? '' : ' (почта Resend не подключена — письма не уйдут)'}`;
   });
   $('[data-out]').addEventListener('click', logout);
-  // Sign-in by email: first the code is sent, then the same form checks it.
-  $<HTMLFormElement>('[data-mail]').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const f = e.currentTarget as HTMLFormElement; const d = Object.fromEntries(new FormData(f)) as Record<string, string>;
-    const codeIn = f.querySelector<HTMLInputElement>('[name=code]')!; const msg = $('[data-mail-msg]');
-    if (codeIn.hidden) {
-      const r = await fetch('/api/staff/code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: d.email }) }).then((x) => x.json()).catch(() => null);
-      if (!r?.ok) { msg.textContent = 'Проверьте email.'; return; }
-      codeIn.hidden = false; codeIn.required = true; codeIn.focus(); $('[data-mail-btn]').textContent = 'Войти';
-      msg.textContent = r.mail ? 'Если этот адрес приглашён — код уже в почте (проверьте «Спам»).' : 'Почта для кодов ещё не подключена — войдите ключом владельца.';
-      return;
-    }
-    const r = await fetch('/api/staff/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: d.email, code: d.code }) }).then((x) => x.json()).catch(() => null);
-    if (!r?.token) { msg.textContent = 'Код не подошёл или устарел. Запросите новый.'; codeIn.hidden = true; codeIn.value = ''; $('[data-mail-btn]').textContent = 'Получить код'; return; }
-    token = r.token; try { localStorage.setItem(KEY, token); } catch {}
-    load();
-  });
+  // Sign-in by email: first the code is sent, then the same form checks it. Resend after 60 s, change the address any time.
+  {
+    const f = $<HTMLFormElement>('[data-mail]');
+    const emailIn = f.querySelector<HTMLInputElement>('[name=email]')!; const codeIn = f.querySelector<HTMLInputElement>('[name=code]')!;
+    const btn = $<HTMLButtonElement>('[data-mail-btn]'); const msg = $('[data-mail-msg]'); const more = $('[data-mail-more]'); const again = $<HTMLButtonElement>('[data-mail-again]');
+    let timer = 0;
+    const countdown = () => {
+      let left = 60; clearInterval(timer); again.disabled = true; again.textContent = `Отправить ещё раз (${left} с)`;
+      timer = window.setInterval(() => { left--; if (left > 0) again.textContent = `Отправить ещё раз (${left} с)`; else { clearInterval(timer); again.disabled = false; again.textContent = 'Отправить ещё раз'; } }, 1000);
+    };
+    const sendCode = async () => {
+      btn.disabled = true; msg.textContent = 'Отправляю код…';
+      const r = await fetch('/api/staff/code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: emailIn.value }) }).then((x) => x.json()).catch(() => null);
+      btn.disabled = false;
+      if (!r?.ok) { msg.textContent = 'Проверьте адрес почты или интернет и попробуйте ещё раз.'; return; }
+      if (!r.mail) { msg.textContent = 'Почта для кодов не подключена — войдите ключом владельца ниже.'; return; }
+      emailIn.readOnly = true; codeIn.hidden = false; codeIn.required = true; codeIn.value = ''; codeIn.focus(); btn.textContent = 'Войти'; more.hidden = false; countdown();
+      msg.textContent = `Код отправлен на ${emailIn.value}, если эта почта есть в доступах CRM. Письмо идёт до минуты, проверьте «Спам» и «Промоакции».`;
+    };
+    const login = async () => {
+      const code = codeIn.value.replace(/\D/g, '');
+      if (code.length !== 6) { msg.textContent = 'В коде 6 цифр.'; codeIn.focus(); return; }
+      btn.disabled = true; msg.textContent = 'Проверяю…';
+      const r = await fetch('/api/staff/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: emailIn.value, code }) }).then((x) => x.json()).catch(() => null);
+      btn.disabled = false;
+      if (!r?.token) { msg.textContent = 'Код не подошёл или устарел (действует 15 минут, 5 попыток). Нажмите «Отправить ещё раз».'; codeIn.select(); return; }
+      token = r.token; try { localStorage.setItem(KEY, token); } catch {}
+      load();
+    };
+    f.addEventListener('submit', (e) => { e.preventDefault(); if (codeIn.hidden) sendCode(); else login(); });
+    codeIn.addEventListener('input', () => { if (codeIn.value.replace(/\D/g, '').length === 6) login(); });
+    again.addEventListener('click', sendCode);
+    $('[data-mail-change]').addEventListener('click', () => {
+      clearInterval(timer); emailIn.readOnly = false; codeIn.hidden = true; codeIn.required = false; codeIn.value = ''; more.hidden = true;
+      btn.textContent = 'Получить код'; msg.textContent = ''; emailIn.focus();
+    });
+  }
   $<HTMLFormElement>('[data-say]').addEventListener('submit', async (e) => {
     e.preventDefault();
     const f = e.currentTarget as HTMLFormElement; const text = String(new FormData(f).get('text') || '').trim();
@@ -1057,6 +1081,9 @@ import Base from '../layouts/Base.astro';
   .adm h2 { font-size: 18px; margin: 22px 0 10px; }
   .adm .top-r { display: flex; gap: 8px; }
   .adm .login { display: flex; flex-direction: column; gap: 10px; max-width: 420px; }
+  .adm [data-mail-more] { display: flex; gap: 8px; flex-wrap: wrap; }
+  .adm [data-mail-more][hidden] { display: none; }
+  .adm [data-mail-again]:disabled { opacity: .55; cursor: default; }
   .adm input, .adm select, .adm textarea { font: 15px var(--font); color: var(--ink); background: var(--surf); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; width: 100%; box-sizing: border-box; }
   .adm .cta { background: var(--acc); color: var(--dark-ink); border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 700; cursor: pointer; white-space: nowrap; }
   .adm .cta.alt { background: var(--ink); color: var(--bg); }
