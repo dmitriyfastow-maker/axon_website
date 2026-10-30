@@ -2,13 +2,9 @@
 import { getDict, type Lang } from '../i18n';
 import Header from './Header.astro';
 import Hero from './Hero.astro';
-import Ecosystem from './Ecosystem.astro';
 import Method from './Method.astro';
-import Why from './Why.astro';
 import Cases from './Cases.astro';
-import Session from './Session.astro';
 import Pricing from './Pricing.astro';
-import Referral from './Referral.astro';
 import Services from './Services.astro';
 import Faq from './Faq.astro';
 import Contact from './Contact.astro';
@@ -23,13 +19,9 @@ const t = getDict(lang);
 <Header lang={lang} t={t} />
 <main>
   <Hero t={t} />
-  <Ecosystem lang={lang} />
   <Method t={t} />
-  <Why t={t} />
   <Cases t={t} />
-  <Session t={t} />
   <Pricing t={t} />
-  <Referral t={t} />
   <Services t={t} />
   <Faq t={t} />
   <Contact t={t} lang={lang} />

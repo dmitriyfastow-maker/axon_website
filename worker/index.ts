@@ -17,6 +17,7 @@ import { handleStaffLogin } from './staff.js';
 import { monoCheck, monoPay, monoReceiptSweep, monoWebhook } from './mono.js';
 import { handleFinancePublic } from './finance.js';
 import { handleIntake } from './intake.js';
+import { handleLab } from './lab.js';
 import { notifyOwnerChat } from './ownerchat.js';
 import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackUx, trackView, triageLead } from './autopilot.js';
 
@@ -102,6 +103,7 @@ export default {
       if (invp[2] === 'pay' && request.method === 'POST') return monoPay(env.LEADS, env.MONO_ACQ_TOKEN, invp[1], url.origin);
       if (invp[2] === 'check') return monoCheck(env.LEADS, env.MONO_ACQ_TOKEN, env.AI, notify, invp[1], request.url);
     }
+    if (url.pathname === '/api/lab') return env.LEADS ? handleLab(env.LEADS, request, env.MONO_ACQ_TOKEN, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/mono/webhook') return env.LEADS ? monoWebhook(env.LEADS, env.MONO_ACQ_TOKEN, env.AI, notify, request) : json(503, { ok: false });
     if (url.pathname === '/api/file') return env.LEADS ? handleFileUpload(env.FILES, env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     // Short tracked links for bios (vaxogroup.com/go/<name>): count the click, then send the person on.
@@ -110,6 +112,7 @@ export default {
       const GO: Record<string, string> = {
         vaxo: '/?utm_source=instagram_dmitriy&utm_content=linktree',
         insiders: 'https://discord.com/invite/aUgWVKhzSM',
+        lab: '/lab/?utm_source=discord',
         'vaxo-yt': '/?utm_source=youtube_dmitriy',
         'vaxo-tt': '/?utm_source=tiktok_dmitriy',
         'vaxo-discord': '/?utm_source=discord&utm_content=insiders',
