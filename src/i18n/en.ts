@@ -3,6 +3,7 @@ const en = {
   "nav": [
     "Services",
     "Cases",
+    "Live demos",
     "About",
     "Gifts 🎁",
     "Shop",
