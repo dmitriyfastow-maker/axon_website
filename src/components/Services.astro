@@ -3,9 +3,12 @@ import type { Dict } from '../i18n';
 import VaxSays from './VaxSays.astro';
 import { SVC_PRICES } from '../data/services';
 
-interface Props { t: Dict }
-const { t } = Astro.props;
+interface Props { t: Dict; lang?: string }
+const { t, lang = 'en' } = Astro.props;
 const c = t.cat;
+// Price units in the visitor's language (the price list itself is shared).
+const U = lang === 'ru' ? [[' / mo', ' / мес'], [' / page', ' / стр.'], [' / 500 words', ' / 500 слов']] : lang === 'ua' ? [[' / mo', ' / міс'], [' / page', ' / стор.'], [' / 500 words', ' / 500 слів']] : [];
+const unit = (p: string) => U.reduce((a, [x, y]) => a.replace(x, y), p);
 const DEFAULT_OPEN = 2;
 // "See it live" links: real things a visitor can open and try for a category (index in t.cat.items).
 const L = Astro.url.pathname.startsWith('/ru/') ? 'ru' : Astro.url.pathname.startsWith('/ua/') ? 'ua' : 'en';
@@ -49,7 +52,7 @@ const DEMOS: Record<number, [string, string][]> = {
                       <span class="l">{r.l}</span>
                       {r.d && <span class="d">{r.d}</span>}
                     </div>
-                    <span class="p">{SVC_PRICES[i][k] || c.custom}</span>
+                    <span class="p">{SVC_PRICES[i][k] ? unit(SVC_PRICES[i][k]) : c.custom}</span>
                   </div>
                 ))}
                 {DEMOS[i] && <div class="demos">{DEMOS[i].map(([h, l]) => <a href={h} data-demo={h === '#vax-chat' ? 'chat' : undefined}>{l} →</a>)}</div>}

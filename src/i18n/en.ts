@@ -262,7 +262,7 @@ const en = {
   ],
   "stepZero": "Step zero",
   "sessTitle": "Strategic session before we start",
-  "sessSub": "Before kicking off, we analyse your situation and shape the strategy for your growth.",
+  "sessSub": "Vax, our AI manager, answers right here. A manager joins for calls and important decisions — only if you want.",
   "sessItems": [
     "Identify your real growth points",
     "Shape an initial product line",
@@ -270,7 +270,7 @@ const en = {
     "Map out possible scaling scenarios",
     "Agree on the best format of collaboration"
   ],
-  "sessNote": "The strategic session is included in every tier.",
+  "sessNote": "A free review and a growth plan come with every launch.",
   "tiersTitle": "Launch once. Then we run it for you.",
   "tiersSub": "We build the system in days — site, AI manager, owner command center — and then keep it working, answering and growing every month. You run the business; the rest is ours.",
   "labels": {
@@ -409,7 +409,7 @@ const en = {
     "title": "Need a single service instead of a full tier?",
     "body": "Take just the part you need: SMM, ads, websites, apps, SEO, design, copywriting or short videos. Each comes with AI built in and a clear price range.",
     "sub": "Not sure what you need? Tell Vax in the chat — he’ll suggest the right mix in a minute.",
-    "note": "The exact price is fixed after a free call, once we know the scope. No surprises later.",
+    "note": "The exact price is fixed after a free review in the chat, once the scope is clear. No surprises later.",
     "items": [
       {
         "name": "SMM",
@@ -557,7 +557,7 @@ const en = {
       "a": "Yes — worldwide, in English, Ukrainian and Russian, any niche: local services, clinics, online stores, SaaS, apps."
     }
   ],
-  "finalTitle": "Ready for systemic growth?",
+  "finalTitle": "Tell us what you need — get a plan and a price in a minute",
   "submit": "Submit request",
   "ask": "Ask a question",
   "footer": "VAXO — FULL-CYCLE DIGITAL STUDIO. ONLINE, WORLDWIDE.",
@@ -572,7 +572,7 @@ const en = {
     "question": "Your question",
     "send": "Submit request",
     "sendQ": "Send question",
-    "success": "Thank you. We'll get back to you within 24 hours to schedule the strategic session.",
+    "success": "Thank you! A manager will write to you within 24 hours — usually much sooner.",
     "again": "Send another",
     "room": "Your private project chat is ready — open it and save the link:",
     "roomBtn": "Open my project chat →",

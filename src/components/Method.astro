@@ -1,18 +1,34 @@
 ---
-import type { Dict } from '../i18n';
+import type { Dict, Lang } from '../i18n';
 
-interface Props { t: Dict }
-const { t } = Astro.props;
+interface Props { t: Dict; lang?: Lang }
+const { lang = 'en' } = Astro.props;
+// How working with us goes, in three steps (the hero already shows the three packages).
+const S = {
+  en: { h: 'How it works', steps: [
+    ['01', 'Tell Vax what you need', 'In the chat, in your own words. In a minute you get a plan, a price range and a free review of your current site or socials.'],
+    ['02', 'We launch in days', 'Site, AI manager and your command center. You approve the preview first — the rest is paid only after that.'],
+    ['03', 'We run it for you every month', 'The AI answers your clients 24/7, we fix, improve and report. You run the business — the rest is ours.'] ] },
+  ru: { h: 'Как это работает', steps: [
+    ['01', 'Напишите Vax, что нужно', 'В чате, своими словами. За минуту — план, вилка цены и бесплатный разбор вашего сайта или соцсетей.'],
+    ['02', 'Запускаем за дни', 'Сайт, ИИ-менеджер и ваш пульт. Сначала вы одобряете превью — вторую часть оплаты только после этого.'],
+    ['03', 'Каждый месяц ведём всё за вас', 'ИИ отвечает вашим клиентам 24/7, мы исправляем, улучшаем и отчитываемся. Вы занимаетесь бизнесом — остальное наше.'] ] },
+  ua: { h: 'Як це працює', steps: [
+    ['01', 'Напишіть Vax, що потрібно', 'У чаті, своїми словами. За хвилину — план, вилка ціни й безкоштовний розбір вашого сайту чи соцмереж.'],
+    ['02', 'Запускаємо за дні', 'Сайт, ШІ-менеджер і ваш пульт. Спочатку ви схвалюєте прев’ю — другу частину оплати лише після цього.'],
+    ['03', 'Щомісяця ведемо все за вас', 'ШІ відповідає вашим клієнтам 24/7, ми виправляємо, покращуємо й звітуємо. Ви займаєтесь бізнесом — решта наша.'] ] },
+}[lang];
 ---
 
 <section id="method" class="method">
+  <h2 class="mh">{S.h}</h2>
   <div class="grid">
     {
-      t.layers.map((ly) => (
+      S.steps.map(([n, h, d]) => (
         <div class="card">
-          <div class="n">{ly.n}</div>
-          <h2>{ly.t}</h2>
-          <p>{ly.d}</p>
+          <div class="n">{n}</div>
+          <h2>{h}</h2>
+          <p>{d}</p>
         </div>
       ))
     }
@@ -20,6 +36,7 @@ const { t } = Astro.props;
 </section>
 
 <style>
+  .mh { font-size: clamp(28px, 4vw, 44px); letter-spacing: -0.03em; margin: 0 0 22px; }
   .method {
     max-width: 1280px;
     margin: 0 auto;
