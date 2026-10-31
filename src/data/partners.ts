@@ -18,11 +18,11 @@ export const RATES = {
 
 /** Real prices from /start/ and /shop/; the calculator uses the middle of each range. */
 export const CALC = {
-  packages: [149, 199, 249], // starter packages: automation, one-page website, AI chat assistant
-  project: 800, // bigger projects start at $800
+  packages: [149, 199, 249], // starter packages: automation, landing page, AI chat assistant
+  project: 490, // site with booking or catalog
   template: 10, // single templates cost $9–$12
   bundle: 67, // all templates in one bundle
-  support: 100, // monthly support costs $50–$200 / month
+  support: 129, // the Growth plan (plans: $39 / $129 / $299 a month)
 };
 
 export type CalcRow = { id: 'pk' | 'pr' | 'tp' | 'bd' | 'sp'; label: string; hint: string; max: number; step: number; value: number };
@@ -95,7 +95,7 @@ const en: Text = {
     ['🎓', 'Step-by-step training', 'Videos, posts, personal messages, communities — what to do, in what order, with examples.'],
     ['🤖', 'AI does the hard part', 'Ready prompts with your link already inside. One click opens them in Claude, ChatGPT or Gemini.'],
     ['🤝', 'We close the deals', 'Our team answers clients, prepares proposals and delivers the work. You bring people.'],
-    ['👥', 'Build your team', `Invite other partners and earn +${r.team}% of what they earn — paid by us, on top.`],
+    ['👥', 'Build your team', `Invite other partners and earn +${r.team}% of every sale they make — on top, from us.`],
   ],
   promoteH: 'What you promote — and what you earn',
   directions: [
@@ -104,7 +104,7 @@ const en: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'deals from $149',
       what: 'Automation, websites and AI chatbots for small businesses. Our team does all the work.',
-      points: [`${r.fullCycle}% — you found the client AND closed the deal on a call (top rate)`, `${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `Posting content only? Choose ${r.clipFirst}% of the first sale or ${r.clipLife}% of every sale for life`],
+      points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `Clients can join too and earn the same`],
     },
     {
       name: 'Our templates',
@@ -125,10 +125,10 @@ const en: Text = {
   calcSub: 'Real prices from our site. Move the sliders — every line shows exactly how it is counted.',
   calcRows: [
     { id: 'pk', label: 'Starter packages sold', hint: `${r.agencyOwn}% of the package price`, max: 20, step: 1, value: 2 },
-    { id: 'pr', label: 'Bigger projects (from $800)', hint: `${r.agencyOwn}% of $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'pr', label: 'Sites with booking or catalog ($490)', hint: `${r.agencyOwn}% of $${c.project}`, max: 10, step: 1, value: 0 },
     { id: 'tp', label: 'Single templates ($9–$12)', hint: `${r.products}% of $${c.template}`, max: 200, step: 5, value: 20 },
     { id: 'bd', label: 'Template bundles ($67)', hint: `${r.products}% of $${c.bundle}`, max: 50, step: 1, value: 3 },
-    { id: 'sp', label: 'Clients on monthly support ($50–$200)', hint: `${r.agencyRenewal}% of $${c.support} every month`, max: 30, step: 1, value: 2 },
+    { id: 'sp', label: 'Clients on a monthly plan ($39–$299)', hint: `${r.agencyRenewal}% of $${c.support} every month`, max: 30, step: 1, value: 2 },
   ],
   calcPkg: ['Automation', 'Website', 'AI chatbot'],
   calcMonth: 'per month',
@@ -200,7 +200,7 @@ const ua: Text = {
     ['🎓', 'Покрокове навчання', 'Відео, пости, особисті повідомлення, спільноти — що робити, в якому порядку, з прикладами.'],
     ['🤖', 'Складне робить ШІ', 'Готові промпти з вашим посиланням. Один клік — і вони відкриваються в Claude, ChatGPT чи Gemini.'],
     ['🤝', 'Угоди закриваємо ми', 'Наша команда відповідає клієнтам, готує пропозиції та робить роботу. Ви приводите людей.'],
-    ['👥', 'Будуйте команду', `Запрошуйте партнерів і отримуйте +${r.team}% від їхнього заробітку — понад, від нас.`],
+    ['👥', 'Будуйте команду', `Запрошуйте партнерів і отримуйте +${r.team}% з кожного їхнього продажу — понад, від нас.`],
   ],
   promoteH: 'Що рекомендуєте — і скільки заробляєте',
   directions: [
@@ -209,7 +209,7 @@ const ua: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'угоди від $149',
       what: 'Автоматизація, сайти та ШІ-чат-боти для малого бізнесу. Усю роботу робить наша команда.',
-      points: [`${r.fullCycle}% — ви знайшли клієнта І самі закрили угоду на дзвінку (найвища ставка)`, `${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `Лише викладаєте контент? Оберіть ${r.clipFirst}% з першого продажу або ${r.clipLife}% з кожного продажу довічно`],
+      points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `Клієнти теж можуть приєднатися й заробляти так само`],
     },
     {
       name: 'Наші шаблони',
@@ -230,10 +230,10 @@ const ua: Text = {
   calcSub: 'Реальні ціни з нашого сайту. Рухайте повзунки — кожен рядок показує, як саме рахується.',
   calcRows: [
     { id: 'pk', label: 'Продано стартових пакетів', hint: `${r.agencyOwn}% від ціни пакета`, max: 20, step: 1, value: 2 },
-    { id: 'pr', label: 'Великі проєкти (від $800)', hint: `${r.agencyOwn}% від $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'pr', label: 'Сайти із записом або каталогом ($490)', hint: `${r.agencyOwn}% від $${c.project}`, max: 10, step: 1, value: 0 },
     { id: 'tp', label: 'Окремі шаблони ($9–$12)', hint: `${r.products}% від $${c.template}`, max: 200, step: 5, value: 20 },
     { id: 'bd', label: 'Набори шаблонів ($67)', hint: `${r.products}% від $${c.bundle}`, max: 50, step: 1, value: 3 },
-    { id: 'sp', label: 'Клієнти на щомісячній підтримці ($50–$200)', hint: `${r.agencyRenewal}% від $${c.support} щомісяця`, max: 30, step: 1, value: 2 },
+    { id: 'sp', label: 'Клієнти на щомісячній підписці ($39–$299)', hint: `${r.agencyRenewal}% від $${c.support} щомісяця`, max: 30, step: 1, value: 2 },
   ],
   calcPkg: ['Автоматизація', 'Сайт', 'ШІ-чат-бот'],
   calcMonth: 'на місяць',
@@ -305,7 +305,7 @@ const ru: Text = {
     ['🎓', 'Пошаговое обучение', 'Видео, посты, личные сообщения, сообщества — что делать, в каком порядке, с примерами.'],
     ['🤖', 'Сложное делает ИИ', 'Готовые промпты с вашей ссылкой внутри. Один клик — и они открываются в Claude, ChatGPT или Gemini.'],
     ['🤝', 'Сделки закрываем мы', 'Наша команда отвечает клиентам, готовит предложения и делает работу. Вы приводите людей.'],
-    ['👥', 'Стройте команду', `Приглашайте партнёров и получайте +${r.team}% от их заработка — сверху, от нас.`],
+    ['👥', 'Стройте команду', `Приглашайте партнёров и получайте +${r.team}% с каждой их продажи — сверху, от нас.`],
   ],
   promoteH: 'Что рекомендуете — и сколько зарабатываете',
   directions: [
@@ -314,7 +314,7 @@ const ru: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'сделки от $149',
       what: 'Автоматизация, сайты и ИИ-чат-боты для малого бизнеса. Всю работу делает наша команда.',
-      points: [`${r.fullCycle}% — вы нашли клиента И сами закрыли сделку на созвоне (самая высокая ставка)`, `${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `Только выкладываете контент? Выберите ${r.clipFirst}% с первой продажи или ${r.clipLife}% с каждой продажи пожизненно`],
+      points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `Клиенты тоже могут присоединиться и зарабатывать так же`],
     },
     {
       name: 'Наши шаблоны',
@@ -335,10 +335,10 @@ const ru: Text = {
   calcSub: 'Реальные цены с нашего сайта. Двигайте ползунки — каждая строка показывает, как именно считается.',
   calcRows: [
     { id: 'pk', label: 'Продано стартовых пакетов', hint: `${r.agencyOwn}% от цены пакета`, max: 20, step: 1, value: 2 },
-    { id: 'pr', label: 'Большие проекты (от $800)', hint: `${r.agencyOwn}% от $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'pr', label: 'Сайты с записью или каталогом ($490)', hint: `${r.agencyOwn}% от $${c.project}`, max: 10, step: 1, value: 0 },
     { id: 'tp', label: 'Отдельные шаблоны ($9–$12)', hint: `${r.products}% от $${c.template}`, max: 200, step: 5, value: 20 },
     { id: 'bd', label: 'Наборы шаблонов ($67)', hint: `${r.products}% от $${c.bundle}`, max: 50, step: 1, value: 3 },
-    { id: 'sp', label: 'Клиенты на ежемесячной поддержке ($50–$200)', hint: `${r.agencyRenewal}% от $${c.support} каждый месяц`, max: 30, step: 1, value: 2 },
+    { id: 'sp', label: 'Клиенты на ежемесячной подписке ($39–$299)', hint: `${r.agencyRenewal}% от $${c.support} каждый месяц`, max: 30, step: 1, value: 2 },
   ],
   calcPkg: ['Автоматизация', 'Сайт', 'ИИ-чат-бот'],
   calcMonth: 'в месяц',
