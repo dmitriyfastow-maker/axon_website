@@ -8,35 +8,35 @@ const { lang } = Astro.props;
 
 const C = {
   en: {
-    eyebrow: 'After launch', h2: 'Your growth cabinet — the whole business on one screen',
+    eyebrow: 'After launch', h2: 'We run it for you — every month',
     sub: 'Every site, shop or app we build comes with a personal cabinet. Keep it running on a monthly plan: you see every lead, where people come from and what to fix next — and we keep improving it for you.',
-    per: '/ month', pop: 'Most popular', cta: 'Ask Vax about it →', note: 'Cancel any time. Prices in USD; you can pay by card.',
+    per: '/ month', pop: 'Most popular', cta: 'Ask Vax about it →', note: 'The first month is included in every launch. Pay for a year — 2 months free. Cancel any time; prices in USD, card payment.',
     plans: [
       ['Care', '$39', ['Hosting, backups and security', 'Fixes when something breaks', 'Monthly AI report: what happened and what to improve']],
-      ['Growth', '$129', ['Everything in Care', 'All leads in one inbox: site, AI chat, Instagram', 'AI assistant answering customers 24/7', 'Weekly AI report in plain words', '2 improvements every month']],
-      ['Pro', '$299', ['Everything in Growth', '5 improvements every month', 'Ads management (basic)', 'Priority: answers within hours']],
+      ['Growth', '$129', ['Everything in Care', 'All leads in one inbox: site, AI chat, Instagram', 'AI assistant answering customers 24/7', 'Weekly AI report in plain words', 'Auto replies to reviews; team roles and access', '2 improvements every month']],
+      ['Pro', '$299', ['Everything in Growth', '5 improvements every month', 'Ads management (basic)', 'Content: 8 posts or short videos a month', 'Priority: answers within hours']],
     ],
     ask: 'Hi Vax! Tell me about the growth cabinet plans (Care / Growth / Pro).',
   },
   ru: {
-    eyebrow: 'После запуска', h2: 'Кабинет роста — весь бизнес на одном экране',
+    eyebrow: 'После запуска', h2: 'Дальше ведём всё за вас — каждый месяц',
     sub: 'К каждому сайту, магазину или приложению, которые мы делаем, идёт личный кабинет. Подключите его помесячно: видно каждую заявку, откуда приходят люди и что улучшить дальше — а мы продолжаем улучшать за вас.',
-    per: '/ мес', pop: 'Чаще всего выбирают', cta: 'Спросить Vax →', note: 'Отменить можно в любой момент. Цены в долларах, оплата картой.',
+    per: '/ мес', pop: 'Чаще всего выбирают', cta: 'Спросить Vax →', note: 'Первый месяц входит в каждый запуск. Оплата за год — 2 месяца в подарок. Отменить можно в любой момент; цены в долларах, оплата картой.',
     plans: [
       ['Care', '$39', ['Хостинг, резервные копии и защита', 'Исправления, если что-то сломалось', 'ИИ-отчёт раз в месяц: что было и что улучшить']],
-      ['Growth', '$129', ['Всё из Care', 'Все заявки в одном месте: сайт, ИИ-чат, Instagram', 'ИИ-помощник отвечает клиентам 24/7', 'ИИ-отчёт каждую неделю простыми словами', '2 улучшения в месяц']],
-      ['Pro', '$299', ['Всё из Growth', '5 улучшений в месяц', 'Ведение рекламы (базовое)', 'Приоритет: ответ в течение нескольких часов']],
+      ['Growth', '$129', ['Всё из Care', 'Все заявки в одном месте: сайт, ИИ-чат, Instagram', 'ИИ-помощник отвечает клиентам 24/7', 'ИИ-отчёт каждую неделю простыми словами', 'Автоответы на отзывы; роли и доступы для команды', '2 улучшения в месяц']],
+      ['Pro', '$299', ['Всё из Growth', '5 улучшений в месяц', 'Ведение рекламы (базовое)', 'Контент: 8 постов или коротких видео в месяц', 'Приоритет: ответ в течение нескольких часов']],
     ],
     ask: 'Привет, Vax! Расскажи про тарифы кабинета роста (Care / Growth / Pro).',
   },
   ua: {
-    eyebrow: 'Після запуску', h2: 'Кабінет зростання — весь бізнес на одному екрані',
+    eyebrow: 'Після запуску', h2: 'Далі ведемо все за вас — щомісяця',
     sub: 'До кожного сайту, магазину чи застосунку, які ми робимо, йде особистий кабінет. Підключіть його щомісяця: видно кожну заявку, звідки приходять люди і що покращити далі — а ми продовжуємо покращувати за вас.',
-    per: '/ міс', pop: 'Обирають найчастіше', cta: 'Запитати Vax →', note: 'Скасувати можна будь-коли. Ціни в доларах, оплата карткою.',
+    per: '/ міс', pop: 'Обирають найчастіше', cta: 'Запитати Vax →', note: 'Перший місяць входить у кожен запуск. Оплата за рік — 2 місяці в подарунок. Скасувати можна будь-коли; ціни в доларах, оплата карткою.',
     plans: [
       ['Care', '$39', ['Хостинг, резервні копії й захист', 'Виправлення, якщо щось зламалося', 'ШІ-звіт раз на місяць: що було і що покращити']],
-      ['Growth', '$129', ['Усе з Care', 'Усі заявки в одному місці: сайт, ШІ-чат, Instagram', 'ШІ-помічник відповідає клієнтам 24/7', 'ШІ-звіт щотижня простими словами', '2 покращення на місяць']],
-      ['Pro', '$299', ['Усе з Growth', '5 покращень на місяць', 'Ведення реклами (базове)', 'Пріоритет: відповідь протягом кількох годин']],
+      ['Growth', '$129', ['Усе з Care', 'Усі заявки в одному місці: сайт, ШІ-чат, Instagram', 'ШІ-помічник відповідає клієнтам 24/7', 'ШІ-звіт щотижня простими словами', 'Автовідповіді на відгуки; ролі й доступи для команди', '2 покращення на місяць']],
+      ['Pro', '$299', ['Усе з Growth', '5 покращень на місяць', 'Ведення реклами (базове)', 'Контент: 8 постів або коротких відео на місяць', 'Пріоритет: відповідь протягом кількох годин']],
     ],
     ask: 'Привіт, Vax! Розкажи про тарифи кабінету зростання (Care / Growth / Pro).',
   },

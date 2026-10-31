@@ -23,24 +23,24 @@ const en = {
   ],
   "time": [
     "days",
-    "months",
-    "months"
+    "days",
+    "days"
   ],
   "layers": [
     {
-      "n": "01 / Foundation",
-      "t": "Structural base",
-      "d": "We build the core: a packaged profile, selling content and a reliable client-acquisition infrastructure."
+      "n": "01 / Start",
+      "t": "Launch in days",
+      "d": "A site or landing page, an AI manager answering clients 24/7 and your owner command center — live in 7–14 days."
     },
     {
-      "n": "02 / Growth",
-      "t": "Growth architecture",
-      "d": "We design multi-channel funnels, amplify content reach and create a steady flow of leads."
+      "n": "02 / Business",
+      "t": "The business on autopilot",
+      "d": "Every channel in one inbox, CRM and roles for your team, auto review replies, bookings, payments and ads with AI advice."
     },
     {
       "n": "03 / Scale",
-      "t": "Global market",
-      "d": "Custom IT solutions, automation and process scaling to take you into global markets."
+      "t": "Scale and new markets",
+      "d": "Online store or app, partner program, integrations and launch in the EU, UK, US or UAE."
     }
   ],
   "whyTitle": "Why it's faster and better value with us",
@@ -271,96 +271,98 @@ const en = {
     "Agree on the best format of collaboration"
   ],
   "sessNote": "The strategic session is included in every tier.",
-  "tiersTitle": "Strategic tiers",
-  "tiersSub": "Solutions that grow together with your business.",
+  "tiersTitle": "Launch once. Then we run it for you.",
+  "tiersSub": "We build the system in days — site, AI manager, owner command center — and then keep it working, answering and growing every month. You run the business; the rest is ours.",
   "labels": {
     "problem": "Problem",
     "solution": "Solution",
     "result": "Result",
-    "investment": "Investment",
-    "mo": "/ mo",
-    "rangeNote": "Indicative range — the final scope is locked in after the strategic session.",
-    "details": "Details",
-    "strategicDetails": "Strategic details",
-    "strategy": "Strategy",
-    "recommended": "RECOMMENDED",
+    "investment": "Launch",
+    "mo": "one-time",
+    "rangeNote": "Exact price after a free review. Then it runs on a plan from $39/month — we keep everything working for you.",
+    "details": "What is included",
+    "strategicDetails": "What is included",
+    "strategy": "What you get",
+    "recommended": "MOST CHOSEN",
     "howBuild": "HOW WE BUILD IT",
     "challenge": "Challenge",
     "approach": "What we built",
     "duration": "Timeline",
     "stack": "Stack",
     "readCase": "Read the case",
-    "hideCase": "Hide details"
+    "hideCase": "Hide details",
+    "from": "from"
   },
   "tiers": [
     {
-      "tag": "Tier 01",
-      "problem": "Traffic exists, but it leaks. The profile doesn't sell. No structure.",
-      "solution": "A selling foundation: profile, content, traffic, infrastructure.",
-      "result": "The profile starts converting traffic into inquiries. Content sells. Traffic stops leaking.",
-      "strategyTitle": "Strategy (built in from Foundation)",
+      "tag": "Package 01",
+      "problem": "Clients write at night and on weekends — and nobody answers. No proper site.",
+      "solution": "A site that sells + an AI manager in chat + your command center.",
+      "result": "Every inquiry gets an answer in seconds and lands in one place. You see everything from your phone.",
+      "strategyTitle": "Free review + 3-month growth plan",
       "strategy": [
-        "Identifying growth points",
-        "Initial product line",
-        "Audience segmentation (mass / premium)",
-        "Recommendations for the next growth strategy"
+        "What to launch first and why",
+        "Which channels bring clients in your niche",
+        "Numbers to aim for in 90 days"
       ],
       "items": [
-        "SMM: profile packaging, 10–14 scripts, highlights funnel, omnichannel setup.",
-        "Paid: basic traffic launch, BM, retargeting, creatives.",
-        "Development: multi-link hub, CRM, inquiry forms."
+        "Landing page or small site, mobile-first, basic SEO and Google profile",
+        "AI manager trained on your services, prices and FAQ",
+        "Owner command center: leads, chats, simple analytics",
+        "First month of the Growth plan — free"
       ],
       "referral": "",
-      "cta": "Start with Foundation"
+      "cta": "Start with Start"
     },
     {
-      "tag": "Tier 02",
-      "problem": "Inquiries are coming in, but there's no stable, scalable funnel.",
-      "solution": "A growth system: funnel, content, traffic, website.",
-      "result": "Steady flow of leads. Content warms up and sells. CPA drops.",
-      "strategyTitle": "Strategy (reinforced)",
+      "tag": "Package 02",
+      "problem": "Inquiries come from 5 places, the team loses them, reviews go unanswered.",
+      "solution": "The whole business in one system: all chats, CRM, roles, automations, ads.",
+      "result": "No lost clients, the team knows what to do every day, the owner sees every number.",
+      "strategyTitle": "Growth strategy for 6 months",
       "strategy": [
-        "Product line (mass / premium)",
-        "Traffic segmentation by purchasing power",
-        "Mass and concierge handling tracks",
-        "Growth plan for 3–6 months",
-        "Includes the Foundation strategy"
+        "Funnel and offer for each audience segment",
+        "Ad plan with budget and target cost per lead",
+        "Which processes the AI takes over"
       ],
       "items": [
-        "SMM: 12–20 videos/mo, ToV, community, engagement mechanics.",
-        "Paid: competitor analysis, multi-segment campaigns, A/B testing.",
-        "Development: landing page, payments, CRM, chatbot."
+        "Multi-page site or booking/catalog, payments",
+        "AI manager in Instagram, WhatsApp, Telegram, site; auto review replies",
+        "CRM with roles and access for staff + AI assistant for each person",
+        "Automations: reminders, follow-ups, win-back",
+        "Ads setup (Meta/Google) with AI budget advice",
+        "First month of the Growth plan — free"
       ],
-      "referral": "Basic referral system — included.",
-      "cta": "Move to Growth"
+      "referral": "Referral program for your clients — included.",
+      "cta": "Choose Business"
     },
     {
-      "tag": "Tier 03",
-      "problem": "The business is ready to grow, but the infrastructure can't handle large budgets.",
-      "solution": "A scalable IT platform and multi-layered funnels.",
-      "result": "An independent sales system. Automation. Client-base growth. Entry into new markets.",
-      "strategyTitle": "Strategy (maximum)",
+      "tag": "Package 03",
+      "problem": "The system works, but growth needs its own product, partners or new countries.",
+      "solution": "Store, app or platform + partner program + new markets.",
+      "result": "A new sales channel and partners who bring clients for a commission.",
+      "strategyTitle": "12-month scale plan",
       "strategy": [
-        "Scalable product-line architecture",
-        "Plan for entering new markets (EU / UAE / USA)",
-        "12-month growth model",
-        "Building the ecosystem",
-        "Includes Foundation and Growth strategies"
+        "Product and market entry plan",
+        "Partner program economics",
+        "Integrations and data"
       ],
       "items": [
-        "SMM: producer-led, 20–40 videos/mo, creators, KPI model.",
-        "Paid: budgets from $3,000/mo, email/bot funnels, offline tracking.",
-        "Development: e-commerce / SaaS / app, integrations, lifecycle messaging."
+        "Online store, client app or SaaS platform",
+        "Partner program: links, levels, payouts, AI coach for partners",
+        "Integrations (payments, delivery, accounting, any CRM)",
+        "Localization and launch in new markets",
+        "First month of the Pro plan — free"
       ],
-      "referral": "Multi-level partner program with automated tracking.",
-      "cta": "Scale globally"
+      "referral": "Multi-level partner program — included.",
+      "cta": "Discuss Scale"
     }
   ],
   "ref": {
     "eyebrow": "Layer 04 · Compounding growth",
     "title": "Your private growth network",
     "sub": "Referral architecture — the system premium brands use to scale without extra budget.",
-    "body": "Paid traffic plateaus. Reputation compounds. We build a private distribution network on top of every Growth and Scale tier — so each client you've won becomes a channel that brings in the next one. The cost of acquiring clients and repeat sales drops, while the value of your business grows without ad spend.",
+    "body": "Paid traffic plateaus. Reputation compounds. We build a private distribution network on top of every Business and Scale tier — so each client you've won becomes a channel that brings in the next one. The cost of acquiring clients and repeat sales drops, while the value of your business grows without ad spend.",
     "outcome": "Outcome — a self-reinforcing acquisition channel that compounds month after month and survives any ad-platform change.",
     "note": "Designed in the strategic session. Built inside your tier. Yours to keep forever.",
     "whyTitle": "Why we set this up as its own layer",
@@ -385,12 +387,12 @@ const en = {
     "buildTitle": "How it's built into your tier",
     "build": [
       {
-        "tier": "Foundation",
+        "tier": "Start",
         "t": "Data model prepared",
         "d": "We structure the CRM and tracking so the system can launch instantly the day you upgrade."
       },
       {
-        "tier": "Growth",
+        "tier": "Business",
         "t": "Single-level system",
         "d": "Tracking links, automated rewards, CRM tags, attribution. Clients start bringing in new clients."
       },
@@ -522,40 +524,36 @@ const en = {
   "faqTitle": "Frequently asked",
   "faq": [
     {
-      "q": "Why are prices shown as a range?",
-      "a": "Every project is scoped after the strategic session — the range protects you from overpaying and us from under-delivering."
+      "q": "How much does it cost?",
+      "a": "Launch is one-time: Start from $590, Business from $1,490, Scale from $3,900. Then the system runs on a plan: Care $39, Growth $129 or Pro $299 a month. The first month of the plan is included in every launch."
     },
     {
-      "q": "Can a tier be adapted?",
-      "a": "Yes. Tiers are starting architectures, not rigid packages. We adapt the scope, channels and deliverables to your reality."
+      "q": "Why a monthly plan?",
+      "a": "A site with an AI manager is a living system: it answers clients every day, needs hosting, security, updates and improvements. On the plan we do all of it for you — you never hire a developer or a marketer for small things."
     },
     {
-      "q": "What's included in the strategic session?",
-      "a": "Diagnosis of growth points, initial product line, audience segmentation, scaling scenarios and a partnership-fit check. Included in every tier."
+      "q": "What if I want to stop the plan?",
+      "a": "You can stop any time. The design and content are yours; we help move the site to your own hosting. The AI manager, command center and our support work only while the plan is active."
     },
     {
-      "q": "How does the work go?",
-      "a": "Everything happens in your personal project chat on our site: one manager, files, progress and reports in one place. Calls only when you want them."
-    },
-    {
-      "q": "What are the timelines?",
-      "a": "Foundation 30–60 days. Growth compounds month over month. Scale opens new markets within a quarter."
+      "q": "How fast?",
+      "a": "Start — 7–14 days, Business — 14–30 days, Scale — 30–90 days. Small tasks — from minutes to a couple of days."
     },
     {
       "q": "Do I need a call to start?",
-      "a": "No. Leave a request or ask Vax in the chat — your manager continues in writing. We schedule a call only if you ask for it."
+      "a": "No. Tell Vax in the chat what you need — he gives a price range in a minute and a manager continues in writing. A call only if you want one."
     },
     {
       "q": "How do I pay?",
-      "a": "After we agree the scope, Vaxo sends a contract and an invoice with a fixed price. You pay Vaxo directly."
+      "a": "Launch: 50% to start, 50% after you approve the result (from $3,000 — in 3 stages). Plans — monthly in advance, by card. Pay a year at once — 2 months free."
     },
     {
-      "q": "Who will be my contact?",
-      "a": "One personal manager from the first message to launch and support."
+      "q": "Who will be in touch?",
+      "a": "One personal manager plus Vax, our AI manager, 24/7. Everything — progress, files, payments — in your client cabinet."
     },
     {
       "q": "Do you work with my country and niche?",
-      "a": "Yes — worldwide, in English, Ukrainian and Russian, any niche: local services, e-commerce, SaaS, apps."
+      "a": "Yes — worldwide, in English, Ukrainian and Russian, any niche: local services, clinics, online stores, SaaS, apps."
     }
   ],
   "finalTitle": "Ready for systemic growth?",
