@@ -6,6 +6,7 @@ import Method from './Method.astro';
 import Cases from './Cases.astro';
 import Pricing from './Pricing.astro';
 import GrowthPlans from './GrowthPlans.astro';
+import Compare from './Compare.astro';
 import EcoShowcase from './EcoShowcase.astro';
 import Services from './Services.astro';
 import Faq from './Faq.astro';
@@ -22,6 +23,7 @@ const t = getDict(lang);
 <main>
   <Hero t={t} />
   <Method t={t} lang={lang} />
+  <Compare lang={lang} />
   <EcoShowcase lang={lang} />
   <Cases t={t} />
   <Pricing t={t} />

@@ -1,0 +1,48 @@
+{
+ "eyebrow": "Why it pays off",
+ "h": "Compare: what you pay elsewhere",
+ "cols": [
+  "Hire staff",
+  "Agency",
+  "AI builder (Wix and others)",
+  "Vaxo"
+ ],
+ "rows": [
+  [
+   "Price per month",
+   "from $3,300 for one administrator",
+   "from $1,500",
+   "$17–40 + your time",
+   "from $39"
+  ],
+  [
+   "Who does the work",
+   "you hire and control",
+   "the agency, slowly",
+   "you, yourself",
+   "we and the AI — you just watch"
+  ],
+  [
+   "Answers clients 24/7",
+   "no",
+   "no",
+   "you set it up yourself",
+   "yes, from day one"
+  ],
+  [
+   "Site + ads + social + CRM together",
+   "different people",
+   "separate contracts",
+   "no",
+   "yes, in one place"
+  ],
+  [
+   "You see everything",
+   "by asking",
+   "a report once a month",
+   "only site visits",
+   "live, in one app"
+  ]
+ ],
+ "note": "Market prices 2026: administrator salary in the US — Salary.com, Jooble; agency retainers — SearchLab; Wix plans — WebsiteBuilderExpert."
+}

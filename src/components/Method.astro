@@ -6,17 +6,17 @@ const { lang = 'en' } = Astro.props;
 // How working with us goes, in three steps (the hero already shows the three packages).
 const S = {
   en: { h: 'How it works', steps: [
-    ['01', 'Tell Vax what you need', 'In the chat, in your own words. In a minute you get a plan, a price range and a free review of your current site or socials.'],
-    ['02', 'We launch in days', 'Site, AI manager and your command center. You approve the preview first — the rest is paid only after that.'],
-    ['03', 'We run it for you every month', 'The AI answers your clients 24/7, we fix, improve and report. You run the business — the rest is ours.'] ] },
+    ['01', 'Tell Vax what you need', 'In the chat, in your own words. In a minute you get a plan and a price — and a free look at your current site or social pages.'],
+    ['02', 'We launch in days', 'Website, AI employee and your app. You see the result first — the second half is paid only after you like it.'],
+    ['03', 'We run it for you every month', 'The AI answers your clients 24/7, and we fix, improve and show you the results. You run the business — the rest is ours.'] ] },
   ru: { h: 'Как это работает', steps: [
-    ['01', 'Напишите Vax, что нужно', 'В чате, своими словами. За минуту — план, вилка цены и бесплатный разбор вашего сайта или соцсетей.'],
-    ['02', 'Запускаем за дни', 'Сайт, ИИ-менеджер и ваш пульт. Сначала вы одобряете превью — вторую часть оплаты только после этого.'],
-    ['03', 'Каждый месяц ведём всё за вас', 'ИИ отвечает вашим клиентам 24/7, мы исправляем, улучшаем и отчитываемся. Вы занимаетесь бизнесом — остальное наше.'] ] },
+    ['01', 'Напишите Vax, что нужно', 'В чате, своими словами. За минуту — план и цена, плюс бесплатно посмотрим ваш сайт или соцсети.'],
+    ['02', 'Запускаем за дни', 'Сайт, ИИ-сотрудник и ваше приложение. Сначала вы смотрите результат — вторую половину платите, только если всё нравится.'],
+    ['03', 'Каждый месяц ведём всё за вас', 'ИИ отвечает вашим клиентам 24/7, а мы исправляем, улучшаем и показываем результаты. Вы занимаетесь бизнесом — остальное наше.'] ] },
   ua: { h: 'Як це працює', steps: [
-    ['01', 'Напишіть Vax, що потрібно', 'У чаті, своїми словами. За хвилину — план, вилка ціни й безкоштовний розбір вашого сайту чи соцмереж.'],
-    ['02', 'Запускаємо за дні', 'Сайт, ШІ-менеджер і ваш пульт. Спочатку ви схвалюєте прев’ю — другу частину оплати лише після цього.'],
-    ['03', 'Щомісяця ведемо все за вас', 'ШІ відповідає вашим клієнтам 24/7, ми виправляємо, покращуємо й звітуємо. Ви займаєтесь бізнесом — решта наша.'] ] },
+    ['01', 'Напишіть Vax, що потрібно', 'У чаті, своїми словами. За хвилину — план і ціна, плюс безкоштовно подивимося ваш сайт чи соцмережі.'],
+    ['02', 'Запускаємо за дні', 'Сайт, ШІ-працівник і ваш застосунок. Спочатку ви дивитеся результат — другу половину платите, лише якщо все подобається.'],
+    ['03', 'Щомісяця ведемо все за вас', 'ШІ відповідає вашим клієнтам 24/7, а ми виправляємо, покращуємо й показуємо результати. Ви займаєтесь бізнесом — решта наша.'] ] },
 }[lang];
 ---
 

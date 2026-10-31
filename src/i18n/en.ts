@@ -11,36 +11,36 @@ const en = {
     "Collaborate"
   ],
   "eyebrow": "Your online team in one chat",
-  "h1": "Any online task — done for you.",
-  "sub": "Your business online, done for you: a site people find, an AI manager that answers clients 24/7 and a command center where you see everything — from $199. Then we run it all for you every month.",
-  "cta1": "Discuss your project",
-  "cta2": "Services & prices",
-  "cta3": "Try the AI for free — no signup",
+  "h1": "A website and an AI employee for your business — we do everything for you",
+  "sub": "We build your website, connect an AI that answers your clients and books them by itself, and give you an app where you see every request and every dollar. You don’t need to understand any of it.",
+  "cta1": "Try it free",
+  "cta2": "See examples",
+  "cta3": "How much does it cost",
   "heroTags": [
-    "Launch from $199",
-    "AI answers clients 24/7",
-    "You see everything on one screen"
+    "Answers in seconds, 24/7",
+    "Price in a minute in the chat",
+    "Cancel the plan any time"
   ],
   "time": [
-    "from $199",
+    "ready in days",
     "24/7",
-    "one screen"
+    "all in one app"
   ],
   "layers": [
     {
-      "n": "01 / Site",
-      "t": "A site people find — and that sells",
-      "d": "Mobile-first, SEO and full analytics from day one: where visitors come from, what they click, where they leave."
+      "n": "01 / Website",
+      "t": "A website people find",
+      "d": "Beautiful on a phone, found on Google, with full statistics of who comes and why."
     },
     {
-      "n": "02 / AI manager",
-      "t": "Answers your clients 24/7",
-      "d": "Instagram, WhatsApp, Telegram and your site: replies in seconds, books, sells and hands you the hard cases."
+      "n": "02 / AI employee",
+      "t": "Answers clients for you",
+      "d": "In Instagram, WhatsApp, Telegram and on the site — day and night. Books, sells, and calls you only when needed."
     },
     {
-      "n": "03 / Command center",
-      "t": "You see everything and steer",
-      "d": "Leads, chats, money, ads and team in one place — with an AI assistant for you and every employee."
+      "n": "03 / Your app",
+      "t": "You see and control everything",
+      "d": "Requests, chats, money, ads and your team — on one screen in your phone. Change anything with one message."
     }
   ],
   "whyTitle": "Why it's faster and better value with us",
@@ -271,15 +271,15 @@ const en = {
     "Agree on the best format of collaboration"
   ],
   "sessNote": "A free review and a growth plan come with every launch.",
-  "tiersTitle": "What it costs: a small launch, then we run everything",
-  "tiersSub": "You pay once to build it — from $199. Then a monthly plan keeps it working and growing: the more you need, the more we take off your hands.",
+  "tiersTitle": "How much it costs",
+  "tiersSub": "Two parts. Creating the system — once, depends on how complex it is. Then a monthly plan: we keep everything working and growing.",
   "labels": {
     "problem": "Problem",
     "solution": "Solution",
     "result": "Result",
-    "investment": "One-time launch",
+    "investment": "Creation, once",
     "mo": "",
-    "rangeNote": "Then a plan from $39/month. The first month is free.",
+    "rangeNote": "Exact price from Vax in a minute. Or creation for free with a 12-month Growth or Pro plan.",
     "details": "What is included",
     "strategicDetails": "What is included",
     "strategy": "What you get",
@@ -295,61 +295,55 @@ const en = {
   },
   "tiers": [
     {
-      "tag": "Launch",
-      "problem": "Landing page",
-      "solution": "One page that sells, AI manager in chat, your command center, SEO and analytics.",
-      "result": "Clients find you and get an answer in seconds, day and night.",
+      "tag": "Simple",
+      "problem": "Website for a small business",
+      "solution": "A page or a small site about you, with an AI employee in the chat.",
+      "result": "Clients find you and get an answer right away.",
       "strategyTitle": "Ready in 3–7 days",
-      "strategy": [
-        "Free review of what you have now"
-      ],
+      "strategy": [],
       "items": [
-        "Mobile-first page with your offer",
-        "AI manager trained on your services and prices",
-        "SEO, Google profile and full analytics",
-        "Command center: every lead and chat"
+        "Website for phones and computers",
+        "AI employee trained on your services and prices",
+        "Google, SEO and full statistics",
+        "Your app with every request"
       ],
       "referral": "",
-      "cta": "Start for $199",
-      "price": "$199"
+      "cta": "Try it free",
+      "price": "$150–400"
     },
     {
-      "tag": "Launch",
-      "problem": "Site with booking or catalog",
-      "solution": "Several pages, online booking or a catalog, payments — plus everything from the landing page.",
-      "result": "Clients book and pay by themselves; you only see the result.",
+      "tag": "Popular",
+      "problem": "Website with booking or a catalog",
+      "solution": "Clients book or order and pay by themselves.",
+      "result": "Fewer calls and messages for you, more paid orders.",
       "strategyTitle": "Ready in 7–14 days",
-      "strategy": [
-        "Free review + growth plan for 3 months"
-      ],
+      "strategy": [],
       "items": [
-        "Pages for every service",
-        "Online booking or catalog with payments",
-        "AI manager in all chats",
-        "Reminders and follow-ups that bring clients back"
+        "Everything from the simple website",
+        "Online booking or a catalog with payment",
+        "AI employee in all your chats",
+        "Reminders that bring clients back"
       ],
       "referral": "",
-      "cta": "Choose this",
-      "price": "$490"
+      "cta": "Try it free",
+      "price": "$400–1,000"
     },
     {
-      "tag": "Launch",
+      "tag": "Big",
       "problem": "Store, app or platform",
-      "solution": "Online store, client app, CRM for your team or a partner program — built around your business.",
-      "result": "A full system that replaces a team of people.",
+      "solution": "An online store, a client app, a CRM for your team or a partner program.",
+      "result": "A whole system that does the work of several employees.",
       "strategyTitle": "Ready in 2–6 weeks",
-      "strategy": [
-        "Free review + growth plan for 6 months"
-      ],
+      "strategy": [],
       "items": [
-        "Online store, app or platform",
-        "CRM with staff roles and an AI assistant for each person",
+        "Store, app or platform",
+        "Team roles + an AI assistant for every employee",
         "Partner program for your clients",
-        "Integrations: payments, delivery, accounting"
+        "Payments, delivery and accounting connected"
       ],
       "referral": "",
       "cta": "Discuss my project",
-      "price": "from $990"
+      "price": "from $1,000"
     }
   ],
   "ref": {
@@ -519,11 +513,11 @@ const en = {
   "faq": [
     {
       "q": "How much does it cost?",
-      "a": "Building is one-time: a landing page $199, a site with booking or a catalog $490, a store, app or platform from $990. Then a monthly plan: Care $39, Growth $129 or Pro $299 — the first month is free."
+      "a": "Two parts. Creating it — once, depending on complexity: a simple website $150–400, a site with booking or a catalog $400–1,000, a store or app from $1,000. Or creation for free with a 12-month Growth or Pro plan. Then a monthly plan: Care $39, Growth $129 or Pro $299 — the first month is free."
     },
     {
-      "q": "What exactly do I get for $199?",
-      "a": "Not just a page: a working system. A mobile-first landing page with SEO and full analytics, an AI manager that answers your clients 24/7, and your command center where you see every lead and chat. Try the live demos at vaxogroup.com/examples."
+      "q": "What do I actually get?",
+      "a": "A working system, not just a page: a website people find on Google, an AI employee that answers your clients 24/7 in your chats and books them, and an app where you see every request, chat and payment. Try it yourself: tap the raccoon in the corner, or open vaxogroup.com/examples."
     },
     {
       "q": "Why a monthly plan?",

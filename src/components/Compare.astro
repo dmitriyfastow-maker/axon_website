@@ -1,0 +1,47 @@
+---
+// Home: why Vaxo pays off — the same job done by hired staff, an agency, a DIY AI builder, and by us.
+// Texts live in src/data/compare.<lang>.json (written by scripts/pricing-2026-10-31c.py).
+import type { Lang } from '../i18n';
+import en from '../data/compare.en.json';
+import ru from '../data/compare.ru.json';
+import ua from '../data/compare.ua.json';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const C = { en, ru, ua }[lang];
+---
+
+<section class="cmp" id="compare">
+  <div class="in">
+    <p class="eyebrow">{C.eyebrow}</p>
+    <h2>{C.h}</h2>
+    <div class="wrap">
+      <table>
+        <thead><tr><th></th>{C.cols.map((c, i) => <th class:list={{ us: i === 3 }}>{c}</th>)}</tr></thead>
+        <tbody>
+          {C.rows.map(([k, ...v]) => (
+            <tr><th scope="row">{k}</th>{v.map((x, i) => <td class:list={{ us: i === 3 }}>{x}</td>)}</tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="note">{C.note}</p>
+  </div>
+</section>
+
+<style>
+  .cmp { padding: 0 0 clamp(72px, 8vw, 112px); }
+  .in { max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+  .eyebrow { color: var(--accText); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 13px; margin: 0 0 10px; }
+  h2 { font-size: clamp(28px, 4vw, 44px); line-height: 1.1; letter-spacing: -0.03em; margin: 0 0 22px; max-width: 24ch; }
+  .wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 22px; background: var(--surf); }
+  table { width: 100%; border-collapse: collapse; min-width: 760px; }
+  th, td { padding: 16px 18px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.4; }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+  thead th { font-size: 14px; color: var(--mut); font-weight: 700; }
+  tbody th { font-weight: 700; width: 20%; }
+  td { color: var(--mut); }
+  .us { background: color-mix(in srgb, var(--acc) 16%, transparent); color: var(--ink); font-weight: 700; }
+  thead .us { color: var(--ink); font-size: 16px; }
+  .note { color: var(--mut); font-size: 13px; margin: 12px 0 0; }
+</style>

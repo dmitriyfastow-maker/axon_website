@@ -18,9 +18,9 @@ const { t } = Astro.props;
       <h1>{t.h1}</h1>
       <p class="sub">{t.sub}</p>
       <div class="actions">
-        <a href="#contact" class="btn-primary">{t.cta1} <span>→</span></a>
-        <a href="#services" class="btn-secondary">{t.cta2}</a>
-        <a href="#" data-vax-chat class="btn-tertiary">{t.cta3} →</a>
+        <a href="#" data-vax-chat class="btn-primary">{t.cta1} <span>→</span></a>
+        <a href="#demos" class="btn-secondary">{t.cta2}</a>
+        <a href="#pricing" class="btn-tertiary">{t.cta3} →</a>
       </div>
       <div class="tags">
         {t.heroTags.map((h) => <span><span class="check">✓</span>{h}</span>)}
