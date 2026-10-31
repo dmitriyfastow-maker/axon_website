@@ -100,7 +100,7 @@ function draw(){const i=lv(),n=L[i+1];
  $("prog").style.width=n?Math.min(100,Math.round((s.paid-L[i][2])/(n[2]-L[i][2])*100))+"%":"100%";
  $("progtx").textContent=n?`${n[2]-s.paid} more paid client(s) to reach ${n[0]} (${n[1]}% commission).`:"Top level reached — thank you!";
  const tips=[];tips.push(s.signups/Math.max(s.clicks,1)<0.2?"Your click→sign-up rate is below average. Add a short video or a personal story before the link — it lifts it by ~2×.":"Great click→sign-up rate. Keep your current post style.");
- tips.push(s.signups-s.paid>5?`${s.signups-s.paid} people signed up but haven't paid. Send them the ready follow-up message (copy below).`:"Almost everyone who signs up becomes a client — nice.");
+ tips.push(s.signups-s.paid>5?`${s.signups-s.paid} people signed up but haven't paid. Send them the ready follow-up message (draft below).`:"Almost everyone who signs up becomes a client — nice.");
  $("coach").innerHTML=tips.map(t=>`<p>• ${t}</p>`).join("")+`<p style="opacity:.7">Draft: “Hi! Saw you looked at Orbit — happy to answer any question before you decide.”</p>`;
  $("tiers").innerHTML=L.map((l,j)=>`<div class="card ${j===i?"on":""}"><b>${l[0]}</b><br>${l[1]}% commission<br><small style="color:var(--mut)">${l[2]?l[2]+"+ paid clients":"Start"}</small></div>`).join("");
  const av=s.pend.filter(p=>p[3]==="paid").reduce((a,p)=>a+Math.round(p[2]*L[i][1]/100),0)-s.paidOut;
