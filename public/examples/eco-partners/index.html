@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,follow">
+<title>Orbit Partners — Vaxo partner platform demo</title>
+<meta name="description" content="A partner platform built by Vaxo: personal links, live earnings, tiers, leaderboard, payouts and an AI coach. Fictional brand, click through it.">
+<style>
+:root{--ink:#14201c;--mut:#62706a;--bg:#f2f5f2;--card:#fff;--a:#1f9d6b;--a2:#e1f4ec;--gold:#e4a93f;--line:#dde4df}
+*{box-sizing:border-box}body{margin:0;font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:var(--bg)}button,input,select{font:inherit}button{cursor:pointer}
+.w{max-width:1100px;margin:0 auto;padding:0 18px}
+.vx{position:sticky;top:0;z-index:50;background:#111;color:#ddd}.vx .w{display:flex;align-items:center;gap:12px;height:54px;overflow-x:auto}
+.vx b{color:#fff;letter-spacing:-.03em}.vx b i{color:var(--gold);font-style:normal}
+.tabs{display:flex;gap:4px;background:#222;padding:4px;border-radius:999px}.tabs button{border:0;background:none;color:#bbb;padding:7px 14px;border-radius:999px;white-space:nowrap;font-weight:600;font-size:13px}.tabs button.on{background:#fff;color:#111}
+.get{margin-left:auto;background:var(--gold);color:#111;font-weight:700;text-decoration:none;padding:8px 14px;border-radius:999px;white-space:nowrap}
+.view{display:none;padding:22px 0 90px}.view.on{display:block}
+h1{font-size:26px;margin:0 0 4px}.sub{color:var(--mut);margin:0 0 18px}h2{font-size:17px;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
+.kpi small{color:var(--mut);display:block}.kpi b{font-size:26px;letter-spacing:-.02em}
+.link{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.link code{flex:1;min-width:200px;background:var(--a2);color:#0d5c3d;padding:10px 12px;border-radius:10px;overflow:auto;white-space:nowrap}
+.btn{background:var(--a);color:#fff;border:0;border-radius:999px;padding:9px 16px;font-weight:600}.btn.o{background:#fff;color:var(--a);border:1px solid var(--a)}
+.bar{height:12px;background:var(--a2);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--a);width:0;transition:width .5s}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--mut);font-weight:600}
+.pill{display:inline-block;border-radius:99px;padding:1px 10px;font-size:12px;background:var(--a2);color:#0d5c3d}.pill.w2{background:#fdf0d4;color:#8a5b00}
+.tier{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.tier .card.on{border-color:var(--a);box-shadow:0 0 0 2px var(--a2)}
+input[type=range]{width:100%;accent-color:var(--a)}
+.me td{background:var(--a2);font-weight:700}
+.coach{background:#14201c;color:#e6f3ec;border-radius:16px;padding:16px}.coach p{margin:0 0 8px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:10px 18px;border-radius:999px;transition:.3s;z-index:99}#toast.on{transform:translateX(-50%)}
+.note{color:var(--mut);font-size:13px;margin-top:20px}
+</style></head><body>
+<div class="vx"><div class="w"><b>Orbit<i>.</i>Partners</b>
+<div class="tabs"><button class="on" data-v="home">Dashboard</button><button data-v="calc">Earnings calculator</button><button data-v="board">Leaderboard</button><button data-v="pay">Payouts</button><button data-v="owner">Owner view</button></div>
+<a class="get" href="/#contact">Get one like this</a></div></div>
+
+<div class="w">
+<section class="view on" id="v-home">
+ <h1>Hi, Mira 👋</h1><p class="sub">Your partner cabinet: link, clicks, earnings and the next level — all live.</p>
+ <div class="grid">
+  <div class="card kpi"><small>Clicks</small><b id="k1">128</b></div>
+  <div class="card kpi"><small>Sign-ups</small><b id="k2">19</b></div>
+  <div class="card kpi"><small>Paid clients</small><b id="k3">4</b></div>
+  <div class="card kpi"><small>Earned</small><b id="k4">$640</b></div>
+ </div>
+ <div class="card" style="margin-bottom:14px"><h2>Your personal link</h2>
+  <div class="link"><code>orbit.example/?ref=mira-7k2</code><button class="btn" id="copy">Copy</button><button class="btn o" id="sim">Simulate a visitor</button></div>
+  <p class="note" style="margin:8px 0 0">Press “Simulate a visitor” to see how a click turns into a sign-up and a sale.</p></div>
+ <div class="card" style="margin-bottom:14px"><h2>Level: <span id="lvl">Silver</span> · <span id="rate">20%</span> commission</h2>
+  <div class="bar"><i id="prog"></i></div><p class="note" style="margin:8px 0 0" id="progtx"></p></div>
+ <div class="coach"><h2 style="color:#fff">✦ AI coach</h2><div id="coach"></div></div>
+</section>
+
+<section class="view" id="v-calc">
+ <h1>What could you earn?</h1><p class="sub">Move the sliders — the estimate follows your level.</p>
+ <div class="card">
+  <p>Clients per month: <b id="cn">3</b></p><input type="range" id="c1" min="1" max="30" value="3">
+  <p>Average package: <b id="cp">$400</b></p><input type="range" id="c2" min="100" max="2000" step="50" value="400">
+  <h2 style="margin-top:18px">Per month: <span id="cm" style="color:var(--a)">$240</span> · per year: <span id="cy">$2,880</span></h2>
+  <p class="note">Commission depends on your level (Bronze 15% · Silver 20% · Gold 25% · Platinum 30%).</p>
+ </div>
+ <div class="tier" style="margin-top:14px" id="tiers"></div>
+</section>
+
+<section class="view" id="v-board">
+ <h1>This month's leaderboard</h1><p class="sub">Healthy competition, public nicknames only.</p>
+ <div class="card"><table><thead><tr><th>#</th><th>Partner</th><th>Clients</th><th>Level</th></tr></thead><tbody id="lb"></tbody></table></div>
+</section>
+
+<section class="view" id="v-pay">
+ <h1>Payouts</h1><p class="sub">Transparent: every commission, every status.</p>
+ <div class="card"><table><thead><tr><th>Date</th><th>Client</th><th>Sale</th><th>You earn</th><th>Status</th></tr></thead><tbody id="pt"></tbody></table>
+ <div class="row" style="margin-top:12px"><button class="btn" id="withdraw">Request payout</button> <span class="note" id="wtx">Available: $0</span></div></div>
+</section>
+
+<section class="view" id="v-owner">
+ <h1>Owner view</h1><p class="sub">What the business owner sees: who brings clients, what it costs, what to fix.</p>
+ <div class="grid">
+  <div class="card kpi"><small>Active partners</small><b>47</b></div>
+  <div class="card kpi"><small>Revenue from partners</small><b>$18,400</b></div>
+  <div class="card kpi"><small>Commissions paid</small><b>$3,860</b></div>
+  <div class="card kpi"><small>Cost of a client</small><b>$92</b></div>
+ </div>
+ <div class="card"><h2>✦ AI weekly report</h2>
+  <p>Partners brought <b>11</b> new paying clients this week (+22%). Top source: <b>Mira (Silver)</b> with 4 clients.</p>
+  <p>9 partners got a link but never shared it — an automatic nudge with a ready post was sent to them today.</p>
+  <p>Suggestion: promote 3 partners close to Gold; their next level costs you $0 until they bring one more client.</p></div>
+</section>
+<p class="note">Fictional brand. Yours gets your design, your commission rules and your payment provider.</p>
+</div>
+<div id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+const L=[["Bronze",15,0],["Silver",20,3],["Gold",25,8],["Platinum",30,20]];
+let s={clicks:128,signups:19,paid:4,earned:640,paidOut:0,pend:[["Oct 28","Nordic Bakery",400,"paid"],["Oct 24","Helio Dental",900,"paid"],["Oct 19","Kora Studio",350,"paid"],["Oct 11","Atlas Garage",600,"paid"]]};
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),2200)}
+const lv=()=>{let i=0;L.forEach((l,j)=>{if(s.paid>=l[2])i=j});return i};
+function draw(){const i=lv(),n=L[i+1];
+ $("k1").textContent=s.clicks;$("k2").textContent=s.signups;$("k3").textContent=s.paid;$("k4").textContent="$"+s.earned;
+ $("lvl").textContent=L[i][0];$("rate").textContent=L[i][1]+"%";
+ $("prog").style.width=n?Math.min(100,Math.round((s.paid-L[i][2])/(n[2]-L[i][2])*100))+"%":"100%";
+ $("progtx").textContent=n?`${n[2]-s.paid} more paid client(s) to reach ${n[0]} (${n[1]}% commission).`:"Top level reached — thank you!";
+ const tips=[];tips.push(s.signups/Math.max(s.clicks,1)<0.2?"Your click→sign-up rate is below average. Add a short video or a personal story before the link — it lifts it by ~2×.":"Great click→sign-up rate. Keep your current post style.");
+ tips.push(s.signups-s.paid>5?`${s.signups-s.paid} people signed up but haven't paid. Send them the ready follow-up message (copy below).`:"Almost everyone who signs up becomes a client — nice.");
+ $("coach").innerHTML=tips.map(t=>`<p>• ${t}</p>`).join("")+`<p style="opacity:.7">Draft: “Hi! Saw you looked at Orbit — happy to answer any question before you decide.”</p>`;
+ $("tiers").innerHTML=L.map((l,j)=>`<div class="card ${j===i?"on":""}"><b>${l[0]}</b><br>${l[1]}% commission<br><small style="color:var(--mut)">${l[2]?l[2]+"+ paid clients":"Start"}</small></div>`).join("");
+ const av=s.pend.filter(p=>p[3]==="paid").reduce((a,p)=>a+Math.round(p[2]*L[i][1]/100),0)-s.paidOut;
+ $("pt").innerHTML=s.pend.map(p=>`<tr><td>${p[0]}</td><td>${p[1]}</td><td>$${p[2]}</td><td>$${Math.round(p[2]*L[i][1]/100)}</td><td><span class="pill ${p[3]==="paid"?"":"w2"}">${p[3]==="paid"?"confirmed":"pending"}</span></td></tr>`).join("");
+ $("wtx").textContent="Available: $"+Math.max(av,0);calc();board()}
+function calc(){const n=+$("c1").value,p=+$("c2").value,r=L[lv()][1]/100;$("cn").textContent=n;$("cp").textContent="$"+p;$("cm").textContent="$"+Math.round(n*p*r).toLocaleString();$("cy").textContent="$"+Math.round(n*p*r*12).toLocaleString()}
+function board(){const rows=[["sunny_k",12,"Gold"],["Dan.R",9,"Gold"],["lena_partners",7,"Silver"],["Mira (you)",s.paid,L[lv()][0]],["ArtemV",3,"Silver"],["olga.m",2,"Bronze"]].sort((a,b)=>b[1]-a[1]);
+ $("lb").innerHTML=rows.map((r,i)=>`<tr class="${r[0].includes("you")?"me":""}"><td>${i+1}</td><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}
+document.addEventListener("click",e=>{const t=e.target;
+ if(t.dataset.v){document.querySelectorAll(".view").forEach(v=>v.classList.remove("on"));$("v-"+t.dataset.v).classList.add("on");document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b===t))}});
+$("copy").onclick=()=>{try{navigator.clipboard.writeText("orbit.example/?ref=mira-7k2")}catch(e){}toast("Link copied")};
+$("sim").onclick=()=>{s.clicks++;if(Math.random()<.6){s.signups++;toast("A visitor signed up")}else toast("A visitor clicked");
+ if(s.signups%3===0&&Math.random()<.8){s.paid++;const sale=[400,600,900][Math.floor(Math.random()*3)];s.earned+=Math.round(sale*L[lv()][1]/100);s.pend.unshift(["Today","New client",sale,"pending"]);toast("🎉 New paid client! Commission pending")}
+ draw()};
+$("withdraw").onclick=()=>{const a=parseInt($("wtx").textContent.replace(/\D/g,""))||0;if(!a){toast("Nothing to withdraw yet");return}s.paidOut+=a;draw();toast("Payout of $"+a+" requested — arrives in 3 days")};
+$("c1").oninput=calc;$("c2").oninput=calc;
+draw();
+</script></body></html>
