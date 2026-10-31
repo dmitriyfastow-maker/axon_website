@@ -404,9 +404,9 @@ const en = {
   "cat": {
     "eyebrow": "Service catalog",
     "title": "Need a single service instead of a full tier?",
-    "body": "All 8 categories — SMM, targeted ads, web design & development, app design & development, SEO, design, copywriting and short-form video — with transparent price ranges.",
-    "sub": "Every discipline we deliver, with transparent price ranges. Pick a strategic tier above or commission a single line item.",
-    "note": "The final price range is locked in after the strategic session and scope definition.",
+    "body": "Take just the part you need: SMM, ads, websites, apps, SEO, design, copywriting or short videos. Each comes with AI built in and a clear price range.",
+    "sub": "Not sure what you need? Tell Vax in the chat — he’ll suggest the right mix in a minute.",
+    "note": "The exact price is fixed after a free call, once we know the scope. No surprises later.",
     "items": [
       {
         "name": "SMM",

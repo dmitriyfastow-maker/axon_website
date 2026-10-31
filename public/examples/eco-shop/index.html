@@ -283,6 +283,7 @@ td{padding:10px 0;border-bottom:1px solid var(--line)}
     <button data-v="store" aria-pressed="true" data-t="vStore">Store</button>
     <button data-v="cab" aria-pressed="false" data-t="vCab">Customer cabinet</button>
     <button data-v="owner" aria-pressed="false" data-t="vOwner">Owner dashboard</button>
+    <button data-v="os" aria-pressed="false" data-t="vOs"></button>
     <button data-v="aff" aria-pressed="false" data-t="vAff">Affiliates</button>
   </nav>
   <div class="langs" role="group" aria-label="Language"><button data-l="en">EN</button><button data-l="ru">RU</button><button data-l="ua">UA</button></div>
@@ -443,6 +444,7 @@ td{padding:10px 0;border-bottom:1px solid var(--line)}
     <div style="display:flex;gap:10px;flex-wrap:wrap"><input class="inp" style="flex:1;min-width:200px" data-gen-in /><button class="btn fill" data-gen data-t="gen"></button></div>
     <div class="aiout" style="margin-top:12px" data-gen-out></div>
   </div>
+  <div class="panel" style="margin-top:18px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;background:var(--ink);color:var(--paper)"><div style="flex:1;min-width:240px"><h3 data-t="osH" style="color:var(--paper)"></h3><p style="margin:0;font-size:14px;opacity:.85" data-t="osP"></p></div><button class="btn fill" data-goos data-t="osGo" style="background:var(--acc2);color:var(--ink)"></button></div>
 </div></section>
 
 <section class="view app" data-view="aff" hidden><div class="wrap">
@@ -463,6 +465,8 @@ td{padding:10px 0;border-bottom:1px solid var(--line)}
   </div>
 </div></section>
 </main>
+
+<section class="view app" data-view="os" hidden><div class="wrap" style="max-width:1360px"><div data-os></div></div></section>
 
 <footer><div class="wrap">
   <div><div class="logo">OSTRA</div><p data-t="fAbout"></p>
@@ -493,15 +497,16 @@ td{padding:10px 0;border-bottom:1px solid var(--line)}
   <form data-chat-form><input data-chat-in autocomplete="off" /><button data-t="send"></button></form>
 </section>
 
-<div class="guide" data-guide>
+<div class="guide" data-guide><script>if(/[?&]shot/.test(location.search))document.currentScript.parentNode.style.display="none"</script>
   <div class="gh" data-guide-t><b>Vaxo</b> <span data-t="gH"></span><span>▾</span></div>
   <ol><li data-t="g1"></li><li data-t="g2"></li><li data-t="g3"></li><li data-t="g4"></li><li data-t="g5"></li></ol>
 </div>
 <div class="toast" data-toast></div>
 
+<script src="/examples/_os/os.js"></script>
 <script>
 const I = {
-en:{demo:'Demo store — the brand is fictional',vStore:'Store',vCab:'Customer cabinet',vOwner:'Owner dashboard',vAff:'Affiliates',nShop:'Shop',nFinder:'Scent finder',nReviews:'Reviews',find:'Find',mPlain:'Search',mAi:'✦ Ask AI',phPlain:'Search candles, perfumes, notes…',phAi:'Describe it: “cozy smell for a small bedroom, not sweet, under $60”',
+en:{demo:'Demo store — the brand is fictional',vStore:'Store',vCab:'Customer cabinet',vOwner:'Owner dashboard',vAff:'Affiliates',vOs:'✦ Owner command center',osH:'All chats, reviews, ads, team and roles — one screen',osP:'Every chat from Instagram, WhatsApp, Telegram and the site is answered by the AI manager; reviews get replies automatically, negatives come to you. You see everything, can step into any chat, give staff their own access — and everyone gets a personal AI assistant.',osGo:'Open the command center →',nShop:'Shop',nFinder:'Scent finder',nReviews:'Reviews',find:'Find',mPlain:'Search',mAi:'✦ Ask AI',phPlain:'Search candles, perfumes, notes…',phAi:'Describe it: “cozy smell for a small bedroom, not sweet, under $60”',
 heroK:'Maison de parfum · since 2014',heroH:'Scent for <i>slow</i> evenings',heroP:'Hand-poured candles, perfumes and home scents. Not sure what to choose? Describe the mood — our AI perfumer will pick it for you.',heroB1:'Shop the collection',heroB2:'✦ Describe a scent',
 s1:'Free shipping from $80',s1s:'2–4 days',s2:'Free samples',s2s:'2 with every order',s3:'Refill & save 15%',s3s:'Pause any time',s4:'Ostra Circle',s4s:'Points on every order',
 colK:'The collection',colH:'Candles, perfumes, home',filters:'Filters',clear:'Clear all',fCat:'Category',fFam:'Scent family',fMood:'Mood',fInt:'Intensity',fPrice:'Price up to',fRefill:'Refill available',fVegan:'Vegan wax / formula',showRes:'Show results',
@@ -521,7 +526,7 @@ fab:'Ask a perfumer',online:'online · answers in seconds',send:'Send',chatPh:'A
 gH:'What to try here',g1:'Switch “Search” to “✦ Ask AI” and type what you need in your own words.',g2:'Use filters: family, mood, intensity, price.',g3:'Open a product — see notes and AI pairings.',g4:'Talk to Lea, the AI perfumer (bottom right).',g5:'Look at the cabinet, owner dashboard and affiliates (top bar).',
 top3:'Top',heart:'Heart',base:'Base',burn:'Lasts',pairs:'✦ AI pairs it with',aiThinking:'AI is choosing from the catalog…',aiFail:'The AI is busy right now — try again or use filters.',
 cats:{candle:'Candles',perfume:'Perfumes',diffuser:'Diffusers',oil:'Body oils',incense:'Incense'},fams:{wood:'Woody',flower:'Floral',citrus:'Citrus',spice:'Spicy',fresh:'Fresh'},moods:{calm:'Calm',cozy:'Cozy',fresh:'Fresh',bold:'Bold'},ints:{1:'Soft',2:'Medium',3:'Strong'}},
-ru:{demo:'Демо-магазин — бренд вымышленный',vStore:'Магазин',vCab:'Кабинет покупателя',vOwner:'Панель владельца',vAff:'Партнёры',nShop:'Каталог',nFinder:'Подбор аромата',nReviews:'Отзывы',find:'Найти',mPlain:'Поиск',mAi:'✦ Спросить ИИ',phPlain:'Свечи, духи, ноты…',phAi:'Опишите: «уютный запах для маленькой спальни, не сладкий, до $60»',
+ru:{demo:'Демо-магазин — бренд вымышленный',vStore:'Магазин',vCab:'Кабинет покупателя',vOwner:'Панель владельца',vAff:'Партнёры',vOs:'✦ Пульт владельца',osH:'Все чаты, отзывы, реклама, команда и доступы — на одном экране',osP:'На каждый чат из Instagram, WhatsApp, Telegram и с сайта отвечает ИИ-менеджер, на отзывы — тоже сам, негатив сразу приходит вам. Вы видите всё, можете вмешаться в любой чат, раздать сотрудникам свои доступы — и у каждого есть личный ИИ-помощник.',osGo:'Открыть пульт →',nShop:'Каталог',nFinder:'Подбор аромата',nReviews:'Отзывы',find:'Найти',mPlain:'Поиск',mAi:'✦ Спросить ИИ',phPlain:'Свечи, духи, ноты…',phAi:'Опишите: «уютный запах для маленькой спальни, не сладкий, до $60»',
 heroK:'Парфюмерный дом · с 2014',heroH:'Аромат для <i>неспешных</i> вечеров',heroP:'Свечи ручной заливки, духи и ароматы для дома. Не знаете, что выбрать? Опишите настроение — ИИ-парфюмер подберёт.',heroB1:'Смотреть коллекцию',heroB2:'✦ Описать аромат',
 s1:'Бесплатная доставка от $80',s1s:'2–4 дня',s2:'Пробники в подарок',s2s:'2 к каждому заказу',s3:'Подписка на рефилы −15%',s3s:'Пауза в любой момент',s4:'Клуб Ostra Circle',s4s:'Баллы за каждый заказ',
 colK:'Коллекция',colH:'Свечи, духи, дом',filters:'Фильтры',clear:'Сбросить',fCat:'Категория',fFam:'Семейство аромата',fMood:'Настроение',fInt:'Интенсивность',fPrice:'Цена до',fRefill:'Есть рефил',fVegan:'Веганский воск / состав',showRes:'Показать',
@@ -541,7 +546,7 @@ fab:'Спросить парфюмера',online:'онлайн · отвечае
 gH:'Что здесь попробовать',g1:'Переключите «Поиск» на «✦ Спросить ИИ» и напишите, что нужно, своими словами.',g2:'Фильтры: семейство, настроение, интенсивность, цена.',g3:'Откройте товар — ноты и пары от ИИ.',g4:'Поговорите с Lea, ИИ-парфюмером (справа внизу).',g5:'Посмотрите кабинет, панель владельца и партнёров (верхняя полоса).',
 top3:'Верх',heart:'Сердце',base:'База',burn:'Хватает на',pairs:'✦ ИИ советует к нему',aiThinking:'ИИ выбирает из каталога…',aiFail:'ИИ сейчас занят — попробуйте ещё раз или используйте фильтры.',
 cats:{candle:'Свечи',perfume:'Духи',diffuser:'Диффузоры',oil:'Масла для тела',incense:'Благовония'},fams:{wood:'Древесные',flower:'Цветочные',citrus:'Цитрусовые',spice:'Пряные',fresh:'Свежие'},moods:{calm:'Спокойное',cozy:'Уютное',fresh:'Свежее',bold:'Смелое'},ints:{1:'Мягкий',2:'Средний',3:'Сильный'}},
-ua:{demo:'Демо-магазин — бренд вигаданий',vStore:'Магазин',vCab:'Кабінет покупця',vOwner:'Панель власника',vAff:'Партнери',nShop:'Каталог',nFinder:'Підбір аромату',nReviews:'Відгуки',find:'Знайти',mPlain:'Пошук',mAi:'✦ Запитати ШІ',phPlain:'Свічки, парфуми, ноти…',phAi:'Опишіть: «затишний запах для маленької спальні, не солодкий, до $60»',
+ua:{demo:'Демо-магазин — бренд вигаданий',vStore:'Магазин',vCab:'Кабінет покупця',vOwner:'Панель власника',vAff:'Партнери',vOs:'✦ Пульт власника',osH:'Усі чати, відгуки, реклама, команда й доступи — на одному екрані',osP:'На кожен чат з Instagram, WhatsApp, Telegram і з сайту відповідає ШІ-менеджер, на відгуки — теж сам, негатив одразу приходить вам. Ви бачите все, можете втрутитися в будь-який чат, роздати працівникам свої доступи — і кожен має особистого ШІ-помічника.',osGo:'Відкрити пульт →',nShop:'Каталог',nFinder:'Підбір аромату',nReviews:'Відгуки',find:'Знайти',mPlain:'Пошук',mAi:'✦ Запитати ШІ',phPlain:'Свічки, парфуми, ноти…',phAi:'Опишіть: «затишний запах для маленької спальні, не солодкий, до $60»',
 heroK:'Парфумерний дім · з 2014',heroH:'Аромат для <i>неквапливих</i> вечорів',heroP:'Свічки ручного розливу, парфуми та аромати для дому. Не знаєте, що обрати? Опишіть настрій — ШІ-парфумер підбере.',heroB1:'Дивитися колекцію',heroB2:'✦ Описати аромат',
 s1:'Безкоштовна доставка від $80',s1s:'2–4 дні',s2:'Пробники в подарунок',s2s:'2 до кожного замовлення',s3:'Підписка на рефіли −15%',s3s:'Пауза будь-коли',s4:'Клуб Ostra Circle',s4s:'Бали за кожне замовлення',
 colK:'Колекція',colH:'Свічки, парфуми, дім',filters:'Фільтри',clear:'Скинути',fCat:'Категорія',fFam:'Сімейство аромату',fMood:'Настрій',fInt:'Інтенсивність',fPrice:'Ціна до',fRefill:'Є рефіл',fVegan:'Веганський віск / склад',showRes:'Показати',
@@ -759,13 +764,14 @@ function renderAff(){const v=+$('[data-aff]').value;$('[data-affout]').innerHTML
 $('[data-aff]').addEventListener('input',renderAff);
 $('[data-copy]').addEventListener('click',()=>{navigator.clipboard?.writeText('https://ostra.co/?ref=hannah').catch(()=>{});toast(t('copied'))});
 
-function view(v){$$('[data-view]').forEach(s=>s.hidden=s.dataset.view!==v);$$('[data-v]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v));window.scrollTo({top:0})}
+let osOn=0;function view(v){if(v==='os'&&!osOn){osOn=1;VaxoOS.mount(document.querySelector('[data-os]'),{lang,niche:'shop',accent:'#6E2F22',accent2:'#B88A57'})}$$('[data-view]').forEach(s=>s.hidden=s.dataset.view!==v);$$('[data-v]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v));window.scrollTo({top:0})}
 $$('[data-v]').forEach(b=>b.addEventListener('click',()=>view(b.dataset.v)));
 $$('[data-v-go]').forEach(b=>b.addEventListener('click',()=>view(b.dataset.vGo)));
-$$('[data-l]').forEach(b=>b.addEventListener('click',()=>{lang=b.dataset.l;try{localStorage.setItem('ostra_lang',lang)}catch{};applyLang()}));
+$$('[data-l]').forEach(b=>b.addEventListener('click',()=>{lang=b.dataset.l;try{localStorage.setItem('ostra_lang',lang)}catch{};applyLang();if(window.VaxoOS&&osOn)VaxoOS.lang(lang)}));
 $('[data-guide-t]').addEventListener('click',()=>$('[data-guide]').classList.toggle('min'));
 if(innerWidth<1400)$('[data-guide]').classList.add('min');
 applyLang();
+document.addEventListener('click',e=>{if(e.target.closest('[data-goos]'))view('os')});
 </script>
 </body>
 </html>

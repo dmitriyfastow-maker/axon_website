@@ -62,6 +62,12 @@ import Base from '../layouts/Base.astro';
           <button class="cta">Отправить Claude</button>
         </form>
         <small class="mut" data-say-msg></small>
+        <section class="assist">
+          <h2>✦ Ваш ИИ-помощник <small class="mut" data-assist-who></small></h2>
+          <div class="tips" data-tips></div>
+          <form class="say" data-ask><textarea name="q" rows="1" placeholder="Спросите помощника — например: «что сделать сегодня, чтобы быстрее получить первую оплату?»"></textarea><button class="cta">Спросить</button></form>
+          <div class="assist-a" data-ask-a hidden></div>
+        </section>
         <h2>💰 Путь клиента: от заявки до денег</h2>
         <div class="pipe" data-pipe></div>
         <h2>Все процессы</h2>
@@ -331,6 +337,20 @@ import Base from '../layouts/Base.astro';
   }
 
   const PROC_LIGHT = (bad: boolean, warn: boolean) => (bad ? 'r' : warn ? 'y' : 'g');
+  async function loadAssist() {
+    const r = await api('/assist').catch(() => null);
+    if (!r?.ok) return;
+    $('[data-assist-who]').textContent = me.name ? `· для ${me.role === 'owner' ? 'владельца' : me.name}` : '';
+    $('[data-tips]').replaceChildren(...(r.tips as R[]).map((t) => el('button', { type: 'button', class: 'tip', onclick: () => show(t.view) }, el('span', {}, t.icon), el('p', {}, t.text), el('b', {}, 'Открыть →'))));
+  }
+  $('[data-ask]').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = e.target as HTMLFormElement; const q = (f.q as HTMLTextAreaElement).value.trim(); if (!q) return;
+    const a = $('[data-ask-a]'); a.hidden = false; a.textContent = 'Думаю…';
+    const r = await api('/assist', { q }).catch(() => null);
+    a.textContent = r?.text || 'ИИ сейчас занят — попробуйте через минуту.';
+  });
+
   async function loadPulse() {
     const p = await api('/pulse').catch(() => null);
     if (!p?.ok) return;
@@ -401,7 +421,7 @@ import Base from '../layouts/Base.astro';
   async function load() {
     if (!token) return logout();
     try { data = await api(''); } catch { return; }
-    loadMe(); loadPulse(); loadPlan();
+    loadMe().then(loadAssist); loadPulse(); loadPlan();
     $('[data-loginbox]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
     loadOutbox();
     renderToday(); renderInbox(); renderLeads(); renderTeam(); renderPay(); renderCartoon(); renderLinks();
@@ -1240,4 +1260,15 @@ import Base from '../layouts/Base.astro';
   .vb span { width: 70%; background: #E0A84F; border-radius: 6px 6px 0 0; min-height: 2px; }
   .adm .offer { background: var(--bg); border: 2px solid var(--acc); border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
   .adm .codes { margin-top: 12px; display: grid; gap: 8px; }
+  .assist { background: linear-gradient(135deg, #1c2150, #3b4fd6 70%, #6b5cff); color: #fff; border-radius: 20px; padding: 18px; margin: 18px 0; }
+  .assist h2 { color: #fff; margin-top: 0; }
+  .assist .mut { color: #c9cff5; }
+  .assist .tips { display: grid; gap: 8px; margin-bottom: 12px; }
+  .assist .tip { display: flex; gap: 12px; align-items: center; text-align: left; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); color: #fff; border-radius: 14px; padding: 10px 14px; cursor: pointer; font: inherit; }
+  .assist .tip:hover { background: rgba(255,255,255,.18); }
+  .assist .tip p { margin: 0; flex: 1; }
+  .assist .tip b { white-space: nowrap; font-size: 13px; opacity: .85; }
+  .assist textarea { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.25); }
+  .assist textarea::placeholder { color: #d4d8f7; }
+  .assist-a { background: rgba(0,0,0,.22); border-radius: 14px; padding: 12px 14px; margin-top: 10px; white-space: pre-wrap; }
 </style>

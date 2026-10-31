@@ -15,6 +15,7 @@ import { handlePlan } from './plan.js';
 import { OWNER_KEY, ROLES, SECTION_NAMES, handleStaffAdmin, sectionOf, staffFromToken, type Me } from './staff.js';
 import { settings } from './autopilot.js';
 import type { AiBinding } from './chat.js';
+import { assistAnswer, tipsFor } from './assist.js';
 
 /** An invoice was paid (by hand in the HQ, or by card through the mono webhook): record it through Finance (taxes,
  * cashback) and let Vax thank the client. Returns 400 when the invoice is not open (already paid or cancelled). */
@@ -86,6 +87,12 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   if (path === 'me') return json(200, { ok: true, me: { name: me.name, email: me.email, role: me.role, role_name: ROLES[me.role]?.name, sections: me.sections, write: me.write }, names: SECTION_NAMES });
   if (path === 'plan') return handlePlan(db, request);
   if (path === 'pulse') return json(200, { ok: true, ...(await pulse(db)) });
+  if (path === 'assist') {
+    const p = (await pulse(db)) as Record<string, Record<string, any>>;
+    const b = request.method === 'POST' ? ((await request.json().catch(() => ({}))) as Record<string, unknown>) : {};
+    const q = typeof b.q === 'string' ? b.q.trim() : '';
+    return json(200, { ok: true, tips: tipsFor(p, me), text: q ? await assistAnswer(ai, p, me, q) : '' });
+  }
   if (path === 'staff' || path.startsWith('staff/')) return handleStaffAdmin(db, request, path.slice('staff'.length).replace(/^\//, ''), me, new URL(request.url).origin);
   if (path === '' && request.method === 'GET') return json(200, { ok: true, ...(await ownerOverview(db, notify)), payouts: await allPayouts(db), hq: HQ });
   if (path === 'analytics' && request.method === 'GET') return json(200, { ok: true, ...(await analytics(db)) });

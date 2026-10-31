@@ -3,119 +3,195 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,follow">
 <title>Orbit Partners — Vaxo partner platform demo</title>
-<meta name="description" content="A partner platform built by Vaxo: personal links, live earnings, tiers, leaderboard, payouts and an AI coach. Fictional brand, click through it.">
+<meta name="description" content="Demo by Vaxo: a partner (affiliate) platform — personal links, live earnings, levels with growing commission, leaderboard, payouts, an AI coach for every partner and an owner view.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#14201c;--mut:#62706a;--bg:#f2f5f2;--card:#fff;--a:#1f9d6b;--a2:#e1f4ec;--gold:#e4a93f;--line:#dde4df}
-*{box-sizing:border-box}body{margin:0;font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:var(--bg)}button,input,select{font:inherit}button{cursor:pointer}
-.w{max-width:1100px;margin:0 auto;padding:0 18px}
-.vx{position:sticky;top:0;z-index:50;background:#111;color:#ddd}.vx .w{display:flex;align-items:center;gap:12px;height:54px;overflow-x:auto}
-.vx b{color:#fff;letter-spacing:-.03em}.vx b i{color:var(--gold);font-style:normal}
-.tabs{display:flex;gap:4px;background:#222;padding:4px;border-radius:999px}.tabs button{border:0;background:none;color:#bbb;padding:7px 14px;border-radius:999px;white-space:nowrap;font-weight:600;font-size:13px}.tabs button.on{background:#fff;color:#111}
-.get{margin-left:auto;background:var(--gold);color:#111;font-weight:700;text-decoration:none;padding:8px 14px;border-radius:999px;white-space:nowrap}
-.view{display:none;padding:22px 0 90px}.view.on{display:block}
-h1{font-size:26px;margin:0 0 4px}.sub{color:var(--mut);margin:0 0 18px}h2{font-size:17px;margin:0 0 10px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
-.kpi small{color:var(--mut);display:block}.kpi b{font-size:26px;letter-spacing:-.02em}
-.link{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.link code{flex:1;min-width:200px;background:var(--a2);color:#0d5c3d;padding:10px 12px;border-radius:10px;overflow:auto;white-space:nowrap}
-.btn{background:var(--a);color:#fff;border:0;border-radius:999px;padding:9px 16px;font-weight:600}.btn.o{background:#fff;color:var(--a);border:1px solid var(--a)}
-.bar{height:12px;background:var(--a2);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--a);width:0;transition:width .5s}
-table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--mut);font-weight:600}
-.pill{display:inline-block;border-radius:99px;padding:1px 10px;font-size:12px;background:var(--a2);color:#0d5c3d}.pill.w2{background:#fdf0d4;color:#8a5b00}
-.tier{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.tier .card.on{border-color:var(--a);box-shadow:0 0 0 2px var(--a2)}
+:root{--bg:#0b0b14;--card:#14141f;--card2:#1b1b2a;--ink:#f3f2ff;--mut:#9b99b5;--line:#2a2940;--a:#7c5cff;--a2:#22d3a6;--gold:#ffc24b;--pink:#ff5fa2}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(900px 500px at 10% -10%,#3a1f8a 0,transparent 60%),radial-gradient(800px 500px at 110% 10%,#0f5d52 0,transparent 55%),var(--bg);color:var(--ink);font:15px/1.55 Manrope,system-ui,sans-serif;min-height:100vh}
+button,input{font:inherit;color:inherit}button{cursor:pointer}
+.w{max-width:1180px;margin:0 auto;padding:0 16px}
+.vx{position:sticky;top:0;z-index:50;background:rgba(11,11,20,.75);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.vx .w{display:flex;align-items:center;gap:12px;min-height:60px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.logo{font-family:Unbounded,sans-serif;font-weight:700;font-size:17px;letter-spacing:-.02em}.logo i{font-style:normal;color:var(--a2)}
+.tabs{display:flex;gap:4px;background:var(--card);padding:4px;border-radius:99px;overflow-x:auto;max-width:100%}
+.tabs button{border:0;background:none;color:var(--mut);padding:7px 14px;border-radius:99px;white-space:nowrap;font-weight:700;font-size:13px}
+.tabs button.on{background:linear-gradient(135deg,var(--a),#a35cff);color:#fff}
+.langs{display:flex;gap:2px;margin-left:auto}.langs button{border:0;background:none;color:var(--mut);font-weight:800;font-size:12px;padding:4px 6px}.langs button[aria-pressed=true]{color:#fff}
+.get{background:var(--a2);color:#062b23;font-weight:800;text-decoration:none;padding:8px 14px;border-radius:99px;white-space:nowrap;font-size:14px}
+.demo{font-size:12px;color:var(--mut);text-align:center;padding:6px}
+.view{display:none;padding:26px 0 60px}.view.on{display:block;animation:in .4s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+h1{font-family:Unbounded,sans-serif;font-size:clamp(26px,4vw,40px);line-height:1.1;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:17px;margin:0 0 10px}
+.sub{color:var(--mut);margin:0 0 20px;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;position:relative;overflow:hidden}
+.kpi small{color:var(--mut);font-weight:600}.kpi b{display:block;font-size:30px;letter-spacing:-.02em;font-family:Unbounded,sans-serif;font-weight:500;margin-top:4px}
+.kpi::after{content:"";position:absolute;right:-30px;top:-30px;width:90px;height:90px;border-radius:50%;background:var(--c,var(--a));opacity:.18;filter:blur(10px)}
+.link{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.link code{background:var(--card2);border:1px dashed #4a4870;padding:10px 14px;border-radius:12px;flex:1;min-width:200px;font-size:14px;color:#cfc9ff}
+.btn{background:linear-gradient(135deg,var(--a),#a35cff);color:#fff;border:0;border-radius:99px;padding:10px 18px;font-weight:800}
+.btn.o{background:var(--card2);border:1px solid var(--line)}.btn.g{background:var(--a2);color:#062b23}
+.note{color:var(--mut);font-size:13.5px}
+.lvl{display:flex;gap:18px;align-items:center}
+.ring{width:118px;height:118px;flex:none;position:relative}.ring svg{width:100%;height:100%;transform:rotate(-90deg)}.ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:Unbounded,sans-serif;font-size:22px}
+.coach{background:linear-gradient(135deg,#2a1a6e,#5b2bd1 55%,#a0379b);border:0}
+.coach p{margin:0 0 8px}
+.coach .row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.coach input{flex:1;min-width:180px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:9px 12px;color:#fff}.coach input::placeholder{color:#d9cfff}
+.out{background:rgba(0,0,0,.25);border-radius:12px;padding:10px 12px;margin-top:10px;white-space:pre-wrap}.out:empty{display:none}
 input[type=range]{width:100%;accent-color:var(--a)}
-.me td{background:var(--a2);font-weight:700}
-.coach{background:#14201c;color:#e6f3ec;border-radius:16px;padding:16px}.coach p{margin:0 0 8px}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:10px 18px;border-radius:999px;transition:.3s;z-index:99}#toast.on{transform:translateX(-50%)}
-.note{color:var(--mut);font-size:13px;margin-top:20px}
+.tier{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.tier .card{text-align:center}.tier .card.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 20px 40px -20px rgba(255,194,75,.5)}
+.tier b{font-family:Unbounded,sans-serif;font-size:15px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--mut);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+tr.me td{background:rgba(124,92,255,.14)}
+.pill{background:rgba(34,211,166,.15);color:var(--a2);border-radius:99px;padding:2px 10px;font-size:12px;font-weight:700}.pill.w2{background:rgba(255,194,75,.15);color:var(--gold)}
+.medal{font-size:18px}
+.bar{height:10px;border-radius:9px;background:var(--card2);overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--a),var(--a2));transition:width .6s}
+#toast{position:fixed;left:50%;top:76px;transform:translateX(-50%);background:#fff;color:#111;padding:10px 18px;border-radius:99px;z-index:70;opacity:0;transition:.3s;pointer-events:none;font-weight:700}#toast.on{opacity:1}
+.conf{position:fixed;top:-10px;width:9px;height:14px;z-index:80;pointer-events:none;animation:fall 1.6s ease-in forwards}@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.6}}
+.osb{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:linear-gradient(135deg,#0f5d52,#14141f);border:1px solid #1e6b5d}
+.osb div{flex:1;min-width:240px}
+@media(max-width:860px){.grid{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}.tier{grid-template-columns:repeat(2,1fr)}.kpi b{font-size:24px}.card{overflow-x:auto}}
 </style></head><body>
-<div class="vx"><div class="w"><b>Orbit<i>.</i>Partners</b>
-<div class="tabs"><button class="on" data-v="home">Dashboard</button><button data-v="calc">Earnings calculator</button><button data-v="board">Leaderboard</button><button data-v="pay">Payouts</button><button data-v="owner">Owner view</button></div>
-<a class="get" href="/#contact">Get one like this</a></div></div>
+<div class="vx"><div class="w"><span class="logo">Orbit<i>.</i>Partners</span>
+<div class="tabs"><button class="on" data-v="home" data-t="tHome"></button><button data-v="calc" data-t="tCalc"></button><button data-v="board" data-t="tBoard"></button><button data-v="pay" data-t="tPay"></button><button data-v="owner" data-t="tOwner"></button></div>
+<div class="langs"><button data-l="en">EN</button><button data-l="ru">RU</button><button data-l="ua">UA</button></div>
+<a class="get" href="/#chat" data-t="get"></a></div></div>
+<div class="demo" data-t="demo"></div>
 
 <div class="w">
 <section class="view on" id="v-home">
- <h1>Hi, Mira 👋</h1><p class="sub">Your partner cabinet: link, clicks, earnings and the next level — all live.</p>
+ <h1 data-t="hi"></h1><p class="sub" data-t="hiP"></p>
  <div class="grid">
-  <div class="card kpi"><small>Clicks</small><b id="k1">128</b></div>
-  <div class="card kpi"><small>Sign-ups</small><b id="k2">19</b></div>
-  <div class="card kpi"><small>Paid clients</small><b id="k3">4</b></div>
-  <div class="card kpi"><small>Earned</small><b id="k4">$640</b></div>
+  <div class="card kpi" style="--c:#7c5cff"><small data-t="k1"></small><b id="k1">128</b></div>
+  <div class="card kpi" style="--c:#22d3a6"><small data-t="k2"></small><b id="k2">19</b></div>
+  <div class="card kpi" style="--c:#ff5fa2"><small data-t="k3"></small><b id="k3">4</b></div>
+  <div class="card kpi" style="--c:#ffc24b"><small data-t="k4"></small><b id="k4">$640</b></div>
  </div>
- <div class="card" style="margin-bottom:14px"><h2>Your personal link</h2>
-  <div class="link"><code>orbit.example/?ref=mira-7k2</code><button class="btn" id="copy">Copy</button><button class="btn o" id="sim">Simulate a visitor</button></div>
-  <p class="note" style="margin:8px 0 0">Press “Simulate a visitor” to see how a click turns into a sign-up and a sale.</p></div>
- <div class="card" style="margin-bottom:14px"><h2>Level: <span id="lvl">Silver</span> · <span id="rate">20%</span> commission</h2>
-  <div class="bar"><i id="prog"></i></div><p class="note" style="margin:8px 0 0" id="progtx"></p></div>
- <div class="coach"><h2 style="color:#fff">✦ AI coach</h2><div id="coach"></div></div>
+ <div class="card" style="margin-bottom:14px"><h2 data-t="linkH"></h2>
+  <div class="link"><code>orbit.example/?ref=mira-7k2</code><button class="btn o" id="copy" data-t="copy"></button><button class="btn g" id="sim" data-t="sim"></button></div>
+  <p class="note" style="margin:10px 0 0" data-t="simP"></p></div>
+ <div class="g2">
+  <div class="card coach"><h2 style="color:#fff" data-t="coachH"></h2><div id="coach"></div>
+   <form class="row" id="postf"><input id="postq" maxlength="140"><button class="btn g" data-t="postGo"></button></form><div class="out" id="posto"></div></div>
+  <div class="card"><div class="lvl"><div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="#2a2940" stroke-width="12"/><circle id="ringc" cx="60" cy="60" r="50" fill="none" stroke="url(#rg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" style="transition:stroke-dashoffset .8s"/><defs><linearGradient id="rg"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#22d3a6"/></linearGradient></defs></svg><b id="rate">20%</b></div>
+   <div><h2><span data-t="level"></span>: <span id="lvl">Silver</span></h2><p class="note" style="margin:0" id="progtx"></p></div></div></div>
+ </div>
 </section>
 
 <section class="view" id="v-calc">
- <h1>What could you earn?</h1><p class="sub">Move the sliders — the estimate follows your level.</p>
+ <h1 data-t="cH"></h1><p class="sub" data-t="cP"></p>
  <div class="card">
-  <p>Clients per month: <b id="cn">3</b></p><input type="range" id="c1" min="1" max="30" value="3">
-  <p>Average package: <b id="cp">$400</b></p><input type="range" id="c2" min="100" max="2000" step="50" value="400">
-  <h2 style="margin-top:18px">Per month: <span id="cm" style="color:var(--a)">$240</span> · per year: <span id="cy">$2,880</span></h2>
-  <p class="note">Commission depends on your level (Bronze 15% · Silver 20% · Gold 25% · Platinum 30%).</p>
+  <p><span data-t="cN"></span> <b id="cn">3</b></p><input type="range" id="c1" min="1" max="30" value="3">
+  <p><span data-t="cA"></span> <b id="cp">$400</b></p><input type="range" id="c2" min="100" max="2000" step="50" value="400">
+  <h2 style="margin-top:18px;font-size:22px"><span data-t="cM"></span> <span id="cm" style="color:var(--a2)">$240</span> · <span data-t="cY"></span> <span id="cy" style="color:var(--gold)">$2,880</span></h2>
+  <p class="note" data-t="cNote"></p>
  </div>
  <div class="tier" style="margin-top:14px" id="tiers"></div>
 </section>
 
 <section class="view" id="v-board">
- <h1>This month's leaderboard</h1><p class="sub">Healthy competition, public nicknames only.</p>
- <div class="card"><table><thead><tr><th>#</th><th>Partner</th><th>Clients</th><th>Level</th></tr></thead><tbody id="lb"></tbody></table></div>
+ <h1 data-t="bH"></h1><p class="sub" data-t="bP"></p>
+ <div class="card"><table><thead><tr><th>#</th><th data-t="thP"></th><th data-t="thC"></th><th data-t="thL"></th></tr></thead><tbody id="lb"></tbody></table></div>
 </section>
 
 <section class="view" id="v-pay">
- <h1>Payouts</h1><p class="sub">Transparent: every commission, every status.</p>
- <div class="card"><table><thead><tr><th>Date</th><th>Client</th><th>Sale</th><th>You earn</th><th>Status</th></tr></thead><tbody id="pt"></tbody></table>
- <div class="row" style="margin-top:12px"><button class="btn" id="withdraw">Request payout</button> <span class="note" id="wtx">Available: $0</span></div></div>
+ <h1 data-t="pH"></h1><p class="sub" data-t="pP"></p>
+ <div class="card"><table><thead><tr><th data-t="thD"></th><th data-t="thCl"></th><th data-t="thS"></th><th data-t="thE"></th><th data-t="thSt"></th></tr></thead><tbody id="pt"></tbody></table>
+ <div style="margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><button class="btn" id="withdraw" data-t="wd"></button><span class="note" id="wtx"></span></div></div>
 </section>
 
 <section class="view" id="v-owner">
- <h1>Owner view</h1><p class="sub">What the business owner sees: who brings clients, what it costs, what to fix.</p>
+ <h1 data-t="oH"></h1><p class="sub" data-t="oP"></p>
  <div class="grid">
-  <div class="card kpi"><small>Active partners</small><b>47</b></div>
-  <div class="card kpi"><small>Revenue from partners</small><b>$18,400</b></div>
-  <div class="card kpi"><small>Commissions paid</small><b>$3,860</b></div>
-  <div class="card kpi"><small>Cost of a client</small><b>$92</b></div>
+  <div class="card kpi" style="--c:#7c5cff"><small data-t="o1"></small><b>47</b></div>
+  <div class="card kpi" style="--c:#22d3a6"><small data-t="o2"></small><b>$18,400</b></div>
+  <div class="card kpi" style="--c:#ffc24b"><small data-t="o3"></small><b>$3,860</b></div>
+  <div class="card kpi" style="--c:#ff5fa2"><small data-t="o4"></small><b>$92</b></div>
  </div>
- <div class="card"><h2>✦ AI weekly report</h2>
-  <p>Partners brought <b>11</b> new paying clients this week (+22%). Top source: <b>Mira (Silver)</b> with 4 clients.</p>
-  <p>9 partners got a link but never shared it — an automatic nudge with a ready post was sent to them today.</p>
-  <p>Suggestion: promote 3 partners close to Gold; their next level costs you $0 until they bring one more client.</p></div>
+ <div class="card coach" style="margin-bottom:14px"><h2 style="color:#fff" data-t="oAi"></h2><p data-th="oA1"></p><p data-t="oA2"></p><p data-t="oA3"></p></div>
+ <div class="card osb"><div><h2 data-t="osH"></h2><p class="note" style="margin:0;color:#cfe" data-t="osP"></p></div><a class="get" href="/examples/eco-crm/" id="oslink" data-t="osGo"></a></div>
 </section>
-<p class="note">Fictional brand. Yours gets your design, your commission rules and your payment provider.</p>
+<p class="note" data-t="foot"></p>
 </div>
 <div id="toast"></div>
 <script>
-const $=id=>document.getElementById(id);
+const I={
+en:{tHome:'Dashboard',tCalc:'Earnings calculator',tBoard:'Leaderboard',tPay:'Payouts',tOwner:'Owner view',get:'Get one like this →',demo:'Demo by Vaxo — the brand is fictional, click anything',
+hi:'Hi, Mira 👋',hiP:'Your partner cabinet: link, clicks, earnings and the next level — all live.',k1:'Clicks',k2:'Sign-ups',k3:'Paid clients',k4:'Earned',linkH:'Your personal link',copy:'Copy',sim:'Simulate a visitor',simP:'Press “Simulate a visitor” to see how a click turns into a sign-up and a sale.',
+coachH:'✦ AI coach',postGo:'Write my post',postPh:'Where will you post? e.g. “Instagram story for small business owners”',level:'Level',commission:'commission',
+more:'{n} more paid client(s) to reach {l} ({r}% commission).',top:'Top level reached — thank you!',
+tipLow:'Your click→sign-up rate is below average. Add a short video or a personal story before the link — it usually lifts it about 2×.',tipOk:'Great click→sign-up rate. Keep your current post style.',
+tipFollow:'{n} people signed up but haven’t paid. Send them the ready follow-up message.',tipAll:'Almost everyone who signs up becomes a client — nice.',draft:'Draft: “Hi! Saw you looked at Orbit — happy to answer any question before you decide.”',
+cH:'What could you earn?',cP:'Move the sliders — the estimate follows your level.',cN:'Clients per month:',cA:'Average package:',cM:'Per month:',cY:'per year:',cNote:'Commission depends on your level (Bronze 15% · Silver 20% · Gold 25% · Platinum 30%).',start:'Start',plus:'+ paid clients',
+bH:'This month’s leaderboard',bP:'Healthy competition, public nicknames only.',thP:'Partner',thC:'Clients',thL:'Level',you:'you',
+pH:'Payouts',pP:'Transparent: every commission, every status.',thD:'Date',thCl:'Client',thS:'Sale',thE:'You earn',thSt:'Status',ok:'confirmed',pend:'pending',wd:'Request payout',avail:'Available: ',today:'Today',newc:'New client',
+oH:'Owner view',oP:'What the business owner sees: who brings clients, what it costs, what to fix.',o1:'Active partners',o2:'Revenue from partners',o3:'Commissions paid',o4:'Cost of a client',oAi:'✦ AI weekly report',
+oA1:'Partners brought <b>11</b> new paying clients this week (+22%). Top source: <b>Mira (Silver)</b> with 4 clients.',oA2:'9 partners got a link but never shared it — an automatic nudge with a ready post was sent to them today.',oA3:'Suggestion: promote 3 partners close to Gold; their next level costs you $0 until they bring one more client.',
+osH:'The whole business in one command center',osP:'Partners, chats, reviews, ads, team roles and an AI assistant for everyone — see the owner command center.',osGo:'Open the command center →',
+foot:'Fictional brand. Yours gets your design, your commission rules and your payment provider.',copied:'Link copied',signed:'A visitor signed up',clicked:'A visitor clicked',sale:'🎉 New paid client! Commission pending',none:'Nothing to withdraw yet',paid:'Payout of ${a} requested — arrives in 3 days',busy:'The AI is busy — try again in a minute.'},
+ru:{tHome:'Кабинет',tCalc:'Калькулятор дохода',tBoard:'Рейтинг',tPay:'Выплаты',tOwner:'Вид владельца',get:'Хочу такую →',demo:'Демо от Vaxo — бренд вымышленный, нажимайте что угодно',
+hi:'Привет, Мира 👋',hiP:'Ваш кабинет партнёра: ссылка, клики, заработок и следующий уровень — всё вживую.',k1:'Клики',k2:'Регистрации',k3:'Оплатившие клиенты',k4:'Заработано',linkH:'Ваша личная ссылка',copy:'Копировать',sim:'Симулировать посетителя',simP:'Нажмите «Симулировать посетителя» — увидите, как клик превращается в регистрацию и продажу.',
+coachH:'✦ ИИ-тренер',postGo:'Написать мой пост',postPh:'Где будете публиковать? Например: «сторис в Instagram для владельцев малого бизнеса»',level:'Уровень',commission:'комиссия',
+more:'Ещё {n} оплативших клиента — и уровень {l} ({r}% комиссии).',top:'Высший уровень — спасибо!',
+tipLow:'Из кликов мало регистраций. Добавьте перед ссылкой короткое видео или личную историю — обычно это поднимает конверсию примерно вдвое.',tipOk:'Отличная конверсия из кликов в регистрации. Продолжайте в том же стиле.',
+tipFollow:'{n} человек зарегистрировались, но не оплатили. Отправьте им готовое сообщение-напоминание.',tipAll:'Почти все, кто регистрируется, становятся клиентами — отлично.',draft:'Черновик: «Привет! Видел(а), вы смотрели Orbit, — с радостью отвечу на вопросы, прежде чем решите».',
+cH:'Сколько можно заработать?',cP:'Двигайте ползунки — расчёт учитывает ваш уровень.',cN:'Клиентов в месяц:',cA:'Средний пакет:',cM:'В месяц:',cY:'в год:',cNote:'Комиссия зависит от уровня (Bronze 15% · Silver 20% · Gold 25% · Platinum 30%).',start:'Старт',plus:'+ оплативших',
+bH:'Рейтинг месяца',bP:'Здоровое соревнование, только публичные ники.',thP:'Партнёр',thC:'Клиенты',thL:'Уровень',you:'вы',
+pH:'Выплаты',pP:'Прозрачно: каждая комиссия и её статус.',thD:'Дата',thCl:'Клиент',thS:'Продажа',thE:'Ваш доход',thSt:'Статус',ok:'подтверждено',pend:'ожидает',wd:'Запросить выплату',avail:'Доступно: ',today:'Сегодня',newc:'Новый клиент',
+oH:'Вид владельца',oP:'Что видит владелец бизнеса: кто приводит клиентов, сколько это стоит и что исправить.',o1:'Активные партнёры',o2:'Выручка от партнёров',o3:'Выплачено комиссий',o4:'Цена клиента',oAi:'✦ Недельный отчёт ИИ',
+oA1:'Партнёры привели <b>11</b> новых оплативших клиентов за неделю (+22%). Лучший источник — <b>Мира (Silver)</b>, 4 клиента.',oA2:'9 партнёров получили ссылку, но ни разу ею не поделились — сегодня им автоматически ушло напоминание с готовым постом.',oA3:'Совет: 3 партнёрам до Gold остался один клиент — подтолкните их, повышение уровня вам ничего не стоит до новой продажи.',
+osH:'Весь бизнес в одном пульте',osP:'Партнёры, чаты, отзывы, реклама, роли команды и ИИ-помощник для каждого — смотрите пульт владельца.',osGo:'Открыть пульт →',
+foot:'Бренд вымышленный. Ваша партнёрская программа получит ваш дизайн, ваши правила комиссий и вашу платёжную систему.',copied:'Ссылка скопирована',signed:'Посетитель зарегистрировался',clicked:'Посетитель перешёл по ссылке',sale:'🎉 Новый оплативший клиент! Комиссия ожидает подтверждения',none:'Пока нечего выводить',paid:'Выплата ${a} запрошена — придёт за 3 дня',busy:'ИИ занят — попробуйте через минуту.'},
+ua:{tHome:'Кабінет',tCalc:'Калькулятор доходу',tBoard:'Рейтинг',tPay:'Виплати',tOwner:'Вигляд власника',get:'Хочу таку →',demo:'Демо від Vaxo — бренд вигаданий, натискайте будь-що',
+hi:'Привіт, Міро 👋',hiP:'Ваш кабінет партнера: посилання, кліки, заробіток і наступний рівень — усе наживо.',k1:'Кліки',k2:'Реєстрації',k3:'Клієнти, що оплатили',k4:'Зароблено',linkH:'Ваше особисте посилання',copy:'Копіювати',sim:'Симулювати відвідувача',simP:'Натисніть «Симулювати відвідувача» — побачите, як клік стає реєстрацією і продажем.',
+coachH:'✦ ШІ-тренер',postGo:'Написати мій пост',postPh:'Де публікуватимете? Наприклад: «сторіс в Instagram для власників малого бізнесу»',level:'Рівень',commission:'комісія',
+more:'Ще {n} клієнти, що оплатили, — і рівень {l} ({r}% комісії).',top:'Найвищий рівень — дякуємо!',
+tipLow:'З кліків мало реєстрацій. Додайте перед посиланням коротке відео або особисту історію — зазвичай це піднімає конверсію приблизно вдвічі.',tipOk:'Чудова конверсія з кліків у реєстрації. Продовжуйте в тому ж стилі.',
+tipFollow:'{n} людей зареєструвалися, але не оплатили. Надішліть їм готове повідомлення-нагадування.',tipAll:'Майже всі, хто реєструється, стають клієнтами — чудово.',draft:'Чернетка: «Привіт! Бачив(ла), ви дивилися Orbit, — радо відповім на питання, перш ніж вирішите».',
+cH:'Скільки можна заробити?',cP:'Рухайте повзунки — розрахунок враховує ваш рівень.',cN:'Клієнтів на місяць:',cA:'Середній пакет:',cM:'На місяць:',cY:'на рік:',cNote:'Комісія залежить від рівня (Bronze 15% · Silver 20% · Gold 25% · Platinum 30%).',start:'Старт',plus:'+ оплат',
+bH:'Рейтинг місяця',bP:'Здорове змагання, лише публічні ніки.',thP:'Партнер',thC:'Клієнти',thL:'Рівень',you:'ви',
+pH:'Виплати',pP:'Прозоро: кожна комісія та її статус.',thD:'Дата',thCl:'Клієнт',thS:'Продаж',thE:'Ваш дохід',thSt:'Статус',ok:'підтверджено',pend:'очікує',wd:'Запросити виплату',avail:'Доступно: ',today:'Сьогодні',newc:'Новий клієнт',
+oH:'Вигляд власника',oP:'Що бачить власник бізнесу: хто приводить клієнтів, скільки це коштує і що виправити.',o1:'Активні партнери',o2:'Виручка від партнерів',o3:'Виплачено комісій',o4:'Ціна клієнта',oAi:'✦ Тижневий звіт ШІ',
+oA1:'Партнери привели <b>11</b> нових клієнтів, що оплатили, за тиждень (+22%). Найкраще джерело — <b>Міра (Silver)</b>, 4 клієнти.',oA2:'9 партнерів отримали посилання, але жодного разу ним не поділилися — сьогодні їм автоматично пішло нагадування з готовим постом.',oA3:'Порада: 3 партнерам до Gold лишився один клієнт — підштовхніть їх, підвищення рівня вам нічого не коштує до нового продажу.',
+osH:'Весь бізнес в одному пульті',osP:'Партнери, чати, відгуки, реклама, ролі команди й ШІ-помічник для кожного — дивіться пульт власника.',osGo:'Відкрити пульт →',
+foot:'Бренд вигаданий. Ваша партнерська програма отримає ваш дизайн, ваші правила комісій і вашу платіжну систему.',copied:'Посилання скопійовано',signed:'Відвідувач зареєструвався',clicked:'Відвідувач перейшов за посиланням',sale:'🎉 Новий клієнт оплатив! Комісія очікує підтвердження',none:'Поки нічого виводити',paid:'Виплату ${a} запитано — надійде за 3 дні',busy:'ШІ зайнятий — спробуйте за хвилину.'}};
+const $=id=>document.getElementById(id),$$=s=>document.querySelectorAll(s);
+let lang=(()=>{const u=new URLSearchParams(location.search).get('lang');if(u&&I[u])return u;try{const s=localStorage.getItem('vaxo_demo_lang');if(s&&I[s])return s}catch{}const n=(navigator.language||'en').slice(0,2);return n==='ru'?'ru':n==='uk'?'ua':'en'})();
+const t=k=>I[lang][k],f=(k,m)=>t(k).replace(/\{(\w)\}/g,(_,x)=>m[x]);
 const L=[["Bronze",15,0],["Silver",20,3],["Gold",25,8],["Platinum",30,20]];
-let s={clicks:128,signups:19,paid:4,earned:640,paidOut:0,pend:[["Oct 28","Nordic Bakery",400,"paid"],["Oct 24","Helio Dental",900,"paid"],["Oct 19","Kora Studio",350,"paid"],["Oct 11","Atlas Garage",600,"paid"]]};
-function toast(t){const e=$("toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),2200)}
+const D0=[["10/28","Nordic Bakery",400,"paid"],["10/24","Helio Dental",900,"paid"],["10/19","Kora Studio",350,"paid"],["10/11","Atlas Garage",600,"paid"]];
+let s={clicks:128,signups:19,paid:4,earned:640,paidOut:0,pend:D0.slice()};
+function toast(x){const e=$("toast");e.textContent=x;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),2200)}
+function confetti(){for(let i=0;i<40;i++){const c=document.createElement('i');c.className='conf';c.style.left=Math.random()*100+'vw';c.style.background=['#7c5cff','#22d3a6','#ffc24b','#ff5fa2'][i%4];c.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),2200)}}
 const lv=()=>{let i=0;L.forEach((l,j)=>{if(s.paid>=l[2])i=j});return i};
 function draw(){const i=lv(),n=L[i+1];
  $("k1").textContent=s.clicks;$("k2").textContent=s.signups;$("k3").textContent=s.paid;$("k4").textContent="$"+s.earned;
  $("lvl").textContent=L[i][0];$("rate").textContent=L[i][1]+"%";
- $("prog").style.width=n?Math.min(100,Math.round((s.paid-L[i][2])/(n[2]-L[i][2])*100))+"%":"100%";
- $("progtx").textContent=n?`${n[2]-s.paid} more paid client(s) to reach ${n[0]} (${n[1]}% commission).`:"Top level reached — thank you!";
- const tips=[];tips.push(s.signups/Math.max(s.clicks,1)<0.2?"Your click→sign-up rate is below average. Add a short video or a personal story before the link — it lifts it by ~2×.":"Great click→sign-up rate. Keep your current post style.");
- tips.push(s.signups-s.paid>5?`${s.signups-s.paid} people signed up but haven't paid. Send them the ready follow-up message (draft below).`:"Almost everyone who signs up becomes a client — nice.");
- $("coach").innerHTML=tips.map(t=>`<p>• ${t}</p>`).join("")+`<p style="opacity:.7">Draft: “Hi! Saw you looked at Orbit — happy to answer any question before you decide.”</p>`;
- $("tiers").innerHTML=L.map((l,j)=>`<div class="card ${j===i?"on":""}"><b>${l[0]}</b><br>${l[1]}% commission<br><small style="color:var(--mut)">${l[2]?l[2]+"+ paid clients":"Start"}</small></div>`).join("");
+ const pr=n?Math.min(1,(s.paid-L[i][2])/(n[2]-L[i][2])):1;$("ringc").style.strokeDashoffset=314*(1-pr);
+ $("progtx").textContent=n?f('more',{n:n[2]-s.paid,l:n[0],r:n[1]}):t('top');
+ const tips=[s.signups/Math.max(s.clicks,1)<0.2?t('tipLow'):t('tipOk'),s.signups-s.paid>5?f('tipFollow',{n:s.signups-s.paid}):t('tipAll')];
+ $("coach").innerHTML=tips.map(x=>`<p>• ${x}</p>`).join("")+`<p style="opacity:.75">${t('draft')}</p>`;
+ $("tiers").innerHTML=L.map((l,j)=>`<div class="card ${j===i?"on":""}"><b>${l[0]}</b><br><span style="font-size:22px;font-weight:800;color:${['#cd8a5a','#c9cbe0','#ffc24b','#b9f3ff'][j]}">${l[1]}%</span><br><small style="color:var(--mut)">${l[2]?l[2]+" "+t('plus'):t('start')}</small></div>`).join("");
  const av=s.pend.filter(p=>p[3]==="paid").reduce((a,p)=>a+Math.round(p[2]*L[i][1]/100),0)-s.paidOut;
- $("pt").innerHTML=s.pend.map(p=>`<tr><td>${p[0]}</td><td>${p[1]}</td><td>$${p[2]}</td><td>$${Math.round(p[2]*L[i][1]/100)}</td><td><span class="pill ${p[3]==="paid"?"":"w2"}">${p[3]==="paid"?"confirmed":"pending"}</span></td></tr>`).join("");
- $("wtx").textContent="Available: $"+Math.max(av,0);calc();board()}
-function calc(){const n=+$("c1").value,p=+$("c2").value,r=L[lv()][1]/100;$("cn").textContent=n;$("cp").textContent="$"+p;$("cm").textContent="$"+Math.round(n*p*r).toLocaleString();$("cy").textContent="$"+Math.round(n*p*r*12).toLocaleString()}
-function board(){const rows=[["sunny_k",12,"Gold"],["Dan.R",9,"Gold"],["lena_partners",7,"Silver"],["Mira (you)",s.paid,L[lv()][0]],["ArtemV",3,"Silver"],["olga.m",2,"Bronze"]].sort((a,b)=>b[1]-a[1]);
- $("lb").innerHTML=rows.map((r,i)=>`<tr class="${r[0].includes("you")?"me":""}"><td>${i+1}</td><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}
-document.addEventListener("click",e=>{const t=e.target;
- if(t.dataset.v){document.querySelectorAll(".view").forEach(v=>v.classList.remove("on"));$("v-"+t.dataset.v).classList.add("on");document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b===t))}});
-$("copy").onclick=()=>{try{navigator.clipboard.writeText("orbit.example/?ref=mira-7k2")}catch(e){}toast("Link copied")};
-$("sim").onclick=()=>{s.clicks++;if(Math.random()<.6){s.signups++;toast("A visitor signed up")}else toast("A visitor clicked");
- if(s.signups%3===0&&Math.random()<.8){s.paid++;const sale=[400,600,900][Math.floor(Math.random()*3)];s.earned+=Math.round(sale*L[lv()][1]/100);s.pend.unshift(["Today","New client",sale,"pending"]);toast("🎉 New paid client! Commission pending")}
+ $("pt").innerHTML=s.pend.map(p=>`<tr><td>${p[0]==='T'?t('today'):p[0]}</td><td>${p[1]==='N'?t('newc'):p[1]}</td><td>$${p[2]}</td><td><b>$${Math.round(p[2]*L[i][1]/100)}</b></td><td><span class="pill ${p[3]==="paid"?"":"w2"}">${p[3]==="paid"?t('ok'):t('pend')}</span></td></tr>`).join("");
+ $("wtx").textContent=t('avail')+"$"+Math.max(av,0);calc();board()}
+function calc(){const n=+$("c1").value,p=+$("c2").value,r=L[lv()][1]/100;$("cn").textContent=n;$("cp").textContent="$"+p;$("cm").textContent="$"+Math.round(n*p*r).toLocaleString('en-US');$("cy").textContent="$"+Math.round(n*p*r*12).toLocaleString('en-US')}
+function board(){const rows=[["sunny_k",12,"Gold"],["Dan.R",9,"Gold"],["lena_partners",7,"Silver"],["Mira ("+t('you')+")",s.paid,L[lv()][0],1],["ArtemV",3,"Silver"],["olga.m",2,"Bronze"]].sort((a,b)=>b[1]-a[1]);
+ $("lb").innerHTML=rows.map((r,i)=>`<tr class="${r[3]?"me":""}"><td class="medal">${['🥇','🥈','🥉'][i]||i+1}</td><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}
+function applyLang(){document.documentElement.lang=lang==='ua'?'uk':lang;$$('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));$$('[data-th]').forEach(e=>e.innerHTML=t(e.dataset.th));$$('[data-l]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===lang));$("postq").placeholder=t('postPh');$("oslink").href='/examples/eco-crm/?lang='+lang+'&niche=biz';draw()}
+document.addEventListener("click",e=>{const b=e.target.closest('[data-v]');if(b){$$(".view").forEach(v=>v.classList.remove("on"));$("v-"+b.dataset.v).classList.add("on");$$(".tabs button").forEach(x=>x.classList.toggle("on",x===b));window.scrollTo({top:0})}});
+$$('[data-l]').forEach(b=>b.onclick=()=>{lang=b.dataset.l;try{localStorage.setItem('vaxo_demo_lang',lang)}catch{}applyLang()});
+$("copy").onclick=()=>{try{navigator.clipboard.writeText("orbit.example/?ref=mira-7k2")}catch(e){}toast(t('copied'))};
+$("sim").onclick=()=>{s.clicks++;if(Math.random()<.6){s.signups++;toast(t('signed'))}else toast(t('clicked'));
+ if(s.signups%3===0&&Math.random()<.8){s.paid++;const sale=[400,600,900][Math.floor(Math.random()*3)];s.earned+=Math.round(sale*L[lv()][1]/100);s.pend.unshift(["T","N",sale,"pending"]);toast(t('sale'));confetti()}
  draw()};
-$("withdraw").onclick=()=>{const a=parseInt($("wtx").textContent.replace(/\D/g,""))||0;if(!a){toast("Nothing to withdraw yet");return}s.paidOut+=a;draw();toast("Payout of $"+a+" requested — arrives in 3 days")};
+$("withdraw").onclick=()=>{const a=parseInt($("wtx").textContent.replace(/\D/g,""))||0;if(!a){toast(t('none'));return}s.paidOut+=a;draw();toast(t('paid').replace('{a}',a))};
 $("c1").oninput=calc;$("c2").oninput=calc;
-draw();
+$("postf").onsubmit=async e=>{e.preventDefault();const q=$("postq").value.trim()||t('postPh');const o=$("posto");o.textContent='…';
+ try{const r=await fetch('/api/demo/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lang,brand:'Orbit Partners',mode:'chat',role:'an AI coach for affiliate partners of Orbit (a business software). Write ONE ready, honest, personal social post the partner can publish with their link: a hook, 2-3 short lines about the benefit, a soft call to action, no fake numbers or promises of income. Put the post in "text", ids empty',items:[{id:'orbit',t:'Orbit — simple software that helps small businesses get more clients'}],q:'Where and for whom: '+q})});const j=await r.json();o.textContent=j.ok?j.text:t('busy')}catch{o.textContent=t('busy')}};
+applyLang();
 </script></body></html>

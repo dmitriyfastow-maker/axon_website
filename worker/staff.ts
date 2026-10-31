@@ -51,7 +51,7 @@ export async function staffFromToken(db: DB, bearer: string): Promise<Me | null>
 export function sectionOf(path: string): string {
   const p = path.split('/')[0];
   const map: Record<string, string> = {
-    '': 'today', pulse: 'today', me: 'today', plan: 'plan', analytics: 'stats', autopilot: 'auto', 'test-lead': 'auto', digest: 'auto', 'terms-notice': 'auto',
+    '': 'today', pulse: 'today', me: 'today', assist: 'today', plan: 'plan', analytics: 'stats', autopilot: 'auto', 'test-lead': 'auto', digest: 'auto', 'terms-notice': 'auto',
     work: 'work', outbox: 'work', claude: 'claude', invoice: 'fin', finance: 'fin', payout: 'pay', lead: 'leads', partner: 'team', staff: 'access',
   };
   return map[p] ?? 'access';

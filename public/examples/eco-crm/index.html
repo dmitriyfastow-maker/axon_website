@@ -2,120 +2,55 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,follow">
-<title>Pipeline — Vaxo CRM builder demo</title>
-<meta name="description" content="A CRM built around your business by Vaxo: you choose stages, fields and automations, and the AI writes the weekly report. Fictional brand, click through it.">
+<title>Vaxo OS — the owner's command center (demo)</title>
+<meta name="description" content="Demo by Vaxo: one command center for the whole business — all chats with an AI manager, auto review replies, ads and marketing, content, CRM, team roles and a personal AI assistant for everyone.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#16181d;--mut:#6a707a;--bg:#f3f2ef;--card:#fff;--a:#3b4fd6;--a2:#e6e9fb;--ok:#2f8a57;--hot:#d9643a;--line:#e3e1dc}
-*{box-sizing:border-box}body{margin:0;font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:var(--bg)}button,input,select{font:inherit}button{cursor:pointer}
-.w{max-width:1200px;margin:0 auto;padding:0 18px}
-.vx{position:sticky;top:0;z-index:50;background:#111;color:#ddd}.vx .w{display:flex;align-items:center;gap:12px;height:54px;overflow-x:auto}
-.vx b{color:#fff;letter-spacing:-.03em}.vx b i{color:#e4a93f;font-style:normal}
-.tabs{display:flex;gap:4px;background:#222;padding:4px;border-radius:999px}.tabs button{border:0;background:none;color:#bbb;padding:7px 14px;border-radius:999px;white-space:nowrap;font-weight:600;font-size:13px}.tabs button.on{background:#fff;color:#111}
-.get{margin-left:auto;background:#e4a93f;color:#111;font-weight:700;text-decoration:none;padding:8px 14px;border-radius:999px;white-space:nowrap}
-.view{display:none;padding:22px 0 90px}.view.on{display:block}
-h1{font-size:26px;margin:0 0 4px}.sub{color:var(--mut);margin:0 0 18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
-.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(220px,1fr);gap:12px;overflow-x:auto;padding-bottom:8px}
-.col{background:#eae8e3;border-radius:14px;padding:10px;min-height:260px}.col h3{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);display:flex;justify-content:space-between}
-.deal{background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1px solid var(--line);cursor:grab;font-size:14px}.deal b{display:block}.deal small{color:var(--mut)}.deal.drag{opacity:.4}
-.deal .tag{display:inline-block;font-size:11px;background:var(--a2);color:var(--a);border-radius:999px;padding:1px 8px;margin-top:4px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
-.btn{background:var(--a);color:#fff;border:0;border-radius:999px;padding:9px 16px;font-weight:600}.btn.g{background:#fff;color:var(--ink);border:1px solid var(--line)}
-input,select{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}
-.chip{display:inline-flex;gap:6px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 6px 5px 12px;margin:0 6px 6px 0}.chip button{border:0;background:var(--a2);color:var(--a);border-radius:50%;width:22px;height:22px;line-height:1}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:760px){.grid2{grid-template-columns:1fr}}
-.rule{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}.rule:last-child{border:0}
-.sw{position:relative;width:42px;height:24px;background:#ccc;border-radius:999px;border:0;flex:none}.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}.sw.on{background:var(--ok)}.sw.on::after{left:21px}
-.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}@media(max-width:760px){.kpi{grid-template-columns:repeat(2,1fr)}}
-.kpi .card b{font-size:24px;display:block}.kpi small{color:var(--mut)}
-.ai{background:linear-gradient(135deg,#1c2150,#3b4fd6);color:#fff;border:0}.ai p{margin:6px 0}
-.log{font-size:13px;color:var(--mut);max-height:200px;overflow:auto}.log div{padding:4px 0;border-bottom:1px dashed var(--line)}
-.toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;z-index:70;opacity:0;transition:.3s;pointer-events:none}.toast.on{opacity:1}
-.guide{position:fixed;left:14px;bottom:14px;z-index:40;max-width:340px;background:#111;color:#eee;border-radius:18px;padding:14px 18px;font-size:14px}.guide h4{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#e4a93f}.guide p{margin:0;line-height:1.45}.guide .x{position:absolute;top:6px;right:12px;border:0;background:none;color:#888;font-size:20px}
+:root{--bg:#0d0f14;--ink:#f2f3f5;--mut:#9aa1ad}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1200px 600px at 15% -10%,#2a2f7a 0,transparent 60%),radial-gradient(900px 500px at 100% 0,#5a3a12 0,transparent 55%),var(--bg);color:var(--ink);font:15px/1.55 Manrope,system-ui,sans-serif;min-height:100vh}
+button{font:inherit;cursor:pointer}
+.w{max-width:1320px;margin:0 auto;padding:0 16px}
+.bar{display:flex;align-items:center;gap:12px;min-height:58px;flex-wrap:wrap}
+.bar b{font-size:19px;letter-spacing:-.03em}.bar b i{color:#e4a93f;font-style:normal}
+.bar .tag{color:var(--mut);font-size:13px}
+.langs{margin-left:auto;display:flex;gap:2px;background:#1a1d25;border-radius:99px;padding:3px}.langs button{border:0;background:none;color:var(--mut);border-radius:99px;padding:4px 10px;font-weight:700;font-size:12px}.langs button[aria-pressed=true]{background:#fff;color:#111}
+.get{background:#e4a93f;color:#111;font-weight:800;text-decoration:none;padding:9px 16px;border-radius:99px;white-space:nowrap}
+.hero{padding:34px 0 22px;display:grid;grid-template-columns:1.3fr 1fr;gap:24px;align-items:end}
+.hero h1{font-size:clamp(32px,4.6vw,56px);line-height:1.04;letter-spacing:-.035em;margin:0 0 12px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#8c9bff,#e4a93f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:#c3c8d1;font-size:17px;margin:0;max-width:60ch}
+.pts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pts span{background:#171a22;border:1px solid #262a35;border-radius:14px;padding:10px 12px;font-size:13.5px;color:#d5d9e0}
+.niche{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 14px}.niche small{color:var(--mut);margin-right:4px}
+.niche button{border:1px solid #2b303c;background:#151820;color:#d5d9e0;border-radius:99px;padding:7px 14px;font-weight:700;font-size:13.5px}
+.niche button[aria-pressed=true]{background:#fff;color:#111;border-color:#fff}
+.foot{color:var(--mut);font-size:13px;text-align:center;padding:26px 0 40px}.foot a{color:#e4a93f}
+@media(max-width:860px){.hero{grid-template-columns:1fr}.pts{grid-template-columns:1fr}}
 </style></head><body>
-<div class="vx"><div class="w"><b>va<i>x</i>o</b><span>CRM builder demo</span>
-<div class="tabs" id="tabs"><button class="on" data-v="board">Pipeline</button><button data-v="build">Build your CRM</button><button data-v="auto">Automations</button><button data-v="ai">AI weekly report</button></div>
-<a class="get" href="/#chat">Build mine →</a></div></div>
-<div class="toast" id="toast"></div>
-
 <div class="w">
-<section class="view on" id="v-board">
-<h1>Pipeline <small style="font-weight:400;color:var(--mut)">— Pipeline Studio (fictional)</small></h1>
-<p class="sub">Drag a card to the next stage. Every move can trigger an automation (see the tab).</p>
-<div class="kpi"><div class="card"><b id="k1">0</b><small>open deals</small></div><div class="card"><b id="k2">$0</b><small>in pipeline</small></div><div class="card"><b id="k3">$0</b><small>won this month</small></div><div class="card"><b id="k4">0%</b><small>win rate</small></div></div>
-<div class="board" id="board"></div>
-<div class="card" style="margin-top:14px"><b>What happened (automatic log)</b><div class="log" id="log"><div>Nothing yet — move a card.</div></div></div>
-</section>
-
-<section class="view" id="v-build">
-<h1>Build it around your business</h1>
-<p class="sub">No two businesses sell the same way. Add your own stages and fields — the board updates instantly.</p>
-<div class="grid2">
-<div class="card"><b>Stages</b><div style="margin:10px 0" id="stageChips"></div><div class="row"><input id="newStage" placeholder="e.g. Site visit"><button class="btn" id="addStage">Add stage</button></div>
-<div class="row"><button class="btn g" data-tpl="agency">Template: agency</button><button class="btn g" data-tpl="clinic">Template: clinic</button><button class="btn g" data-tpl="b2b">Template: B2B sales</button></div></div>
-<div class="card"><b>Fields on a deal card</b><div style="margin:10px 0" id="fieldChips"></div><div class="row"><input id="newField" placeholder="e.g. Budget, Source, Language"><button class="btn" id="addField">Add field</button></div></div>
+  <div class="bar"><b>va<i>x</i>o</b><span class="tag" data-t="tag"></span>
+    <div class="langs"><button data-l="en">EN</button><button data-l="ru">RU</button><button data-l="ua">UA</button></div>
+    <a class="get" href="/#chat" data-t="get"></a></div>
+  <div class="hero"><div><h1 data-th="h1"></h1><p data-t="p"></p></div>
+    <div class="pts"><span data-t="p1"></span><span data-t="p2"></span><span data-t="p3"></span><span data-t="p4"></span></div></div>
+  <div class="niche"><small data-t="try"></small><button data-n="clinic" data-t="nc"></button><button data-n="shop" data-t="ns"></button><button data-n="biz" data-t="nb"></button></div>
+  <div id="os"></div>
+  <p class="foot"><span data-t="foot"></span> <a href="/#chat" data-t="get"></a></p>
 </div>
-<div class="card" style="margin-top:14px"><b>New deal</b><div class="row" style="margin-top:8px"><input id="dName" placeholder="Client name"><input id="dSum" type="number" placeholder="Amount, $"><select id="dSrc"><option>Instagram</option><option>Website</option><option>Referral</option><option>Partner</option></select><button class="btn" id="addDeal">Add to first stage</button></div></div>
-</section>
-
-<section class="view" id="v-auto">
-<h1>Automations</h1>
-<p class="sub">Switch on what you want. Vaxo sets these up and connects them to your messengers and email.</p>
-<div class="card" id="rules"></div>
-</section>
-
-<section class="view" id="v-ai">
-<h1>AI weekly report</h1>
-<p class="sub">Every Monday the owner gets this — written from the real board, in plain words.</p>
-<div class="card ai"><b>Monday summary</b><div id="report"></div><div class="row" style="margin-top:10px"><button class="btn" style="background:#fff;color:#1c2150" id="regen">Rewrite from current board</button></div></div>
-</section>
-</div>
-
-<div class="guide" id="guide"><button class="x" onclick="this.parentNode.remove()">×</button><h4>What this solves</h4><p>Leads get lost in chats and spreadsheets. Here every deal has a stage, a next step and an automatic nudge — and the owner reads one short AI summary instead of digging through data.</p></div>
-
+<script src="/examples/_os/os.js"></script>
 <script>
-const T={agency:["New lead","Brief","Proposal","In work","Paid"],clinic:["Enquiry","Booked","Visited","Follow-up","Returning"],b2b:["Lead","Call","Demo","Contract","Won"]};
-let stages=[...T.agency],fields=["Source"],deals=[
-{n:"Nordic Bakery",s:4200,src:"Instagram",st:0},{n:"Helio Dental",s:7800,src:"Website",st:1},{n:"Kora Studio",s:3100,src:"Referral",st:1},{n:"Atlas Garage",s:5400,src:"Partner",st:2},{n:"Bloom Florist",s:2600,src:"Instagram",st:3},{n:"Pixel Gym",s:6100,src:"Website",st:4}];
-const rules=[["Remind me if a deal sits in a stage for 3 days",1],["Send the client a thank-you message when a deal is won",1],["Ask for a review 7 days after payment",0],["Message a lead within 1 minute (AI first reply)",1],["Offer a partner link to every happy client",0]];
-const $=id=>document.getElementById(id);
-function toast(t){const e=$("toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),2200)}
-function log(t){const l=$("log");if(l.firstChild&&l.firstChild.textContent.startsWith("Nothing"))l.innerHTML="";const d=document.createElement("div");d.textContent=new Date().toLocaleTimeString().slice(0,5)+" — "+t;l.prepend(d)}
-function draw(){
- const b=$("board");b.innerHTML="";
- stages.forEach((name,i)=>{const c=document.createElement("div");c.className="col";const list=deals.filter(d=>d.st===i);
-  c.innerHTML=`<h3>${name}<span>${list.length}</span></h3>`;
-  c.ondragover=e=>e.preventDefault();c.ondrop=e=>{const d=deals[+e.dataTransfer.getData("t")];if(!d)return;d.st=i;fire(d,i);draw()};
-  list.forEach(d=>{const k=deals.indexOf(d),e=document.createElement("div");e.className="deal";e.draggable=true;
-   e.ondragstart=ev=>ev.dataTransfer.setData("t",k);
-   e.innerHTML=`<b>${d.n}</b><small>$${d.s.toLocaleString()}</small>${fields.map(f=>`<br><small>${f}: ${f==="Source"?d.src:"—"}</small>`).join("")}`;
-   e.onclick=()=>{if(d.st<stages.length-1){d.st++;fire(d,d.st);draw()}};c.appendChild(e)});
-  b.appendChild(c)});
- const last=stages.length-1,open=deals.filter(d=>d.st<last),won=deals.filter(d=>d.st===last);
- $("k1").textContent=open.length;$("k2").textContent="$"+open.reduce((a,d)=>a+d.s,0).toLocaleString();$("k3").textContent="$"+won.reduce((a,d)=>a+d.s,0).toLocaleString();$("k4").textContent=Math.round(won.length/Math.max(deals.length,1)*100)+"%";
- $("stageChips").innerHTML=stages.map((s,i)=>`<span class="chip">${s}<button data-i="${i}" data-k="s">×</button></span>`).join("");
- $("fieldChips").innerHTML=`<span class="chip">Name</span><span class="chip">Amount</span>`+fields.map((s,i)=>`<span class="chip">${s}<button data-i="${i}" data-k="f">×</button></span>`).join("");
- report()}
-function fire(d,i){const last=i===stages.length-1;log(`${d.n} → ${stages[i]}`);
- if(last&&rules[1][1]){log(`Thank-you message sent to ${d.n}`);toast("Automation: thank-you sent")}
- else if(rules[0][1])log(`Reminder set: follow up with ${d.n} in 3 days`)}
-function report(){
- const last=stages.length-1,open=deals.filter(d=>d.st<last),won=deals.filter(d=>d.st===last);
- const top=[...open].sort((a,b)=>b.s-a.s)[0],src={};deals.forEach(d=>src[d.src]=(src[d.src]||0)+1);
- const best=Object.entries(src).sort((a,b)=>b[1]-a[1])[0];
- $("report").innerHTML=`<p>This week you have <b>${open.length}</b> open deals worth <b>$${open.reduce((a,d)=>a+d.s,0).toLocaleString()}</b> and <b>${won.length}</b> won ($${won.reduce((a,d)=>a+d.s,0).toLocaleString()}).</p>
- <p>${top?`Biggest chance: <b>${top.n}</b> ($${top.s.toLocaleString()}) — it is at “${stages[top.st]}”. Worth a personal call today.`:"No open deals — time to bring in new leads."}</p>
- <p>Most leads come from <b>${best?best[0]:"—"}</b>. ${deals.some(d=>d.st===0)?`${deals.filter(d=>d.st===0).length} lead(s) are still waiting at the first stage — reply today so they don't cool down.`:"Nobody is waiting at the first stage — good."}</p>`}
-$("rules").innerHTML=rules.map((r,i)=>`<div class="rule"><span>${r[0]}</span><button class="sw ${r[1]?"on":""}" data-r="${i}"></button></div>`).join("");
-document.addEventListener("click",e=>{const t=e.target;
- if(t.dataset.v){document.querySelectorAll(".view").forEach(v=>v.classList.remove("on"));$("v-"+t.dataset.v).classList.add("on");document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b===t))}
- if(t.dataset.r!==undefined){const r=rules[+t.dataset.r];r[1]=r[1]?0:1;t.classList.toggle("on");toast(r[1]?"Automation on":"Automation off")}
- if(t.dataset.tpl){stages=[...T[t.dataset.tpl]];deals.forEach(d=>d.st=Math.min(d.st,stages.length-1));draw();toast("Stages replaced by template")}
- if(t.dataset.k==="s"&&stages.length>2){const i=+t.dataset.i;stages.splice(i,1);deals.forEach(d=>{if(d.st>=stages.length)d.st=stages.length-1});draw()}
- if(t.dataset.k==="f"){fields.splice(+t.dataset.i,1);draw()}});
-$("addStage").onclick=()=>{const v=$("newStage").value.trim();if(v){stages.splice(stages.length-1,0,v);$("newStage").value="";draw();toast("Stage added")}};
-$("addField").onclick=()=>{const v=$("newField").value.trim();if(v){fields.push(v);$("newField").value="";draw();toast("Field added")}};
-$("addDeal").onclick=()=>{const n=$("dName").value.trim();if(!n)return;deals.unshift({n,s:+$("dSum").value||0,src:$("dSrc").value,st:0});$("dName").value="";$("dSum").value="";draw();log(`New lead ${n}: AI replied in 1 minute`);toast("Deal added")};
-$("regen").onclick=()=>{report();toast("Report rewritten")};
-draw();
-</script></body></html>
+const I={
+en:{tag:'Demo · Vaxo OS',get:'Get one for my business →',h1:'The whole business on <em>one screen</em>',p:'Every chat, review, ad, post, deal and employee — in one place. The AI manager answers clients 24/7, the assistant tells each person what to do today, and you see everything.',p1:'💬 All chats in one inbox — AI replies, you can step in',p2:'⭐ Reviews answered automatically, negatives sent to you',p3:'📣 Ads, content and brand — with AI budget advice',p4:'🔐 Roles and access for every employee',try:'Try it as:',nc:'Clinic',ns:'Online store',nb:'Services / agency',foot:'Fictional data. Yours is set up around how your business really works.'},
+ru:{tag:'Демо · Vaxo OS',get:'Хочу такой для своего бизнеса →',h1:'Весь бизнес на <em>одном экране</em>',p:'Все чаты, отзывы, реклама, посты, сделки и сотрудники — в одном месте. ИИ-менеджер отвечает клиентам 24/7, помощник подсказывает каждому, что сделать сегодня, а вы видите всё.',p1:'💬 Все чаты в одном окне — отвечает ИИ, вы можете вмешаться',p2:'⭐ На отзывы отвечает ИИ, негатив сразу приходит вам',p3:'📣 Реклама, контент и бренд — с советами ИИ по бюджету',p4:'🔐 Роли и доступы для каждого сотрудника',try:'Попробуйте как:',nc:'Клиника',ns:'Интернет-магазин',nb:'Услуги / агентство',foot:'Данные вымышленные. Ваш пульт настроим под то, как на самом деле работает ваш бизнес.'},
+ua:{tag:'Демо · Vaxo OS',get:'Хочу такий для свого бізнесу →',h1:'Весь бізнес на <em>одному екрані</em>',p:'Усі чати, відгуки, реклама, пости, угоди й працівники — в одному місці. ШІ-менеджер відповідає клієнтам 24/7, помічник підказує кожному, що зробити сьогодні, а ви бачите все.',p1:'💬 Усі чати в одному вікні — відповідає ШІ, ви можете втрутитися',p2:'⭐ На відгуки відповідає ШІ, негатив одразу приходить вам',p3:'📣 Реклама, контент і бренд — з порадами ШІ щодо бюджету',p4:'🔐 Ролі й доступи для кожного працівника',try:'Спробуйте як:',nc:'Клініка',ns:'Інтернет-магазин',nb:'Послуги / агенція',foot:'Дані вигадані. Ваш пульт налаштуємо під те, як насправді працює ваш бізнес.'}};
+const AC={clinic:['#2f5d4c','#B9785B'],shop:['#7a3324','#B88A57'],biz:['#3b4fd6','#e4a93f']};
+const $$=s=>document.querySelectorAll(s);
+let lang=(()=>{const u=new URLSearchParams(location.search).get('lang');if(u&&I[u])return u;try{const s=localStorage.getItem('vaxo_demo_lang');if(s&&I[s])return s}catch{}const n=(navigator.language||'en').slice(0,2);return n==='ru'?'ru':n==='uk'?'ua':'en'})();
+let niche=new URLSearchParams(location.search).get('niche');if(!AC[niche])niche='clinic';
+function apply(){const d=I[lang];document.documentElement.lang=lang==='ua'?'uk':lang;$$('[data-t]').forEach(e=>e.textContent=d[e.dataset.t]);$$('[data-th]').forEach(e=>e.innerHTML=d[e.dataset.th]);$$('[data-l]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===lang));$$('[data-n]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.n===niche))}
+$$('[data-l]').forEach(b=>b.onclick=()=>{lang=b.dataset.l;try{localStorage.setItem('vaxo_demo_lang',lang)}catch{}apply();VaxoOS.lang(lang)});
+$$('[data-n]').forEach(b=>b.onclick=()=>{niche=b.dataset.n;apply();VaxoOS.niche(niche,...AC[niche])});
+apply();VaxoOS.mount(document.getElementById('os'),{lang,niche,accent:AC[niche][0],accent2:AC[niche][1]});
+const h=location.hash.slice(1);if(h)VaxoOS.go(h);
+</script>
+</body></html>

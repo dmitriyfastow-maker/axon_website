@@ -9,39 +9,41 @@ const { lang } = Astro.props;
 const C = {
   en: {
     eyebrow: 'Live demos', h2: 'Don’t imagine it — click through it',
-    sub: 'Three working examples of what we build. Each has its own design for its niche, real AI (ask it anything) and everything behind the scenes: client cabinet, owner CRM, partners.',
-    open: 'Open the demo →', note: 'Brands are fictional. Yours gets your design and your wishes on top.', all: 'All examples',
+    sub: 'Four working systems built the way we build for clients: a design that fits the niche, real AI you can talk to right now, and everything behind the scenes — client cabinet, owner command center, partner program.',
+    open: 'Open the demo →', note: 'The brands are made up — the functions are real. We build yours around your business, your style and your goals.', cta: 'Discuss my project', all: 'All examples',
     items: [
-      ['Aesthetic clinic', 'Aurelia', 'AI concierge picks treatments from a description · booking in 4 steps · client app with plan and points · CRM with no-show risk and AI morning report'],
-      ['Online store', 'Ostra', 'Search in your own words with AI · filters · AI perfumer in chat · cart with AI upsell · customer cabinet · owner dashboard · affiliates'],
-      ['CRM for your business', 'Pipeline', 'Your own CRM: drag deals between stages, automations on every move, AI weekly report — set up for how you work'],
-      ['Partner platform', 'Orbit Partners', 'Personal links, live earnings, levels with growing commission, leaderboard, payouts — and an AI coach for every partner'],
+      ['Owner command center', 'Vaxo OS', 'The whole business on one screen: every chat answered by an AI manager, reviews replied to automatically, ads with AI budget advice, content and brand, sales pipeline, staff roles and access — and a personal AI assistant for everyone'],
+      ['Aesthetic clinic', 'Aurelia', 'AI manager picks treatments from a description · booking in 4 steps · client app with a plan and points · clinic CRM with no-show risk'],
+      ['Online store', 'Ostra', 'Search in your own words with AI · filters · AI perfumer in chat · cart with smart suggestions · customer cabinet · owner dashboard'],
+      ['Partner program', 'Orbit Partners', 'Personal links, live earnings, levels with growing commission, leaderboard, payouts — and an AI coach that writes posts for partners'],
     ],
   },
   ru: {
     eyebrow: 'Живые примеры', h2: 'Не представляйте — попробуйте сами',
-    sub: 'Три рабочих примера того, что мы делаем. У каждого свой дизайн под нишу, настоящий ИИ (спросите что угодно) и всё «за кулисами»: кабинет клиента, CRM владельца, партнёры.',
-    open: 'Открыть пример →', note: 'Бренды вымышленные. Ваш получит свой дизайн и ваши пожелания сверху.', all: 'Все примеры',
+    sub: 'Четыре рабочие системы, собранные так же, как мы делаем для клиентов: дизайн под нишу, настоящий ИИ, с которым можно поговорить прямо сейчас, и всё «за кулисами» — кабинет клиента, пульт владельца, партнёрская программа.',
+    open: 'Открыть пример →', note: 'Бренды придуманы — функции настоящие. Для вас соберём такую же систему под ваш бизнес, стиль и цели.', cta: 'Обсудить свой проект', all: 'Все примеры',
     items: [
-      ['Клиника эстетики', 'Aurelia', 'ИИ-консьерж подбирает процедуры по описанию · запись в 4 шага · приложение клиента с планом и баллами · CRM с риском неявки и утренним ИИ-отчётом'],
-      ['Интернет-магазин', 'Ostra', 'Поиск своими словами через ИИ · фильтры · ИИ-парфюмер в чате · корзина с подсказками ИИ · кабинет покупателя · панель владельца · партнёры'],
-      ['CRM для вашего бизнеса', 'Pipeline', 'Своя CRM: сделки перетаскиваются по этапам, автоматизации на каждый шаг, ИИ-отчёт раз в неделю — под то, как работаете вы'],
-      ['Партнёрская платформа', 'Orbit Partners', 'Личные ссылки, заработок вживую, уровни с растущей комиссией, рейтинг, выплаты — и ИИ-тренер для каждого партнёра'],
+      ['Пульт владельца', 'Vaxo OS', 'Весь бизнес на одном экране: на каждый чат отвечает ИИ-менеджер, на отзывы — автоматически, реклама с советами ИИ по бюджету, контент и бренд, продажи, роли и доступы сотрудников — и личный ИИ-помощник у каждого'],
+      ['Клиника эстетики', 'Aurelia', 'ИИ-менеджер подбирает процедуры по описанию · запись в 4 шага · приложение клиента с планом и баллами · CRM клиники с риском неявки'],
+      ['Интернет-магазин', 'Ostra', 'Поиск своими словами через ИИ · фильтры · ИИ-парфюмер в чате · корзина с умными подсказками · кабинет покупателя · панель владельца'],
+      ['Партнёрская программа', 'Orbit Partners', 'Личные ссылки, заработок вживую, уровни с растущей комиссией, рейтинг, выплаты — и ИИ-тренер, который пишет партнёрам посты'],
     ],
   },
   ua: {
     eyebrow: 'Живі приклади', h2: 'Не уявляйте — спробуйте самі',
-    sub: 'Три робочі приклади того, що ми робимо. У кожного свій дизайн під нішу, справжній ШІ (запитайте будь-що) і все «за лаштунками»: кабінет клієнта, CRM власника, партнери.',
-    open: 'Відкрити приклад →', note: 'Бренди вигадані. Ваш отримає свій дизайн і ваші побажання зверху.', all: 'Усі приклади',
+    sub: 'Чотири робочі системи, зібрані так само, як ми робимо для клієнтів: дизайн під нішу, справжній ШІ, з яким можна поговорити просто зараз, і все «за лаштунками» — кабінет клієнта, пульт власника, партнерська програма.',
+    open: 'Відкрити приклад →', note: 'Бренди вигадані — функції справжні. Для вас зберемо таку саму систему під ваш бізнес, стиль і цілі.', cta: 'Обговорити свій проєкт', all: 'Усі приклади',
     items: [
-      ['Клініка естетики', 'Aurelia', 'ШІ-консьєрж підбирає процедури за описом · запис у 4 кроки · застосунок клієнта з планом і балами · CRM з ризиком неявки та ранковим ШІ-звітом'],
-      ['Інтернет-магазин', 'Ostra', 'Пошук своїми словами через ШІ · фільтри · ШІ-парфумер у чаті · кошик із підказками ШІ · кабінет покупця · панель власника · партнери'],
-      ['CRM для вашого бізнесу', 'Pipeline', 'Своя CRM: угоди перетягуються етапами, автоматизації на кожен крок, ШІ-звіт щотижня — під те, як працюєте ви'],
-      ['Партнерська платформа', 'Orbit Partners', 'Особисті посилання, заробіток наживо, рівні зі зростаючою комісією, рейтинг, виплати — і ШІ-тренер для кожного партнера'],
+      ['Пульт власника', 'Vaxo OS', 'Весь бізнес на одному екрані: на кожен чат відповідає ШІ-менеджер, на відгуки — автоматично, реклама з порадами ШІ щодо бюджету, контент і бренд, продажі, ролі й доступи працівників — і особистий ШІ-помічник у кожного'],
+      ['Клініка естетики', 'Aurelia', 'ШІ-менеджер підбирає процедури за описом · запис у 4 кроки · застосунок клієнта з планом і балами · CRM клініки з ризиком неявки'],
+      ['Інтернет-магазин', 'Ostra', 'Пошук своїми словами через ШІ · фільтри · ШІ-парфумер у чаті · кошик із розумними підказками · кабінет покупця · панель власника'],
+      ['Партнерська програма', 'Orbit Partners', 'Особисті посилання, заробіток наживо, рівні зі зростаючою комісією, рейтинг, виплати — і ШІ-тренер, який пише партнерам пости'],
     ],
   },
 }[lang];
-const slugs = ['eco-clinic', 'eco-shop', 'eco-crm', 'eco-partners'];
+const slugs = ['eco-crm', 'eco-clinic', 'eco-shop', 'eco-partners'];
+const thumbs = ['eco-os', 'eco-clinic', 'eco-shop', 'eco-partners'];
+const chatHref = lang === 'en' ? '/#chat' : `/${lang}/#chat`;
 const allHref = lang === 'en' ? '/examples/' : `/${lang}/examples/`;
 ---
 
@@ -53,7 +55,7 @@ const allHref = lang === 'en' ? '/examples/' : `/${lang}/examples/`;
     <div class="grid">
       {C.items.map(([kind, name, what], i) => (
         <a class:list={['card', { big: i === 0 }]} href={`/examples/${slugs[i]}/?lang=${lang}`} target="_blank" rel="noopener">
-          <span class="shot"><img src={`/examples/thumbs/${slugs[i]}.jpg`} alt={name} loading="lazy" width="960" height="600" /></span>
+          <span class="shot"><img src={`/examples/thumbs/${thumbs[i]}-${lang}.jpg`} alt={name} loading="lazy" width="1200" height="750" /></span>
           <span class="tx">
             <span class="kind">{kind} · <b>{name}</b></span>
             <span class="what">{what}</span>
@@ -62,7 +64,7 @@ const allHref = lang === 'en' ? '/examples/' : `/${lang}/examples/`;
         </a>
       ))}
     </div>
-    <p class="note">{C.note} <a href={allHref}>{C.all} →</a></p>
+    <div class="foot"><p class="note">{C.note}</p><a class="cta" href={chatHref}>{C.cta}</a><a class="allx" href={allHref}>{C.all} →</a></div>
   </div>
 </section>
 
@@ -72,24 +74,29 @@ const allHref = lang === 'en' ? '/examples/' : `/${lang}/examples/`;
   .eyebrow { color: var(--accText); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 13px; margin: 0 0 10px; }
   h2 { font-size: clamp(30px, 4.5vw, 46px); line-height: 1.08; letter-spacing: -0.03em; margin: 0 0 14px; max-width: 22ch; }
   .sub { color: var(--mut); font-size: 18px; line-height: 1.55; max-width: 62ch; margin: 0 0 32px; }
-  .grid { display: grid; grid-template-columns: 1.25fr 1fr; grid-template-rows: auto auto; gap: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 22px; overflow: hidden; background: var(--surf); text-decoration: none; color: inherit; transition: transform 0.25s, box-shadow 0.25s; }
   .card:hover { transform: translateY(-3px); box-shadow: 0 22px 44px -28px rgba(0, 0, 0, 0.45); }
-  .card.big { grid-row: span 2; }
+  .card.big { grid-column: 1 / -1; flex-direction: row; }
+  .big .tx { flex: 0 0 34%; justify-content: center; padding: 28px; }
+  .big .kind b { font-size: 22px; }
+  .big .what { font-size: 17px; }
   .shot { display: block; aspect-ratio: 16 / 10; overflow: hidden; background: var(--line); }
-  .big .shot { flex: 1; aspect-ratio: auto; min-height: 300px; }
-  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.6s; }
+  .big .shot { flex: 1; aspect-ratio: 16 / 10; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: center; transition: transform 0.6s; }
   .card:hover .shot img { transform: scale(1.03); }
   .tx { display: flex; flex-direction: column; gap: 6px; padding: 18px 20px 20px; }
   .kind { font-size: 14px; color: var(--mut); }
   .kind b { color: var(--ink); font-size: 17px; }
   .what { line-height: 1.5; }
   .go { font-weight: 700; color: var(--accText); margin-top: 4px; }
-  .note { color: var(--mut); font-size: 14px; margin: 18px 0 0; }
-  .note a { color: var(--accText); font-weight: 600; }
+  .foot { display: flex; gap: 14px 22px; align-items: center; flex-wrap: wrap; margin-top: 22px; }
+  .note { color: var(--mut); font-size: 15px; margin: 0; flex: 1 1 320px; }
+  .cta { background: var(--ink); color: var(--bg); font-weight: 700; padding: 12px 22px; border-radius: 999px; text-decoration: none; }
+  .allx { color: var(--accText); font-weight: 700; text-decoration: none; }
   @media (max-width: 860px) {
     .grid { grid-template-columns: 1fr; }
-    .card.big { grid-row: auto; }
-    .big .shot { aspect-ratio: 16 / 10; min-height: 0; }
+    .card.big { flex-direction: column; }
+    .big .tx { padding: 18px 20px 20px; }
   }
 </style>
