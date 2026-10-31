@@ -3,6 +3,8 @@
 // keeps working from the browser's own storage.
 import type { DB } from './partner.js';
 import { mailReady, sendMail } from './mail.js';
+import { askAi, json as parse } from './autopilot.js';
+import type { AiBinding } from './chat.js';
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -27,7 +29,7 @@ function merge(a: State, b: State): State {
 }
 
 /** POST {action:'code', email} | {action:'verify', email, code, state?} | {action:'save', session, state} | GET ?session= */
-export async function handleLevel(db: DB, request: Request): Promise<Response> {
+export async function handleLevel(db: DB, request: Request, ai?: AiBinding): Promise<Response> {
   if (request.method === 'GET') {
     const sess = new URL(request.url).searchParams.get('session') || '';
     if (sess.length < 20) return json(401, { ok: false });
@@ -38,6 +40,21 @@ export async function handleLevel(db: DB, request: Request): Promise<Response> {
   if (request.method !== 'POST') return json(405, { ok: false });
   const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
   const email = String(b.email || '').trim().toLowerCase().slice(0, 120);
+
+  // AI checks a quest: the person says what they did, the AI accepts it or says what is missing. No account needed.
+  if (b.action === 'check') {
+    const quest = String(b.quest || '').slice(0, 200), proof = String(b.proof || '').trim().slice(0, 800);
+    const lang = ({ ru: 'Russian', ua: 'Ukrainian' } as Record<string, string>)[String(b.lang)] || 'English';
+    if (!quest || proof.length < 8) return json(400, { ok: false, error: 'short' });
+    const t = await askAi(ai, `You are a friendly but honest coach in INSIDERS Level, a daily-quest game for young builders (18+).
+Quest: "${quest}"
+What the player says they did: "${proof}"
+Accept if the answer shows they really did the quest (concrete details, even small). Reject if it is empty, off-topic, a joke or only a promise to do it later.
+Reply ONLY with JSON in ${lang}: {"pass": true|false, "text": "1-2 short sentences: if pass, praise one concrete detail and suggest a next micro-step; if not, say exactly what is missing"}`, 200);
+    const j = parse<{ pass?: boolean; text?: string }>(t);
+    if (!j?.text) return json(502, { ok: false });
+    return json(200, { ok: true, pass: !!j.pass, text: String(j.text).slice(0, 400) });
+  }
 
   if (b.action === 'code') {
     if (!EMAIL.test(email)) return json(400, { ok: false, error: 'email' });

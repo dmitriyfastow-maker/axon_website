@@ -1,6 +1,6 @@
 ---
 // INSIDERS Level (Decision 25, step 1): a daily-quest game for the INSIDERS Discord community.
-// Step 1 keeps progress in the browser (localStorage); Discord login, AI-checked tasks and squads come next.
+// Progress lives in the browser and, after email sign-in, on the server; the AI checks each quest.
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
@@ -18,8 +18,8 @@ const L = {
     desc: 'Five spheres, small daily quests, streaks and a first win in 24 hours. The game layer of the INSIDERS community by Vaxo.',
     lead: 'Small daily quests in five spheres. Finish one in the next 24 hours to get your first win, then keep the streak going.',
     level: 'Level', streak: 'Day streak', next: 'What comes next',
-    nextText: 'Sign-in with Discord, quests checked by AI, squads of four and the link to INSIDERS Lab. For now your progress lives in this browser.',
-    lab: 'See INSIDERS Lab →', labHref: '/lab/',
+    nextText: 'Every quest is checked by AI: tell it what you did and it counts the quest or says what is missing. Next: squads of four and the link to INSIDERS VIP.',
+    lab: 'See INSIDERS VIP →', labHref: '/lab/',
     done: 'First win done. Keep going tomorrow.', left: (h: number | string) => `First win window: ${h} h left. Tick one quest.`, tick: 'Tick one quest to get your first win.',
     spheres: [
       ['AI skills', ['Write one prompt that solves a real task of yours', 'Rebuild a bad answer from AI into a good one and note what you changed', 'Make an AI helper for one boring chore']],
@@ -34,8 +34,8 @@ const L = {
     desc: 'Пять сфер, маленькие задания на каждый день, серии и первая победа за 24 часа. Игровой слой сообщества INSIDERS от Vaxo.',
     lead: 'Маленькие задания на каждый день в пяти сферах. Выполни одно в ближайшие 24 часа — это твоя первая победа, дальше держи серию.',
     level: 'Уровень', streak: 'Дней подряд', next: 'Что дальше',
-    nextText: 'Вход через Discord, проверка заданий ИИ, отряды по четыре и связь с INSIDERS Lab. Пока прогресс хранится в этом браузере.',
-    lab: 'Смотреть INSIDERS Lab →', labHref: '/ru/lab/',
+    nextText: 'Каждое задание проверяет ИИ: напиши, что сделал, — он засчитает или скажет, чего не хватает. Дальше: отряды по четыре и связь с INSIDERS VIP.',
+    lab: 'Смотреть INSIDERS VIP →', labHref: '/ru/lab/',
     done: 'Первая победа есть. Продолжай завтра.', left: (h: number | string) => `Окно первой победы: осталось ${h} ч. Отметь одно задание.`, tick: 'Отметь одно задание — это будет первая победа.',
     spheres: [
       ['ИИ-навыки', ['Напиши один промпт, который решает твою настоящую задачу', 'Перепиши плохой ответ ИИ в хороший и запиши, что изменил', 'Сделай ИИ-помощника для одного скучного дела']],
@@ -50,8 +50,8 @@ const L = {
     desc: "П'ять сфер, маленькі завдання на кожен день, серії та перша перемога за 24 години. Ігровий шар спільноти INSIDERS від Vaxo.",
     lead: "Маленькі завдання на кожен день у п'яти сферах. Виконай одне найближчими 24 годинами — це твоя перша перемога, далі тримай серію.",
     level: 'Рівень', streak: 'Днів поспіль', next: 'Що далі',
-    nextText: "Вхід через Discord, перевірка завдань ШІ, загони по четверо та зв'язок з INSIDERS Lab. Поки прогрес зберігається в цьому браузері.",
-    lab: 'Дивитись INSIDERS Lab →', labHref: '/ua/lab/',
+    nextText: "Кожне завдання перевіряє ШІ: напиши, що зробив, — він зарахує або скаже, чого бракує. Далі: загони по четверо та зв'язок з INSIDERS VIP.",
+    lab: 'Дивитись INSIDERS VIP →', labHref: '/ua/lab/',
     done: 'Перша перемога є. Продовжуй завтра.', left: (h: number | string) => `Вікно першої перемоги: лишилось ${h} год. Познач одне завдання.`, tick: 'Познач одне завдання — це буде перша перемога.',
     spheres: [
       ['ШІ-навички', ['Напиши один промпт, що розв’язує твоє справжнє завдання', 'Перепиши погану відповідь ШІ на добру й записати, що змінив', 'Зроби ШІ-помічника для однієї нудної справи']],
@@ -161,12 +161,43 @@ const spheres = L.spheres.map((s, i) => ({ id: ids[i], icon: icons[i], name: s[0
     document.querySelectorAll<HTMLInputElement>('input[data-q]').forEach((c) => { c.checked = !!state.done[c.dataset.q!]; });
   };
 
+  // Ticking a quest asks what was done; the AI accepts it (the quest counts) or says what is missing.
+  const QT: Record<string, Record<string, string>> = {
+    en: { ph: 'What exactly did you do? 1-2 sentences, with details', go: 'Check with AI', wait: 'AI is checking…', err: 'AI is busy — try again in a minute.', short: 'Write a bit more: what exactly did you do?' },
+    ru: { ph: 'Что именно ты сделал? 1–2 предложения, с деталями', go: 'Проверить ИИ', wait: 'ИИ проверяет…', err: 'ИИ занят — попробуй через минуту.', short: 'Напиши чуть подробнее: что именно ты сделал?' },
+    ua: { ph: 'Що саме ти зробив? 1–2 речення, з деталями', go: 'Перевірити ШІ', wait: 'ШІ перевіряє…', err: 'ШІ зайнятий — спробуй за хвилину.', short: 'Напиши трохи детальніше: що саме ти зробив?' },
+  };
+  const LG = document.documentElement.lang === 'uk' ? 'ua' : (document.documentElement.lang === 'ru' ? 'ru' : 'en');
+  const qt = QT[LG];
+  const accept = (k: string) => { state.done[k] = today(); if (!state.days.includes(today())) state.days.push(today()); save(); render(); };
   document.querySelectorAll<HTMLInputElement>('input[data-q]').forEach((c) => {
     c.addEventListener('change', () => {
       const k = c.dataset.q!;
-      if (c.checked) { state.done[k] = today(); if (!state.days.includes(today())) state.days.push(today()); }
-      else delete state.done[k];
-      save(); render();
+      const li = c.closest('li')!;
+      li.querySelector('.lv-proof')?.remove();
+      if (!c.checked) { delete state.done[k]; save(); render(); return; }
+      c.checked = false;
+      const f = document.createElement('form');
+      f.className = 'lv-proof';
+      f.innerHTML = `<textarea rows="2" maxlength="800"></textarea><div><button>${qt.go}</button><span></span></div>`;
+      const ta = f.querySelector('textarea')!, out = f.querySelector('span')!, btn = f.querySelector('button')!;
+      ta.placeholder = qt.ph;
+      li.appendChild(f); ta.focus();
+      f.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const proof = ta.value.trim();
+        if (proof.length < 8) { out.textContent = qt.short; return; }
+        btn.disabled = true; out.textContent = qt.wait;
+        try {
+          const r = await fetch('/api/level', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'check', quest: li.querySelector('label span')!.textContent, proof, lang: LG }) });
+          const d = await r.json();
+          if (!d.ok) throw 0;
+          out.textContent = (d.pass ? '✅ ' : '✋ ') + d.text;
+          out.className = d.pass ? 'ok' : 'no';
+          if (d.pass) { accept(k); ta.disabled = true; btn.hidden = true; }
+        } catch { out.textContent = qt.err; }
+        btn.disabled = false;
+      });
     });
   });
   render();
@@ -239,4 +270,11 @@ const spheres = L.spheres.map((s, i) => ({ id: ids[i], icon: icons[i], name: s[0
   .lv-sync .lv-btn { margin-top: 0; padding: 8px 16px; background: transparent; color: inherit; cursor: pointer; }
   .lv-note { margin-top: 40px; text-align: center; }
   .lv-btn { display: inline-block; margin-top: 8px; padding: 10px 20px; border-radius: 999px; border: 1px solid currentColor; text-decoration: none; }
+  :global(.lv-proof) { margin: 8px 0 4px 28px; display: grid; gap: 6px; }
+  :global(.lv-proof textarea) { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; font: inherit; background: var(--surf, #fff); color: inherit; }
+  :global(.lv-proof div) { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  :global(.lv-proof button) { border: 0; border-radius: 999px; padding: 7px 14px; font-weight: 700; background: var(--ink); color: var(--bg); cursor: pointer; }
+  :global(.lv-proof span) { font-size: 14px; color: var(--mut); }
+  :global(.lv-proof span.ok) { color: #1f8a52; }
+  :global(.lv-proof span.no) { color: #b5651d; }
 </style>
