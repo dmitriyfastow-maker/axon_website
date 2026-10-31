@@ -39,13 +39,13 @@ const r = RATES;
 const MAP = {
   en: { h: 'Your income map — earn from every direction', p: 'One person you talk to can bring money in several ways at once. Think about all four.',
         rows: [['🛠', 'Agency services', `${r.agencyOwn}% of your client · ${r.agencyGiven}% of our lead you close · +${r.agencyRenewal}% of every renewal for life`],
-               ['📦', 'Our templates', `${r.products}% of every sale`], ['🤝', 'Partner offers', `${r.offers}% of the payout we receive (soon)`], ['👥', 'Your team', `+${r.team}% on top of your partners’ earnings`]] },
+               ['📦', 'Our templates', `${r.products}% of every sale`], ['🤝', 'Partner offers', `${r.offers}% of the payout we receive (soon)`], ['👥', 'Your team', `+${r.team}% of every sale your partners make, on top`]] },
   ru: { h: 'Карта вашего дохода — зарабатывайте со всех направлений', p: 'Один человек, с которым вы поговорили, может принести деньги сразу несколькими способами. Думайте обо всех четырёх.',
         rows: [['🛠', 'Услуги агентства', `${r.agencyOwn}% с вашего клиента · ${r.agencyGiven}% с нашей заявки, которую вы закрыли · +${r.agencyRenewal}% с каждого продления навсегда`],
-               ['📦', 'Наши шаблоны', `${r.products}% с каждой продажи`], ['🤝', 'Офферы партнёров', `${r.offers}% от выплаты, которую получаем мы (скоро)`], ['👥', 'Ваша команда', `+${r.team}% сверху от заработка ваших партнёров`]] },
+               ['📦', 'Наши шаблоны', `${r.products}% с каждой продажи`], ['🤝', 'Офферы партнёров', `${r.offers}% от выплаты, которую получаем мы (скоро)`], ['👥', 'Ваша команда', `+${r.team}% с каждой продажи ваших партнёров, сверху`]] },
   ua: { h: 'Карта вашого доходу — заробляйте з усіх напрямів', p: 'Одна людина, з якою ви поговорили, може принести гроші одразу кількома способами. Думайте про всі чотири.',
         rows: [['🛠', 'Послуги агентства', `${r.agencyOwn}% з вашого клієнта · ${r.agencyGiven}% з нашої заявки, яку ви закрили · +${r.agencyRenewal}% з кожного продовження назавжди`],
-               ['📦', 'Наші шаблони', `${r.products}% з кожного продажу`], ['🤝', 'Офери партнерів', `${r.offers}% від виплати, яку отримуємо ми (скоро)`], ['👥', 'Ваша команда', `+${r.team}% зверху від заробітку ваших партнерів`]] },
+               ['📦', 'Наші шаблони', `${r.products}% з кожного продажу`], ['🤝', 'Офери партнерів', `${r.offers}% від виплати, яку отримуємо ми (скоро)`], ['👥', 'Ваша команда', `+${r.team}% з кожного продажу ваших партнерів, зверху`]] },
 }[lang];
 const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels: levelsJs };
 ---
