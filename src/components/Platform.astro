@@ -1,0 +1,123 @@
+---
+// Home: Vaxo is one platform that covers every task of a business (Decision 29, 31.10) —
+// what's inside, and the three ways in: no site yet / already have a site / need something custom.
+import type { Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const C = {
+  en: {
+    eyebrow: 'One platform', h2: 'Everything your business needs online — in one place',
+    sub: 'No more paying for a website builder, a CRM, a social media manager and an admin separately. Vaxo does all of it, and AI does the routine work for you.',
+    mods: [
+      ['Website + SEO', 'Found in Google, fast on phones'],
+      ['Analytics', 'Visitors, sources, clicks, where people leave'],
+      ['AI employee', 'Answers in every chat 24/7, books and sells'],
+      ['Leads and CRM', 'Every request and deal in one list'],
+      ['Booking and payments', 'Clients book and pay without calls'],
+      ['Reviews', 'AI asks for reviews and replies to them'],
+      ['Social media', 'AI writes posts, they go out on schedule'],
+      ['Ads', 'Set up, watched and improved with AI'],
+      ['Automations', 'Reminders, follow-ups, repeat sales'],
+      ['Team and roles', 'Everyone sees only their part'],
+      ['AI assistant', 'A personal helper for you and each employee'],
+      ['Referral program', 'Your clients bring clients — and earn'],
+    ],
+    waysH: 'Where you start does not matter',
+    ways: [
+      ['No website yet', 'We build it under your brand. Free with a yearly plan.'],
+      ['Already have a site or CRM', 'We connect to it with one line of code — nothing to rebuild. $0 to connect.'],
+      ['Need something special', 'We add your own feature into the platform for a fixed price agreed upfront.'],
+    ],
+    brand: 'Your clients see only your brand: your logo, colours and domain.',
+  },
+  ru: {
+    eyebrow: 'Одна платформа', h2: 'Всё, что нужно бизнесу в интернете, — в одном месте',
+    sub: 'Не нужно отдельно платить за конструктор сайтов, CRM, SMM-щика и администратора. Vaxo закрывает всё это, а рутину за вас делает ИИ.',
+    mods: [
+      ['Сайт и SEO', 'Находят в Google, быстро открывается с телефона'],
+      ['Аналитика', 'Посетители, источники, клики, где уходят'],
+      ['ИИ-сотрудник', 'Отвечает во всех чатах 24/7, записывает и продаёт'],
+      ['Заявки и CRM', 'Каждая заявка и сделка в одном списке'],
+      ['Запись и оплата', 'Клиенты записываются и платят без звонков'],
+      ['Отзывы', 'ИИ просит оставить отзыв и отвечает на них'],
+      ['Соцсети', 'ИИ пишет посты, они выходят по расписанию'],
+      ['Реклама', 'Настроена, под контролем, ИИ подсказывает, как лучше'],
+      ['Автоматизации', 'Напоминания, дожим заявок, повторные продажи'],
+      ['Команда и роли', 'Каждый видит только своё'],
+      ['ИИ-помощник', 'Личный помощник вам и каждому сотруднику'],
+      ['Реферальная программа', 'Ваши клиенты приводят клиентов и зарабатывают'],
+    ],
+    waysH: 'Неважно, с чего вы начинаете',
+    ways: [
+      ['Сайта ещё нет', 'Сделаем под ваш бренд. Бесплатно при оплате года.'],
+      ['Уже есть сайт или CRM', 'Подключимся одной строкой кода — ничего не переделываем. Подключение $0.'],
+      ['Нужно что-то своё', 'Добавим вашу функцию прямо в платформу. Цена фиксируется заранее.'],
+    ],
+    brand: 'Ваши клиенты видят только ваш бренд: ваш логотип, цвета и адрес сайта.',
+  },
+  ua: {
+    eyebrow: 'Одна платформа', h2: 'Усе, що потрібно бізнесу в інтернеті, — в одному місці',
+    sub: 'Не треба окремо платити за конструктор сайтів, CRM, SMM-ника й адміністратора. Vaxo закриває все це, а рутину за вас робить ШІ.',
+    mods: [
+      ['Сайт і SEO', 'Знаходять у Google, швидко відкривається з телефона'],
+      ['Аналітика', 'Відвідувачі, джерела, кліки, де йдуть'],
+      ['ШІ-працівник', 'Відповідає в усіх чатах 24/7, записує і продає'],
+      ['Заявки і CRM', 'Кожна заявка й угода в одному списку'],
+      ['Запис і оплата', 'Клієнти записуються і платять без дзвінків'],
+      ['Відгуки', 'ШІ просить залишити відгук і відповідає на них'],
+      ['Соцмережі', 'ШІ пише пости, вони виходять за розкладом'],
+      ['Реклама', 'Налаштована, під контролем, ШІ підказує, як краще'],
+      ['Автоматизації', 'Нагадування, дотиск заявок, повторні продажі'],
+      ['Команда і ролі', 'Кожен бачить лише своє'],
+      ['ШІ-помічник', 'Особистий помічник вам і кожному працівнику'],
+      ['Реферальна програма', 'Ваші клієнти приводять клієнтів і заробляють'],
+    ],
+    waysH: 'Неважливо, з чого ви починаєте',
+    ways: [
+      ['Сайту ще немає', 'Зробимо під ваш бренд. Безкоштовно при оплаті року.'],
+      ['Уже є сайт або CRM', 'Підключимося одним рядком коду — нічого не переробляємо. Підключення $0.'],
+      ['Потрібно щось своє', 'Додамо вашу функцію просто в платформу. Ціна фіксується заздалегідь.'],
+    ],
+    brand: 'Ваші клієнти бачать лише ваш бренд: ваш логотип, кольори й адресу сайту.',
+  },
+}[lang];
+---
+
+<section class="pf" id="platform">
+  <div class="in">
+    <p class="eyebrow">{C.eyebrow}</p>
+    <h2>{C.h2}</h2>
+    <p class="sub">{C.sub}</p>
+    <ul class="mods">
+      {C.mods.map(([h, p]) => <li><b>{h}</b><span>{p}</span></li>)}
+    </ul>
+    <h3>{C.waysH}</h3>
+    <div class="ways">
+      {C.ways.map(([h, p], i) => <article><span class="n">{i + 1}</span><b>{h}</b><p>{p}</p></article>)}
+    </div>
+    <p class="brand">{C.brand}</p>
+  </div>
+</section>
+
+<style>
+  .pf { padding: 0 0 clamp(72px, 8vw, 112px); }
+  .in { max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+  .eyebrow { color: var(--accText); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 13px; margin: 0 0 10px; }
+  h2 { font-size: clamp(28px, 4vw, 44px); line-height: 1.1; letter-spacing: -0.03em; margin: 0 0 14px; max-width: 24ch; }
+  .sub { color: var(--mut); font-size: 18px; line-height: 1.55; max-width: 62ch; margin: 0 0 28px; }
+  .mods { list-style: none; padding: 0; margin: 0 0 40px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .mods li { border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; background: var(--surf); display: flex; flex-direction: column; gap: 4px; }
+  .mods b { font-size: 16px; }
+  .mods span { color: var(--mut); font-size: 14px; line-height: 1.4; }
+  h3 { font-size: clamp(22px, 3vw, 28px); letter-spacing: -0.02em; margin: 0 0 16px; }
+  .ways { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .ways article { border-radius: 20px; padding: 22px; background: color-mix(in srgb, var(--acc) 12%, var(--surf)); border: 1px solid color-mix(in srgb, var(--acc) 35%, var(--line)); }
+  .ways .n { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--acc); color: var(--dark-ink); font-weight: 800; font-size: 14px; margin-bottom: 10px; }
+  .ways b { display: block; font-size: 18px; margin-bottom: 6px; }
+  .ways p { margin: 0; color: var(--mut); line-height: 1.45; }
+  .brand { color: var(--mut); font-size: 15px; margin: 18px 0 0; }
+  @media (max-width: 900px) { .mods { grid-template-columns: repeat(2, 1fr); } .ways { grid-template-columns: 1fr; } }
+  @media (max-width: 420px) { .mods { grid-template-columns: 1fr; } }
+</style>

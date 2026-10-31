@@ -445,12 +445,20 @@ import Base from '../layouts/Base.astro';
     const pillEl = document.querySelector<HTMLElement>('[data-n="claude"]'); if (pillEl) { pillEl.textContent = String(open); pillEl.hidden = !open; }
     box.replaceChildren(...(d.messages.length ? (d.messages as R[]).map((m) => {
       const who = m.sender === 'owner' ? 'Вы' : m.sender === 'claude' ? (m.kind === 'idea' ? '💡 Claude — идея' : m.kind === 'question' ? '❓ Claude — вопрос' : 'Claude') : 'Помощник (ИИ)';
-      const ask = m.sender === 'claude' && (m.kind === 'idea' || m.kind === 'question') && m.status === 'open';
-      const act = (a: string) => async () => { const note = a === 'discuss' ? prompt('Что обсудить? (можно пусто)') ?? '' : ''; await api(`/claude/${m.id}/${a}`, { note }); loadClaude(); };
+      // Every Claude message can be answered: Да / Нет / Обсудить (+ your comment). Questions/ideas wait for it; messages after answering are 'answered'.
+      const ask = m.sender === 'claude' && m.status !== 'answered' && !(m.kind !== 'msg' && m.status === 'done');
+      const noteBox = el('textarea', { class: 'ocnote', rows: '2', placeholder: 'Комментарий для Claude (необязательно)…', hidden: '' }) as HTMLTextAreaElement;
+      const act = (a: string) => async () => {
+        if (a === 'discuss' && noteBox.hidden) { noteBox.hidden = false; noteBox.focus(); return; }
+        await api(`/claude/${m.id}/${a}`, { note: noteBox.value.trim() }); loadClaude();
+      };
+      const toggleNote = () => { noteBox.hidden = !noteBox.hidden; if (!noteBox.hidden) noteBox.focus(); };
       return el('div', { class: 'ocm ' + (m.sender === 'owner' ? 'me' : 'them') + (m.kind === 'task' && m.sender === 'owner' ? ' task' : '') },
         el('small', {}, `${who}${m.kind === 'task' && m.sender === 'owner' ? (m.status === 'open' ? ' · задача в очереди' : ' · задача выполнена') : ''} · ${when(m.at)}`),
         rich(m.text),
-        ask && el('div', { class: 'btns' }, el('button', { class: 'cta sm', type: 'button', onclick: act('yes') }, 'Да'), el('button', { class: 'ghost sm', type: 'button', onclick: act('no') }, 'Нет'), el('button', { class: 'ghost sm', type: 'button', onclick: act('discuss') }, 'Обсудить')));
+        ask && noteBox,
+        ask && el('div', { class: 'btns' }, el('button', { class: 'cta sm', type: 'button', onclick: act('yes') }, 'Да'), el('button', { class: 'ghost sm', type: 'button', onclick: act('no') }, 'Нет'), el('button', { class: 'ghost sm', type: 'button', onclick: act('discuss') }, 'Обсудить'), el('button', { class: 'ghost sm', type: 'button', onclick: toggleNote }, '✎ Комментарий')),
+        m.sender === 'claude' && m.status === 'answered' && el('small', { class: 'mut' }, '✓ вы ответили'));
     }) : [el('p', { class: 'mut' }, 'Пока пусто. Спросите что угодно о компании или дайте задачу — например: «Сделай пост для Instagram про подарки».')]));
     box.scrollTop = box.scrollHeight;
   }
@@ -1178,6 +1186,7 @@ import Base from '../layouts/Base.astro';
   .adm .ocm.them { align-self: flex-start; background: var(--bg); border: 1px solid var(--line); }
   .adm .ocm.me { align-self: flex-end; background: var(--acc); color: var(--dark-ink); } .adm .ocm.me small { color: rgba(0,0,0,.55); }
   .adm .ocm.task { border: 2px dashed var(--dark-ink); }
+  .adm .ocm .ocnote { width: 100%; font: inherit; font-size: 13px; padding: 7px 9px; border-radius: 10px; border: 1px solid var(--line); background: var(--surf); color: var(--ink); resize: vertical; }
   .adm .oc-in { display: flex; gap: 8px; align-items: stretch; } .adm .oc-in textarea { flex: 1; }
   .adm .oc-mic { width: 46px; display: grid; place-items: center; padding: 0; } .adm .oc-mic.rec { background: var(--error, #e5484d); color: #fff; }
   .adm .sm { padding: 5px 10px; font-size: 13px; }

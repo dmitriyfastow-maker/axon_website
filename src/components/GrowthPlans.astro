@@ -1,5 +1,5 @@
 ---
-// Growth cabinet subscription (Decision 24, prices approved by Dmitry 30.10): after the project the client keeps a
+// Platform subscription (Decision 29, 31.10; prices from Decision 24): after the project the client keeps a
 // cabinet with leads, site analytics, a weekly AI report and monthly improvements. Care / Growth / Pro.
 import type { Lang } from '../i18n';
 
@@ -8,37 +8,37 @@ const { lang } = Astro.props;
 
 const C = {
   en: {
-    eyebrow: 'After launch', h2: 'We run it for you — every month',
-    sub: 'Every site, shop or app we build comes with a personal cabinet. Keep it running on a monthly plan: you see every lead, where people come from and what to fix next — and we keep improving it for you.',
-    per: '/ month', pop: 'Most popular', cta: 'Ask Vax about it →', note: 'The first month is free with every launch. The more you need, the more we take off your hands. Pay for a year — 2 months free. Cancel any time; prices in USD, card payment.',
+    eyebrow: 'Subscription', h2: 'One subscription instead of a whole team',
+    sub: 'The platform, the AI employee and our work in one monthly price. The bigger the plan, the more we take off your hands. Prices are clear and do not grow with every message.',
+    per: '/ month', pop: 'Most popular', cta: 'Ask Vax about it →', note: 'The first month is free. Pay for a year — 2 months free, and the website is built for $0. Already have a site — connecting it is $0. Cancel any time; prices in USD.',
     plans: [
-      ['Care', '$39', ['Hosting, security and backups', 'SEO basics and your Google profile', 'Full analytics: visitors, sources, clicks, where people leave', 'Command center: every lead in one place', 'Fixes whenever something breaks', 'Monthly AI report in plain words']],
-      ['Growth', '$129', ['Everything in Care', 'AI manager in Instagram, WhatsApp, Telegram and your site — 24/7', 'Auto replies to reviews', 'Team roles + an AI assistant for every employee', 'Referral program: your clients bring clients', 'Weekly AI report', '2 improvements every month']],
-      ['Pro', '$299', ['Everything in Growth', 'Ads management with AI budget advice', '8 posts or short videos a month', 'Advanced SEO: growing in Google every month', 'Partner program for your business', '5 improvements every month', 'Priority: answers within hours']],
+      ['Care', '$39', 'Replaces: a website builder + CRM + analytics', ['Your site, or connection to the one you have', 'SEO and your Google profile', 'Full analytics: visitors, sources, clicks, where people leave', 'AI employee in your site chat', 'Every lead in one app', 'Hosting, security, fixes', 'Monthly AI report in plain words']],
+      ['Growth', '$129', 'Replaces: an administrator + a social media manager', ['Everything in Care', 'AI employee in Instagram, WhatsApp, Telegram, Facebook — 24/7', 'Online booking and payments', 'AI asks for reviews and replies to them', 'Social media: 12 AI posts a month, published on schedule', 'Automations: reminders, follow-ups, repeat sales', 'Team up to 5 with roles + an AI assistant each', 'Referral program for your clients', 'Weekly report, 2 improvements a month']],
+      ['Pro', '$299', 'Replaces: a marketing agency', ['Everything in Growth', 'We run your social media: 8 videos or posts a month + stories', 'We set up and run your ads (ad budget is separate)', 'Advanced SEO, shop', 'Your own automation scenarios', 'App under your brand, unlimited team', 'Partner program for your partners', '5 improvements a month, priority, monthly call']],
     ],
-    ask: 'Hi Vax! Tell me about the growth cabinet plans (Care / Growth / Pro).',
+    ask: 'Hi Vax! Tell me about the Vaxo plans (Care / Growth / Pro) and which one fits my business.',
   },
   ru: {
-    eyebrow: 'После запуска', h2: 'Дальше ведём всё за вас — каждый месяц',
-    sub: 'К каждому сайту, магазину или приложению, которые мы делаем, идёт личный кабинет. Подключите его помесячно: видно каждую заявку, откуда приходят люди и что улучшить дальше — а мы продолжаем улучшать за вас.',
-    per: '/ мес', pop: 'Чаще всего выбирают', cta: 'Спросить Vax →', note: 'Первый месяц — бесплатно с каждым запуском. Чем больше вам нужно, тем больше мы берём на себя. Оплата за год — 2 месяца в подарок. Отменить можно в любой момент; цены в долларах, оплата картой.',
+    eyebrow: 'Подписка', h2: 'Одна подписка вместо целой команды',
+    sub: 'Платформа, ИИ-сотрудник и наша работа — за одну цену в месяц. Чем выше тариф, тем больше мы берём на себя. Цена понятная и не растёт от каждого сообщения.',
+    per: '/ мес', pop: 'Чаще всего выбирают', cta: 'Спросить Vax →', note: 'Первый месяц — бесплатно. Оплата за год — 2 месяца в подарок и сайт за $0. Уже есть сайт — подключение $0. Отменить можно в любой момент; цены в долларах.',
     plans: [
-      ['Care', '$39', ['Хостинг, защита и резервные копии', 'Базовое SEO и Google-карточка', 'Полная аналитика: посетители, источники, клики, где уходят', 'Пульт: все заявки в одном месте', 'Исправления, если что-то сломалось', 'ИИ-отчёт раз в месяц простыми словами']],
-      ['Growth', '$129', ['Всё из Care', 'ИИ-менеджер в Instagram, WhatsApp, Telegram и на сайте — 24/7', 'Автоответы на отзывы', 'Роли для команды + ИИ-помощник у каждого сотрудника', 'Реферальная программа: ваши клиенты приводят клиентов', 'ИИ-отчёт каждую неделю', '2 улучшения в месяц']],
-      ['Pro', '$299', ['Всё из Growth', 'Ведение рекламы с советами ИИ по бюджету', '8 постов или коротких видео в месяц', 'Продвинутое SEO: растём в Google каждый месяц', 'Партнёрская программа для вашего бизнеса', '5 улучшений в месяц', 'Приоритет: ответ в течение нескольких часов']],
+      ['Care', '$39', 'Заменяет: конструктор сайтов + CRM + аналитику', ['Ваш сайт или подключение к тому, что есть', 'SEO и Google-карточка', 'Полная аналитика: посетители, источники, клики, где уходят', 'ИИ-сотрудник в чате на сайте', 'Все заявки в одном приложении', 'Хостинг, защита, исправления', 'ИИ-отчёт раз в месяц простыми словами']],
+      ['Growth', '$129', 'Заменяет: администратора + SMM-щика', ['Всё из Care', 'ИИ-сотрудник в Instagram, WhatsApp, Telegram, Facebook — 24/7', 'Онлайн-запись и оплата', 'ИИ просит отзывы и отвечает на них', 'Соцсети: 12 постов от ИИ в месяц, выходят по расписанию', 'Автоматизации: напоминания, дожим заявок, повторные продажи', 'Команда до 5 человек с ролями + ИИ-помощник каждому', 'Реферальная программа для ваших клиентов', 'Отчёт каждую неделю, 2 доработки в месяц']],
+      ['Pro', '$299', 'Заменяет: маркетинговое агентство', ['Всё из Growth', 'Ведём ваши соцсети: 8 роликов или постов в месяц + сторис', 'Настраиваем и ведём рекламу (бюджет на рекламу отдельно)', 'Продвинутое SEO, магазин', 'Свои сценарии автоматизаций', 'Приложение под вашим брендом, команда без лимита', 'Партнёрская программа для ваших партнёров', '5 доработок в месяц, приоритет, созвон раз в месяц']],
     ],
-    ask: 'Привет, Vax! Расскажи про тарифы кабинета роста (Care / Growth / Pro).',
+    ask: 'Привет, Vax! Расскажи про тарифы Vaxo (Care / Growth / Pro) и какой подойдёт моему бизнесу.',
   },
   ua: {
-    eyebrow: 'Після запуску', h2: 'Далі ведемо все за вас — щомісяця',
-    sub: 'До кожного сайту, магазину чи застосунку, які ми робимо, йде особистий кабінет. Підключіть його щомісяця: видно кожну заявку, звідки приходять люди і що покращити далі — а ми продовжуємо покращувати за вас.',
-    per: '/ міс', pop: 'Обирають найчастіше', cta: 'Запитати Vax →', note: 'Перший місяць — безкоштовно з кожним запуском. Що більше вам потрібно, то більше ми беремо на себе. Оплата за рік — 2 місяці в подарунок. Скасувати можна будь-коли; ціни в доларах, оплата карткою.',
+    eyebrow: 'Підписка', h2: 'Одна підписка замість цілої команди',
+    sub: 'Платформа, ШІ-працівник і наша робота — за одну ціну на місяць. Що вищий тариф, то більше ми беремо на себе. Ціна зрозуміла і не росте від кожного повідомлення.',
+    per: '/ міс', pop: 'Обирають найчастіше', cta: 'Запитати Vax →', note: 'Перший місяць — безкоштовно. Оплата за рік — 2 місяці в подарунок і сайт за $0. Уже є сайт — підключення $0. Скасувати можна будь-коли; ціни в доларах.',
     plans: [
-      ['Care', '$39', ['Хостинг, захист і резервні копії', 'Базове SEO і Google-картка', 'Повна аналітика: відвідувачі, джерела, кліки, де йдуть', 'Пульт: усі заявки в одному місці', 'Виправлення, якщо щось зламалося', 'ШІ-звіт раз на місяць простими словами']],
-      ['Growth', '$129', ['Усе з Care', 'ШІ-менеджер в Instagram, WhatsApp, Telegram і на сайті — 24/7', 'Автовідповіді на відгуки', 'Ролі для команди + ШІ-помічник у кожного працівника', 'Реферальна програма: ваші клієнти приводять клієнтів', 'ШІ-звіт щотижня', '2 покращення на місяць']],
-      ['Pro', '$299', ['Усе з Growth', 'Ведення реклами з порадами ШІ щодо бюджету', '8 постів або коротких відео на місяць', 'Просунуте SEO: ростемо в Google щомісяця', 'Партнерська програма для вашого бізнесу', '5 покращень на місяць', 'Пріоритет: відповідь протягом кількох годин']],
+      ['Care', '$39', 'Замінює: конструктор сайтів + CRM + аналітику', ['Ваш сайт або підключення до наявного', 'SEO і Google-картка', 'Повна аналітика: відвідувачі, джерела, кліки, де йдуть', 'ШІ-працівник у чаті на сайті', 'Усі заявки в одному застосунку', 'Хостинг, захист, виправлення', 'ШІ-звіт раз на місяць простими словами']],
+      ['Growth', '$129', 'Замінює: адміністратора + SMM-ника', ['Усе з Care', 'ШІ-працівник в Instagram, WhatsApp, Telegram, Facebook — 24/7', 'Онлайн-запис і оплата', 'ШІ просить відгуки й відповідає на них', 'Соцмережі: 12 постів від ШІ на місяць, виходять за розкладом', 'Автоматизації: нагадування, дотиск заявок, повторні продажі', 'Команда до 5 людей з ролями + ШІ-помічник кожному', 'Реферальна програма для ваших клієнтів', 'Звіт щотижня, 2 доопрацювання на місяць']],
+      ['Pro', '$299', 'Замінює: маркетингову агенцію', ['Усе з Growth', 'Ведемо ваші соцмережі: 8 роликів або постів на місяць + сторіс', 'Налаштовуємо й ведемо рекламу (бюджет на рекламу окремо)', 'Просунуте SEO, магазин', 'Власні сценарії автоматизацій', 'Застосунок під вашим брендом, команда без ліміту', 'Партнерська програма для ваших партнерів', '5 доопрацювань на місяць, пріоритет, дзвінок раз на місяць']],
     ],
-    ask: 'Привіт, Vax! Розкажи про тарифи кабінету зростання (Care / Growth / Pro).',
+    ask: 'Привіт, Vax! Розкажи про тарифи Vaxo (Care / Growth / Pro) і який підійде моєму бізнесу.',
   },
 }[lang];
 ---
@@ -49,11 +49,12 @@ const C = {
     <h2>{C.h2}</h2>
     <p class="sub">{C.sub}</p>
     <div class="grid">
-      {C.plans.map(([name, price, items], i) => (
+      {C.plans.map(([name, price, repl, items], i) => (
         <article class:list={['plan', { pop: i === 1 }]}>
           {i === 1 && <span class="badge">{C.pop}</span>}
           <h3>{name}</h3>
           <p class="price"><b>{price}</b> {C.per}</p>
+          <p class="repl">{repl}</p>
           <ul>{(items as string[]).map((x) => <li>{x}</li>)}</ul>
           <a href="#" class="go" data-vax-chat data-vax-ask={C.ask}>{C.cta}</a>
         </article>
@@ -75,6 +76,7 @@ const C = {
   .badge { position: absolute; top: -12px; left: 22px; background: var(--acc); color: var(--dark-ink); font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
   h3 { margin: 0; font-size: 22px; }
   .price { margin: 10px 0 16px; color: var(--mut); }
+  .repl { margin: -8px 0 16px; font-size: 14px; font-weight: 700; color: var(--accText); }
   .price b { font-size: 40px; color: var(--ink); letter-spacing: -0.03em; }
   ul { list-style: none; padding: 0; margin: 0 0 22px; display: grid; gap: 9px; flex: 1; }
   li { padding-left: 22px; position: relative; line-height: 1.4; }

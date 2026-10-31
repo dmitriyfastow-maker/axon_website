@@ -33,7 +33,7 @@ export async function handleOwnerChat(db: DB, ai: AiBinding | undefined, request
     const id = Number(done[1]);
     const row = await db.prepare('SELECT kind, text FROM owner_chat WHERE id = ?').bind(id).first<{ kind: string; text: string }>();
     if (!row) return json(404, { ok: false });
-    await db.prepare(`UPDATE owner_chat SET status = 'done' WHERE id = ?`).bind(id).run();
+    await db.prepare(`UPDATE owner_chat SET status = ? WHERE id = ?`).bind(done[2] === 'done' ? 'done' : 'answered', id).run();
     if (done[2] !== 'done') {
       const word = { yes: 'ДА', no: 'НЕТ', discuss: 'ОБСУДИТЬ' }[done[2] as 'yes'];
       await db.prepare(`INSERT INTO owner_chat (sender, kind, text) VALUES ('owner', 'task', ?)`).bind(`Ответ на «${row.text.slice(0, 120)}»: ${word}${typeof b.note === 'string' && b.note ? ' — ' + b.note.slice(0, 500) : ''}`).run();
@@ -72,7 +72,7 @@ export async function askOwner(db: DB, notify: Notify, text: string, kind: 'idea
 export async function notifyOwnerChat(db: DB, notify: Notify) {
   const { results } = await db.prepare(`SELECT id, kind, text FROM owner_chat WHERE sender = 'claude' AND notified = 0 ORDER BY id LIMIT 10`).all<{ id: number; kind: string; text: string }>();
   for (const r of results) {
-    await notify(`${r.kind === 'idea' ? '💡 Идея от Claude' : r.kind === 'question' ? '❓ Вопрос от Claude' : '🧠 Claude'}:\n${r.text.slice(0, 1500)}\n\nОтветить: Штаб → 🧠 Claude${r.kind === 'msg' ? '' : ' (кнопки Да / Нет / Обсудить)'}.`);
+    await notify(`${r.kind === 'idea' ? '💡 Идея от Claude' : r.kind === 'question' ? '❓ Вопрос от Claude' : '🧠 Claude'}:\n${r.text.slice(0, 1500)}\n\nОтветить: Штаб → 🧠 Claude (кнопки Да / Нет / Обсудить + комментарий).`);
     await db.prepare('UPDATE owner_chat SET notified = 1 WHERE id = ?').bind(r.id).run();
   }
 }
