@@ -50,7 +50,7 @@
       "tier": 2,
       "real": true,
       "stack": "Flutter · PostgreSQL",
-      "img": "assets/tricho-cover.png",
+      "img": "assets/tricho-hero.png",
       "pal": {
         "bg": "#173F4F",
         "ink": "#FFFFFF",
@@ -83,7 +83,7 @@
       "tier": 2,
       "real": true,
       "stack": "React · PostgreSQL",
-      "img": "assets/aipro-cover.png",
+      "img": "assets/aipro-hero.png",
       "pal": {
         "bg": "#1C1C1C",
         "ink": "#FFFFFF",

@@ -8,8 +8,8 @@ import Footer from './Footer.astro';
 import AiPluses from './AiPluses.astro';
 import CrossSell from './CrossSell.astro';
 import { getDict, langPath, type Lang } from '../i18n';
-import tricho from '../assets/images/tricho-laptop.png';
-import aipro from '../assets/images/aipro-laptop.webp';
+import tricho from '../assets/images/tricho-hero.jpg';
+import aipro from '../assets/images/aipro-hero.jpg';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -187,8 +187,9 @@ const realImg = [tricho.src, aipro.src, '/examples/thumbs/vaxo.jpg'];
   .real { display: grid; gap: 16px; }
   .rcard { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 0; background: var(--surf); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; color: inherit; text-decoration: none; transition: transform .2s, border-color .2s; }
   .rcard:hover { transform: translateY(-3px); border-color: var(--acc); }
-  .rimg { background: var(--surf2, #f1ece3); display: grid; place-items: center; padding: 18px; min-height: 240px; }
-  .rimg img { width: 100%; height: 100%; max-height: 300px; object-fit: contain; border-radius: 12px; }
+  .rimg { background: var(--surf2, #f1ece3); display: grid; place-items: center; min-height: 240px; aspect-ratio: 16 / 10; overflow: hidden; }
+  .rimg img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+  .rcard:hover .rimg img { transform: scale(1.03); }
   .rtxt { padding: 26px 28px; display: flex; flex-direction: column; justify-content: center; }
   .rtxt h3 { font-size: 26px; margin: 6px 0 8px; }
   .rtxt p { color: var(--mut); margin: 0 0 14px; }

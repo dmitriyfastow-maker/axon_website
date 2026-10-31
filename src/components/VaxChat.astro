@@ -231,6 +231,24 @@ const T = {
       const a = (e.target as Element).closest?.('[data-vax-chat]') as HTMLElement | null;
       if (a) { e.preventDefault(); open(true); if (a.dataset.vaxAsk) ask(a.dataset.vaxAsk); }
     });
+    // Came from a demo's "Get one for my business" (?vax=demo-…): open the chat and start the conversation
+    // with what they just saw, so Vax picks up the context at once. Once per demo per visit.
+    const DEMO: Record<string, [string, string, string]> = {
+      'demo-os': ['the owner command center (Vaxo OS)', '«Пульт владельца» (Vaxo OS)', '«Пульт власника» (Vaxo OS)'],
+      'demo-clinic': ['the aesthetic clinic (Aurelia)', 'клиники эстетики Aurelia', 'клініки естетики Aurelia'],
+      'demo-shop': ['the online store (Ostra)', 'интернет-магазина Ostra', 'інтернет-магазину Ostra'],
+      'demo-partners': ['the partner program (Orbit Partners)', 'партнёрской программы Orbit Partners', 'партнерської програми Orbit Partners'],
+    };
+    const from = new URLSearchParams(location.search).get('vax') || '';
+    if (DEMO[from]) {
+      history.replaceState(null, '', location.pathname + location.hash);
+      const name = DEMO[from][lang === 'ru' ? 1 : lang === 'ua' ? 2 : 0];
+      const q = lang === 'ru' ? `Я посмотрел ваш пример ${name} и хочу такую же систему для своего бизнеса. С чего начнём?`
+        : lang === 'ua' ? `Я подивився ваш приклад ${name} і хочу таку саму систему для свого бізнесу. З чого почнемо?`
+        : `I just tried your demo of ${name} and I want a system like that for my business. Where do we start?`;
+      open(true);
+      if (sessionStorage.getItem('vaxo_from') !== from) { try { sessionStorage.setItem('vaxo_from', from); } catch {} ask(q); }
+    }
     // A gentle teaser once per visit, after the visitor has had time to read.
     if (!store.get('vaxo_chat_seen')) setTimeout(() => { if (panel.hidden) teaser.hidden = false; }, 9000);
   }

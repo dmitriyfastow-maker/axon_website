@@ -30,12 +30,12 @@ button{font:inherit;cursor:pointer}
 <div class="w">
   <div class="bar"><b>va<i>x</i>o</b><span class="tag" data-t="tag"></span>
     <div class="langs"><button data-l="en">EN</button><button data-l="ru">RU</button><button data-l="ua">UA</button></div>
-    <a class="get" href="/#chat" data-t="get"></a></div>
+    <a class="get" href="/?vax=demo-os" data-vax="demo-os" data-t="get"></a></div>
   <div class="hero"><div><h1 data-th="h1"></h1><p data-t="p"></p></div>
     <div class="pts"><span data-t="p1"></span><span data-t="p2"></span><span data-t="p3"></span><span data-t="p4"></span></div></div>
   <div class="niche"><small data-t="try"></small><button data-n="clinic" data-t="nc"></button><button data-n="shop" data-t="ns"></button><button data-n="biz" data-t="nb"></button></div>
   <div id="os"></div>
-  <p class="foot"><span data-t="foot"></span> <a href="/#chat" data-t="get"></a></p>
+  <p class="foot"><span data-t="foot"></span> <a href="/?vax=demo-os" data-vax="demo-os" data-t="get"></a></p>
 </div>
 <script src="/examples/_os/os.js"></script>
 <script>
@@ -52,5 +52,6 @@ $$('[data-l]').forEach(b=>b.onclick=()=>{lang=b.dataset.l;try{localStorage.setIt
 $$('[data-n]').forEach(b=>b.onclick=()=>{niche=b.dataset.n;apply();VaxoOS.niche(niche,...AC[niche])});
 apply();VaxoOS.mount(document.getElementById('os'),{lang,niche,accent:AC[niche][0],accent2:AC[niche][1]});
 const h=location.hash.slice(1);if(h)VaxoOS.go(h);
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[data-vax]');if(a)a.href=(lang==='en'?'/':'/'+lang+'/')+'?vax='+a.dataset.vax},true);
 </script>
 </body></html>

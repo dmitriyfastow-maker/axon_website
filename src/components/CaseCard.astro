@@ -23,7 +23,6 @@ const vars = `--c-bg:${p.bg};--c-ink:${p.ink};--c-acc:${p.acc};--c-chip:${p.chip
       img ? (
         <>
           <Img name={m.img!} alt={m.client} class="cover-img" sizes="(min-width: 1100px) 50vw, (min-width: 720px) 100vw, 100vw" widths={[640, 960, 1280]} />
-          <div class="shade" />
         </>
       ) : (
         <>
@@ -38,11 +37,15 @@ const vars = `--c-bg:${p.bg};--c-ink:${p.ink};--c-acc:${p.acc};--c-chip:${p.chip
         </>
       )
     }
-    <div class="cover-top">
-      <span class="chip">{c.shot}</span>
-      <span class="badge">{TIER_NAMES[m.tier]}</span>
-    </div>
-    <span class="word">{m.client}</span>
+    {!img && (
+      <>
+        <div class="cover-top">
+          <span class="chip">{c.shot}</span>
+          <span class="badge">{TIER_NAMES[m.tier]}</span>
+        </div>
+        <span class="word">{m.client}</span>
+      </>
+    )}
   </div>
   <div class="body">
     <div class="intro">

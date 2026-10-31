@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
 :root{--bg:#F4EFE8;--paper:#FBF8F3;--ink:#1D1915;--mut:#7A7067;--line:#DDD4C8;--acc:#6E2F22;--acc2:#B88A57;--ok:#4C6B4A;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Jost',system-ui,sans-serif}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
@@ -274,6 +274,50 @@ td{padding:10px 0;border-bottom:1px solid var(--line)}
   .edit .tx{padding:40px 16px}
 }
 @media (max-width:700px){.demo nav{flex-wrap:nowrap;overflow-x:auto;width:100%;order:3;scrollbar-width:none}.demo nav::-webkit-scrollbar{display:none}.demo nav button{white-space:nowrap}.demo .langs{margin-left:auto}.demo .wrap{gap:6px 10px;padding-top:6px;padding-bottom:6px}}
+
+/* 2026 refresh: modern niche-perfume look (Byredo / Boy Smells / Glossier mood) */
+:root{--bg:#F7F5F2;--paper:#FFFFFF;--ink:#0F0F10;--mut:#6F6B66;--line:#E7E2DB;--acc:#FF5B2E;--acc2:#8E6BFF;--ok:#1F8A5B;--serif:'Bricolage Grotesque',system-ui,sans-serif;--sans:'Inter',system-ui,sans-serif;--r:22px}
+body{font-size:15px}
+.cap{letter-spacing:.08em;font-weight:600;font-size:11.5px}
+.logo{font-family:var(--serif);font-weight:800;letter-spacing:-.03em;font-size:30px;padding-left:0;text-transform:lowercase}
+header.top{background:color-mix(in srgb,#fff 86%,transparent);border-bottom:1px solid var(--line)}
+.hnav a{font-weight:500;text-transform:none;letter-spacing:0}
+.searchbar{background:#fff}
+.sbox{border-radius:999px;padding-left:18px;background:var(--bg);border-color:transparent}
+.sbox:focus-within{background:#fff;border-color:var(--ink)}
+.sbox.ai{background:#fff}
+.sgo{border-radius:999px}
+.hero{margin:14px clamp(10px,2vw,28px) 0;border-radius:32px;min-height:min(74vh,700px);background:#1d1410}
+.hero::after{background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(10,6,4,.72))}
+.hero h1{font-family:var(--serif);font-weight:700;letter-spacing:-.045em;line-height:.92;font-size:clamp(48px,7.4vw,112px)}
+.hero h1 i{font-style:normal;background:linear-gradient(90deg,#FFB38A,#FF5B2E 45%,#C8A2FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-weight:400}
+.btn{border-radius:999px;letter-spacing:0;text-transform:none;font-size:15px;font-weight:600;padding:14px 24px}
+.btn.fill{background:var(--ink)}
+.btn.light{background:#fff;border-color:#fff}
+.strip{border:0;gap:10px;padding:16px clamp(10px,2vw,28px);grid-template-columns:repeat(4,1fr)}
+.strip div{border:0;background:#fff;border-radius:18px;padding:16px}
+.sechead h2,.edit h2,.dh h3{font-family:var(--serif);font-weight:700;letter-spacing:-.035em}
+.fgroup h4{letter-spacing:.06em;font-weight:600}
+.fgroup input[type=checkbox]{border-radius:6px}
+.toolbar select{border-radius:999px;padding:9px 14px}
+.aiband{border-radius:var(--r);background:linear-gradient(110deg,#FFF1EA,#F3EEFF)}
+.aiband p{font-family:var(--serif);font-weight:600;letter-spacing:-.02em}
+.card .ph{border-radius:var(--r);background:#EEE9E2}
+.tag{border-radius:999px;letter-spacing:.04em;font-weight:600;padding:5px 10px}
+.qa{border-radius:999px;letter-spacing:0;text-transform:none;font-size:14px;font-weight:600}
+.card h3{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;font-size:20px}
+.card .price{font-weight:700}
+.stars{color:var(--acc)}
+.edit{margin:0 clamp(10px,2vw,28px);border:0;border-radius:32px;overflow:hidden;background:linear-gradient(120deg,#FFF1EA,#F1ECFF)}
+.quiz .q button{border-radius:999px}
+.quizres,.rev p{font-family:var(--serif);font-weight:600;letter-spacing:-.02em}
+.rev{background:#fff;border:0;border-radius:var(--r);padding:20px}
+.aisum{border-radius:var(--r)}
+.drawer{border-radius:24px 0 0 24px}
+footer{background:#0F0F10}
+footer h5{letter-spacing:.06em}
+@media(max-width:860px){.strip{grid-template-columns:1fr 1fr}.hero{border-radius:24px}}
 </style>
 </head>
 <body>
@@ -473,7 +517,7 @@ td{padding:10px 0;border-bottom:1px solid var(--line)}
     <form class="sub" data-sub><input type="email" required data-t-ph="email" aria-label="Email" /><button data-t="join"></button></form></div>
   <div><h5 data-t="nShop"></h5><p data-t="cCandle"></p><p data-t="cPerfume"></p><p data-t="cHome"></p></div>
   <div><h5 data-t="help"></h5><p data-t="ship"></p><p data-t="ret"></p><p data-t="nFinder"></p></div>
-  <div><h5>Vaxo</h5><p><a href="/examples/" data-t="more"></a></p><p><a href="/" data-t="build"></a></p></div>
+  <div><h5>Vaxo</h5><p><a href="/examples/" data-t="more"></a></p><p><a href="/?vax=demo-shop" data-vax="demo-shop" data-t="build"></a></p></div>
   <div class="fine" data-t="fine"></div>
 </div></footer>
 
@@ -772,6 +816,7 @@ $('[data-guide-t]').addEventListener('click',()=>$('[data-guide]').classList.tog
 if(innerWidth<1400)$('[data-guide]').classList.add('min');
 applyLang();
 document.addEventListener('click',e=>{if(e.target.closest('[data-goos]'))view('os')});
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[data-vax]');if(a)a.href=(lang==='en'?'/':'/'+lang+'/')+'?vax='+a.dataset.vax},true);
 </script>
 </body>
 </html>

@@ -59,7 +59,7 @@ tr.me td{background:rgba(124,92,255,.14)}
 <div class="vx"><div class="w"><span class="logo">Orbit<i>.</i>Partners</span>
 <div class="tabs"><button class="on" data-v="home" data-t="tHome"></button><button data-v="calc" data-t="tCalc"></button><button data-v="board" data-t="tBoard"></button><button data-v="pay" data-t="tPay"></button><button data-v="owner" data-t="tOwner"></button></div>
 <div class="langs"><button data-l="en">EN</button><button data-l="ru">RU</button><button data-l="ua">UA</button></div>
-<a class="get" href="/#chat" data-t="get"></a></div></div>
+<a class="get" href="/?vax=demo-partners" data-vax="demo-partners" data-t="get"></a></div></div>
 <div class="demo" data-t="demo"></div>
 
 <div class="w">
@@ -194,4 +194,5 @@ $("c1").oninput=calc;$("c2").oninput=calc;
 $("postf").onsubmit=async e=>{e.preventDefault();const q=$("postq").value.trim()||t('postPh');const o=$("posto");o.textContent='…';
  try{const r=await fetch('/api/demo/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lang,brand:'Orbit Partners',mode:'chat',role:'an AI coach for affiliate partners of Orbit (a business software). Write ONE ready, honest, personal social post the partner can publish with their link: a hook, 2-3 short lines about the benefit, a soft call to action, no fake numbers or promises of income. Put the post in "text", ids empty',items:[{id:'orbit',t:'Orbit — simple software that helps small businesses get more clients'}],q:'Where and for whom: '+q})});const j=await r.json();o.textContent=j.ok?j.text:t('busy')}catch{o.textContent=t('busy')}};
 applyLang();
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[data-vax]');if(a)a.href=(lang==='en'?'/':'/'+lang+'/')+'?vax='+a.dataset.vax},true);
 </script></body></html>

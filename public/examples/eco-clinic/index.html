@@ -404,7 +404,7 @@ svg.chart{width:100%;height:170px}
 <footer><div class="wrap">
   <div><div class="logo" style="color:#fff"><i></i>Aurelia</div><p data-t="fAddr"></p></div>
   <div><h5 data-t="hours"></h5><p data-t="hrs1"></p><p data-t="hrs2"></p></div>
-  <div><h5>Vaxo</h5><p><a href="/examples/" data-t="more"></a></p><p><a href="/" data-t="build"></a></p></div>
+  <div><h5>Vaxo</h5><p><a href="/examples/" data-t="more"></a></p><p><a href="/?vax=demo-clinic" data-vax="demo-clinic" data-t="build"></a></p></div>
   <div class="fine" data-t="fine"></div>
 </div></footer>
 
@@ -642,6 +642,7 @@ $('[data-guide-t]').addEventListener('click',()=>$('[data-guide]').classList.tog
 if(innerWidth<1400)$('[data-guide]').classList.add('min');
 applyLang();
 document.addEventListener('click',e=>{if(e.target.closest('[data-goos]'))view('os')});
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[data-vax]');if(a)a.href=(lang==='en'?'/':'/'+lang+'/')+'?vax='+a.dataset.vax},true);
 </script>
 </body>
 </html>
