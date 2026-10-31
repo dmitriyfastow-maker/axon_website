@@ -52,7 +52,7 @@ export async function partnerPayouts(db: DB, partnerId: number) {
 
 export async function allPayouts(db: DB) {
   const { results } = await db
-    .prepare(`SELECT p.*, d.name AS client, pr.name AS partner, pr.email AS partner_email
+    .prepare(`SELECT p.*, d.name AS client, pr.name AS partner, pr.email AS partner_email, pr.payout_profile, pr.payout_filled_at
               FROM payouts p JOIN leads d ON d.id = p.lead_id JOIN partners pr ON pr.id = p.partner_id ORDER BY p.status = 'paid', p.id DESC LIMIT 1000`)
     .all();
   return results;
@@ -60,6 +60,11 @@ export async function allPayouts(db: DB) {
 
 export async function setPayout(db: DB, id: number, status: string) {
   if (!['due', 'paid', 'cancelled'].includes(status)) return false;
+  // No payout is sent before the partner fills in the payout details (country, status, residency, 18+, terms).
+  if (status === 'paid') {
+    const ok = await db.prepare('SELECT pr.payout_filled_at AS f FROM payouts p JOIN partners pr ON pr.id = p.partner_id WHERE p.id = ?').bind(id).first<{ f: string | null }>();
+    if (!ok?.f) return false;
+  }
   await db.prepare(`UPDATE payouts SET status = ?, paid_at = CASE WHEN ? = 'paid' THEN datetime('now') ELSE NULL END WHERE id = ?`).bind(status, status, id).run();
   return true;
 }

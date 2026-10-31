@@ -212,6 +212,26 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
     return json(200, { ok: true, slug });
   }
 
+  // Payout profile (Decision 29): without it no payout is sent. Ukrainians are paid only as FOP;
+  // crypto is not offered (single-tax FOP may not pay in crypto).
+  if (path === 'payout' && method === 'GET') {
+    const r = await db.prepare('SELECT payout_profile, payout_filled_at FROM partners WHERE id = ?').bind(me.id).first<{ payout_profile: string | null; payout_filled_at: string | null }>();
+    return json(200, { ok: true, profile: r?.payout_profile ? JSON.parse(r.payout_profile) : null, at: r?.payout_filled_at ?? null });
+  }
+  if (path === 'payout' && method === 'POST') {
+    const b = await readBody(request);
+    const status = String(b.status);
+    if (!['fop', 'person', 'company'].includes(status)) return json(400, { ok: false, error: 'status' });
+    const country = s(b.country, 60), residency = s(b.residency, 60), method_ = s(b.method, 30), account = s(b.account, 200), legal = s(b.legal_name, 120);
+    if (!country || !residency || !legal || !account || !['payoneer', 'wise', 'bank'].includes(method_)) return json(400, { ok: false, error: 'fields' });
+    if (b.adult !== true || b.offer !== true) return json(400, { ok: false, error: 'consent' });
+    const ua = /ukrain|україн|украин|^ua$/i.test(country) || /ukrain|україн|украин|^ua$/i.test(residency);
+    if (ua && status !== 'fop') return json(400, { ok: false, error: 'ua_fop' });
+    const profile = { status, country, residency, legal_name: legal, tax_id: s(b.tax_id, 40), method: method_, account, adult: true, offer: true };
+    await db.prepare("UPDATE partners SET payout_profile = ?, payout_filled_at = datetime('now') WHERE id = ?").bind(JSON.stringify(profile), me.id).run();
+    return json(200, { ok: true });
+  }
+
   const toggle = path.match(/^links\/(\d+)\/toggle$/);
   if (toggle && method === 'POST') {
     await db.prepare('UPDATE links SET active = 1 - active WHERE id = ? AND partner_id = ?').bind(Number(toggle[1]), me.id).run();

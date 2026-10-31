@@ -92,7 +92,7 @@ const en = {
   pay: {
     h1: 'Payouts & rules',
     payH: '💸 Payouts',
-    payP: `Every week, for money we have received and held for ${r.holdDays} days (refund protection). Main method: crypto (USDT). Sales appear in your cabinet once the client has paid.`,
+    payP: `Every week, for money we have received and held for ${r.holdDays} days (refund protection). Paid by Payoneer, Wise or bank transfer (Ukraine: to a FOP account only). Sales appear in your cabinet once the client has paid.`,
     clientsH: '🔒 Your clients',
     clientsP: 'The first link a client clicks is saved for good. If they come back and buy months later, it still counts for you.',
     rulesH: 'Partner rules',
@@ -227,7 +227,7 @@ const ua: CabinetText = {
   pay: {
     h1: 'Виплати і правила',
     payH: '💸 Виплати',
-    payP: `Щотижня, за гроші, які ми отримали і тримали ${r.holdDays} днів (захист від повернень). Основний спосіб — крипта (USDT). Продажі з’являються в кабінеті після оплати клієнта.`,
+    payP: `Щотижня, за гроші, які ми отримали і тримали ${r.holdDays} днів (захист від повернень). Виплата через Payoneer, Wise або банківським переказом (Україна — лише на рахунок ФОП). Продажі з’являються в кабінеті після оплати клієнта.`,
     clientsH: '🔒 Ваші клієнти',
     clientsP: 'Перше посилання, за яким прийшов клієнт, зберігається назавжди. Повернеться і купить через місяці — все одно ваш.',
     rulesH: 'Правила партнерів',
@@ -378,7 +378,7 @@ const ru: CabinetText = {
   pay: {
     h1: 'Выплаты и правила',
     payH: '💸 Выплаты',
-    payP: `Каждую неделю, за деньги, которые мы получили и держали ${r.holdDays} дней (защита от возвратов). Основной способ — крипта (USDT). Продажи появляются в кабинете после оплаты клиента.`,
+    payP: `Каждую неделю, за деньги, которые мы получили и держали ${r.holdDays} дней (защита от возвратов). Выплата через Payoneer, Wise или банковским переводом (Украина — только на счёт ФОП). Продажи появляются в кабинете после оплаты клиента.`,
     clientsH: '🔒 Ваши клиенты',
     clientsP: 'Первая ссылка, по которой пришёл клиент, сохраняется навсегда. Вернётся и купит через месяцы — всё равно ваш.',
     rulesH: 'Правила партнёров',

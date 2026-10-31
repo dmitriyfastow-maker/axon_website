@@ -17,6 +17,11 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const c = CABINET[lang];
 const PLAN = {"en": {"h": "How you are paid", "top": "Bring a client and close the deal on a call yourself — <b>50%</b> of the first payment + 30% of every later payment for life.", "opts": [["classic", "I recommend Vaxo to people I know: 50% of the first order + 30% of every later payment, for life"], ["first30", "I post content (clips, videos): 50% of the first sale + 30% for life (same as everyone)"], ["life10", "I post content (clips, videos): 50% of the first sale + 30% for life (same as everyone)"]], "ok": "Saved"}, "ru": {"h": "Как вам платят", "top": "Привели клиента и сами довели созвон до оплаты — <b>50%</b> первой оплаты + 30% с каждой следующей пожизненно.", "opts": [["classic", "Рекомендую Vaxo знакомым: 50% первого заказа + 30% с каждой следующей оплаты пожизненно"], ["first30", "Выкладываю контент (нарезки, ролики): 50% с первой продажи + 30% пожизненно (как у всех)"], ["life10", "Выкладываю контент (нарезки, ролики): 50% с первой продажи + 30% пожизненно (как у всех)"]], "ok": "Сохранено"}, "ua": {"h": "Як вам платять", "top": "Привели клієнта і самі довели дзвінок до оплати — <b>50%</b> першої оплати + 30% з кожної наступної довічно.", "opts": [["classic", "Рекомендую Vaxo знайомим: 50% першого замовлення + 30% з кожної наступної оплати довічно"], ["first30", "Викладаю контент (нарізки, ролики): 50% з першого продажу + 30% довічно (як у всіх)"], ["life10", "Викладаю контент (нарізки, ролики): 50% з першого продажу + 30% довічно (як у всіх)"]], "ok": "Збережено"}}[lang];
+const PF = {
+  en: { h: 'Payout details', p: 'Fill this in once — no payout is sent without it. We pay by Payoneer, Wise or bank transfer. Partners in Ukraine are paid only as a registered sole proprietor (FOP). We do not pay in crypto yet.', status: 'Your status', st: [['fop', 'Sole proprietor (FOP / self-employed)'], ['person', 'Private person'], ['company', 'Company']], country: 'Country you live in', residency: 'Tax residency (country)', legal: 'Full legal name (or company name)', tax: 'Tax ID (optional)', method: 'How to pay you', account: 'Payoneer / Wise email or IBAN', adult: 'I am 18 or older', offer: 'I accept the partner terms', save: 'Save', ok: 'Saved. Payouts can be sent to you.', err: 'Please fill in every field.', ua: 'Partners in Ukraine are paid only as a FOP — please register a FOP first.', filled: 'Filled in' },
+  ru: { h: 'Данные для выплат', p: 'Заполните один раз — без этого выплата не уходит. Платим через Payoneer, Wise или банковским переводом. Партнёрам из Украины — только как ФОП. Криптой пока не платим.', status: 'Ваш статус', st: [['fop', 'ФОП / самозанятый'], ['person', 'Физическое лицо'], ['company', 'Компания']], country: 'Страна проживания', residency: 'Налоговое резидентство (страна)', legal: 'Полное имя по документам (или название компании)', tax: 'Налоговый номер (необязательно)', method: 'Как вам платить', account: 'Email Payoneer / Wise или IBAN', adult: 'Мне 18 лет или больше', offer: 'Я принимаю условия партнёрской программы', save: 'Сохранить', ok: 'Сохранено. Выплаты можно отправлять.', err: 'Заполните все поля.', ua: 'Партнёрам из Украины платим только как ФОП — сначала оформите ФОП.', filled: 'Заполнено' },
+  ua: { h: 'Дані для виплат', p: 'Заповніть один раз — без цього виплата не йде. Платимо через Payoneer, Wise або банківським переказом. Партнерам з України — лише як ФОП. Криптою поки не платимо.', status: 'Ваш статус', st: [['fop', 'ФОП / самозайнятий'], ['person', 'Фізична особа'], ['company', 'Компанія']], country: 'Країна проживання', residency: 'Податкове резидентство (країна)', legal: 'Повне імʼя за документами (або назва компанії)', tax: 'Податковий номер (необовʼязково)', method: 'Як вам платити', account: 'Email Payoneer / Wise або IBAN', adult: 'Мені 18 років або більше', offer: 'Я приймаю умови партнерської програми', save: 'Зберегти', ok: 'Збережено. Виплати можна надсилати.', err: 'Заповніть усі поля.', ua: 'Партнерам з України платимо лише як ФОП — спершу оформіть ФОП.', filled: 'Заповнено' },
+}[lang];
 const base = lang === 'en' ? '/partner/' : `/${lang}/partner/`;
 const landing = lang === 'en' ? '/partners/' : `/${lang}/partners/`;
 const byId = (id: string) => PROMPTS.find((p) => p.id === id)!;
@@ -286,6 +291,21 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
           <div class="card"><h3>{c.pay.payH}</h3><p class="mut">{c.pay.payP}</p></div>
           <div class="card"><h3>{c.pay.clientsH}</h3><p class="mut">{c.pay.clientsP}</p></div>
         </div>
+        <form class="card pform" data-payout data-msg={JSON.stringify({ ok: PF.ok, err: PF.err, ua: PF.ua, filled: PF.filled })}>
+          <h3>{PF.h} <span class="mut" data-pfilled></span></h3>
+          <p class="mut">{PF.p}</p>
+          <label>{PF.status}<select name="status" required>{PF.st.map(([v, t]) => <option value={v}>{t}</option>)}</select></label>
+          <label>{PF.country}<input name="country" required maxlength="60" /></label>
+          <label>{PF.residency}<input name="residency" required maxlength="60" /></label>
+          <label>{PF.legal}<input name="legal_name" required maxlength="120" /></label>
+          <label>{PF.tax}<input name="tax_id" maxlength="40" /></label>
+          <label>{PF.method}<select name="method"><option value="payoneer">Payoneer</option><option value="wise">Wise</option><option value="bank">Bank / IBAN</option></select></label>
+          <label>{PF.account}<input name="account" required maxlength="200" /></label>
+          <label class="check"><input type="checkbox" name="adult" required /> {PF.adult}</label>
+          <label class="check"><input type="checkbox" name="offer" required /> {PF.offer} <a href="#rules">→</a></label>
+          <button type="submit">{PF.save}</button>
+          <p class="mut" data-pmsg role="status"></p>
+        </form>
       </div>
     </section>
 
@@ -496,6 +516,33 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
     const r = await api('plan', { plan: v });
     if (r.ok) { const ok = document.querySelector<HTMLElement>('[data-plan-ok]'); if (ok) { ok.hidden = false; setTimeout(() => (ok.hidden = true), 2000); } }
   });
+  // Payout details form (Decision 29): no payout leaves until it is filled.
+  const pform = document.querySelector<HTMLFormElement>('[data-payout]');
+  if (pform) {
+    const PM = JSON.parse(pform.dataset.msg!) as { ok: string; err: string; ua: string; filled: string };
+    const pmsg = pform.querySelector<HTMLElement>('[data-pmsg]')!;
+    const mark = () => (pform.querySelector('[data-pfilled]')!.textContent = `· ${PM.filled} ✓`);
+    api('payout').then((r) => (r.ok ? r.json() : null)).then((d: any) => {
+      if (!d?.profile) return;
+      for (const [k, v] of Object.entries(d.profile)) {
+        const el = pform.elements.namedItem(k) as HTMLInputElement | null;
+        if (!el) continue;
+        if (el.type === 'checkbox') el.checked = !!v; else el.value = String(v);
+      }
+      mark();
+    }).catch(() => {});
+    pform.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(pform);
+      const body: Record<string, unknown> = Object.fromEntries(fd.entries());
+      body.adult = fd.has('adult'); body.offer = fd.has('offer');
+      const r = await api('payout', body);
+      const d = (await r.json().catch(() => ({}))) as { error?: string };
+      pmsg.textContent = r.ok ? PM.ok : d.error === 'ua_fop' ? PM.ua : PM.err;
+      if (r.ok) mark();
+    });
+  }
+
   async function load() {
     const res = await api('me');
     if (!res.ok) return show('auth');
@@ -778,6 +825,8 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   .teamnum b { font-size: 48px; display: block; color: var(--accText); line-height: 1; }
   .teamnum span { color: var(--mut); }
 
+  .pform { display: grid; gap: 10px; margin-top: 16px; max-width: 560px; }
+  .pform label:not(.check) { display: grid; gap: 4px; font-size: 14px; }
   .rules { margin-top: 48px; }
   .rules ol li { margin: 6px 0; }
 
