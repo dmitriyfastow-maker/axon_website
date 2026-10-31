@@ -15,7 +15,7 @@ const en = {
   "sub": "Clients, a website, an app, ads, content, AI, automation — or something nobody has built yet. Describe it in your own words: Vax gives you a price in a minute, and you watch the progress live.",
   "cta1": "Discuss your project",
   "cta2": "Services & prices",
-  "cta3": "Starter packages from $149",
+  "cta3": "Try the AI for free — no signup",
   "heroTags": [
     "Answers in seconds, 24/7 — no bureaucracy",
     "Transparent price ranges",

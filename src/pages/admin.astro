@@ -43,6 +43,7 @@ import Base from '../layouts/Base.astro';
         <button type="button" class="more" data-more aria-expanded="false">Ещё ▾</button>
         <span class="sec">
         <button type="button" data-view="plan" aria-pressed="false">🔮 Планы и прогноз</button>
+        <button type="button" data-view="social" aria-pressed="false">📣 Соцсети</button>
         <button type="button" data-view="work" aria-pressed="false">📋 Вся работа Claude</button>
         <button type="button" data-view="stats" aria-pressed="false">📊 Аналитика</button>
         <button type="button" data-view="leads" aria-pressed="false">📋 Все заявки</button>
@@ -159,6 +160,14 @@ import Base from '../layouts/Base.astro';
         <p class="hint">Одно место для всех ваших решений и всего, что уходит наружу. Вверху — что ждёт вашего «да»: нажмите «✅ Да» (я отправлю или опубликую и перенесу в «Отправлено»), «❌ Нет» или «✏️ Поправить» (напишите, что изменить). Ниже — что уже ушло, что Vax сам пишет клиентам и мои вопросы вам.</p>
         <div class="obx-sum" data-obx-sum></div>
         <div data-obx></div>
+      </section>
+      <section data-panel="social" hidden>
+        <p class="hint">Все соцсети в одном месте: что я выложил, кому ответил, кто ждёт вас. Любую карточку можно прокомментировать (придёт мне задачей), а поручение — написать прямо здесь.</p>
+        <form class="say" data-soc-say><textarea name="text" rows="1" placeholder="Поручение по соцсетям — например: «в Discord ответь Farah, что…» или «в Instagram выложи сторис про…»"></textarea><button class="cta">Отправить Claude</button></form>
+        <small class="mut" data-soc-msg></small>
+        <div class="soc-nets" data-soc-nets></div>
+        <h2>Последние действия</h2>
+        <div class="work" data-soc-feed></div>
       </section>
       <section data-panel="work" hidden>
         <p class="hint">Всё, что я сделал, — как отчёт сотрудника: найденные клиенты и готовые сообщения им, черновики сайтов (можно открыть), ролики, документы, списки партнёров, изменения сайта. «Ждёт вашего да» — то, что уйдёт наружу только после вашего решения. Комментарий к любой карточке приходит мне задачей.</p>
@@ -332,7 +341,7 @@ import Base from '../layouts/Base.astro';
     if (!r?.ok) return;
     me = r.me;
     $('[data-who]').textContent = me.role === 'owner' ? '' : `· ${me.name} (${me.role_name})`;
-    $$<HTMLButtonElement>('[data-view]').forEach((b) => { const v = b.dataset.view!; b.hidden = v !== 'help' && !(me.sections as string[]).includes(v === 'access' ? 'access' : v === 'outbox' ? 'work' : v); });
+    $$<HTMLButtonElement>('[data-view]').forEach((b) => { const v = b.dataset.view!; b.hidden = v !== 'help' && !(me.sections as string[]).includes(v === 'access' ? 'access' : v === 'outbox' || v === 'social' ? 'work' : v); });
     if ((me.sections as string[]).includes('access')) loadAccess();
   }
 
@@ -425,7 +434,7 @@ import Base from '../layouts/Base.astro';
     $('[data-loginbox]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
     loadOutbox();
     renderToday(); renderInbox(); renderLeads(); renderTeam(); renderPay(); renderCartoon(); renderLinks();
-    loadAuto(); loadStats(); loadFin(); loadClaude(); loadWork();
+    loadAuto(); loadStats(); loadFin(); loadClaude(); loadWork(); loadSocial();
   }
 
   async function loadClaude() {
@@ -454,7 +463,7 @@ import Base from '../layouts/Base.astro';
   })();
   document.querySelector('[data-go-chats]')?.addEventListener('click', () => show('chats'));
   const finStyle = document.createElement('style'); finStyle.textContent = FIN_CSS; document.head.append(finStyle);
-  const WK: R = { clients: ['🎯', 'Клиенты'], partners: ['🤝', 'Партнёры'], draft: ['🖥', 'Черновики сайтов'], video: ['🎬', 'Ролики'], doc: ['📄', 'Документы'], site: ['🛠', 'Сайт и Штаб'], research: ['🔎', 'Исследования'], outreach: ['✉️', 'Рассылки'] };
+  const WK: R = { clients: ['🎯', 'Клиенты'], partners: ['🤝', 'Партнёры'], draft: ['🖥', 'Черновики сайтов'], video: ['🎬', 'Ролики'], doc: ['📄', 'Документы'], site: ['🛠', 'Сайт и Штаб'], research: ['🔎', 'Исследования'], outreach: ['✉️', 'Рассылки'], social: ['📣', 'Соцсети'] };
   const WS: R = { ready: ['готово', 'g'], waiting: ['ждёт вашего «да»', 'y'], approved: ['одобрено — отправляю', 'p'], sent: ['отправлено', 'b'], rejected: ['забраковано', 'r'], done: ['закрыто', 'n'] };
   let workFilter = '';
   async function loadWork() {
@@ -488,6 +497,40 @@ import Base from '../layouts/Base.astro';
         el('div', { class: 'wact' }, sel, note, el('button', { type: 'button', class: 'cta sm', onclick: async () => { await api(`/work/${i.id}`, { status: sel.value, note: note.value.trim() || undefined }); loadWork(); } }, 'Сохранить')));
     }));
   }
+  // 📣 Соцсети: every social action from the work log, by network; orders to Claude go to the 🧠 Claude tasks.
+  const NETS: [string, string, RegExp][] = [['Discord', '💬', /discord|insiders/i], ['Instagram', '📸', /instagram|reels|сторис|stories/i], ['YouTube', '▶️', /youtube|shorts/i], ['TikTok', '🎵', /tiktok/i], ['LinkedIn', '💼', /linkedin/i], ['Threads', '🧵', /threads/i], ['Facebook', '📘', /facebook/i]];
+  async function loadSocial() {
+    const d = await api('/work').catch(() => null);
+    if (!d?.ok) return;
+    const net = (i: R) => NETS.find(([, , re]) => re.test(`${i.title} ${i.body || ''}`));
+    const items = (d.items as R[]).filter((i) => i.kind === 'social' || net(i));
+    const day = Date.now() - 864e5, week = Date.now() - 7 * 864e5;
+    $('[data-soc-nets]').replaceChildren(...NETS.map(([name, ic, re]) => {
+      const mine = items.filter((i) => re.test(`${i.title} ${i.body || ''}`));
+      const need = mine.filter((i) => i.status === 'waiting');
+      return el('article', { class: 'kpi soc' + (need.length ? ' need' : '') },
+        el('small', {}, `${ic} ${name}`),
+        el('b', {}, String(mine.filter((i) => ts(i.at) > week).length)),
+        el('span', {}, `за 7 дней · сегодня ${mine.filter((i) => ts(i.at) > day).length}${need.length ? ` · ждут вас ${need.length}` : ''}`));
+    }));
+    $('[data-soc-feed]').replaceChildren(...items.slice(0, 30).map((i) => {
+      const n = net(i);
+      const note = el('textarea', { rows: '1', placeholder: 'Поправить или ответить (придёт мне задачей)…' }, '') as HTMLTextAreaElement;
+      return el('article', { class: 'wcard' },
+        el('div', { class: 'wh' }, el('span', { class: 'wk' }, n ? `${n[1]} ${n[0]}` : '📣'), el('span', { class: 'st st-' + ((WS[i.status] || [])[1] || 'n') }, (WS[i.status] || [i.status])[0]), el('small', { class: 'mut' }, when(i.at))),
+        el('h3', {}, i.title),
+        i.body && el('details', { open: i.body.length < 400 }, el('summary', {}, 'Подробно'), rich(i.body)),
+        i.link && el('a', { href: i.link, target: '_blank', rel: 'noopener', class: 'ghost sm' }, '↗ Открыть'),
+        el('div', { class: 'wact' }, note, el('button', { type: 'button', class: 'cta sm', onclick: async () => { const v = note.value.trim(); if (!v) return; await api(`/work/${i.id}`, { status: i.status, note: v }); note.value = ''; loadSocial(); } }, 'Отправить')));
+    }));
+  }
+  $('[data-soc-say]').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const ta = (e.target as HTMLFormElement).querySelector('textarea')!; const text = ta.value.trim(); if (!text) return;
+    await api('/claude', { text: `[Соцсети] ${text}`, task: true }).catch(() => null);
+    ta.value = ''; $('[data-soc-msg]').textContent = 'Принято — сделаю в ближайший запуск и отчитаюсь здесь.';
+  });
+
   // ✅ Ждёт вашего «да» и рассылки: decisions by group with big buttons, then everything that went out.
   async function loadOutbox() {
     const d = await api('/outbox').catch(() => null);
@@ -1271,4 +1314,6 @@ import Base from '../layouts/Base.astro';
   .assist textarea { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.25); }
   .assist textarea::placeholder { color: #d4d8f7; }
   .assist-a { background: rgba(0,0,0,.22); border-radius: 14px; padding: 12px 14px; margin-top: 10px; white-space: pre-wrap; }
+  .soc-nets { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+  .soc-nets .soc.need { outline: 2px solid #e0942b; }
 </style>
