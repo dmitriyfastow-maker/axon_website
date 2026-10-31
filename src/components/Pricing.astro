@@ -25,36 +25,18 @@ const L = t.labels;
                 <span class="tag">{tr.tag}</span>
                 {rec && <span class="rec-badge">{L.recommended}</span>}
               </div>
-              <h3>{TIER_NAMES[i]}</h3>
-              <div class="psr">
-                <div><span class="mono-label k">{L.problem}</span><span class="v">{tr.problem}</span></div>
-                <div><span class="mono-label k">{L.solution}</span><span class="v">{tr.solution}</span></div>
-                <div><span class="mono-label k">{L.result}</span><span class="v result">{tr.result}</span></div>
-              </div>
+              <h3>{tr.problem}</h3>
               <div class="price-box">
                 <span class="mono-label k">{L.investment}</span>
-                <span class="price"><span class="mo">{L.from}</span> {PRICES[i]} <span class="mo">{L.mo}</span></span>
-                <span class="range">{L.rangeNote}</span>
+                <span class="price">{tr.price || PRICES[i]}</span>
+                <span class="range">{tr.strategyTitle}</span>
               </div>
-              <button type="button" class="toggle" aria-expanded="false" aria-controls={`tier-panel-${i}`} data-acc-btn data-tier-btn={i}>
-                <span>{rec ? L.strategicDetails : L.details}</span>
-                <span class="tsign"><span class="sign-closed">+</span><span class="sign-open">−</span></span>
-              </button>
-              <div class="details" id={`tier-panel-${i}`} data-acc-panel data-closed>
-                <div class="strategy">
-                  <span class="mono-label k">{L.strategy}</span>
-                  <span class="st-title">{tr.strategyTitle}</span>
-                  {tr.strategy.map((s) => <span class="st">— {s}</span>)}
-                </div>
-                <div class="items">
-                  {tr.items.map((it) => <span>• {it}</span>)}
-                  {tr.referral && (
-                    <a href="#referral" class="ref">
-                      • {tr.referral} <span class="how">{L.howBuild} →</span>
-                    </a>
-                  )}
-                </div>
-              </div>
+              <p class="sol">{tr.solution}</p>
+              <ul class="inc">
+                {tr.items.map((it) => <li>✓ {it}</li>)}
+              </ul>
+              <p class="res">→ {tr.result}</p>
+              <p class="range">{L.rangeNote}</p>
               <button type="button" class="choose" data-choose-tier={TIER_NAMES[i]}>{tr.cta}</button>
             </article>
           );
@@ -66,6 +48,11 @@ const L = t.labels;
 </section>
 
 <style>
+  .tier .sol { margin: 4px 0 0; opacity: 0.9; line-height: 1.5; }
+  .tier .inc { list-style: none; padding: 0; margin: 6px 0; display: grid; gap: 7px; }
+  .tier .inc li { line-height: 1.4; }
+  .tier .res { margin: 0; font-weight: 600; color: var(--acc); }
+
   .pricing {
     background: var(--deep);
     color: var(--deepInk);

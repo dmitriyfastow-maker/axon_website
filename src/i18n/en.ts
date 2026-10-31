@@ -12,35 +12,35 @@ const en = {
   ],
   "eyebrow": "Your online team in one chat",
   "h1": "Any online task — done for you.",
-  "sub": "Clients, a website, an app, ads, content, AI, automation — or something nobody has built yet. Describe it in your own words: Vax gives you a price in a minute, and you watch the progress live.",
+  "sub": "Your business online, done for you: a site people find, an AI manager that answers clients 24/7 and a command center where you see everything — from $199. Then we run it all for you every month.",
   "cta1": "Discuss your project",
   "cta2": "Services & prices",
   "cta3": "Try the AI for free — no signup",
   "heroTags": [
-    "Answers in seconds, 24/7 — no bureaucracy",
-    "Transparent price ranges",
-    "Some tasks in minutes, some in days"
+    "Launch from $199",
+    "AI answers clients 24/7",
+    "You see everything on one screen"
   ],
   "time": [
-    "days",
-    "days",
-    "days"
+    "from $199",
+    "24/7",
+    "one screen"
   ],
   "layers": [
     {
-      "n": "01 / Start",
-      "t": "Launch in days",
-      "d": "A site or landing page, an AI manager answering clients 24/7 and your owner command center — live in 7–14 days."
+      "n": "01 / Site",
+      "t": "A site people find — and that sells",
+      "d": "Mobile-first, SEO and full analytics from day one: where visitors come from, what they click, where they leave."
     },
     {
-      "n": "02 / Business",
-      "t": "The business on autopilot",
-      "d": "Every channel in one inbox, CRM and roles for your team, auto review replies, bookings, payments and ads with AI advice."
+      "n": "02 / AI manager",
+      "t": "Answers your clients 24/7",
+      "d": "Instagram, WhatsApp, Telegram and your site: replies in seconds, books, sells and hands you the hard cases."
     },
     {
-      "n": "03 / Scale",
-      "t": "Scale and new markets",
-      "d": "Online store or app, partner program, integrations and launch in the EU, UK, US or UAE."
+      "n": "03 / Command center",
+      "t": "You see everything and steer",
+      "d": "Leads, chats, money, ads and team in one place — with an AI assistant for you and every employee."
     }
   ],
   "whyTitle": "Why it's faster and better value with us",
@@ -271,15 +271,15 @@ const en = {
     "Agree on the best format of collaboration"
   ],
   "sessNote": "A free review and a growth plan come with every launch.",
-  "tiersTitle": "Launch once. Then we run it for you.",
-  "tiersSub": "We build the system in days — site, AI manager, owner command center — and then keep it working, answering and growing every month. You run the business; the rest is ours.",
+  "tiersTitle": "What it costs: a small launch, then we run everything",
+  "tiersSub": "You pay once to build it — from $199. Then a monthly plan keeps it working and growing: the more you need, the more we take off your hands.",
   "labels": {
     "problem": "Problem",
     "solution": "Solution",
     "result": "Result",
-    "investment": "Launch",
-    "mo": "one-time",
-    "rangeNote": "Exact price after a free review. Then it runs on a plan from $39/month — we keep everything working for you.",
+    "investment": "One-time launch",
+    "mo": "",
+    "rangeNote": "Then a plan from $39/month. The first month is free.",
     "details": "What is included",
     "strategicDetails": "What is included",
     "strategy": "What you get",
@@ -291,72 +291,65 @@ const en = {
     "stack": "Stack",
     "readCase": "Read the case",
     "hideCase": "Hide details",
-    "from": "from"
+    "from": ""
   },
   "tiers": [
     {
-      "tag": "Package 01",
-      "problem": "Clients write at night and on weekends — and nobody answers. No proper site.",
-      "solution": "A site that sells + an AI manager in chat + your command center.",
-      "result": "Every inquiry gets an answer in seconds and lands in one place. You see everything from your phone.",
-      "strategyTitle": "Free review + 3-month growth plan",
+      "tag": "Launch",
+      "problem": "Landing page",
+      "solution": "One page that sells, AI manager in chat, your command center, SEO and analytics.",
+      "result": "Clients find you and get an answer in seconds, day and night.",
+      "strategyTitle": "Ready in 3–7 days",
       "strategy": [
-        "What to launch first and why",
-        "Which channels bring clients in your niche",
-        "Numbers to aim for in 90 days"
+        "Free review of what you have now"
       ],
       "items": [
-        "Landing page or small site, mobile-first, basic SEO and Google profile",
-        "AI manager trained on your services, prices and FAQ",
-        "Owner command center: leads, chats, simple analytics",
-        "First month of the Growth plan — free",
-        "Or launch for $0 with a 12-month Growth plan"
+        "Mobile-first page with your offer",
+        "AI manager trained on your services and prices",
+        "SEO, Google profile and full analytics",
+        "Command center: every lead and chat"
       ],
       "referral": "",
-      "cta": "Start with Start"
+      "cta": "Start for $199",
+      "price": "$199"
     },
     {
-      "tag": "Package 02",
-      "problem": "Inquiries come from 5 places, the team loses them, reviews go unanswered.",
-      "solution": "The whole business in one system: all chats, CRM, roles, automations, ads.",
-      "result": "No lost clients, the team knows what to do every day, the owner sees every number.",
-      "strategyTitle": "Growth strategy for 6 months",
+      "tag": "Launch",
+      "problem": "Site with booking or catalog",
+      "solution": "Several pages, online booking or a catalog, payments — plus everything from the landing page.",
+      "result": "Clients book and pay by themselves; you only see the result.",
+      "strategyTitle": "Ready in 7–14 days",
       "strategy": [
-        "Funnel and offer for each audience segment",
-        "Ad plan with budget and target cost per lead",
-        "Which processes the AI takes over"
+        "Free review + growth plan for 3 months"
       ],
       "items": [
-        "Multi-page site or booking/catalog, payments",
-        "AI manager in Instagram, WhatsApp, Telegram, site; auto review replies",
-        "CRM with roles and access for staff + AI assistant for each person",
-        "Automations: reminders, follow-ups, win-back",
-        "Ads setup (Meta/Google) with AI budget advice",
-        "First month of the Growth plan — free"
+        "Pages for every service",
+        "Online booking or catalog with payments",
+        "AI manager in all chats",
+        "Reminders and follow-ups that bring clients back"
       ],
-      "referral": "Referral program for your clients — included.",
-      "cta": "Choose Business"
+      "referral": "",
+      "cta": "Choose this",
+      "price": "$490"
     },
     {
-      "tag": "Package 03",
-      "problem": "The system works, but growth needs its own product, partners or new countries.",
-      "solution": "Store, app or platform + partner program + new markets.",
-      "result": "A new sales channel and partners who bring clients for a commission.",
-      "strategyTitle": "12-month scale plan",
+      "tag": "Launch",
+      "problem": "Store, app or platform",
+      "solution": "Online store, client app, CRM for your team or a partner program — built around your business.",
+      "result": "A full system that replaces a team of people.",
+      "strategyTitle": "Ready in 2–6 weeks",
       "strategy": [
-        "Product and market entry plan",
-        "Partner program economics",
-        "Integrations and data"
+        "Free review + growth plan for 6 months"
       ],
       "items": [
-        "Online store, client app or SaaS platform",
-        "Partner program: links, levels, payouts, AI coach for partners",
-        "Integrations (payments, delivery, accounting, any CRM)",
-        "Localization and launch in new markets",
-        "First month of the Pro plan — free"
+        "Online store, app or platform",
+        "CRM with staff roles and an AI assistant for each person",
+        "Partner program for your clients",
+        "Integrations: payments, delivery, accounting"
       ],
-      "referral": "Multi-level partner program — included.",
-      "cta": "Discuss Scale"
+      "referral": "",
+      "cta": "Discuss my project",
+      "price": "from $990"
     }
   ],
   "ref": {
@@ -526,7 +519,11 @@ const en = {
   "faq": [
     {
       "q": "How much does it cost?",
-      "a": "Launch is one-time: Start from $290, Business from $990, Scale from $2,900. Then the system runs on a plan: Care $39, Growth $129 or Pro $299 a month. The first month of the plan is included in every launch, and Start can launch for $0 with a 12-month Growth plan."
+      "a": "Building is one-time: a landing page $199, a site with booking or a catalog $490, a store, app or platform from $990. Then a monthly plan: Care $39, Growth $129 or Pro $299 — the first month is free."
+    },
+    {
+      "q": "What exactly do I get for $199?",
+      "a": "Not just a page: a working system. A mobile-first landing page with SEO and full analytics, an AI manager that answers your clients 24/7, and your command center where you see every lead and chat. Try the live demos at vaxogroup.com/examples."
     },
     {
       "q": "Why a monthly plan?",
@@ -535,10 +532,6 @@ const en = {
     {
       "q": "What if I want to stop the plan?",
       "a": "You can stop any time. The design and content are yours; we help move the site to your own hosting. The AI manager, command center and our support work only while the plan is active."
-    },
-    {
-      "q": "How fast?",
-      "a": "Start — 7–14 days, Business — 14–30 days, Scale — 30–90 days. Small tasks — from minutes to a couple of days."
     },
     {
       "q": "Do I need a call to start?",

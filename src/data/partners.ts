@@ -4,15 +4,15 @@ import type { Lang } from '../i18n';
 
 /** Commission, %. */
 export const RATES = {
-  agencyOwn: 30, // client the partner found
+  agencyOwn: 50, // client the partner (or a client) brought: 50% of the first payment (Dmitry, 31.10.2026)
   agencyGiven: 20, // warm lead Vaxo hands to the partner to close
-  agencyRenewal: 10, // every renewal / monthly payment, for life
-  fullCycle: 40, // the partner brought the client AND closed the deal on a call: the top rate
-  clipFirst: 30, // content partner plan A: 30% of the first sale only
-  clipLife: 10, // content partner plan B: 10% of every sale for life
+  agencyRenewal: 30, // every renewal / monthly payment, for life
+  fullCycle: 50, // brought the client AND closed the deal on a call
+  clipFirst: 50, // legacy content plan A — now the same as everyone
+  clipLife: 30, // legacy content plan B — now the same as everyone
   products: 50, // our digital products
   offers: 70, // share of the payout Vaxo receives from partner offers
-  team: 10, // bonus on direct partners' earnings, paid by Vaxo on top
+  team: 10, // 10% of every sale made by the partner's direct team members (one level only), paid by Vaxo on top
   holdDays: 14, // commission becomes payable after the refund window
 };
 

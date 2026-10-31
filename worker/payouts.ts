@@ -2,6 +2,7 @@
 // the manager who closed it (warm-lead rate) and the partner whose link brought the client (own-client rate).
 // The same person who brought AND closed the client gets the full-cycle rate (the most work, the most money).
 // Content partners on the 'first30' / 'life10' plan get that plan instead of the classic referral rate.
+// The referrer's direct sponsor (partners.parent_id) gets the team bonus on every sale and renewal.
 import type { DB } from './partner.js';
 import { RATES } from '../src/data/partners.js';
 
@@ -22,6 +23,11 @@ export async function createPayouts(db: DB, leadId: number) {
   if (l.referrer_id && l.referrer_id === l.closer_id) rows.push([l.referrer_id, 'referral', RATES.fullCycle]);
   else if (l.referrer_id) rows.push([l.referrer_id, 'referral', l.referrer_plan === 'life10' ? RATES.clipLife : l.referrer_plan === 'first30' ? RATES.clipFirst : RATES.agencyOwn]);
   if (l.closer_id && l.closer_id !== l.referrer_id) rows.push([l.closer_id, 'manager', RATES.agencyGiven]);
+  // Team bonus: the referrer's direct sponsor gets 10% of this sale, on top (one level only — no pyramid).
+  if (l.referrer_id) {
+    const up = await db.prepare('SELECT parent_id FROM partners WHERE id = ?').bind(l.referrer_id).first<{ parent_id: number | null }>();
+    if (up?.parent_id && up.parent_id !== l.referrer_id) rows.push([up.parent_id, 'team', RATES.team]);
+  }
   for (const [pid, kind, rate] of rows) {
     // One row per lead and kind; a corrected deal value updates an unpaid row.
     await db
@@ -82,6 +88,14 @@ export async function addRenewal(db: DB, leadId: number, amountUsd: number) {
       .prepare('INSERT INTO payouts (partner_id, lead_id, kind, rate, base_usd, amount_usd) VALUES (?, ?, ?, ?, ?, ?)')
       .bind(pid, leadId, kind, RATES.agencyRenewal, amountUsd, Math.round((amountUsd * RATES.agencyRenewal) / 100))
       .run();
+  }
+  // Team bonus on renewals too: 10% to the referrer's direct sponsor.
+  if (l.referrer_id) {
+    const up = await db.prepare('SELECT parent_id FROM partners WHERE id = ?').bind(l.referrer_id).first<{ parent_id: number | null }>();
+    if (up?.parent_id && up.parent_id !== l.referrer_id) {
+      await db.prepare('INSERT INTO payouts (partner_id, lead_id, kind, rate, base_usd, amount_usd) VALUES (?, ?, ?, ?, ?, ?)')
+        .bind(up.parent_id, leadId, `renewal-team:${tag}`, RATES.team, amountUsd, Math.round((amountUsd * RATES.team) / 100)).run();
+    }
   }
   return true;
 }

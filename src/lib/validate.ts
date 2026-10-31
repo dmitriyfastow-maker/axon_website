@@ -1,6 +1,6 @@
 import type { Lang } from '../i18n/index.js';
 
-export const INTERESTS = ['Starter', 'Start', 'Business', 'Foundation', 'Growth', 'Scale', 'single', 'any', 'gift-card', 'gift-scene', 'gift-series', 'gift-business'] as const;
+export const INTERESTS = ['Starter', 'Landing', 'Site + booking', 'Store / app', 'Start', 'Business', 'Foundation', 'Growth', 'Scale', 'single', 'any', 'gift-card', 'gift-scene', 'gift-series', 'gift-business'] as const;
 export const LIMITS = { name: 100, contact: 100, message: 2000 } as const;
 
 export interface LeadInput {

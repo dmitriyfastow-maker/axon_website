@@ -1,3 +1,4 @@
+# SUPERSEDED by pricing-2026-10-31b.py (simpler offer: $199 / $490 / from $990 + plans). Do not re-run.
 # One-off: the new offer model (31.10.2026, Dmitry: "decide yourself") — launch once + "we run everything for you"
 # subscription. Rewrites tiers, hero/method layers and pricing labels in en/ru/ua, prices in raw.json.
 import json, re, pathlib

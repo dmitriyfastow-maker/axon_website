@@ -8,7 +8,8 @@ const { t, lang = 'en' } = Astro.props;
 const c = t.cat;
 // Price units in the visitor's language (the price list itself is shared).
 const U = lang === 'ru' ? [[' / mo', ' / мес'], [' / page', ' / стр.'], [' / 500 words', ' / 500 слов']] : lang === 'ua' ? [[' / mo', ' / міс'], [' / page', ' / стор.'], [' / 500 words', ' / 500 слів']] : [];
-const unit = (p: string) => U.reduce((a, [x, y]) => a.replace(x, y), p);
+const FROM = lang === 'ru' ? 'от' : lang === 'ua' ? 'від' : 'from';
+const unit = (p: string) => U.reduce((a, [x, y]) => a.replace(x, y), p.replace(/^(\$[\d,]+)\s*–\s*\$[\d,]+/, `${FROM} $1`));
 const DEFAULT_OPEN = 2;
 // "See it live" links: real things a visitor can open and try for a category (index in t.cat.items).
 const L = Astro.url.pathname.startsWith('/ru/') ? 'ru' : Astro.url.pathname.startsWith('/ua/') ? 'ua' : 'en';
