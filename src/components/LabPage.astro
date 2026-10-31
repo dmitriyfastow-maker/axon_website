@@ -1,5 +1,5 @@
 ---
-// INSIDERS Lab (/lab/, /ru/lab/, /ua/lab/; Decisions 24–25): the paid tier of the INSIDERS Discord community, built by
+// INSIDERS VIP (/lab/, /ru/lab/, /ua/lab/; Decisions 24–25): the paid tier of the INSIDERS Discord community, built by
 // Vaxo. Card payment through mono invoices (worker/lab.ts); optional autopay with an email 3 days before each charge.
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
@@ -14,23 +14,24 @@ const alts = { en: '/lab/', ua: '/ua/lab/', ru: '/ru/lab/' };
 
 const C = {
   en: {
-    title: 'INSIDERS Lab — the paid room of the INSIDERS Discord', desc: 'Weekly real business briefs, feedback from the Vaxo studio, first call on paid tasks, the AI playbook. $5/month for the first 50 members. 18+.',
-    badge: 'Private Discord room', h1: 'INSIDERS Lab', lead: 'The paid room inside the INSIDERS Discord community. You practise AI and online work on real business problems, get honest feedback from the Vaxo studio and the first call when our client projects need extra hands.',
-    per: '/ month', seats: (n: number) => `Founding price for the first 50 members — ${n} seats left. It stays yours while you stay.`, regular: 'Regular price.', cta: 'Join INSIDERS Lab →',
-    howH: 'How it works', how: [['Pay here', 'By card, Apple Pay or Google Pay. Takes a minute.'], ['Get the Lab role', 'Within a few hours your Discord account gets the Lab role, and the private channels open.'], ['Start this week', 'Take the brief of the week, post your work, get feedback.']],
+    title: 'INSIDERS VIP — the paid room of the INSIDERS Discord', desc: 'Weekly real business briefs, feedback from the Vaxo studio, first call on paid tasks, the AI playbook. $5/month for the first 100 members. 18+.',
+    badge: 'Private Discord room', h1: 'INSIDERS VIP', lead: 'The paid room inside the INSIDERS Discord community. You practise AI and online work on real business problems, get honest feedback from the Vaxo studio and the first call when our client projects need extra hands.',
+    per: '/ month', seats: (n: number) => `Founding price for the first 100 members — ${n} seats left. It stays yours while you stay.`, regular: 'Regular price.', cta: 'Join INSIDERS VIP →',
+    howH: 'How it works', how: [['Pay here', 'By card, Apple Pay or Google Pay. Takes a minute.'], ['Get the VIP role', 'Within a few hours your Discord account gets the VIP role, and the private channels open.'], ['Start this week', 'Take the brief of the week, post your work, get feedback.']],
     getH: 'What opens in Discord', gets: [
-      ['#lab-room', 'Real briefs every week', 'A real small-business problem from our market research: a clinic without online booking, a café losing reviews, a shop with no follow-up. You solve it with AI; the best work gets a written review.'],
-      ['#lab-tasks', 'First call on paid tasks', 'When Vaxo client projects need extra hands (design, video, research, outreach, no-code builds), Lab members hear first. Paid per task, agreed up front. No task is promised — they come when clients do.'],
-      ['#lab-playbook', 'The Vaxo AI playbook', 'The prompts, templates and workflows we use ourselves to build sites, chats and content. Updated weekly.'],
-      ['monthly', 'Profile review', 'Once a month send your Upwork, Fiverr, LinkedIn or portfolio and get a written teardown: what to cut, what to add, how to price.'],
-      ['24h', 'Answers within a day', 'Ask anything about AI tools, clients or pricing in #lab-room.'],
+      ['partners', 'Partner fast track', 'Bring clients to Vaxo and earn 40% of the first payment + 15% of every later payment for life (regular partners: 30% + 10%). Build your own team: +5% from every client your partners bring. Vaxo does all the work — you bring people.'],
+      ['AI', 'Your own AI assistant', 'An assistant set up for you: it writes posts and personal messages, finds businesses that need a site or AI chat, and plans your day.'],
+      ['demos', 'White-label demos', 'Our live demos — owner command center, clinic, store, partner program — to show your clients as your portfolio.'],
+      ['Level', 'Squads of four', 'INSIDERS Level inside: squads, streaks, a first win in 24 hours and a monthly leaderboard. Accountability, not “watched a video and forgot”.'],
+      ['#vip-room', 'Reviews 2–3 times a week', 'Post your profile, offer or client pitch — get a detailed written review within 24 hours: what to cut, what to add, how to price.'],
+      ['tasks', 'First call on paid tasks', 'When client projects need extra hands, VIP members hear first. Paid per task, agreed up front; no task is promised.'],
     ],
     formH: 'Join', name: 'Your name', discord: 'Discord username', discordPh: 'e.g. alex_builds', email: 'Email (for the receipt and reminders)',
     adult: 'I am 18 or older', auto: 'Renew automatically every month', autoNote: 'We email you 3 days before every charge. Switch it off any time with one click from that email.',
     pay: 'Pay', and: 'and join →', opening: 'Opening the payment page…', off: 'Card payment is paused right now. Please try again later.', err: 'Not sent. Check the fields and try again.', net: 'No connection. Please try again.',
     fine: 'Payment is processed by monobank; you pay the dollar price in hryvnia at the day’s rate, the payment page shows the amount. Vaxo is a registered Ukrainian business (FOP).', terms: 'Terms', privacy: 'Privacy',
     faqH: 'Questions', faq: [
-      ['Is this a get-rich course?', 'No. Nobody here promises income. Lab is practice on real problems, honest feedback and a fair chance at paid tasks.'],
+      ['Is this a get-rich course?', 'No. Nobody here promises income. VIP is practice on real problems, honest feedback and a fair chance at paid tasks.'],
       ['Who can join?', 'Only people 18 or older. If you are younger, you are welcome in the free part of INSIDERS.'],
       ['What is Vaxo?', 'The studio behind INSIDERS: websites, apps, AI assistants and content for businesses. The payment page shows “vaxo” — that is us.'],
       ['Can I cancel?', 'Yes. Without autopay nothing is charged — you just don’t pay next month. With autopay, switch it off from any of our emails.'],
@@ -38,23 +39,24 @@ const C = {
     ],
   },
   ru: {
-    title: 'INSIDERS Lab — платная комната Discord-сообщества INSIDERS', desc: 'Реальные задачи бизнеса каждую неделю, разборы от студии Vaxo, первые платные задачи, ИИ-плейбук. $5 в месяц для первых 50. 18+.',
-    badge: 'Закрытая комната в Discord', h1: 'INSIDERS Lab', lead: 'Платная комната внутри Discord-сообщества INSIDERS. Вы тренируетесь в ИИ и онлайн-работе на реальных задачах бизнеса, получаете честные разборы от студии Vaxo и первыми узнаёте, когда нашим клиентским проектам нужны руки.',
-    per: '/ месяц', seats: (n: number) => `Цена основателя для первых 50 участников — осталось мест: ${n}. Она остаётся за вами, пока вы с нами.`, regular: 'Обычная цена.', cta: 'Вступить в INSIDERS Lab →',
-    howH: 'Как это работает', how: [['Оплатите здесь', 'Картой, Apple Pay или Google Pay. Минута.'], ['Получите роль Lab', 'В течение нескольких часов ваш Discord получает роль Lab, и закрытые каналы открываются.'], ['Начните на этой неделе', 'Возьмите задачу недели, выложите работу, получите разбор.']],
+    title: 'INSIDERS VIP — платная комната Discord-сообщества INSIDERS', desc: 'Реальные задачи бизнеса каждую неделю, разборы от студии Vaxo, первые платные задачи, ИИ-плейбук. $5 в месяц для первых 100. 18+.',
+    badge: 'Закрытая комната в Discord', h1: 'INSIDERS VIP', lead: 'Платная комната внутри Discord-сообщества INSIDERS. Вы тренируетесь в ИИ и онлайн-работе на реальных задачах бизнеса, получаете честные разборы от студии Vaxo и первыми узнаёте, когда нашим клиентским проектам нужны руки.',
+    per: '/ месяц', seats: (n: number) => `Цена основателя для первых 100 участников — осталось мест: ${n}. Она остаётся за вами, пока вы с нами.`, regular: 'Обычная цена.', cta: 'Вступить в INSIDERS VIP →',
+    howH: 'Как это работает', how: [['Оплатите здесь', 'Картой, Apple Pay или Google Pay. Минута.'], ['Получите роль VIP', 'В течение нескольких часов ваш Discord получает роль VIP, и закрытые каналы открываются.'], ['Начните на этой неделе', 'Возьмите задачу недели, выложите работу, получите разбор.']],
     getH: 'Что откроется в Discord', gets: [
-      ['#lab-room', 'Реальные задачи каждую неделю', 'Настоящая проблема малого бизнеса из нашего исследования рынка: клиника без онлайн-записи, кофейня теряет отзывы, магазин не возвращает покупателей. Вы решаете её с ИИ, лучшие работы получают письменный разбор.'],
-      ['#lab-tasks', 'Первыми — платные задачи', 'Когда клиентским проектам Vaxo нужны руки (дизайн, видео, исследование, поиск клиентов, сборка без кода), участники Lab узнают первыми. Оплата за задачу, договариваемся заранее. Задачи не обещаем — они появляются вместе с клиентами.'],
-      ['#lab-playbook', 'ИИ-плейбук Vaxo', 'Промпты, шаблоны и процессы, которыми мы сами делаем сайты, чаты и контент. Обновляется каждую неделю.'],
-      ['раз в месяц', 'Разбор профиля', 'Раз в месяц пришлите Upwork, Fiverr, LinkedIn или портфолио — получите письменный разбор: что убрать, что добавить, сколько брать.'],
-      ['24 ч', 'Ответ в течение дня', 'Любой вопрос про ИИ-инструменты, клиентов или цены — в #lab-room.'],
+      ['партнёры', 'Партнёрство на особых условиях', 'Приводите клиентов в Vaxo и получайте 40% с первой оплаты + 15% с каждой следующей пожизненно (обычные партнёры: 30% + 10%). Стройте свою команду: +5% с каждого клиента, которого приведут ваши партнёры. Всю работу делает Vaxo — от вас люди.'],
+      ['ИИ', 'Свой ИИ-помощник', 'Помощник, настроенный под вас: пишет посты и личные сообщения, находит бизнесы, которым нужен сайт или ИИ-чат, и составляет план дня.'],
+      ['примеры', 'Примеры под вашим именем', 'Наши живые примеры — пульт владельца, клиника, магазин, партнёрская программа — можно показывать клиентам как своё портфолио.'],
+      ['Level', 'Отряды по четыре', 'Внутри — INSIDERS Level: отряды, серии, первая победа за 24 часа и рейтинг месяца. Живая ответственность, а не «посмотрел видео и забыл».'],
+      ['#vip-room', 'Разборы 2–3 раза в неделю', 'Выложите профиль, оффер или сообщение клиенту — в течение 24 часов получите подробный письменный разбор: что убрать, что добавить, сколько брать.'],
+      ['задачи', 'Первые платные задачи', 'Когда клиентским проектам нужны руки, VIP узнают первыми. Оплата за задачу, условия заранее; задачи не обещаем.'],
     ],
     formH: 'Вступить', name: 'Ваше имя', discord: 'Ник в Discord', discordPh: 'например, alex_builds', email: 'Email (для чека и напоминаний)',
     adult: 'Мне 18 лет или больше', auto: 'Продлевать автоматически каждый месяц', autoNote: 'За 3 дня до каждого списания пришлём письмо. Отключить можно в любой момент одной кнопкой из письма.',
     pay: 'Оплатить', and: 'и вступить →', opening: 'Открываю страницу оплаты…', off: 'Оплата картой сейчас на паузе. Попробуйте позже.', err: 'Не отправилось. Проверьте поля и попробуйте ещё раз.', net: 'Нет связи. Попробуйте ещё раз.',
     fine: 'Оплату проводит monobank: цена в долларах списывается в гривнах по курсу дня, сумма видна на странице оплаты. Vaxo — зарегистрированный украинский бизнес (ФОП).', terms: 'Условия', privacy: 'Конфиденциальность',
     faqH: 'Вопросы', faq: [
-      ['Это курс «как разбогатеть»?', 'Нет. Здесь никто не обещает доход. Lab — практика на реальных задачах, честные разборы и честный шанс на платные задачи.'],
+      ['Это курс «как разбогатеть»?', 'Нет. Здесь никто не обещает доход. VIP — практика на реальных задачах, честные разборы и честный шанс на платные задачи.'],
       ['Кто может вступить?', 'Только с 18 лет. Если вам меньше — добро пожаловать в бесплатную часть INSIDERS.'],
       ['Что такое Vaxo?', 'Студия, которая стоит за INSIDERS: сайты, приложения, ИИ-помощники и контент для бизнеса. На странице оплаты написано «vaxo» — это мы.'],
       ['Можно отменить?', 'Да. Без автоплатежа ничего не списывается — просто не платите следующий месяц. С автоплатежом — отключите из любого нашего письма.'],
@@ -62,23 +64,24 @@ const C = {
     ],
   },
   ua: {
-    title: 'INSIDERS Lab — платна кімната Discord-спільноти INSIDERS', desc: 'Реальні задачі бізнесу щотижня, розбори від студії Vaxo, перші платні задачі, ШІ-плейбук. $5 на місяць для перших 50. 18+.',
-    badge: 'Закрита кімната в Discord', h1: 'INSIDERS Lab', lead: 'Платна кімната всередині Discord-спільноти INSIDERS. Ви тренуєтеся в ШІ та онлайн-роботі на реальних задачах бізнесу, отримуєте чесні розбори від студії Vaxo і першими дізнаєтеся, коли нашим клієнтським проєктам потрібні руки.',
-    per: '/ місяць', seats: (n: number) => `Ціна засновника для перших 50 учасників — залишилось місць: ${n}. Вона лишається за вами, поки ви з нами.`, regular: 'Звичайна ціна.', cta: 'Вступити в INSIDERS Lab →',
-    howH: 'Як це працює', how: [['Сплатіть тут', 'Карткою, Apple Pay або Google Pay. Хвилина.'], ['Отримайте роль Lab', 'Протягом кількох годин ваш Discord отримує роль Lab, і закриті канали відкриваються.'], ['Почніть цього тижня', 'Візьміть задачу тижня, викладіть роботу, отримайте розбір.']],
+    title: 'INSIDERS VIP — платна кімната Discord-спільноти INSIDERS', desc: 'Реальні задачі бізнесу щотижня, розбори від студії Vaxo, перші платні задачі, ШІ-плейбук. $5 на місяць для перших 100. 18+.',
+    badge: 'Закрита кімната в Discord', h1: 'INSIDERS VIP', lead: 'Платна кімната всередині Discord-спільноти INSIDERS. Ви тренуєтеся в ШІ та онлайн-роботі на реальних задачах бізнесу, отримуєте чесні розбори від студії Vaxo і першими дізнаєтеся, коли нашим клієнтським проєктам потрібні руки.',
+    per: '/ місяць', seats: (n: number) => `Ціна засновника для перших 100 учасників — залишилось місць: ${n}. Вона лишається за вами, поки ви з нами.`, regular: 'Звичайна ціна.', cta: 'Вступити в INSIDERS VIP →',
+    howH: 'Як це працює', how: [['Сплатіть тут', 'Карткою, Apple Pay або Google Pay. Хвилина.'], ['Отримайте роль VIP', 'Протягом кількох годин ваш Discord отримує роль VIP, і закриті канали відкриваються.'], ['Почніть цього тижня', 'Візьміть задачу тижня, викладіть роботу, отримайте розбір.']],
     getH: 'Що відкриється в Discord', gets: [
-      ['#lab-room', 'Реальні задачі щотижня', 'Справжня проблема малого бізнесу з нашого дослідження ринку: клініка без онлайн-запису, кавʼярня втрачає відгуки, магазин не повертає покупців. Ви розвʼязуєте її з ШІ, найкращі роботи отримують письмовий розбір.'],
-      ['#lab-tasks', 'Першими — платні задачі', 'Коли клієнтським проєктам Vaxo потрібні руки (дизайн, відео, дослідження, пошук клієнтів, збірка без коду), учасники Lab дізнаються першими. Оплата за задачу, домовляємося заздалегідь. Задач не обіцяємо — вони зʼявляються разом із клієнтами.'],
-      ['#lab-playbook', 'ШІ-плейбук Vaxo', 'Промпти, шаблони й процеси, якими ми самі робимо сайти, чати й контент. Оновлюється щотижня.'],
-      ['раз на місяць', 'Розбір профілю', 'Раз на місяць надішліть Upwork, Fiverr, LinkedIn або портфоліо — отримайте письмовий розбір: що прибрати, що додати, скільки брати.'],
-      ['24 год', 'Відповідь протягом дня', 'Будь-яке питання про ШІ-інструменти, клієнтів чи ціни — у #lab-room.'],
+      ['партнери', 'Партнерство на особливих умовах', 'Приводьте клієнтів у Vaxo й отримуйте 40% з першої оплати + 15% з кожної наступної довічно (звичайні партнери: 30% + 10%). Будуйте свою команду: +5% з кожного клієнта, якого приведуть ваші партнери. Усю роботу робить Vaxo — від вас люди.'],
+      ['ШІ', 'Свій ШІ-помічник', 'Помічник, налаштований під вас: пише пости й особисті повідомлення, знаходить бізнеси, яким потрібен сайт або ШІ-чат, і складає план дня.'],
+      ['приклади', 'Приклади під вашим ім’ям', 'Наші живі приклади — пульт власника, клініка, магазин, партнерська програма — можна показувати клієнтам як своє портфоліо.'],
+      ['Level', 'Загони по четверо', 'Усередині — INSIDERS Level: загони, серії, перша перемога за 24 години й рейтинг місяця. Жива відповідальність, а не «подивився відео й забув».'],
+      ['#vip-room', 'Розбори 2–3 рази на тиждень', 'Викладіть профіль, офер чи повідомлення клієнту — протягом 24 годин отримаєте детальний письмовий розбір: що прибрати, що додати, скільки брати.'],
+      ['задачі', 'Перші платні задачі', 'Коли клієнтським проєктам потрібні руки, VIP дізнаються першими. Оплата за задачу, умови заздалегідь; задачі не обіцяємо.'],
     ],
     formH: 'Вступити', name: 'Ваше імʼя', discord: 'Нік у Discord', discordPh: 'наприклад, alex_builds', email: 'Email (для чека й нагадувань)',
     adult: 'Мені 18 років або більше', auto: 'Подовжувати автоматично щомісяця', autoNote: 'За 3 дні до кожного списання надішлемо лист. Вимкнути можна будь-коли однією кнопкою з листа.',
     pay: 'Сплатити', and: 'і вступити →', opening: 'Відкриваю сторінку оплати…', off: 'Оплата карткою зараз на паузі. Спробуйте пізніше.', err: 'Не надіслано. Перевірте поля й спробуйте ще раз.', net: 'Немає звʼязку. Спробуйте ще раз.',
     fine: 'Оплату проводить monobank: ціна в доларах списується в гривнях за курсом дня, сума видна на сторінці оплати. Vaxo — зареєстрований український бізнес (ФОП).', terms: 'Умови', privacy: 'Конфіденційність',
     faqH: 'Питання', faq: [
-      ['Це курс «як розбагатіти»?', 'Ні. Тут ніхто не обіцяє дохід. Lab — практика на реальних задачах, чесні розбори й чесний шанс на платні задачі.'],
+      ['Це курс «як розбагатіти»?', 'Ні. Тут ніхто не обіцяє дохід. VIP — практика на реальних задачах, чесні розбори й чесний шанс на платні задачі.'],
       ['Хто може вступити?', 'Тільки з 18 років. Якщо вам менше — ласкаво просимо в безкоштовну частину INSIDERS.'],
       ['Що таке Vaxo?', 'Студія, яка стоїть за INSIDERS: сайти, застосунки, ШІ-помічники й контент для бізнесу. На сторінці оплати написано «vaxo» — це ми.'],
       ['Можна скасувати?', 'Так. Без автоплатежу нічого не списується — просто не платіть наступний місяць. З автоплатежем — вимкніть з будь-якого нашого листа.'],
@@ -97,7 +100,7 @@ const C = {
       <h1>{C.h1}</h1>
       <p class="lead">{C.lead}</p>
       <div class="price"><b data-price>$5</b><span>{C.per}</span><s data-regular hidden>$9</s></div>
-      <p class="seats" data-seats data-tpl={C.seats(999).replace('999', '{n}')} data-reg={C.regular}>{C.seats(50)}</p>
+      <p class="seats" data-seats data-tpl={C.seats(999).replace('999', '{n}')} data-reg={C.regular}>{C.seats(100)}</p>
       <a class="btn" href="#join">{C.cta}</a>
     </section>
 

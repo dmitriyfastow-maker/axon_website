@@ -309,7 +309,8 @@ const en = {
         "Landing page or small site, mobile-first, basic SEO and Google profile",
         "AI manager trained on your services, prices and FAQ",
         "Owner command center: leads, chats, simple analytics",
-        "First month of the Growth plan — free"
+        "First month of the Growth plan — free",
+        "Or launch for $0 with a 12-month Growth plan"
       ],
       "referral": "",
       "cta": "Start with Start"
@@ -525,7 +526,7 @@ const en = {
   "faq": [
     {
       "q": "How much does it cost?",
-      "a": "Launch is one-time: Start from $590, Business from $1,490, Scale from $3,900. Then the system runs on a plan: Care $39, Growth $129 or Pro $299 a month. The first month of the plan is included in every launch."
+      "a": "Launch is one-time: Start from $290, Business from $990, Scale from $2,900. Then the system runs on a plan: Care $39, Growth $129 or Pro $299 a month. The first month of the plan is included in every launch, and Start can launch for $0 with a 12-month Growth plan."
     },
     {
       "q": "Why a monthly plan?",

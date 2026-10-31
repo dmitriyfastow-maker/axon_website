@@ -15,8 +15,8 @@ const hex = (n: number) => Array.from(crypto.getRandomValues(new Uint8Array(n)),
 const s = (v: unknown, n: number) => (typeof v === 'string' ? v.trim().slice(0, n) : '');
 const LANGS = ['en', 'ru', 'ua'];
 
-/** Founding price for the first 50 paid members, locked while they stay; then the regular price. */
-export const LAB = { founding: 5, regular: 9, foundingSeats: 50 };
+/** Founding price for the first 100 paid members, locked while they stay; then the regular price. */
+export const LAB = { founding: 5, regular: 9, foundingSeats: 100 };
 const DESC = 'INSIDERS Lab (Discord) — 1 month';
 
 type Member = { id: number; token: string; lead_id: number | null; name: string; discord: string; email: string; lang: string; price: number; autopay: number; wallet_id: string | null; card_token: string | null; paid_until: string | null; status: string; last_invoice_id: number | null; notice_for: string | null };
