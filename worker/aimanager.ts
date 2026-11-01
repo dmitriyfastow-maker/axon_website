@@ -139,7 +139,7 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
     .first();
   if (humanRecent && !opts.nudge) return false;
   const convo = await Promise.all(msgs.filter((m) => m.sender !== 'system').map(async (m) => ({ role: m.sender === 'client' ? 'user' : 'assistant', content: (await filesForAi(db, m.text).catch(() => m.text)).slice(0, 2500) })));
-  if (opts.greet) convo.push({ role: 'user', content: `(The client just sent the request above via the site form and opened this chat. Greet them by name, say you are Vax, the AI manager, and ask the first 1–2 questions.)` });
+  if (opts.greet) convo.push({ role: 'user', content: `(The client just sent the request above via the site form and opened this chat. Greet them by name, say you are Vax, the AI manager, and ask the first 1–2 questions. Never re-ask what the request already says (the "Need" chips, the about text); build on it, mention the subscription entry point (first month free, then from $39/mo) in one short line, and ask only the next missing detail.)` });
   if (opts.nudge) convo.push({ role: 'user', content: `(System, not the client: ${opts.nudge})` });
   // Models expect alternating turns starting with the user.
   const merged: { role: string; content: string }[] = [];
