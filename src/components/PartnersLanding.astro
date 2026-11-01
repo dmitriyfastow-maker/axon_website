@@ -67,17 +67,6 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
 
     <section class="rv">
       <div class="in">
-        <h2>{p.aloneH}</h2>
-        <p class="lead">{p.aloneSub}</p>
-        <div class="grid four">
-          {p.alone.map(([icon, h, x]) => <article class="card feat"><span class="ic">{icon}</span><h3>{h}</h3><p>{x}</p></article>)}
-        </div>
-        <VaxSays text={t.vax.partners} pose="partners" />
-      </div>
-    </section>
-
-    <section class="rv">
-      <div class="in">
         <h2>{p.promoteH}</h2>
         <div class="grid three">
           {p.directions.map((d, i) => (
@@ -163,18 +152,12 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
     </section>
 
     <section class="rv">
-      <div class="in grid two">
+      <div class="in">
         <div class="team card">
           <div class="orbit" aria-hidden="true"><span class="me">{({ en: "You", ua: "Ви", ru: "Вы" })[lang]}</span><i></i><i></i><i></i><i></i></div>
           <h2>{p.teamH}</h2>
           <p>{p.teamP}</p>
           <ul>{p.teamPoints.map((x) => <li>{x}</li>)}</ul>
-        </div>
-        <div class="soon card">
-          <span class="pill-soon">{p.soonTag}</span>
-          <div class="gift" aria-hidden="true">🎁</div>
-          <h2>{p.soonH}</h2>
-          <p>{p.soonP}</p>
         </div>
       </div>
     </section>
