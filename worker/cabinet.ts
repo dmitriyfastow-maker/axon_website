@@ -184,6 +184,15 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
     return json(200, { ok: true }, { 'Set-Cookie': await startSession(db, c.id) });
   }
 
+  // The owner tests the client side: a one-time link from the HQ signs in as the test client (keys live 10 minutes).
+  if (path === 'as' && request.method === 'GET') {
+    const k = url.searchParams.get('k') || '';
+    const row = /^[a-f0-9]{32}$/.test(k) ? await db.prepare("SELECT value FROM settings WHERE key = ?").bind('test_login_' + k).first<{ value: string }>() : null;
+    await db.prepare("DELETE FROM settings WHERE key = ? OR (key LIKE 'test_login_%' AND CAST(json_extract(value, '$.exp') AS INTEGER) < ?)").bind('test_login_' + k, Date.now()).run();
+    const v = row ? (JSON.parse(row.value) as { id: number; exp: number; lang?: string }) : null;
+    if (!v || v.exp < Date.now()) return new Response('Link expired — open it again from the HQ.', { status: 410 });
+    return new Response(null, { status: 302, headers: { Location: v.lang === 'en' ? '/me/' : `/${v.lang || 'ru'}/me/`, 'Set-Cookie': await startSession(db, v.id) } });
+  }
   // Google: /api/me/google?back=<room> → Google → /api/me/google/callback → /me/
   if (path === 'google' && request.method === 'GET') {
     if (!env.GOOGLE_CLIENT_ID) return Response.redirect(new URL('/me/?err=google_off', url).toString(), 302);

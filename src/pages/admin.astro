@@ -34,27 +34,35 @@ import Base from '../layouts/Base.astro';
       </details>
     </div>
     <div data-app hidden>
-      <nav class="tabs" aria-label="Разделы">
-        <button type="button" data-view="today" aria-pressed="true">📊 Обзор <span class="pill" data-n="today" hidden></span></button>
-        <button type="button" data-view="outbox" aria-pressed="false">✅ Ждёт вашего «да» и рассылки <span class="pill" data-n="outbox" hidden></span></button>
-        <button type="button" data-view="chats" aria-pressed="false">💬 Клиенты <span class="pill" data-n="chats" hidden></span></button>
-        <button type="button" data-view="claude" aria-pressed="false">🧠 Claude <span class="pill" data-n="claude" hidden></span></button>
-        <button type="button" data-view="fin" aria-pressed="false">💰 Деньги</button>
-        <button type="button" class="more" data-more aria-expanded="false">Ещё ▾</button>
-        <span class="sec">
-        <button type="button" data-view="plan" aria-pressed="false">🔮 Планы и прогноз</button>
-        <button type="button" data-view="social" aria-pressed="false">📣 Соцсети</button>
-        <button type="button" data-view="work" aria-pressed="false">📋 Вся работа Claude</button>
-        <button type="button" data-view="stats" aria-pressed="false">📊 Аналитика</button>
-        <button type="button" data-view="leads" aria-pressed="false">📋 Все заявки</button>
-        <button type="button" data-view="team" aria-pressed="false">👥 Партнёры <span class="pill" data-n="team" hidden></span></button>
-        <button type="button" data-view="pay" aria-pressed="false">💸 Выплаты <span class="pill" data-n="pay" hidden></span></button>
-        <button type="button" data-view="cartoon" aria-pressed="false">🎬 Мультик</button>
-        <button type="button" data-view="auto" aria-pressed="false">🤖 Автопилот</button>
-        <button type="button" data-view="links" aria-pressed="false">🔗 Все ссылки</button>
-        <button type="button" data-view="access" aria-pressed="false" hidden>🔐 Доступы</button>
-        <button type="button" data-view="help" aria-pressed="false">❓ Как это работает</button>
-        </span>
+      <nav class="tabs grouped" aria-label="Разделы">
+        <div class="groups">
+          <button type="button" data-group="home" aria-pressed="true">🏠 Главное <span class="pill" data-gn="home" hidden></span></button>
+          <button type="button" data-group="clients" aria-pressed="false">💬 Клиенты <span class="pill" data-gn="clients" hidden></span></button>
+          <button type="button" data-group="yes" aria-pressed="false">✅ Ждёт вас <span class="pill" data-gn="yes" hidden></span></button>
+          <button type="button" data-group="content" aria-pressed="false">🎬 Видео и соцсети <span class="pill" data-gn="content" hidden></span></button>
+          <button type="button" data-group="money" aria-pressed="false">💰 Деньги и партнёры <span class="pill" data-gn="money" hidden></span></button>
+          <button type="button" data-group="system" aria-pressed="false">⚙️ Система <span class="pill" data-gn="system" hidden></span></button>
+        </div>
+        <div class="subs">
+          <button type="button" data-view="today" data-g="home" aria-pressed="true">📊 Обзор <span class="pill" data-n="today" hidden></span></button>
+          <button type="button" data-view="stats" data-g="home" aria-pressed="false">📈 Аналитика</button>
+          <button type="button" data-view="plan" data-g="home" aria-pressed="false">🔮 Планы и прогноз</button>
+          <button type="button" data-view="chats" data-g="clients" aria-pressed="false">💬 Переписки <span class="pill" data-n="chats" hidden></span></button>
+          <button type="button" data-view="leads" data-g="clients" aria-pressed="false">📋 Все заявки</button>
+          <button type="button" data-view="outbox" data-g="yes" aria-pressed="false">✅ Ваше «да» и рассылки <span class="pill" data-n="outbox" hidden></span></button>
+          <button type="button" data-view="claude" data-g="yes" aria-pressed="false">🧠 Вопросы и задачи Claude <span class="pill" data-n="claude" hidden></span></button>
+          <button type="button" data-view="video" data-g="content" aria-pressed="false">🎬 Видеозаводы</button>
+          <button type="button" data-view="social" data-g="content" aria-pressed="false">📣 Соцсети</button>
+          <button type="button" data-view="cartoon" data-g="content" aria-pressed="false">🦝 Мультик</button>
+          <button type="button" data-view="fin" data-g="money" aria-pressed="false">💰 Деньги</button>
+          <button type="button" data-view="pay" data-g="money" aria-pressed="false">💸 Выплаты <span class="pill" data-n="pay" hidden></span></button>
+          <button type="button" data-view="team" data-g="money" aria-pressed="false">👥 Партнёры <span class="pill" data-n="team" hidden></span></button>
+          <button type="button" data-view="links" data-g="system" aria-pressed="false">🔗 Ссылки и вход как клиент</button>
+          <button type="button" data-view="work" data-g="system" aria-pressed="false">📋 Вся работа Claude</button>
+          <button type="button" data-view="auto" data-g="system" aria-pressed="false">🤖 Автопилот</button>
+          <button type="button" data-view="access" data-g="system" aria-pressed="false" hidden>🔐 Доступы</button>
+          <button type="button" data-view="help" data-g="system" aria-pressed="false">❓ Как это работает</button>
+        </div>
       </nav>
 
       <section data-panel="today">
@@ -161,6 +169,10 @@ import Base from '../layouts/Base.astro';
         <div class="obx-sum" data-obx-sum></div>
         <div data-obx></div>
       </section>
+      <section data-panel="video" hidden>
+        <p class="hint">Оба видеозавода в одном месте: ваш личный (рилсы @dmitriy_fastow, TikTok, YouTube) и соцсети Vaxo. Зелёный — работает, жёлтый — ждёт, красный — нужен вы (написано, что сделать). Кнопки срабатывают в течение 2–3 минут — под кнопкой видно «выполнено».</p>
+        <div class="fac" data-fac></div>
+      </section>
       <section data-panel="social" hidden>
         <p class="hint">Все соцсети в одном месте: что я выложил, кому ответил, кто ждёт вас. Любую карточку можно прокомментировать (придёт мне задачей), а поручение — написать прямо здесь.</p>
         <form class="say" data-soc-say><textarea name="text" rows="1" placeholder="Поручение по соцсетям — например: «в Discord ответь Farah, что…» или «в Instagram выложи сторис про…»"></textarea><button class="cta">Отправить Claude</button></form>
@@ -215,6 +227,7 @@ import Base from '../layouts/Base.astro';
       </section>
 
       <section data-panel="links" hidden>
+        <div class="card testc"><h3>🧪 Войти как клиент</h3><p class="mut">Откроется кабинет тестового клиента («Тестовая пекарня») — так его видят ваши клиенты: проекты, пульт бизнеса, ИИ-помощник. Ваш вход в Штаб не меняется.</p><button type="button" class="cta" data-testc>Открыть кабинет клиента</button> <small class="mut" data-testc-msg></small></div>
         <div class="linkgrid" data-links></div>
         <h2>Решения (документы с вариантами и галочками)</h2>
         <ul class="decisions" data-decisions></ul>
@@ -341,7 +354,7 @@ import Base from '../layouts/Base.astro';
     if (!r?.ok) return;
     me = r.me;
     $('[data-who]').textContent = me.role === 'owner' ? '' : `· ${me.name} (${me.role_name})`;
-    $$<HTMLButtonElement>('[data-view]').forEach((b) => { const v = b.dataset.view!; b.hidden = v !== 'help' && !(me.sections as string[]).includes(v === 'access' ? 'access' : v === 'outbox' || v === 'social' ? 'work' : v); });
+    $$<HTMLButtonElement>('[data-view]').forEach((b) => { const v = b.dataset.view!; b.hidden = v !== 'help' && !(me.sections as string[]).includes(v === 'access' ? 'access' : v === 'outbox' || v === 'social' || v === 'video' ? 'work' : v); });
     if ((me.sections as string[]).includes('access')) loadAccess();
   }
 
@@ -1068,10 +1081,57 @@ import Base from '../layouts/Base.astro';
     $('[data-decisions]').replaceChildren(...((hq.decisions || []) as R[]).map((d) => el('li', {}, el('a', { href: d.url, target: '_blank', rel: 'noopener' }, d.t))));
   }
 
-  $('[data-more]').addEventListener('click', (e) => { const n = (e.currentTarget as HTMLElement).closest('.tabs')!; const on = n.classList.toggle('all'); (e.currentTarget as HTMLElement).setAttribute('aria-expanded', String(on)); (e.currentTarget as HTMLElement).textContent = on ? 'Скрыть ▴' : 'Ещё ▾'; });
+  // Grouped menu (01.11): 6 groups on top, the group's sections below. A group's badge = sum of its sections' badges.
+  const pickGroup = (g: string, view?: string) => {
+    $$<HTMLButtonElement>('[data-group]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.group === g)));
+    $$<HTMLButtonElement>('[data-view]').forEach((x) => x.classList.toggle('off', x.dataset.g !== g));
+    const first = view ? $<HTMLButtonElement>(`[data-view="${view}"]`) : $$<HTMLButtonElement>(`[data-view][data-g="${g}"]`).find((x) => !x.hidden);
+    first?.click();
+  };
+  $$<HTMLButtonElement>('[data-group]').forEach((b) => b.addEventListener('click', () => pickGroup(b.dataset.group!)));
+  const rollup = () => $$<HTMLElement>('[data-gn]').forEach((gp) => {
+    const n = $$<HTMLElement>(`[data-view][data-g="${gp.dataset.gn}"]:not([hidden]) [data-n]`).filter((x) => !x.hidden).reduce((t, x) => t + (parseInt(x.textContent || '0') || 0), 0);
+    gp.hidden = !n; gp.textContent = String(n);
+    const gb = gp.closest<HTMLButtonElement>('[data-group]')!;
+    gb.hidden = !$$<HTMLElement>(`[data-view][data-g="${gb.dataset.group}"]`).some((x) => !x.hidden);
+  });
+  setInterval(rollup, 1500);
+  pickGroup('home', 'today');
+  $('[data-testc]').addEventListener('click', async () => {
+    const w = window.open('', '_blank');
+    const r = await api('/test-client', { lang: 'ru' }).catch(() => null);
+    if (r?.ok && w) w.location.href = r.url; else { w?.close(); $('[data-testc-msg]').textContent = 'Не получилось — обновите страницу и попробуйте ещё раз.'; }
+  });
+  async function loadFactory() {
+    const r = await api('/factory').catch(() => null);
+    const box = $('[data-fac]');
+    if (!r?.ok) return;
+    const s = r.status as R | null, c = r.cmd as R | null;
+    const ago = (iso?: string) => { if (!iso) return '—'; const m = Math.round((Date.now() - Date.parse(iso)) / 60000); return m < 1 ? 'только что' : m < 60 ? `${m} мин назад` : `${Math.round(m / 60)} ч назад`; };
+    const fresh = s && Date.now() - Date.parse(s.at) < 15 * 60000;
+    const card = (key: string, f: R | undefined, title: string) => {
+      const lamp = !fresh ? '⚪' : f?.light === 'red' ? '🔴' : f?.light === 'yellow' ? '🟡' : '🟢';
+      const cmdLine = c && c.target === key ? el('p', { class: 'mut' }, `Команда «${({ pause: 'Пауза', resume: 'Продолжить', go: 'Работай сейчас' } as R)[c.cmd]}» — ${c.state === 'done' ? '✅ выполнено ' + ago(c.done_at) : '⏳ ждёт Mac (до 3 минут)'}`) : null;
+      const btn = (cmd: string, label: string) => el('button', { type: 'button', class: 'ghost', onclick: async () => { await api('/factory', { cmd, target: key }); loadFactory(); } }, label);
+      return el('div', { class: 'card' },
+        el('h3', {}, `${lamp} ${title}`),
+        el('p', {}, el('b', {}, f?.now || (fresh ? '—' : 'Mac не на связи: он выключен, спит или без интернета'))),
+        ...((f?.nets || []) as R[]).map((n) => el('p', {}, `${n.ok === false ? '🔴' : n.ok === null ? '🟡' : '🟢'} ${n.name}: ${n.text}`)),
+        ...((f?.todo || []) as string[]).map((t) => el('p', { class: 'todo' }, '👉 ' + t)),
+        key === 'personal' ? el('div', { class: 'row' }, btn('go', '▶️ Работай сейчас'), btn('pause', '⏸ Пауза 3 ч'), btn('resume', '🔄 Снять паузу')) : null,
+        cmdLine,
+        el('p', { class: 'mut' }, `Обновлено: ${ago(s?.at)}`));
+    };
+    box.replaceChildren(card('personal', s?.personal, 'Личный завод — @dmitriy_fastow'), card('vaxo', s?.vaxo, 'Соцсети Vaxo — @vaxo_group'));
+  }
+  setInterval(() => { if (!$('[data-panel="video"]').hidden) loadFactory(); }, 20000);
   $$<HTMLButtonElement>('[data-view]').forEach((b) => b.addEventListener('click', () => {
     $$('[data-view]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    // Jumping to a section from elsewhere (e.g. a card link) also switches its group.
+    $$<HTMLButtonElement>('[data-group]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.group === b.dataset.g)));
+    $$<HTMLButtonElement>('[data-view]').forEach((x) => x.classList.toggle('off', x.dataset.g !== b.dataset.g));
     $$<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.view));
+    if (b.dataset.view === 'video') loadFactory();
   }));
   $('[data-search]').addEventListener('input', renderLeads);
   $('[data-close]').addEventListener('click', () => ($('[data-drawer]').hidden = true));
@@ -1191,6 +1251,16 @@ import Base from '../layouts/Base.astro';
   .adm .oc-mic { width: 46px; display: grid; place-items: center; padding: 0; } .adm .oc-mic.rec { background: var(--error, #e5484d); color: #fff; }
   .adm .sm { padding: 5px 10px; font-size: 13px; }
   .adm .tabs, .adm .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .adm .grouped .groups { display: flex; gap: 6px; flex-wrap: wrap; }
+  .adm .grouped .groups button { font-size: 15px; padding: 9px 15px; }
+  .adm .grouped .groups button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .adm .grouped .subs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .adm .grouped .subs button { font-size: 13px; padding: 6px 12px; }
+  .adm .grouped .subs button.off { display: none; }
+  .adm .fac { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+  .adm .fac .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+  .adm .fac .todo { background: color-mix(in srgb, #f59e0b 14%, transparent); border-radius: 10px; padding: 8px 10px; }
+  .adm .testc { margin-bottom: 16px; }
   .adm .tabs { margin-bottom: 16px; border-bottom: 1px solid var(--line); padding-bottom: 10px; position: sticky; top: 0; background: var(--bg); z-index: 5; padding-top: 6px; }
   .adm .tabs button, .adm .chips button { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 7px 13px; cursor: pointer; font: 600 14px var(--font); }
   .adm [aria-pressed='true'] { background: var(--ink) !important; color: var(--bg) !important; }

@@ -130,6 +130,36 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
     return json(200, { ok: true });
   }
   // 📋 Claude's work log: everything done, with previews; the owner can leave a note or a decision on any item.
+  // Video factories (personal reels + Vaxo social): the Mac pushes a status snapshot (scripts/factory-sync.py) and picks up
+  // the owner's button presses from here, then confirms — so every press visibly lands.
+  if (path === 'factory' && request.method === 'GET') {
+    const st = await settings(db);
+    return json(200, { ok: true, status: st.factory_status ? JSON.parse(st.factory_status) : null, cmd: st.factory_cmd ? JSON.parse(st.factory_cmd) : null });
+  }
+  if (path === 'factory' && request.method === 'POST') {
+    const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const cmd = String(b.cmd), target = String(b.target);
+    if (!['pause', 'resume', 'go'].includes(cmd) || !['personal', 'vaxo'].includes(target)) return json(400, { ok: false });
+    const v = JSON.stringify({ cmd, target, at: new Date().toISOString(), by: me.name, state: 'pending' });
+    await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind('factory_cmd', v).run();
+    return json(200, { ok: true });
+  }
+  // "Sign in as a client" for testing: a test client with a sample business, opened by a one-time 10-minute link.
+  if (path === 'test-client' && request.method === 'POST') {
+    const email = 'test-client@vaxogroup.com';
+    await db.prepare("INSERT OR IGNORE INTO clients (email, name, lang, consent_at, email_verified_at) VALUES (?, 'Тестовый клиент', 'ru', datetime('now'), datetime('now'))").bind(email).run();
+    const c = await db.prepare('SELECT id FROM clients WHERE email = ?').bind(email).first<{ id: number }>();
+    if (!c) return json(500, { ok: false });
+    const has = await db.prepare('SELECT id FROM biz WHERE owner_id = ?').bind(c.id).first<{ id: number }>().catch(() => null);
+    if (!has) {
+      const key = Array.from(crypto.getRandomValues(new Uint8Array(12)), (x) => x.toString(16).padStart(2, '0')).join('');
+      await db.prepare("INSERT INTO biz (owner_id, name, domain, key, about) VALUES (?, 'Тестовая пекарня', 'example.com', ?, 'Пекарня: торты на заказ от $40, круассаны, кофе. Работаем 8:00–20:00, доставка по городу.')").bind(c.id, key).run().catch(() => {});
+    }
+    const k = Array.from(crypto.getRandomValues(new Uint8Array(16)), (x) => x.toString(16).padStart(2, '0')).join('');
+    const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)').bind('test_login_' + k, JSON.stringify({ id: c.id, exp: Date.now() + 10 * 60e3, lang: ['ru', 'ua', 'en'].includes(String(b.lang)) ? b.lang : 'ru' })).run();
+    return json(200, { ok: true, url: `/api/me/as?k=${k}` });
+  }
   if (path === 'work' && request.method === 'GET') {
     const { results } = await db.prepare('SELECT * FROM claude_work ORDER BY id DESC LIMIT 400').all();
     return json(200, { ok: true, items: results });

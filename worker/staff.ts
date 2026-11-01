@@ -52,7 +52,7 @@ export function sectionOf(path: string): string {
   const p = path.split('/')[0];
   const map: Record<string, string> = {
     '': 'today', pulse: 'today', me: 'today', assist: 'today', plan: 'plan', analytics: 'stats', autopilot: 'auto', 'test-lead': 'auto', digest: 'auto', 'terms-notice': 'auto',
-    work: 'work', outbox: 'work', claude: 'claude', invoice: 'fin', finance: 'fin', payout: 'pay', lead: 'leads', partner: 'team', staff: 'access',
+    work: 'work', outbox: 'work', claude: 'claude', invoice: 'fin', finance: 'fin', payout: 'pay', lead: 'leads', partner: 'team', staff: 'access', factory: 'work', 'test-client': 'access',
   };
   return map[p] ?? 'access';
 }
