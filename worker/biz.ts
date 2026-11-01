@@ -7,6 +7,7 @@ import type { Notify } from './deals.js';
 import type { AiBinding } from './chat.js';
 import { askAi } from './autopilot.js';
 import { sessionClient } from './cabinet.js';
+import { sendMail } from './mail.js';
 
 const json = (status: number, body: unknown, headers: Record<string, string> = {}) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...headers } });
@@ -19,7 +20,7 @@ const host = (d: string) => d.toLowerCase().replace(/^https?:\/\//, '').replace(
 const soon = () => json(503, { ok: false, error: 'soon' });
 
 /** The snippet: pageviews (also on SPA navigation), clicks on calls/messengers/buttons, and form submissions as leads. */
-export function snippet(key: string, origin: string) {
+export function snippet(key: string, origin: string, chatName = '') {
   return `(function(){if(window.__vx)return;window.__vx=1;var K=${JSON.stringify(key)},U=${JSON.stringify(origin + '/api/w')};
 var s;try{s=sessionStorage.getItem('vx_s');if(!s){s=Math.random().toString(36).slice(2,12);sessionStorage.setItem('vx_s',s)}}catch(e){s='x'}
 var q=new URLSearchParams(location.search),src=q.get('utm_source')||(document.referrer&&document.referrer.indexOf(location.host)<0?new URL(document.referrer).hostname:'')||'direct';
@@ -32,11 +33,35 @@ var l=/^tel:/.test(h)?'call':/^mailto:/.test(h)?'email':/wa\\.me|whatsapp/.test(
 document.addEventListener('submit',function(e){var f=e.target,d={},m=[];if(!f||!f.elements)return;for(var i=0;i<f.elements.length;i++){var el=f.elements[i],n=((el.name||el.id||el.type||'')+'').toLowerCase(),v=(el.value||'').trim();
 if(!v||/pass|card|cvv|cvc|iban|ssn|token|captcha|csrf/.test(n)||el.type==='hidden'||el.type==='password'||el.type==='checkbox'||el.type==='radio'||el.type==='submit')continue;
 if(!d.name&&/name|имя|ім/.test(n))d.name=v;else if(!d.contact&&(el.type==='email'||el.type==='tel'||/mail|phone|tel|contact/.test(n)))d.contact=v;else m.push(v)}
-if(!d.contact&&!m.length)return;d.t='lead';d.m=m.join('\\n').slice(0,2000);send(d)},true);})();`;
+if(!d.contact&&!m.length)return;d.t='lead';d.m=m.join('\\n').slice(0,2000);send(d)},true);${chatName ? chatWidget(chatName) : ''}})();`;
+}
+
+/** AI chat bubble for the client's site (Care plan: "AI answers in your site chat 24/7"). Shadow DOM keeps their styles apart. */
+function chatWidget(name: string) {
+  return `var L=(navigator.language||'en').slice(0,2),W={ru:['Здравствуйте! Чем помочь?','Ваш вопрос…'],uk:['Вітаємо! Чим допомогти?','Ваше питання…'],en:['Hi! How can we help?','Your question…']}[L]||['Hi! How can we help?','Your question…'];
+function chat(){var h=document.createElement('div');document.body.appendChild(h);var r=h.attachShadow({mode:'open'}),M=[];
+r.innerHTML='<style>.b{position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;border:0;background:#111;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:2147483000}.p{position:fixed;right:18px;bottom:86px;width:min(360px,calc(100vw - 36px));height:min(480px,70vh);background:#fff;color:#111;border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.25);display:flex;flex-direction:column;overflow:hidden;font:14px/1.45 system-ui,sans-serif;z-index:2147483000}.p[hidden]{display:none}.h{padding:12px 16px;background:#111;color:#fff;font-weight:700}.m{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}.m div{max-width:85%;padding:8px 12px;border-radius:14px;background:#f1f1f1;white-space:pre-wrap}.m .u{align-self:flex-end;background:#111;color:#fff}form{display:flex;border-top:1px solid #eee}input{flex:1;border:0;padding:12px;font:inherit;outline:0}form button{border:0;background:none;padding:0 14px;font-size:18px;cursor:pointer}</style><button class=b aria-label=Chat>💬</button><div class=p hidden><div class=h></div><div class=m></div><form><input maxlength=500><button aria-label=Send>➤</button></form></div>';
+var p=r.querySelector('.p'),m=r.querySelector('.m'),f=r.querySelector('form'),i=r.querySelector('input');r.querySelector('.h').textContent=${JSON.stringify(name)};i.placeholder=W[1];
+function add(t,u){var d=document.createElement('div');if(u)d.className='u';d.textContent=t;m.appendChild(d);m.scrollTop=m.scrollHeight;return d}
+r.querySelector('.b').onclick=function(){p.hidden=!p.hidden;if(!p.hidden&&!M.length){add(W[0]);M.push({r:'a',c:W[0]})}if(!p.hidden)i.focus()};
+f.onsubmit=function(e){e.preventDefault();var t=i.value.trim();if(!t)return;i.value='';add(t,1);M.push({r:'u',c:t});var w=add('…');
+fetch(U,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({k:K,s:s,p:location.pathname,u:src,t:'chat',msgs:M.slice(-12)})}).then(function(x){return x.json()}).then(function(d){w.textContent=d.reply||'…';M.push({r:'a',c:w.textContent})}).catch(function(){w.textContent='…'})}}
+if(document.body)chat();else addEventListener('DOMContentLoaded',chat);`;
+}
+
+/** Tell the owner and their managers about a new request, in the owner's language. */
+async function tellOwner(db: DB, bizId: number, lead: { name: string; contact: string; message: string; source: string }) {
+  const o = await db.prepare('SELECT b.name, c.email, c.lang FROM biz b JOIN clients c ON c.id = b.owner_id WHERE b.id = ?').bind(bizId).first<{ name: string; email: string | null; lang: string | null }>();
+  if (!o) return;
+  const team = (await db.prepare("SELECT email FROM biz_members WHERE biz_id = ? AND role = 'manager'").bind(bizId).all<{ email: string }>()).results.map((x) => x.email);
+  const ru = o.lang === 'ru', ua = o.lang === 'ua';
+  const subj = `${ru ? 'Новая заявка' : ua ? 'Нова заявка' : 'New request'} — ${o.name}`;
+  const text = [`${ru ? 'Имя' : ua ? 'Імʼя' : 'Name'}: ${lead.name || '—'}`, `${ru || ua ? 'Контакт' : 'Contact'}: ${lead.contact || '—'}`, lead.message, `${ru ? 'Источник' : ua ? 'Джерело' : 'Source'}: ${lead.source || '—'}`, '', `${ru ? 'Все заявки' : ua ? 'Усі заявки' : 'All requests'}: https://vaxogroup.com/${ru ? 'ru/' : ua ? 'ua/' : ''}me/`].join('\n');
+  for (const to of [o.email, ...team]) if (to) await sendMail(to, subj, text).catch(() => false);
 }
 
 /** Public collector. Text/plain body keeps it a "simple" CORS request (no preflight). */
-export async function handleCollect(db: DB, request: Request): Promise<Response> {
+export async function handleCollect(db: DB, request: Request, ai?: AiBinding, wait: (p: Promise<unknown>) => void = (p) => void p): Promise<Response> {
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
   if (request.method !== 'POST') return json(405, { ok: false }, CORS);
   const ua = request.headers.get('User-Agent') || '';
@@ -44,7 +69,7 @@ export async function handleCollect(db: DB, request: Request): Promise<Response>
   const b = (await request.text().then((t) => JSON.parse(t.slice(0, 8000))).catch(() => ({}))) as Record<string, unknown>;
   const key = cut(b.k, 40);
   if (!/^[a-f0-9]{24}$/.test(key)) return json(400, { ok: false }, CORS);
-  const biz = await db.prepare('SELECT id, domain FROM biz WHERE key = ?').bind(key).first<{ id: number; domain: string | null }>().catch(() => null);
+  const biz = await db.prepare('SELECT id, name, domain, about FROM biz WHERE key = ?').bind(key).first<{ id: number; name: string; domain: string | null; about: string | null }>().catch(() => null);
   if (!biz) return json(404, { ok: false }, CORS);
   // Only the owner's own site may report (when a domain is set). Local previews are allowed for testing.
   const from = host(request.headers.get('Origin') || request.headers.get('Referer') || '');
@@ -57,7 +82,32 @@ export async function handleCollect(db: DB, request: Request): Promise<Response>
     if (!contact && !message) return json(400, { ok: false }, CORS);
     // One form, one row: the same visit sending the same text twice in a minute is a double click.
     const dup = await db.prepare("SELECT id FROM biz_leads WHERE biz_id = ? AND contact IS ? AND message IS ? AND at > datetime('now', '-1 minute')").bind(biz.id, contact || null, message || null).first();
-    if (!dup) await db.prepare('INSERT INTO biz_leads (biz_id, name, contact, message, source, path) VALUES (?, ?, ?, ?, ?, ?)').bind(biz.id, cut(b.name, 80) || null, contact || null, message || null, source, path).run();
+    if (!dup) {
+      await db.prepare('INSERT INTO biz_leads (biz_id, name, contact, message, source, path) VALUES (?, ?, ?, ?, ?, ?)').bind(biz.id, cut(b.name, 80) || null, contact || null, message || null, source, path).run();
+      wait(tellOwner(db, biz.id, { name: cut(b.name, 80), contact, message, source }));
+    }
+  } else if (t === 'chat') {
+    // The site's AI chat answers only from the owner's "About the business"; a contact left in the chat becomes a request.
+    const msgs = (Array.isArray(b.msgs) ? b.msgs : []).slice(-12).map((x: any) => ({ r: x?.r === 'u' ? 'Visitor' : 'Assistant', c: cut(x?.c, 500) })).filter((x) => x.c);
+    const lastU = [...msgs].reverse().find((x) => x.r === 'Visitor');
+    if (!lastU || !biz.about) return json(200, { ok: true, reply: '' }, CORS);
+    const used = await db.prepare("SELECT COUNT(*) AS n FROM biz_events WHERE biz_id = ? AND sid = ? AND type = 'chat' AND at > datetime('now', '-1 day')").bind(biz.id, sid).first<{ n: number }>();
+    if ((used?.n ?? 0) >= 30) return json(200, { ok: true, reply: '…' }, CORS);
+    await db.prepare("INSERT INTO biz_events (biz_id, type, sid, path, source, label) VALUES (?, 'chat', ?, ?, ?, NULL)").bind(biz.id, sid, path, source).run();
+    const contact = lastU.c.match(/[^\s@]+@[^\s@]+\.[a-z]{2,}|\+?\d[\d\s()-]{7,}\d/i)?.[0] || '';
+    if (contact) {
+      const story = msgs.filter((x) => x.r === 'Visitor').map((x) => x.c).join('\n').slice(0, 2000);
+      const dup = await db.prepare("SELECT id FROM biz_leads WHERE biz_id = ? AND contact = ? AND at > datetime('now', '-1 day')").bind(biz.id, contact).first();
+      if (!dup) {
+        await db.prepare("INSERT INTO biz_leads (biz_id, contact, message, source, path) VALUES (?, ?, ?, ?, ?)").bind(biz.id, contact, story, `chat · ${source}`, path).run();
+        wait(tellOwner(db, biz.id, { name: '', contact, message: story, source: `chat · ${source}` }));
+      }
+    }
+    const prompt = `You are the online assistant of "${biz.name}" in the chat on their website. Facts about the business (the ONLY source of truth): ${biz.about.slice(0, 3000)}
+Conversation so far:
+${msgs.map((x) => `${x.r}: ${x.c}`).join('\n')}
+Reply as the Assistant in the visitor's language, 1–4 short friendly sentences. Use only the facts above; if the answer is not there (exact price, free time slot, something special), say the team will confirm and ask for a phone number or email${contact ? ' — the visitor already left a contact, so thank them and say the team will reach out soon' : ''}. Never invent prices, discounts, addresses or promises.`;
+    return json(200, { ok: true, reply: (await askAi(ai, prompt, 300)) || '…' }, CORS);
   }
   return json(200, { ok: true }, CORS);
 }

@@ -104,9 +104,11 @@ export default {
     if (url.pathname === '/w.js') {
       const k = url.searchParams.get('k') || '';
       if (!/^[a-f0-9]{24}$/.test(k)) return new Response('', { status: 400 });
-      return new Response(snippet(k, url.origin), { headers: { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'public, max-age=3600', 'Access-Control-Allow-Origin': '*' } });
+      // The AI chat bubble is added only when the owner filled in "About the business" — it needs facts to answer.
+      const chatName = env.LEADS ? ((await env.LEADS.prepare("SELECT name FROM biz WHERE key = ? AND about IS NOT NULL AND about != ''").bind(k).first<{ name: string }>().catch(() => null))?.name ?? '') : '';
+      return new Response(snippet(k, url.origin, chatName), { headers: { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'public, max-age=600', 'Access-Control-Allow-Origin': '*' } });
     }
-    if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request) : json(503, { ok: false });
+    if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     if (url.pathname === '/api/biz' || url.pathname.startsWith('/api/biz/')) return env.LEADS ? handleBiz(env.LEADS, request, url.pathname.slice('/api/biz'.length).replace(/^\//, ''), env.AI, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify) : json(503, { ok: false });
     const invm = url.pathname.match(/^\/api\/invoice\/([a-f0-9]{32})$/);
