@@ -5,8 +5,6 @@ import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Contact from './Contact.astro';
 import Footer from './Footer.astro';
-import AiPluses from './AiPluses.astro';
-import CrossSell from './CrossSell.astro';
 import { getDict, langPath, type Lang } from '../i18n';
 import tricho from '../assets/images/tricho-hero.jpg';
 import aipro from '../assets/images/aipro-hero.jpg';
@@ -170,9 +168,7 @@ const realImg = [tricho.src, aipro.src, '/examples/thumbs/vaxo.jpg'];
       </div>
     </section>
 
-    <CrossSell lang={lang} items={['done', 'partner']} />
     <Contact t={t} lang={lang} />
-    <AiPluses t={t} />
   </main>
   <Footer t={t} home={home} lang={lang} />
 </Base>
