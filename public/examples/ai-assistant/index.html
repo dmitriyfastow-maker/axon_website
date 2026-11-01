@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lumo AI — an AI employee in every chat · Vaxo demo</title>
+<meta name="description" content="Interactive demo: an AI assistant that answers in Instagram, WhatsApp and Telegram, books clients, takes orders, sends payment links — plus your own branded app. Built by Vaxo.">
+<meta name="theme-color" content="#0a0a10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a10;--bg2:#12121b;--card:#16161f;--line:rgba(255,255,255,.09);--ink:#f5f2ea;--mute:#a9a6b8;--acc:#c8ff3e;--vio:#8f7cff;--hot:#ff6b3d;--r:22px;--d:'Unbounded',system-ui,sans-serif;--b:'Manrope',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--b);overflow-x:clip;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{max-width:100%;display:block}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:8px}
+.wrap{width:min(1200px,100% - 32px);margin-inline:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* strip */
+.strip{background:var(--acc);color:#0a0a10;font:600 13px/1.3 var(--b);text-align:center;padding:9px 16px}
+.strip a{font-weight:800;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+/* header */
+.top{position:sticky;top:0;z-index:30;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(10,10,16,.6);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;font:600 17px var(--d);text-decoration:none;letter-spacing:-.02em}
+.logo i{width:28px;height:28px;border-radius:9px;background:conic-gradient(from 200deg,var(--acc),var(--vio),var(--hot),var(--acc));display:grid;place-items:center;position:relative}
+.logo i:after{content:"";width:10px;height:10px;border-radius:50%;background:var(--bg)}
+.langs{display:flex;gap:2px;background:var(--bg2);border:1px solid var(--line);border-radius:99px;padding:3px}
+.langs a{font:700 12px var(--b);text-decoration:none;padding:6px 10px;border-radius:99px;color:var(--mute);text-transform:uppercase}
+.langs a[aria-current]{background:var(--ink);color:var(--bg)}
+/* hero */
+.hero{position:relative;overflow:hidden;padding:72px 0 40px}
+.mesh{position:absolute;inset:-20% -10% auto;height:140%;pointer-events:none;z-index:0}
+.mesh b{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;animation:drift 18s ease-in-out infinite alternate}
+.mesh b:nth-child(1){width:520px;height:520px;background:#5b3cff;left:48%;top:4%}
+.mesh b:nth-child(2){width:380px;height:380px;background:#b6ff2e;left:72%;top:30%;opacity:.28;animation-delay:-6s}
+.mesh b:nth-child(3){width:420px;height:420px;background:#ff5a2e;left:-8%;top:40%;opacity:.25;animation-delay:-11s}
+@keyframes drift{to{transform:translate(-60px,50px) scale(1.15)}}
+.grain{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hero .wrap{position:relative;z-index:2}
+.hw{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.kick{display:inline-flex;align-items:center;gap:8px;font:700 12px var(--b);letter-spacing:.14em;text-transform:uppercase;color:var(--acc)}
+.kick:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 4px rgba(200,255,62,.18);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 9px rgba(200,255,62,0)}}
+h1{font:600 clamp(32px,5.3vw,74px)/1.04 var(--d);letter-spacing:-.045em;margin:18px 0 22px}
+h1 em,h2 em{font-style:normal;background:linear-gradient(100deg,var(--acc) 10%,#7ef2c8 45%,var(--vio) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:clamp(16px,1.6vw,19px);color:var(--mute);max-width:560px}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 24px;border-radius:99px;font:700 15px var(--b);text-decoration:none;transition:transform .25s,background .25s,box-shadow .25s}
+.btn.pri{background:var(--acc);color:#0a0a10;box-shadow:0 10px 40px -10px rgba(200,255,62,.6)}
+.btn.pri:hover{transform:translateY(-2px);box-shadow:0 16px 50px -10px rgba(200,255,62,.75)}
+.btn.sec{border:1px solid var(--line);background:rgba(255,255,255,.04)}
+.btn.sec:hover{background:rgba(255,255,255,.09)}
+.btn svg{width:16px;height:16px}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:64px;position:relative;z-index:2}
+.facts div{background:rgba(14,14,22,.85);padding:20px 22px}
+.facts b{display:block;font:600 18px var(--d);letter-spacing:-.02em}
+.facts span{font-size:13.5px;color:var(--mute)}
+/* phone */
+.stage{position:relative;display:flex;justify-content:center;padding:20px 0}
+.phone{position:relative;width:310px;height:630px;border-radius:50px;padding:10px;background:linear-gradient(145deg,#2c2c36,#0c0c10 40%,#24242c);box-shadow:0 0 0 1.5px #3a3a46,0 50px 100px -30px rgba(0,0,0,.9),0 30px 80px -40px rgba(143,124,255,.6);flex:none}
+.phone:before{content:"";position:absolute;top:20px;left:50%;transform:translateX(-50%);width:92px;height:26px;border-radius:20px;background:#000;z-index:5}
+.scr{position:relative;width:100%;height:100%;border-radius:40px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.hero .phone{animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-14px) rotate(-1deg)}}
+.bdg{position:absolute;z-index:6;display:flex;align-items:center;gap:10px;padding:10px 14px 10px 10px;border-radius:16px;background:rgba(22,22,31,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12);font:700 13px var(--b);white-space:nowrap;box-shadow:0 20px 40px -15px rgba(0,0,0,.7);animation:bob 6s ease-in-out infinite}
+.bdg i{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;flex:none}
+.bdg i svg{width:16px;height:16px}
+.bdg small{display:block;font:500 11px var(--b);color:var(--mute)}
+.bdg.b1{left:0;top:30%}.bdg.b1 i{background:var(--acc);color:#0a0a10}
+.bdg.b2{right:-8px;top:62%;animation-delay:-2s}.bdg.b2 i{background:var(--hot)}
+.bdg.b3{left:2%;bottom:6%;animation-delay:-4s}.bdg.b3 i{background:var(--vio)}
+@keyframes bob{50%{transform:translateY(-10px)}}
+/* chat skins */
+.chat{display:flex;flex-direction:column;height:100%;font:400 13.5px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,var(--b);color:#111}
+.ch{display:flex;align-items:center;gap:10px;padding:46px 14px 10px;border-bottom:1px solid rgba(0,0,0,.07);flex:none}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 13px var(--b);color:#fff;background:linear-gradient(135deg,#8f7cff,#ff6b3d);flex:none;position:relative}
+.ch b{display:block;font-size:14px;font-weight:700;line-height:1.2}
+.ch small{font-size:11.5px;opacity:.65}
+.ai{display:inline-block;font:700 9.5px/1 var(--b);letter-spacing:.06em;text-transform:uppercase;padding:3px 5px;border-radius:5px;background:#c8ff3e;color:#111;margin-left:5px;vertical-align:2px}
+.cb{flex:1;overflow-y:auto;padding:12px 10px 14px;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth;scrollbar-width:none}
+.cb::-webkit-scrollbar{display:none}
+.cb>*{flex-shrink:0}
+.ci{flex:none;display:flex;align-items:center;gap:8px;padding:8px 10px 14px}
+.ci span{flex:1;border-radius:20px;padding:9px 14px;font-size:13px;opacity:.55}
+.ci i{width:32px;height:32px;border-radius:50%;flex:none}
+.m{max-width:80%;padding:7px 11px 6px;border-radius:18px;position:relative;animation:pop .35s cubic-bezier(.2,.9,.3,1.3) both;word-wrap:break-word;white-space:pre-line}
+.m.o{align-self:flex-end}.m.i{align-self:flex-start}
+.m time{font-size:10px;opacity:.5;margin-left:8px;float:right;margin-top:5px;line-height:1}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.94)}}
+.day{align-self:center;font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;margin:2px 0 4px}
+.typ{display:flex;gap:4px;padding:12px 13px}
+.typ i{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.4;animation:dot 1s infinite}
+.typ i:nth-child(2){animation-delay:.15s}.typ i:nth-child(3){animation-delay:.3s}
+@keyframes dot{30%{opacity:1;transform:translateY(-3px)}}
+.slots{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.slots span{padding:6px 10px;border-radius:10px;border:1.5px solid currentColor;font-weight:700;font-size:12.5px;opacity:.75}
+.slots span.on{background:#111;color:#fff;border-color:#111;opacity:1;animation:pick .4s both}
+@keyframes pick{50%{transform:scale(1.12)}}
+.pay{width:220px;padding:0;overflow:hidden}
+.pay .pt{padding:10px 12px 4px;font-size:12px;opacity:.7}
+.pay .pa{padding:0 12px 10px;font:700 22px var(--b)}
+.pay button{display:block;width:100%;padding:10px;font-weight:700;font-size:13px;background:#111;color:#fff;transition:.3s}
+.pay button.ok{background:#1faa59}
+.sys svg{width:14px;height:14px;flex:none}
+.sys{align-self:center;display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:6px 11px;border-radius:12px;background:rgba(17,17,17,.82);color:#c8ff3e;animation:pop .4s both;text-align:center}
+.lnk{color:#0a66ff;text-decoration:underline}
+/* IG */
+.chat[data-skin=ig]{background:#fff}
+.chat[data-skin=ig] .av{box-shadow:0 0 0 2px #fff,0 0 0 4px #d62976}
+.chat[data-skin=ig] .m.i,.chat[data-skin=ig] .typ{background:#efefef}
+.chat[data-skin=ig] .m.o{background:linear-gradient(135deg,#7638fa,#a530e8 55%,#d62976);color:#fff}
+.chat[data-skin=ig] .day{color:#888}
+.chat[data-skin=ig] .ci span{border:1px solid #ddd}
+.chat[data-skin=ig] .ci i{background:linear-gradient(135deg,#7638fa,#d62976)}
+.chat[data-skin=ig] .typ,.chat[data-skin=ig] .m.i{border-radius:18px 18px 18px 6px}
+/* WA */
+.chat[data-skin=wa]{background:#efeae2 radial-gradient(rgba(0,0,0,.05) 1.2px,transparent 1.3px) 0 0/16px 16px}
+.chat[data-skin=wa] .ch{background:#075e54;color:#fff;border:0}
+.chat[data-skin=wa] .m{border-radius:10px;box-shadow:0 1px .5px rgba(0,0,0,.13)}
+.chat[data-skin=wa] .m.i,.chat[data-skin=wa] .typ{background:#fff;border-top-left-radius:2px}
+.chat[data-skin=wa] .m.o{background:#d9fdd3;border-top-right-radius:2px}
+.chat[data-skin=wa] .m.o time:after{content:" ✓✓";color:#53bdeb;font-weight:700}
+.chat[data-skin=wa] .day{background:#fff;color:#54656f;box-shadow:0 1px .5px rgba(0,0,0,.13)}
+.chat[data-skin=wa] .ci span{background:#fff}.chat[data-skin=wa] .ci i{background:#00a884}
+.chat[data-skin=wa] .typ{border-radius:10px}
+/* TG */
+.chat[data-skin=tg]{background:linear-gradient(160deg,#b9d58f,#dfe6a6 50%,#9cc79a)}
+.chat[data-skin=tg] .ch{background:#fff;border:0}
+.chat[data-skin=tg] .av{background:linear-gradient(135deg,#5ab0f5,#3c8be0)}
+.chat[data-skin=tg] .m{border-radius:16px;box-shadow:0 1px 1px rgba(0,0,0,.1)}
+.chat[data-skin=tg] .m.i,.chat[data-skin=tg] .typ{background:#fff;border-bottom-left-radius:4px}
+.chat[data-skin=tg] .m.o{background:#effdde;border-bottom-right-radius:4px}
+.chat[data-skin=tg] .m.o time{color:#4fae4e;opacity:.9}
+.chat[data-skin=tg] .m.o time:after{content:" ✓✓"}
+.chat[data-skin=tg] .day{background:rgba(0,0,0,.18);color:#fff}
+.chat[data-skin=tg] .ci{background:#fff}.chat[data-skin=tg] .ci i{background:#3c8be0}
+.chat[data-skin=tg] .typ{border-radius:16px}
+/* brand skin (hero + try) */
+.chat[data-skin=br]{background:#0f0f17;color:#f1eee6}
+.chat[data-skin=br] .ch{border-color:rgba(255,255,255,.08)}
+.chat[data-skin=br] .m.i,.chat[data-skin=br] .typ{background:#1d1d29;border-bottom-left-radius:6px}
+.chat[data-skin=br] .m.o{background:#c8ff3e;color:#0a0a10;border-bottom-right-radius:6px}
+.chat[data-skin=br] .day{color:#777}
+.chat[data-skin=br] .slots span.on{background:#c8ff3e;color:#111;border-color:#c8ff3e}
+.chat[data-skin=br] .pay button{background:#8f7cff}
+.chat[data-skin=br] .pay button.ok{background:#1faa59}
+.chat[data-skin=br] .ci span{background:#1d1d29}.chat[data-skin=br] .ci i{background:#c8ff3e}
+.chat[data-skin=br] .lnk{color:#c8ff3e}
+/* sections */
+section{position:relative}
+.sx{padding:110px 0}
+.sh{max-width:720px;margin-bottom:48px}
+h2{font:600 clamp(30px,4.4vw,56px)/1.06 var(--d);letter-spacing:-.04em;margin:14px 0 16px}
+.sh p{color:var(--mute);font-size:17px}
+.num{font:600 12px var(--b);letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.num b{color:var(--acc)}
+/* scenarios */
+.hw>*,.scn>*,.try>*{min-width:0}
+.scn{display:grid;grid-template-columns:1fr 360px;gap:56px;align-items:start}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{display:flex;align-items:center;gap:10px;padding:10px 18px 10px 10px;border-radius:99px;border:1px solid var(--line);background:var(--card);font-weight:700;font-size:15px;transition:.25s}
+.chip i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06)}
+.chip i svg{width:17px;height:17px}
+.chip:hover{border-color:rgba(255,255,255,.25)}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip[aria-pressed=true] i{background:var(--acc);color:#0a0a10}
+.scard{margin-top:28px;border-radius:28px;overflow:hidden;border:1px solid var(--line);background:var(--card);display:grid;grid-template-columns:200px 1fr}
+.scard .ph{position:relative;min-height:100%;background:#222 center/cover}
+.scard .ph:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 40%,var(--card))}
+.scard .bd{padding:26px 26px 22px}
+.scard h3{font:600 20px var(--d);letter-spacing:-.02em}
+.scard .bd>p{color:var(--mute);font-size:14.5px;margin:6px 0 18px}
+.evh{display:flex;justify-content:space-between;align-items:center;font:700 12px var(--b);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:10px}
+.rep{display:inline-flex;gap:6px;align-items:center;font:700 13px var(--b);letter-spacing:0;text-transform:none;color:var(--ink);padding:6px 12px;border-radius:99px;border:1px solid var(--line)}
+.rep:hover{background:rgba(255,255,255,.07)}
+.rep svg{width:14px;height:14px}
+.log{list-style:none;display:grid;gap:8px;min-height:180px}
+.log li{display:flex;gap:10px;align-items:center;font-size:14.5px;font-weight:600;animation:pop .45s both}
+.log li i{width:24px;height:24px;border-radius:8px;background:rgba(200,255,62,.14);color:var(--acc);display:grid;place-items:center;flex:none}
+.log li i svg{width:13px;height:13px}
+.log li small{margin-left:auto;color:var(--mute);font-weight:500;font-size:12px;font-variant-numeric:tabular-nums}
+.skins{display:flex;gap:4px;padding:4px;border-radius:99px;background:var(--card);border:1px solid var(--line);margin:0 auto 18px;width:max-content;max-width:100%}
+.skins button{padding:8px 14px;border-radius:99px;font:700 13px var(--b);color:var(--mute);display:flex;gap:7px;align-items:center}
+.skins button i{width:9px;height:9px;border-radius:50%}
+.skins button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.pcol{position:sticky;top:90px}
+/* try */
+.try{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.tbox{border-radius:28px;overflow:hidden;border:1px solid var(--line);height:520px;box-shadow:0 40px 80px -40px rgba(143,124,255,.45)}
+.tbox .chat .ch{padding-top:14px}
+.tform{display:flex;gap:8px;padding:10px;border-top:1px solid rgba(255,255,255,.08);flex:none}
+.tform input{flex:1;min-width:0;background:#1d1d29;border:1px solid transparent;border-radius:99px;padding:12px 16px;color:#fff;font:500 15px var(--b)}
+.tform input:focus{outline:none;border-color:var(--acc)}
+.tform button{width:46px;height:46px;border-radius:50%;background:var(--acc);color:#0a0a10;display:grid;place-items:center;flex:none}
+.tform button svg{width:18px;height:18px}
+.sugs{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.sugs button{padding:9px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);font-weight:600;font-size:14px}
+.sugs button:hover{border-color:var(--acc);color:var(--acc)}
+.note{margin-top:4px;font-size:11.5px;color:#a9a6b8;align-self:center;text-align:center;max-width:92%;animation:pop .4s both}
+/* app */
+.appsec{overflow:hidden;background:radial-gradient(60% 50% at 50% 60%,rgba(143,124,255,.18),transparent 70%)}
+.apps{display:flex;justify-content:center;gap:36px;align-items:center;perspective:1400px}
+.apps .phone{width:270px;height:560px;border-radius:44px;transition:transform .2s linear;will-change:transform}
+.apps .phone .scr{border-radius:35px}
+.apps .phone:nth-child(2){transform:translateY(-30px)}
+.ap{height:100%;background:#faf7f2;color:#1a1714;font:500 13px/1.4 var(--b);display:flex;flex-direction:column}
+.ap h4{font:600 17px var(--d);letter-spacing:-.02em}
+.ap .hi{height:200px;background:#c9b8a8 center/cover;position:relative;padding:40px 18px 16px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff}
+.ap .hi:before{content:"";position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(0,0,0,.55))}
+.ap .hi>*{position:relative}
+.ap .pad{padding:16px;display:flex;flex-direction:column;gap:12px;flex:1}
+.nx{background:#1a1714;color:#fff;border-radius:18px;padding:14px}
+.nx small{opacity:.6;font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+.nx b{display:block;font-size:15px;margin-top:3px}
+.qk{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.qk div{background:#fff;border-radius:14px;padding:12px 6px;text-align:center;font-weight:700;font-size:11.5px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.qk div i{display:block;width:26px;height:26px;margin:0 auto 6px;border-radius:9px;background:#efe6da}
+.qk div:nth-child(1) i{background:#c8ff3e}.qk div:nth-child(2) i{background:#ffd7c7}.qk div:nth-child(3) i{background:#ddd6ff}
+.tabb{display:flex;justify-content:space-around;padding:12px 10px 18px;border-top:1px solid #eee;background:#fff}
+.tabb i{width:22px;height:22px;border-radius:7px;background:#e7e1d9}.tabb i:first-child{background:#1a1714}
+.ap .tt{padding:46px 16px 0}
+.wk{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:14px}
+.wk div{background:#fff;border-radius:12px;text-align:center;padding:8px 0;font-size:11px;font-weight:600;color:#8a8178}
+.wk div b{display:block;font-size:16px;color:#1a1714}
+.wk div.on{background:#1a1714;color:#bbb}.wk div.on b{color:#fff}
+.tm{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tm span{background:#fff;border-radius:10px;padding:9px 0;text-align:center;font-weight:700;font-size:12.5px}
+.tm span.x{opacity:.35;text-decoration:line-through}
+.tm span.on{background:#c8ff3e}
+.ms{display:flex;gap:10px;align-items:center;background:#fff;border-radius:14px;padding:10px}
+.ms i{width:36px;height:36px;border-radius:50%;background:#efe6da center/cover;flex:none}
+.ms small{display:block;color:#8a8178;font-size:11px}
+.cta2{margin-top:auto;background:#1a1714;color:#fff;border-radius:14px;padding:13px;text-align:center;font-weight:700}
+.ring{width:150px;height:150px;margin:14px auto 4px;border-radius:50%;background:conic-gradient(#8f7cff 0 300deg,#e7e1d9 0);display:grid;place-items:center;position:relative}
+.ring:after{content:"";position:absolute;inset:12px;border-radius:50%;background:#faf7f2}
+.ring div{position:relative;z-index:1;text-align:center}
+.ring b{display:block;font:600 30px var(--d);letter-spacing:-.04em}
+.ring small{font-size:11px;color:#8a8178}
+.loy{background:linear-gradient(135deg,#1a1714,#3a2f55);color:#fff;border-radius:18px;padding:14px;display:flex;justify-content:space-between;align-items:center}
+.loy small{opacity:.6;font-size:11px}
+.rw{display:flex;justify-content:space-between;background:#fff;border-radius:12px;padding:10px 12px;font-weight:600;font-size:12.5px}
+.rw b{color:#8f7cff}
+.alab{display:flex;justify-content:center;gap:36px;margin-top:26px}
+.alab span{width:270px;text-align:center;color:var(--mute);font-weight:600;font-size:14px}
+/* timeline */
+.tl{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.tl:before{content:"";position:absolute;left:0;right:0;top:27px;height:2px;background:var(--line)}
+.tl .fill{position:absolute;left:0;top:27px;height:2px;width:100%;background:linear-gradient(90deg,var(--acc),var(--vio));transform-origin:left;transform:scaleX(0);transition:transform 1.8s cubic-bezier(.6,0,.2,1)}
+.tl.in .fill{transform:scaleX(1)}
+.st{position:relative;opacity:0;transform:translateY(24px);transition:.7s cubic-bezier(.2,.8,.2,1)}
+.tl.in .st{opacity:1;transform:none}
+.tl.in .st:nth-child(3){transition-delay:.35s}.tl.in .st:nth-child(4){transition-delay:.7s}.tl.in .st:nth-child(5){transition-delay:1.05s}
+.st .dt{width:56px;height:56px;border-radius:18px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;color:var(--acc);position:relative}
+.st .dt svg{width:22px;height:22px}
+.st .wh{margin-top:20px;font:700 12px var(--b);letter-spacing:.12em;text-transform:uppercase;color:var(--acc)}
+.st h3{font:600 19px var(--d);letter-spacing:-.02em;margin:6px 0 14px}
+.st .bub{background:var(--card);border:1px solid var(--line);border-radius:18px 18px 18px 6px;padding:12px 14px;font-size:14px;color:#dcd9cf}
+.loopn{margin-top:28px;display:inline-flex;align-items:center;gap:10px;color:var(--mute);font-weight:600;font-size:14.5px}
+.loopn svg{width:18px;height:18px;color:var(--acc)}
+/* plans */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pl{border:1px solid var(--line);background:var(--card);border-radius:28px;padding:30px 28px;display:flex;flex-direction:column;gap:6px;transition:transform .3s,border-color .3s}
+.pl:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.22)}
+.pl .tag{font:700 12px var(--b);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.pl h3{font:600 30px var(--d);letter-spacing:-.04em}
+.pl p{color:var(--mute);font-size:15px;margin-bottom:12px}
+.pl ul{list-style:none;display:grid;gap:9px;font-size:14.5px;font-weight:600}
+.pl li{display:flex;gap:10px}
+.pl li:before{content:"";flex:none;width:18px;height:18px;margin-top:2px;border-radius:6px;background:rgba(200,255,62,.15) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c8ff3e' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
+.pl.hl{background:linear-gradient(160deg,#20202e,#16161f);border-color:rgba(200,255,62,.5);box-shadow:0 30px 70px -40px rgba(200,255,62,.5)}
+.pl.pro h3{background:linear-gradient(100deg,var(--acc),var(--vio));-webkit-background-clip:text;background-clip:text;color:transparent}
+.cta{margin-top:56px;border-radius:36px;padding:64px 48px;text-align:center;position:relative;overflow:hidden;background:#13131c;border:1px solid var(--line)}
+.cta:before{content:"";position:absolute;inset:-40%;background:conic-gradient(from 0deg,transparent,rgba(200,255,62,.22),transparent 30%,rgba(143,124,255,.3),transparent 60%);animation:spin 14s linear infinite}
+.cta:after{content:"";position:absolute;inset:1px;border-radius:35px;background:#101018}
+.cta>*{position:relative;z-index:1}
+.cta h2{max-width:780px;margin-inline:auto}
+.cta p{color:var(--mute);max-width:560px;margin:0 auto}
+.cta .btns{justify-content:center}
+@keyframes spin{to{transform:rotate(1turn)}}
+footer{border-top:1px solid var(--line);padding:34px 0 46px;color:var(--mute);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+footer a{color:var(--ink);font-weight:700}
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s,transform .9s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+/* responsive */
+@media (max-width:1000px){
+ .hw,.scn,.try{grid-template-columns:1fr}
+ .hero{padding-top:44px}
+ .pcol{position:static}
+ .scn{gap:24px}.scn>div:first-child{display:contents}.scn .sh{order:1;margin-bottom:0}.scn .chips{order:2;min-width:0}.scn .pcol{order:3}.scn .scard{order:4;margin-top:0}
+ .facts{grid-template-columns:repeat(2,1fr);margin-top:40px}
+ .tl{grid-template-columns:1fr 1fr;row-gap:44px}
+ .tl:before,.tl .fill{display:none}
+ .plans{grid-template-columns:1fr}
+ .apps .phone:nth-child(3){display:none}.alab span:nth-child(3){display:none}
+}
+@media (max-width:640px){
+ .sx{padding:76px 0}
+ .phone{width:288px;height:590px}
+ .bdg{font-size:12px;padding:8px 11px 8px 8px}.bdg i{width:26px;height:26px}
+ .bdg.b1{top:2%}.bdg.b2{top:auto;bottom:2%;right:0}.bdg.b3{display:none}
+ .scard{grid-template-columns:1fr}.scard .ph{height:120px}.scard .ph:after{background:linear-gradient(transparent 30%,var(--card))}
+ .scard .bd{padding:18px}
+ .chips{flex-wrap:nowrap;overflow-x:auto;margin-inline:-16px;padding:2px 16px 8px;scrollbar-width:none}
+ .chips::-webkit-scrollbar{display:none}
+ .chip{flex:none}
+ .apps{gap:16px;justify-content:flex-start;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-16px;padding:40px 16px 10px;scrollbar-width:none}
+ .apps::-webkit-scrollbar{display:none}
+ .apps .phone{width:250px;height:520px;scroll-snap-align:center}
+ .apps .phone:nth-child(3){display:block}
+ .apps .phone:nth-child(2){transform:none}
+ .alab{display:none}
+ .tl{grid-template-columns:1fr;row-gap:28px}.st{display:grid;grid-template-columns:44px 1fr;column-gap:14px}.st .dt{grid-row:1/4;width:44px;height:44px;border-radius:14px}.st .wh{margin-top:0}.st h3{margin:2px 0 10px}
+ .tbox{height:480px}
+ .cta{padding:44px 20px;border-radius:28px}
+ .facts div{padding:16px}
+ .facts b{font-size:15px}
+ .strip{font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
+ *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+ .rv,.st{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="strip"><span data-i="strip"></span> · <a href="/?vax=demo-assistant" data-i="stripCta"></a></div>
+<header class="top"><div class="wrap">
+ <a class="logo" href="#top" aria-label="Lumo AI"><i></i>Lumo AI</a>
+ <nav class="langs" aria-label="Language"><a href="?lang=en" hreflang="en">en</a><a href="?lang=ru" hreflang="ru">ru</a><a href="?lang=ua" hreflang="uk">ua</a></nav>
+</div></header>
+
+<main id="top">
+<section class="hero">
+ <div class="mesh" aria-hidden="true"><b></b><b></b><b></b></div><div class="grain" aria-hidden="true"></div>
+ <div class="wrap hw">
+  <div>
+   <span class="kick" data-i="heroK"></span>
+   <h1 data-h="heroH"></h1>
+   <p class="lead" data-i="heroP"></p>
+   <div class="btns"><a class="btn pri" href="#scenarios" data-i="heroB1"></a><a class="btn sec" href="#try" data-i="heroB2"></a></div>
+  </div>
+  <div class="stage" aria-hidden="true">
+   <div class="phone"><div class="scr"><div class="chat" data-skin="br" id="heroChat"></div></div></div>
+   <div class="bdg b1"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></i><div><span data-i="bd1"></span><small data-i="bd1s"></small></div></div>
+   <div class="bdg b2"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></i><div><span data-i="bd2"></span><small data-i="bd2s"></small></div></div>
+   <div class="bdg b3"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></i><div><span data-i="bd3"></span><small data-i="bd3s"></small></div></div>
+  </div>
+ </div>
+ <div class="wrap"><div class="facts rv"><div><b data-i="f1"></b><span data-i="f1s"></span></div><div><b data-i="f2"></b><span data-i="f2s"></span></div><div><b data-i="f3"></b><span data-i="f3s"></span></div><div><b data-i="f4"></b><span data-i="f4s"></span></div></div></div>
+</section>
+
+<section class="sx" id="scenarios" aria-labelledby="scH">
+ <div class="wrap scn">
+  <div>
+   <div class="sh rv"><span class="num"><b>01</b> · <span data-i="scK"></span></span><h2 id="scH" data-h="scH"></h2><p data-i="scP"></p></div>
+   <div class="chips rv" id="chips" role="group"></div>
+   <div class="scard rv"><div class="ph" id="scPh"></div><div class="bd"><h3 id="scName"></h3><p id="scDesc"></p>
+    <div class="evh"><span data-i="evH"></span><button class="rep" id="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8M3 3v5h5"/></svg><span data-i="replay"></span></button></div>
+    <ul class="log" id="log" aria-live="polite"></ul></div></div>
+  </div>
+  <div class="pcol">
+   <div class="skins" role="group" aria-label="Messenger">
+    <button data-skin="ig" aria-pressed="true"><i style="background:linear-gradient(135deg,#7638fa,#d62976)"></i>Instagram</button>
+    <button data-skin="wa" aria-pressed="false"><i style="background:#25d366"></i>WhatsApp</button>
+    <button data-skin="tg" aria-pressed="false"><i style="background:#2aabee"></i>Telegram</button>
+   </div>
+   <div class="stage" style="padding:0"><div class="phone"><div class="scr"><div class="chat" data-skin="ig" id="scChat" aria-live="off"></div></div></div></div>
+  </div>
+ </div>
+</section>
+
+<section class="sx" id="try" aria-labelledby="tryH" style="padding-top:20px">
+ <div class="wrap try">
+  <div class="rv">
+   <span class="num"><b>02</b> · <span data-i="tryK"></span></span><h2 id="tryH" data-h="tryH"></h2><p class="lead" data-i="tryP"></p>
+   <div class="sugs" id="sugs"></div>
+  </div>
+  <div class="tbox rv">
+   <div class="chat" data-skin="br" id="tryChat">
+    <div class="ch"><span class="av" id="tryAv">L</span><div><b id="tryName"></b><small><span data-i="online"></span><span class="ai">AI</span></small></div></div>
+    <div class="cb" id="tryBody" aria-live="polite"></div>
+    <form class="tform" id="tryForm"><label class="sr" for="tryIn" data-i="tryPh"></label><input id="tryIn" autocomplete="off" maxlength="200"><button type="submit" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="sx appsec" aria-labelledby="appH">
+ <div class="wrap">
+  <div class="sh rv" style="margin-inline:auto;text-align:center"><span class="num"><b>03</b> · <span data-i="appK"></span></span><h2 id="appH" data-h="appH"></h2><p data-i="appP"></p></div>
+  <div class="apps" id="apps">
+   <div class="phone" data-d="-.06"><div class="scr"><div class="ap">
+    <div class="hi" style="background-image:url(/examples/img/au-hero.webp)"><small style="opacity:.8" data-i="a0"></small><h4 data-i="a1"></h4></div>
+    <div class="pad"><div class="nx"><small data-i="a2"></small><b data-i="a3"></b></div>
+     <div class="qk"><div><i></i><span data-i="a4"></span></div><div><i></i><span data-i="a5"></span></div><div><i></i><span data-i="a6"></span></div></div>
+     <div class="ms"><i style="background-image:url(/examples/img/au-facial.webp)"></i><div><b data-i="a7"></b><small data-i="a8"></small></div></div>
+    </div><div class="tabb"><i></i><i></i><i></i><i></i></div></div></div></div>
+   <div class="phone" data-d=".05"><div class="scr"><div class="ap">
+    <div class="tt"><h4 data-i="bk1"></h4><div class="wk" id="wk"></div></div>
+    <div class="pad"><small style="color:#8a8178;font-weight:700" data-i="bk2"></small>
+     <div class="tm"><span>10:00</span><span class="x">11:30</span><span>13:00</span><span class="on">14:30</span><span class="x">16:00</span><span>18:15</span></div>
+     <div class="ms"><i style="background-image:url(/examples/img/au-massage.webp)"></i><div><b data-i="bk3"></b><small data-i="bk4"></small></div></div>
+     <div class="cta2" data-i="bk5"></div></div></div></div></div>
+   <div class="phone" data-d="-.03"><div class="scr"><div class="ap">
+    <div class="tt"><h4 data-i="ly1"></h4></div>
+    <div class="ring"><div><b>840</b><small data-i="ly2"></small></div></div>
+    <div class="pad"><div class="loy"><div><small data-i="ly3"></small><br><b data-i="ly4"></b></div><b>Gold</b></div>
+     <div class="rw"><span data-i="ly5"></span><b>300</b></div><div class="rw"><span data-i="ly6"></span><b>1000</b></div></div></div></div></div>
+  </div>
+  <div class="alab"><span data-i="al1"></span><span data-i="al2"></span><span data-i="al3"></span></div>
+ </div>
+</section>
+
+<section class="sx" aria-labelledby="autoH">
+ <div class="wrap">
+  <div class="sh rv"><span class="num"><b>04</b> · <span data-i="auK"></span></span><h2 id="autoH" data-h="auH"></h2><p data-i="auP"></p></div>
+  <div class="tl" id="tl"><div class="fill"></div></div>
+  <p class="loopn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 013-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 01-3 3H3"/></svg><span data-i="auLoop"></span></p>
+ </div>
+</section>
+
+<section class="sx" id="plans" aria-labelledby="plH" style="padding-top:30px">
+ <div class="wrap">
+  <div class="sh rv"><span class="num"><b>05</b> · <span data-i="plK"></span></span><h2 id="plH" data-h="plH"></h2><p data-i="plP"></p></div>
+  <div class="plans" id="plans-list"></div>
+  <div class="cta rv"><h2 data-h="ctaH"></h2><p data-i="ctaP"></p><div class="btns"><a class="btn pri" href="/?vax=demo-assistant" data-i="ctaB"></a><a class="btn sec" href="/examples/" data-i="more"></a></div></div>
+ </div>
+</section>
+</main>
+
+<footer><div class="wrap"><span data-i="foot"></span><a href="/examples/" data-i="more"></a></div></footer>
+
+<script>
+const IC={
+beauty:'<path d="M12 3c-2 4-6 6-6 10a6 6 0 0012 0c0-4-4-6-6-10z"/>',
+food:'<path d="M4 3v8a3 3 0 006 0V3M7 3v18M17 3c-2 2-3 5-3 8h4v10"/>',
+shop:'<path d="M5 8h14l-1 12H6zM9 8a3 3 0 016 0"/>',
+coach:'<path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/>',
+me:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/>',
+check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+bell:'<path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4"/>',
+chat:'<path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/>',
+star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+repeat:'<path d="M17 2l4 4-4 4M3 11V9a3 3 0 013-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 01-3 3H3"/>'};
+const svg=(k,w)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w||2.2}" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
+const SC=[['beauty','beauty','au-hero.webp'],['food','food','food-hero.webp'],['shop','shop','os-hero.webp'],['coach','coach','coach-hero.webp'],['me','me','home-hero.webp']];
+
+const L={
+en:{
+strip:'Demo by Vaxo — the brand is fictional, the functions are real',stripCta:'Want this for you? →',
+heroK:'AI employee · 24/7',heroH:'An AI employee in <em>every chat</em>. And your own app.',
+heroP:'It replies in seconds in Instagram, WhatsApp, Telegram and on your site — books clients, takes orders, sends payment links and never forgets to follow up.',
+heroB1:'Watch it work',heroB2:'Try it yourself',
+bd1:'Booked · Fri 14:30',bd1s:'from Instagram DM',bd2:'+$43 order paid',bd2s:'WhatsApp, 23:48',bd3:'Replied in 2 s',bd3s:'while you were asleep',
+f1:'Seconds',f1s:'to answer, day or night',f2:'3 messengers + site',f2s:'one AI, one inbox',f3:'Books & sells',f3s:'calendar, orders, payments',f4:'Every lead saved',f4s:'goes to your CRM',
+scK:'Scenarios',scH:'Pick a business. <em>Watch the AI work.</em>',scP:'A real conversation flow — questions, booking, order, payment link. Switch the messenger: the same AI works everywhere.',
+evH:'What the AI did',replay:'Replay',online:'online',typing:'typing…',today:'Today',pay:'Pay',paid:'Paid ✓',msg:'Message…',
+tryK:'Try it',tryH:'Ask it <em>anything.</em>',tryP:'This mini-bot answers from the selected business\'s FAQ. Ask about prices, booking or delivery — or leave a phone number.',tryPh:'Type a message…',
+sugs:['How much is it?','Can I book?','Do you deliver?','Where are you?','Talk to a human'],
+appK:'Your app',appH:'Your own app. <em>Your brand.</em>',appP:'Clients book, pay and collect points in an app with your name and logo. The AI lives inside it too.',
+a0:'Lumo Beauty',a1:'Hi, Emma',a2:'Next visit',a3:'Fri · 14:30 · Gel manicure',a4:'Book',a5:'Points',a6:'Chat',a7:'New: glow facial',a8:'−15% for club members',
+bk1:'Book a visit',bk2:'FREE TIME · ANNA',bk3:'Gel manicure · 60 min',bk4:'Anna · $45',bk5:'Confirm 14:30',
+ly1:'Lumo Club',ly2:'points',ly3:'Your level',ly4:'160 to a free manicure',ly5:'Coffee & hand care',ly6:'Free manicure',
+al1:'Home',al2:'Booking',al3:'Loyalty points',
+auK:'Automations',auH:'It keeps selling <em>after the chat ends.</em>',auP:'Every client gets the right message at the right time — automatically, in the messenger they use.',
+tl:[['bell','1 day before','Reminder','Hi Emma! See you tomorrow at 14:30 with Anna. Reply 1 to confirm.'],['chat','2 hours after','Follow-up','How do you like your nails? Here are 3 tips to make gel last longer.'],['star','Day 3','Review request','Would you leave a quick review? It takes 20 seconds — here\'s the link.'],['repeat','Day 21','Repeat sale','Time for a refresh! Anna has Friday 14:30 free again — book it?']],
+auLoop:'…and the cycle repeats with every client.',
+plK:'Plans',plH:'Which plan <em>includes it</em>',plP:'Start small and grow. We set everything up — you approve and get clients.',
+plans:[['Care','AI in your site chat',['Answers FAQ 24/7','Collects leads to your CRM','Hands over to a human']],['Growth','AI in all messengers + booking',['Instagram, WhatsApp, Telegram, site','Booking, orders and payment links','Reminders and follow-ups']],['Pro','App under your brand',['Your own app with booking','Loyalty points and push messages','AI assistant inside the app']]],
+ctaH:'Describe your task — <em>we\'ll build your version.</em>',ctaP:'Websites, apps, bots, ads, automation — for businesses and for individuals. Vaxo and AI do any online task.',ctaB:'Describe your task',more:'More examples',
+foot:'Demo by Vaxo. “Lumo” is a fictional brand; the functions are real.',
+note:'Demo: nothing was sent. In your version this lead lands instantly in your CRM and Telegram.',noteL:'Want Vaxo to contact you? →',
+g:{hi:'Hi! I\'m the AI assistant of {b}. Ask me about prices, booking or delivery.',hours:'We\'re open daily 9:00–21:00, and I reply 24/7.',where:'We\'re at 12 Green Street, 2 min from the metro. I can send a map pin.',human:'Of course — I\'ve passed this chat to a manager, they\'ll reply here shortly.',fb:'Good question! I\'ll check with the team. Meanwhile I can tell you about prices, booking or delivery — or leave your phone and we\'ll call you.',contact:'Thank you! Got it: {c}. A manager will contact you shortly.'},
+sc:{
+beauty:{n:'Beauty salon',b:'Lumo Beauty',d:'Answers prices, picks a free slot, takes a deposit and sends a reminder.',
+s:[{u:'Hi! How much is a gel manicure?'},{a:'Hi! Gel manicure is $45, about 1 hour. Shall I book you in?',e:'Answered in 2 s'},{u:'Yes, Friday after 2pm?'},{a:'Friday with Anna is free at:',sl:['14:30','16:00','18:15'],p:0,e:'Checked Anna\'s calendar'},{u:'14:30 please'},{k:'Booked · Fri 14:30 · Anna',e:'Booked Fri 14:30'},{a:'To hold the slot there\'s a $10 deposit:'},{pay:'Deposit · Gel manicure',amt:'$10',e:'Sent $10 payment link'},{u:'Paid!'},{a:'Got it, thank you! I\'ll remind you on Thursday evening. See you Friday!',e:'Reminder set · Thu 18:00'}],
+f:{price:'Gel manicure $45, pedicure $55, brows $25. Want me to book you?',book:'Sure! Tomorrow is free at 11:00, 14:30 and 17:00. Which one suits you?',deliver:'We don\'t deliver, but I can send a gift certificate online in 1 minute.'}},
+food:{n:'Restaurant',b:'Osteria Lumo',d:'Builds the order from the menu, sends it to the kitchen and a payment link to the guest.',
+s:[{u:'Do you deliver to Oak Street?'},{a:'Yes! 30–40 min, free from $30. Today\'s special: truffle pasta, $18. Add it?',e:'Checked delivery zone'},{u:'2 pastas and a tiramisu'},{a:'Your order:\n2 × Truffle pasta — $36\nTiramisu — $7\nTotal: $43. Which house number?',e:'Built order from menu'},{u:'12, apt 5'},{k:'Order #2481 · $43 · ETA 19:40',e:'Sent order to the kitchen'},{pay:'Order #2481',amt:'$43',e:'Sent payment link'},{u:'Done 👍'},{a:'Paid, thanks! The courier is on the way — I\'ll text you when he\'s near.',e:'Courier tracking on'}],
+f:{price:'Pastas $14–18, pizzas from $12, desserts $7. Delivery is free from $30.',book:'I can book a table or take a delivery order. For how many people and what time?',deliver:'Yes! 30–40 min across the city, free from $30.'}},
+shop:{n:'Online store',b:'Lumo Candles',d:'Recommends products, creates the order, sends a payment link and tracking.',
+s:[{u:'Which candle is good for a bedroom?'},{a:'People love “Lavender Cashmere” for the bedroom — calm, 50 h burn, $29. There\'s also a set of 3 for $69.',e:'Recommended from catalog'},{u:'The set. Do you ship to Berlin?'},{a:'Yes: 3–5 days, $6. Total $75. Your name and address?'},{u:'Emma Klein, Torstr. 12'},{k:'Order #A-731 created',e:'Created order in the shop'},{pay:'Order #A-731',amt:'$75',e:'Sent payment link'},{u:'Paid'},{a:'Thank you, Emma! The tracking number will arrive right here once it ships.',e:'Tracking will be sent automatically'}],
+f:{price:'Candles $19–39, a set of 3 — $69.',book:'Tell me what you\'d like — I\'ll create the order and send a payment link.',deliver:'3–5 days across Europe, $6; free from $80.'}},
+coach:{n:'Fitness coach',b:'Coach Mira',d:'Qualifies the client, books a free call and sends a questionnaire.',
+s:[{u:'I want to lose 5 kg before summer. Where do I start?'},{a:'Great goal! Two quick questions: how many times a week can you train — and at home or in a gym?',e:'Started qualifying'},{u:'3 times, at home'},{a:'Then “Home · 12 weeks” fits: 3 workouts a week + meal guide, $39/month. First — a free 20-min call with Mira:',sl:['Mon 9:00','Tue 19:00','Wed 12:30'],p:1,e:'Matched the right program'},{u:'Tue 19:00'},{k:'Call booked · Tue 19:00',e:'Booked call in Mira\'s calendar'},{a:'Done! Here\'s a 2-minute questionnaire so Mira can prepare your plan:'},{pay:'Questionnaire · 6 questions',amt:'2 min',btn:'Open',e:'Sent questionnaire'}],
+f:{price:'Online plan $39/month, personal sessions $25, the first call is free.',book:'Free 20-min call with Mira: Mon 9:00, Tue 19:00 or Wed 12:30?',deliver:'Everything is online: app, videos and chat with the coach.'}},
+me:{n:'Personal assistant',b:'My Assistant',d:'For you personally: reminders, week plan, shopping list, gift ideas.',
+s:[{u:'Remind me to call mom tomorrow at 7pm'},{k:'Reminder · tomorrow 19:00 · Call mom',e:'Created a reminder'},{u:'What\'s on my week?'},{a:'Tue — dentist at 10:00\nWed — Max\'s birthday (gift?)\nFri — rent $650 due',e:'Read your calendar'},{u:'Shopping list for the weekend: pasta, tomatoes, wine for Max'},{k:'Shopping list · 3 items',e:'Saved shopping list'},{a:'Added. Want me to find a gift for Max under $40?'},{u:'Yes please'},{a:'3 ideas:\n1) Board game “Cascadia” — $35\n2) Coffee subscription — $30\n3) Leather notebook — $28\nPick one and I\'ll order it.',e:'Compared 3 gift ideas'}],
+f:{price:'I can compare prices for anything. What are we looking for?',book:'Tell me what and when — I\'ll add it to your calendar and remind you.',deliver:'I can order groceries or a gift with delivery. What do you need?',hours:'I work 24/7 — ask any time.',where:'Tell me where you\'re going — I\'ll build the route and remind you when to leave.'}}}
+},
+ru:{
+strip:'Демо от Vaxo — бренд вымышленный, функции настоящие',stripCta:'Хотите так же? →',
+heroK:'ИИ-сотрудник · 24/7',heroH:'ИИ-сотрудник <em>в каждом чате</em>. И своё приложение.',
+heroP:'Отвечает за секунды в Instagram, WhatsApp, Telegram и на сайте — записывает клиентов, принимает заказы, присылает ссылку на оплату и не забывает напомнить.',
+heroB1:'Посмотреть в деле',heroB2:'Попробовать самому',
+bd1:'Запись · пт 14:30',bd1s:'из директа Instagram',bd2:'+$43 заказ оплачен',bd2s:'WhatsApp, 23:48',bd3:'Ответ за 2 сек',bd3s:'пока вы спали',
+f1:'Секунды',f1s:'на ответ днём и ночью',f2:'3 мессенджера + сайт',f2s:'один ИИ, один ящик',f3:'Записывает и продаёт',f3s:'календарь, заказы, оплаты',f4:'Каждая заявка',f4s:'сохраняется в CRM',
+scK:'Сценарии',scH:'Выберите бизнес. <em>Смотрите, как работает ИИ.</em>',scP:'Настоящий ход разговора — вопросы, запись, заказ, ссылка на оплату. Переключите мессенджер: тот же ИИ работает везде.',
+evH:'Что сделал ИИ',replay:'Повторить',online:'в сети',typing:'печатает…',today:'Сегодня',pay:'Оплатить',paid:'Оплачено ✓',msg:'Сообщение…',
+tryK:'Попробуйте',tryH:'Спросите <em>что угодно.</em>',tryP:'Мини-бот отвечает по FAQ выбранного бизнеса. Спросите про цены, запись или доставку — или оставьте телефон.',tryPh:'Напишите сообщение…',
+sugs:['Сколько стоит?','Можно записаться?','Есть доставка?','Где вы находитесь?','Позовите человека'],
+appK:'Ваше приложение',appH:'Своё приложение. <em>Ваш бренд.</em>',appP:'Клиенты записываются, платят и копят баллы в приложении с вашим названием и логотипом. ИИ живёт и в нём.',
+a0:'Lumo Beauty',a1:'Привет, Эмма',a2:'Следующий визит',a3:'Пт · 14:30 · Маникюр',a4:'Запись',a5:'Баллы',a6:'Чат',a7:'Новинка: уход «сияние»',a8:'−15% для клуба',
+bk1:'Запись',bk2:'СВОБОДНО · АННА',bk3:'Маникюр с покрытием · 60 мин',bk4:'Анна · $45',bk5:'Записаться на 14:30',
+ly1:'Lumo Club',ly2:'баллов',ly3:'Ваш уровень',ly4:'ещё 160 до маникюра в подарок',ly5:'Кофе и уход для рук',ly6:'Маникюр в подарок',
+al1:'Главная',al2:'Запись',al3:'Бонусные баллы',
+auK:'Автоматизации',auH:'Продаёт <em>и после разговора.</em>',auP:'Каждый клиент получает нужное сообщение в нужный момент — сам, в том мессенджере, где ему удобно.',
+tl:[['bell','За день','Напоминание','Эмма, здравствуйте! Ждём вас завтра в 14:30 у Анны. Ответьте 1, чтобы подтвердить.'],['chat','Через 2 часа','Забота','Как вам маникюр? Вот 3 совета, чтобы покрытие держалось дольше.'],['star','3-й день','Просьба об отзыве','Оставите короткий отзыв? Это 20 секунд — вот ссылка.'],['repeat','21-й день','Повторная продажа','Пора обновить! У Анны снова свободна пятница 14:30 — записать?']],
+auLoop:'…и цикл повторяется с каждым клиентом.',
+plK:'Тарифы',plH:'В каком тарифе <em>это есть</em>',plP:'Начните с малого и растите. Мы всё настраиваем — вы одобряете и получаете клиентов.',
+plans:[['Care','ИИ в чате на сайте',['Отвечает на вопросы 24/7','Собирает заявки в CRM','Передаёт разговор человеку']],['Growth','ИИ во всех мессенджерах + запись',['Instagram, WhatsApp, Telegram, сайт','Запись, заказы и ссылки на оплату','Напоминания и повторные касания']],['Pro','Приложение под вашим брендом',['Своё приложение с записью','Бонусные баллы и push-сообщения','ИИ-помощник внутри приложения']]],
+ctaH:'Опишите задачу — <em>соберём вашу версию.</em>',ctaP:'Сайты, приложения, боты, реклама, автоматизация — для бизнеса и для частных людей. Vaxo и ИИ делают любую задачу в интернете.',ctaB:'Описать задачу',more:'Другие примеры',
+foot:'Демо от Vaxo. «Lumo» — вымышленный бренд, функции настоящие.',
+note:'Демо: ничего не отправлено. В вашей версии заявка сразу падает в CRM и Telegram.',noteL:'Хотите, чтобы Vaxo связался с вами? →',
+g:{hi:'Здравствуйте! Я ИИ-помощник {b}. Спросите про цены, запись или доставку.',hours:'Работаем каждый день 9:00–21:00, а я отвечаю круглосуточно.',where:'Мы на ул. Зелёной, 12, 2 минуты от метро. Могу прислать точку на карте.',human:'Конечно — передал чат менеджеру, он скоро ответит здесь.',fb:'Хороший вопрос! Уточню у команды. А пока могу рассказать про цены, запись или доставку — или оставьте телефон, и мы перезвоним.',contact:'Спасибо! Записал: {c}. Менеджер скоро с вами свяжется.'},
+sc:{
+beauty:{n:'Салон красоты',b:'Lumo Beauty',d:'Называет цены, подбирает свободное окно, берёт предоплату и напоминает о визите.',
+s:[{u:'Здравствуйте! Сколько стоит маникюр с гель-лаком?'},{a:'Здравствуйте! Маникюр с покрытием — $45, около часа. Записать вас?',e:'Ответил за 2 сек'},{u:'Да, в пятницу после 14?'},{a:'В пятницу у Анны свободно:',sl:['14:30','16:00','18:15'],p:0,e:'Проверил календарь Анны'},{u:'14:30'},{k:'Запись · пт 14:30 · Анна',e:'Записал на пт 14:30'},{a:'Чтобы закрепить время — предоплата $10:'},{pay:'Предоплата · Маникюр',amt:'$10',e:'Отправил ссылку на $10'},{u:'Оплатила!'},{a:'Получили, спасибо! Напомню в четверг вечером. До пятницы!',e:'Напоминание · чт 18:00'}],
+f:{price:'Маникюр с покрытием $45, педикюр $55, брови $25. Записать вас?',book:'Конечно! Завтра свободно в 11:00, 14:30 и 17:00. Какое время удобно?',deliver:'Доставки нет, но могу за минуту отправить подарочный сертификат онлайн.'}},
+food:{n:'Ресторан',b:'Osteria Lumo',d:'Собирает заказ по меню, передаёт на кухню и отправляет гостю ссылку на оплату.',
+s:[{u:'Доставляете на ул. Дубовую?'},{a:'Да! 30–40 минут, бесплатно от $30. Сегодня советуем пасту с трюфелем, $18. Добавить?',e:'Проверил зону доставки'},{u:'2 пасты и тирамису'},{a:'Ваш заказ:\n2 × Паста с трюфелем — $36\nТирамису — $7\nИтого: $43. Какой номер дома?',e:'Собрал заказ по меню'},{u:'12, кв. 5'},{k:'Заказ №2481 · $43 · к 19:40',e:'Передал заказ на кухню'},{pay:'Заказ №2481',amt:'$43',e:'Отправил ссылку на оплату'},{u:'Готово 👍'},{a:'Оплата пришла, спасибо! Курьер уже едет — напишу, когда будет рядом.',e:'Включил трекинг курьера'}],
+f:{price:'Пасты $14–18, пицца от $12, десерты $7. Доставка бесплатно от $30.',book:'Могу забронировать стол или принять заказ на доставку. На сколько человек и во сколько?',deliver:'Да! 30–40 минут по городу, бесплатно от $30.'}},
+shop:{n:'Интернет-магазин',b:'Lumo Candles',d:'Советует товар, оформляет заказ, присылает оплату и трек-номер.',
+s:[{u:'Какая свеча подойдёт для спальни?'},{a:'Для спальни чаще берут «Лаванда и кашемир» — спокойный аромат, 50 часов горения, $29. Есть набор из 3 за $69.',e:'Подобрал товар из каталога'},{u:'Набор. Доставите в Киев?'},{a:'Да: 1–2 дня, $6. Итого $75. Ваше имя и адрес?'},{u:'Анна Коваль, ул. Саксаганского, 12'},{k:'Заказ №A-731 оформлен',e:'Создал заказ в магазине'},{pay:'Заказ №A-731',amt:'$75',e:'Отправил ссылку на оплату'},{u:'Оплатила'},{a:'Спасибо, Анна! Трек-номер придёт сюда же, как только отправим.',e:'Трек-номер отправится сам'}],
+f:{price:'Свечи $19–39, набор из 3 — $69.',book:'Напишите, что хотите, — оформлю заказ и пришлю ссылку на оплату.',deliver:'1–2 дня по Украине, 3–5 дней по Европе, $6; бесплатно от $80.'}},
+coach:{n:'Фитнес-тренер',b:'Coach Mira',d:'Выясняет цель клиента, записывает на бесплатный созвон и отправляет анкету.',
+s:[{u:'Хочу сбросить 5 кг к лету. С чего начать?'},{a:'Отличная цель! Два вопроса: сколько раз в неделю можете тренироваться — дома или в зале?',e:'Начал выяснять цель'},{u:'3 раза, дома'},{a:'Тогда подойдёт «Дома · 12 недель»: 3 тренировки в неделю + питание, $39/мес. Сначала — бесплатный созвон с Мирой на 20 минут:',sl:['пн 9:00','вт 19:00','ср 12:30'],p:1,e:'Подобрал программу'},{u:'вт 19:00'},{k:'Созвон · вт 19:00',e:'Записал в календарь Миры'},{a:'Готово! Вот анкета на 2 минуты, чтобы Мира подготовила план:'},{pay:'Анкета · 6 вопросов',amt:'2 мин',btn:'Открыть',e:'Отправил анкету'}],
+f:{price:'Онлайн-план $39/мес, персональные тренировки $25, первый созвон бесплатно.',book:'Бесплатный созвон с Мирой: пн 9:00, вт 19:00 или ср 12:30?',deliver:'Всё онлайн: приложение, видео и чат с тренером.'}},
+me:{n:'Личный помощник',b:'Мой помощник',d:'Для вас лично: напоминания, план недели, список покупок, идеи подарков.',
+s:[{u:'Напомни завтра в 19:00 позвонить маме'},{k:'Напоминание · завтра 19:00 · Позвонить маме',e:'Создал напоминание'},{u:'Что у меня на неделе?'},{a:'Вт — стоматолог в 10:00\nСр — день рождения Макса (подарок?)\nПт — оплата аренды $650',e:'Посмотрел календарь'},{u:'Список покупок на выходные: паста, помидоры, вино для Макса'},{k:'Список покупок · 3 пункта',e:'Сохранил список'},{a:'Добавил. Подобрать подарок Максу до $40?'},{u:'Да, давай'},{a:'3 идеи:\n1) Настолка «Cascadia» — $35\n2) Подписка на кофе — $30\n3) Кожаный блокнот — $28\nВыберите — закажу.',e:'Сравнил 3 подарка'}],
+f:{price:'Могу сравнить цены на что угодно. Что ищем?',book:'Скажите, что и когда, — внесу в календарь и напомню.',deliver:'Могу заказать продукты или подарок с доставкой. Что нужно?',hours:'Я на связи круглосуточно — пишите когда угодно.',where:'Скажите, куда едете, — построю маршрут и напомню, когда выходить.'}}}
+},
+ua:{
+strip:'Демо від Vaxo — бренд вигаданий, функції справжні',stripCta:'Хочете так само? →',
+heroK:'ШІ-працівник · 24/7',heroH:'ШІ-працівник <em>у кожному чаті</em>. І власний застосунок.',
+heroP:'Відповідає за секунди в Instagram, WhatsApp, Telegram і на сайті — записує клієнтів, приймає замовлення, надсилає посилання на оплату й не забуває нагадати.',
+heroB1:'Подивитися в дії',heroB2:'Спробувати самому',
+bd1:'Запис · пт 14:30',bd1s:'з директу Instagram',bd2:'+$43 замовлення сплачено',bd2s:'WhatsApp, 23:48',bd3:'Відповідь за 2 с',bd3s:'поки ви спали',
+f1:'Секунди',f1s:'на відповідь удень і вночі',f2:'3 месенджери + сайт',f2s:'один ШІ, одна скринька',f3:'Записує і продає',f3s:'календар, замовлення, оплати',f4:'Кожна заявка',f4s:'зберігається в CRM',
+scK:'Сценарії',scH:'Оберіть бізнес. <em>Дивіться, як працює ШІ.</em>',scP:'Справжній хід розмови — питання, запис, замовлення, посилання на оплату. Перемкніть месенджер: той самий ШІ працює всюди.',
+evH:'Що зробив ШІ',replay:'Повторити',online:'в мережі',typing:'друкує…',today:'Сьогодні',pay:'Сплатити',paid:'Сплачено ✓',msg:'Повідомлення…',
+tryK:'Спробуйте',tryH:'Запитайте <em>що завгодно.</em>',tryP:'Міні-бот відповідає за FAQ обраного бізнесу. Запитайте про ціни, запис чи доставку — або залиште телефон.',tryPh:'Напишіть повідомлення…',
+sugs:['Скільки коштує?','Можна записатися?','Є доставка?','Де ви знаходитесь?','Покличте людину'],
+appK:'Ваш застосунок',appH:'Власний застосунок. <em>Ваш бренд.</em>',appP:'Клієнти записуються, платять і збирають бали в застосунку з вашою назвою та логотипом. ШІ живе і в ньому.',
+a0:'Lumo Beauty',a1:'Привіт, Еммо',a2:'Наступний візит',a3:'Пт · 14:30 · Манікюр',a4:'Запис',a5:'Бали',a6:'Чат',a7:'Новинка: догляд «сяйво»',a8:'−15% для клубу',
+bk1:'Запис',bk2:'ВІЛЬНО · АННА',bk3:'Манікюр з покриттям · 60 хв',bk4:'Анна · $45',bk5:'Записатися на 14:30',
+ly1:'Lumo Club',ly2:'балів',ly3:'Ваш рівень',ly4:'ще 160 до манікюру в подарунок',ly5:'Кава і догляд для рук',ly6:'Манікюр у подарунок',
+al1:'Головна',al2:'Запис',al3:'Бонусні бали',
+auK:'Автоматизації',auH:'Продає <em>і після розмови.</em>',auP:'Кожен клієнт отримує потрібне повідомлення в потрібний момент — автоматично, у месенджері, де йому зручно.',
+tl:[['bell','За день','Нагадування','Еммо, вітаю! Чекаємо вас завтра о 14:30 в Анни. Відповідайте 1, щоб підтвердити.'],['chat','Через 2 години','Турбота','Як вам манікюр? Ось 3 поради, щоб покриття трималося довше.'],['star','3-й день','Прохання про відгук','Залишите короткий відгук? Це 20 секунд — ось посилання.'],['repeat','21-й день','Повторний продаж','Час оновити! В Анни знову вільна пʼятниця 14:30 — записати?']],
+auLoop:'…і цикл повторюється з кожним клієнтом.',
+plK:'Тарифи',plH:'У якому тарифі <em>це є</em>',plP:'Почніть з малого й ростіть. Ми все налаштовуємо — ви погоджуєте й отримуєте клієнтів.',
+plans:[['Care','ШІ в чаті на сайті',['Відповідає на питання 24/7','Збирає заявки в CRM','Передає розмову людині']],['Growth','ШІ в усіх месенджерах + запис',['Instagram, WhatsApp, Telegram, сайт','Запис, замовлення й посилання на оплату','Нагадування й повторні дотики']],['Pro','Застосунок під вашим брендом',['Власний застосунок із записом','Бонусні бали та push-повідомлення','ШІ-помічник усередині застосунку']]],
+ctaH:'Опишіть задачу — <em>зберемо вашу версію.</em>',ctaP:'Сайти, застосунки, боти, реклама, автоматизація — для бізнесу й для приватних людей. Vaxo і ШІ роблять будь-яку задачу в інтернеті.',ctaB:'Описати задачу',more:'Інші приклади',
+foot:'Демо від Vaxo. «Lumo» — вигаданий бренд, функції справжні.',
+note:'Демо: нічого не надіслано. У вашій версії заявка одразу потрапляє в CRM і Telegram.',noteL:'Хочете, щоб Vaxo звʼязався з вами? →',
+g:{hi:'Вітаю! Я ШІ-помічник {b}. Запитайте про ціни, запис чи доставку.',hours:'Працюємо щодня 9:00–21:00, а я відповідаю цілодобово.',where:'Ми на вул. Зеленій, 12, 2 хвилини від метро. Можу надіслати точку на мапі.',human:'Звісно — передав чат менеджеру, він скоро відповість тут.',fb:'Гарне питання! Уточню в команди. А поки можу розповісти про ціни, запис чи доставку — або залиште телефон, і ми передзвонимо.',contact:'Дякую! Записав: {c}. Менеджер незабаром звʼяжеться з вами.'},
+sc:{
+beauty:{n:'Салон краси',b:'Lumo Beauty',d:'Називає ціни, підбирає вільне вікно, бере передоплату й нагадує про візит.',
+s:[{u:'Добрий день! Скільки коштує манікюр з гель-лаком?'},{a:'Вітаю! Манікюр з покриттям — $45, близько години. Записати вас?',e:'Відповів за 2 с'},{u:'Так, у пʼятницю після 14?'},{a:'У пʼятницю в Анни вільно:',sl:['14:30','16:00','18:15'],p:0,e:'Перевірив календар Анни'},{u:'14:30'},{k:'Запис · пт 14:30 · Анна',e:'Записав на пт 14:30'},{a:'Щоб закріпити час — передоплата $10:'},{pay:'Передоплата · Манікюр',amt:'$10',e:'Надіслав посилання на $10'},{u:'Сплатила!'},{a:'Отримали, дякую! Нагадаю в четвер увечері. До пʼятниці!',e:'Нагадування · чт 18:00'}],
+f:{price:'Манікюр з покриттям $45, педикюр $55, брови $25. Записати вас?',book:'Звісно! Завтра вільно об 11:00, 14:30 і 17:00. Який час зручний?',deliver:'Доставки немає, але можу за хвилину надіслати подарунковий сертифікат онлайн.'}},
+food:{n:'Ресторан',b:'Osteria Lumo',d:'Збирає замовлення з меню, передає на кухню й надсилає гостю посилання на оплату.',
+s:[{u:'Доставляєте на вул. Дубову?'},{a:'Так! 30–40 хвилин, безкоштовно від $30. Сьогодні радимо пасту з трюфелем, $18. Додати?',e:'Перевірив зону доставки'},{u:'2 пасти й тірамісу'},{a:'Ваше замовлення:\n2 × Паста з трюфелем — $36\nТірамісу — $7\nРазом: $43. Який номер будинку?',e:'Зібрав замовлення з меню'},{u:'12, кв. 5'},{k:'Замовлення №2481 · $43 · до 19:40',e:'Передав замовлення на кухню'},{pay:'Замовлення №2481',amt:'$43',e:'Надіслав посилання на оплату'},{u:'Готово 👍'},{a:'Оплата надійшла, дякую! Курʼєр уже їде — напишу, коли буде поруч.',e:'Увімкнув трекінг курʼєра'}],
+f:{price:'Пасти $14–18, піца від $12, десерти $7. Доставка безкоштовно від $30.',book:'Можу забронювати столик або прийняти замовлення на доставку. На скільки людей і о котрій?',deliver:'Так! 30–40 хвилин містом, безкоштовно від $30.'}},
+shop:{n:'Інтернет-магазин',b:'Lumo Candles',d:'Радить товар, оформлює замовлення, надсилає оплату й трек-номер.',
+s:[{u:'Яка свічка підійде для спальні?'},{a:'Для спальні найчастіше беруть «Лаванда й кашемір» — спокійний аромат, 50 годин горіння, $29. Є набір із 3 за $69.',e:'Підібрав товар з каталогу'},{u:'Набір. Доставите в Київ?'},{a:'Так: 1–2 дні, $6. Разом $75. Ваше імʼя та адреса?'},{u:'Анна Коваль, вул. Саксаганського, 12'},{k:'Замовлення №A-731 оформлено',e:'Створив замовлення в магазині'},{pay:'Замовлення №A-731',amt:'$75',e:'Надіслав посилання на оплату'},{u:'Сплатила'},{a:'Дякую, Анно! Трек-номер прийде сюди ж, щойно відправимо.',e:'Трек-номер надішлеться сам'}],
+f:{price:'Свічки $19–39, набір із 3 — $69.',book:'Напишіть, що бажаєте, — оформлю замовлення й надішлю посилання на оплату.',deliver:'1–2 дні Україною, 3–5 днів Європою, $6; безкоштовно від $80.'}},
+coach:{n:'Фітнес-тренер',b:'Coach Mira',d:'Зʼясовує мету клієнта, записує на безкоштовний дзвінок і надсилає анкету.',
+s:[{u:'Хочу скинути 5 кг до літа. З чого почати?'},{a:'Чудова мета! Два питання: скільки разів на тиждень можете тренуватися — вдома чи в залі?',e:'Почав зʼясовувати мету'},{u:'3 рази, вдома'},{a:'Тоді підійде «Вдома · 12 тижнів»: 3 тренування на тиждень + харчування, $39/міс. Спершу — безкоштовний дзвінок з Мірою на 20 хвилин:',sl:['пн 9:00','вт 19:00','ср 12:30'],p:1,e:'Підібрав програму'},{u:'вт 19:00'},{k:'Дзвінок · вт 19:00',e:'Записав у календар Міри'},{a:'Готово! Ось анкета на 2 хвилини, щоб Міра підготувала план:'},{pay:'Анкета · 6 питань',amt:'2 хв',btn:'Відкрити',e:'Надіслав анкету'}],
+f:{price:'Онлайн-план $39/міс, персональні тренування $25, перший дзвінок безкоштовно.',book:'Безкоштовний дзвінок з Мірою: пн 9:00, вт 19:00 чи ср 12:30?',deliver:'Усе онлайн: застосунок, відео й чат із тренером.'}},
+me:{n:'Особистий помічник',b:'Мій помічник',d:'Для вас особисто: нагадування, план тижня, список покупок, ідеї подарунків.',
+s:[{u:'Нагадай завтра о 19:00 подзвонити мамі'},{k:'Нагадування · завтра 19:00 · Подзвонити мамі',e:'Створив нагадування'},{u:'Що в мене на тижні?'},{a:'Вт — стоматолог о 10:00\nСр — день народження Макса (подарунок?)\nПт — оплата оренди $650',e:'Переглянув календар'},{u:'Список покупок на вихідні: паста, помідори, вино для Макса'},{k:'Список покупок · 3 пункти',e:'Зберіг список'},{a:'Додав. Підібрати подарунок Максу до $40?'},{u:'Так, давай'},{a:'3 ідеї:\n1) Настолка «Cascadia» — $35\n2) Підписка на каву — $30\n3) Шкіряний блокнот — $28\nОберіть — замовлю.',e:'Порівняв 3 подарунки'}],
+f:{price:'Можу порівняти ціни на що завгодно. Що шукаємо?',book:'Скажіть, що і коли, — внесу в календар і нагадаю.',deliver:'Можу замовити продукти або подарунок з доставкою. Що потрібно?',hours:'Я на звʼязку цілодобово — пишіть будь-коли.',where:'Скажіть, куди їдете, — побудую маршрут і нагадаю, коли виходити.'}}}
+}};
+
+const qs=new URLSearchParams(location.search);
+let lang=(qs.get('lang')||'en').toLowerCase();if(!L[lang])lang='en';
+const T=L[lang];
+document.documentElement.lang=lang==='ua'?'uk':lang;
+document.querySelectorAll('.langs a').forEach(a=>{if(a.getAttribute('href')==='?lang='+lang)a.setAttribute('aria-current','true')});
+document.querySelectorAll('[data-i]').forEach(e=>{const v=T[e.dataset.i];if(typeof v==='string')e.textContent=v});
+document.querySelectorAll('[data-h]').forEach(e=>e.innerHTML=T[e.dataset.h]);
+document.getElementById('tryIn').placeholder=T.tryPh;
+const ttl={en:'Lumo AI — an AI employee in every chat · Vaxo demo',ru:'Lumo AI — ИИ-сотрудник в каждом чате · демо Vaxo',ua:'Lumo AI — ШІ-працівник у кожному чаті · демо Vaxo'};document.title=ttl[lang];
+document.querySelector('meta[name=description]').content=T.heroP;
+
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep=ms=>new Promise(r=>setTimeout(r,RM?Math.min(ms,120):ms));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hm=m=>{const h=10+Math.floor(m/60),mm=m%60;return h+':'+String(mm).padStart(2,'0')};
+
+function shell(chat,name,ini){
+ chat.innerHTML=`<div class="ch"><span class="av">${ini}</span><div><b>${esc(name)}<span class="ai">AI</span></b><small>${T.online}</small></div></div><div class="cb"></div><div class="ci"><span>${T.msg}</span><i></i></div>`;
+ return chat.querySelector('.cb');
+}
+function scroll(b){b.scrollTop=b.scrollHeight}
+function bubble(b,side,html,t){const m=el('div','m '+side,html+(t?`<time>${t}</time>`:''));b.appendChild(m);scroll(b);return m}
+
+async function play(chat,sc,tok,log,loop){
+ const my=++tok.v;const live=()=>tok.v===my;
+ const b=shell(chat,sc.b,sc.b[0]);if(log)log.innerHTML='';
+ b.appendChild(el('div','day',T.today));
+ let min=2,sec=0;await sleep(500);
+ for(const s of sc.s){
+  if(!live())return;
+  if(s.u){await sleep(900);if(!live())return;min++;bubble(b,'o',esc(s.u),hm(min))}
+  else if(s.k){await sleep(500);if(!live())return;b.appendChild(el('div','sys',svg('check',3)+esc(s.k)));scroll(b)}
+  else{
+   const ty=el('div','m i typ','<i></i><i></i><i></i>');b.appendChild(ty);scroll(b);
+   await sleep(Math.min(1700,650+((s.a||'').length*14)));if(!live())return;ty.remove();
+   if(s.pay){const m=bubble(b,'i pay',`<div class="pt">${esc(s.pay)}</div><div class="pa">${esc(s.amt)}</div><button tabindex="-1">${s.btn||T.pay}</button>`);
+    if(!s.btn){await sleep(1300);if(!live())return;const bt=m.querySelector('button');bt.textContent=T.paid;bt.classList.add('ok')}}
+   else{const m=bubble(b,'i',esc(s.a),hm(min));
+    if(s.sl){const w=el('div','slots',s.sl.map(x=>`<span>${x}</span>`).join(''));m.insertBefore(w,m.querySelector('time'));scroll(b);await sleep(1000);if(!live())return;w.children[s.p].classList.add('on')}}
+  }
+  if(s.e&&log){sec+=s.u?0:2+Math.round(Math.random()*3);const li=el('li','',`<i>${svg('check',3)}</i><span>${esc(s.e)}</span><small>${hm(min)}</small>`);log.appendChild(li)}
+ }
+ if(loop){await sleep(4500);if(live())play(chat,sc,tok,log,loop)}
+}
+
+/* hero */
+const heroTok={v:0};
+play(document.getElementById('heroChat'),T.sc.beauty,heroTok,null,true);
+
+/* scenarios */
+let cur='beauty';const scTok={v:0};
+const chips=document.getElementById('chips'),scChat=document.getElementById('scChat'),log=document.getElementById('log');
+SC.forEach(([k,ic,img])=>{const c=el('button','chip',`<i>${svg(ic)}</i>${esc(T.sc[k].n)}`);c.dataset.k=k;c.setAttribute('aria-pressed',k===cur);c.onclick=()=>pick(k,true,k!==cur);chips.appendChild(c)});
+let started=false;
+function pick(k,run,rs){cur=k;const sc=T.sc[k];
+ chips.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.k===k));
+ document.getElementById('scPh').style.backgroundImage=`url(/examples/img/${SC.find(x=>x[0]===k)[2]})`;
+ document.getElementById('scName').textContent=sc.b;document.getElementById('scDesc').textContent=sc.d;
+ if(run){started=true;play(scChat,sc,scTok,log,false)}
+ if(rs)tryReset();
+}
+document.getElementById('replay').onclick=()=>play(scChat,T.sc[cur],scTok,log,false);
+document.querySelectorAll('.skins button').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.skins button').forEach(x=>x.setAttribute('aria-pressed',x===btn));scChat.dataset.skin=btn.dataset.skin});
+shell(scChat,T.sc.beauty.b,'L');
+
+/* try it */
+const tb=document.getElementById('tryBody'),tin=document.getElementById('tryIn');
+const KW={hi:['hi','hello','hey','привет','здравств','добрый','привіт','вітаю','добрий'],price:['price','cost','how much','₴','цен','стоит','стоим','сколько','прайс','цін','скільки','варт','коштує'],book:['book','appoint','reserve','slot','order','запис','заказ','брон','замов'],deliver:['deliver','shipping','ship','доставк','доставл','курьер','курʼєр'],hours:['hour','open','when','график','работаете','графік','працюєте','коли','когда'],where:['where','address','location','где','адрес','куда','де ви','адреса','знаход'],human:['human','manager','person','operator','человек','менеджер','оператор','людин']};
+function answer(q){
+ const sc=T.sc[cur],f=Object.assign({},T.g,sc.f),low=q.toLowerCase();
+ const em=q.match(/[^\s@]+@[^\s@]+\.[^\s@]{2,}/),ph=q.match(/\+?\d[\d\s().-]{6,}\d/);
+ if(em||(ph&&ph[0].replace(/\D/g,'').length>=9))return{t:f.contact.replace('{c}',(em||ph)[0].trim()),n:1};
+ for(const k of ['human','price','book','deliver','hours','where','hi'])if(KW[k].some(w=>k==='hi'?new RegExp('(^|\\s)'+w).test(low):low.includes(w)))return{t:f[k].replace('{b}',sc.b)};
+ return{t:f.fb};
+}
+let tBusy=false;
+async function ask(q){
+ if(!q.trim()||tBusy)return;tBusy=true;
+ const d=new Date(),t=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
+ bubble(tb,'o',esc(q),t);tin.value='';
+ await sleep(350);const ty=el('div','m i typ','<i></i><i></i><i></i>');tb.appendChild(ty);scroll(tb);
+ const r=answer(q);await sleep(Math.min(1500,600+r.t.length*10));ty.remove();
+ bubble(tb,'i',esc(r.t),t);
+ if(r.n){await sleep(400);tb.appendChild(el('div','note',`${esc(T.note)} <a class="lnk" href="/?vax=demo-assistant">${esc(T.noteL)}</a>`));scroll(tb)}
+ tBusy=false;
+}
+function tryReset(){const sc=T.sc[cur];document.getElementById('tryName').textContent=sc.b;document.getElementById('tryAv').textContent=sc.b[0];
+ tb.innerHTML='';tb.appendChild(el('div','day',T.today));bubble(tb,'i',esc(T.g.hi.replace('{b}',sc.b)))}
+document.getElementById('tryForm').onsubmit=e=>{e.preventDefault();ask(tin.value)};
+const sg=document.getElementById('sugs');T.sugs.forEach(s=>{const b=el('button','',esc(s));b.type='button';b.onclick=()=>ask(s);sg.appendChild(b)});
+pick('beauty',false,true);
+
+/* app week */
+const wkN={en:['Mon','Tue','Wed','Thu','Fri'],ru:['Пн','Вт','Ср','Чт','Пт'],ua:['Пн','Вт','Ср','Чт','Пт']}[lang];
+document.getElementById('wk').innerHTML=wkN.map((n,i)=>`<div class="${i===4?'on':''}">${n}<b>${10+i}</b></div>`).join('');
+
+/* timeline + plans */
+const tl=document.getElementById('tl');
+T.tl.forEach(([ic,w,h,m])=>tl.appendChild(el('div','st',`<div class="dt">${svg(ic)}</div><div class="wh">${esc(w)}</div><h3>${esc(h)}</h3><div class="bub">${esc(m)}</div>`)));
+const pls=document.getElementById('plans-list');
+T.plans.forEach(([n,d,li],i)=>pls.appendChild(el('div','pl rv'+(i===1?' hl':'')+(i===2?' pro':''),`<span class="tag">${i===0?'01':i===1?'02':'03'}</span><h3>${n}</h3><p>${esc(d)}</p><ul>${li.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`)));
+
+/* reveal */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.rv,#tl').forEach(x=>io.observe(x));
+const io2=new IntersectionObserver(es=>{if(es[0].isIntersecting&&!started){pick(cur,true);io2.disconnect()}},{threshold:.35});
+io2.observe(scChat);
+
+/* parallax */
+if(!RM){const ps=[...document.querySelectorAll('#apps .phone')],sec=document.getElementById('apps');let mx=0,raf=0;
+ const upd=()=>{raf=0;if(innerWidth<641){ps.forEach(p=>p.style.transform='');return}const r=sec.getBoundingClientRect(),c=(r.top+r.height/2-innerHeight/2);
+  ps.forEach((p,i)=>{const d=+p.dataset.d;p.style.transform=`translateY(${c*d+(i===1?-30:0)}px) rotateY(${mx*(i-1?8:5)}deg) rotateX(${-mx*2}deg)`})};
+ const q=()=>{if(!raf)raf=requestAnimationFrame(upd)};
+ addEventListener('scroll',q,{passive:true});addEventListener('resize',q);
+ sec.addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5);q()});sec.addEventListener('pointerleave',()=>{mx=0;q()});upd()}
+</script>
+</body>
+</html>

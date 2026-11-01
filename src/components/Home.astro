@@ -12,16 +12,16 @@ const { lang } = Astro.props;
 const t = getDict(lang);
 const P = (p: string) => (lang === 'en' ? p : `/${lang}${p}`);
 const ex = (slug: string) => `/examples/${slug}/?lang=${lang}`;
-const thumb = (slug: string) => (slug === 'coach' ? '/examples/thumbs/coach.jpg' : `/examples/thumbs/${slug}-${lang}.jpg`);
+const thumb = (slug: string) => `/examples/thumbs/${slug === 'eco-crm' ? 'eco-os' : slug}-${lang}.jpg`;
 
 const C = {
   en: {
-    eyebrow: 'Any task online — done for you',
-    h1: ['You describe it.', 'We and AI do it.'],
+    eyebrow: 'Websites · apps · marketing · AI — for anyone',
+    h1: ['Tell us what you need —', 'we’ll handle the rest.'],
     sub: 'A website, an app, a bot, ads, social media, automation — for a business or for you personally. Everything lives in one app where you see the progress live and can ask Vax anything, any time.',
     cta: 'Describe your task', see: 'See real examples',
     trust: ['Plan and price free, before you pay', 'Everything in your plan is included', 'Cancel any time'],
-    float: ['New request · Instagram', '“Cake for 10 people, Saturday?”', 'AI replied · 02:14 at night'],
+    scenes: [["I need a website for my coffee shop and Instagram ads", "Plan and price are ready: site in 3 days, ads from week one.", "Coffee shop · site + ads", ["Design", "Website", "Ads"], "🌐 Site is live · 📣 first requests came in"], ["Make me a portfolio site — I'm a photographer", "Done in 2 days. Want a booking button for shoots?", "Portfolio · personal", ["Style", "Gallery", "Booking"], "📸 Portfolio is live · 💬 AI answers clients"], ["A bot that books my clients in WhatsApp", "Connected. It answers 24/7 and books into your calendar.", "WhatsApp bot · beauty studio", ["Script", "Calendar", "Launch"], "🤖 Bot is live · 📅 bookings at night too"]], sceneLab: ["You", "Vax", "Your project"],
     getH: 'What you get', getSub: 'One subscription instead of five services and three hires — and anything beyond it on request.',
     get: [
       ['🌐', 'Your site or app', 'A one-page site, a full site with booking, a store or an app — built for you, included in the plan.'],
@@ -34,11 +34,11 @@ const C = {
     billH: 'The same work, the usual way', bill: [['An administrator who answers clients', 'from $3,300/mo'], ['A marketing agency: social media + ads', 'from $1,500/mo'], ['A website built by a studio', 'from $1,000 once'], ['A site builder + CRM you set up yourself', 'from $17/mo + your evenings']],
     billOld: 'Usually', billOldV: 'from $4,800/mo', billNew: 'With Vaxo', billNewV: 'from $39/mo', billNote: 'Typical US prices, 2026: administrator salary, small-agency retainers, studio website projects, Wix plans.',
     howH: 'How it works', how: [['Describe the task', 'In your own words — one line is enough. Vax asks 2–3 questions.'], ['Get the plan and price', 'Free and before any payment: what we do, how long, how much.'], ['Watch it happen', 'Progress in your app in real time. Ask Vax anything along the way. Done — and it keeps working for you.']],
-    demosH: 'See what we build', demosSub: 'Working examples you can click through. The brands are made up — the functions are real. Yours is built around your business and your wishes.',
-    demos: [['One-page site', 'Personal brand or service: who you are, prices, booking a call', 'coach'], ['Site with online booking', 'Clinic, salon, studio: time slots, reviews, client app', 'eco-clinic'], ['Online store', 'Catalog, cart, AI consultant, customer cabinet', 'eco-shop'], ['Business app (CRM)', 'Requests, chats, team, ads and AI reports on one screen', 'eco-crm']],
+    demosH: "See it for yourself", demosSub: "Working builds, not pictures. The brands are made up — everything else is real. We build yours the same way, or better.",
+    demos: [["A website that takes your breath away", "Motion, bold type, online orders and an AI barista — 2026 level", "flagship"], ["Marketing on autopilot", "Ad creatives, AI posts, a content calendar and a report on requests — every month", "marketing"], ["An AI employee in every chat", "Answers in Instagram, WhatsApp, Telegram, books and takes payment — try it yourself", "ai-assistant"], ["Your control app", "Requests, chats, team and AI reports on one screen", "eco-crm"]],
     open: 'Open →', allDemos: 'All examples',
     priceH: 'Plans', priceSub: 'Everything in a plan is included — the website too. You pay extra only for something custom. Every client gets their own setup: the functions follow your business.',
-    plans: [['Care', '$39', 'Start online', 'A one-page site or a connection to yours, AI in the site chat, every request in the app', 'coach'], ['Growth', '$129', 'Most popular', 'A full site with booking and payments, AI in all messengers, AI posts, team with roles', 'eco-clinic'], ['Pro', '$299', 'Everything done for you', 'A store or an app under your brand, we run your social media and ads, priority', 'eco-shop']],
+    plans: [['Care', '$39', 'Start online', 'A one-page site or a connection to yours, AI in the site chat, every request in the app', 'flagship'], ['Growth', '$129', 'Most popular', 'A full site with booking and payments, AI in all messengers, AI posts, team with roles', 'ai-assistant'], ['Pro', '$299', 'Everything done for you', 'A store or an app under your brand, we run your social media and ads, priority', 'marketing']],
     look: 'Looks like this',
     custom: ['Something of your own', 'A custom app, a bot, an integration, a game — for a business or a personal task. Vax names a fixed price upfront; you see the progress live in your cabinet, and the result connects to the platform. Already have a CRM? We connect it — your data stays in both places.', 'Describe the task'],
     mo: '/mo', priceNote: 'First month free on any plan · a year = 2 months free · change or cancel any time',
@@ -68,12 +68,12 @@ const C = {
     sticky: 'Describe your task',
   },
   ru: {
-    eyebrow: 'Любая задача онлайн — сделаем за вас',
-    h1: ['Вы описываете.', 'Мы и ИИ делаем.'],
+    eyebrow: 'Сайты · приложения · маркетинг · ИИ — для любого',
+    h1: ['Скажите, что нужно —', 'остальное сделаем мы.'],
     sub: 'Сайт, приложение, бот, реклама, соцсети, автоматизация — для бизнеса или для вас лично. Всё в одном приложении: вы видите прогресс в реальном времени и в любой момент можете спросить Vax.',
     cta: 'Описать задачу', see: 'Посмотреть примеры',
     trust: ['План и цена — бесплатно, до оплаты', 'Всё из тарифа уже включено', 'Отмена в любой момент'],
-    float: ['Новая заявка · Instagram', '«Торт на 10 человек к субботе?»', 'ИИ ответил · 02:14 ночи'],
+    scenes: [["Нужен сайт для кофейни и реклама в Instagram", "План и цена готовы: сайт за 3 дня, реклама — с первой недели.", "Кофейня · сайт + реклама", ["Дизайн", "Сайт", "Реклама"], "🌐 Сайт запущен · 📣 пришли первые заявки"], ["Сделайте мне сайт-портфолио — я фотограф", "Готово за 2 дня. Добавить кнопку записи на съёмку?", "Портфолио · личный проект", ["Стиль", "Галерея", "Запись"], "📸 Портфолио работает · 💬 ИИ отвечает клиентам"], ["Бот, который записывает клиентов в WhatsApp", "Подключили. Отвечает 24/7 и пишет в ваш календарь.", "Бот WhatsApp · студия красоты", ["Сценарий", "Календарь", "Запуск"], "🤖 Бот работает · 📅 записи даже ночью"]], sceneLab: ["Вы", "Vax", "Ваш проект"],
     getH: 'Что вы получаете', getSub: 'Одна подписка вместо пяти сервисов и трёх сотрудников — и всё, что сверх неё, по запросу.',
     get: [
       ['🌐', 'Сайт или приложение', 'Одностраничный сайт, полный сайт с записью, магазин или приложение — делаем за вас, входит в тариф.'],
@@ -86,11 +86,11 @@ const C = {
     billH: 'Та же работа — как обычно', bill: [['Администратор, который отвечает клиентам', 'от $3 300/мес'], ['Агентство: соцсети + реклама', 'от $1 500/мес'], ['Сайт у студии', 'от $1 000 разово'], ['Конструктор + CRM, которые настраиваете сами', 'от $17/мес + ваши вечера']],
     billOld: 'Обычно', billOldV: 'от $4 800/мес', billNew: 'С Vaxo', billNewV: 'от $39/мес', billNote: 'Типичные цены в США, 2026: зарплата администратора, абонентка небольшого агентства, сайт у студии, тарифы Wix.',
     howH: 'Как это работает', how: [['Опишите задачу', 'Своими словами — хватит одной строки. Vax задаст 2–3 вопроса.'], ['Получите план и цену', 'Бесплатно и до оплаты: что сделаем, за сколько дней, сколько стоит.'], ['Смотрите, как всё делается', 'Прогресс в вашем приложении в реальном времени. Спрашивайте Vax о чём угодно. Готово — и оно работает на вас дальше.']],
-    demosH: 'Посмотрите, что мы делаем', demosSub: 'Рабочие примеры — их можно открыть и потрогать. Бренды придуманы, функции настоящие. Ваш вариант соберём под ваш бизнес и ваши пожелания.',
-    demos: [['Одностраничный сайт', 'Личный бренд или услуга: кто вы, цены, запись на звонок', 'coach'], ['Сайт с онлайн-записью', 'Клиника, салон, студия: время записи, отзывы, приложение клиента', 'eco-clinic'], ['Интернет-магазин', 'Каталог, корзина, ИИ-консультант, кабинет покупателя', 'eco-shop'], ['Приложение для бизнеса (CRM)', 'Заявки, переписки, команда, реклама и отчёты ИИ на одном экране', 'eco-crm']],
+    demosH: "Откройте и попробуйте сами", demosSub: "Это рабочие примеры, а не картинки. Бренды придуманы — всё остальное настоящее. Под вашу задачу соберём так же — или лучше.",
+    demos: [["Сайт, от которого захватывает дух", "Движение, крупная типографика, заказ онлайн и ИИ-бариста — уровень 2026 года", "flagship"], ["Маркетинг на автопилоте", "Креативы, посты от ИИ, контент-план и отчёт по заявкам — каждый месяц", "marketing"], ["ИИ-сотрудник в каждом чате", "Отвечает в Instagram, WhatsApp, Telegram, записывает и принимает оплату — попробуйте сами", "ai-assistant"], ["Ваше приложение управления", "Заявки, переписки, команда и отчёты ИИ на одном экране", "eco-crm"]],
     open: 'Открыть →', allDemos: 'Все примеры',
     priceH: 'Тарифы', priceSub: 'Всё, что есть в тарифе, уже включено — и сайт тоже. Доплата — только за своё, нестандартное решение. Каждый клиент получает свою сборку: функции подстраиваются под ваш бизнес.',
-    plans: [['Care', '$39', 'Чтобы начать', 'Одностраничный сайт или подключение к вашему, ИИ в чате сайта, все заявки в приложении', 'coach'], ['Growth', '$129', 'Выбирают чаще всего', 'Полный сайт с записью и оплатой, ИИ во всех мессенджерах, посты от ИИ, команда с ролями', 'eco-clinic'], ['Pro', '$299', 'Всё делаем за вас', 'Магазин или приложение под вашим брендом, ведём соцсети и рекламу, приоритет', 'eco-shop']],
+    plans: [['Care', '$39', 'Чтобы начать', 'Одностраничный сайт или подключение к вашему, ИИ в чате сайта, все заявки в приложении', 'flagship'], ['Growth', '$129', 'Выбирают чаще всего', 'Полный сайт с записью и оплатой, ИИ во всех мессенджерах, посты от ИИ, команда с ролями', 'ai-assistant'], ['Pro', '$299', 'Всё делаем за вас', 'Магазин или приложение под вашим брендом, ведём соцсети и рекламу, приоритет', 'marketing']],
     look: 'Как это выглядит',
     custom: ['Своё решение', 'Своё приложение, бот, интеграция, игра — для бизнеса или личная задача. Vax заранее называет точную цену, прогресс вы видите в кабинете в реальном времени, а результат подключается к платформе. Есть своя CRM? Подключим — данные будут и у вас, и у нас.', 'Описать задачу'],
     mo: '/мес', priceNote: 'Первый месяц бесплатно на любом тарифе · год — 2 месяца в подарок · сменить или отменить можно в любой момент',
@@ -120,12 +120,12 @@ const C = {
     sticky: 'Описать задачу',
   },
   ua: {
-    eyebrow: 'Будь-яке завдання онлайн — зробимо за вас',
-    h1: ['Ви описуєте.', 'Ми і ШІ робимо.'],
+    eyebrow: 'Сайти · застосунки · маркетинг · ШІ — для будь-кого',
+    h1: ['Скажіть, що потрібно —', 'решту зробимо ми.'],
     sub: 'Сайт, застосунок, бот, реклама, соцмережі, автоматизація — для бізнесу чи для вас особисто. Усе в одному застосунку: ви бачите прогрес у реальному часі й будь-коли можете запитати Vax.',
     cta: 'Описати завдання', see: 'Подивитися приклади',
     trust: ['План і ціна — безкоштовно, до оплати', 'Усе з тарифу вже включено', 'Скасування будь-коли'],
-    float: ['Нова заявка · Instagram', '«Торт на 10 людей до суботи?»', 'ШІ відповів · 02:14 ночі'],
+    scenes: [["Потрібен сайт для кавʼярні й реклама в Instagram", "План і ціна готові: сайт за 3 дні, реклама — з першого тижня.", "Кавʼярня · сайт + реклама", ["Дизайн", "Сайт", "Реклама"], "🌐 Сайт запущено · 📣 прийшли перші заявки"], ["Зробіть мені сайт-портфоліо — я фотограф", "Готово за 2 дні. Додати кнопку запису на зйомку?", "Портфоліо · особистий проєкт", ["Стиль", "Галерея", "Запис"], "📸 Портфоліо працює · 💬 ШІ відповідає клієнтам"], ["Бот, який записує клієнтів у WhatsApp", "Підключили. Відповідає 24/7 і пише у ваш календар.", "Бот WhatsApp · студія краси", ["Сценарій", "Календар", "Запуск"], "🤖 Бот працює · 📅 записи навіть уночі"]], sceneLab: ["Ви", "Vax", "Ваш проєкт"],
     getH: 'Що ви отримуєте', getSub: 'Одна підписка замість пʼяти сервісів і трьох працівників — і все, що понад неї, на запит.',
     get: [
       ['🌐', 'Сайт або застосунок', 'Односторінковий сайт, повний сайт із записом, магазин чи застосунок — робимо за вас, входить у тариф.'],
@@ -138,11 +138,11 @@ const C = {
     billH: 'Та сама робота — як зазвичай', bill: [['Адміністратор, який відповідає клієнтам', 'від $3 300/міс'], ['Агенція: соцмережі + реклама', 'від $1 500/міс'], ['Сайт у студії', 'від $1 000 разово'], ['Конструктор + CRM, які налаштовуєте самі', 'від $17/міс + ваші вечори']],
     billOld: 'Зазвичай', billOldV: 'від $4 800/міс', billNew: 'З Vaxo', billNewV: 'від $39/міс', billNote: 'Типові ціни в США, 2026: зарплата адміністратора, абонплата невеликої агенції, сайт у студії, тарифи Wix.',
     howH: 'Як це працює', how: [['Опишіть завдання', 'Своїми словами — вистачить одного рядка. Vax поставить 2–3 запитання.'], ['Отримайте план і ціну', 'Безкоштовно і до оплати: що зробимо, за скільки днів, скільки коштує.'], ['Дивіться, як усе робиться', 'Прогрес у вашому застосунку в реальному часі. Питайте Vax про що завгодно. Готово — і воно працює на вас далі.']],
-    demosH: 'Подивіться, що ми робимо', demosSub: 'Робочі приклади — їх можна відкрити й помацати. Бренди вигадані, функції справжні. Ваш варіант зберемо під ваш бізнес і ваші побажання.',
-    demos: [['Односторінковий сайт', 'Особистий бренд чи послуга: хто ви, ціни, запис на дзвінок', 'coach'], ['Сайт з онлайн-записом', 'Клініка, салон, студія: час запису, відгуки, застосунок клієнта', 'eco-clinic'], ['Інтернет-магазин', 'Каталог, кошик, ШІ-консультант, кабінет покупця', 'eco-shop'], ['Застосунок для бізнесу (CRM)', 'Заявки, листування, команда, реклама і звіти ШІ на одному екрані', 'eco-crm']],
+    demosH: "Відкрийте й спробуйте самі", demosSub: "Це робочі приклади, а не картинки. Бренди вигадані — усе інше справжнє. Під ваше завдання зберемо так само — або краще.",
+    demos: [["Сайт, від якого перехоплює подих", "Рух, велика типографіка, замовлення онлайн і ШІ-бариста — рівень 2026 року", "flagship"], ["Маркетинг на автопілоті", "Креативи, пости від ШІ, контент-план і звіт по заявках — щомісяця", "marketing"], ["ШІ-працівник у кожному чаті", "Відповідає в Instagram, WhatsApp, Telegram, записує і приймає оплату — спробуйте самі", "ai-assistant"], ["Ваш застосунок керування", "Заявки, листування, команда і звіти ШІ на одному екрані", "eco-crm"]],
     open: 'Відкрити →', allDemos: 'Усі приклади',
     priceH: 'Тарифи', priceSub: 'Усе, що є в тарифі, уже включено — і сайт теж. Доплата — лише за своє, нестандартне рішення. Кожен клієнт отримує свою збірку: функції підлаштовуються під ваш бізнес.',
-    plans: [['Care', '$39', 'Щоб почати', 'Односторінковий сайт або підключення до вашого, ШІ в чаті сайту, усі заявки в застосунку', 'coach'], ['Growth', '$129', 'Обирають найчастіше', 'Повний сайт із записом і оплатою, ШІ в усіх месенджерах, пости від ШІ, команда з ролями', 'eco-clinic'], ['Pro', '$299', 'Усе робимо за вас', 'Магазин або застосунок під вашим брендом, ведемо соцмережі й рекламу, пріоритет', 'eco-shop']],
+    plans: [['Care', '$39', 'Щоб почати', 'Односторінковий сайт або підключення до вашого, ШІ в чаті сайту, усі заявки в застосунку', 'flagship'], ['Growth', '$129', 'Обирають найчастіше', 'Повний сайт із записом і оплатою, ШІ в усіх месенджерах, пости від ШІ, команда з ролями', 'ai-assistant'], ['Pro', '$299', 'Усе робимо за вас', 'Магазин або застосунок під вашим брендом, ведемо соцмережі й рекламу, пріоритет', 'marketing']],
     look: 'Як це виглядає',
     custom: ['Своє рішення', 'Власний застосунок, бот, інтеграція, гра — для бізнесу чи особисте завдання. Vax заздалегідь називає точну ціну, прогрес ви бачите в кабінеті в реальному часі, а результат підключається до платформи. Є своя CRM? Підключимо — дані будуть і у вас, і в нас.', 'Описати завдання'],
     mo: '/міс', priceNote: 'Перший місяць безкоштовно на будь-якому тарифі · рік — 2 місяці в подарунок · змінити чи скасувати можна будь-коли',
@@ -188,10 +188,16 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
         </div>
         <ul class="trust">{C.trust.map((x) => <li>✓ {x}</li>)}</ul>
       </div>
-      <div class="hero-art" aria-hidden="true">
-        <div class="screen"><img src={`/examples/thumbs/eco-os-${lang}.jpg`} alt="" width="960" height="600" fetchpriority="high" /></div>
-        <div class="bubble b1"><small>{C.float[0]}</small><b>{C.float[1]}</b></div>
-        <div class="bubble b2"><span class="dot"></span>{C.float[2]}</div>
+      <div class="stage" aria-hidden="true" data-stage data-scenes={JSON.stringify(C.scenes)}>
+        <div class="glow"></div>
+        <div class="msg me"><small>{C.sceneLab[0]}</small><span data-q>{C.scenes[0][0]}</span></div>
+        <div class="msg vax"><small>🦝 {C.sceneLab[1]}</small><span data-a>{C.scenes[0][1]}</span></div>
+        <div class="proj">
+          <div class="ph"><b>{C.sceneLab[2]}</b><small data-t>{C.scenes[0][2]}</small></div>
+          <div class="bar"><i data-bar></i></div>
+          <ol class="stp" data-steps>{C.scenes[0][3].map((x) => <li>{x}</li>)}</ol>
+        </div>
+        <div class="res" data-r>{C.scenes[0][4]}</div>
       </div>
     </div>
   </section>
@@ -232,7 +238,7 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
       <div class="demos">
         {C.demos.map(([name, what, slug]) => (
           <a class="demo" href={ex(slug)} target="_blank" rel="noopener">
-            <img src={thumb(slug === 'eco-crm' ? 'eco-os' : slug)} alt={name} width="480" height="300" loading="lazy" />
+            <img src={thumb(slug)} alt={name} width="480" height="300" loading="lazy" />
             <span class="dt"><b>{name}</b><small>{what}</small><i>{C.open}</i></span>
           </a>
         ))}
@@ -317,6 +323,24 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
 </main>
 
 <script>
+  // Hero: one task after another — request, Vax's plan, live progress, result (not a business screenshot).
+  const st = document.querySelector<HTMLElement>('[data-stage]');
+  if (st) {
+    const S = JSON.parse(st.dataset.scenes!) as [string, string, string, string[], string][];
+    const q = (k: string) => st.querySelector<HTMLElement>(`[data-${k}]`)!;
+    let i = 0;
+    const play = () => {
+      const [ask, ans, title, steps, res] = S[i % S.length];
+      st.classList.remove('on'); void st.offsetWidth;
+      q('q').textContent = ask; q('a').textContent = ans; q('t').textContent = title; q('r').textContent = res;
+      q('steps').innerHTML = steps.map((x) => `<li>${x}</li>`).join('');
+      st.classList.add('on');
+      i++;
+    };
+    play();
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(play, 9500);
+  }
+
   // Two steps, no "form" feeling: first the task (chips fill it), then only name + contact → the private project chat.
   const f = document.querySelector<HTMLFormElement>('[data-start]');
   if (f) {
@@ -380,15 +404,32 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
 
   .hero { padding: clamp(28px, 5vw, 64px) 0 0; }
   .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; }
-  .hero-art { position: relative; }
-  .screen { border-radius: 18px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.35); background: var(--surf); transform: perspective(1400px) rotateY(-6deg) rotateX(2deg); }
-  .screen img { display: block; width: 100%; height: auto; }
-  .bubble { position: absolute; background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.35); font-size: 14px; display: grid; gap: 2px; animation: float 6s ease-in-out infinite; }
-  .bubble small { color: var(--mut); font-size: 12px; }
-  .b1 { left: -18px; bottom: 18%; max-width: 250px; }
-  .b2 { right: -10px; top: 8%; display: flex; align-items: center; gap: 8px; animation-delay: -3s; font-weight: 600; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px color-mix(in srgb, #22c55e 25%, transparent); }
-  @keyframes float { 50% { transform: translateY(-8px); } }
+  .stage { position: relative; min-height: 440px; display: grid; gap: 12px; align-content: center; padding: 28px; border-radius: 28px; background: radial-gradient(120% 90% at 85% 10%, color-mix(in srgb, var(--acc) 38%, transparent), transparent 60%), radial-gradient(90% 80% at 0% 100%, color-mix(in srgb, #6d5dfc 30%, transparent), transparent 60%), var(--deep, #111); color: var(--deepInk, #fff); overflow: hidden; box-shadow: 0 50px 90px -40px rgba(0, 0, 0, 0.55); }
+  .glow { position: absolute; inset: -40% -20% auto auto; width: 70%; aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, var(--acc) 30%, transparent); filter: blur(60px); animation: drift 12s ease-in-out infinite; }
+  @keyframes drift { 50% { transform: translate(-30%, 20%); } }
+  .msg { position: relative; max-width: 82%; padding: 12px 16px; border-radius: 18px; display: grid; gap: 4px; font-size: 16px; line-height: 1.4; backdrop-filter: blur(8px); }
+  .msg small { font-size: 12px; opacity: 0.7; }
+  .msg.me { justify-self: end; background: color-mix(in srgb, #fff 92%, transparent); color: #111; border-bottom-right-radius: 6px; }
+  .msg.vax { justify-self: start; background: color-mix(in srgb, #fff 12%, transparent); border: 1px solid color-mix(in srgb, #fff 18%, transparent); border-bottom-left-radius: 6px; }
+  .proj { position: relative; padding: 16px; border-radius: 18px; background: color-mix(in srgb, #fff 8%, transparent); border: 1px solid color-mix(in srgb, #fff 16%, transparent); display: grid; gap: 10px; }
+  .ph { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .ph small { opacity: 0.75; }
+  .bar { height: 8px; border-radius: 99px; background: color-mix(in srgb, #fff 14%, transparent); overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 8%; border-radius: inherit; background: linear-gradient(90deg, var(--acc), #ffd98a); }
+  .stp { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; flex-wrap: wrap; font-size: 13px; }
+  .stp li { padding: 5px 10px; border-radius: 99px; background: color-mix(in srgb, #fff 10%, transparent); opacity: 0.45; transition: opacity 0.3s, background 0.3s; }
+  .res { position: relative; justify-self: start; padding: 10px 14px; border-radius: 14px; background: #22c55e; color: #052e16; font-weight: 700; font-size: 14px; opacity: 0; transform: translateY(8px); }
+  .stage.on .msg.me { animation: pop 0.5s both; }
+  .stage.on .msg.vax { animation: pop 0.5s 0.9s both; }
+  .stage.on .proj { animation: pop 0.5s 1.6s both; }
+  .stage.on .bar i { animation: fill 2.6s 1.9s cubic-bezier(.3,.7,.2,1) forwards; }
+  .stage.on .stp li { animation: lit 0.3s forwards; }
+  .stage.on .stp li:nth-child(1) { animation-delay: 2.2s; } .stage.on .stp li:nth-child(2) { animation-delay: 3s; } .stage.on .stp li:nth-child(3) { animation-delay: 3.8s; }
+  .stage.on .res { animation: pop 0.5s 4.6s both; }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
+  @keyframes fill { to { width: 100%; } }
+  @keyframes lit { to { opacity: 1; background: color-mix(in srgb, var(--acc) 55%, transparent); } }
+  @media (prefers-reduced-motion: reduce) { .stage * { animation: none !important; } .res, .stp li { opacity: 1; transform: none; } .bar i { width: 100%; } }
 
   .get { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
   .get article { border: 1px solid var(--line); border-radius: var(--r); padding: 22px; background: var(--surf); }
@@ -472,12 +513,10 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
     .hero-grid, .bill, .start-grid { grid-template-columns: 1fr; }
     .get, .demos { grid-template-columns: repeat(2, 1fr); }
     .steps, .full { grid-template-columns: 1fr; }
-    .b1 { left: 8px; } .b2 { right: 8px; }
-    .screen { transform: none; }
+    .stage { min-height: 380px; }
   }
   @media (max-width: 560px) {
     .get, .demos, .plans { grid-template-columns: 1fr; }
     .sticky { display: block; position: fixed; left: 16px; right: 88px; bottom: 14px; z-index: 40; text-align: center; padding: 15px; border-radius: 999px; background: var(--acc); color: var(--dark-ink); font-weight: 800; text-decoration: none; box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.45); }
-    .bubble { display: none; }
   }
 </style>

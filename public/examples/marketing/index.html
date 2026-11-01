@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,follow">
+<title>Lumen Skin — Marketing on autopilot · Vaxo demo</title>
+<meta name="description" content="Interactive demo by Vaxo: the campaign room a brand gets every month — ad creatives, AI-written posts, a content calendar, a sales funnel and a results dashboard.">
+<meta name="theme-color" content="#0f0c0b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0c0b;--bg2:#171210;--card:#1d1714;--card2:#251d19;--line:rgba(255,236,220,.1);--line2:rgba(255,236,220,.18);
+  --ink:#f6eee6;--mut:#bcae9f;--dim:#8d8075;--peach:#ffb48a;--amber:#f7c873;--rose:#ff8f8f;--sage:#b9d3b0;--blue:#9cc3ff;
+  --cream:#f4ece2;--cink:#241c17;--r:22px;
+  --serif:'Instrument Serif',Georgia,serif;--sans:'Manrope',system-ui,-apple-system,Segoe UI,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans);overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--peach);outline-offset:3px;border-radius:8px}
+.w{max-width:1240px;margin:0 auto;padding:0 24px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.06;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* strip + header */
+.strip{position:relative;z-index:30;background:linear-gradient(90deg,#2a1c15,#3a2418 50%,#2a1c15);color:#f1dccb;font-size:13px;text-align:center;padding:8px 16px;line-height:1.45}
+.strip a{color:#fff;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.4);white-space:nowrap}
+header{position:sticky;top:0;z-index:20;background:rgba(15,12,11,.72);backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:20px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font:400 28px/1 var(--serif);letter-spacing:.01em;margin-right:auto}
+.logo i{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff3e3,var(--peach) 45%,#c76a3f);box-shadow:0 0 24px rgba(255,180,138,.55)}
+.logo small{font:600 11px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-left:4px}
+.links{display:flex;gap:22px;font-size:14px;font-weight:600}
+.links a{text-decoration:none;color:var(--mut);transition:color .2s}.links a:hover{color:var(--ink)}
+.lang{display:flex;border:1px solid var(--line2);border-radius:999px;padding:3px;gap:2px}
+.lang a{font-size:12px;font-weight:800;text-decoration:none;padding:5px 9px;border-radius:999px;color:var(--mut);letter-spacing:.04em}
+.lang a[aria-current="true"]{background:var(--ink);color:var(--bg)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 26px;border-radius:999px;font-weight:800;font-size:15px;text-decoration:none;border:0;cursor:pointer;transition:transform .25s,box-shadow .25s,background .25s;min-height:48px}
+.btn.pri{background:linear-gradient(135deg,#ffd2b0,var(--peach) 50%,#ff9a6b);color:#2a140a;box-shadow:0 10px 40px -10px rgba(255,160,110,.7)}
+.btn.pri:hover{transform:translateY(-2px);box-shadow:0 18px 50px -12px rgba(255,160,110,.85)}
+.btn.ghost{background:rgba(255,255,255,.05);color:var(--ink);border:1px solid var(--line2)}
+.btn.ghost:hover{background:rgba(255,255,255,.1)}
+
+/* hero */
+.hero{position:relative;padding:72px 0 90px;overflow:hidden;isolation:isolate}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);z-index:-1;opacity:.55;animation:drift 18s ease-in-out infinite alternate}
+.o1{width:520px;height:520px;background:#ff9a6b;top:-160px;right:-80px}
+.o2{width:420px;height:420px;background:#7a3fb0;bottom:-180px;left:-120px;opacity:.35;animation-duration:22s}
+.o3{width:300px;height:300px;background:#f7c873;top:40%;left:42%;opacity:.18;animation-duration:26s}
+@keyframes drift{to{transform:translate(-60px,50px) scale(1.15)}}
+.stars{position:absolute;inset:0;z-index:-1;background-image:radial-gradient(1px 1px at 20% 30%,#fff8 50%,transparent),radial-gradient(1px 1px at 70% 20%,#fff6 50%,transparent),radial-gradient(1.5px 1.5px at 85% 60%,#fff5 50%,transparent),radial-gradient(1px 1px at 40% 80%,#fff5 50%,transparent),radial-gradient(1px 1px at 10% 70%,#fff6 50%,transparent),radial-gradient(1px 1px at 55% 45%,#fff4 50%,transparent);animation:tw 6s ease-in-out infinite alternate}
+@keyframes tw{to{opacity:.4}}
+.hgrid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}.hgrid>*,.writer>*,.calw>*,.charts>*,.sh>*{min-width:0}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--peach)}
+.pulse{width:8px;height:8px;border-radius:50%;background:#5be38a;box-shadow:0 0 0 0 rgba(91,227,138,.6);animation:pl 2s infinite}
+@keyframes pl{70%{box-shadow:0 0 0 10px rgba(91,227,138,0)}100%{box-shadow:0 0 0 0 rgba(91,227,138,0)}}
+h1{font:400 clamp(42px,5.3vw,84px)/.98 var(--serif);letter-spacing:-.02em;margin:18px 0 22px}
+h1 .ln{display:block;overflow:hidden;padding-bottom:.06em}
+h1 .ln>span{display:inline-block;transform:translateY(105%);animation:up 1s cubic-bezier(.2,.8,.2,1) forwards}
+h1 .ln:nth-child(2)>span{animation-delay:.12s}
+h1 .ln:nth-child(3)>span{animation-delay:.24s}
+@keyframes up{to{transform:none}}
+h1 .ln>span.rot{display:grid;justify-items:start;max-width:100%}
+.rot em{grid-area:1/1;font-style:italic;background:linear-gradient(100deg,#ffe0c4,var(--peach) 40%,#ff8f8f 80%);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0;transform:translateY(40%);transition:opacity .6s,transform .6s cubic-bezier(.2,.8,.2,1);padding-right:.08em;max-width:100%}
+.rot em.on{opacity:1;transform:none}
+.rot em.out{opacity:0;transform:translateY(-40%)}
+.lead{font-size:clamp(17px,1.6vw,20px);color:var(--mut);max-width:560px;margin:0 0 30px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.hstats{display:flex;gap:28px;margin-top:38px;flex-wrap:wrap}
+.hstats div{font-size:13px;color:var(--dim);line-height:1.3}
+.hstats b{display:block;font:400 34px/1 var(--serif);color:var(--ink);margin-bottom:4px}
+
+.hvis{position:relative;height:560px}
+.hphone{position:absolute;left:0;top:10px;width:232px;z-index:2;transform:rotate(-6deg);animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:rotate(-6deg) translateY(-14px)}}
+.feed{position:absolute;right:-24px;bottom:30px;width:272px;z-index:1;background:rgba(29,23,20,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line2);border-radius:20px;padding:16px;box-shadow:0 30px 80px -20px rgba(0,0,0,.7)}
+.feed h3{margin:0 0 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between;align-items:center}
+.feed h3 time{font:400 20px var(--serif);letter-spacing:0;color:var(--ink);text-transform:none}
+.feed ul{list-style:none;margin:0;padding:0;height:212px;overflow:hidden;position:relative;-webkit-mask:linear-gradient(#000 70%,transparent);mask:linear-gradient(#000 70%,transparent)}
+.feed li{display:flex;gap:10px;align-items:flex-start;font-size:13px;padding:8px 0;border-top:1px solid var(--line);animation:fin .6s cubic-bezier(.2,.8,.2,1)}
+.feed li:first-child{border-top:0}
+.feed li i{flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-style:normal;font-size:13px}
+.feed li small{display:block;color:var(--dim);font-size:11px}
+@keyframes fin{from{opacity:0;transform:translateY(-16px)}}
+.chip{position:absolute;display:flex;align-items:center;gap:8px;background:var(--cream);color:var(--cink);border-radius:14px;padding:10px 14px;font-size:13px;font-weight:700;box-shadow:0 20px 50px -15px rgba(0,0,0,.6);animation:float2 6s ease-in-out infinite}
+.chip small{display:block;font-weight:500;color:#76675b;font-size:11px}
+.chip i{font-style:normal;font-size:18px}
+.c1{right:12%;top:20px;animation-delay:-2s}
+.c2{left:150px;bottom:-6px;z-index:3;animation-delay:-4s}
+@keyframes float2{50%{transform:translateY(-10px)}}
+
+/* marquee */
+.marq{border-block:1px solid var(--line);overflow:hidden;padding:18px 0;background:var(--bg2)}
+.marq div{display:flex;gap:48px;width:max-content;animation:mq 38s linear infinite;font:400 26px var(--serif);color:var(--mut);white-space:nowrap}
+.marq span:before{content:"✦";color:var(--peach);margin-right:48px;font-size:16px;vertical-align:middle}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* sections */
+section.s{padding:110px 0}
+.sh{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:54px}
+.num{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--peach);margin-bottom:14px}
+h2{font:400 clamp(38px,5vw,68px)/1 var(--serif);letter-spacing:-.015em;margin:0}
+h2 em{color:var(--peach)}
+.sh p{color:var(--mut);margin:0;font-size:17px;max-width:500px}
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+/* phone */
+.phone{position:relative;aspect-ratio:9/19;border-radius:38px;padding:8px;background:linear-gradient(145deg,#3a332f,#121010);box-shadow:0 40px 90px -25px rgba(0,0,0,.85),inset 0 0 0 1px rgba(255,255,255,.12)}
+.scr{position:relative;width:100%;height:100%;border-radius:31px;overflow:hidden;background:#000}
+.scr:after{content:"";position:absolute;top:8px;left:50%;width:30%;height:20px;margin-left:-15%;background:#000;border-radius:20px;z-index:5}
+.scr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bars{position:absolute;top:34px;left:10px;right:10px;display:flex;gap:4px;z-index:4}
+.bars span{flex:1;height:2.5px;border-radius:2px;background:rgba(255,255,255,.35);overflow:hidden}
+.bars span:after{content:"";display:block;height:100%;background:#fff;transform:scaleX(0);transform-origin:left;animation:bar 9s linear infinite}
+.bars span:nth-child(2):after{animation-name:bar2}.bars span:nth-child(3):after{animation-name:bar3}
+@keyframes bar{0%{transform:scaleX(0)}33.3%,100%{transform:scaleX(1)}}
+@keyframes bar2{0%,33.3%{transform:scaleX(0)}66.6%,100%{transform:scaleX(1)}}
+@keyframes bar3{0%,66.6%{transform:scaleX(0)}99.9%{transform:scaleX(1)}100%{transform:scaleX(1)}}
+.slide{opacity:0;animation:sl 9s infinite}
+.slide:nth-of-type(1){animation-name:sl1}.slide:nth-of-type(2){animation-name:sl2}.slide:nth-of-type(3){animation-name:sl3}
+@keyframes sl1{0%,30%{opacity:1;transform:scale(1.08)}33.3%,100%{opacity:0;transform:scale(1)}}
+@keyframes sl2{0%,30%{opacity:0}33.3%,63%{opacity:1;transform:scale(1.08)}66.6%,100%{opacity:0}}
+@keyframes sl3{0%,63%{opacity:0}66.6%,97%{opacity:1;transform:scale(1.08)}100%{opacity:0}}
+.uhead{position:absolute;top:44px;left:12px;right:12px;display:flex;align-items:center;gap:8px;z-index:4;color:#fff;font-size:12px;font-weight:700;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.av{width:28px;height:28px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 35%,#fff3e3,var(--peach) 45%,#c76a3f);border:2px solid #fff}
+.uhead small{display:block;font-weight:500;font-size:10px;opacity:.85}
+.shade{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(0,0,0,.35),transparent 25%,transparent 50%,rgba(0,0,0,.75))}
+.sbot{position:absolute;left:14px;right:14px;bottom:18px;z-index:4;color:#fff}
+.sbot .big{font:400 30px/1 var(--serif);margin-bottom:12px;text-shadow:0 2px 14px rgba(0,0,0,.4)}
+.sbot .big em{color:#ffd9bf}
+.swipe{display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#111;border-radius:999px;padding:9px;font-size:12px;font-weight:800}
+.swipe:before{content:"⌃";animation:bob 1.4s ease-in-out infinite;display:inline-block}
+@keyframes bob{50%{transform:translateY(-3px)}}
+
+/* ad wall */
+.wall{display:grid;grid-template-columns:1fr 1.15fr 1fr 1.2fr;gap:26px;align-items:start}
+.wall>figure{margin:0}
+.wall figcaption{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:13px;color:var(--mut);font-weight:600}
+.wall figcaption b{color:var(--ink)}
+.tag{font-size:11px;font-weight:800;padding:4px 9px;border-radius:999px;background:rgba(185,211,176,.14);color:var(--sage)}
+.w2{margin-top:70px!important}.w3{margin-top:24px!important}
+.reel img{animation:kb 12s ease-in-out infinite alternate;object-position:40% center}
+@keyframes kb{to{transform:scale(1.18) translateX(-6%)}}
+.side{position:absolute;right:10px;bottom:110px;z-index:4;display:flex;flex-direction:column;gap:14px;color:#fff;font-size:10px;font-weight:700;text-align:center}
+.side svg{width:24px;height:24px;display:block;margin:0 auto 2px;filter:drop-shadow(0 1px 4px rgba(0,0,0,.5))}
+.side .hrt{animation:hb 3s infinite}
+@keyframes hb{0%,80%,100%{transform:scale(1)}85%{transform:scale(1.3);color:#ff4d6d}}
+.cap{position:absolute;left:12px;right:50px;bottom:20px;z-index:4;color:#fff;font-size:12px}
+.cap b{display:block;margin-bottom:4px}
+.sub{position:absolute;left:12%;right:12%;top:46%;z-index:4;text-align:center}
+.sub span{display:inline;background:#fff;color:#111;font-weight:800;font-size:14px;line-height:1.7;padding:3px 8px;border-radius:6px;box-decoration-break:clone;-webkit-box-decoration-break:clone;transition:opacity .3s}
+.prog{position:absolute;left:0;right:0;bottom:0;height:3px;z-index:5;background:rgba(255,255,255,.25)}
+.prog:after{content:"";display:block;height:100%;width:100%;background:#fff;transform-origin:left;animation:pg 12s linear infinite}
+@keyframes pg{from{transform:scaleX(0)}}
+.post{background:#fff;color:#111;border-radius:20px;overflow:hidden;box-shadow:0 40px 90px -25px rgba(0,0,0,.85);font-size:13px}
+.post .ph{display:flex;align-items:center;gap:8px;padding:10px 12px;font-weight:700;font-size:12px}
+.post .ph small{display:block;font-weight:500;color:#777;font-size:10px}
+.post .pi{position:relative;aspect-ratio:4/5;overflow:hidden}
+.post .pi img{width:100%;height:100%;object-fit:cover;transition:transform 6s}
+.post:hover .pi img{transform:scale(1.06)}
+.post .pi .bigh{position:absolute;left:50%;top:50%;width:80px;height:80px;margin:-40px;color:#fff;opacity:0;animation:pop 5s 1s infinite;filter:drop-shadow(0 4px 20px rgba(0,0,0,.3))}
+@keyframes pop{0%,100%{opacity:0;transform:scale(.3)}6%{opacity:1;transform:scale(1.15)}10%{transform:scale(1)}22%{opacity:1}30%{opacity:0;transform:scale(1)}}
+.post .pi .ol{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,.92);border-radius:10px;padding:8px 10px;font:400 18px/1.1 var(--serif);color:#2a1c15}
+.shopbar{display:flex;justify-content:space-between;align-items:center;background:#3a2418;color:#fff;font-weight:700;font-size:12px;padding:10px 12px}
+.post .pa{display:flex;gap:14px;padding:10px 12px 4px}.post .pa svg{width:22px;height:22px}
+.post .pt{padding:0 12px 14px;line-height:1.45}
+.gwrap{display:flex;flex-direction:column;gap:18px}
+.gsearch{background:#fff;color:#202124;border-radius:999px;padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:14px;box-shadow:0 20px 50px -20px rgba(0,0,0,.7)}
+.gsearch svg{width:18px;height:18px;flex:none;color:#9aa0a6}
+.caret{display:inline-block;width:1.5px;height:16px;background:#1a73e8;vertical-align:middle;animation:blink 1s steps(1) infinite;margin-left:1px}
+@keyframes blink{50%{opacity:0}}
+.gad{background:#fff;color:#202124;border-radius:18px;padding:18px;font-family:Arial,Helvetica,sans-serif;box-shadow:0 40px 90px -25px rgba(0,0,0,.85)}
+.gad .sp{font-weight:700;font-size:12px;margin-bottom:6px}
+.gad .url{display:flex;align-items:center;gap:8px;font-size:12px;color:#4d5156;margin-bottom:4px}
+.gad .url i{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff3e3,var(--peach) 45%,#c76a3f)}
+.gad .ttl{color:#1a0dab;font-size:18px;line-height:1.3;margin:4px 0}
+.gad p{font-size:13px;color:#4d5156;margin:0 0 10px;line-height:1.5}
+.gad .sl{display:flex;flex-wrap:wrap;gap:6px}
+.gad .sl span{font-size:12px;color:#1a0dab;border:1px solid #dadce0;border-radius:999px;padding:5px 10px}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+.mini b{display:block;font:400 28px/1 var(--serif);color:var(--ink)}
+.mini span{font-size:11px;color:var(--dim);line-height:1.3;display:block;margin-top:4px}
+
+/* writer */
+.writer{display:grid;grid-template-columns:.85fr 1.15fr;gap:28px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px}
+.fld{display:block;margin-bottom:18px}
+.fld>span,.lbl{display:block;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.fld input{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:14px;padding:14px 16px;font-size:16px;transition:border-color .2s}
+.fld input:focus{outline:none;border-color:var(--peach)}
+.tones{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;border:0;padding:0}
+.tones label{position:relative;cursor:pointer}
+.tones input{position:absolute;opacity:0}
+.tones span{display:flex;align-items:center;gap:8px;border:1px solid var(--line2);border-radius:14px;padding:12px 14px;font-weight:700;font-size:14px;transition:all .2s}
+.tones input:checked+span{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tones input:focus-visible+span{outline:2px solid var(--peach);outline-offset:2px}
+.plats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.plats label{cursor:pointer;position:relative}.plats input{position:absolute;opacity:0}
+.plats span{display:inline-block;font-size:13px;font-weight:700;padding:8px 12px;border-radius:999px;border:1px solid var(--line2);color:var(--mut)}
+.plats input:checked+span{border-color:var(--peach);color:var(--peach);background:rgba(255,180,138,.08)}
+.plats input:focus-visible+span{outline:2px solid var(--peach)}
+.panel .btn{width:100%}
+.note{font-size:12px;color:var(--dim);margin:14px 0 0;line-height:1.5}
+.outs{display:grid;gap:14px}
+.out{background:var(--cream);color:var(--cink);border-radius:var(--r);padding:20px 22px;position:relative;min-height:120px;transition:transform .3s}
+.out .oh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8a6a55}
+.out .oh button{background:#241c17;color:#fff;border:0;border-radius:999px;font-size:12px;font-weight:700;padding:6px 12px;cursor:pointer;letter-spacing:0;text-transform:none}
+.out p{margin:0;white-space:pre-line;font-size:15px;line-height:1.55}
+.out .ht{margin-top:10px;color:#9a4f2a;font-weight:700;font-size:13px}
+.out .meta{display:flex;gap:14px;margin-top:12px;font-size:12px;color:#7b6a5d}
+.out .meta b{color:#2d6a3e}
+.out.typing p:after{content:"";display:inline-block;width:2px;height:1em;background:#c76a3f;vertical-align:-2px;margin-left:2px;animation:blink 1s steps(1) infinite}
+
+/* calendar */
+.calw{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
+.cal{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.calh{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.calh b{font:400 30px var(--serif)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut);font-weight:600}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i,.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.p-ig{background:#ff8fb1}.p-tt{background:#7ef0e6}.p-fb{background:#8fb4ff}.p-ad{background:var(--amber)}
+.grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wd{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);text-align:center;padding-bottom:6px}
+.day{min-height:96px;border-radius:12px;background:var(--bg2);border:1px solid transparent;padding:7px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:3px;transition:border-color .2s,background .2s;overflow:hidden}
+.day:hover{border-color:var(--line2)}
+.day.sel{border-color:var(--peach);background:#2a1f1a}
+.day.empty{visibility:hidden;cursor:default}
+.day .dn{font-size:12px;font-weight:800;color:var(--mut);display:flex;justify-content:space-between}
+.day.today .dn{color:var(--peach)}
+.day.past{opacity:.72}
+.ev{font-size:10.5px;font-weight:700;line-height:1.2;border-radius:6px;padding:3px 5px;color:#1a1310;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev.p-ig{background:#ffc2d6}.ev.p-tt{background:#b8f6f0}.ev.p-fb{background:#c7d9ff}.ev.p-ad{background:#fbe1a6}
+.dots{display:none;gap:3px;flex-wrap:wrap}
+.det{background:var(--cream);color:var(--cink);border-radius:var(--r);padding:22px;position:sticky;top:90px}
+.det h3{font:400 30px/1 var(--serif);margin:0 0 4px}
+.det .ds{font-size:13px;color:#7b6a5d;margin-bottom:16px}
+.det ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.det li{background:#fff;border-radius:14px;padding:12px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;font-size:13px;animation:fin .4s}
+.det li .dot{width:10px;height:10px}
+.det li b{font-size:14px}
+.det li small{grid-column:2;color:#7b6a5d}
+.st{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:1px}
+.st.ok{background:#d6efd9;color:#2d6a3e}.st.sc{background:#f3e3d4;color:#8a5a3c}
+.calsum{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px;font-size:13px;color:var(--mut)}
+.calsum b{color:var(--ink);font:400 24px var(--serif);margin-right:4px}
+
+/* funnel */
+.fun{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.fline{position:absolute;left:6%;right:6%;top:118px;height:2px;z-index:0;overflow:visible}
+.fline svg{width:100%;height:40px;overflow:visible;margin-top:-19px}
+.st-card{position:relative;z-index:1;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column}
+.st-card .vis{height:160px;border-radius:14px;background:var(--bg2);margin-bottom:16px;position:relative;overflow:hidden;display:grid;place-items:center}
+.st-card .k{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--peach)}
+.st-card h3{font:400 28px/1.05 var(--serif);margin:6px 0 6px}
+.st-card p{font-size:14px;color:var(--mut);margin:0 0 14px;flex:1}
+.st-card .m{display:flex;align-items:baseline;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.st-card .m b{font:400 34px/1 var(--serif)}
+.st-card .m span{font-size:12px;color:var(--dim)}
+.va img{width:100%;height:100%;object-fit:cover;opacity:.9}
+.va .badge{position:absolute;left:10px;top:10px;background:#fff;color:#111;font-size:10px;font-weight:800;border-radius:6px;padding:3px 7px}
+.vsite{width:84%;height:80%;background:var(--cream);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;animation:scrollsite 6s ease-in-out infinite}
+.vsite i{display:block;border-radius:4px;background:#e2d5c7}
+.vsite .t{height:12px;width:70%;background:#3a2418}.vsite .t2{height:8px;width:50%}
+.vsite .im{flex:1;background:url(/examples/img/skin-3.webp) center/cover;border-radius:8px}
+.vsite .b{height:16px;width:44%;background:var(--peach);border-radius:99px}
+@keyframes scrollsite{50%{transform:translateY(-6px)}}
+.vchat{width:88%;display:flex;flex-direction:column;gap:6px;font-size:11px}
+.vchat span{padding:6px 9px;border-radius:12px;max-width:85%;opacity:0;animation:msg 8s infinite;line-height:1.35}
+.vchat .u{align-self:flex-end;background:var(--ink);color:var(--bg);border-bottom-right-radius:3px}
+.vchat .a{align-self:flex-start;background:#3a2c25;border-bottom-left-radius:3px}
+.vchat span:nth-child(2){animation-delay:1s}.vchat span:nth-child(3){animation-delay:2s}
+@keyframes msg{0%,5%{opacity:0;transform:translateY(8px)}10%,85%{opacity:1;transform:none}95%,100%{opacity:0}}
+.vbook{width:84%;background:var(--cream);color:var(--cink);border-radius:12px;padding:12px;font-size:12px}
+.vbook .sl{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:8px 0}
+.vbook .sl i{font-style:normal;text-align:center;border:1px solid #d9cbbd;border-radius:6px;padding:4px 0;font-weight:700;font-size:11px}
+.vbook .sl i.on{background:#3a2418;color:#fff;border-color:#3a2418;animation:sel 4s infinite}
+@keyframes sel{0%,30%{background:transparent;color:inherit}40%,100%{background:#3a2418;color:#fff}}
+.vbook .ok{display:flex;align-items:center;gap:6px;font-weight:800;color:#2d6a3e;animation:okk 4s infinite}
+@keyframes okk{0%,50%{opacity:0}60%,100%{opacity:1}}
+
+/* dashboard */
+.dash{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:28px;padding:26px}
+.dtop{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.dtop b{font:400 26px var(--serif)}
+.exn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:6px 12px;border-radius:999px;border:1px dashed var(--amber);color:var(--amber)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:18px}
+.kpi span{font-size:12px;font-weight:700;color:var(--mut)}
+.kpi b{display:block;font:400 clamp(34px,3.6vw,48px)/1.05 var(--serif);margin:6px 0 4px;font-variant-numeric:tabular-nums}
+.kpi small{font-size:12px;font-weight:700;color:#7fd99a}
+.kpi small.dn{color:#7fd99a}
+.charts{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
+.chart{background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:18px}
+.chart h3{font-size:14px;margin:0 0 2px}
+.chart .cs{font-size:12px;color:var(--dim);margin-bottom:10px}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--dim);font:600 11px var(--sans)}
+.ln-path{stroke-dasharray:1400;stroke-dashoffset:1400;transition:stroke-dashoffset 2.4s cubic-bezier(.4,0,.2,1)}
+.area{opacity:0;transition:opacity 1.6s .8s}
+.drawn .ln-path{stroke-dashoffset:0}.drawn .area{opacity:1}
+.hbar{display:grid;gap:14px;margin-top:8px}
+.hbar div{font-size:13px;font-weight:700}
+.hbar div p{display:flex;justify-content:space-between;margin:0 0 6px}
+.hbar div p span{color:var(--mut);font-weight:600}
+.hbar i{display:block;height:10px;border-radius:99px;background:var(--bg2);overflow:hidden}
+.hbar i:after{content:"";display:block;height:100%;width:var(--v);background:var(--c);border-radius:99px;transform:scaleX(0);transform-origin:left;transition:transform 1.6s cubic-bezier(.2,.8,.2,1)}
+.drawn .hbar i:after{transform:none}
+.dnote{font-size:12px;color:var(--dim);margin:14px 0 0}
+
+/* plans */
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.plan{border-radius:28px;padding:32px;border:1px solid var(--line2);background:var(--card);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.plan.pro{background:var(--cream);color:var(--cink);border-color:transparent}
+.plan.pro:before{content:"";position:absolute;width:340px;height:340px;right:-120px;top:-140px;border-radius:50%;background:radial-gradient(circle,#ffc59e,transparent 70%);opacity:.8}
+.plan .pk{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--peach);position:relative}
+.plan.pro .pk{color:#b0582c}
+.plan h3{font:400 52px/1 var(--serif);margin:8px 0 10px;position:relative}
+.plan>p{color:var(--mut);margin:0 0 22px;position:relative}
+.plan.pro>p{color:#6b5a4d}
+.plan ul{list-style:none;padding:0;margin:0 0 28px;display:grid;gap:12px;flex:1;position:relative}
+.plan li{display:flex;gap:12px;font-size:15px}
+.plan li:before{content:"";flex:none;width:20px;height:20px;margin-top:2px;border-radius:50%;background:rgba(185,211,176,.18) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.5l2.5 2.5L14 7.5' fill='none' stroke='%23b9d3b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px}
+.plan.pro li:before{background:#241c17 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.5l2.5 2.5L14 7.5' fill='none' stroke='%23ffb48a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px}
+.plan .btn{position:relative}
+.plan.pro .btn.pri{background:#241c17;color:#fff;box-shadow:none}
+.pnote{text-align:center;color:var(--dim);font-size:13px;margin:22px 0 0}
+
+/* final */
+.final{position:relative;text-align:center;padding:130px 0;overflow:hidden;isolation:isolate}
+.final h2{font-size:clamp(44px,7vw,96px);max-width:900px;margin:0 auto 20px}
+.final p{color:var(--mut);max-width:560px;margin:0 auto 32px;font-size:18px}
+.final .orb{left:50%;top:50%;margin:-260px 0 0 -260px;width:520px;height:520px;opacity:.35}
+footer{border-top:1px solid var(--line);padding:30px 0 40px;font-size:14px;color:var(--dim)}
+footer .w{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a{color:var(--ink);font-weight:700}
+
+/* responsive */
+@media (max-width:1080px){
+  .links{display:none}
+  .hgrid{grid-template-columns:1fr}
+  .hvis{height:500px;max-width:620px;width:100%;margin:0 auto}
+  .wall{grid-template-columns:repeat(2,1fr)}
+  .w2,.w3{margin-top:0!important}
+  .writer,.calw{grid-template-columns:1fr}
+  .det{position:static}
+  .fun{grid-template-columns:repeat(2,1fr)}
+  .fline{display:none}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .charts{grid-template-columns:1fr}
+  .sh{grid-template-columns:1fr;gap:16px}
+}
+@media (max-width:640px){
+  .w{padding:0 16px}
+  .logo{font-size:24px}.logo small{display:none}
+  .hero{padding:44px 0 60px}
+  h1{margin-top:14px}
+  .hvis{height:auto;display:flex;flex-direction:column;align-items:center;padding-top:10px}
+  .hphone{position:relative;width:210px;left:auto;top:auto}
+  .feed{position:relative;width:100%;right:auto;bottom:auto;margin-top:34px;padding:14px}
+  .feed ul{height:170px}
+  .c1{right:0;top:40px;z-index:3}.c2{left:0;bottom:auto;top:150px}
+  .hstats{gap:20px}.hstats b{font-size:28px}
+  section.s{padding:76px 0}
+  .sh{margin-bottom:34px}
+  .wall{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:16px;margin:0 -16px;padding:0 16px 20px;scrollbar-width:none}
+  .wall::-webkit-scrollbar{display:none}
+  .wall>*{flex:0 0 74%;scroll-snap-align:center}
+  .wall>.gwrap{flex-basis:86%}
+  .panel{padding:20px}
+  .cal{padding:12px}
+  .grid7{gap:4px}
+  .day{min-height:54px;padding:5px;border-radius:9px}
+  .ev{display:none}
+  .dots{display:flex}
+  .fun{grid-template-columns:1fr}
+  .kpis{gap:10px}.kpi{padding:14px}
+  .dash{padding:16px;border-radius:22px}
+  .plans{grid-template-columns:1fr}
+  .plan{padding:24px}.plan h3{font-size:44px}
+  .final{padding:90px 0}
+  .scroll-hint{display:block!important}
+}
+.scroll-hint{display:none;font-size:12px;color:var(--dim);text-align:center;margin-top:4px}
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  h1 .ln>span{transform:none}
+  .rv{opacity:1;transform:none}
+  .slide{opacity:0}.slide:nth-of-type(1){opacity:1}
+  .vchat span,.vbook .ok,.post .pi .bigh{opacity:1}
+  .post .pi .bigh{opacity:0}
+  .ln-path{stroke-dashoffset:0}.area{opacity:1}.hbar i:after{transform:none}
+}
+</style>
+</head>
+<body>
+<div class="strip" role="note"><span data-i="strip">Demo by Vaxo — the brand is fictional, the functions are real</span> · <a href="/?vax=demo-marketing" data-i="stripCta">Want this for you? →</a></div>
+
+<header>
+  <nav class="w nav" aria-label="Main">
+    <a class="logo" href="#top" aria-label="Lumen Skin"><i aria-hidden="true"></i>Lumen<small data-i="room">Campaign room</small></a>
+    <div class="links">
+      <a href="#ads" data-i="n1">Ads</a><a href="#writer" data-i="n2">AI posts</a><a href="#calendar" data-i="n3">Calendar</a><a href="#funnel" data-i="n4">Funnel</a><a href="#results" data-i="n5">Results</a>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <a href="?lang=en" data-l="en">EN</a><a href="?lang=ru" data-l="ru">RU</a><a href="?lang=ua" data-l="ua">UA</a>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+<section class="hero" aria-labelledby="h1">
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="stars"></div>
+  <div class="w hgrid">
+    <div>
+      <div class="eyebrow"><span class="pulse"></span><span data-i="heroEye">Marketing on autopilot · Lumen Skin</span></div>
+      <h1 id="h1"><span class="ln"><span data-i="h1a">Your marketing team</span></span><span class="ln"><span data-i="h1b">works while you</span></span><span class="ln"><span class="rot" id="rot" aria-live="off"></span></span></h1>
+      <p class="lead" data-i="lead">Ads, posts, stories, replies and bookings — planned, written, designed and launched every month by Vaxo and AI. You open one room and see everything.</p>
+      <div class="cta">
+        <a class="btn pri" href="#writer" data-i="cta1">Try the AI writer ↓</a>
+        <a class="btn ghost" href="/?vax=demo-marketing" data-i="cta2">Get this for my brand</a>
+      </div>
+      <div class="hstats">
+        <div><b>20+</b><span data-i="hs1">posts & stories a month</span></div>
+        <div><b>6</b><span data-i="hs2">ad creatives, A/B tested</span></div>
+        <div><b>24/7</b><span data-i="hs3">AI replies to clients</span></div>
+      </div>
+    </div>
+    <div class="hvis" aria-hidden="true">
+      <div class="hphone">
+        <div class="phone"><div class="scr">
+          <img class="slide" src="/examples/img/au-glow.webp" alt="" fetchpriority="high">
+          <img class="slide" src="/examples/img/skin-hero.webp" alt="" loading="lazy">
+          <img class="slide" src="/examples/img/au-mask.webp" alt="" loading="lazy">
+          <div class="shade"></div>
+          <div class="bars"><span></span><span></span><span></span></div>
+          <div class="uhead"><span class="av"></span><div>lumen.skin<small data-i="spons">Sponsored</small></div></div>
+          <div class="sbot"><div class="big" data-i="storyBig">Glow in <em>7 nights</em></div><div class="swipe" data-i="shop">Shop now</div></div>
+        </div></div>
+      </div>
+      <div class="chip c1"><i>📅</i><div><span data-i="chip1">New booking · Fri 15:00</span><small data-i="chip1s">via AI chat, 2 min ago</small></div></div>
+      <div class="chip c2"><i>🔥</i><div><span data-i="chip2">Reel: 12.4k views</span><small data-i="chip2s">published 03:00</small></div></div>
+      <div class="feed">
+        <h3><span data-i="live">Team online</span><time id="clock">03:12</time></h3>
+        <ul id="feed"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marq" aria-hidden="true"><div id="marq"></div></div>
+
+<section class="s" id="ads" aria-labelledby="ads-h">
+  <div class="w">
+    <div class="sh rv">
+      <div><div class="num" data-i="adsN">01 · Ad creatives</div><h2 id="ads-h" data-i="adsH">A month of ads, <em>ready to run</em></h2></div>
+      <p data-i="adsP">Stories, reels, feed posts and search ads — written, designed and tested. You approve with one tap, we launch and keep the winners.</p>
+    </div>
+    <div class="wall">
+      <figure class="rv">
+        <div class="phone"><div class="scr">
+          <img class="slide" src="/examples/img/au-mask.webp" alt="" loading="lazy">
+          <img class="slide" src="/examples/img/au-serum.webp" alt="" loading="lazy">
+          <img class="slide" src="/examples/img/au-glow.webp" alt="" loading="lazy">
+          <div class="shade"></div>
+          <div class="bars"><span></span><span></span><span></span></div>
+          <div class="uhead"><span class="av"></span><div>lumen.skin<small data-i="spons">Sponsored</small></div></div>
+          <div class="sbot"><div class="big" data-i="story2">Your <em>Friday</em> facial is waiting</div><div class="swipe" data-i="book">Book a facial</div></div>
+        </div></div>
+        <figcaption><b data-i="lStory">Instagram Story</b><span class="tag" data-i="tWin">Winner · CTR 2.9%</span></figcaption>
+      </figure>
+      <figure class="rv w2">
+        <article class="post" aria-label="Feed ad">
+          <div class="ph"><span class="av"></span><div>lumen.skin<small data-i="spons">Sponsored</small></div></div>
+          <div class="pi"><img src="/examples/img/skin-2.webp" alt="Lumen Skin serums on a beige background" loading="lazy">
+            <svg class="bigh" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.4 3.2 5 6.6 5c2 0 3.4 1.1 4.4 2.5C12 6.1 13.4 5 15.4 5 18.8 5 21 8.4 21.5 11.8 19.5 16.4 12 21 12 21z"/></svg>
+            <div class="ol" data-i="feedOl">The 3-step night ritual</div></div>
+          <div class="shopbar"><span data-i="shop">Shop now</span><span>›</span></div>
+          <div class="pa"><svg viewBox="0 0 24 24" fill="#ed4956"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.4 3.2 5 6.6 5c2 0 3.4 1.1 4.4 2.5C12 6.1 13.4 5 15.4 5 18.8 5 21 8.4 21.5 11.8 19.5 16.4 12 21 12 21z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.8"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.8"><path d="M22 3L11 13M22 3l-7 18-4-8-8-4z"/></svg></div>
+          <div class="pt"><b data-i="likes">2,184 likes</b><br><b>lumen.skin</b> <span data-i="feedCap">Serum, oil, cream. 3 minutes before bed — and your skin does the rest overnight ✨</span></div>
+        </article>
+        <figcaption><b data-i="lFeed">Feed ad · carousel</b><span class="tag" data-i="tSave">Saves ×3</span></figcaption>
+      </figure>
+      <figure class="rv w3">
+        <div class="phone reel"><div class="scr">
+          <img src="/examples/img/au-roller.webp" alt="" loading="lazy">
+          <div class="shade"></div>
+          <div class="uhead"><b style="font-size:15px" data-i="reels">Reels</b></div>
+          <div class="sub"><span id="subt">POV: your skin after 7 nights</span></div>
+          <div class="side">
+            <div><svg class="hrt" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.4 3.2 5 6.6 5c2 0 3.4 1.1 4.4 2.5C12 6.1 13.4 5 15.4 5 18.8 5 21 8.4 21.5 11.8 19.5 16.4 12 21 12 21z"/></svg>18.2k</div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/></svg>412</div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3L11 13M22 3l-7 18-4-8-8-4z"/></svg>1.1k</div>
+          </div>
+          <div class="cap"><b>lumen.skin · ♫ original audio</b><span data-i="reelCap">Jade roller + serum = morning glow. Save for tonight.</span></div>
+          <div class="prog"></div>
+        </div></div>
+        <figcaption><b data-i="lReel">Reel / TikTok</b><span class="tag" data-i="tViews">212k views</span></figcaption>
+      </figure>
+      <div class="gwrap rv">
+        <div class="gsearch" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span id="gq"></span><span class="caret"></span></div>
+        <article class="gad" aria-label="Google search ad">
+          <div class="sp" data-i="gSp">Sponsored</div>
+          <div class="url"><i></i><div><b style="color:#202124">Lumen Skin</b><br>lumenskin.com › serum</div></div>
+          <div class="ttl" data-i="gT">Vitamin C Night Serum — Visible Glow in 7 Nights</div>
+          <p data-i="gD">Dermatologist-tested, vegan, made in small batches. Free delivery from $40. Try it risk-free for 30 days.</p>
+          <div class="sl"><span data-i="gs1">Bestsellers</span><span data-i="gs2">Skin quiz</span><span data-i="gs3">Book a facial</span></div>
+        </article>
+        <div class="mini">
+          <div><b>6</b><span data-i="m1">creatives a month</span></div>
+          <div><b>4</b><span data-i="m2">platforms</span></div>
+          <div><b>A/B</b><span data-i="m3">every week</span></div>
+        </div>
+        <figcaption style="margin-top:0"><b data-i="lSearch">Google search ad</b><span class="tag" data-i="tCpc">CPC −38%</span></figcaption>
+      </div>
+    </div>
+    <p class="scroll-hint" data-i="swipeHint">← swipe →</p>
+  </div>
+</section>
+
+<section class="s" id="writer" aria-labelledby="w-h" style="background:var(--bg2)">
+  <div class="w">
+    <div class="sh rv">
+      <div><div class="num" data-i="wN">02 · AI writes your posts</div><h2 id="w-h" data-i="wH">Type your offer. <em>Get three posts.</em></h2></div>
+      <p data-i="wP">Try it right now: write what you sell and what you're offering this week, pick a tone — and get ready-to-publish posts with hashtags.</p>
+    </div>
+    <div class="writer">
+      <form class="panel rv" id="wform" autocomplete="off">
+        <label class="fld"><span data-i="lP">Product or service</span><input id="iP" maxlength="60"></label>
+        <label class="fld"><span data-i="lO">This week's offer</span><input id="iO" maxlength="60"></label>
+        <fieldset class="tones" id="tones"><legend class="lbl" data-i="lT" style="grid-column:1/-1">Tone of voice</legend></fieldset>
+        <div class="lbl" data-i="lPl">Platform</div>
+        <div class="plats" id="plats" role="radiogroup"></div>
+        <button class="btn pri" type="submit" data-i="gen">✨ Write 3 posts</button>
+        <p class="note" data-i="wNote">This demo writes in your browser from templates. In the real service, AI learns your brand voice, products and prices first.</p>
+      </form>
+      <div class="outs" id="outs" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="calendar" aria-labelledby="c-h">
+  <div class="w">
+    <div class="sh rv">
+      <div><div class="num" data-i="cN">03 · Content calendar</div><h2 id="c-h" data-i="cH">The whole month, <em>already planned</em></h2></div>
+      <p data-i="cP">Every post, story and ad launch has a day and a time. Tap a day to see what goes out.</p>
+    </div>
+    <div class="calw">
+      <div class="cal rv">
+        <div class="calh"><b id="mname">November 2026</b>
+          <div class="legend"><span><i class="p-ig"></i>Instagram</span><span><i class="p-tt"></i>TikTok</span><span><i class="p-fb"></i>Facebook</span><span><i class="p-ad"></i><span data-i="adsLbl">Ads</span></span></div>
+        </div>
+        <div class="grid7" id="wds"></div>
+        <div class="grid7" id="days" style="margin-top:6px"></div>
+        <div class="calsum" id="calsum"></div>
+      </div>
+      <aside class="det rv" id="det" aria-live="polite"></aside>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="funnel" aria-labelledby="f-h" style="background:var(--bg2)">
+  <div class="w">
+    <div class="sh rv">
+      <div><div class="num" data-i="fN">04 · Funnel</div><h2 id="f-h" data-i="fH">From a scroll <em>to a booking</em></h2></div>
+      <p data-i="fP">We don't stop at likes. The ad leads to a fast site, the AI assistant answers in seconds, and the client books or pays — at 3 a.m. too.</p>
+    </div>
+    <div class="fun">
+      <div class="fline" aria-hidden="true"><svg viewBox="0 0 1000 40" preserveAspectRatio="none"><path d="M0 20H1000" stroke="rgba(255,180,138,.35)" stroke-width="2" stroke-dasharray="4 8"/><g id="parts"></g></svg></div>
+      <article class="st-card rv"><div class="vis va"><img src="/examples/img/au-serum.webp" alt="" loading="lazy"><span class="badge" data-i="spons">Sponsored</span></div>
+        <div class="k">1</div><h3 data-i="f1">Ad</h3><p data-i="f1p">Seen by the right people in your city.</p><div class="m"><b class="cnt" data-n="184300">0</b><span data-i="f1m">views</span></div></article>
+      <article class="st-card rv"><div class="vis"><div class="vsite"><i class="t"></i><i class="t2"></i><i class="im"></i><i class="b"></i></div></div>
+        <div class="k">2</div><h3 data-i="f2">Site</h3><p data-i="f2p">Loads in under a second, shows prices and reviews.</p><div class="m"><b class="cnt" data-n="6920">0</b><span data-i="f2m">visits</span></div></article>
+      <article class="st-card rv"><div class="vis"><div class="vchat"><span class="u" data-i="ch1">Do you have a slot on Friday?</span><span class="a" data-i="ch2">Yes! 15:00 or 17:30 — which suits you? 🌿</span><span class="u" data-i="ch3">15:00 please</span></div></div>
+        <div class="k">3</div><h3 data-i="f3">AI chat</h3><p data-i="f3p">Answers questions 24/7 and picks a time.</p><div class="m"><b class="cnt" data-n="1240">0</b><span data-i="f3m">chats</span></div></article>
+      <article class="st-card rv"><div class="vis"><div class="vbook"><b data-i="bk">Fri, Nov 14</b><div class="sl"><i>12:00</i><i class="on">15:00</i><i>17:30</i></div><div class="ok">✓ <span data-i="bkok">Booked & paid</span></div></div></div>
+        <div class="k">4</div><h3 data-i="f4">Booking / purchase</h3><p data-i="f4p">Paid online, reminder sent, client in your CRM.</p><div class="m"><b class="cnt" data-n="165">0</b><span data-i="f4m">requests</span></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="results" aria-labelledby="r-h">
+  <div class="w">
+    <div class="sh rv">
+      <div><div class="num" data-i="rN">05 · Results</div><h2 id="r-h" data-i="rH">One screen. <em>Every number.</em></h2></div>
+      <p data-i="rP">Reach, clicks, requests and what each request costs — updated every day, explained in plain words every week.</p>
+    </div>
+    <div class="dash rv" id="dash">
+      <div class="dtop"><b data-i="dT">Lumen Skin · last 30 days</b><span class="exn">⚠ <span data-i="exn">Example numbers</span></span></div>
+      <div class="kpis">
+        <div class="kpi"><span data-i="k1">Reach</span><b class="cnt" data-n="184300">0</b><small>▲ 64%</small></div>
+        <div class="kpi"><span data-i="k2">Clicks</span><b class="cnt" data-n="6920">0</b><small>▲ 41%</small></div>
+        <div class="kpi"><span data-i="k3">Requests</span><b class="cnt" data-n="165">0</b><small>▲ 2.3×</small></div>
+        <div class="kpi"><span data-i="k4">Cost per request</span><b class="cnt" data-n="4.8" data-p="$" data-d="1">0</b><small>▼ 37%</small></div>
+      </div>
+      <div class="charts">
+        <div class="chart"><h3 data-i="c1">Daily reach</h3><div class="cs" data-i="c1s">Organic + paid, thousands of people</div>
+          <svg viewBox="0 0 600 220" role="img" aria-label="Line chart of daily reach, example numbers" id="lchart"></svg></div>
+        <div class="chart"><h3 data-i="c2">Requests by channel</h3><div class="cs" data-i="c2s">Bookings and orders</div>
+          <div class="hbar" id="hbar"></div></div>
+      </div>
+      <p class="dnote" data-i="dnote">Numbers on this page are an example for a fictional brand, not a promise. Real results depend on your niche, offer and ad budget.</p>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="plans" aria-labelledby="p-h" style="background:var(--bg2)">
+  <div class="w">
+    <div class="sh rv">
+      <div><div class="num" data-i="pN">06 · What you get</div><h2 id="p-h" data-i="pH">Pick how much <em>we take off you</em></h2></div>
+      <p data-i="pP">Start with AI-written posts, or hand us the whole thing — social media and ads included.</p>
+    </div>
+    <div class="plans">
+      <article class="plan rv"><div class="pk" data-i="g1">Growth</div><h3 data-i="g2">AI posts</h3><p data-i="g3">You publish — AI writes and plans.</p>
+        <ul id="gl"></ul><a class="btn ghost" href="/?vax=demo-marketing" data-i="gCta">Start with Growth</a></article>
+      <article class="plan pro rv"><div class="pk" data-i="p1">Pro</div><h3 data-i="p2">Done for you</h3><p data-i="p3">We run your social media and ads end to end.</p>
+        <ul id="pl"></ul><a class="btn pri" href="/?vax=demo-marketing" data-i="pCta">I want Pro →</a></article>
+    </div>
+    <p class="pnote" data-i="pnote">Ad budget is separate and is paid directly to the platforms (Meta, Google, TikTok). You see every cent of it.</p>
+  </div>
+</section>
+
+<section class="final" aria-labelledby="fin-h">
+  <div class="orb o1"></div>
+  <div class="w">
+    <h2 id="fin-h" data-i="finH">Sleep. <em>Your marketing won't.</em></h2>
+    <p data-i="finP">Tell Vax, our AI assistant, about your business — in a few minutes you'll see what this room would look like for you.</p>
+    <a class="btn pri" href="/?vax=demo-marketing" data-i="finB">Build my campaign room →</a>
+  </div>
+</section>
+</main>
+
+<footer><div class="w"><span data-i="foot">Lumen Skin is a fictional brand. Demo made by Vaxo — websites, apps, bots, social media and ads, done by people and AI.</span><a href="/examples/" data-i="more">More examples →</a></div></footer>
+
+<script>
+(function(){
+"use strict";
+var D={
+en:{strip:"Demo by Vaxo — the brand is fictional, the functions are real",stripCta:"Want this for you? →",room:"Campaign room",n1:"Ads",n2:"AI posts",n3:"Calendar",n4:"Funnel",n5:"Results",
+heroEye:"Marketing on autopilot · Lumen Skin",h1a:"Your marketing team",h1b:"keeps working while you",rot:["sleep.","make coffee.","treat clients.","live your life."],
+lead:"Ads, posts, stories, replies and bookings — planned, written, designed and launched every month by Vaxo and AI. You open one room and see everything.",
+cta1:"Try the AI writer ↓",cta2:"Get this for my brand",hs1:"posts & stories a month",hs2:"ad creatives, A/B tested",hs3:"AI replies to clients",
+spons:"Sponsored",storyBig:"Glow in <em>7 nights</em>",shop:"Shop now",book:"Book a facial",chip1:"New booking · Fri 15:00",chip1s:"via AI chat, 2 min ago",chip2:"Reel: 12.4k views",chip2s:"published at 03:00",live:"Team online",
+feed:[["📸","Story published","Instagram · Glow in 7 nights"],["💬","AI answered Maria","“Is it OK for sensitive skin?”"],["📈","Ad budget moved","to the winning creative +18%"],["📅","Booking confirmed","Facial · Fri 15:00"],["✍️","3 posts written","for next week, waiting for your OK"],["🎬","Reel scheduled","TikTok + Reels · 19:30"],["⭐","Review replied","Google · 5★ from Olena"],["🧪","A/B test started","Headline “7 nights” vs “1 week”"]],
+marq:["Instagram","TikTok","Facebook","Google Ads","Reels","Stories","AI chat 24/7","Content calendar","Weekly report"],
+adsN:"01 · Ad creatives",adsH:"A month of ads, <em>ready to run</em>",adsP:"Stories, reels, feed posts and search ads — written, designed and tested. You approve with one tap, we launch and keep the winners.",
+story2:"Your <em>Friday</em> facial is waiting",lStory:"Instagram Story",tWin:"Winner · CTR 2.9%",feedOl:"The 3-step night ritual",likes:"2,184 likes",feedCap:"Serum, oil, cream. 3 minutes before bed — your skin does the rest overnight ✨",lFeed:"Feed ad · carousel",tSave:"Saves ×3",reels:"Reels",reelCap:"Jade roller + serum = morning glow. Save for tonight.",lReel:"Reel / TikTok",tViews:"212k views",
+subs:["POV: your skin after 7 nights","step 1 — cool the roller","step 2 — 3 drops of serum","…and wake up glowing ✨"],gq:"best vitamin c serum near me",
+gSp:"Sponsored",gT:"Vitamin C Night Serum — Visible Glow in 7 Nights",gD:"Dermatologist-tested, vegan, made in small batches. Free delivery from $40. Try it risk-free for 30 days.",gs1:"Bestsellers",gs2:"Skin quiz",gs3:"Book a facial",m1:"creatives a month",m2:"platforms",m3:"tests every week",lSearch:"Google search ad",tCpc:"CPC −38%",swipeHint:"← swipe →",
+wN:"02 · AI writes your posts",wH:"Type your offer. <em>Get three posts.</em>",wP:"Try it right now: write what you sell and what you're offering this week, pick a tone — and get ready-to-publish posts with hashtags.",
+lP:"Product or service",lO:"This week's offer",dP:"Vitamin C night serum",dO:"−20% until Sunday",lT:"Tone of voice",tones:["Friendly","Premium","Bold","Playful"],lPl:"Platform",gen:"✨ Write 3 posts",
+wNote:"This demo writes in your browser from templates. In the real service, AI learns your brand voice, products and prices first.",variant:"Variant",copy:"Copy",copied:"Copied ✓",reach:"Predicted reach",best:"Best time",
+adsLbl:"Ads",month:"November 2026",wd:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],pick:"Tap a day",today:"today",pub:"published",sch:"scheduled",
+types:{reel:"Reel",car:"Carousel",story:"Stories ×3",post:"Post",ad:"Ad test launch",live:"Live Q&A",ugc:"Client video",tip:"Skin tip",rev:"Review repost"},
+topics:["Night ritual in 3 steps","Vitamin C myths","Before / after 7 nights","Behind the scenes","Ingredient of the week","Client question","Weekend −20%","Sensitive skin guide","Founder story","Mask Sunday"],
+sumP:"posts & stories",sumA:"ad launches",sumPl:"platforms",
+cN:"03 · Content calendar",cH:"The whole month, <em>already planned</em>",cP:"Every post, story and ad launch has a day and a time. Tap a day to see what goes out.",
+fN:"04 · Funnel",fH:"From a scroll <em>to a booking</em>",fP:"We don't stop at likes. The ad leads to a fast site, the AI assistant answers in seconds, and the client books or pays — at 3 a.m. too.",
+f1:"Ad",f1p:"Seen by the right people in your city.",f1m:"views",f2:"Site",f2p:"Loads in under a second, shows prices and reviews.",f2m:"visits",f3:"AI chat",f3p:"Answers questions 24/7 and picks a time.",f3m:"chats",f4:"Booking / purchase",f4p:"Paid online, reminder sent, client saved in your CRM.",f4m:"requests",
+ch1:"Do you have a slot on Friday?",ch2:"Yes! 15:00 or 17:30 — which suits you? 🌿",ch3:"15:00 please",bk:"Fri, Nov 14",bkok:"Booked & paid",
+rN:"05 · Results",rH:"One screen. <em>Every number.</em>",rP:"Reach, clicks, requests and what each request costs — updated every day, explained in plain words every week.",
+dT:"Lumen Skin · last 30 days",exn:"Example numbers",k1:"Reach",k2:"Clicks",k3:"Requests",k4:"Cost per request",c1:"Daily reach",c1s:"Organic + paid, thousands of people",c2:"Requests by channel",c2s:"Bookings and orders",
+ch:["Instagram","TikTok","Google","Facebook"],dnote:"Numbers on this page are an example for a fictional brand, not a promise. Real results depend on your niche, offer and ad budget.",
+pN:"06 · What you get",pH:"Pick how much <em>we take off your plate</em>",pP:"Start with AI-written posts, or hand us the whole thing — social media and ads included.",
+g1:"Growth",g2:"AI posts",g3:"You publish — AI writes and plans.",gl:["Posts, captions and hashtags for every day","Content calendar for the month","Ideas for reels and stories","Replies to comments drafted by AI","Monthly report in plain words"],gCta:"Start with Growth",
+p1:"Pro",p2:"Done for you",p3:"We run your social media and ads end to end.",pl:["Everything in Growth","We publish and reply for you","Ad creatives designed and A/B tested","Ads in Meta, Google and TikTok set up and managed","AI chat that books clients 24/7","Live dashboard + weekly call"],pCta:"I want Pro →",
+pnote:"Ad budget is separate and is paid directly to the platforms (Meta, Google, TikTok). You see every cent of it.",
+finH:"Sleep. <em>Your marketing won't.</em>",finP:"Tell Vax, our AI assistant, about your business — in a few minutes you'll see what this room would look like for you.",finB:"Build my campaign room →",
+foot:"Lumen Skin is a fictional brand. Demo made by Vaxo — websites, apps, bots, social media and ads, done by people and AI.",more:"More examples →",
+title:"Lumen Skin — Marketing on autopilot · Vaxo demo",
+gTpl:{
+friendly:["Hey, skin friend 👋 Meet {p} — your new favourite step before bed.\nIt works while you sleep, so mornings feel easier.\n{o} — grab yours before Sunday!","Real talk: great skin doesn't need 12 steps.\n{p} does the heavy lifting overnight 🌙\nThis week only: {o}. Link in bio 💛","Saving this for tonight? 😉\n3 drops of {p}, lights off — glow on.\n{o}. DM us “GLOW” and we'll help you choose."],
+premium:["Quiet luxury, nightly.\n{p} — crafted in small batches, chosen by skin that knows the difference.\nAn invitation for this week: {o}.","Some rituals are worth slowing down for.\n{p}: a few drops, a calmer complexion, a brighter morning.\nReserved for our community — {o}.","Less, but better.\n{p} is formulated to do one thing exceptionally well.\nDiscover it this week with {o}."],
+bold:["Stop wasting money on 10 products. 🛑\n{p} does the job of three.\n{o} — ends Sunday. Don't sleep on it (actually, do).","7 nights. Visible glow. No filters.\nThat's {p}.\n{o} — tap the link before it's gone.","Your skin works the night shift. Give it the right tools.\n{p} — now with {o}.\nLimited stock. Move fast."],
+playful:["Me: one more episode 📺\nMy skin: still glowing thanks to {p} ✨\n{o} — treat yourself (and your pillowcase).","Plot twist: the secret to morning glow is… sleeping 😴\n(with {p}, obviously)\n{o} this week!","Roses are red 🌹\nNights are for rest\n{p} works while you sleep —\n{o}, you know the rest 😉"]},
+tags:{base:["skincare","glowingskin","selfcare"],friendly:["skincareroutine","nightroutine"],premium:["cleanbeauty","luxuryskincare"],bold:["skingoals","noFilter"],playful:["skintok","beautyhacks"]},
+plats:["Instagram","TikTok","Facebook"]},
+
+ru:{strip:"Демо от Vaxo — бренд выдуман, функции настоящие",stripCta:"Хотите так же? →",room:"Штаб кампании",n1:"Реклама",n2:"ИИ-посты",n3:"Календарь",n4:"Воронка",n5:"Результаты",
+heroEye:"Маркетинг на автопилоте · Lumen Skin",h1a:"Ваша команда маркетинга",h1b:"работает, пока вы",rot:["спите.","пьёте кофе.","принимаете клиентов.","живёте."],
+lead:"Реклама, посты, сторис, ответы и записи — каждый месяц планируют, пишут, рисуют и запускают Vaxo и ИИ. Вы открываете одну комнату и видите всё.",
+cta1:"Попробовать ИИ-копирайтера ↓",cta2:"Хочу так для себя",hs1:"постов и сторис в месяц",hs2:"рекламных креативов с A/B-тестом",hs3:"ИИ отвечает клиентам",
+spons:"Реклама",storyBig:"Сияние за <em>7 ночей</em>",shop:"Купить",book:"Записаться",chip1:"Новая запись · пт 15:00",chip1s:"через ИИ-чат, 2 мин назад",chip2:"Рилс: 12,4 тыс. просмотров",chip2s:"вышел в 03:00",live:"Команда онлайн",
+feed:[["📸","Сторис опубликована","Instagram · Сияние за 7 ночей"],["💬","ИИ ответил Марии","«Подойдёт для чувствительной кожи?»"],["📈","Бюджет перенесён","на лучший креатив +18%"],["📅","Запись подтверждена","Уход за лицом · пт 15:00"],["✍️","Написано 3 поста","на следующую неделю, ждут вашего «ок»"],["🎬","Рилс в очереди","TikTok + Reels · 19:30"],["⭐","Ответ на отзыв","Google · 5★ от Олены"],["🧪","Запущен A/B-тест","Заголовок «7 ночей» против «1 недели»"]],
+marq:["Instagram","TikTok","Facebook","Google Ads","Reels","Stories","ИИ-чат 24/7","Контент-план","Отчёт каждую неделю"],
+adsN:"01 · Рекламные креативы",adsH:"Реклама на месяц, <em>готова к запуску</em>",adsP:"Сторис, рилс, посты в ленту и поисковая реклама — написаны, нарисованы и протестированы. Вы одобряете одним касанием, мы запускаем и оставляем лучшие.",
+story2:"Ваш уход <em>в пятницу</em> уже ждёт",lStory:"Сторис в Instagram",tWin:"Лидер · CTR 2,9%",feedOl:"Ночной ритуал в 3 шага",likes:"2 184 отметки «Нравится»",feedCap:"Сыворотка, масло, крем. 3 минуты перед сном — остальное кожа сделает ночью ✨",lFeed:"Пост в ленте · карусель",tSave:"Сохранений ×3",reels:"Reels",reelCap:"Роллер + сыворотка = сияние утром. Сохрани на вечер.",lReel:"Рилс / TikTok",tViews:"212 тыс. просмотров",
+subs:["POV: кожа после 7 ночей","шаг 1 — охлади роллер","шаг 2 — 3 капли сыворотки","…и просыпайся сияющей ✨"],gq:"сыворотка с витамином С купить",
+gSp:"Реклама",gT:"Ночная сыворотка с витамином C — сияние за 7 ночей",gD:"Проверено дерматологами, веган, малые партии. Бесплатная доставка от $40. 30 дней на возврат.",gs1:"Хиты продаж",gs2:"Тест кожи",gs3:"Записаться на уход",m1:"креативов в месяц",m2:"площадки",m3:"тесты каждую неделю",lSearch:"Реклама в Google",tCpc:"Цена клика −38%",swipeHint:"← листайте →",
+wN:"02 · ИИ пишет посты",wH:"Впишите предложение. <em>Получите три поста.</em>",wP:"Попробуйте прямо сейчас: напишите, что продаёте и какое предложение на этой неделе, выберите тон — и получите готовые посты с хэштегами.",
+lP:"Товар или услуга",lO:"Предложение недели",dP:"Ночная сыворотка с витамином C",dO:"−20% до воскресенья",lT:"Тон",tones:["Дружеский","Премиум","Дерзкий","Игривый"],lPl:"Площадка",gen:"✨ Написать 3 поста",
+wNote:"Это демо пишет прямо в браузере по шаблонам. В настоящем сервисе ИИ сначала изучает голос бренда, товары и цены.",variant:"Вариант",copy:"Копировать",copied:"Скопировано ✓",reach:"Прогноз охвата",best:"Лучшее время",
+adsLbl:"Реклама",month:"Ноябрь 2026",wd:["Пн","Вт","Ср","Чт","Пт","Сб","Вс"],pick:"Нажмите на день",today:"сегодня",pub:"вышло",sch:"в плане",
+types:{reel:"Рилс",car:"Карусель",story:"Сторис ×3",post:"Пост",ad:"Запуск рекламы",live:"Эфир с вопросами",ugc:"Видео клиента",tip:"Совет по уходу",rev:"Репост отзыва"},
+topics:["Ночной ритуал в 3 шага","Мифы о витамине C","До / после 7 ночей","Закулисье","Ингредиент недели","Вопрос клиента","Выходные −20%","Гид для чувствительной кожи","История основательницы","Воскресенье масок"],
+sumP:"постов и сторис",sumA:"запусков рекламы",sumPl:"площадки",
+cN:"03 · Контент-план",cH:"Весь месяц <em>уже расписан</em>",cP:"У каждого поста, сторис и запуска рекламы есть день и время. Нажмите на день — увидите, что выходит.",
+fN:"04 · Воронка",fH:"От листания ленты <em>до записи</em>",fP:"Мы не останавливаемся на лайках. Реклама ведёт на быстрый сайт, ИИ-помощник отвечает за секунды, и клиент записывается или платит — даже в 3 часа ночи.",
+f1:"Реклама",f1p:"Её видят нужные люди в вашем городе.",f1m:"просмотров",f2:"Сайт",f2p:"Открывается меньше чем за секунду, показывает цены и отзывы.",f2m:"визитов",f3:"ИИ-чат",f3p:"Отвечает на вопросы 24/7 и подбирает время.",f3m:"диалогов",f4:"Запись / покупка",f4p:"Оплата онлайн, напоминание отправлено, клиент в вашей CRM.",f4m:"заявок",
+ch1:"Есть окошко в пятницу?",ch2:"Да! 15:00 или 17:30 — как удобнее? 🌿",ch3:"15:00, пожалуйста",bk:"Пт, 14 ноября",bkok:"Записана и оплачено",
+rN:"05 · Результаты",rH:"Один экран. <em>Все цифры.</em>",rP:"Охват, клики, заявки и цена каждой заявки — обновляются каждый день, а раз в неделю объясняем простыми словами.",
+dT:"Lumen Skin · последние 30 дней",exn:"Цифры для примера",k1:"Охват",k2:"Клики",k3:"Заявки",k4:"Цена заявки",c1:"Охват по дням",c1s:"Без рекламы + реклама, тыс. человек",c2:"Заявки по каналам",c2s:"Записи и заказы",
+ch:["Instagram","TikTok","Google","Facebook"],dnote:"Цифры на этой странице — пример для выдуманного бренда, а не обещание. Реальный результат зависит от ниши, предложения и рекламного бюджета.",
+pN:"06 · Что вы получаете",pH:"Выберите, сколько <em>мы берём на себя</em>",pP:"Начните с постов от ИИ — или отдайте нам всё целиком: соцсети и рекламу.",
+g1:"Growth",g2:"ИИ-посты",g3:"Публикуете вы — ИИ пишет и планирует.",gl:["Посты, подписи и хэштеги на каждый день","Контент-план на месяц","Идеи для рилс и сторис","Черновики ответов на комментарии","Отчёт за месяц простыми словами"],gCta:"Начать с Growth",
+p1:"Pro",p2:"Всё за вас",p3:"Ведём ваши соцсети и рекламу от и до.",pl:["Всё из Growth","Публикуем и отвечаем за вас","Рекламные креативы с A/B-тестами","Реклама в Meta, Google и TikTok — настройка и ведение","ИИ-чат записывает клиентов 24/7","Живая панель + созвон раз в неделю"],pCta:"Хочу Pro →",
+pnote:"Рекламный бюджет оплачивается отдельно и напрямую площадкам (Meta, Google, TikTok). Вы видите каждую копейку.",
+finH:"Спите. <em>Маркетинг — нет.</em>",finP:"Расскажите Vax, нашему ИИ-помощнику, о своём деле — через пару минут увидите, какой была бы такая комната у вас.",finB:"Собрать мой штаб кампании →",
+foot:"Lumen Skin — выдуманный бренд. Демо сделано Vaxo: сайты, приложения, боты, соцсети и реклама — руками людей и ИИ.",more:"Ещё примеры →",
+title:"Lumen Skin — маркетинг на автопилоте · демо Vaxo",
+gTpl:{
+friendly:["Привет 👋 Знакомьтесь: {p} — новый любимый шаг перед сном.\nРаботает, пока вы спите, и утро становится проще.\n{o} — успейте забрать свою!","Честно: красивой коже не нужно 12 шагов.\n{p} делает главное за ночь 🌙\nТолько на этой неделе: {o}. Ссылка в шапке 💛","Сохраните на вечер 😉\n3 капли — {p}, свет выключен, сияние включено.\n{o}. Напишите нам «СИЯНИЕ» — поможем выбрать."],
+premium:["Тихая роскошь — каждый вечер.\n{p}: малые партии, выбор кожи, которая чувствует разницу.\nПриглашение этой недели: {o}.","Некоторые ритуалы стоят того, чтобы замедлиться.\n{p}: несколько капель, спокойная кожа, светлое утро.\nДля нашего круга — {o}.","Меньше, но лучше.\n{p} создан, чтобы делать одно — и делать безупречно.\nОткройте его на этой неделе: {o}."],
+bold:["Хватит тратить деньги на 10 баночек. 🛑\n{p} заменяет три.\n{o} — до воскресенья. Не проспите (хотя спать как раз нужно).","7 ночей. Заметное сияние. Без фильтров.\nЭто {p}.\n{o} — жмите ссылку, пока не закончилось.","Ваша кожа работает в ночную смену. Дайте ей правильные инструменты.\n{p} — сейчас {o}.\nКоличество ограничено."],
+playful:["Я: ещё одну серию 📺\nМоя кожа: всё равно сияет благодаря {p} ✨\n{o} — порадуйте себя (и подушку).","Неожиданно: секрет утреннего сияния — это… сон 😴\n(с {p}, конечно)\n{o} на этой неделе!","Ночь — для отдыха,\nутро — для сияния 🌙✨\n{p} работает, пока вы спите.\nИ да: {o} 😉"]},
+tags:{base:["уходзакожей","скинкеа","заботаосебе"],friendly:["вечернийуход","уходзалицом"],premium:["чистаякосметика","люксуход"],bold:["идеальнаякожа","безфильтров"],playful:["бьютилайфхак","скинток"]},
+plats:["Instagram","TikTok","Facebook"]},
+
+ua:{strip:"Демо від Vaxo — бренд вигаданий, функції справжні",stripCta:"Хочете так само? →",room:"Штаб кампанії",n1:"Реклама",n2:"ШІ-пости",n3:"Календар",n4:"Воронка",n5:"Результати",
+heroEye:"Маркетинг на автопілоті · Lumen Skin",h1a:"Ваша команда маркетингу",h1b:"працює, поки ви",rot:["спите.","п'єте каву.","приймаєте клієнтів.","живете."],
+lead:"Реклама, пости, сторіс, відповіді та записи — щомісяця планують, пишуть, малюють і запускають Vaxo та ШІ. Ви відкриваєте одну кімнату й бачите все.",
+cta1:"Спробувати ШІ-копірайтера ↓",cta2:"Хочу так для себе",hs1:"постів і сторіс на місяць",hs2:"рекламних креативів з A/B-тестом",hs3:"ШІ відповідає клієнтам",
+spons:"Реклама",storyBig:"Сяйво за <em>7 ночей</em>",shop:"Купити",book:"Записатися",chip1:"Новий запис · пт 15:00",chip1s:"через ШІ-чат, 2 хв тому",chip2:"Рілс: 12,4 тис. переглядів",chip2s:"вийшов о 03:00",live:"Команда онлайн",
+feed:[["📸","Сторіс опубліковано","Instagram · Сяйво за 7 ночей"],["💬","ШІ відповів Марії","«Чи підійде для чутливої шкіри?»"],["📈","Бюджет перенесено","на найкращий креатив +18%"],["📅","Запис підтверджено","Догляд за обличчям · пт 15:00"],["✍️","Написано 3 пости","на наступний тиждень, чекають вашого «ок»"],["🎬","Рілс у черзі","TikTok + Reels · 19:30"],["⭐","Відповідь на відгук","Google · 5★ від Олени"],["🧪","Запущено A/B-тест","Заголовок «7 ночей» проти «1 тижня»"]],
+marq:["Instagram","TikTok","Facebook","Google Ads","Reels","Stories","ШІ-чат 24/7","Контент-план","Звіт щотижня"],
+adsN:"01 · Рекламні креативи",adsH:"Реклама на місяць, <em>готова до запуску</em>",adsP:"Сторіс, рілс, пости в стрічку й пошукова реклама — написані, намальовані й протестовані. Ви схвалюєте одним дотиком, ми запускаємо й лишаємо найкращі.",
+story2:"Ваш догляд <em>у пʼятницю</em> вже чекає",lStory:"Сторіс в Instagram",tWin:"Лідер · CTR 2,9%",feedOl:"Нічний ритуал у 3 кроки",likes:"2 184 вподобання",feedCap:"Сироватка, олія, крем. 3 хвилини перед сном — решту шкіра зробить уночі ✨",lFeed:"Пост у стрічці · карусель",tSave:"Збережень ×3",reels:"Reels",reelCap:"Ролер + сироватка = сяйво зранку. Збережи на вечір.",lReel:"Рілс / TikTok",tViews:"212 тис. переглядів",
+subs:["POV: шкіра після 7 ночей","крок 1 — охолоди ролер","крок 2 — 3 краплі сироватки","…і прокидайся сяйливою ✨"],gq:"сироватка з вітаміном с купити",
+gSp:"Реклама",gT:"Нічна сироватка з вітаміном C — сяйво за 7 ночей",gD:"Перевірено дерматологами, веган, малі партії. Безкоштовна доставка від $40. 30 днів на повернення.",gs1:"Хіти продажів",gs2:"Тест шкіри",gs3:"Записатися на догляд",m1:"креативів на місяць",m2:"майданчики",m3:"тести щотижня",lSearch:"Реклама в Google",tCpc:"Ціна кліку −38%",swipeHint:"← гортайте →",
+wN:"02 · ШІ пише пости",wH:"Впишіть пропозицію. <em>Отримайте три пости.</em>",wP:"Спробуйте просто зараз: напишіть, що продаєте і яка пропозиція цього тижня, оберіть тон — і отримайте готові пости з хештегами.",
+lP:"Товар або послуга",lO:"Пропозиція тижня",dP:"Нічна сироватка з вітаміном C",dO:"−20% до неділі",lT:"Тон",tones:["Дружній","Преміум","Сміливий","Грайливий"],lPl:"Майданчик",gen:"✨ Написати 3 пости",
+wNote:"Це демо пише просто в браузері за шаблонами. У справжньому сервісі ШІ спершу вивчає голос бренду, товари й ціни.",variant:"Варіант",copy:"Копіювати",copied:"Скопійовано ✓",reach:"Прогноз охоплення",best:"Найкращий час",
+adsLbl:"Реклама",month:"Листопад 2026",wd:["Пн","Вт","Ср","Чт","Пт","Сб","Нд"],pick:"Натисніть на день",today:"сьогодні",pub:"вийшло",sch:"у плані",
+types:{reel:"Рілс",car:"Карусель",story:"Сторіс ×3",post:"Пост",ad:"Запуск реклами",live:"Ефір із питаннями",ugc:"Відео клієнтки",tip:"Порада з догляду",rev:"Репост відгуку"},
+topics:["Нічний ритуал у 3 кроки","Міфи про вітамін C","До / після 7 ночей","Закулісся","Інгредієнт тижня","Питання клієнтки","Вихідні −20%","Гід для чутливої шкіри","Історія засновниці","Неділя масок"],
+sumP:"постів і сторіс",sumA:"запусків реклами",sumPl:"майданчики",
+cN:"03 · Контент-план",cH:"Увесь місяць <em>уже розписано</em>",cP:"Кожен пост, сторіс і запуск реклами має день і час. Натисніть на день — побачите, що виходить.",
+fN:"04 · Воронка",fH:"Від гортання стрічки <em>до запису</em>",fP:"Ми не зупиняємося на лайках. Реклама веде на швидкий сайт, ШІ-помічник відповідає за секунди, і клієнт записується або платить — навіть о 3 ночі.",
+f1:"Реклама",f1p:"Її бачать потрібні люди у вашому місті.",f1m:"переглядів",f2:"Сайт",f2p:"Відкривається менш ніж за секунду, показує ціни й відгуки.",f2m:"візитів",f3:"ШІ-чат",f3p:"Відповідає на питання 24/7 і підбирає час.",f3m:"діалогів",f4:"Запис / покупка",f4p:"Оплата онлайн, нагадування надіслано, клієнт у вашій CRM.",f4m:"заявок",
+ch1:"Є віконце в пʼятницю?",ch2:"Так! 15:00 чи 17:30 — як зручніше? 🌿",ch3:"15:00, будь ласка",bk:"Пт, 14 листопада",bkok:"Записано й оплачено",
+rN:"05 · Результати",rH:"Один екран. <em>Усі цифри.</em>",rP:"Охоплення, кліки, заявки й ціна кожної заявки — оновлюються щодня, а щотижня пояснюємо простими словами.",
+dT:"Lumen Skin · останні 30 днів",exn:"Цифри для прикладу",k1:"Охоплення",k2:"Кліки",k3:"Заявки",k4:"Ціна заявки",c1:"Охоплення по днях",c1s:"Без реклами + реклама, тис. людей",c2:"Заявки по каналах",c2s:"Записи й замовлення",
+ch:["Instagram","TikTok","Google","Facebook"],dnote:"Цифри на цій сторінці — приклад для вигаданого бренду, а не обіцянка. Реальний результат залежить від ніші, пропозиції та рекламного бюджету.",
+pN:"06 · Що ви отримуєте",pH:"Оберіть, скільки <em>ми беремо на себе</em>",pP:"Почніть із постів від ШІ — або віддайте нам усе: соцмережі й рекламу.",
+g1:"Growth",g2:"ШІ-пости",g3:"Публікуєте ви — ШІ пише й планує.",gl:["Пости, підписи й хештеги на кожен день","Контент-план на місяць","Ідеї для рілс і сторіс","Чернетки відповідей на коментарі","Звіт за місяць простими словами"],gCta:"Почати з Growth",
+p1:"Pro",p2:"Усе за вас",p3:"Ведемо ваші соцмережі й рекламу від початку до кінця.",pl:["Усе з Growth","Публікуємо й відповідаємо за вас","Рекламні креативи з A/B-тестами","Реклама в Meta, Google і TikTok — налаштування й ведення","ШІ-чат записує клієнтів 24/7","Жива панель + дзвінок щотижня"],pCta:"Хочу Pro →",
+pnote:"Рекламний бюджет оплачується окремо й напряму майданчикам (Meta, Google, TikTok). Ви бачите кожну копійку.",
+finH:"Спіть. <em>Маркетинг — ні.</em>",finP:"Розкажіть Vax, нашому ШІ-помічнику, про свою справу — за кілька хвилин побачите, якою була б така кімната у вас.",finB:"Зібрати мій штаб кампанії →",
+foot:"Lumen Skin — вигаданий бренд. Демо зроблено Vaxo: сайти, застосунки, боти, соцмережі й реклама — руками людей і ШІ.",more:"Більше прикладів →",
+title:"Lumen Skin — маркетинг на автопілоті · демо Vaxo",
+gTpl:{
+friendly:["Привіт 👋 Знайомтеся: {p} — новий улюблений крок перед сном.\nПрацює, поки ви спите, і ранок стає легшим.\n{o} — встигніть забрати свою!","Чесно: гарній шкірі не потрібно 12 кроків.\n{p} робить головне за ніч 🌙\nЛише цього тижня: {o}. Посилання в шапці 💛","Збережіть на вечір 😉\n3 краплі — {p}, світло вимкнено, сяйво ввімкнено.\n{o}. Напишіть нам «СЯЙВО» — допоможемо обрати."],
+premium:["Тиха розкіш — щовечора.\n{p}: малі партії, вибір шкіри, яка відчуває різницю.\nЗапрошення цього тижня: {o}.","Деякі ритуали варті того, щоб сповільнитися.\n{p}: кілька крапель, спокійна шкіра, світлий ранок.\nДля нашого кола — {o}.","Менше, але краще.\n{p} створено, щоб робити одне — і робити бездоганно.\nВідкрийте його цього тижня: {o}."],
+bold:["Годі витрачати гроші на 10 баночок. 🛑\n{p} замінює три.\n{o} — до неділі. Не проспіть (хоча спати якраз треба).","7 ночей. Помітне сяйво. Без фільтрів.\nЦе {p}.\n{o} — тисніть посилання, поки не скінчилося.","Ваша шкіра працює в нічну зміну. Дайте їй правильні інструменти.\n{p} — зараз {o}.\nКількість обмежена."],
+playful:["Я: ще одну серію 📺\nМоя шкіра: однаково сяє завдяки {p} ✨\n{o} — потіште себе (і подушку).","Несподівано: секрет ранкового сяйва — це… сон 😴\n(з {p}, звісно)\n{o} цього тижня!","Ніч — для відпочинку,\nранок — для сяйва 🌙✨\n{p} працює, поки ви спите.\nІ так: {o} 😉"]},
+tags:{base:["доглядзашкірою","скінкеа","турботапросебе"],friendly:["вечірнійдогляд","доглядзаобличчям"],premium:["чистакосметика","люксдогляд"],bold:["ідеальнашкіра","безфільтрів"],playful:["бʼютілайфхак","скінток"]},
+plats:["Instagram","TikTok","Facebook"]}
+};
+var TONES=["friendly","premium","bold","playful"],TICON=["🙂","✦","⚡","🎈"];
+var rm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var q=new URLSearchParams(location.search).get("lang");var L=D[q]?q:"en";var T=D[L];
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+var fmt=function(n,d){return n.toLocaleString(L==="en"?"en-US":(L==="ru"?"ru-RU":"uk-UA"),{minimumFractionDigits:d||0,maximumFractionDigits:d||0})};
+
+function apply(){
+  T=D[L];document.documentElement.lang=L==="ua"?"uk":L;document.title=T.title;
+  $$("[data-i]").forEach(function(el){var v=T[el.getAttribute("data-i")];if(typeof v==="string")el.innerHTML=v});
+  $$(".lang a").forEach(function(a){a.setAttribute("aria-current",a.dataset.l===L?"true":"false")});
+  $("#marq").innerHTML=T.marq.concat(T.marq).map(function(x){return "<span>"+x+"</span>"}).join("");
+  $("#gl").innerHTML=T.gl.map(function(x){return "<li>"+x+"</li>"}).join("");
+  $("#pl").innerHTML=T.pl.map(function(x){return "<li>"+x+"</li>"}).join("");
+  rotInit();feedInit();writerInit();calInit();charts();
+}
+$$(".lang a").forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();L=a.dataset.l;try{history.replaceState(null,"","?lang="+L+location.hash)}catch(_){}apply()})});
+
+/* rotating word */
+var rotT;
+function rotInit(){
+  var r=$("#rot");clearInterval(rotT);
+  r.innerHTML=T.rot.map(function(w,i){return '<em class="'+(i===0?"on":"")+'">'+w+"</em>"}).join("");
+  r.setAttribute("aria-label",T.rot[0]);
+  if(rm)return;var i=0,ems=$$("em",r);
+  rotT=setInterval(function(){ems[i].className="out";var j=i;setTimeout(function(){ems[j].className=""},600);i=(i+1)%ems.length;ems[i].className="on"},2600);
+}
+/* live feed + clock */
+var feedT;
+function feedInit(){
+  var ul=$("#feed"),k=0,cols=["#3a2a22","#22302a","#2a2638","#382a22"];clearInterval(feedT);ul.innerHTML="";
+  var t=new Date();t.setHours(3,12,0);
+  function add(){var f=T.feed[k%T.feed.length];t=new Date(t.getTime()+ (4+k%5)*60000);
+    var li=document.createElement("li");li.innerHTML='<i style="background:'+cols[k%4]+'">'+f[0]+"</i><div><b>"+esc(f[1])+"</b><small>"+pad(t.getHours())+":"+pad(t.getMinutes())+" · "+esc(f[2])+"</small></div>";
+    ul.insertBefore(li,ul.firstChild);if(ul.children.length>6)ul.removeChild(ul.lastChild);$("#clock").textContent=pad(t.getHours())+":"+pad(t.getMinutes());k++}
+  for(var i=0;i<4;i++)add();if(!rm)feedT=setInterval(add,2400);
+}
+function pad(n){return (n<10?"0":"")+n}
+
+/* reel subtitles + google typing */
+var subT,gT;
+function adsAnim(){
+  clearInterval(subT);clearInterval(gT);var s=$("#subt"),i=0;s.textContent=T.subs[0];
+  var g=$("#gq");if(rm){g.textContent=T.gq;return}
+  subT=setInterval(function(){i=(i+1)%T.subs.length;s.style.opacity=0;setTimeout(function(){s.textContent=T.subs[i];s.style.opacity=1},250)},3000);
+  var c=0,dir=1,hold=0;gT=setInterval(function(){if(hold>0){hold--;return}c+=dir;g.textContent=T.gq.slice(0,c);if(c>=T.gq.length){dir=-1;hold=30}else if(c<=0){dir=1;hold=6}},80);
+}
+
+/* writer */
+var tone=0,plat=0;
+function writerInit(){
+  $("#iP").value=T.dP;$("#iO").value=T.dO;$("#iP").placeholder=T.dP;$("#iO").placeholder=T.dO;
+  var fs=$("#tones");$$("label",fs).forEach(function(l){l.remove()});
+  T.tones.forEach(function(n,i){var l=document.createElement("label");l.innerHTML='<input type="radio" name="tone" value="'+i+'"'+(i===tone?" checked":"")+'><span>'+TICON[i]+" "+n+"</span>";fs.appendChild(l)});
+  $("#plats").innerHTML=T.plats.map(function(p,i){return '<label><input type="radio" name="plat" value="'+i+'"'+(i===plat?" checked":"")+"><span>"+p+"</span></label>"}).join("");
+  gen(true);adsAnim();
+}
+$("#tones").addEventListener("change",function(e){tone=+e.target.value;gen()});
+$("#plats").addEventListener("change",function(e){plat=+e.target.value;gen()});
+$("#wform").addEventListener("submit",function(e){e.preventDefault();gen()});
+function slug(s){return s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu," ").trim().split(" ").filter(function(w){return w.length>2}).slice(0,2).join("")}
+var typT=[];
+function gen(instant){
+  var p=$("#iP").value.trim()||T.dP,o=$("#iO").value.trim()||T.dO,tn=TONES[tone],tpl=T.gTpl[tn],tg=T.tags;
+  var tags=[slug(p)].concat(tg.base,tg[tn]).filter(Boolean);if(plat===1)tags.push(L==="en"?"fyp":"рекомендации");
+  var times=[["19:30","21:00","08:15"],["20:00","18:30","22:00"],["12:30","19:00","09:00"]][plat];
+  var reach=[[2.1,3.4,4.0],[5.8,8.2,11.5],[1.2,1.9,2.6]][plat];
+  typT.forEach(clearInterval);typT=[];
+  var out=$("#outs");out.innerHTML="";
+  tpl.forEach(function(t,i){
+    var txt=t.replace(/\{p\}/g,p).replace(/\{o\}/g,o);
+    var ht=tags.slice(0,3+i).concat(i===2?["lumenskin"]:[]).map(function(x){return "#"+x}).join(" ");
+    var c=document.createElement("article");c.className="out rv in";
+    c.innerHTML='<div class="oh"><span>'+T.variant+" "+(i+1)+" · "+T.plats[plat]+'</span><button type="button">'+T.copy+'</button></div><p></p><div class="ht">'+esc(ht)+'</div><div class="meta"><span>'+T.reach+": <b>"+fmt(reach[i],1).replace(/[.,]0$/,"")+'k</b></span><span>'+T.best+": <b>"+times[i]+"</b></span></div>";
+    out.appendChild(c);var pe=$("p",c);
+    $("button",c).addEventListener("click",function(){var b=this,s=txt+"\n\n"+ht;
+      var done=function(){b.textContent=T.copied;setTimeout(function(){b.textContent=T.copy},1600)};
+      if(navigator.clipboard)navigator.clipboard.writeText(s).then(done,done);else done()});
+    if(instant||rm){pe.textContent=txt;return}
+    c.classList.add("typing");var k=0;
+    setTimeout(function(){var it=setInterval(function(){k+=3;pe.textContent=txt.slice(0,k);if(k>=txt.length){clearInterval(it);c.classList.remove("typing")}},16);typT.push(it)},i*350);
+  });
+}
+
+/* calendar: Nov 2026 starts on Sunday */
+var PL=["ig","tt","fb","ad"],PN=["Instagram","TikTok","Facebook","Ads"],TODAY=12,selDay=TODAY;
+function dayPosts(d){
+  var wd=(d+5)%7,list=[],tp=T.topics,ty=T.types;
+  list.push({p:0,t:[ty.reel,ty.car,ty.post,ty.tip,ty.rev,ty.story,ty.ugc][wd],s:tp[d%tp.length],h:"19:30"});
+  if(wd%2===0)list.push({p:1,t:ty.reel,s:tp[(d+3)%tp.length],h:"20:00"});
+  if(wd===1||wd===3||wd===5)list.push({p:2,t:ty.post,s:tp[(d+5)%tp.length],h:"12:30"});
+  if(d===3||d===10||d===17||d===24)list.push({p:3,t:ty.ad,s:tp[(d+1)%tp.length],h:"09:00"});
+  if(d===20)list.push({p:0,t:ty.live,s:tp[7],h:"18:00"});
+  list.push({p:0,t:ty.story,s:"",h:"10:00"});
+  return list;
+}
+function calInit(){
+  $("#mname").textContent=T.month;
+  $("#wds").innerHTML=T.wd.map(function(w){return '<div class="wd">'+w+"</div>"}).join("");
+  var h="",tot=0,ads=0;for(var e=0;e<6;e++)h+='<div class="day empty" aria-hidden="true"></div>';
+  for(var d=1;d<=30;d++){var ps=dayPosts(d);tot+=ps.length;ps.forEach(function(x){if(x.p===3)ads++});
+    h+='<button type="button" class="day'+(d<TODAY?" past":"")+(d===TODAY?" today":"")+(d===selDay?" sel":"")+'" data-d="'+d+'" aria-label="'+d+" "+T.month+", "+ps.length+'"><span class="dn">'+d+"</span>"+
+      ps.slice(0,3).map(function(x){return '<span class="ev p-'+PL[x.p]+'">'+esc(x.t)+"</span>"}).join("")+
+      '<span class="dots">'+ps.map(function(x){return '<i class="dot p-'+PL[x.p]+'"></i>'}).join("")+"</span></button>"}
+  $("#days").innerHTML=h;
+  $("#calsum").innerHTML="<span><b>"+(tot-ads)+"</b>"+T.sumP+"</span><span><b>"+ads+"</b>"+T.sumA+"</span><span><b>4</b>"+T.sumPl+"</span>";
+  showDay(selDay);
+}
+$("#days").addEventListener("click",function(e){var b=e.target.closest(".day:not(.empty)");if(!b)return;selDay=+b.dataset.d;$$(".day.sel").forEach(function(x){x.classList.remove("sel")});b.classList.add("sel");showDay(selDay)});
+function showDay(d){
+  var ps=dayPosts(d).sort(function(a,b){return a.h<b.h?-1:1}),wdn=T.wd[(d+5)%7];
+  $("#det").innerHTML="<h3>"+wdn+", "+d+"</h3><div class=\"ds\">"+T.month+(d===TODAY?" · "+T.today:"")+"</div><ul>"+ps.map(function(x){
+    return '<li><i class="dot p-'+PL[x.p]+'"></i><b>'+esc(x.t)+'<span class="st '+(d<TODAY?"ok\">"+T.pub:"sc\">"+T.sch)+"</span></b><small>"+x.h+" · "+(x.p===3?T.adsLbl:PN[x.p])+(x.s?" · "+esc(x.s):"")+"</small></li>"}).join("")+"</ul>";
+}
+
+/* charts */
+function charts(){
+  var n=30,pts=[],mx=0;for(var i=0;i<n;i++){var v=3.2+i*0.17+Math.sin(i*0.9)*0.9+Math.sin(i*0.31)*0.6+(i===17?2.2:0)+(i===24?1.6:0);pts.push(v);if(v>mx)mx=v}
+  mx=Math.ceil(mx/2)*2;var W=600,H=220,pl=34,pr=8,pt=12,pb=26;
+  var X=function(i){return pl+i*(W-pl-pr)/(n-1)},Y=function(v){return pt+(1-v/mx)*(H-pt-pb)};
+  var d=pts.map(function(v,i){return (i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)}).join(" ");
+  var g="";for(var k=0;k<=mx;k+=mx/4){g+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(k)+'" y2="'+Y(k)+'" stroke="rgba(255,236,220,.08)"/><text x="'+(pl-8)+'" y="'+(Y(k)+4)+'" text-anchor="end">'+fmt(k)+"k</text>"}
+  [1,8,15,22,29].forEach(function(dd){g+='<text x="'+X(dd-1)+'" y="'+(H-6)+'" text-anchor="middle">'+dd+"</text>"});
+  var lx=X(29),ly=Y(pts[29]);
+  $("#lchart").innerHTML='<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb48a" stop-opacity=".45"/><stop offset="1" stop-color="#ffb48a" stop-opacity="0"/></linearGradient></defs>'+g+
+    '<path class="area" d="'+d+" L"+X(n-1)+" "+(H-pb)+" L"+pl+" "+(H-pb)+' Z" fill="url(#ga)"/><path class="ln-path" d="'+d+'" fill="none" stroke="#ffb48a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+
+    '<circle class="area" cx="'+lx+'" cy="'+ly+'" r="5" fill="#ffb48a" stroke="#0f0c0b" stroke-width="2"/>';
+  var vals=[64,41,38,22],cs=["#ff8fb1","#7ef0e6","#f7c873","#8fb4ff"];
+  $("#hbar").innerHTML=T.ch.map(function(c,i){return "<div><p>"+c+"<span>"+vals[i]+"</span></p><i style=\"--v:"+(vals[i]/64*100)+"%;--c:"+cs[i]+'"></i></div>'}).join("");
+  $$(".cnt").forEach(function(el){if(el.dataset.done)setNum(el,1)});
+}
+function setNum(el,f){var n=+el.dataset.n,dd=+(el.dataset.d||0);el.textContent=(el.dataset.p||"")+fmt(n*f,dd)}
+function count(el){if(el.dataset.done)return;el.dataset.done=1;if(rm){setNum(el,1);return}var t0=performance.now(),dur=1800;
+  (function f(t){var k=Math.min(1,(t-t0)/dur);setNum(el,1-Math.pow(1-k,3));if(k<1)requestAnimationFrame(f)})(t0)}
+
+/* funnel particles */
+function parts(){if(rm)return;var g=$("#parts");if(!g)return;var h="";
+  for(var i=0;i<14;i++){var dur=(4+Math.random()*3).toFixed(1),del=(-Math.random()*6).toFixed(1),r=(1.5+Math.random()*2).toFixed(1),y=(20+(Math.random()*8-4)).toFixed(1);
+    h+='<circle r="'+r+'" cy="'+y+'" fill="'+(i%3?"#ffb48a":"#f7c873")+'"><animate attributeName="cx" from="0" to="1000" dur="'+dur+'s" begin="'+del+'s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="'+dur+'s" begin="'+del+'s" repeatCount="indefinite"/></circle>'}
+  g.innerHTML=h}
+
+/* reveal */
+if("IntersectionObserver" in window&&!rm){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;var t=e.target;t.classList.add("in");
+    $$(".cnt",t).forEach(count);if(t.id==="dash")t.classList.add("drawn");if(t.classList.contains("cnt"))count(t);io.unobserve(t)})},{threshold:.15,rootMargin:"0px 0px -40px 0px"});
+  $$(".rv").forEach(function(el,i){el.style.transitionDelay=(i%4)*80+"ms";io.observe(el)});
+}else{$$(".rv").forEach(function(el){el.classList.add("in")});$$(".cnt").forEach(count);$("#dash").classList.add("drawn")}
+
+apply();parts();
+})();
+</script>
+</body>
+</html>

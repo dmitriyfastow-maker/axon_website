@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ember — Specialty Coffee Roastery & Café</title>
+<meta name="description" content="Ember: small-batch specialty coffee roasted every Tuesday. Order beans, build a subscription box, book a cupping night. A demo site by Vaxo.">
+<meta name="theme-color" content="#140d0a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="/examples/img/os-hands.webp">
+<style>
+:root{
+  --bg:#140d0a;--bg2:#1d1410;--card:#241914;--line:rgba(243,233,220,.12);
+  --ink:#f3e9dc;--mute:#b9a898;--ember:#ff6a2b;--ember2:#ffb347;--ash:#8a776a;--moss:#a3c585;
+  --r:22px;--pad:clamp(16px,4vw,48px);--max:1280px;
+  --disp:"Unbounded",system-ui,sans-serif;--serif:"Cormorant Garamond",Georgia,serif;--body:"Manrope",system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html,body{overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--body);-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--ember2);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+em.s{font-family:var(--serif);font-style:italic;font-weight:600;letter-spacing:0;background:linear-gradient(100deg,var(--ember2),var(--ember) 60%,#ff3d2e);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.08em}
+/* grain */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.07;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* vaxo strip */
+.vx{display:block;background:var(--ink);color:#1b120d;font:600 12.5px/1.3 var(--body);text-align:center;padding:9px 16px;text-decoration:none;position:relative;z-index:60}
+.vx b{font-weight:800}
+.vx span{text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.vx:hover span{color:#c2410c}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);background:rgba(20,13,10,.72);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:18px;height:64px}
+.logo{display:flex;align-items:center;gap:9px;font:800 19px/1 var(--disp);letter-spacing:-.02em;text-decoration:none}
+.logo svg{width:24px;height:28px}
+.links{display:flex;gap:26px;margin-left:auto;font-size:14px;font-weight:500}
+.links a{text-decoration:none;color:var(--mute);transition:color .2s}
+.links a:hover{color:var(--ink)}
+.lang{display:flex;border:1px solid var(--line);border-radius:99px;padding:3px;font:700 11px/1 var(--body)}
+.lang button{padding:7px 9px;border-radius:99px;color:var(--mute);letter-spacing:.06em}
+.lang button[aria-pressed=true]{background:var(--ink);color:#1b120d}
+.cartbtn{position:relative;display:flex;align-items:center;gap:8px;background:var(--ember);color:#1b0d05;font-weight:700;font-size:14px;padding:10px 16px;border-radius:99px;transition:transform .2s var(--ease)}
+.cartbtn:hover{transform:translateY(-2px)}
+.cartbtn .n{min-width:20px;height:20px;border-radius:99px;background:#1b0d05;color:var(--ember2);font-size:11px;display:grid;place-items:center;padding:0 5px}
+.cartbtn.bump{animation:bump .5s var(--ease)}
+@keyframes bump{40%{transform:scale(1.15)}}
+.prog{position:absolute;left:0;bottom:-1px;height:2px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--ember2),var(--ember))}
+
+/* hero */
+.hero{position:relative;min-height:calc(100svh - 100px);display:flex;align-items:center;padding:clamp(40px,7vw,90px) 0 60px;overflow:hidden;isolation:isolate}
+.glow{position:absolute;width:70vmax;height:70vmax;left:var(--mx,70%);top:var(--my,40%);transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,106,43,.28),rgba(255,106,43,.06) 40%,transparent 65%);z-index:-1;pointer-events:none;transition:left .6s var(--ease),top .6s var(--ease)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:clamp(24px,4vw,64px);align-items:center;width:100%}
+.kick{display:inline-flex;align-items:center;gap:10px;font:600 12px/1 var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--ember2);margin-bottom:26px}
+.kick i{width:8px;height:8px;border-radius:50%;background:var(--ember);box-shadow:0 0 0 0 rgba(255,106,43,.7);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 12px rgba(255,106,43,0)}100%{box-shadow:0 0 0 0 rgba(255,106,43,0)}}
+h1{font:800 clamp(2.3rem,6.6vw,7rem)/.92 var(--disp);letter-spacing:-.045em;text-transform:uppercase}
+h1 .ln{display:block;overflow:hidden;padding-bottom:.06em}
+h1 .ln>span{display:inline-block;transform:translateY(105%);transition:transform 1.1s var(--ease)}
+h1 em.s{text-transform:none;font-size:1.12em;letter-spacing:-.01em;line-height:.8}
+.ready h1 .ln>span{transform:none}
+h1 .ln:nth-child(2)>span{transition-delay:.12s}h1 .ln:nth-child(3)>span{transition-delay:.24s}
+.lead{max-width:34ch;color:var(--mute);font-size:clamp(16px,1.4vw,19px);margin:36px 0 34px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 24px;border-radius:99px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .25s var(--ease),background .25s,box-shadow .25s}
+.btn.p{background:var(--ember);color:#1b0d05;box-shadow:0 10px 40px -10px rgba(255,106,43,.7)}
+.btn.p:hover{transform:translateY(-3px);box-shadow:0 18px 50px -12px rgba(255,106,43,.9)}
+.btn.g{border:1px solid var(--line);color:var(--ink)}
+.btn.g:hover{background:rgba(243,233,220,.06)}
+.btn svg{width:16px;height:16px;transition:transform .25s var(--ease)}
+.btn:hover svg{transform:translateX(4px)}
+.fade{opacity:0;transform:translateY(16px);transition:opacity .9s var(--ease) .5s,transform .9s var(--ease) .5s}
+.ready .fade{opacity:1;transform:none}
+.heroart{position:relative;aspect-ratio:4/5;max-height:72svh;justify-self:end;width:100%}
+.arch{position:absolute;inset:0;border-radius:999px 999px 28px 28px;overflow:hidden;background:var(--card);transform:scale(.92);opacity:0;transition:transform 1.4s var(--ease) .2s,opacity 1s .2s}
+.ready .arch{transform:none;opacity:1}
+.arch img{width:100%;height:115%;object-fit:cover;object-position:60% 50%;transform:translateY(var(--py,0));filter:saturate(1.1) contrast(1.05)}
+.arch::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(20,13,10,.6))}
+.badge{position:absolute;left:-46px;bottom:12%;width:132px;height:132px;border-radius:50%;background:var(--ember);color:#1b0d05;display:grid;place-items:center;box-shadow:0 20px 50px -15px rgba(0,0,0,.7)}
+.badge svg.rot{position:absolute;inset:0;width:100%;height:100%;animation:spin 18s linear infinite}
+.badge text{font:700 10.5px var(--body);letter-spacing:.2em;text-transform:uppercase;fill:#1b0d05}
+.badge b{font:800 26px/1 var(--disp)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.steam{position:absolute;right:14%;top:-6%;width:90px;height:120px;opacity:.75}
+.steam path{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:6 14;animation:steam 3s linear infinite}
+.steam path:nth-child(2){animation-duration:3.8s;opacity:.6}.steam path:nth-child(3){animation-duration:4.4s;opacity:.4}
+@keyframes steam{to{stroke-dashoffset:-80}}
+.scrollhint{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);font:600 11px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--ash);display:flex;flex-direction:column;align-items:center;gap:8px}
+.scrollhint i{width:1px;height:34px;background:linear-gradient(var(--ember),transparent);animation:drip 1.8s var(--ease) infinite;transform-origin:top}
+@keyframes drip{0%{transform:scaleY(0)}60%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* marquee */
+.mq{border-block:1px solid var(--line);overflow:hidden;padding:20px 0;background:var(--bg2)}
+.mq .t{display:flex;width:max-content;animation:mq 38s linear infinite}
+.mq span{font:600 clamp(20px,3vw,34px)/1 var(--disp);letter-spacing:-.02em;text-transform:uppercase;padding-right:36px;white-space:nowrap;display:flex;align-items:center;gap:36px}
+.mq span::after{content:"✺";color:var(--ember);font-size:.8em}
+.mq span:nth-child(even){font-family:var(--serif);font-style:italic;text-transform:none;font-weight:500;font-size:clamp(26px,3.6vw,42px);color:var(--mute)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* sections */
+section{position:relative;scroll-margin-top:64px}
+.sec{padding:clamp(72px,10vw,140px) 0}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--ember2);margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:28px;height:1px;background:currentColor}
+h2{font:800 clamp(1.8rem,5.4vw,4.6rem)/.98 var(--disp);letter-spacing:-.04em;text-transform:uppercase;max-width:16ch}
+h2 em.s{text-transform:none;font-size:1.1em}
+.head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:clamp(32px,5vw,56px)}
+.head p{max-width:38ch;color:var(--mute)}
+.rv{opacity:0;transform:translateY(40px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}.rv.d3{transition-delay:.24s}
+
+/* shop */
+.tabs{display:flex;gap:6px;background:var(--bg2);border:1px solid var(--line);padding:5px;border-radius:99px;width:max-content;max-width:100%;overflow-x:auto;margin-bottom:28px}
+.tabs button{padding:10px 18px;border-radius:99px;font-weight:600;font-size:14px;color:var(--mute);white-space:nowrap;transition:background .25s,color .25s}
+.tabs button[aria-selected=true]{background:var(--ink);color:#1b120d}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.prod{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;transition:transform .5s var(--ease),border-color .3s;animation:pop .6s var(--ease) both}
+.prod:hover{transform:translateY(-6px);border-color:rgba(255,106,43,.45)}
+@keyframes pop{from{opacity:0;transform:translateY(24px) scale(.97)}}
+.pa{aspect-ratio:1/1;border-radius:14px;display:grid;place-items:center;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 70%,var(--c2,#3a2a20),var(--bg2) 75%)}
+.pa svg{width:62%;transition:transform .7s var(--ease)}
+.prod:hover .pa svg{transform:rotate(-5deg) scale(1.06) translateY(-4px)}
+.tag{position:absolute;top:10px;left:10px;font:700 10.5px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;background:rgba(20,13,10,.7);padding:6px 9px;border-radius:99px;color:var(--ember2)}
+.prod h3{font:600 17px/1.2 var(--disp);letter-spacing:-.02em;margin:16px 4px 6px}
+.notes{font-size:13.5px;color:var(--mute);margin:0 4px;min-height:2.9em}
+.meter{display:flex;gap:4px;margin:12px 4px 0;align-items:center;font-size:11px;color:var(--ash);letter-spacing:.08em;text-transform:uppercase}
+.meter i{width:14px;height:4px;border-radius:2px;background:var(--line)}
+.meter i.on{background:var(--ember)}
+.pb{display:flex;align-items:center;justify-content:space-between;margin:16px 4px 2px;padding-top:14px;border-top:1px dashed var(--line)}
+.price{font:600 18px var(--disp)}
+.add{width:42px;height:42px;border-radius:50%;background:var(--ink);color:#1b120d;display:grid;place-items:center;transition:transform .3s var(--ease),background .3s}
+.add:hover{background:var(--ember);transform:rotate(90deg)}
+.add svg{width:18px;height:18px}
+.add.ok{background:var(--moss)}
+.fly{position:fixed;z-index:80;width:18px;height:18px;border-radius:50%;background:var(--ember);box-shadow:0 0 20px var(--ember);pointer-events:none;transition:transform .75s cubic-bezier(.5,-.4,.6,1),opacity .75s}
+
+/* bento */
+.bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(190px,auto);gap:16px}
+.b{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,2.4vw,30px);position:relative;overflow:hidden}
+.b h3{font:600 clamp(18px,1.6vw,22px)/1.2 var(--disp);letter-spacing:-.02em;margin-bottom:8px}
+.b p{color:var(--mute);font-size:14.5px}
+.b .big{font:800 clamp(56px,7vw,104px)/.9 var(--disp);letter-spacing:-.06em;margin-bottom:14px;background:linear-gradient(180deg,var(--ink),var(--ash));-webkit-background-clip:text;background-clip:text;color:transparent}
+.b1{grid-column:span 2;grid-row:span 2;display:flex;flex-direction:column;background:radial-gradient(120% 90% at 100% 0%,rgba(255,106,43,.18),transparent 60%),var(--card)}
+.curve{flex:1;min-height:200px;margin:14px -6px 6px}
+.curve path.l{fill:none;stroke:url(#gr);stroke-width:3.5;stroke-linecap:round;stroke-dasharray:900;stroke-dashoffset:900;transition:stroke-dashoffset 2.6s var(--ease)}
+.in .curve path.l{stroke-dashoffset:0}
+.curve .ar{fill:url(#ga);opacity:0;transition:opacity 1.6s 1s}
+.in .curve .ar{opacity:1}
+.curve text{font:600 11px var(--body);fill:var(--ash);letter-spacing:.08em}
+.curve line{stroke:var(--line)}
+.live{display:flex;gap:28px;flex-wrap:wrap;font-size:13px;color:var(--mute)}
+.live b{display:block;font:600 26px/1.1 var(--disp);color:var(--ink);font-variant-numeric:tabular-nums}
+.b2{grid-column:span 2}
+.b3 .dots{position:absolute;inset:auto 0 0 0;height:60%;opacity:.9}
+.b4{background:var(--ember);color:#1b0d05;border:0}
+.b4 p{color:#3b1a08}
+.b4 .big{background:none;color:#1b0d05;-webkit-background-clip:initial;background-clip:initial}
+.b5{grid-column:1/-1;padding:0;min-height:300px}
+.b5 img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transform:scale(1.08);transition:transform 1.6s var(--ease)}
+.b5.in img{transform:scale(1)}
+.b5 .cap{position:absolute;left:0;right:0;bottom:0;padding:24px;background:linear-gradient(transparent,rgba(20,13,10,.85))}
+.b5 .cap p{color:var(--ink);font:500 italic clamp(22px,2.4vw,30px)/1.15 var(--serif)}
+
+/* subscription */
+.subbox{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+.opts{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3vw,36px);display:grid;gap:28px}
+.og legend{font:600 12px var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--ash);margin-bottom:12px;display:flex;gap:10px}
+.og legend b{color:var(--ember2)}
+fieldset{border:0}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.seg label{position:relative;cursor:pointer}
+.seg input{position:absolute;opacity:0;inset:0}
+.seg span{display:block;border:1px solid var(--line);border-radius:16px;padding:14px;transition:border-color .25s,background .25s,transform .25s var(--ease);height:100%}
+.seg span b{display:block;font:600 16px/1.2 var(--disp);letter-spacing:-.02em}
+.seg span small{color:var(--mute);font-size:12.5px;display:block;margin-top:4px}
+.seg input:checked+span{border-color:var(--ember);background:rgba(255,106,43,.1)}
+.seg input:focus-visible+span{outline:2px solid var(--ember2);outline-offset:2px}
+.seg label:hover span{transform:translateY(-2px)}
+.sum{background:linear-gradient(160deg,#2e1d14,var(--card));border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3vw,36px);display:flex;flex-direction:column;gap:18px;position:sticky;top:84px;align-self:start}
+.box{height:180px;display:grid;place-items:center}
+.box svg{height:100%;transition:transform .6s var(--ease)}
+.box .lid{transition:transform .6s var(--ease);transform-origin:50% 40%}
+.sum:hover .lid{transform:translateY(-10px) rotate(-4deg)}
+.sum .pr{font:800 clamp(40px,4vw,56px)/1 var(--disp);letter-spacing:-.05em}
+.sum .pr small{font:500 15px var(--body);color:var(--mute);letter-spacing:0}
+.sum ul{list-style:none;display:grid;gap:8px;font-size:14px;color:var(--mute)}
+.sum li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding-bottom:8px}
+.sum li b{color:var(--ink);font-weight:600;text-align:right}
+.save{color:var(--moss)!important}
+
+/* events */
+.ev{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.evc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:transform .5s var(--ease)}
+.evc:hover{transform:translateY(-6px)}
+.evc .im{aspect-ratio:16/11;overflow:hidden;position:relative}
+.evc img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.evc:hover img{transform:scale(1.07)}
+.date{position:absolute;top:14px;left:14px;background:var(--ink);color:#1b120d;border-radius:14px;padding:8px 12px;text-align:center;font:800 22px/1 var(--disp)}
+.date small{display:block;font:700 10px var(--body);letter-spacing:.14em;margin-top:3px}
+.evc .bd{padding:20px;display:flex;flex-direction:column;gap:8px;flex:1}
+.evc h3{font:600 19px/1.2 var(--disp);letter-spacing:-.02em}
+.evc p{color:var(--mute);font-size:14px;flex:1}
+.seats{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ash);margin-top:6px}
+.bar{height:4px;background:var(--line);border-radius:4px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ember2),var(--ember));width:0;transition:width 1.5s var(--ease) .3s}
+.in .bar i{width:var(--w)}
+.book{margin-top:16px;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3vw,32px);display:grid;grid-template-columns:1.2fr 1fr .7fr auto;gap:12px;align-items:end}
+.fld{display:grid;gap:6px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ash);font-weight:600}
+.fld input,.fld select{background:var(--card);border:1px solid var(--line);border-radius:14px;height:52px;padding:0 14px;font-size:16px;letter-spacing:0;text-transform:none;color:var(--ink);width:100%;min-width:0}
+.fld select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23b9a898' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:34px}
+.step{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;height:52px;padding:0 6px}
+.step button{width:40px;height:40px;border-radius:10px;font-size:20px}
+.step button:hover{background:var(--line)}
+.step output{font:600 18px var(--disp);color:var(--ink)}
+.book .btn{height:52px;justify-content:center}
+.ticket{display:none;margin-top:16px;border-radius:var(--r);padding:22px 24px;background:var(--moss);color:#14200b;font-weight:600;align-items:center;gap:16px;flex-wrap:wrap}
+.ticket.show{display:block;animation:pop .6s var(--ease);line-height:1.6}
+.ticket code{font:800 17px var(--disp);letter-spacing:.04em;background:rgba(20,32,11,.12);padding:2px 8px;border-radius:8px;white-space:nowrap}
+
+/* reviews */
+.rows{display:grid;gap:16px;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);overflow:hidden}
+.row{display:flex;width:max-content;gap:16px;animation:mq 60s linear infinite}
+.row.rev{animation-direction:reverse;animation-duration:70s}
+.rows:hover .row{animation-play-state:paused}
+.rc{width:min(360px,80vw);background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px;flex:none}
+.rc .st{color:var(--ember2);letter-spacing:3px;font-size:14px}
+.rc q{display:block;font:500 italic 22px/1.25 var(--serif);margin:12px 0 18px;quotes:none}
+.rc .who{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--mute)}
+.rc .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 13px var(--disp);color:#1b0d05}
+.score{display:flex;align-items:baseline;gap:14px}
+.score b{font:800 clamp(48px,6vw,80px)/1 var(--disp);letter-spacing:-.05em}
+
+/* cta big */
+.bigcta{text-align:center;padding:clamp(80px,12vw,170px) 0;overflow:hidden}
+.bigcta h2{margin:0 auto 32px;max-width:14ch;font-size:clamp(2.4rem,8vw,7.4rem)}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:56px 0 96px;background:var(--bg2);overflow:hidden}
+.fg{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px;margin-bottom:48px}
+.fg h4{font:600 12px var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--ash);margin-bottom:14px}
+.fg ul{list-style:none;display:grid;gap:8px;font-size:14.5px}
+.fg a{text-decoration:none;color:var(--mute)}
+.fg a:hover{color:var(--ink)}
+.fg p{color:var(--mute);font-size:14.5px;max-width:30ch}
+.word{font:800 clamp(80px,24vw,360px)/.78 var(--disp);letter-spacing:-.07em;text-transform:uppercase;background:linear-gradient(180deg,rgba(243,233,220,.14),rgba(243,233,220,0) 90%);-webkit-background-clip:text;background-clip:text;color:transparent;text-align:center;user-select:none;white-space:nowrap}
+.legal{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ash);margin-top:24px}
+.legal a{color:var(--ember2)}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,6,4,.6);backdrop-filter:blur(4px);z-index:70;opacity:0;pointer-events:none;transition:opacity .35s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--bg2);border-left:1px solid var(--line);z-index:71;transform:translateX(102%);visibility:hidden;transition:transform .5s var(--ease),visibility 0s .5s;display:flex;flex-direction:column}
+.drawer.on{transform:none;visibility:visible;transition:transform .5s var(--ease)}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:20px 22px;border-bottom:1px solid var(--line)}
+.dh h3{font:600 20px var(--disp)}
+.x{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);font-size:20px;line-height:1}
+.items{flex:1;overflow:auto;padding:12px 22px;display:grid;align-content:start;gap:12px}
+.it{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line)}
+.it .th{width:56px;height:56px;border-radius:12px;display:grid;place-items:center;background:var(--card)}
+.it .th svg{width:34px}
+.it b{font-weight:600;font-size:15px;display:block}
+.it small{color:var(--mute)}
+.q{display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:99px;padding:2px}
+.q button{width:28px;height:28px;border-radius:50%}
+.q button:hover{background:var(--line)}
+.q span{min-width:18px;text-align:center;font-weight:700;font-size:14px}
+.empty{color:var(--mute);text-align:center;padding:50px 10px}
+.empty svg{width:70px;margin:0 auto 14px;opacity:.6}
+.df{padding:20px 22px;border-top:1px solid var(--line);display:grid;gap:12px}
+.tot{display:flex;justify-content:space-between;font:600 20px var(--disp)}
+.ship{font-size:12.5px;color:var(--mute)}
+.shipbar{height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.shipbar i{display:block;height:100%;background:var(--moss);transition:width .5s var(--ease)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,calc(100% + 40px));visibility:hidden;background:var(--ink);color:#1b120d;padding:14px 20px;border-radius:16px;font-weight:600;font-size:14.5px;z-index:95;max-width:calc(100% - 32px);box-shadow:0 20px 50px -10px rgba(0,0,0,.6);transition:transform .5s var(--ease)}
+.toast.on{transform:translate(-50%,0);visibility:visible}
+
+/* chat */
+.fab{position:fixed;right:18px;bottom:18px;z-index:65;display:flex;align-items:center;gap:10px;background:var(--ink);color:#1b120d;padding:8px 18px 8px 8px;border-radius:99px;font-weight:700;font-size:14px;box-shadow:0 18px 40px -12px rgba(0,0,0,.8);transition:transform .3s var(--ease)}
+.fab:hover{transform:translateY(-3px)}
+.fab .ic{width:40px;height:40px;border-radius:50%;background:var(--ember);display:grid;place-items:center}
+.fab .ic svg{width:22px}
+.chat{position:fixed;right:18px;bottom:84px;width:min(380px,calc(100% - 24px));height:min(560px,calc(100svh - 120px));z-index:66;background:var(--bg2);border:1px solid var(--line);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.9);transform:translateY(20px) scale(.96);transform-origin:100% 100%;opacity:0;visibility:hidden;pointer-events:none;transition:transform .4s var(--ease),opacity .3s,visibility 0s .4s}
+.chat.on{transform:none;opacity:1;visibility:visible;pointer-events:auto;transition:transform .4s var(--ease),opacity .3s}
+.ch{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line);background:linear-gradient(120deg,rgba(255,106,43,.16),transparent)}
+.ch .ic{width:38px;height:38px;border-radius:50%;background:var(--ember);display:grid;place-items:center;flex:none}
+.ch .ic svg{width:20px}
+.ch b{display:block;font:600 15px var(--disp)}
+.ch small{color:var(--moss);font-size:12px}
+.ch .x{margin-left:auto}
+.msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.m{flex:none;max-width:85%;padding:11px 14px;border-radius:18px;font-size:14.5px;line-height:1.45;animation:pop .35s var(--ease)}
+.m.b{background:var(--card);border-bottom-left-radius:6px}
+.m.u{background:var(--ember);color:#1b0d05;align-self:flex-end;border-bottom-right-radius:6px;font-weight:600}
+.typing{display:flex;gap:4px;padding:14px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--mute);animation:ty 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes ty{50%{transform:translateY(-4px);opacity:.4}}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none}
+.chips button{flex:none;border:1px solid var(--line);border-radius:99px;padding:7px 12px;font-size:13px;color:var(--mute)}
+.chips button:hover{color:var(--ink);border-color:var(--ember)}
+.cf{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+.cf input{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:0 16px;height:46px;font-size:16px}
+.cf button{width:46px;height:46px;border-radius:50%;background:var(--ember);color:#1b0d05;display:grid;place-items:center;flex:none}
+.cf button svg{width:18px}
+
+/* responsive */
+@media (max-width:1020px){
+  .links{display:none}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .bento{grid-template-columns:repeat(2,1fr)}
+  .ev{grid-template-columns:1fr 1fr}
+  .ev .evc:last-child{grid-column:span 2}
+  .book{grid-template-columns:1fr 1fr}
+  .fg{grid-template-columns:1fr 1fr}
+}
+@media (max-width:760px){
+  .hero{min-height:auto;padding-top:36px}
+  .hero .wrap{grid-template-columns:1fr}
+  .heroart{max-height:none;aspect-ratio:5/4;order:-1}
+  .arch{border-radius:28px}
+  .badge{left:auto;right:12px;bottom:-30px;width:104px;height:104px}
+  .badge b{font-size:20px}
+  .badge text{font-size:9px}
+  .steam{display:none}
+  .scrollhint{display:none}
+  .subbox{grid-template-columns:1fr}
+  .sum{position:relative;top:0}
+  .ev{grid-template-columns:1fr}
+  .ev .evc:last-child{grid-column:auto}
+  .b1,.b2,.b5{grid-column:span 2}
+  .fab span{display:none}
+  .fab{padding:8px}
+  .chat{right:12px;bottom:76px}
+}
+@media (max-width:520px){
+  .grid{grid-template-columns:1fr 1fr;gap:10px}
+  .prod{padding:10px}
+  .prod h3{font-size:14.5px;margin:12px 2px 4px}
+  .notes{font-size:12.5px;margin:0 2px}
+  .meter{display:none}
+  .pb{margin:12px 2px 0}
+  .price{font-size:15px}
+  .add{width:36px;height:36px}
+  .seg{grid-template-columns:1fr}
+  .seg span{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .seg span small{margin:0;text-align:right}
+  .book{grid-template-columns:1fr}
+  .cartbtn .lbl{display:none}
+  .nav .wrap{gap:10px}
+  .bento{grid-template-columns:1fr}
+  .b1,.b2,.b5{grid-column:auto}
+  .fg{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  h1 .ln>span,.fade,.arch,.rv{transform:none!important;opacity:1!important}
+  .curve path.l{stroke-dashoffset:0!important}.curve .ar{opacity:1!important}
+  .bar i{width:var(--w)!important}
+  .rows{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+<a class="vx" href="/?vax=demo-flagship" data-i="strip"><b>Demo by Vaxo</b> — the brand is fictional, the functions are real · <span>Want one like this? →</span></a>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Ember home">
+      <svg viewBox="0 0 24 28" aria-hidden="true"><defs><linearGradient id="fl" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff3d2e"/><stop offset=".6" stop-color="#ff6a2b"/><stop offset="1" stop-color="#ffb347"/></linearGradient></defs><path fill="url(#fl)" d="M12 1c1 5 7 8 7 15a7 7 0 0 1-14 0c0-3 1.5-5 3-6.5 0 2.5 1 4 2.5 4.5C9 9 10.5 5 12 1z"/></svg>
+      Ember
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="#shop" data-i="n1">Shop</a><a href="#subscribe" data-i="n2">Subscription</a><a href="#events" data-i="n3">Events</a><a href="#reviews" data-i="n4">Reviews</a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language">
+      <button data-l="en">EN</button><button data-l="ru">RU</button><button data-l="ua">UA</button>
+    </div>
+    <button class="cartbtn" id="cartBtn" aria-label="Cart">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8zM9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      <span class="lbl" data-i="cart">Cart</span><span class="n" id="cartN">0</span>
+    </button>
+  </div>
+  <i class="prog" id="prog"></i>
+</header>
+
+<main id="top">
+<section class="hero" id="hero">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="wrap">
+    <div>
+      <p class="kick fade"><i></i><span data-i="kick">Roasting today · Batch #214</span></p>
+      <h1 id="h1"><span class="ln"><span>Roasted</span></span><span class="ln"><span>slow.</span></span><span class="ln"><span>Poured <em class="s">bright.</em></span></span></h1>
+      <p class="lead fade" data-i="lead">Small-batch specialty coffee from nine farms we know by name. Roasted every Tuesday in Brooklyn, at your door by Thursday.</p>
+      <div class="cta fade">
+        <a class="btn p" href="#shop"><span data-i="cta1">Shop fresh beans</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a>
+        <a class="btn g" href="#subscribe" data-i="cta2">Build a box</a>
+      </div>
+    </div>
+    <div class="heroart">
+      <svg class="steam" viewBox="0 0 90 120" aria-hidden="true"><path d="M25 118c-14-20 14-30 0-55s12-38 4-60"/><path d="M45 118c-14-20 14-30 0-55s12-38 4-60"/><path d="M65 118c-14-20 14-30 0-55s12-38 4-60"/></svg>
+      <div class="arch"><img id="heroImg" src="/examples/img/os-hands.webp" width="1000" height="667" alt="Hands warming around a glowing cup in a dim café" fetchpriority="high"></div>
+      <div class="badge" aria-hidden="true">
+        <svg class="rot" viewBox="0 0 132 132"><defs><path id="cp" d="M66 66m-50 0a50 50 0 1 1 100 0a50 50 0 1 1-100 0"/></defs><text><textPath href="#cp" id="badgeTxt">fresh roast · every tuesday · fresh roast · every tuesday ·</textPath></text></svg>
+        <b>72h</b>
+      </div>
+    </div>
+  </div>
+  <div class="scrollhint" aria-hidden="true"><span data-i="scroll">Scroll</span><i></i></div>
+</section>
+
+<div class="mq" aria-hidden="true"><div class="t" id="mq"></div></div>
+
+<section class="sec" id="shop">
+  <div class="wrap">
+    <div class="head rv">
+      <div><p class="eyebrow" data-i="shopEy">The roastery shop</p><h2 data-i="shopH">This week’s <em class="s">pour</em></h2></div>
+      <p data-i="shopP">Beans ship within 24 hours of roasting. Café drinks are ready for pickup in 7 minutes.</p>
+    </div>
+    <div class="tabs rv" role="tablist" id="tabs">
+      <button role="tab" data-c="beans" aria-selected="true" data-i="t1">Beans</button>
+      <button role="tab" data-c="cafe" aria-selected="false" data-i="t2">Café pickup</button>
+      <button role="tab" data-c="gear" aria-selected="false" data-i="t3">Gear</button>
+    </div>
+    <div class="grid" id="grid" role="tabpanel"></div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="head rv"><div><p class="eyebrow" data-i="whyEy">Why Ember</p><h2 data-i="whyH">Obsessed, <em class="s">on purpose</em></h2></div></div>
+    <div class="bento">
+      <div class="b b1 rv">
+        <h3 data-i="b1h">Live roast profile</h3>
+        <p data-i="b1p">Every batch is logged second by second. This one is happening right now.</p>
+        <svg class="curve" viewBox="0 0 600 260" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="gr" x1="0" x2="1"><stop offset="0" stop-color="#ffb347"/><stop offset="1" stop-color="#ff3d2e"/></linearGradient><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(255,106,43,.35)"/><stop offset="1" stop-color="rgba(255,106,43,0)"/></linearGradient></defs>
+          <line x1="0" y1="65" x2="600" y2="65"/><line x1="0" y1="130" x2="600" y2="130"/><line x1="0" y1="195" x2="600" y2="195"/>
+          <path class="ar" d="M0 60C40 150 70 210 110 205S220 150 300 110 450 50 600 38V260H0Z"/>
+          <path class="l" d="M0 60C40 150 70 210 110 205S220 150 300 110 450 50 600 38"/>
+          <text x="112" y="230">TURN</text><circle cx="300" cy="110" r="6" fill="#ffb347"/><text x="312" y="146" id="fc">FIRST CRACK</text><text x="540" y="28">DROP</text>
+        </svg>
+        <div class="live"><div><b id="temp">201°C</b><span data-i="lt">bean temp</span></div><div><b id="tm">08:42</b><span data-i="ltime">roast time</span></div><div><b>Guji</b><span data-i="lorig">on the drum</span></div></div>
+      </div>
+      <div class="b b2 rv d1"><div class="big" data-count="9">0</div><h3 data-i="b2h">Farms, all direct trade</h3><p data-i="b2p">We pay 2.4× Fairtrade minimum and visit every harvest.</p></div>
+      <div class="b b3 rv d2"><div class="big">72h</div><h3 data-i="b3h">Roast to cup</h3><p data-i="b3p">Never older than three days when it leaves us.</p></div>
+      <div class="b b4 rv d3"><div class="big">0g</div><h3 data-i="b4h">Plastic in our bags</h3><p data-i="b4p">Home-compostable, valve and all.</p></div>
+      <div class="b b5 rv"><img src="/examples/img/os-warm.webp" width="1200" height="960" alt="Candles glowing on a long café table" loading="lazy"><div class="cap"><p data-i="b5">“Open late on Fridays. Candles, slow pours, no laptops.”</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="subscribe" style="background:var(--bg2);border-block:1px solid var(--line)">
+  <div class="wrap">
+    <div class="head rv"><div><p class="eyebrow" data-i="subEy">Subscription box</p><h2 data-i="subH">Never run <em class="s">dry</em></h2></div><p data-i="subP">Pick a size, a rhythm and a roast. Pause, skip or cancel in two taps.</p></div>
+    <form class="subbox" id="subForm">
+      <div class="opts rv">
+        <fieldset class="og"><legend><b>01</b><span data-i="s1">Bag size</span></legend><div class="seg" id="segSize"></div></fieldset>
+        <fieldset class="og"><legend><b>02</b><span data-i="s2">How often</span></legend><div class="seg" id="segFreq"></div></fieldset>
+        <fieldset class="og"><legend><b>03</b><span data-i="s3">Roast style</span></legend><div class="seg" id="segRoast"></div></fieldset>
+      </div>
+      <aside class="sum rv d1" aria-live="polite">
+        <div class="box" aria-hidden="true">
+          <svg viewBox="0 0 200 170"><path d="M30 70h140v86a8 8 0 0 1-8 8H38a8 8 0 0 1-8-8z" fill="#3a2418"/><path d="M30 70h140v20H30z" fill="#2b1a11"/><g class="lid"><path d="M22 52h156v22H22z" fill="#4a2d1d"/><path id="ribbon" d="M92 52h16v22H92z" fill="#ff6a2b"/></g><path id="ribbon2" d="M92 74h16v90H92z" fill="#ff6a2b"/><circle cx="100" cy="120" r="22" fill="#140d0a"/><path fill="#ffb347" d="M100 104c.6 3 4 5 4 9a4 4 0 0 1-8 0c0-1.7.9-2.9 1.7-3.7 0 1.4.6 2.3 1.4 2.6-.4-3 .5-5.5.9-7.9z" transform="translate(-6 -6) scale(1.06)"/></svg>
+        </div>
+        <div class="pr" id="subPrice">$0</div>
+        <ul>
+          <li><span data-i="perBag">Per delivery</span><b id="subPer"></b></li>
+          <li><span data-i="perMo">About per month</span><b id="subMo"></b></li>
+          <li><span data-i="saved">You save</span><b class="save" id="subSave"></b></li>
+        </ul>
+        <button class="btn p" type="submit" style="justify-content:center"><span data-i="subGo">Start my box</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8h11M9 4l4 4-4 4"/></svg></button>
+      </aside>
+    </form>
+  </div>
+</section>
+
+<section class="sec" id="events">
+  <div class="wrap">
+    <div class="head rv"><div><p class="eyebrow" data-i="evEy">Events & tastings</p><h2 data-i="evH">Pull up <em class="s">a chair</em></h2></div><p data-i="evP">Small tables, long conversations. Seats are limited on purpose.</p></div>
+    <div class="ev" id="evList"></div>
+    <form class="book rv" id="bookForm">
+      <label class="fld"><span data-i="bEv">Event</span><select id="bSel"></select></label>
+      <label class="fld"><span data-i="bName">Your name</span><input id="bName" required autocomplete="name" placeholder="Alex"></label>
+      <div class="fld"><span data-i="bG">Guests</span><div class="step"><button type="button" id="gMinus" aria-label="−">−</button><output id="gN">2</output><button type="button" id="gPlus" aria-label="+">+</button></div></div>
+      <button class="btn p" type="submit" data-i="bGo">Reserve seats</button>
+    </form>
+    <div class="ticket" id="ticket" role="status"></div>
+  </div>
+</section>
+
+<section class="sec" id="reviews" style="padding-top:0">
+  <div class="wrap">
+    <div class="head rv"><div><p class="eyebrow" data-i="rvEy">Reviews</p><h2 data-i="rvH">Regulars <em class="s">say it best</em></h2></div><div class="score"><b>4.9</b><span style="color:var(--mute)" data-i="rvN">from 1,284 orders</span></div></div>
+  </div>
+  <div class="rows rv"><div class="row" id="r1"></div><div class="row rev" id="r2"></div></div>
+</section>
+
+<section class="bigcta">
+  <div class="wrap rv">
+    <p class="eyebrow" style="justify-content:center" data-i="ctaEy">Tuesday’s batch closes at midnight</p>
+    <h2 data-i="ctaH">Your next cup is <em class="s">already roasting</em></h2>
+    <a class="btn p" href="#shop"><span data-i="cta1">Shop fresh beans</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fg">
+      <div><a class="logo" href="#top" style="margin-bottom:14px">Ember</a><p data-i="fAbout">Specialty coffee roastery & café. A fictional brand — this whole site is a working demo.</p></div>
+      <div><h4 data-i="fVisit">Visit</h4><ul><li style="color:var(--mute)">214 Kent Ave, Brooklyn</li><li style="color:var(--mute)" data-i="fHours">Mon–Fri 7–19 · Sat–Sun 8–20</li></ul></div>
+      <div><h4 data-i="fShop">Shop</h4><ul><li><a href="#shop" data-i="t1">Beans</a></li><li><a href="#subscribe" data-i="n2">Subscription</a></li><li><a href="#events" data-i="n3">Events</a></li></ul></div>
+      <div><h4>Vaxo</h4><ul><li><a href="/examples/" data-i="fMore">More examples</a></li><li><a href="/?vax=demo-flagship" data-i="fWant">Order a site like this</a></li></ul></div>
+    </div>
+    <div class="word" aria-hidden="true">Ember</div>
+    <div class="legal"><span data-i="fCopy">© 2026 Ember (fictional). Prices and orders are not real.</span><span><span data-i="fBy">Designed & built by</span> <a href="/?vax=demo-flagship">Vaxo</a></span></div>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Cart" aria-hidden="true">
+  <div class="dh"><h3 data-i="yourCart">Your cart</h3><button class="x" id="dClose" aria-label="Close">×</button></div>
+  <div class="items" id="items"></div>
+  <div class="df">
+    <div class="ship" id="shipTxt"></div><div class="shipbar"><i id="shipBar"></i></div>
+    <div class="tot"><span data-i="total">Total</span><span id="tot">$0</span></div>
+    <button class="btn p" id="checkout" style="justify-content:center" data-i="checkout">Checkout</button>
+  </div>
+</aside>
+
+<button class="fab" id="fab" aria-expanded="false" aria-controls="chat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1b0d05" stroke-width="2" stroke-linecap="round"><path d="M4 10h13v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6v-4zM17 11h1.5a2.5 2.5 0 0 1 0 5H17M8 3c0 2 2 2 2 4M12 3c0 2 2 2 2 4"/></svg></span><span data-i="fab">Ask the AI barista</span></button>
+<section class="chat" id="chat" aria-label="AI barista" aria-hidden="true">
+  <div class="ch"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1b0d05" stroke-width="2" stroke-linecap="round"><path d="M4 10h13v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6v-4zM17 11h1.5a2.5 2.5 0 0 1 0 5H17"/></svg></span><div><b data-i="botName">Ember AI barista</b><small data-i="online">● online · answers instantly</small></div><button class="x" id="cClose" aria-label="Close">×</button></div>
+  <div class="msgs" id="msgs" aria-live="polite"></div>
+  <div class="chips" id="chips"></div>
+  <form class="cf" id="cf"><input id="ci" autocomplete="off" aria-label="Message"><button aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></form>
+</section>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const T={
+en:{strip:'<b>Demo by Vaxo</b> — the brand is fictional, the functions are real · <span>Want one like this? →</span>',n1:'Shop',n2:'Subscription',n3:'Events',n4:'Reviews',cart:'Cart',kick:'Roasting today · Batch #214',
+h1:['Roasted','slow.','Poured <em class="s">bright.</em>'],lead:'Small-batch specialty coffee from nine farms we know by name. Roasted every Tuesday in Brooklyn, at your door by Thursday.',cta1:'Shop fresh beans',cta2:'Build a box',scroll:'Scroll',badge:'fresh roast · every tuesday · fresh roast · every tuesday · ',
+mq:['Ethiopia','washed & natural','Colombia','honey process','Kenya','bright & juicy','Guatemala','chocolate & plum','Rwanda','tea-like'],
+shopEy:'The roastery shop',shopH:'This week’s <em class="s">pour</em>',shopP:'Beans ship within 24 hours of roasting. Café drinks are ready for pickup in 7 minutes.',t1:'Beans',t2:'Café pickup',t3:'Gear',roast:'Roast',
+whyEy:'Why Ember',whyH:'Obsessed, <em class="s">on purpose</em>',b1h:'Live roast profile',b1p:'Every batch is logged second by second. This one is happening right now.',lt:'bean temp',ltime:'roast time',lorig:'on the drum',b2h:'Farms, all direct trade',b2p:'We pay 2.4× Fairtrade minimum and visit every harvest.',b3h:'Roast to cup',b3p:'Never older than three days when it leaves us.',b4h:'Plastic in our bags',b4p:'Home-compostable, valve and all.',b5:'“Open late on Fridays. Candles, slow pours, no laptops.”',
+subEy:'Subscription box',subH:'Never run <em class="s">dry</em>',subP:'Pick a size, a rhythm and a roast. Pause, skip or cancel in two taps.',s1:'Bag size',s2:'How often',s3:'Roast style',perBag:'Per delivery',perMo:'About per month',saved:'You save',subGo:'Start my box',
+size:[['250 g','~16 cups'],['500 g','~33 cups'],['1 kg','~66 cups']],freq:[['Weekly','−15%'],['Every 2 weeks','−10%'],['Monthly','−5%']],roastS:[['Light','fruity, floral'],['Omni','balanced'],['Espresso','chocolate, bold']],mo:'/ delivery',pm:'/ mo',
+evEy:'Events & tastings',evH:'Pull up <em class="s">a chair</em>',evP:'Small tables, long conversations. Seats are limited on purpose.',bEv:'Event',bName:'Your name',bG:'Guests',bGo:'Reserve seats',left:'seats left',
+ev:[['Cupping night: Ethiopia vs Kenya','Taste six coffees blind with our head roaster. Snacks and arguments included.','NOV'],['Candlelit Friday','Late opening with slow pours, vinyl and a small-plates menu.','NOV'],['Supper & coffee pairing','A five-course dinner where every plate meets a different brew.','DEC']],
+tk:(n,e,g,c)=>`🎟 ${n}, ${g} seat${g>1?'s':''} reserved for “${e}”. Code <code>${c}</code> · Demo: nothing was really booked.`,
+rvEy:'Reviews',rvH:'Regulars <em class="s">say it best</em>',rvN:'from 1,284 orders',
+rv:['The Guji tastes like someone hid blueberries in my cup.','Subscription arrives the day my bag runs out. Spooky.','Best flat white this side of the river, no contest.','Cupping night ruined supermarket coffee for me forever.','The AI barista picked my beans better than I would have.','Packaging is gorgeous and actually compostable.'],
+ctaEy:'Tuesday’s batch closes at midnight',ctaH:'Your next cup is <em class="s">already roasting</em>',
+fAbout:'Specialty coffee roastery & café. A fictional brand — this whole site is a working demo.',fVisit:'Visit',fHours:'Mon–Fri 7–19 · Sat–Sun 8–20',fShop:'Shop',fMore:'More examples',fWant:'Order a site like this',fCopy:'© 2026 Ember (fictional). Prices and orders are not real.',fBy:'Designed & built by',
+yourCart:'Your cart',total:'Total',checkout:'Checkout',empty:'Your cart is empty — the beans are lonely.',shipLeft:a=>`Add ${a} more for free shipping`,shipOk:'Free shipping unlocked ✓',added:'Added to cart',
+demoOrder:'Demo checkout — no payment taken. Vaxo can wire up real payments for your shop.',demoSub:'Box saved! (Demo — nothing charged.)',
+fab:'Ask the AI barista',botName:'Ember AI barista',online:'● online · answers instantly',ph:'Ask about beans, hours, delivery…',
+hi:'Hi! I’m Ember’s AI barista ☕ Ask me anything — which beans to pick, delivery, events, oat milk…',
+chips:['Which beans for me?','Delivery time?','Opening hours','Oat milk?','Pause subscription'],
+fb:'Good question! I’m a demo with a small built-in menu of answers. Try asking about beans, delivery, hours, events or the subscription.'},
+ru:{strip:'<b>Демо от Vaxo</b> — бренд вымышленный, функции настоящие · <span>Хотите такой же? →</span>',n1:'Магазин',n2:'Подписка',n3:'События',n4:'Отзывы',cart:'Корзина',kick:'Обжариваем сегодня · Партия №214',
+h1:['Жарим','медленно.','Пьём <em class="s">ярко.</em>'],lead:'Спешелти-кофе малыми партиями с девяти ферм, которые мы знаем по именам. Обжарка каждый вторник — у вашей двери к четвергу.',cta1:'Купить свежее зерно',cta2:'Собрать бокс',scroll:'Листайте',badge:'свежая обжарка · каждый вторник · свежая обжарка · ',
+mq:['Эфиопия','мытая и натуральная','Колумбия','хани-обработка','Кения','яркая и сочная','Гватемала','шоколад и слива','Руанда','как чай'],
+shopEy:'Магазин обжарочной',shopH:'Кофе <em class="s">этой недели</em>',shopP:'Зерно отправляем в течение 24 часов после обжарки. Напитки в кафе готовы к выдаче за 7 минут.',t1:'Зерно',t2:'Кафе навынос',t3:'Посуда',roast:'Обжарка',
+whyEy:'Почему Ember',whyH:'Одержимы <em class="s">нарочно</em>',b1h:'Обжарка в прямом эфире',b1p:'Каждая партия записывается по секундам. Эта идёт прямо сейчас.',lt:'темп. зерна',ltime:'время обжарки',lorig:'в барабане',b2h:'Ферм, все — напрямую',b2p:'Платим в 2,4 раза выше минимума Fairtrade и приезжаем на каждый урожай.',b3h:'От обжарки до чашки',b3p:'Кофе уходит от нас не старше трёх дней.',b4h:'Пластика в упаковке',b4p:'Пакет компостируется дома — даже клапан.',b5:'«По пятницам открыты допоздна. Свечи, медленные проливы, без ноутбуков».',
+subEy:'Кофейный бокс',subH:'Кофе <em class="s">не закончится</em>',subP:'Выберите объём, ритм и обжарку. Пауза, пропуск или отмена — в два касания.',s1:'Объём пачки',s2:'Как часто',s3:'Обжарка',perBag:'За доставку',perMo:'Примерно в месяц',saved:'Экономия',subGo:'Оформить бокс',
+size:[['250 г','~16 чашек'],['500 г','~33 чашки'],['1 кг','~66 чашек']],freq:[['Каждую неделю','−15%'],['Раз в 2 недели','−10%'],['Раз в месяц','−5%']],roastS:[['Светлая','фрукты, цветы'],['Омни','баланс'],['Эспрессо','шоколад, плотно']],mo:'/ доставка',pm:'/ мес',
+evEy:'События и дегустации',evH:'Садитесь <em class="s">ближе</em>',evP:'Маленькие столы, долгие разговоры. Мест мало — нарочно.',bEv:'Событие',bName:'Ваше имя',bG:'Гостей',bGo:'Забронировать',left:'мест осталось',
+ev:[['Каппинг: Эфиопия против Кении','Шесть кофе вслепую с нашим главным обжарщиком. Закуски и споры включены.','НОЯ'],['Пятница при свечах','Позднее открытие: медленные проливы, винил и меню закусок.','НОЯ'],['Ужин в паре с кофе','Ужин из пяти блюд, к каждому — свой способ заваривания.','ДЕК']],
+tk:(n,e,g,c)=>`🎟 ${n}, забронировано мест: ${g} на «${e}». Код <code>${c}</code> · Это демо: бронь не отправлена.`,
+rvEy:'Отзывы',rvH:'Постоянные гости <em class="s">скажут лучше</em>',rvN:'по 1 284 заказам',
+rv:['Гуджи на вкус, будто в чашку спрятали чернику.','Подписка приходит ровно в день, когда пачка кончается. Магия.','Лучший флэт уайт в районе, без вариантов.','После каппинга кофе из супермаркета для меня умер.','ИИ-бариста подобрал зерно лучше, чем я сам.','Упаковка красивая и правда компостируется.'],
+ctaEy:'Приём на партию вторника — до полуночи',ctaH:'Ваша следующая чашка <em class="s">уже жарится</em>',
+fAbout:'Обжарочная спешелти-кофе и кафе. Бренд вымышленный — весь сайт работает как демо.',fVisit:'Адрес',fHours:'Пн–Пт 7–19 · Сб–Вс 8–20',fShop:'Магазин',fMore:'Ещё примеры',fWant:'Заказать такой сайт',fCopy:'© 2026 Ember (вымышленный). Цены и заказы не настоящие.',fBy:'Дизайн и разработка —',
+yourCart:'Ваша корзина',total:'Итого',checkout:'Оформить заказ',empty:'Корзина пуста — зёрнам одиноко.',shipLeft:a=>`Ещё ${a} — и доставка бесплатно`,shipOk:'Бесплатная доставка ✓',added:'Добавлено в корзину',
+demoOrder:'Демо-оформление — оплата не списана. Vaxo подключит настоящую оплату в вашем магазине.',demoSub:'Бокс сохранён! (Демо — ничего не списано.)',
+fab:'Спросить ИИ-бариста',botName:'ИИ-бариста Ember',online:'● онлайн · отвечает сразу',ph:'Спросите о зерне, часах, доставке…',
+hi:'Привет! Я ИИ-бариста Ember ☕ Спросите что угодно — какое зерно выбрать, доставка, события, овсяное молоко…',
+chips:['Какое зерно мне?','Сколько доставка?','Часы работы','Есть овсяное?','Пауза подписки'],
+fb:'Хороший вопрос! Я демо с небольшой встроенной базой ответов. Спросите про зерно, доставку, часы, события или подписку.'},
+ua:{strip:'<b>Демо від Vaxo</b> — бренд вигаданий, функції справжні · <span>Хочете такий самий? →</span>',n1:'Магазин',n2:'Підписка',n3:'Події',n4:'Відгуки',cart:'Кошик',kick:'Обсмажуємо сьогодні · Партія №214',
+h1:['Смажимо','повільно.','П’ємо <em class="s">яскраво.</em>'],lead:'Спешелті-кава малими партіями з дев’яти ферм, які ми знаємо на ім’я. Обсмаження щовівторка — біля ваших дверей до четверга.',cta1:'Купити свіже зерно',cta2:'Зібрати бокс',scroll:'Гортайте',badge:'свіже обсмаження · щовівторка · свіже обсмаження · ',
+mq:['Ефіопія','мита й натуральна','Колумбія','хані-обробка','Кенія','яскрава й соковита','Гватемала','шоколад і слива','Руанда','як чай'],
+shopEy:'Магазин обсмажувальні',shopH:'Кава <em class="s">цього тижня</em>',shopP:'Зерно відправляємо протягом 24 годин після обсмаження. Напої в кафе готові до видачі за 7 хвилин.',t1:'Зерно',t2:'Кафе з собою',t3:'Посуд',roast:'Обсмаження',
+whyEy:'Чому Ember',whyH:'Одержимі <em class="s">навмисно</em>',b1h:'Обсмаження наживо',b1p:'Кожна партія записується посекундно. Ця йде просто зараз.',lt:'темп. зерна',ltime:'час обсмаження',lorig:'у барабані',b2h:'Ферм, усі — напряму',b2p:'Платимо в 2,4 раза більше за мінімум Fairtrade і приїжджаємо на кожен урожай.',b3h:'Від обсмаження до чашки',b3p:'Кава йде від нас не старшою за три дні.',b4h:'Пластику в упаковці',b4p:'Пакет компостується вдома — навіть клапан.',b5:'«У п’ятницю відчинені допізна. Свічки, повільні проливи, без ноутбуків».',
+subEy:'Кавовий бокс',subH:'Кава <em class="s">не скінчиться</em>',subP:'Оберіть об’єм, ритм і обсмаження. Пауза, пропуск чи скасування — у два дотики.',s1:'Об’єм пачки',s2:'Як часто',s3:'Обсмаження',perBag:'За доставку',perMo:'Приблизно на місяць',saved:'Економія',subGo:'Оформити бокс',
+size:[['250 г','~16 чашок'],['500 г','~33 чашки'],['1 кг','~66 чашок']],freq:[['Щотижня','−15%'],['Раз на 2 тижні','−10%'],['Раз на місяць','−5%']],roastS:[['Світла','фрукти, квіти'],['Омні','баланс'],['Еспресо','шоколад, щільно']],mo:'/ доставка',pm:'/ міс',
+evEy:'Події та дегустації',evH:'Сідайте <em class="s">ближче</em>',evP:'Маленькі столи, довгі розмови. Місць мало — навмисно.',bEv:'Подія',bName:'Ваше ім’я',bG:'Гостей',bGo:'Забронювати',left:'місць лишилось',
+ev:[['Капінг: Ефіопія проти Кенії','Шість кав наосліп із нашим головним обсмажувальником. Закуски й суперечки включено.','ЛИС'],['П’ятниця при свічках','Пізнє відкриття: повільні проливи, вініл і меню закусок.','ЛИС'],['Вечеря в парі з кавою','Вечеря з п’яти страв, до кожної — свій спосіб заварювання.','ГРУ']],
+tk:(n,e,g,c)=>`🎟 ${n}, заброньовано місць: ${g} на «${e}». Код <code>${c}</code> · Це демо: бронь не надіслано.`,
+rvEy:'Відгуки',rvH:'Постійні гості <em class="s">скажуть краще</em>',rvN:'за 1 284 замовленнями',
+rv:['Гуджі на смак, ніби в чашку сховали чорниці.','Підписка приходить саме того дня, коли пачка закінчується. Магія.','Найкращий флет вайт у районі, без варіантів.','Після капінгу кава із супермаркету для мене померла.','ШІ-бариста підібрав зерно краще, ніж я сам.','Упаковка гарна й справді компостується.'],
+ctaEy:'Прийом на партію вівторка — до опівночі',ctaH:'Ваша наступна чашка <em class="s">вже смажиться</em>',
+fAbout:'Обсмажувальня спешелті-кави та кафе. Бренд вигаданий — увесь сайт працює як демо.',fVisit:'Адреса',fHours:'Пн–Пт 7–19 · Сб–Нд 8–20',fShop:'Магазин',fMore:'Більше прикладів',fWant:'Замовити такий сайт',fCopy:'© 2026 Ember (вигаданий). Ціни й замовлення не справжні.',fBy:'Дизайн і розробка —',
+yourCart:'Ваш кошик',total:'Разом',checkout:'Оформити замовлення',empty:'Кошик порожній — зернам самотньо.',shipLeft:a=>`Ще ${a} — і доставка безкоштовна`,shipOk:'Безкоштовна доставка ✓',added:'Додано в кошик',
+demoOrder:'Демо-оформлення — оплату не списано. Vaxo підключить справжню оплату у вашому магазині.',demoSub:'Бокс збережено! (Демо — нічого не списано.)',
+fab:'Запитати ШІ-баристу',botName:'ШІ-бариста Ember',online:'● онлайн · відповідає одразу',ph:'Запитайте про зерно, години, доставку…',
+hi:'Привіт! Я ШІ-бариста Ember ☕ Питайте що завгодно — яке зерно обрати, доставка, події, вівсяне молоко…',
+chips:['Яке зерно мені?','Скільки доставка?','Години роботи','Є вівсяне?','Пауза підписки'],
+fb:'Гарне питання! Я демо з невеликою вбудованою базою відповідей. Спитайте про зерно, доставку, години, події чи підписку.'}
+};
+/* products: id,cat,name,price,color,roast(1-5),notes{en,ru,ua},tag */
+const P=[
+['guji','beans','Ethiopia Guji',19,'#e9a23b',1,['Blueberry · jasmine · honey','Черника · жасмин · мёд','Чорниця · жасмин · мед'],'new'],
+['huila','beans','Colombia Huila',17,'#d9533b',2,['Red apple · caramel · cocoa','Красное яблоко · карамель · какао','Червоне яблуко · карамель · какао']],
+['house','beans','Ember House Blend',15,'#ff6a2b',4,['Dark chocolate · hazelnut','Тёмный шоколад · фундук','Темний шоколад · фундук'],'top'],
+['decaf','beans','Sugarcane Decaf',16,'#8fb36b',3,['Brown sugar · plum · zero jitters','Тростниковый сахар · слива · без бодрости','Тростинний цукор · слива · без бадьорості']],
+['fw','cafe','Flat White',4.5,'#c8956b',3,['Double ristretto, silky milk','Двойной ристретто, шёлковое молоко','Подвійний ристрето, шовкове молоко'],'top'],
+['tonic','cafe','Ember Tonic',5.5,'#ffb347',2,['Espresso, tonic, orange peel','Эспрессо, тоник, апельсиновая цедра','Еспресо, тонік, апельсинова цедра'],'new'],
+['card','cafe','Cardamom Latte',5,'#d7b98e',3,['House cardamom syrup, oat by default','Домашний кардамоновый сироп, на овсяном','Домашній кардамоновий сироп, на вівсяному']],
+['cold','cafe','12h Cold Brew',4.8,'#6b3b24',4,['Steeped overnight, chocolate-smooth','Настаивается ночь, мягкий как шоколад','Настоюється ніч, м’який як шоколад']],
+['v60','gear','Pour-over Kit',38,'#f3e9dc',0,['Dripper, filters, our brew guide','Воронка, фильтры, наш гайд','Лійка, фільтри, наш гайд']],
+['mug','gear','Ember Mug',22,'#ff6a2b',0,['Hand-thrown stoneware, 300 ml','Ручная керамика, 300 мл','Ручна кераміка, 300 мл'],'top'],
+['grind','gear','Hand Grinder',64,'#b9a898',0,['Steel burrs, 40 click settings','Стальные жернова, 40 щелчков','Сталеві жорна, 40 кліків']],
+['tote','gear','Roastery Tote',18,'#a3c585',0,['Heavy canvas, fits 4 bags','Плотный холст, влезает 4 пачки','Щільне полотно, вміщує 4 пачки']]
+];
+const art=p=>{const c=p[4];
+ if(p[1]==='beans')return `<svg viewBox="0 0 120 150" aria-hidden="true"><path d="M22 18h76l8 120a6 6 0 0 1-6 6H20a6 6 0 0 1-6-6z" fill="${c}"/><path d="M22 18h76l1 10H21z" fill="rgba(0,0,0,.25)"/><path d="M24 6h72v14H24z" fill="${c}" opacity=".85"/><rect x="28" y="56" width="64" height="58" rx="6" fill="#140d0a" opacity=".88"/><path fill="${c}" d="M60 66c1.4 6 8 9 8 16a8 8 0 0 1-16 0c0-3.4 1.6-5.6 3.2-7.2 0 2.6 1 4.4 2.6 5-.6-5.6 1-10 2.2-13.8z"/><rect x="38" y="100" width="44" height="4" rx="2" fill="#f3e9dc" opacity=".6"/><circle cx="60" cy="38" r="5" fill="rgba(0,0,0,.2)"/><path d="M14 138 22 18" stroke="rgba(255,255,255,.18)" stroke-width="3"/></svg>`;
+ if(p[1]==='cafe')return `<svg viewBox="0 0 120 150" aria-hidden="true"><path d="M30 40h60l-7 98a6 6 0 0 1-6 6H43a6 6 0 0 1-6-6z" fill="#f3e9dc"/><path d="M33 72h54l-3 40H36z" fill="${c}"/><rect x="24" y="30" width="72" height="12" rx="4" fill="#2b1a11"/><path d="M50 20c-4-6 4-8 0-14M64 22c-4-6 4-8 0-14M78 20c-4-6 4-8 0-14" stroke="#f3e9dc" stroke-width="3" fill="none" stroke-linecap="round" opacity=".5"/><path fill="#140d0a" d="M60 82c1 4 5 6 5 10a5 5 0 0 1-10 0c0-2 1-3.4 2-4.4 0 1.6.6 2.6 1.6 3-.4-3.4.6-6 1.4-8.6z"/></svg>`;
+ return `<svg viewBox="0 0 120 150" aria-hidden="true"><ellipse cx="60" cy="132" rx="40" ry="8" fill="rgba(0,0,0,.3)"/><path d="M28 50h56v62a20 20 0 0 1-20 20H48a20 20 0 0 1-20-20z" fill="${c}"/><path d="M84 62h8a14 14 0 0 1 0 28h-8" stroke="${c}" stroke-width="8" fill="none"/><ellipse cx="56" cy="50" rx="28" ry="6" fill="#140d0a" opacity=".4"/><path fill="#140d0a" opacity=".55" d="M56 74c1.2 5 6 7 6 12a6 6 0 0 1-12 0c0-2.4 1.2-4 2.4-5 0 2 .8 3 2 3.6-.4-4 .8-7.6 1.6-10.6z"/></svg>`;
+};
+const CUP=`<svg viewBox="0 0 320 220" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;background:radial-gradient(circle at 50% 40%,#3a2418,#140d0a 75%)" aria-hidden="true">${[0,1,2,3,4,5].map(i=>{const x=70+(i%3)*90,y=72+Math.floor(i/3)*82,c=['#3b1f12','#5a2e17','#2a160d','#6b3a1e','#4a2614','#331b10'][i];return `<circle cx="${x}" cy="${y}" r="34" fill="#f3e9dc"/><circle cx="${x}" cy="${y}" r="27" fill="${c}"/><ellipse cx="${x-8}" cy="${y-9}" rx="9" ry="4" fill="#fff" opacity=".18"/>`}).join('')}<path d="M250 30l40 70" stroke="#b9a898" stroke-width="6" stroke-linecap="round"/><ellipse cx="246" cy="24" rx="14" ry="10" fill="#b9a898"/></svg>`;
+const EV=[{d:'14',img:0,seats:16,left:5},{d:'21',img:'/examples/img/food-4.webp',seats:40,left:12},{d:'06',img:'/examples/img/food-hero.webp',seats:24,left:3}];
+const FAQ=[
+{k:['which','recommend','bean','best','pick','какое','какой','зерн','посовет','подбер','яке','який','порад','підбер','fruity','фрукт','choco','шокол'],a:['Love fruity & bright? Go for <b>Ethiopia Guji</b> (blueberry, jasmine). Prefer chocolatey & cozy? <b>Ember House Blend</b>. Sensitive to caffeine? <b>Sugarcane Decaf</b> — it actually tastes great.','Любите фруктовое и яркое — берите <b>Ethiopia Guji</b> (черника, жасмин). Шоколадное и уютное — <b>Ember House Blend</b>. Чувствительны к кофеину — <b>Sugarcane Decaf</b>, он правда вкусный.','Любите фруктове та яскраве — беріть <b>Ethiopia Guji</b> (чорниця, жасмин). Шоколадне й затишне — <b>Ember House Blend</b>. Чутливі до кофеїну — <b>Sugarcane Decaf</b>, він справді смачний.']},
+{k:['deliver','ship','when','arriv','достав','когда','придёт','придет','відправ','коли','прийде'],a:['We roast on Tuesday and ship the same day: most US addresses get it by Thursday. Free shipping from $40.','Жарим во вторник и отправляем в тот же день: обычно посылка у вас к четвергу. Бесплатная доставка от $40.','Смажимо у вівторок і відправляємо того ж дня: зазвичай посилка у вас до четверга. Безкоштовна доставка від $40.']},
+{k:['hour','open','close','time','час','работ','открыт','закрыв','годин','відчин','зачин','графік','график'],a:['Mon–Fri 7:00–19:00, Sat–Sun 8:00–20:00. Fridays we stay open till 23:00 by candlelight.','Пн–Пт 7:00–19:00, Сб–Вс 8:00–20:00. По пятницам — до 23:00 при свечах.','Пн–Пт 7:00–19:00, Сб–Нд 8:00–20:00. У п’ятницю — до 23:00 при свічках.']},
+{k:['oat','milk','vegan','lactose','plant','овся','молок','веган','лактоз','вівсян','молок'],a:['Yes! Oat, almond and coconut milk at no extra charge. The Cardamom Latte comes with oat by default.','Да! Овсяное, миндальное и кокосовое — без доплаты. Кардамоновый латте по умолчанию на овсяном.','Так! Вівсяне, мигдальне й кокосове — без доплати. Кардамонове лате за замовчуванням на вівсяному.']},
+{k:['pause','skip','cancel','subscri','stop','пауз','пропуст','отмен','подписк','скасу','підписк','зупин'],a:['Easy: pause, skip a delivery or cancel any time from your account, in two taps. No fees, no calls.','Легко: пауза, пропуск доставки или отмена — в любой момент в личном кабинете, в два касания. Без штрафов и звонков.','Легко: пауза, пропуск доставки чи скасування — будь-коли в особистому кабінеті, у два дотики. Без штрафів і дзвінків.']},
+{k:['event','cupping','book','reserv','tasting','событ','каппинг','брон','дегуст','поді','капінг','бронюв'],a:['Next up: a cupping night (Ethiopia vs Kenya) and our Candlelit Friday. Book right on this page in the Events block — it takes 10 seconds.','Ближайшие — каппинг (Эфиопия против Кении) и Пятница при свечах. Бронь прямо на этой странице в блоке «События» — 10 секунд.','Найближчі — капінг (Ефіопія проти Кенії) і П’ятниця при свічках. Бронь просто на цій сторінці в блоці «Події» — 10 секунд.']},
+{k:['grind','молот','помол','мелен','мелен','espresso machine','французск','french','v60','turka','турк'],a:['We grind to order: espresso, moka, V60, French press or whole bean. Just tell us at checkout.','Мелем под ваш способ: эспрессо, гейзер, V60, френч-пресс или целое зерно. Укажите при заказе.','Мелемо під ваш спосіб: еспресо, гейзер, V60, френч-прес або ціле зерно. Вкажіть при замовленні.']},
+{k:['wifi','wi-fi','laptop','work','ноут','вайфай','интернет','інтернет','працюв','поработ'],a:['Free Wi-Fi all week. Fridays after 18:00 are laptop-free — that’s our candle hour.','Wi-Fi бесплатный всю неделю. По пятницам после 18:00 — без ноутбуков, это наш час свечей.','Wi-Fi безкоштовний увесь тиждень. У п’ятницю після 18:00 — без ноутбуків, це наша година свічок.']},
+{k:['price','cost','how much','цен','стоит','сколько','ціна','скільки','коштує'],a:['Beans are $15–19 per 250 g, café drinks $4.50–5.50. Subscribers save up to 15%.','Зерно — $15–19 за 250 г, напитки в кафе — $4.50–5.50. Подписчики экономят до 15%.','Зерно — $15–19 за 250 г, напої в кафе — $4.50–5.50. Підписники заощаджують до 15%.']},
+{k:['where','address','location','где','адрес','де ','знайти'],a:['214 Kent Ave, Brooklyn — the brick building with the orange door. (Fictional, like the whole brand!)','214 Kent Ave, Бруклин — кирпичное здание с оранжевой дверью. (Вымышленное, как и весь бренд!)','214 Kent Ave, Бруклін — цегляна будівля з помаранчевими дверима. (Вигадана, як і весь бренд!)']},
+{k:['vaxo','site','сайт','demo','демо','who made','кто сделал','хто зробив'],a:['This site is a demo by Vaxo. They build sites like this — with shop, booking and an AI assistant — for any business. Tap the top bar to ask them!','Этот сайт — демо от Vaxo. Они делают такие сайты — с магазином, бронью и ИИ-ассистентом — для любого бизнеса. Нажмите на полосу сверху!','Цей сайт — демо від Vaxo. Вони роблять такі сайти — з магазином, бронюванням і ШІ-асистентом — для будь-якого бізнесу. Натисніть на смугу зверху!']}
+];
+const LI={en:0,ru:1,ua:2};
+let L=new URLSearchParams(location.search).get('lang');if(!T[L])L='en';
+const money=v=>'$'+(Math.round(v*100)/100).toFixed(v%1?2:0);
+let cat='beans',cart={},sub={s:0,f:1,r:1},guests=2;
+
+function apply(){
+ const t=T[L];document.documentElement.lang=L==='ua'?'uk':L;
+ $$('[data-i]').forEach(e=>{const v=t[e.dataset.i];if(typeof v==='string')e.innerHTML=v});
+ $$('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===L));
+ $('#h1').innerHTML=t.h1.map(x=>`<span class="ln"><span>${x}</span></span>`).join('');
+ $('#badgeTxt').textContent=t.badge;
+ const m=t.mq.map(x=>`<span>${x}</span>`).join('');$('#mq').innerHTML=m+m;
+ $('#ci').placeholder=t.ph;
+ $('#fc').textContent=L==='en'?'FIRST CRACK':L==='ru'?'ПЕРВЫЙ КРЭК':'ПЕРШИЙ КРЕК';
+ renderGrid();renderSub();renderEv();renderRv();renderCart();renderChips();
+ if(!$('#msgs').children.length||$('#msgs').dataset.l!==L){$('#msgs').innerHTML='';$('#msgs').dataset.l=L;bot(t.hi,0)}
+}
+function renderGrid(){
+ const t=T[L];
+ $('#grid').innerHTML=P.filter(p=>p[1]===cat).map((p,i)=>`<article class="prod" style="animation-delay:${i*70}ms">
+ <div class="pa" style="--c2:${p[4]}55">${p[7]?`<span class="tag">${p[7]==='new'?'New':'★ Top'}</span>`:''}${art(p)}</div>
+ <h3>${p[2]}</h3><p class="notes">${p[6][LI[L]]}</p>
+ ${p[5]?`<div class="meter" aria-label="${t.roast} ${p[5]}/5">${t.roast}&nbsp;${[1,2,3,4,5].map(n=>`<i class="${n<=p[5]?'on':''}"></i>`).join('')}</div>`:''}
+ <div class="pb"><span class="price">${money(p[3])}</span><button class="add" data-id="${p[0]}" aria-label="Add ${p[2]}"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 3v12M3 9h12"/></svg></button></div></article>`).join('');
+}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cat=b.dataset.c;$$('#tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));renderGrid()});
+$('#grid').addEventListener('click',e=>{const b=e.target.closest('.add');if(!b)return;const id=b.dataset.id;cart[id]=(cart[id]||0)+1;
+ b.classList.add('ok');b.innerHTML='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M3 9l4 4 8-8"/></svg>';
+ setTimeout(()=>{b.classList.remove('ok');b.innerHTML='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 3v12M3 9h12"/></svg>'},1100);
+ if(!RM){const r=b.getBoundingClientRect(),c=$('#cartBtn').getBoundingClientRect(),d=document.createElement('i');d.className='fly';d.style.left=r.left+r.width/2-9+'px';d.style.top=r.top+r.height/2-9+'px';document.body.appendChild(d);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{d.style.transform=`translate(${c.left+c.width-20-r.left-r.width/2}px,${c.top+10-r.top-r.height/2}px) scale(.6)`;d.style.opacity='.3'}));
+  setTimeout(()=>{d.remove();bump()},760)}else bump();
+ renderCart();toast(T[L].added+' · '+P.find(p=>p[0]===id)[2]);
+});
+function bump(){const c=$('#cartBtn');c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')}
+function renderCart(){
+ const t=T[L],ids=Object.keys(cart).filter(k=>cart[k]>0);let n=0,sum=0;
+ ids.forEach(k=>{const p=P.find(x=>x[0]===k);n+=cart[k];sum+=p[3]*cart[k]});
+ $('#cartN').textContent=n;$('#tot').textContent=money(sum);
+ $('#items').innerHTML=ids.length?ids.map(k=>{const p=P.find(x=>x[0]===k);return `<div class="it"><div class="th">${art(p)}</div><div><b>${p[2]}</b><small>${money(p[3])}</small></div><div class="q"><button data-d="-1" data-id="${k}" aria-label="−">−</button><span>${cart[k]}</span><button data-d="1" data-id="${k}" aria-label="+">+</button></div></div>`}).join(''):`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8zM9 8V6a3 3 0 0 1 6 0v2"/></svg>${t.empty}</div>`;
+ const left=40-sum;$('#shipTxt').textContent=left>0?t.shipLeft(money(left)):t.shipOk;$('#shipBar').style.width=Math.min(100,sum/40*100)+'%';
+ $('#checkout').disabled=!n;$('#checkout').style.opacity=n?1:.5;
+}
+$('#items').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cart[b.dataset.id]=Math.max(0,cart[b.dataset.id]+ +b.dataset.d);renderCart()});
+const openCart=o=>{$('#drawer').classList.toggle('on',o);$('#scrim').classList.toggle('on',o);$('#drawer').setAttribute('aria-hidden',!o);if(o)$('#dClose').focus()};
+$('#cartBtn').onclick=()=>openCart(true);$('#dClose').onclick=$('#scrim').onclick=()=>openCart(false);
+$('#checkout').onclick=()=>{openCart(false);cart={};renderCart();toast(T[L].demoOrder,4200)};
+addEventListener('keydown',e=>{if(e.key==='Escape'){openCart(false);chat(false)}});
+
+/* subscription */
+const BASE=[14,25,44],DISC=[.15,.10,.05],PERMO=[4.33,2.17,1],RC=['#ffb347','#ff6a2b','#7a3a1c'];
+function seg(id,key,arr){$(id).innerHTML=arr.map((o,i)=>`<label><input type="radio" name="${key}" value="${i}" ${sub[key]===i?'checked':''}><span><b>${o[0]}</b><small>${o[1]}</small></span></label>`).join('')}
+function renderSub(){const t=T[L];seg('#segSize','s',t.size);seg('#segFreq','f',t.freq);seg('#segRoast','r',t.roastS);calc()}
+function calc(){const b=BASE[sub.s],per=b*(1-DISC[sub.f]),mo=per*PERMO[sub.f],sv=(b-per)*PERMO[sub.f];
+ $('#subPrice').innerHTML=money(per)+` <small>${T[L].mo}</small>`;$('#subPer').textContent=money(per);$('#subMo').textContent=money(mo);$('#subSave').textContent=money(sv)+' '+T[L].pm;
+ $('#ribbon').setAttribute('fill',RC[sub.r]);$('#ribbon2').setAttribute('fill',RC[sub.r]);}
+$('#subForm').addEventListener('change',e=>{const i=e.target;if(i.name in sub){sub[i.name]=+i.value;calc()}});
+$('#subForm').addEventListener('submit',e=>{e.preventDefault();toast(T[L].demoSub,3500)});
+
+/* events */
+function renderEv(){const t=T[L];
+ $('#evList').innerHTML=EV.map((e,i)=>`<article class="evc rv in"><div class="im">${e.img?`<img src="${e.img}" width="900" height="600" alt="" loading="lazy">`:CUP}<div class="date">${e.d}<small>${t.ev[i][2]}</small></div></div><div class="bd"><h3>${t.ev[i][0]}</h3><p>${t.ev[i][1]}</p><div><div class="seats"><span>${e.left} ${t.left}</span><span>${e.seats-e.left}/${e.seats}</span></div><div class="bar"><i style="--w:${(e.seats-e.left)/e.seats*100}%"></i></div></div></div></article>`).join('');
+ const v=$('#bSel').value;$('#bSel').innerHTML=EV.map((e,i)=>`<option value="${i}">${e.d} ${t.ev[i][2]} — ${t.ev[i][0]}</option>`).join('');if(v)$('#bSel').value=v;
+}
+$('#gMinus').onclick=()=>{guests=Math.max(1,guests-1);$('#gN').textContent=guests};
+$('#gPlus').onclick=()=>{guests=Math.min(8,guests+1);$('#gN').textContent=guests};
+$('#bookForm').addEventListener('submit',e=>{e.preventDefault();const i=+$('#bSel').value,t=T[L],nm=$('#bName').value.trim().replace(/[<>&"]/g,'')||'Guest';
+ const code='EMB-'+Math.random().toString(36).slice(2,6).toUpperCase();const k=$('#ticket');k.innerHTML=t.tk(nm,t.ev[i][0],guests,code);k.classList.remove('show');void k.offsetWidth;k.classList.add('show')});
+
+/* reviews */
+const RN=[['Maya R.','#ffb347'],['Daniel K.','#a3c585'],['Sofia L.','#ff6a2b'],['Oleh P.','#d7b98e'],['Priya S.','#e9a23b'],['Marco V.','#c8956b']];
+function renderRv(){const t=T[L];const card=(i)=>`<figure class="rc"><div class="st" aria-label="5/5">★★★★★</div><q>${t.rv[i]}</q><figcaption class="who"><span class="av" style="background:${RN[i][1]}">${RN[i][0][0]}</span>${RN[i][0]}</figcaption></figure>`;
+ const a=[0,1,2,3,4,5].map(card).join(''),b=[3,5,1,4,0,2].map(card).join('');$('#r1').innerHTML=a+a;$('#r2').innerHTML=b+b}
+
+/* chat */
+const chatEl=$('#chat');
+function chat(o){chatEl.classList.toggle('on',o);chatEl.setAttribute('aria-hidden',!o);$('#fab').setAttribute('aria-expanded',o);if(o)setTimeout(()=>$('#ci').focus(),250)}
+$('#fab').onclick=()=>chat(!chatEl.classList.contains('on'));$('#cClose').onclick=()=>chat(false);
+function add(cls,h){const d=document.createElement('div');d.className='m '+cls;d.innerHTML=h;$('#msgs').appendChild(d);$('#msgs').scrollTop=1e5;return d}
+function bot(h,delay=700){const ty=add('b','<span class="typing"><i></i><i></i><i></i></span>');ty.style.padding='0';setTimeout(()=>{ty.style.padding='';ty.innerHTML=h;$('#msgs').scrollTop=1e5},RM?0:delay)}
+function answer(q){const s=q.toLowerCase();let best=null,sc=0;FAQ.forEach(f=>{const n=f.k.filter(k=>s.includes(k)).length;if(n>sc){sc=n;best=f}});return best?best.a[LI[L]]:T[L].fb}
+function ask(q){q=q.trim();if(!q)return;add('u',q.replace(/[<>&]/g,''));bot(answer(q),600+Math.min(900,q.length*15))}
+$('#cf').addEventListener('submit',e=>{e.preventDefault();ask($('#ci').value);$('#ci').value=''});
+function renderChips(){$('#chips').innerHTML=T[L].chips.map(c=>`<button type="button">${c}</button>`).join('')}
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('button');if(b)ask(b.textContent)});
+
+/* toast */
+let tt;function toast(m,ms=1800){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),ms)}
+
+/* language */
+$$('.lang button').forEach(b=>b.onclick=()=>{L=b.dataset.l;const u=new URL(location);u.searchParams.set('lang',L);history.replaceState(null,'',u);apply();document.body.classList.add('ready')});
+
+/* reveal */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);const c=e.target.querySelector('[data-count]');if(c)countUp(c)}}),{threshold:.15,rootMargin:'0px 0px -6% 0px'});
+$$('.rv').forEach(e=>io.observe(e));
+function countUp(el){const to=+el.dataset.count;if(RM){el.textContent=to;return}let s=null;const f=ts=>{s=s||ts;const p=Math.min(1,(ts-s)/1400);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+
+/* live roast */
+let sec=522;setInterval(()=>{sec++;if(sec>720)sec=480;const tp=180+Math.round((sec-480)/240*32*10)/10;$('#temp').textContent=tp.toFixed(1)+'°C';$('#tm').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')},1000);
+
+/* scroll fx */
+const hero=$('#hero'),img=$('#heroImg'),prog=$('#prog');let tk=false;
+function onScroll(){const y=scrollY,h=document.documentElement.scrollHeight-innerHeight;prog.style.transform=`scaleX(${h>0?y/h:0})`;
+ if(!RM&&y<innerHeight*1.2){img.style.setProperty('--py',(-y*.12)+'px');$('#h1').style.transform=`translateY(${y*.18}px)`;$('#h1').style.opacity=Math.max(0,1-y/(innerHeight*.9))}tk=false}
+addEventListener('scroll',()=>{if(!tk){tk=true;requestAnimationFrame(onScroll)}},{passive:true});
+if(matchMedia('(pointer:fine)').matches&&!RM)hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();hero.style.setProperty('--mx',(e.clientX-r.left)+'px');hero.style.setProperty('--my',(e.clientY-r.top)+'px')});
+
+apply();
+requestAnimationFrame(()=>requestAnimationFrame(()=>document.body.classList.add('ready')));
+})();
+</script>
+</body>
+</html>
