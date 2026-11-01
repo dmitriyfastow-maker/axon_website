@@ -189,9 +189,15 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
     const k = url.searchParams.get('k') || '';
     const row = /^[a-f0-9]{32}$/.test(k) ? await db.prepare("SELECT value FROM settings WHERE key = ?").bind('test_login_' + k).first<{ value: string }>() : null;
     await db.prepare("DELETE FROM settings WHERE key = ? OR (key LIKE 'test_login_%' AND CAST(json_extract(value, '$.exp') AS INTEGER) < ?)").bind('test_login_' + k, Date.now()).run();
-    const v = row ? (JSON.parse(row.value) as { id: number; exp: number; lang?: string }) : null;
+    const v = row ? (JSON.parse(row.value) as { id: number; exp: number; lang?: string; kind?: string }) : null;
     if (!v || v.exp < Date.now()) return new Response('Link expired — open it again from the HQ.', { status: 410 });
-    return new Response(null, { status: 302, headers: { Location: v.lang === 'en' ? '/me/' : `/${v.lang || 'ru'}/me/`, 'Set-Cookie': await startSession(db, v.id) } });
+    const pre = v.lang === 'en' ? '' : `/${v.lang || 'ru'}`;
+    if (v.kind === 'partner') {
+      const tok = hex(32);
+      await db.prepare("INSERT INTO sessions (token, partner_id, expires_at) VALUES (?, ?, datetime('now', '+1 day'))").bind(tok, v.id).run();
+      return new Response(null, { status: 302, headers: { Location: `${pre}/partner/`, 'Set-Cookie': `vaxo_session=${tok}; Max-Age=86400; Path=/; HttpOnly; Secure; SameSite=Lax` } });
+    }
+    return new Response(null, { status: 302, headers: { Location: `${pre}/me/`, 'Set-Cookie': await startSession(db, v.id) } });
   }
   // Google: /api/me/google?back=<room> → Google → /api/me/google/callback → /me/
   if (path === 'google' && request.method === 'GET') {

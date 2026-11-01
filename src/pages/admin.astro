@@ -227,7 +227,14 @@ import Base from '../layouts/Base.astro';
       </section>
 
       <section data-panel="links" hidden>
-        <div class="card testc"><h3>🧪 Войти как клиент</h3><p class="mut">Откроется кабинет тестового клиента («Тестовая пекарня») — так его видят ваши клиенты: проекты, пульт бизнеса, ИИ-помощник. Ваш вход в Штаб не меняется.</p><button type="button" class="cta" data-testc>Открыть кабинет клиента</button> <small class="mut" data-testc-msg></small></div>
+        <div class="card testc"><h3>🧪 Пройти всё глазами клиента и партнёра</h3><p class="mut">Каждая кнопка открывает в новой вкладке тестовый аккаунт — ровно так, как его видят люди. Ваш вход в Штаб не меняется.</p>
+          <div class="row tb">
+            <button type="button" class="cta" data-testc="client">👤 Клиент: проект в работе + пульт бизнеса</button>
+            <button type="button" class="ghost" data-testc="partner">🤝 Партнёр: кабинет, ссылки, выплаты</button>
+            <a class="ghost" href="/ru/#contact" target="_blank" rel="noopener">✨ Новый посетитель: главная → описать задачу</a>
+            <a class="ghost" href="/ru/examples/" target="_blank" rel="noopener">🖼 Примеры работ</a>
+          </div>
+          <small class="mut" data-testc-msg></small></div>
         <div class="linkgrid" data-links></div>
         <h2>Решения (документы с вариантами и галочками)</h2>
         <ul class="decisions" data-decisions></ul>
@@ -1097,11 +1104,11 @@ import Base from '../layouts/Base.astro';
   });
   setInterval(rollup, 1500);
   pickGroup('home', 'today');
-  $('[data-testc]').addEventListener('click', async () => {
+  $$<HTMLButtonElement>('[data-testc]').forEach((b) => b.addEventListener('click', async () => {
     const w = window.open('', '_blank');
-    const r = await api('/test-client', { lang: 'ru' }).catch(() => null);
+    const r = await api('/test-client', { lang: 'ru', kind: b.dataset.testc }).catch(() => null);
     if (r?.ok && w) w.location.href = r.url; else { w?.close(); $('[data-testc-msg]').textContent = 'Не получилось — обновите страницу и попробуйте ещё раз.'; }
-  });
+  }));
   async function loadFactory() {
     const r = await api('/factory').catch(() => null);
     const box = $('[data-fac]');
@@ -1261,6 +1268,8 @@ import Base from '../layouts/Base.astro';
   .adm .fac .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
   .adm .fac .todo { background: color-mix(in srgb, #f59e0b 14%, transparent); border-radius: 10px; padding: 8px 10px; }
   .adm .testc { margin-bottom: 16px; }
+  .adm .testc .tb { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+  .adm .testc .tb a { text-decoration: none; display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); }
   .adm .tabs { margin-bottom: 16px; border-bottom: 1px solid var(--line); padding-bottom: 10px; position: sticky; top: 0; background: var(--bg); z-index: 5; padding-top: 6px; }
   .adm .tabs button, .adm .chips button { background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 7px 13px; cursor: pointer; font: 600 14px var(--font); }
   .adm [aria-pressed='true'] { background: var(--ink) !important; color: var(--bg) !important; }

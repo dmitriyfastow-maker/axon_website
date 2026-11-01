@@ -155,9 +155,21 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
       const key = Array.from(crypto.getRandomValues(new Uint8Array(12)), (x) => x.toString(16).padStart(2, '0')).join('');
       await db.prepare("INSERT INTO biz (owner_id, name, domain, key, about) VALUES (?, 'Тестовая пекарня', 'example.com', ?, 'Пекарня: торты на заказ от $40, круассаны, кофе. Работаем 8:00–20:00, доставка по городу.')").bind(c.id, key).run().catch(() => {});
     }
-    const k = Array.from(crypto.getRandomValues(new Uint8Array(16)), (x) => x.toString(16).padStart(2, '0')).join('');
     const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
-    await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)').bind('test_login_' + k, JSON.stringify({ id: c.id, exp: Date.now() + 10 * 60e3, lang: ['ru', 'ua', 'en'].includes(String(b.lang)) ? b.lang : 'ru' })).run();
+    const kind = b.kind === 'partner' ? 'partner' : 'client';
+    const hasLead = await db.prepare('SELECT id FROM leads WHERE client_id = ?').bind(c.id).first();
+    if (!hasLead) {
+      const room = Array.from(crypto.getRandomValues(new Uint8Array(12)), (x) => x.toString(16).padStart(2, '0')).join('');
+      await db.prepare(`INSERT INTO leads (mode, name, contact, interest, message, lang, page, room, status, stage, progress, client_id) VALUES ('request', 'Тестовый клиент', ?, 'any', 'Сайт для пекарни с заказами онлайн (тестовый проект)', 'ru', 'test', ?, 'won', 'work', 45, ?)`).bind(email, room, c.id).run().catch(() => {});
+    }
+    let id = c.id;
+    if (kind === 'partner') {
+      // A test partner (no password: the hash can never match), signed in only through this link.
+      await db.prepare("INSERT OR IGNORE INTO partners (email, name, pass_hash, salt, code) VALUES ('test-partner@vaxogroup.com', 'Тестовый партнёр', 'none', 'none', 'TESTPARTNER')").run();
+      id = (await db.prepare("SELECT id FROM partners WHERE email = 'test-partner@vaxogroup.com'").first<{ id: number }>())!.id;
+    }
+    const k = Array.from(crypto.getRandomValues(new Uint8Array(16)), (x) => x.toString(16).padStart(2, '0')).join('');
+    await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)').bind('test_login_' + k, JSON.stringify({ kind, id, exp: Date.now() + 10 * 60e3, lang: ['ru', 'ua', 'en'].includes(String(b.lang)) ? b.lang : 'ru' })).run();
     return json(200, { ok: true, url: `/api/me/as?k=${k}` });
   }
   if (path === 'work' && request.method === 'GET') {
