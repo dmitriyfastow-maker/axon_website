@@ -1,9 +1,9 @@
 ---
-// "Our work": real projects first (TrichoTech, AiPro Partners, Vaxo itself), then design benchmarks — concept sites in
-// different styles, clearly labeled as concepts (fictional brands). EN / UA / RU.
+// "Examples" (rebuilt 01.11.2026 for conversion): plain-language types (one-page site, site with booking, store, app),
+// which plan each one comes with, a filter by type, "open it" + "I want one like this"; then real projects and custom
+// work. Every demo is a working build with a fictional brand. EN / UA / RU.
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
-import Contact from './Contact.astro';
 import Footer from './Footer.astro';
 import { getDict, langPath, type Lang } from '../i18n';
 import tricho from '../assets/images/tricho-hero.jpg';
@@ -14,206 +14,210 @@ const { lang } = Astro.props;
 const t = getDict(lang);
 const home = langPath(lang);
 const alts = { en: '/examples/', ua: '/ua/examples/', ru: '/ru/examples/' };
-const CONCEPTS = ['dental', 'restaurant', 'skincare', 'cleaning', 'coach'] as const;
+
+// [type key, slug, thumb, plan]
+const ITEMS = [
+  ['site', 'coach', 'coach.jpg', 'Care'],
+  ['site', 'cleaning', 'cleaning.jpg', 'Care'],
+  ['booking', 'dental', 'dental.jpg', 'Growth'],
+  ['booking', 'restaurant', 'restaurant.jpg', 'Growth'],
+  ['booking', 'eco-clinic', `eco-clinic-${lang}.jpg`, 'Growth'],
+  ['shop', 'skincare', 'skincare.jpg', 'Pro'],
+  ['shop', 'eco-shop', `eco-shop-${lang}.jpg`, 'Pro'],
+  ['app', 'eco-crm', `eco-os-${lang}.jpg`, 'Care · Growth · Pro'],
+  ['app', 'eco-partners', `eco-partners-${lang}.jpg`, 'Pro'],
+] as const;
 
 const C = {
   en: {
-    title: 'Vaxo — Our work: real projects and design benchmarks', desc: 'Real Vaxo projects (AI medical platform, partner platform, our own AI-powered site) and concept sites for clinics, restaurants, stores, services and personal brands.',
-    eyebrow: 'Our work', h1: 'Real projects and the level we build at',
-    sub: 'First — systems we built and run. Below — concept sites in five different styles, so you can see the quality your site gets.',
-    realH: 'Real projects', realSub: 'Built by our team and working today.',
-    real: [
-      { tag: 'MedTech · AI platform', name: 'TrichoTech', what: 'An AI platform that helps dermatologists and trichologists diagnose faster: image analysis, treatment plans, patient records.', href: `${home}#cases`, cta: 'See the case →' },
-      { tag: 'Partner platform · 2024', name: 'AiPro Partners', what: 'A partner program for digital marketplaces: partners, referral links, analytics and a promo store in one platform.', href: `${home}#cases`, cta: 'See the case →' },
-      { tag: 'Our own system', name: 'Vaxo + Vax AI', what: 'This site: an AI manager that answers in seconds 24/7, client cabinets, project chats, invoices and a CRM — the same tech we set up for clients.', href: home, cta: 'Try Vax in the corner ↘' },
+    title: 'Vaxo — Examples: websites, stores and apps you can click through', desc: 'Working examples of what Vaxo builds: one-page sites, sites with online booking, online stores, business apps. Included in your plan; anything custom on request.',
+    eyebrow: 'Examples', h1: 'This is what you get. Open it and try it.',
+    sub: 'Every example is a working build: click, book, chat with the AI. Yours is built around your business — and everything in your plan is already included.',
+    cta: 'I want one like this →', cta2: 'Describe your task',
+    filters: { all: 'All', site: 'One-page sites', booking: 'Sites with booking', shop: 'Online stores', app: 'Apps and CRM' },
+    types: { site: 'One-page site', booking: 'Site with online booking', shop: 'Online store', app: 'App' },
+    items: [
+      ['Personal brand', 'Who you are, programs with prices, results, booking a free call.'],
+      ['Home services', 'Instant price calculator, booking, guarantee, call button.'],
+      ['Dental clinic', 'Time slots, prices, reviews, a sticky “Book” button on phones.'],
+      ['Restaurant', 'Menu, chef’s table, table reservations, full-screen photos.'],
+      ['Clinic + client app', 'Booking in 30 seconds, a client app with points, an owner CRM with AI reports.'],
+      ['Skincare store', 'Catalog, cart, a routine quiz, email signup with a discount.'],
+      ['Store with an AI consultant', 'Search in your own words, AI in chat, smart cart, customer cabinet.'],
+      ['Business app (CRM)', 'Requests, chats, team roles, ads and AI reports on one screen. Comes with every plan.'],
+      ['Partner program', 'Personal links, live earnings, levels, payouts and an AI coach for partners.'],
     ],
-    ecoH: 'Ready ecosystems — the level every client gets', ecoSub: 'Not a template site: a whole system you can click through. Website, booking or store, AI assistant, client app with points and levels, owner CRM with AI reports, partner program. Fictional brands — yours gets your design and your wishes on top.', ecoOpen: 'Click through it →', ecoBadge: 'Live demo',
-    eco: [['Services · clinic, salon, studio', 'Aurelia Skin Clinic', 'Website → 30-second booking → client app with levels and missions → owner CRM with AI weekly report and automations → partner cabinet.'], ['Online store', 'Ostra', 'Store with AI consultant, free-shipping bar and smart add-ons → gift wheel and quests → customer cabinet → abandoned-cart recovery dashboard → affiliates.'], ['CRM builder', 'Pipeline Studio', 'Your own stages and fields → drag-and-drop deal board → automations you switch on → AI weekly report for the owner. Click through it.'], ['Partner platform', 'Orbit Partners', 'Personal link → live clicks and sales → levels with higher commission → leaderboard → payouts → AI coach for partners and weekly AI report for the owner.']],
-    conH: 'Design benchmarks', conSub: 'Concept sites in different styles. Brands are fictional — your site is designed for your business, with your photos and texts.',
-    concepts: [
-      ['Clinic · premium', 'Bright Oak Dental', 'Online booking with time slots, prices, reviews, sticky “Book” on phones.'],
-      ['Restaurant · dark luxury', 'Ember & Salt', 'Full-screen photography, menu, chef\'s table, table reservations.'],
-      ['Online store · minimal', 'Lumen Skincare', 'Product catalog, cart, routine quiz, email signup with a discount.'],
-      ['Home services · local', 'Sunny Nest Cleaning', 'Instant price calculator, booking, guarantee, call button.'],
-      ['Personal brand · bold', 'Maya Reed Coaching', 'Programs with prices, results, story, free-call funnel.'],
-    ],
-    open: 'Open the site →', concept: 'Concept',
-    incl: 'Every site includes', inclList: ['Fast and made for phones', 'Basic SEO and Google Business Profile', 'Requests straight to your phone and CRM', 'AI chat on request', 'Launch in days, not months'],
-    cta: 'Get a free quote for your site →',
+    plan: 'In plan', open: 'Open', want: 'I want one',
+    note: 'The brands are made up — the functions are real. Your design, texts and functions follow your business.',
+    realH: 'Already working for real clients', realSub: 'Built by our team and running today.',
+    real: [['MedTech · AI platform', 'TrichoTech', 'AI image analysis, treatment plans and patient records for dermatologists.'], ['Partner platform', 'AiPro Partners', 'Partners, referral links, analytics and a promo store in one platform.'], ['Our own system', 'Vaxo + Vax AI', 'This site: an AI manager 24/7, client cabinets, project chats, invoices and a CRM.']],
+    caseCta: 'See the case →', tryCta: 'Talk to Vax →',
+    customH: 'Need something that is not here?', customP: 'An app, a bot, an integration, a game — for a business or a personal task. Vax names a fixed price upfront; you watch the progress live in your cabinet and can ask anything at any moment.',
   },
   ru: {
-    title: 'Vaxo — Наши работы: реальные проекты и эталоны дизайна', desc: 'Реальные проекты Vaxo (ИИ-платформа для медицины, партнёрская платформа, наш сайт с ИИ) и концепт-сайты для клиник, ресторанов, магазинов, услуг и личных брендов.',
-    eyebrow: 'Наши работы', h1: 'Реальные проекты и уровень, на котором мы делаем',
-    sub: 'Сначала — системы, которые мы построили и которые работают. Ниже — концепт-сайты в пяти разных стилях: так выглядит качество, которое получит ваш сайт.',
-    realH: 'Реальные проекты', realSub: 'Сделаны нашей командой и работают сегодня.',
-    real: [
-      { tag: 'Медтех · ИИ-платформа', name: 'TrichoTech', what: 'ИИ-платформа, которая помогает дерматологам и трихологам ставить диагноз быстрее: анализ снимков, планы лечения, карты пациентов.', href: `${home}#cases`, cta: 'Смотреть кейс →' },
-      { tag: 'Партнёрская платформа · 2024', name: 'AiPro Partners', what: 'Партнёрская программа для маркетплейсов цифровых товаров: партнёры, реферальные ссылки, аналитика и промо-магазин в одной платформе.', href: `${home}#cases`, cta: 'Смотреть кейс →' },
-      { tag: 'Наша собственная система', name: 'Vaxo + ИИ-менеджер Vax', what: 'Этот сайт: ИИ-менеджер отвечает за секунды 24/7, кабинеты клиентов, чаты проектов, счета и CRM — та же технология, что мы ставим клиентам.', href: home, cta: 'Попробуйте Vax в углу ↘' },
+    title: 'Vaxo — Примеры: сайты, магазины и приложения, которые можно открыть', desc: 'Рабочие примеры того, что делает Vaxo: одностраничные сайты, сайты с онлайн-записью, интернет-магазины, приложения для бизнеса. Входят в тариф, кастом — по запросу.',
+    eyebrow: 'Примеры', h1: 'Вот что вы получите. Откройте и попробуйте.',
+    sub: 'Каждый пример — рабочий: нажимайте, записывайтесь, поговорите с ИИ. Ваш вариант соберём под ваш бизнес — и всё из тарифа уже включено.',
+    cta: 'Хочу такой →', cta2: 'Описать задачу',
+    filters: { all: 'Все', site: 'Одностраничные сайты', booking: 'Сайты с записью', shop: 'Интернет-магазины', app: 'Приложения и CRM' },
+    types: { site: 'Одностраничный сайт', booking: 'Сайт с онлайн-записью', shop: 'Интернет-магазин', app: 'Приложение' },
+    items: [
+      ['Личный бренд', 'Кто вы, программы с ценами, результаты, запись на бесплатный звонок.'],
+      ['Услуги на дом', 'Мгновенный расчёт цены, запись, гарантия, кнопка звонка.'],
+      ['Стоматология', 'Время записи, цены, отзывы, кнопка «Записаться» всегда под рукой на телефоне.'],
+      ['Ресторан', 'Меню, стол шефа, бронь столика, фото на весь экран.'],
+      ['Клиника + приложение клиента', 'Запись за 30 секунд, приложение клиента с баллами, CRM владельца с отчётами ИИ.'],
+      ['Магазин косметики', 'Каталог, корзина, подбор ухода по тесту, подписка со скидкой.'],
+      ['Магазин с ИИ-консультантом', 'Поиск своими словами, ИИ в чате, умная корзина, кабинет покупателя.'],
+      ['Приложение для бизнеса (CRM)', 'Заявки, переписки, роли команды, реклама и отчёты ИИ на одном экране. Входит в любой тариф.'],
+      ['Партнёрская программа', 'Личные ссылки, заработок вживую, уровни, выплаты и ИИ-тренер для партнёров.'],
     ],
-    ecoH: 'Готовые экосистемы — уровень, который получает каждый клиент', ecoSub: 'Не сайт-шаблон, а целая система, которую можно «потрогать»: сайт, запись или магазин, ИИ-помощник, приложение клиента с баллами и уровнями, CRM владельца с ИИ-отчётами, партнёрская программа. Бренды вымышлены — ваш получит свой дизайн и ваши пожелания сверху.', ecoOpen: 'Открыть и потрогать →', ecoBadge: 'Живое демо',
-    eco: [['Услуги · клиника, салон, студия', 'Aurelia Skin Clinic', 'Сайт → запись за 30 секунд → приложение клиента с уровнями и заданиями → CRM владельца с ИИ-отчётом и автоматизациями → кабинет партнёра.'], ['Интернет-магазин', 'Ostra', 'Магазин с ИИ-консультантом, шкалой бесплатной доставки и допродажами → колесо подарков и задания → кабинет покупателя → возврат брошенных корзин → партнёры.'], ['Конструктор CRM', 'Pipeline Studio', 'Свои этапы и поля → доска сделок перетаскиванием → автоматизации одним переключателем → еженедельный ИИ-отчёт владельцу. Можно потрогать.'], ['Партнёрская платформа', 'Orbit Partners', 'Личная ссылка → клики и продажи вживую → уровни с растущей комиссией → рейтинг → выплаты → ИИ-тренер партнёру и еженедельный ИИ-отчёт владельцу.']],
-    conH: 'Эталоны дизайна', conSub: 'Концепт-сайты в разных стилях. Бренды вымышленные — ваш сайт делаем под ваш бизнес, с вашими фото и текстами.',
-    concepts: [
-      ['Клиника · премиум', 'Bright Oak Dental', 'Онлайн-запись со слотами времени, цены, отзывы, кнопка «Записаться» на телефоне.'],
-      ['Ресторан · тёмный люкс', 'Ember & Salt', 'Фото на весь экран, меню, стол шефа, бронь столика.'],
-      ['Интернет-магазин · минимализм', 'Lumen Skincare', 'Каталог, корзина, подбор ухода, подписка со скидкой.'],
-      ['Услуги · локальный бизнес', 'Sunny Nest Cleaning', 'Калькулятор цены за 10 секунд, бронь, гарантия, кнопка звонка.'],
-      ['Личный бренд · смелый', 'Maya Reed Coaching', 'Программы с ценами, результаты, история, воронка на бесплатный созвон.'],
-    ],
-    open: 'Открыть сайт →', concept: 'Концепт',
-    incl: 'В каждом сайте', inclList: ['Быстрый и удобный с телефона', 'Базовое SEO и Google-карточка', 'Заявки сразу на телефон и в CRM', 'ИИ-чат по желанию', 'Запуск за дни, а не месяцы'],
-    cta: 'Бесплатная оценка вашего сайта →',
+    plan: 'Тариф', open: 'Открыть', want: 'Хочу такой',
+    note: 'Бренды придуманы — функции настоящие. Дизайн, тексты и функции подстроим под ваш бизнес.',
+    realH: 'Уже работают у реальных клиентов', realSub: 'Сделаны нашей командой и работают сегодня.',
+    real: [['Медтех · ИИ-платформа', 'TrichoTech', 'ИИ-анализ снимков, планы лечения и карты пациентов для дерматологов.'], ['Партнёрская платформа', 'AiPro Partners', 'Партнёры, реферальные ссылки, аналитика и промо-магазин в одной платформе.'], ['Наша собственная система', 'Vaxo + ИИ-менеджер Vax', 'Этот сайт: ИИ-менеджер 24/7, кабинеты клиентов, чаты проектов, счета и CRM.']],
+    caseCta: 'Смотреть кейс →', tryCta: 'Поговорить с Vax →',
+    customH: 'Нужно то, чего здесь нет?', customP: 'Приложение, бот, интеграция, игра — для бизнеса или личная задача. Vax заранее называет точную цену, прогресс вы видите в кабинете в реальном времени и можете спросить что угодно в любой момент.',
   },
   ua: {
-    title: 'Vaxo — Наші роботи: реальні проєкти та еталони дизайну', desc: 'Реальні проєкти Vaxo (ШІ-платформа для медицини, партнерська платформа, наш сайт із ШІ) і концепт-сайти для клінік, ресторанів, магазинів, послуг та особистих брендів.',
-    eyebrow: 'Наші роботи', h1: 'Реальні проєкти й рівень, на якому ми робимо',
-    sub: 'Спершу — системи, які ми побудували і які працюють. Нижче — концепт-сайти у п’яти різних стилях: така якість буде у вашого сайту.',
-    realH: 'Реальні проєкти', realSub: 'Зроблені нашою командою і працюють сьогодні.',
-    real: [
-      { tag: 'Медтех · ШІ-платформа', name: 'TrichoTech', what: 'ШІ-платформа, що допомагає дерматологам і трихологам ставити діагноз швидше: аналіз знімків, плани лікування, картки пацієнтів.', href: `${home}#cases`, cta: 'Дивитися кейс →' },
-      { tag: 'Партнерська платформа · 2024', name: 'AiPro Partners', what: 'Партнерська програма для маркетплейсів цифрових товарів: партнери, реферальні посилання, аналітика і промо-магазин в одній платформі.', href: `${home}#cases`, cta: 'Дивитися кейс →' },
-      { tag: 'Наша власна система', name: 'Vaxo + ШІ-менеджер Vax', what: 'Цей сайт: ШІ-менеджер відповідає за секунди 24/7, кабінети клієнтів, чати проєктів, рахунки і CRM — та сама технологія, яку ми ставимо клієнтам.', href: home, cta: 'Спробуйте Vax у куті ↘' },
+    title: 'Vaxo — Приклади: сайти, магазини й застосунки, які можна відкрити', desc: 'Робочі приклади того, що робить Vaxo: односторінкові сайти, сайти з онлайн-записом, інтернет-магазини, застосунки для бізнесу. Входять у тариф, кастом — на запит.',
+    eyebrow: 'Приклади', h1: 'Ось що ви отримаєте. Відкрийте й спробуйте.',
+    sub: 'Кожен приклад — робочий: натискайте, записуйтеся, поговоріть із ШІ. Ваш варіант зберемо під ваш бізнес — і все з тарифу вже включено.',
+    cta: 'Хочу такий →', cta2: 'Описати завдання',
+    filters: { all: 'Усі', site: 'Односторінкові сайти', booking: 'Сайти із записом', shop: 'Інтернет-магазини', app: 'Застосунки і CRM' },
+    types: { site: 'Односторінковий сайт', booking: 'Сайт з онлайн-записом', shop: 'Інтернет-магазин', app: 'Застосунок' },
+    items: [
+      ['Особистий бренд', 'Хто ви, програми з цінами, результати, запис на безкоштовний дзвінок.'],
+      ['Послуги вдома', 'Миттєвий розрахунок ціни, запис, гарантія, кнопка дзвінка.'],
+      ['Стоматологія', 'Час запису, ціни, відгуки, кнопка «Записатися» завжди під рукою на телефоні.'],
+      ['Ресторан', 'Меню, стіл шефа, бронювання столика, фото на весь екран.'],
+      ['Клініка + застосунок клієнта', 'Запис за 30 секунд, застосунок клієнта з балами, CRM власника зі звітами ШІ.'],
+      ['Магазин косметики', 'Каталог, кошик, підбір догляду за тестом, підписка зі знижкою.'],
+      ['Магазин із ШІ-консультантом', 'Пошук своїми словами, ШІ в чаті, розумний кошик, кабінет покупця.'],
+      ['Застосунок для бізнесу (CRM)', 'Заявки, листування, ролі команди, реклама і звіти ШІ на одному екрані. Входить у будь-який тариф.'],
+      ['Партнерська програма', 'Особисті посилання, заробіток наживо, рівні, виплати і ШІ-тренер для партнерів.'],
     ],
-    ecoH: 'Готові екосистеми — рівень, який отримує кожен клієнт', ecoSub: 'Не сайт-шаблон, а ціла система, яку можна «помацати»: сайт, запис або магазин, ШІ-помічник, застосунок клієнта з балами й рівнями, CRM власника з ШІ-звітами, партнерська програма. Бренди вигадані — ваш отримає свій дизайн і ваші побажання зверху.', ecoOpen: 'Відкрити й помацати →', ecoBadge: 'Живе демо',
-    eco: [['Послуги · клініка, салон, студія', 'Aurelia Skin Clinic', 'Сайт → запис за 30 секунд → застосунок клієнта з рівнями й завданнями → CRM власника з ШІ-звітом і автоматизаціями → кабінет партнера.'], ['Інтернет-магазин', 'Ostra', 'Магазин із ШІ-консультантом, шкалою безкоштовної доставки й допродажами → колесо подарунків і завдання → кабінет покупця → повернення покинутих кошиків → партнери.'], ['Конструктор CRM', 'Pipeline Studio', 'Свої етапи й поля → дошка угод перетягуванням → автоматизації одним перемикачем → щотижневий ШІ-звіт власнику. Можна помацати.'], ['Партнерська платформа', 'Orbit Partners', 'Особисте посилання → кліки й продажі наживо → рівні зі зростаючою комісією → рейтинг → виплати → ШІ-тренер партнеру й щотижневий ШІ-звіт власнику.']],
-    conH: 'Еталони дизайну', conSub: 'Концепт-сайти в різних стилях. Бренди вигадані — ваш сайт робимо під ваш бізнес, з вашими фото й текстами.',
-    concepts: [
-      ['Клініка · преміум', 'Bright Oak Dental', 'Онлайн-запис зі слотами часу, ціни, відгуки, кнопка «Записатися» на телефоні.'],
-      ['Ресторан · темний люкс', 'Ember & Salt', 'Фото на весь екран, меню, стіл шефа, бронювання столика.'],
-      ['Інтернет-магазин · мінімалізм', 'Lumen Skincare', 'Каталог, кошик, підбір догляду, підписка зі знижкою.'],
-      ['Послуги · локальний бізнес', 'Sunny Nest Cleaning', 'Калькулятор ціни за 10 секунд, бронювання, гарантія, кнопка дзвінка.'],
-      ['Особистий бренд · сміливий', 'Maya Reed Coaching', 'Програми з цінами, результати, історія, воронка на безкоштовний дзвінок.'],
-    ],
-    open: 'Відкрити сайт →', concept: 'Концепт',
-    incl: 'У кожному сайті', inclList: ['Швидкий і зручний з телефона', 'Базове SEO і Google-картка', 'Заявки одразу на телефон і в CRM', 'ШІ-чат за бажанням', 'Запуск за дні, а не місяці'],
-    cta: 'Безкоштовна оцінка вашого сайту →',
+    plan: 'Тариф', open: 'Відкрити', want: 'Хочу такий',
+    note: 'Бренди вигадані — функції справжні. Дизайн, тексти й функції підлаштуємо під ваш бізнес.',
+    realH: 'Уже працюють у реальних клієнтів', realSub: 'Зроблені нашою командою і працюють сьогодні.',
+    real: [['Медтех · ШІ-платформа', 'TrichoTech', 'ШІ-аналіз знімків, плани лікування й карти пацієнтів для дерматологів.'], ['Партнерська платформа', 'AiPro Partners', 'Партнери, реферальні посилання, аналітика і промо-магазин в одній платформі.'], ['Наша власна система', 'Vaxo + ШІ-менеджер Vax', 'Цей сайт: ШІ-менеджер 24/7, кабінети клієнтів, чати проєктів, рахунки і CRM.']],
+    caseCta: 'Дивитися кейс →', tryCta: 'Поговорити з Vax →',
+    customH: 'Потрібно те, чого тут немає?', customP: 'Застосунок, бот, інтеграція, гра — для бізнесу чи особисте завдання. Vax заздалегідь називає точну ціну, прогрес ви бачите в кабінеті в реальному часі й можете запитати будь-що будь-коли.',
   },
 }[lang];
-const realImg = [tricho.src, aipro.src, '/examples/thumbs/vaxo.jpg'];
+const realImg = [tricho.src, aipro.src, `/examples/thumbs/vaxo.jpg`];
+const start = `${home}#contact`;
 ---
 
 <Base lang={lang} title={C.title} description={C.desc} path={alts[lang]} alts={alts}>
   <Header lang={lang} t={t} home={home} alts={alts} />
-  <main>
+  <main class="exm">
     <section class="hero">
       <div class="in">
-        <div class="eyebrow">{C.eyebrow}</div>
+        <p class="eyebrow">{C.eyebrow}</p>
         <h1>{C.h1}</h1>
         <p class="sub">{C.sub}</p>
+        <div class="acts"><a class="btn" href={start}>{C.cta}</a></div>
       </div>
     </section>
 
-    <section class="block">
-      <div class="in">
-        <h2 class="h2">{C.realH}</h2>
-        <p class="bsub">{C.realSub}</p>
-        <div class="real">
-          {C.real.map((r, i) => (
-            <a class="rcard" href={r.href} data-vax-chat={i === 2 ? '' : undefined}>
-              <div class="rimg"><img src={realImg[i]} alt={r.name} loading="lazy" /></div>
-              <div class="rtxt">
-                <div class="tag">{r.tag}</div>
-                <h3>{r.name}</h3>
-                <p>{r.what}</p>
-                <span class="open">{r.cta}</span>
+    <section class="in">
+      <div class="filters" role="group" data-filters>
+        {Object.entries(C.filters).map(([k, v], i) => <button type="button" data-f={k} aria-pressed={i === 0 ? 'true' : 'false'}>{v}</button>)}
+      </div>
+      <div class="grid">
+        {ITEMS.map(([type, slug, img, plan], i) => (
+          <article class="card" data-type={type}>
+            <a class="thumb" href={`/examples/${slug}/?lang=${lang}`} target="_blank" rel="noopener">
+              <img src={`/examples/thumbs/${img}`} alt={C.items[i][0]} loading="lazy" width="480" height="300" />
+              <span class="type">{(C.types as Record<string, string>)[type]}</span>
+            </a>
+            <div class="body">
+              <h3>{C.items[i][0]}</h3>
+              <p>{C.items[i][1]}</p>
+              <small class="plan">{C.plan}: <b>{plan}</b></small>
+              <div class="row">
+                <a class="btn sm" href={`/examples/${slug}/?lang=${lang}`} target="_blank" rel="noopener">{C.open}</a>
+                <a class="btn sm ghost" href={start}>{C.want}</a>
               </div>
-            </a>
-          ))}
-        </div>
+            </div>
+          </article>
+        ))}
+      </div>
+      <p class="note">{C.note}</p>
+    </section>
+
+    <section class="in block">
+      <h2>{C.realH}</h2>
+      <p class="sub">{C.realSub}</p>
+      <div class="real">
+        {C.real.map(([tag, name, what], i) => (
+          <a class="rcard" href={i === 2 ? '#' : `${home}#cases`} data-vax-chat={i === 2 ? '' : undefined}>
+            <img src={realImg[i]} alt={name} loading="lazy" />
+            <div><small class="tag">{tag}</small><h3>{name}</h3><p>{what}</p><span class="go">{i === 2 ? C.tryCta : C.caseCta}</span></div>
+          </a>
+        ))}
       </div>
     </section>
 
-    <section class="block eco">
-      <div class="in">
-        <h2 class="h2">{C.ecoH}</h2>
-        <p class="bsub">{C.ecoSub}</p>
-        <div class="egrid">
-          {C.eco.map(([style, name, what], i) => (
-            <a class="ecard" href={`/examples/${['eco-clinic', 'eco-shop', 'eco-crm', 'eco-partners'][i]}/`} target="_blank" rel="noopener">
-              <span class="badge">{C.ecoBadge}</span>
-              <div class="niche">{style}</div>
-              <h3>{name}</h3>
-              <p>{what}</p>
-              <span class="open">{C.ecoOpen}</span>
-            </a>
-          ))}
-        </div>
+    <section class="in block">
+      <div class="custom">
+        <div><h2>{C.customH}</h2><p>{C.customP}</p></div>
+        <a class="btn" href={start}>{C.cta2} →</a>
       </div>
     </section>
-
-    <section class="block">
-      <div class="in">
-        <h2 class="h2">{C.conH}</h2>
-        <p class="bsub">{C.conSub}</p>
-        <div class="grid">
-          {C.concepts.map(([style, name, what], i) => (
-            <a class="card" href={`/examples/${CONCEPTS[i]}/`} target="_blank" rel="noopener">
-              <div class="thumb"><img src={`/examples/thumbs/${CONCEPTS[i]}.jpg`} alt={name} loading="lazy" /><span class="badge">{C.concept}</span></div>
-              <div class="niche">{style}</div>
-              <h3>{name}</h3>
-              <p>{what}</p>
-              <span class="open">{C.open}</span>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section class="incl">
-      <div class="in">
-        <h2 class="h2">{C.incl}</h2>
-        <ul>{C.inclList.map((x) => <li>{x}</li>)}</ul>
-        <a href="#contact" class="cta">{C.cta}</a>
-      </div>
-    </section>
-
-    <Contact t={t} lang={lang} />
   </main>
   <Footer t={t} home={home} lang={lang} />
 </Base>
 
+<script>
+  const box = document.querySelector<HTMLElement>('[data-filters]');
+  box?.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-f]');
+    if (!b) return;
+    box.querySelectorAll('[data-f]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelectorAll<HTMLElement>('[data-type]').forEach((c) => (c.hidden = b.dataset.f !== 'all' && c.dataset.type !== b.dataset.f));
+  });
+</script>
+
 <style>
-  .in { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
-  .hero { padding: 120px 0 24px; }
-  h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0; max-width: 20ch; }
-  .sub { color: var(--mut); font-size: 19px; max-width: 62ch; margin: 0; }
-  .block { padding: 40px 0; }
-  .bsub { color: var(--mut); margin: 6px 0 22px; max-width: 70ch; }
-  .real { display: grid; gap: 16px; }
-  .rcard { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 0; background: var(--surf); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; color: inherit; text-decoration: none; transition: transform .2s, border-color .2s; }
-  .rcard:hover { transform: translateY(-3px); border-color: var(--acc); }
-  .rimg { background: var(--surf2, #f1ece3); display: grid; place-items: center; min-height: 240px; aspect-ratio: 16 / 10; overflow: hidden; }
-  .rimg img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
-  .rcard:hover .rimg img { transform: scale(1.03); }
-  .rtxt { padding: 26px 28px; display: flex; flex-direction: column; justify-content: center; }
-  .rtxt h3 { font-size: 26px; margin: 6px 0 8px; }
-  .rtxt p { color: var(--mut); margin: 0 0 14px; }
-  .tag, .niche { font-family: var(--mono); font-size: 13px; color: var(--accText); text-transform: uppercase; letter-spacing: .04em; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
-  .egrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  .ecard { position: relative; display: block; border-radius: 24px; padding: 28px; text-decoration: none; color: #f3ece4; background: linear-gradient(135deg, #1d1a17, #3a2e26); transition: transform .2s; }
-  .ecard:nth-child(2) { background: linear-gradient(135deg, #14161a, #2f5d50); }
-  .ecard:hover { transform: translateY(-4px); }
-  .ecard h3 { color: #fff; font-size: 28px; margin: 6px 0 8px; }
-  .ecard p { color: #d8cfc6; }
-  .ecard .niche { color: #e4a93f; }
-  .ecard .open { color: #e4a93f; font-weight: 700; }
-  .ecard .badge { position: static; display: inline-block; margin-bottom: 10px; }
-  @media (max-width: 760px) { .egrid { grid-template-columns: 1fr; } }
-  .card { display: block; background: var(--surf); border: 1px solid var(--line); border-radius: 20px; padding: 12px 12px 22px; color: inherit; text-decoration: none; transition: transform .2s, border-color .2s; }
-  .card:hover { transform: translateY(-3px); border-color: var(--acc); }
-  .thumb { aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden; position: relative; margin-bottom: 14px; background: #eee; }
-  .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform .6s; }
-  .card:hover .thumb img { transform: scale(1.04); }
-  .badge { position: absolute; top: 10px; left: 10px; background: rgba(23, 21, 15, .82); color: #fff; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
-  .card .niche, .card h3, .card p, .card .open { margin-left: 6px; margin-right: 6px; }
-  .card h3 { font-size: 21px; margin-top: 6px; margin-bottom: 8px; }
-  .card p { color: var(--mut); margin-top: 0; margin-bottom: 14px; }
-  .open { color: var(--accText); font-weight: 600; }
-  .incl { padding: 24px 0 72px; }
-  .incl ul { list-style: none; padding: 0; margin: 20px 0 28px; display: flex; flex-wrap: wrap; gap: 10px; }
-  .incl li { background: var(--surf); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; }
-  .cta { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 600; padding: 14px 22px; border-radius: 999px; text-decoration: none; }
-  @media (max-width: 760px) { .rcard { grid-template-columns: 1fr; } .rimg { min-height: 180px; } .rtxt { padding: 20px; } }
+  .exm { padding-bottom: clamp(64px, 8vw, 110px); }
+  .in { max-width: 1160px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+  .hero { padding: clamp(36px, 6vw, 80px) 0 28px; }
+  .eyebrow { color: var(--accText); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 12px; margin: 0 0 14px; }
+  h1 { font-size: clamp(36px, 5.4vw, 64px); line-height: 1.04; letter-spacing: -0.035em; margin: 0 0 16px; max-width: 18ch; }
+  h2 { font-size: clamp(28px, 3.6vw, 42px); letter-spacing: -0.03em; margin: 0 0 10px; line-height: 1.1; }
+  h3 { margin: 0 0 6px; font-size: 18px; }
+  .sub { color: var(--mut); font-size: 18px; line-height: 1.5; max-width: 62ch; margin: 0 0 24px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 22px; border-radius: 999px; background: var(--acc); color: var(--dark-ink); font-weight: 800; text-decoration: none; }
+  .btn.sm { padding: 9px 14px; font-size: 14px; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 700; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 18px; }
+  .filters button { font: inherit; font-size: 14px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surf); color: var(--ink); cursor: pointer; }
+  .filters button[aria-pressed='true'] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { border: 1px solid var(--line); border-radius: 22px; overflow: hidden; background: var(--surf); display: flex; flex-direction: column; }
+  .card[hidden] { display: none; }
+  .thumb { position: relative; display: block; }
+  .thumb img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; transition: transform 0.3s; }
+  .card:hover .thumb img { transform: scale(1.03); }
+  .type { position: absolute; left: 12px; top: 12px; background: var(--ink); color: var(--bg); font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; }
+  .body { padding: 16px 18px 18px; display: grid; gap: 6px; flex: 1; align-content: start; }
+  .body p { margin: 0; color: var(--mut); line-height: 1.45; }
+  .plan { color: var(--mut); }
+  .plan b { color: var(--accText); }
+  .row { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+  .note { color: var(--mut); font-size: 14px; margin: 14px 0 0; }
+  .block { padding-top: clamp(56px, 7vw, 90px); }
+  .real { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .rcard { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 22px; overflow: hidden; background: var(--surf); text-decoration: none; color: inherit; }
+  .rcard img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+  .rcard div { padding: 16px 18px 18px; display: grid; gap: 6px; }
+  .rcard p { margin: 0; color: var(--mut); line-height: 1.45; }
+  .tag { color: var(--accText); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .go { color: var(--accText); font-weight: 700; }
+  .custom { display: flex; gap: 24px; align-items: center; justify-content: space-between; padding: clamp(24px, 4vw, 44px); border-radius: 28px; background: var(--deep, #111); color: var(--deepInk, #fff); }
+  .custom p { margin: 0; max-width: 62ch; color: color-mix(in srgb, var(--deepInk, #fff) 78%, transparent); line-height: 1.5; }
+  @media (max-width: 960px) { .grid, .real { grid-template-columns: repeat(2, 1fr); } .custom { flex-direction: column; align-items: flex-start; } }
+  @media (max-width: 560px) { .grid, .real { grid-template-columns: 1fr; } }
 </style>
