@@ -198,10 +198,12 @@ export default {
       return json(status, status === 200 && db ? { ...(out as object), room: roomToken } : out);
     }
     // Anonymous page-view analytics for public pages (no cookies, no IP).
-    if (env.LEADS && request.method === 'GET' && !/^\/(admin|room|partner|ua\/partner|ru\/partner|demo)\b/.test(url.pathname) && (url.pathname.endsWith('/') || !url.pathname.includes('.'))) {
+    // Only pages that exist count: scanners probing /wordpress/, /cms/ and the like got 404 and inflated the numbers (01.11).
+    const page = await env.ASSETS.fetch(request);
+    if (page.status === 200 && env.LEADS && request.method === 'GET' && !/^\/(admin|room|partner|ua\/partner|ru\/partner|demo)\b/.test(url.pathname) && (url.pathname.endsWith('/') || !url.pathname.includes('.'))) {
       waitUntil(trackView(env.LEADS, request, url).catch(() => {}));
     }
-    return env.ASSETS.fetch(request);
+    return page;
   },
   // Hourly: overdue leads go back to the pool even when nobody opens the cabinet.
   async scheduled(_event: unknown, env: Env): Promise<void> {

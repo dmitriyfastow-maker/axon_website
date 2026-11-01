@@ -37,7 +37,7 @@ const on = (s: Record<string, string>, k: string) => s[k] !== '0';
 // ---------- analytics (anonymous) ----------
 
 const BOT = /bot|crawl|spider|slurp|preview|monitor|headless|lighthouse|facebookexternalhit|curl|wget/i;
-const DC = /amazon|aws|google cloud|google llc|microsoft|azure|digitalocean|ovh|hetzner|linode|akamai|alibaba|tencent|oracle|vultr|contabo|leaseweb|scaleway|choopa|m247|datacamp|cloudflare|fastly|hostinger|ionos/i;
+const DC = /amazon|aws|google cloud|google llc|microsoft|azure|digitalocean|ovh|hetzner|linode|akamai|alibaba|tencent|oracle|vultr|contabo|leaseweb|scaleway|choopa|m247|datacamp|cloudflare|fastly|hostinger|ionos|colocrossing|zenlayer|gthost|psychz|servers\.com|selectel|netcup|clouvider|hivelocity|quadranet|ipxo|kamatera|upcloud|constant|packet|host|server|cloud|data ?cent/i;
 
 export async function trackView(db: DB, request: Request, url: URL) {
   if (BOT.test(request.headers.get('User-Agent') || '')) return;
