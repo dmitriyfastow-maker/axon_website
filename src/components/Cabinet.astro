@@ -5,6 +5,7 @@ import Base from '../layouts/Base.astro';
 import PromptCard from './PromptCard.astro';
 import Deals from './Deals.astro';
 import Coach from './Coach.astro';
+import PartnerEarn from './PartnerEarn.astro';
 import { LANGS, type Lang } from '../i18n';
 import { CABINET } from '../i18n/cabinet';
 import { OFFERS, PROMPTS } from '../data/ai-toolkit';
@@ -16,7 +17,6 @@ import { OFFER_TEXT, PROMPT_TEXT } from '../data/ai-toolkit-i18n';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const c = CABINET[lang];
-const PLAN = {"en": {"h": "How you are paid", "top": "Bring a client and close the deal on a call yourself — <b>50%</b> of the first payment + 30% of every later payment for life.", "opts": [["classic", "I recommend Vaxo to people I know: 50% of the first order + 30% of every later payment, for life"], ["first30", "I post content (clips, videos): 50% of the first sale + 30% for life (same as everyone)"], ["life10", "I post content (clips, videos): 50% of the first sale + 30% for life (same as everyone)"]], "ok": "Saved"}, "ru": {"h": "Как вам платят", "top": "Привели клиента и сами довели созвон до оплаты — <b>50%</b> первой оплаты + 30% с каждой следующей пожизненно.", "opts": [["classic", "Рекомендую Vaxo знакомым: 50% первого заказа + 30% с каждой следующей оплаты пожизненно"], ["first30", "Выкладываю контент (нарезки, ролики): 50% с первой продажи + 30% пожизненно (как у всех)"], ["life10", "Выкладываю контент (нарезки, ролики): 50% с первой продажи + 30% пожизненно (как у всех)"]], "ok": "Сохранено"}, "ua": {"h": "Як вам платять", "top": "Привели клієнта і самі довели дзвінок до оплати — <b>50%</b> першої оплати + 30% з кожної наступної довічно.", "opts": [["classic", "Рекомендую Vaxo знайомим: 50% першого замовлення + 30% з кожної наступної оплати довічно"], ["first30", "Викладаю контент (нарізки, ролики): 50% з першого продажу + 30% довічно (як у всіх)"], ["life10", "Викладаю контент (нарізки, ролики): 50% з першого продажу + 30% довічно (як у всіх)"]], "ok": "Збережено"}}[lang];
 const PF = {
   en: { h: 'Payout details', p: 'Fill this in once — no payout is sent without it. We pay by Payoneer, Wise or bank transfer. Partners in Ukraine are paid only as a registered sole proprietor (FOP). We do not pay in crypto yet.', status: 'Your status', st: [['fop', 'Sole proprietor (FOP / self-employed)'], ['person', 'Private person'], ['company', 'Company']], country: 'Country you live in', residency: 'Tax residency (country)', legal: 'Full legal name (or company name)', tax: 'Tax ID (optional)', method: 'How to pay you', account: 'Payoneer / Wise email or IBAN', adult: 'I am 18 or older', offer: 'I accept the partner terms', save: 'Save', ok: 'Saved. Payouts can be sent to you.', err: 'Please fill in every field.', ua: 'Partners in Ukraine are paid only as a FOP — please register a FOP first.', filled: 'Filled in' },
   ru: { h: 'Данные для выплат', p: 'Заполните один раз — без этого выплата не уходит. Платим через Payoneer, Wise или банковским переводом. Партнёрам из Украины — только как ФОП. Криптой пока не платим.', status: 'Ваш статус', st: [['fop', 'ФОП / самозанятый'], ['person', 'Физическое лицо'], ['company', 'Компания']], country: 'Страна проживания', residency: 'Налоговое резидентство (страна)', legal: 'Полное имя по документам (или название компании)', tax: 'Налоговый номер (необязательно)', method: 'Как вам платить', account: 'Email Payoneer / Wise или IBAN', adult: 'Мне 18 лет или больше', offer: 'Я принимаю условия партнёрской программы', save: 'Сохранить', ok: 'Сохранено. Выплаты можно отправлять.', err: 'Заполните все поля.', ua: 'Партнёрам из Украины платим только как ФОП — сначала оформите ФОП.', filled: 'Заполнено' },
@@ -117,15 +117,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
           <button type="button" class="cta" data-next-go>{c.home.doIt}</button>
         </div>
 
-        <div class="plan card">
-          <span class="eyebrow-s">{PLAN.h}</span>
-          <p set:html={PLAN.top} />
-          <div class="plan-opts" data-plan>
-            {PLAN.opts.map(([k, t]) => <label><input type="radio" name="plan" value={k} /> <span>{t}</span></label>)}
-          </div>
-          <small class="mut" data-plan-ok hidden>{PLAN.ok}</small>
-          <a class="mut small" href={lang === 'en' ? '/partner-terms/' : `/${lang}/partner-terms/`} target="_blank">{lang === 'ru' ? 'Условия партнёрской программы →' : lang === 'ua' ? 'Умови партнерської програми →' : 'Partner terms →'}</a>
-        </div>
+        <div class="card"><PartnerEarn lang={lang} /></div>
 
         <div class="mylink card">
           <div><span class="eyebrow-s">{c.home.mainLink}</span><code data-main-link></code></div>
@@ -287,6 +279,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
       <!-- RULES -->
       <div data-panel="rules" hidden>
         <h1>{c.pay.h1}</h1>
+        <div class="card"><PartnerEarn lang={lang} /></div>
         <div class="grid2">
           <div class="card"><h3>{c.pay.payH}</h3><p class="mut">{c.pay.payP}</p></div>
           <div class="card"><h3>{c.pay.clientsH}</h3><p class="mut">{c.pay.clientsP}</p></div>
@@ -511,11 +504,6 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   }
 
   // ---- data ----
-  document.querySelector('[data-plan]')?.addEventListener('change', async (e) => {
-    const v = (e.target as HTMLInputElement).value;
-    const r = await api('plan', { plan: v });
-    if (r.ok) { const ok = document.querySelector<HTMLElement>('[data-plan-ok]'); if (ok) { ok.hidden = false; setTimeout(() => (ok.hidden = true), 2000); } }
-  });
   // Payout details form (Decision 29): no payout leaves until it is filled.
   const pform = document.querySelector<HTMLFormElement>('[data-payout]');
   if (pform) {
@@ -550,8 +538,6 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
     code = data.partner.code;
     $('[data-name]').textContent = data.partner.name;
     $('[data-email]').textContent = data.partner.email ?? '';
-    const planIn = document.querySelector<HTMLInputElement>(`[data-plan] input[value="${(data as any).plan || 'classic'}"]`);
-    if (planIn) planIn.checked = true;
     const clicks = data.links.reduce((n, l) => n + l.clicks, 0);
     const leads = data.links.reduce((n, l) => n + l.leads, 0);
     const sales = data.sales ?? 0;
@@ -838,7 +824,4 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
     .next::after, .soon .gift { animation: none; }
   }
   .plan p { margin: 6px 0 10px; }
-  .plan-opts { display: grid; gap: 8px; }
-  .plan-opts label { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; line-height: 1.4; }
-  .plan-opts input { margin-top: 3px; accent-color: var(--acc); }
 </style>

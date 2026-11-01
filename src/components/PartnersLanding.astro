@@ -5,6 +5,7 @@ import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
 import VaxSays from './VaxSays.astro';
+import PartnerEarn from './PartnerEarn.astro';
 import { getDict, langPath, type Lang } from '../i18n';
 import { CALC, PARTNERS_TEXT, RATES } from '../data/partners';
 
@@ -23,7 +24,7 @@ const cab = lang === 'en' ? '/partner/' : `/${lang}/partner/`;
 const alts = { en: '/partners/', ua: '/ua/partners/', ru: '/ru/partners/' };
 const calc = { ...CALC, own: RATES.agencyOwn, renewal: RATES.agencyRenewal, products: RATES.products };
 const chips = ['Claude', 'ChatGPT', 'Gemini', 'CapCut', 'Canva', 'TikTok', 'Reels', 'Shorts', 'Telegram', 'Reddit', 'Facebook', 'LinkedIn'];
-const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
+const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
 ---
 
 <Base lang={lang} title={p.meta.title} description={p.meta.description} path={alts[lang]} alts={alts}>
@@ -92,6 +93,10 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
       </div>
     </section>
 
+    <section id="earn" class="rv">
+      <div class="in"><PartnerEarn lang={lang} /></div>
+    </section>
+
     <section id="calc" class="rv">
       <div class="in">
         <div class="calc" data-calc={JSON.stringify(calc)}>
@@ -107,7 +112,7 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
                 {row.id === 'pk' && (
                   <div class="seg" role="group">
                     {CALC.packages.map((price, i) => (
-                      <button type="button" data-pkg={price} aria-pressed={i === 2 ? 'true' : 'false'}>{p.calcPkg[i]} ${price}</button>
+                      <button type="button" data-pkg={price} aria-pressed={i === 1 ? 'true' : 'false'}>{p.calcPkg[i]} ${price}</button>
                     ))}
                   </div>
                 )}
@@ -240,7 +245,7 @@ const payout = Math.round(CALC.packages[2] * RATES.agencyOwn) / 100;
   const box = document.querySelector<HTMLElement>('[data-calc]');
   if (box) {
     const c = JSON.parse(box.dataset.calc!) as { packages: number[]; project: number; template: number; bundle: number; support: number; own: number; renewal: number; products: number };
-    let pkg = c.packages[2];
+    let pkg = c.packages[1];
     const val = (k: string) => Number(box.querySelector<HTMLInputElement>(`[data-in="${k}"]`)!.value);
     const rows = () => ({
       pk: [val('pk'), pkg, c.own],

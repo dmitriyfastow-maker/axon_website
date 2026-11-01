@@ -1,0 +1,102 @@
+---
+// What a partner gets, for what and when (Decision 29 prices × partner rates). One block for the
+// partner landing and the cabinet, so the numbers never disagree. Numbers come from src/data/partners.ts.
+import type { Lang } from '../i18n';
+import { PRICES, RATES } from '../data/partners';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const r = RATES;
+const pct = (v: number, rate: number) => `$${((v * rate) / 100).toFixed(2).replace(/\.00$/, '')}`;
+const range = ([a, b]: number[], rate: number) => `${pct(a, rate)}–${pct(b, rate)}`;
+
+const C = {
+  en: {
+    h: 'What you get — and for what',
+    sub: 'The same terms for every partner from day one. You are paid only for clients who actually paid.',
+    cols: ['The client buys', 'Price', `You, first payment (${r.agencyOwn}%)`, `You, every later payment (${r.agencyRenewal}%)`, `Your team member sold it (+${r.team}%)`],
+    month: '/mo', once: 'one-off', vax: 'Vax names the price', site: 'Website build', custom: 'Custom: app, bot, integration', tpl: 'Templates',
+    example: (n: number) => `Example: ${n} clients on Growth = ${pct(PRICES.growth * n, r.agencyOwn)} at once, then ${pct(PRICES.growth * n, r.agencyRenewal)} every month while they pay. Example math, not a promise.`,
+    free: 'The client\'s first month is free — your share is counted from their first real payment.',
+    stepsH: 'How it works',
+    steps: ['A client comes through your link — they are yours forever (the first link counts).', 'The client pays — the commission appears in your cabinet.', `After ${r.holdDays} days (refund protection) it is paid out weekly: Payoneer, Wise or bank.`, `You close a warm lead from Vaxo yourself — ${r.agencyGiven}% of that deal + ${r.agencyRenewal}% of its renewals while you stay an active manager.`],
+    noH: 'Not paid',
+    no: ['Your own purchases through your own link', 'Refunded payments', 'Clicks, views and sign-ups without a payment', 'Sales that break the partner rules'],
+    terms: 'Full partner terms →',
+  },
+  ru: {
+    h: 'Сколько вы получаете — и за что',
+    sub: 'Одни условия для всех партнёров с первого дня. Деньги — только за клиентов, которые реально оплатили.',
+    cols: ['Что купил клиент', 'Цена', `Вам с первой оплаты (${r.agencyOwn}%)`, `Вам с каждой следующей (${r.agencyRenewal}%)`, `Продал партнёр из вашей команды (+${r.team}%)`],
+    month: '/мес', once: 'разово', vax: 'цену называет Vax', site: 'Создание сайта', custom: 'Кастом: приложение, бот, интеграция', tpl: 'Шаблоны',
+    example: (n: number) => `Пример: ${n} клиентов на Growth = ${pct(PRICES.growth * n, r.agencyOwn)} сразу, потом ${pct(PRICES.growth * n, r.agencyRenewal)} каждый месяц, пока они платят. Это расчёт, а не обещание.`,
+    free: 'Первый месяц у клиента бесплатный — ваша доля считается с его первой настоящей оплаты.',
+    stepsH: 'Как это работает',
+    steps: ['Клиент пришёл по вашей ссылке — он ваш навсегда (считается первая ссылка).', 'Клиент оплатил — начисление появляется в кабинете.', `Через ${r.holdDays} дней (защита от возвратов) — выплата раз в неделю: Payoneer, Wise или банк.`, `Сами закрыли тёплого клиента от Vaxo — ${r.agencyGiven}% этой сделки + ${r.agencyRenewal}% с её продлений, пока вы активный менеджер.`],
+    noH: 'Не оплачивается',
+    no: ['Ваши собственные покупки по своей ссылке', 'Оплаты, которые вернули', 'Клики, просмотры и регистрации без оплаты', 'Продажи с нарушением правил'],
+    terms: 'Полные условия партнёрской программы →',
+  },
+  ua: {
+    h: 'Скільки ви отримуєте — і за що',
+    sub: 'Однакові умови для всіх партнерів з першого дня. Гроші — лише за клієнтів, які справді оплатили.',
+    cols: ['Що купив клієнт', 'Ціна', `Вам з першої оплати (${r.agencyOwn}%)`, `Вам з кожної наступної (${r.agencyRenewal}%)`, `Продав партнер з вашої команди (+${r.team}%)`],
+    month: '/міс', once: 'разово', vax: 'ціну називає Vax', site: 'Створення сайту', custom: 'Кастом: застосунок, бот, інтеграція', tpl: 'Шаблони',
+    example: (n: number) => `Приклад: ${n} клієнтів на Growth = ${pct(PRICES.growth * n, r.agencyOwn)} одразу, потім ${pct(PRICES.growth * n, r.agencyRenewal)} щомісяця, поки вони платять. Це розрахунок, а не обіцянка.`,
+    free: 'Перший місяць у клієнта безкоштовний — ваша частка рахується з його першої справжньої оплати.',
+    stepsH: 'Як це працює',
+    steps: ['Клієнт прийшов за вашим посиланням — він ваш назавжди (рахується перше посилання).', 'Клієнт оплатив — нарахування зʼявляється в кабінеті.', `Через ${r.holdDays} днів (захист від повернень) — виплата раз на тиждень: Payoneer, Wise або банк.`, `Самі закрили теплого клієнта від Vaxo — ${r.agencyGiven}% цієї угоди + ${r.agencyRenewal}% з її продовжень, поки ви активний менеджер.`],
+    noH: 'Не оплачується',
+    no: ['Ваші власні покупки за своїм посиланням', 'Оплати, які повернули', 'Кліки, перегляди й реєстрації без оплати', 'Продажі з порушенням правил'],
+    terms: 'Повні умови партнерської програми →',
+  },
+}[lang];
+
+const plan = (name: string, v: number) => [`${name}`, `$${v}${C.month}`, pct(v, r.agencyOwn), `${pct(v, r.agencyRenewal)}${C.month}`, pct(v, r.team)];
+const rows = [
+  plan('Care', PRICES.care),
+  plan('Growth', PRICES.growth),
+  plan('Pro', PRICES.pro),
+  [C.site, `$${PRICES.site[0]}–${PRICES.site[1]}`, range(PRICES.site, r.agencyOwn), C.once, range(PRICES.site, r.team)],
+  [C.custom, C.vax, `${r.agencyOwn}%`, `${r.agencyRenewal}%`, `+${r.team}%`],
+  [C.tpl, `$${PRICES.templates[0]}–${PRICES.templates[1]}`, `${r.products}%`, '—', `+${r.team}%`],
+];
+const terms = lang === 'en' ? '/partner-terms/' : `/${lang}/partner-terms/`;
+---
+
+<div class="earn">
+  <h2>{C.h}</h2>
+  <p class="mut">{C.sub}</p>
+  <div class="tw">
+    <table>
+      <thead><tr>{C.cols.map((c) => <th>{c}</th>)}</tr></thead>
+      <tbody>{rows.map((row) => <tr>{row.map((x, i) => (i === 0 ? <th scope="row">{x}</th> : <td class:list={{ hi: i === 2 || i === 3 }}>{x}</td>))}</tr>)}</tbody>
+    </table>
+  </div>
+  <p class="ex">{C.example(5)}</p>
+  <p class="mut small">{C.free}</p>
+  <div class="two">
+    <div><h3>{C.stepsH}</h3><ol>{C.steps.map((s) => <li>{s}</li>)}</ol></div>
+    <div><h3>{C.noH}</h3><ul>{C.no.map((s) => <li>{s}</li>)}</ul></div>
+  </div>
+  <a class="mut small" href={terms} target="_blank">{C.terms}</a>
+</div>
+
+<style>
+  .earn { display: grid; gap: 12px; }
+  .earn h2 { margin: 0; font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.02em; }
+  .earn h3 { margin: 0 0 8px; font-size: 17px; }
+  .earn p { margin: 0; line-height: 1.5; }
+  .tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surf); }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; }
+  th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); line-height: 1.35; font-size: 14px; vertical-align: top; }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+  thead th { color: var(--mut); font-weight: 700; font-size: 13px; }
+  .hi { font-weight: 700; background: color-mix(in srgb, var(--acc) 14%, transparent); }
+  .mut { color: var(--mut); }
+  .ex { font-weight: 600; }
+  .small { font-size: 13px; }
+  .two { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+  .two ol, .two ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; line-height: 1.45; }
+  @media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+</style>

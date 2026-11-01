@@ -16,10 +16,13 @@ export const RATES = {
   holdDays: 14, // commission becomes payable after the refund window
 };
 
-/** Real prices from /start/ and /shop/; the calculator uses the middle of each range. */
+/** Platform prices (Decision 29, 31.10.2026): subscription a month, website build range, templates range. */
+export const PRICES = { care: 39, growth: 129, pro: 299, site: [150, 400], templates: [9, 67] };
+
+/** Calculator inputs; the calculator uses the middle of each range. */
 export const CALC = {
-  packages: [149, 199, 249], // starter packages: automation, landing page, AI chat assistant
-  project: 490, // site with booking or catalog
+  packages: [39, 129, 299], // first payment of a new subscription: Care / Growth / Pro
+  project: 275, // website build, middle of $150–400
   template: 10, // single templates cost $9–$12
   bundle: 67, // all templates in one bundle
   support: 129, // the Growth plan (plans: $39 / $129 / $299 a month)
@@ -102,7 +105,7 @@ const en: Text = {
     {
       name: 'Agency services',
       rate: `${r.agencyOwn}%`,
-      price: 'deals from $149',
+      price: 'plans from $39/mo',
       what: 'Automation, websites and AI chatbots for small businesses. Our team does all the work.',
       points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `Clients can join too and earn the same`],
     },
@@ -124,16 +127,16 @@ const en: Text = {
   calcH: 'Count your income',
   calcSub: 'Real prices from our site. Move the sliders — every line shows exactly how it is counted.',
   calcRows: [
-    { id: 'pk', label: 'Starter packages sold', hint: `${r.agencyOwn}% of the package price`, max: 20, step: 1, value: 2 },
-    { id: 'pr', label: 'Sites with booking or catalog ($490)', hint: `${r.agencyOwn}% of $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'pk', label: 'New clients on a plan', hint: `${r.agencyOwn}% of their first payment`, max: 20, step: 1, value: 2 },
+    { id: 'pr', label: 'Website builds ($150–400)', hint: `${r.agencyOwn}% of $${c.project}`, max: 10, step: 1, value: 0 },
     { id: 'tp', label: 'Single templates ($9–$12)', hint: `${r.products}% of $${c.template}`, max: 200, step: 5, value: 20 },
     { id: 'bd', label: 'Template bundles ($67)', hint: `${r.products}% of $${c.bundle}`, max: 50, step: 1, value: 3 },
-    { id: 'sp', label: 'Clients on a monthly plan ($39–$299)', hint: `${r.agencyRenewal}% of $${c.support} every month`, max: 30, step: 1, value: 2 },
+    { id: 'sp', label: 'Clients who keep paying (Growth $129)', hint: `${r.agencyRenewal}% of $${c.support} every month`, max: 30, step: 1, value: 2 },
   ],
-  calcPkg: ['Automation', 'Website', 'AI chatbot'],
+  calcPkg: ['Care', 'Growth', 'Pro'],
   calcMonth: 'per month',
   calcYear: 'per year',
-  calcNote: `Templates are counted at $${c.template} and support at $${c.support}/month — the middle of each price range. Example math, not a promise: real income depends only on real sales.`,
+  calcNote: `Templates are counted at $${c.template} and monthly plans at Growth $${c.support}/month. Example math, not a promise: real income depends only on real sales.`,
   academyH: 'Free training inside the cabinet',
   academySub: 'Short, practical lessons. Each one shows the free way to start and the maximum way for faster results.',
   modules: [
@@ -207,7 +210,7 @@ const ua: Text = {
     {
       name: 'Послуги агенції',
       rate: `${r.agencyOwn}%`,
-      price: 'угоди від $149',
+      price: 'підписка від $39/міс',
       what: 'Автоматизація, сайти та ШІ-чат-боти для малого бізнесу. Усю роботу робить наша команда.',
       points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `Клієнти теж можуть приєднатися й заробляти так само`],
     },
@@ -229,16 +232,16 @@ const ua: Text = {
   calcH: 'Порахуйте свій дохід',
   calcSub: 'Реальні ціни з нашого сайту. Рухайте повзунки — кожен рядок показує, як саме рахується.',
   calcRows: [
-    { id: 'pk', label: 'Продано стартових пакетів', hint: `${r.agencyOwn}% від ціни пакета`, max: 20, step: 1, value: 2 },
-    { id: 'pr', label: 'Сайти із записом або каталогом ($490)', hint: `${r.agencyOwn}% від $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'pk', label: 'Нові клієнти на підписці', hint: `${r.agencyOwn}% їхньої першої оплати`, max: 20, step: 1, value: 2 },
+    { id: 'pr', label: 'Створення сайтів ($150–400)', hint: `${r.agencyOwn}% від $${c.project}`, max: 10, step: 1, value: 0 },
     { id: 'tp', label: 'Окремі шаблони ($9–$12)', hint: `${r.products}% від $${c.template}`, max: 200, step: 5, value: 20 },
     { id: 'bd', label: 'Набори шаблонів ($67)', hint: `${r.products}% від $${c.bundle}`, max: 50, step: 1, value: 3 },
-    { id: 'sp', label: 'Клієнти на щомісячній підписці ($39–$299)', hint: `${r.agencyRenewal}% від $${c.support} щомісяця`, max: 30, step: 1, value: 2 },
+    { id: 'sp', label: 'Клієнти, які платять далі (Growth $129)', hint: `${r.agencyRenewal}% від $${c.support} щомісяця`, max: 30, step: 1, value: 2 },
   ],
-  calcPkg: ['Автоматизація', 'Сайт', 'ШІ-чат-бот'],
+  calcPkg: ['Care', 'Growth', 'Pro'],
   calcMonth: 'на місяць',
   calcYear: 'на рік',
-  calcNote: `Шаблон рахуємо по $${c.template}, підтримку — $${c.support}/міс (середина діапазону цін). Це приклад, а не обіцянка: дохід залежить лише від реальних продажів.`,
+  calcNote: `Шаблон рахуємо по $${c.template}, підписку — Growth $${c.support}/міс. Це приклад, а не обіцянка: дохід залежить лише від реальних продажів.`,
   academyH: 'Безкоштовне навчання в кабінеті',
   academySub: 'Короткі практичні уроки. У кожному — безкоштовний спосіб почати і максимальний — для швидшого результату.',
   modules: [
@@ -312,7 +315,7 @@ const ru: Text = {
     {
       name: 'Услуги агентства',
       rate: `${r.agencyOwn}%`,
-      price: 'сделки от $149',
+      price: 'подписка от $39/мес',
       what: 'Автоматизация, сайты и ИИ-чат-боты для малого бизнеса. Всю работу делает наша команда.',
       points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `Клиенты тоже могут присоединиться и зарабатывать так же`],
     },
@@ -334,16 +337,16 @@ const ru: Text = {
   calcH: 'Посчитайте свой доход',
   calcSub: 'Реальные цены с нашего сайта. Двигайте ползунки — каждая строка показывает, как именно считается.',
   calcRows: [
-    { id: 'pk', label: 'Продано стартовых пакетов', hint: `${r.agencyOwn}% от цены пакета`, max: 20, step: 1, value: 2 },
-    { id: 'pr', label: 'Сайты с записью или каталогом ($490)', hint: `${r.agencyOwn}% от $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'pk', label: 'Новые клиенты на подписке', hint: `${r.agencyOwn}% их первой оплаты`, max: 20, step: 1, value: 2 },
+    { id: 'pr', label: 'Создание сайтов ($150–400)', hint: `${r.agencyOwn}% от $${c.project}`, max: 10, step: 1, value: 0 },
     { id: 'tp', label: 'Отдельные шаблоны ($9–$12)', hint: `${r.products}% от $${c.template}`, max: 200, step: 5, value: 20 },
     { id: 'bd', label: 'Наборы шаблонов ($67)', hint: `${r.products}% от $${c.bundle}`, max: 50, step: 1, value: 3 },
-    { id: 'sp', label: 'Клиенты на ежемесячной подписке ($39–$299)', hint: `${r.agencyRenewal}% от $${c.support} каждый месяц`, max: 30, step: 1, value: 2 },
+    { id: 'sp', label: 'Клиенты, которые платят дальше (Growth $129)', hint: `${r.agencyRenewal}% от $${c.support} каждый месяц`, max: 30, step: 1, value: 2 },
   ],
-  calcPkg: ['Автоматизация', 'Сайт', 'ИИ-чат-бот'],
+  calcPkg: ['Care', 'Growth', 'Pro'],
   calcMonth: 'в месяц',
   calcYear: 'в год',
-  calcNote: `Шаблон считаем по $${c.template}, поддержку — $${c.support}/мес (середина диапазона цен). Это пример, а не обещание: доход зависит только от реальных продаж.`,
+  calcNote: `Шаблон считаем по $${c.template}, подписку — Growth $${c.support}/мес. Это пример, а не обещание: доход зависит только от реальных продаж.`,
   academyH: 'Бесплатное обучение в кабинете',
   academySub: 'Короткие практичные уроки. В каждом — бесплатный способ начать и максимальный — для более быстрого результата.',
   modules: [

@@ -1,7 +1,7 @@
 // Commission ledger. A won lead with a value creates payouts automatically:
 // the manager who closed it (warm-lead rate) and the partner whose link brought the client (own-client rate).
 // The same person who brought AND closed the client gets the full-cycle rate (the most work, the most money).
-// Content partners on the 'first30' / 'life10' plan get that plan instead of the classic referral rate.
+// Every partner gets the same rates (31.10.2026): the old content plans are no longer applied.
 // The referrer's direct sponsor (partners.parent_id) gets the team bonus on every sale and renewal.
 import type { DB } from './partner.js';
 import { RATES } from '../src/data/partners.js';
@@ -21,7 +21,7 @@ export async function createPayouts(db: DB, leadId: number) {
   if (l.self_ref) { if (l.closer_id === l.referrer_id) l.closer_id = null; l.referrer_id = null; }
   const rows: [number, string, number][] = [];
   if (l.referrer_id && l.referrer_id === l.closer_id) rows.push([l.referrer_id, 'referral', RATES.fullCycle]);
-  else if (l.referrer_id) rows.push([l.referrer_id, 'referral', l.referrer_plan === 'life10' ? RATES.clipLife : l.referrer_plan === 'first30' ? RATES.clipFirst : RATES.agencyOwn]);
+  else if (l.referrer_id) rows.push([l.referrer_id, 'referral', RATES.agencyOwn]);
   if (l.closer_id && l.closer_id !== l.referrer_id) rows.push([l.closer_id, 'manager', RATES.agencyGiven]);
   // Team bonus: the referrer's direct sponsor gets 10% of this sale, on top (one level only — no pyramid).
   if (l.referrer_id) {
@@ -84,8 +84,7 @@ export async function addRenewal(db: DB, leadId: number, amountUsd: number) {
   if (!l) return false;
   const tag = Date.now().toString(36);
   const rows: [number, string][] = [];
-  // 'first30' content partners chose a bigger first payment instead of the lifetime share.
-  if (l.referrer_id && l.referrer_plan !== 'first30') rows.push([l.referrer_id, `renewal-referral:${tag}`]);
+  if (l.referrer_id) rows.push([l.referrer_id, `renewal-referral:${tag}`]);
   // Only an active manager keeps the lifetime share; a paused one loses it (the project moves to another manager).
   if (l.closer_id && l.closer_id !== l.referrer_id && l.closer_status === 'approved') rows.push([l.closer_id, `renewal-manager:${tag}`]);
   for (const [pid, kind] of rows) {
