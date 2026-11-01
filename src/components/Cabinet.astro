@@ -18,9 +18,9 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const c = CABINET[lang];
 const PF = {
-  en: { h: 'Payout details', p: 'Fill this in once — no payout is sent without it. We pay by Payoneer, Wise or bank transfer. Partners in Ukraine are paid only as a registered sole proprietor (FOP). We do not pay in crypto yet.', status: 'Your status', st: [['fop', 'Sole proprietor (FOP / self-employed)'], ['person', 'Private person'], ['company', 'Company']], country: 'Country you live in', residency: 'Tax residency (country)', legal: 'Full legal name (or company name)', tax: 'Tax ID (optional)', method: 'How to pay you', account: 'Payoneer / Wise email or IBAN', adult: 'I am 18 or older', offer: 'I accept the partner terms', save: 'Save', ok: 'Saved. Payouts can be sent to you.', err: 'Please fill in every field.', ua: 'Partners in Ukraine are paid only as a FOP — please register a FOP first.', filled: 'Filled in' },
-  ru: { h: 'Данные для выплат', p: 'Заполните один раз — без этого выплата не уходит. Платим через Payoneer, Wise или банковским переводом. Партнёрам из Украины — только как ФОП. Криптой пока не платим.', status: 'Ваш статус', st: [['fop', 'ФОП / самозанятый'], ['person', 'Физическое лицо'], ['company', 'Компания']], country: 'Страна проживания', residency: 'Налоговое резидентство (страна)', legal: 'Полное имя по документам (или название компании)', tax: 'Налоговый номер (необязательно)', method: 'Как вам платить', account: 'Email Payoneer / Wise или IBAN', adult: 'Мне 18 лет или больше', offer: 'Я принимаю условия партнёрской программы', save: 'Сохранить', ok: 'Сохранено. Выплаты можно отправлять.', err: 'Заполните все поля.', ua: 'Партнёрам из Украины платим только как ФОП — сначала оформите ФОП.', filled: 'Заполнено' },
-  ua: { h: 'Дані для виплат', p: 'Заповніть один раз — без цього виплата не йде. Платимо через Payoneer, Wise або банківським переказом. Партнерам з України — лише як ФОП. Криптою поки не платимо.', status: 'Ваш статус', st: [['fop', 'ФОП / самозайнятий'], ['person', 'Фізична особа'], ['company', 'Компанія']], country: 'Країна проживання', residency: 'Податкове резидентство (країна)', legal: 'Повне імʼя за документами (або назва компанії)', tax: 'Податковий номер (необовʼязково)', method: 'Як вам платити', account: 'Email Payoneer / Wise або IBAN', adult: 'Мені 18 років або більше', offer: 'Я приймаю умови партнерської програми', save: 'Зберегти', ok: 'Збережено. Виплати можна надсилати.', err: 'Заповніть усі поля.', ua: 'Партнерам з України платимо лише як ФОП — спершу оформіть ФОП.', filled: 'Заповнено' },
+  en: { h: 'Payout details', p: 'Fill this in once — no payout is sent without it. We pay by Payoneer, Wise or bank transfer. Partners in Ukraine are paid only as a registered sole proprietor (FOP). We do not pay in crypto yet.', status: 'Your status', st: [['fop', 'Sole proprietor (FOP / self-employed)'], ['person', 'Private person'], ['company', 'Company']], country: 'Country you live in', residency: 'Tax residency (country)', legal: 'Full legal name (or company name)', tax: 'Tax ID (optional)', method: 'How to pay you', account: 'Payoneer / Wise email or IBAN', adult: 'I am 18 or older', offer: 'I accept the partner terms', save: 'Save', ok: 'Saved. Payouts can be sent to you.', err: 'Please fill in every field.', ua: 'Partners in Ukraine are paid only as a FOP — please register a FOP first.', filled: 'Filled in', soon: 'The form opens in a few days — please come back then.' },
+  ru: { h: 'Данные для выплат', p: 'Заполните один раз — без этого выплата не уходит. Платим через Payoneer, Wise или банковским переводом. Партнёрам из Украины — только как ФОП. Криптой пока не платим.', status: 'Ваш статус', st: [['fop', 'ФОП / самозанятый'], ['person', 'Физическое лицо'], ['company', 'Компания']], country: 'Страна проживания', residency: 'Налоговое резидентство (страна)', legal: 'Полное имя по документам (или название компании)', tax: 'Налоговый номер (необязательно)', method: 'Как вам платить', account: 'Email Payoneer / Wise или IBAN', adult: 'Мне 18 лет или больше', offer: 'Я принимаю условия партнёрской программы', save: 'Сохранить', ok: 'Сохранено. Выплаты можно отправлять.', err: 'Заполните все поля.', ua: 'Партнёрам из Украины платим только как ФОП — сначала оформите ФОП.', filled: 'Заполнено', soon: 'Форма заработает в ближайшие дни — загляните чуть позже.' },
+  ua: { h: 'Дані для виплат', p: 'Заповніть один раз — без цього виплата не йде. Платимо через Payoneer, Wise або банківським переказом. Партнерам з України — лише як ФОП. Криптою поки не платимо.', status: 'Ваш статус', st: [['fop', 'ФОП / самозайнятий'], ['person', 'Фізична особа'], ['company', 'Компанія']], country: 'Країна проживання', residency: 'Податкове резидентство (країна)', legal: 'Повне імʼя за документами (або назва компанії)', tax: 'Податковий номер (необовʼязково)', method: 'Як вам платити', account: 'Email Payoneer / Wise або IBAN', adult: 'Мені 18 років або більше', offer: 'Я приймаю умови партнерської програми', save: 'Зберегти', ok: 'Збережено. Виплати можна надсилати.', err: 'Заповніть усі поля.', ua: 'Партнерам з України платимо лише як ФОП — спершу оформіть ФОП.', filled: 'Заповнено', soon: 'Форма запрацює найближчими днями — загляньте трохи пізніше.' },
 }[lang];
 const base = lang === 'en' ? '/partner/' : `/${lang}/partner/`;
 const landing = lang === 'en' ? '/partners/' : `/${lang}/partners/`;
@@ -284,7 +284,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
           <div class="card"><h3>{c.pay.payH}</h3><p class="mut">{c.pay.payP}</p></div>
           <div class="card"><h3>{c.pay.clientsH}</h3><p class="mut">{c.pay.clientsP}</p></div>
         </div>
-        <form class="card pform" data-payout data-msg={JSON.stringify({ ok: PF.ok, err: PF.err, ua: PF.ua, filled: PF.filled })}>
+        <form class="card pform" hidden data-payout data-msg={JSON.stringify({ ok: PF.ok, err: PF.err, ua: PF.ua, filled: PF.filled, soon: PF.soon })}>
           <h3>{PF.h} <span class="mut" data-pfilled></span></h3>
           <p class="mut">{PF.p}</p>
           <label>{PF.status}<select name="status" required>{PF.st.map(([v, t]) => <option value={v}>{t}</option>)}</select></label>
@@ -507,7 +507,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   // Payout details form (Decision 29): no payout leaves until it is filled.
   const pform = document.querySelector<HTMLFormElement>('[data-payout]');
   if (pform) {
-    const PM = JSON.parse(pform.dataset.msg!) as { ok: string; err: string; ua: string; filled: string };
+    const PM = JSON.parse(pform.dataset.msg!) as { ok: string; err: string; ua: string; filled: string; soon: string };
     const pmsg = pform.querySelector<HTMLElement>('[data-pmsg]')!;
     const mark = () => (pform.querySelector('[data-pfilled]')!.textContent = `· ${PM.filled} ✓`);
     api('payout').then((r) => (r.ok ? r.json() : null)).then((d: any) => {
@@ -526,7 +526,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
       body.adult = fd.has('adult'); body.offer = fd.has('offer');
       const r = await api('payout', body);
       const d = (await r.json().catch(() => ({}))) as { error?: string };
-      pmsg.textContent = r.ok ? PM.ok : d.error === 'ua_fop' ? PM.ua : PM.err;
+      pmsg.textContent = r.ok ? PM.ok : d.error === 'ua_fop' ? PM.ua : d.error === 'soon' ? PM.soon : PM.err;
       if (r.ok) mark();
     });
   }

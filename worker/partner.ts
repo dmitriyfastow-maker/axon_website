@@ -215,7 +215,9 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
   // Payout profile (Decision 29): without it no payout is sent. Ukrainians are paid only as FOP;
   // crypto is not offered (single-tax FOP may not pay in crypto).
   if (path === 'payout' && method === 'GET') {
-    const r = await db.prepare('SELECT payout_profile, payout_filled_at FROM partners WHERE id = ?').bind(me.id).first<{ payout_profile: string | null; payout_filled_at: string | null }>();
+    // Until migration 0032 is on the live DB the columns are missing: answer "not yet" instead of crashing.
+    const r = await db.prepare('SELECT payout_profile, payout_filled_at FROM partners WHERE id = ?').bind(me.id).first<{ payout_profile: string | null; payout_filled_at: string | null }>().catch(() => undefined);
+    if (r === undefined) return json(503, { ok: false, error: 'soon' });
     return json(200, { ok: true, profile: r?.payout_profile ? JSON.parse(r.payout_profile) : null, at: r?.payout_filled_at ?? null });
   }
   if (path === 'payout' && method === 'POST') {
@@ -228,8 +230,8 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
     const ua = /ukrain|україн|украин|^ua$/i.test(country) || /ukrain|україн|украин|^ua$/i.test(residency);
     if (ua && status !== 'fop') return json(400, { ok: false, error: 'ua_fop' });
     const profile = { status, country, residency, legal_name: legal, tax_id: s(b.tax_id, 40), method: method_, account, adult: true, offer: true };
-    await db.prepare("UPDATE partners SET payout_profile = ?, payout_filled_at = datetime('now') WHERE id = ?").bind(JSON.stringify(profile), me.id).run();
-    return json(200, { ok: true });
+    const saved = await db.prepare("UPDATE partners SET payout_profile = ?, payout_filled_at = datetime('now') WHERE id = ?").bind(JSON.stringify(profile), me.id).run().then(() => true, () => false);
+    return saved ? json(200, { ok: true }) : json(503, { ok: false, error: 'soon' });
   }
 
   const toggle = path.match(/^links\/(\d+)\/toggle$/);
