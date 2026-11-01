@@ -1,19 +1,10 @@
 // Copy ported verbatim from design/AXON_Landing_v2.dc.html.
 const en = {
-  "nav": [
-    "Services",
-    "Cases",
-    "Live demos",
-    "About",
-    "Gifts 🎁",
-    "Shop",
-    "Partners",
-    "Collaborate"
-  ],
+  "nav": ["What you get", "Live demos", "Cases", "Pricing", "Partners"],
   "eyebrow": "All of your business online, done for you",
   "h1": "Website, clients, social media and ads — in one app",
   "sub": "We build or connect your website, add an AI employee that answers clients in every chat, and run your social media and ads. You see every lead and every dollar in one app. Already have a site? Connecting it is $0.",
-  "cta1": "Try it free",
+  "cta1": "Start free",
   "cta2": "See examples",
   "cta3": "How much does it cost",
   "heroTags": [

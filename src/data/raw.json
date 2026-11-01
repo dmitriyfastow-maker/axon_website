@@ -314,13 +314,10 @@
     ]
   ],
   "NAV_HREFS": [
-    "#services",
-    "#cases",
+    "#get",
     "#demos",
-    "/about/",
-    "/gifts/",
-    "/shop/",
-    "/partners/",
-    "/collab/"
+    "#cases",
+    "#pricing",
+    "/partners/"
   ]
 }
