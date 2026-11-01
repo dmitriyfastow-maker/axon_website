@@ -1,5 +1,5 @@
 ---
-// Starter packages: a low-risk first step for small businesses (Decision 03). EN / UA / RU.
+// Start free (Decision 29): the first month on any plan is free, then a subscription; anything extra priced upfront. EN / UA / RU.
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Contact from './Contact.astro';
@@ -15,57 +15,375 @@ const home = langPath(lang);
 const alts = { en: '/start/', ua: '/ua/start/', ru: '/ru/start/' };
 
 const C = {
-  en: {
-    title: 'Vaxo — Starter packages for small businesses', desc: 'Start small: an AI chat assistant, a one-page website or one automation, usually ready in days.',
-    eyebrow: 'Starter packages', h1: 'Start small. See the result in days.',
-    sub: 'Not ready for a big project? Pick one small thing that brings you customers now. If you like the result, we grow it step by step.',
-    cta: 'Pick a package →', once: 'one-time', roadEyebrow: 'Your growth plan', roadH: 'The starter package is step one, not the whole story',
-    extra: {"cta2": "All services & prices", "order": "Order this package", "stepsHref": ["#packages", "/#services", "#contact"], "howH": "How it works — no calls unless you want one", "how": [["Leave a request", "Name, contact and one line about your business. 1 minute."], ["Brief in your project chat", "Your personal manager asks a few questions in writing. A call only if you want it."], ["Invoice and start", "You get a contract and an invoice from Vaxo with the fixed price."], ["Ready in days", "You get the result, one round of edits is included. Then you decide: stop, grow or keep it running."]], "faqH": "Quick answers", "faq": [["Do I need a call?", "No. Everything can be done in writing in your project chat. We call only when you ask."], ["Who will I talk to?", "One personal manager who stays with you from the first message to support."], ["What do you need from me?", "Your logo and photos if you have them, a short description of services and prices. If you have nothing, we help write it."], ["What if I want more later?", "The starter price is credited to a bigger project if you continue within 30 days. See all services and prices."], ["Do you work with my country and niche?", "Yes. We work worldwide, in English, Ukrainian and Russian, with any niche — from a local service to e-commerce and SaaS."]], "notes": ["Package: AI chat assistant ($249)", "Package: one-page website ($199)", "Package: one automation ($149)"]},
-    packages: [
-      { name: 'AI chat assistant', price: '$249', what: 'A chatbot on your website that answers common questions 24/7 and collects contact details of new customers.', get: ['Trained on your services, prices and FAQ', 'Leads sent to your email or Telegram', 'Works on any website'] },
-      { name: 'One-page website', price: '$199', what: 'A clean, fast page that explains what you do and turns visitors into inquiries.', get: ['Mobile-first design', 'Contact form and click-to-call', 'Basic Google setup'] },
-      { name: 'One automation', price: '$149', what: 'One routine task done for you automatically, so no request gets lost.', get: ['Website requests into a sheet or CRM', 'Instant notifications to your phone', 'Auto-reply to every new lead'] },
+ "en": {
+  "title": "Vaxo — Start free: your first month on us",
+  "desc": "Try the whole Vaxo platform free for a month: website, AI employee, CRM, analytics. Then from $39 a month.",
+  "eyebrow": "Start free",
+  "h1": "Try everything free for a month.",
+  "sub": "No big project and no risk. We set up the platform for your business: a website or a connection to yours, AI that answers your clients, every lead in one app. You pay the subscription only if you stay — we and AI do the work.",
+  "cta": "Pick a plan →",
+  "once": "/ month",
+  "roadEyebrow": "How you grow",
+  "roadH": "Start small, add more when it pays off",
+  "packages": [
+   {
+    "name": "Care",
+    "price": "$39",
+    "what": "Replaces a website builder, a CRM and analytics.",
+    "get": [
+     "Website or a connection to yours, SEO",
+     "AI answers in your site chat 24/7",
+     "Every lead in one app + a monthly AI report"
+    ]
+   },
+   {
+    "name": "Growth",
+    "price": "$129",
+    "what": "Replaces an administrator and a social media manager.",
+    "get": [
+     "AI employee in Instagram, WhatsApp, Telegram, Facebook",
+     "Booking, payments, reviews, 12 AI posts a month",
+     "Team up to 5 with roles, an AI assistant for each"
+    ]
+   },
+   {
+    "name": "Pro",
+    "price": "$299",
+    "what": "Replaces a marketing agency.",
+    "get": [
+     "We run your social media: 8 videos or posts a month + stories",
+     "We set up and run your ads (ad budget separate)",
+     "Shop, custom automations, an app under your brand"
+    ]
+   }
+  ],
+  "steps": [
+   {
+    "n": "01",
+    "title": "Free month",
+    "price": "$0",
+    "text": "We set everything up and connect it. You see the result before you pay anything."
+   },
+   {
+    "n": "02",
+    "title": "Subscription",
+    "price": "from $39 / mo",
+    "text": "You only pay the plan — we and AI do the work every month. Change or cancel any time."
+   },
+   {
+    "n": "03",
+    "title": "Anything extra",
+    "price": "price upfront",
+    "text": "An app, a bot, an integration, even a game. Vax works out the task with you and names a fixed price before we start."
+   }
+  ],
+  "extra": {
+   "cta2": "All features & prices",
+   "order": "Start free",
+   "stepsHref": [
+    "#packages",
+    "#packages",
+    "#contact"
+   ],
+   "howH": "How it works — no calls unless you want one",
+   "how": [
+    [
+     "Leave a request",
+     "Name, contact and one line about your business. 1 minute."
     ],
-    steps: [
-      { n: '01', title: 'Try it', price: '$149 – $249', text: 'One starter package, usually ready in days. One round of edits included.' },
-      { n: '02', title: 'Grow', price: 'from $800', text: 'Full website, lead funnel or ads. The starter price is credited if you continue within 30 days.' },
-      { n: '03', title: 'Keep it running', price: '$50 – $200 / mo', text: 'Support, updates and a monthly report. You focus on clients, we keep the system working.' },
+    [
+     "Brief in your project chat",
+     "A few questions in writing. A call only if you want it."
     ],
-  },
-  ru: {
-    title: 'Vaxo — Стартовые пакеты для малого бизнеса', desc: 'Начните с малого: ИИ-чат, сайт-визитка или одна автоматизация — обычно за несколько дней.',
-    eyebrow: 'Стартовые пакеты', h1: 'Начните с малого. Результат — уже через несколько дней.',
-    sub: 'Не готовы к большому проекту? Выберите одну небольшую вещь, которая приведёт клиентов уже сейчас. Понравится результат — развиваем дальше шаг за шагом.',
-    cta: 'Выбрать пакет →', once: 'разово', roadEyebrow: 'План роста', roadH: 'Стартовый пакет — первый шаг, а не вся история',
-    extra: {"cta2": "Все услуги и цены", "order": "Заказать пакет", "stepsHref": ["#packages", "/ru/#services", "#contact"], "howH": "Как это работает — без созвонов, если вы не хотите", "how": [["Оставьте заявку", "Имя, контакт и одна строка о бизнесе. 1 минута."], ["Бриф в чате проекта", "Личный менеджер задаёт несколько вопросов письменно. Созвон — только если хотите."], ["Счёт и старт", "Вы получаете договор и счёт от Vaxo с фиксированной ценой."], ["Готово за несколько дней", "Вы получаете результат, один круг правок включён. Дальше решаете: остановиться, расти или поддерживать."]], "faqH": "Короткие ответы", "faq": [["Нужен ли созвон?", "Нет. Всё можно сделать письменно в чате проекта. Звоним, только когда вы попросите."], ["С кем я буду общаться?", "С одним личным менеджером — от первого сообщения до поддержки."], ["Что нужно от меня?", "Логотип и фото, если есть, короткое описание услуг и цен. Если ничего нет — поможем написать."], ["Что, если позже захочу больше?", "Цена стартового пакета засчитывается в большой проект, если продолжаете в течение 30 дней. Смотрите все услуги и цены."], ["Работаете с моей страной и нишей?", "Да. Работаем по всему миру, на английском, украинском и русском, с любой нишей — от местных услуг до интернет-магазинов и SaaS."]], "notes": ["Пакет: ИИ-чат на сайте ($249)", "Пакет: сайт-визитка ($199)", "Пакет: одна автоматизация ($149)"]},
-    packages: [
-      { name: 'ИИ-чат на сайте', price: '$249', what: 'Чат-бот на вашем сайте отвечает на частые вопросы 24/7 и собирает контакты новых клиентов.', get: ['Обучен на ваших услугах, ценах и FAQ', 'Заявки приходят на почту или в Telegram', 'Работает на любом сайте'] },
-      { name: 'Сайт-визитка', price: '$199', what: 'Аккуратная быстрая страница: объясняет, чем вы занимаетесь, и превращает посетителей в заявки.', get: ['Удобен с телефона', 'Форма заявки и звонок в один клик', 'Базовая настройка Google'] },
-      { name: 'Одна автоматизация', price: '$149', what: 'Одна рутинная задача выполняется сама — ни одна заявка не потеряется.', get: ['Заявки с сайта — в таблицу или CRM', 'Мгновенные уведомления на телефон', 'Автоответ на каждую новую заявку'] },
+    [
+     "We set it up",
+     "Your website or a connection to yours, AI trained on your services and prices."
     ],
-    steps: [
-      { n: '01', title: 'Попробовать', price: '$149 – $249', text: 'Один стартовый пакет — обычно за несколько дней. Один круг правок включён.' },
-      { n: '02', title: 'Вырасти', price: 'от $800', text: 'Полноценный сайт, воронка заявок или реклама. Цена стартового пакета засчитывается, если продолжаете в течение 30 дней.' },
-      { n: '03', title: 'Поддерживать', price: '$50 – $200 / мес', text: 'Поддержка, обновления и отчёт раз в месяц. Вы занимаетесь клиентами, мы — системой.' },
+    [
+     "Free month, then the plan",
+     "You see real requests and reports. Stay only if it pays off."
+    ]
+   ],
+   "faqH": "Quick answers",
+   "faq": [
+    [
+     "What do I pay for the first month?",
+     "Nothing. The first month is free on every plan. A yearly plan gives 2 more months free."
     ],
-  },
-  ua: {
-    title: 'Vaxo — Стартові пакети для малого бізнесу', desc: 'Почніть з малого: ШІ-чат, сайт-візитка або одна автоматизація — зазвичай за кілька днів.',
-    eyebrow: 'Стартові пакети', h1: 'Почніть з малого. Результат — вже за кілька днів.',
-    sub: 'Не готові до великого проєкту? Оберіть одну невелику річ, яка приведе клієнтів уже зараз. Сподобається результат — розвиваємо далі крок за кроком.',
-    cta: 'Обрати пакет →', once: 'разово', roadEyebrow: 'План зростання', roadH: 'Стартовий пакет — перший крок, а не вся історія',
-    extra: {"cta2": "Усі послуги та ціни", "order": "Замовити пакет", "stepsHref": ["#packages", "/ua/#services", "#contact"], "howH": "Як це працює — без дзвінків, якщо ви не хочете", "how": [["Залиште заявку", "Імʼя, контакт і один рядок про бізнес. 1 хвилина."], ["Бриф у чаті проєкту", "Особистий менеджер ставить кілька питань письмово. Дзвінок — лише якщо хочете."], ["Рахунок і старт", "Ви отримуєте договір і рахунок від Vaxo з фіксованою ціною."], ["Готово за кілька днів", "Ви отримуєте результат, одне коло правок включено. Далі вирішуєте: зупинитися, рости чи підтримувати."]], "faqH": "Короткі відповіді", "faq": [["Чи потрібен дзвінок?", "Ні. Усе можна зробити письмово в чаті проєкту. Дзвонимо, лише коли ви попросите."], ["З ким я спілкуватимусь?", "З одним особистим менеджером — від першого повідомлення до підтримки."], ["Що потрібно від мене?", "Логотип і фото, якщо є, короткий опис послуг і цін. Якщо нічого немає — допоможемо написати."], ["Що, якщо згодом захочу більше?", "Ціна стартового пакета зараховується у великий проєкт, якщо продовжуєте протягом 30 днів. Дивіться всі послуги та ціни."], ["Працюєте з моєю країною і нішею?", "Так. Працюємо по всьому світу, англійською, українською та російською, з будь-якою нішею — від місцевих послуг до інтернет-магазинів і SaaS."]], "notes": ["Пакет: ШІ-чат на сайті ($249)", "Пакет: сайт-візитка ($199)", "Пакет: одна автоматизація ($149)"]},
-    packages: [
-      { name: 'ШІ-чат на сайті', price: '$249', what: 'Чат-бот на вашому сайті відповідає на часті питання 24/7 і збирає контакти нових клієнтів.', get: ['Навчений на ваших послугах, цінах і FAQ', 'Заявки приходять на пошту або в Telegram', 'Працює на будь-якому сайті'] },
-      { name: 'Сайт-візитка', price: '$199', what: 'Акуратна швидка сторінка: пояснює, чим ви займаєтеся, і перетворює відвідувачів на заявки.', get: ['Зручний з телефона', 'Форма заявки і дзвінок в один клік', 'Базове налаштування Google'] },
-      { name: 'Одна автоматизація', price: '$149', what: 'Одна рутинна задача виконується сама — жодна заявка не загубиться.', get: ['Заявки з сайту — у таблицю або CRM', 'Миттєві сповіщення на телефон', 'Автовідповідь на кожну нову заявку'] },
+    [
+     "I already have a website or CRM",
+     "We connect with one line of code — $0, nothing to rebuild."
     ],
-    steps: [
-      { n: '01', title: 'Спробувати', price: '$149 – $249', text: 'Один стартовий пакет — зазвичай за кілька днів. Одне коло правок включено.' },
-      { n: '02', title: 'Вирости', price: 'від $800', text: 'Повноцінний сайт, воронка заявок або реклама. Ціна стартового пакета зараховується, якщо продовжуєте протягом 30 днів.' },
-      { n: '03', title: 'Підтримувати', price: '$50 – $200 / міс', text: 'Підтримка, оновлення і звіт раз на місяць. Ви займаєтеся клієнтами, ми — системою.' },
+    [
+     "I have no website",
+     "We build one under your brand — from $150 depending on complexity, or free with a yearly plan."
     ],
-  },
+    [
+     "Can I need something unusual?",
+     "Yes: an app, a bot, an integration, anything. It is added for an extra fee — Vax names the exact price upfront."
+    ],
+    [
+     "Do I need a call?",
+     "No. Everything can be done in writing in your project chat. We call only when you ask."
+    ],
+    [
+     "Do you work with my country and niche?",
+     "Yes. We work worldwide, in English, Ukrainian and Russian, with any niche — from a local service to e-commerce and SaaS."
+    ]
+   ],
+   "notes": [
+    "Plan: Care $39/mo, first month free",
+    "Plan: Growth $129/mo, first month free",
+    "Plan: Pro $299/mo, first month free"
+   ]
+  }
+ },
+ "ru": {
+  "title": "Vaxo — Начните бесплатно: первый месяц за наш счёт",
+  "desc": "Попробуйте всю платформу Vaxo бесплатно месяц: сайт, ИИ-сотрудник, CRM, аналитика. Дальше — от $39 в месяц.",
+  "eyebrow": "Начните бесплатно",
+  "h1": "Попробуйте всё бесплатно целый месяц.",
+  "sub": "Без большого проекта и без риска. Мы настраиваем платформу под ваш бизнес: сайт или подключение к вашему, ИИ, который отвечает клиентам, все заявки в одном приложении. Платите подписку, только если остаётесь, — работу делаем мы и ИИ.",
+  "cta": "Выбрать тариф →",
+  "once": "/ мес",
+  "roadEyebrow": "Как вы растёте",
+  "roadH": "Начните с малого — добавляйте, когда окупается",
+  "packages": [
+   {
+    "name": "Care",
+    "price": "$39",
+    "what": "Заменяет конструктор сайтов, CRM и аналитику.",
+    "get": [
+     "Сайт или подключение к вашему, SEO",
+     "ИИ отвечает в чате сайта 24/7",
+     "Все заявки в одном приложении + отчёт ИИ раз в месяц"
+    ]
+   },
+   {
+    "name": "Growth",
+    "price": "$129",
+    "what": "Заменяет администратора и SMM-щика.",
+    "get": [
+     "ИИ-сотрудник в Instagram, WhatsApp, Telegram, Facebook",
+     "Запись, оплата, отзывы, 12 постов от ИИ в месяц",
+     "Команда до 5 человек с ролями, каждому ИИ-помощник"
+    ]
+   },
+   {
+    "name": "Pro",
+    "price": "$299",
+    "what": "Заменяет маркетинговое агентство.",
+    "get": [
+     "Ведём ваши соцсети: 8 роликов или постов в месяц + сторис",
+     "Настраиваем и ведём рекламу (бюджет отдельно)",
+     "Магазин, свои автоматизации, приложение под вашим брендом"
+    ]
+   }
+  ],
+  "steps": [
+   {
+    "n": "01",
+    "title": "Бесплатный месяц",
+    "price": "$0",
+    "text": "Мы всё настраиваем и подключаем. Вы видите результат до того, как что-то платите."
+   },
+   {
+    "n": "02",
+    "title": "Подписка",
+    "price": "от $39 / мес",
+    "text": "Вы только платите тариф — работу каждый месяц делаем мы и ИИ. Сменить или отменить можно в любой момент."
+   },
+   {
+    "n": "03",
+    "title": "Что угодно сверху",
+    "price": "цена заранее",
+    "text": "Приложение, бот, интеграция, даже игра. Vax разберёт задачу вместе с вами и назовёт точную цену до начала работы."
+   }
+  ],
+  "extra": {
+   "cta2": "Все возможности и цены",
+   "order": "Начать бесплатно",
+   "stepsHref": [
+    "#packages",
+    "#packages",
+    "#contact"
+   ],
+   "howH": "Как это работает — без звонков, если не хотите",
+   "how": [
+    [
+     "Оставьте заявку",
+     "Имя, контакт и одна строка о бизнесе. 1 минута."
+    ],
+    [
+     "Бриф в чате проекта",
+     "Несколько вопросов письменно. Созвон — только если хотите."
+    ],
+    [
+     "Мы всё настраиваем",
+     "Сайт или подключение к вашему, ИИ обучен на ваших услугах и ценах."
+    ],
+    [
+     "Бесплатный месяц, потом тариф",
+     "Вы видите реальные заявки и отчёты. Остаётесь, только если окупается."
+    ]
+   ],
+   "faqH": "Коротко о главном",
+   "faq": [
+    [
+     "Сколько платить за первый месяц?",
+     "Ничего. Первый месяц бесплатный на любом тарифе. При оплате года — ещё 2 месяца в подарок."
+    ],
+    [
+     "У меня уже есть сайт или CRM",
+     "Подключимся одной строкой кода — $0, ничего не переделываем."
+    ],
+    [
+     "У меня нет сайта",
+     "Сделаем под ваш бренд — от $150 в зависимости от сложности или бесплатно при оплате года."
+    ],
+    [
+     "А если нужно что-то необычное?",
+     "Можно: приложение, бот, интеграция — что угодно. Добавляется за доплату, точную цену Vax называет заранее."
+    ],
+    [
+     "Нужен ли созвон?",
+     "Нет. Всё можно решить письменно в чате проекта. Звоним, только если попросите."
+    ],
+    [
+     "Работаете с моей страной и нишей?",
+     "Да. Работаем по всему миру, на английском, украинском и русском, с любой нишей — от местного сервиса до интернет-магазина и SaaS."
+    ]
+   ],
+   "notes": [
+    "Тариф: Care $39/мес, первый месяц бесплатно",
+    "Тариф: Growth $129/мес, первый месяц бесплатно",
+    "Тариф: Pro $299/мес, первый месяц бесплатно"
+   ]
+  }
+ },
+ "ua": {
+  "title": "Vaxo — Почніть безкоштовно: перший місяць за наш рахунок",
+  "desc": "Спробуйте всю платформу Vaxo безкоштовно місяць: сайт, ШІ-працівник, CRM, аналітика. Далі — від $39 на місяць.",
+  "eyebrow": "Почніть безкоштовно",
+  "h1": "Спробуйте все безкоштовно цілий місяць.",
+  "sub": "Без великого проєкту і без ризику. Ми налаштовуємо платформу під ваш бізнес: сайт або підключення до вашого, ШІ, який відповідає клієнтам, усі заявки в одному застосунку. Платите підписку, лише якщо залишаєтеся, — роботу робимо ми і ШІ.",
+  "cta": "Обрати тариф →",
+  "once": "/ міс",
+  "roadEyebrow": "Як ви ростете",
+  "roadH": "Почніть з малого — додавайте, коли окупається",
+  "packages": [
+   {
+    "name": "Care",
+    "price": "$39",
+    "what": "Замінює конструктор сайтів, CRM і аналітику.",
+    "get": [
+     "Сайт або підключення до вашого, SEO",
+     "ШІ відповідає в чаті сайту 24/7",
+     "Усі заявки в одному застосунку + звіт ШІ щомісяця"
+    ]
+   },
+   {
+    "name": "Growth",
+    "price": "$129",
+    "what": "Замінює адміністратора і SMM-ника.",
+    "get": [
+     "ШІ-працівник в Instagram, WhatsApp, Telegram, Facebook",
+     "Запис, оплата, відгуки, 12 постів від ШІ на місяць",
+     "Команда до 5 людей з ролями, кожному ШІ-помічник"
+    ]
+   },
+   {
+    "name": "Pro",
+    "price": "$299",
+    "what": "Замінює маркетингову агенцію.",
+    "get": [
+     "Ведемо ваші соцмережі: 8 роликів або постів на місяць + сторіс",
+     "Налаштовуємо і ведемо рекламу (бюджет окремо)",
+     "Магазин, власні автоматизації, застосунок під вашим брендом"
+    ]
+   }
+  ],
+  "steps": [
+   {
+    "n": "01",
+    "title": "Безкоштовний місяць",
+    "price": "$0",
+    "text": "Ми все налаштовуємо і підключаємо. Ви бачите результат до того, як щось платите."
+   },
+   {
+    "n": "02",
+    "title": "Підписка",
+    "price": "від $39 / міс",
+    "text": "Ви лише платите тариф — роботу щомісяця робимо ми і ШІ. Змінити чи скасувати можна будь-коли."
+   },
+   {
+    "n": "03",
+    "title": "Будь-що зверху",
+    "price": "ціна заздалегідь",
+    "text": "Застосунок, бот, інтеграція, навіть гра. Vax розбере задачу разом з вами і назве точну ціну до початку роботи."
+   }
+  ],
+  "extra": {
+   "cta2": "Усі можливості й ціни",
+   "order": "Почати безкоштовно",
+   "stepsHref": [
+    "#packages",
+    "#packages",
+    "#contact"
+   ],
+   "howH": "Як це працює — без дзвінків, якщо не хочете",
+   "how": [
+    [
+     "Залиште заявку",
+     "Імʼя, контакт і один рядок про бізнес. 1 хвилина."
+    ],
+    [
+     "Бриф у чаті проєкту",
+     "Кілька запитань письмово. Дзвінок — лише якщо хочете."
+    ],
+    [
+     "Ми все налаштовуємо",
+     "Сайт або підключення до вашого, ШІ навчений на ваших послугах і цінах."
+    ],
+    [
+     "Безкоштовний місяць, потім тариф",
+     "Ви бачите реальні заявки і звіти. Залишаєтеся, лише якщо окупається."
+    ]
+   ],
+   "faqH": "Коротко про головне",
+   "faq": [
+    [
+     "Скільки платити за перший місяць?",
+     "Нічого. Перший місяць безкоштовний на будь-якому тарифі. При оплаті року — ще 2 місяці в подарунок."
+    ],
+    [
+     "У мене вже є сайт або CRM",
+     "Підключимося одним рядком коду — $0, нічого не переробляємо."
+    ],
+    [
+     "У мене немає сайту",
+     "Зробимо під ваш бренд — від $150 залежно від складності або безкоштовно при оплаті року."
+    ],
+    [
+     "А якщо потрібно щось незвичайне?",
+     "Можна: застосунок, бот, інтеграція — будь-що. Додається за доплату, точну ціну Vax називає заздалегідь."
+    ],
+    [
+     "Чи потрібен дзвінок?",
+     "Ні. Усе можна вирішити письмово в чаті проєкту. Телефонуємо, лише якщо попросите."
+    ],
+    [
+     "Працюєте з моєю країною і нішею?",
+     "Так. Працюємо по всьому світу, англійською, українською і російською, з будь-якою нішею — від місцевого сервісу до інтернет-магазину і SaaS."
+    ]
+   ],
+   "notes": [
+    "Тариф: Care $39/міс, перший місяць безкоштовно",
+    "Тариф: Growth $129/міс, перший місяць безкоштовно",
+    "Тариф: Pro $299/міс, перший місяць безкоштовно"
+   ]
+  }
+ }
 }[lang];
 ---
 
@@ -89,7 +407,7 @@ const C = {
             <div class="price">{p.price}<span> {C.once}</span></div>
             <p>{p.what}</p>
             <ul>{p.get.map((g) => <li>{g}</li>)}</ul>
-            <a href="#contact" class="order" data-choose-tier="Starter" data-choose-note={C.extra.notes[i]}>{C.extra.order} →</a>
+            <a href="#contact" class="order" data-choose-tier={p.name} data-choose-note={C.extra.notes[i]}>{C.extra.order} →</a>
           </article>
         ))}
       </div>

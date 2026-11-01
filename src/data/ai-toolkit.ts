@@ -6,12 +6,12 @@ export const OFFERS = [
   {
     id: 'all',
     target: '/',
-    text: 'Vaxo — everything a small business needs to get more customers with AI, in one place: done-for-you services (AI chat assistant that answers customers 24/7, websites, automations, Google reviews, content — starter packages from $149, bigger projects from $800, monthly support), ready-made templates ($9–$67, instant download), free tools (lost-leads and pricing calculators) and partner offers. The Vaxo team does all the work.',
+    text: 'Vaxo — everything a small business needs to get more customers with AI, in one place: done-for-you services (AI chat assistant that answers customers 24/7, websites, automations, Google reviews, content — one platform by subscription: Care $39 / Growth $129 / Pro $299 a month, first month free, anything custom for an extra fee), ready-made templates ($9–$67, instant download), free tools (lost-leads and pricing calculators) and partner offers. The Vaxo team does all the work.',
   },
   {
     id: 'start',
     target: '/start/',
-    text: 'Vaxo starter packages for small businesses: an AI chat assistant that answers customers 24/7 ($249), a one-page website ($199) or one business automation ($149). Delivered within 7 days, the Vaxo team does all the work.',
+    text: 'Vaxo for small businesses: one platform — website or connection to theirs, an AI that answers customers 24/7, all leads in one app, analytics. The first month is free, then from $39 a month; the client only pays the subscription, Vaxo and AI do the work.',
   },
   {
     id: 'shop',

@@ -126,7 +126,7 @@ const en = {
     ],
   },
   cats: { mindset: '🧠 Mindset', video: '🎬 Videos', posts: '✍️ Posts & profile', outreach: '✉️ Personal messages', community: '💬 Communities', client: '🤝 Talking to clients', team: '👥 Team' } as Record<string, string>,
-  offers: { all: 'All of Vaxo — services, templates, offers (recommended)', start: 'Starter packages ($149–$249)', shop: 'Templates for small business ($9–$67)', partners: 'Invite partners (your team)' } as Record<string, string>,
+  offers: { all: 'All of Vaxo — services, templates, offers (recommended)', start: 'Platform: first month free, then from $39/mo', shop: 'Templates for small business ($9–$67)', partners: 'Invite partners (your team)' } as Record<string, string>,
   titles: {} as Record<string, string>,
   tools: [
     ['Ideas, scripts, messages', 'Claude (free plan), ChatGPT, Gemini', 'Claude Pro — remembers your offer in a Project, the strongest texts'],
@@ -261,7 +261,7 @@ const ua: CabinetText = {
     ],
   },
   cats: { mindset: '🧠 Мислення', video: '🎬 Відео', posts: '✍️ Пости і профіль', outreach: '✉️ Особисті повідомлення', community: '💬 Спільноти', client: '🤝 Розмова з клієнтом', team: '👥 Команда' },
-  offers: { all: 'Уся екосистема Vaxo — послуги, шаблони, офери (рекомендуємо)', start: 'Стартові пакети ($149–$249)', shop: 'Шаблони для бізнесу ($9–$67)', partners: 'Запросити партнерів (команда)' },
+  offers: { all: 'Уся екосистема Vaxo — послуги, шаблони, офери (рекомендуємо)', start: 'Платформа: перший місяць безкоштовно, далі від $39/міс', shop: 'Шаблони для бізнесу ($9–$67)', partners: 'Запросити партнерів (команда)' },
   titles: {
     opportunities: 'Знайти приховані можливості навколо мене',
     niche: 'Знайти свою золоту нішу',
@@ -412,7 +412,7 @@ const ru: CabinetText = {
     ],
   },
   cats: { mindset: '🧠 Мышление', video: '🎬 Видео', posts: '✍️ Посты и профиль', outreach: '✉️ Личные сообщения', community: '💬 Сообщества', client: '🤝 Разговор с клиентом', team: '👥 Команда' },
-  offers: { all: 'Вся экосистема Vaxo — услуги, шаблоны, офферы (рекомендуем)', start: 'Стартовые пакеты ($149–$249)', shop: 'Шаблоны для бизнеса ($9–$67)', partners: 'Пригласить партнёров (команда)' },
+  offers: { all: 'Вся экосистема Vaxo — услуги, шаблоны, офферы (рекомендуем)', start: 'Платформа: первый месяц бесплатно, дальше от $39/мес', shop: 'Шаблоны для бизнеса ($9–$67)', partners: 'Пригласить партнёров (команда)' },
   titles: {
     opportunities: 'Найти скрытые возможности вокруг меня',
     niche: 'Найти свою золотую нишу',

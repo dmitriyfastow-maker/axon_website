@@ -9,7 +9,7 @@ import { LIMITS } from '../lib/validate';
 interface Props { t: Dict; lang: Lang }
 const { t, lang } = Astro.props;
 const f = t.form;
-const starter = { en: 'Small task from $149', ru: 'Небольшая задача от $149', ua: 'Невелике завдання від $149' }[lang as 'en' | 'ru' | 'ua'] || 'Small task from $149';
+const starter = { en: 'First month free, then from $39/mo', ru: 'Первый месяц бесплатно, дальше от $39/мес', ua: 'Перший місяць безкоштовно, далі від $39/міс' }[lang as 'en' | 'ru' | 'ua'] || 'First month free, then from $39/mo';
 const interests = [{ v: 'Starter', label: starter }, ...TIER_NAMES.map((n, i) => ({ v: n, label: t.tiers[i]?.problem || n })), { v: 'single', label: f.single }, { v: 'any', label: f.any }];
 // Labels the script swaps when the form mode changes.
 const CHIPS = { en: ['I need more clients', 'A website or an app', 'Ads & social media', 'Automate my work with AI', 'Something else — I’ll describe it'], ru: ['Нужно больше клиентов', 'Сайт или приложение', 'Реклама и соцсети', 'Автоматизировать работу с ИИ', 'Другое — опишу сам'], ua: ['Потрібно більше клієнтів', 'Сайт або застосунок', 'Реклама і соцмережі', 'Автоматизувати роботу з ШІ', 'Інше — опишу сам'] }[lang];
