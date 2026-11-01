@@ -15,7 +15,7 @@ const T = {
     sources: 'Where people come from', pages: 'Most visited pages', actions: 'What people do', leadSrc: 'Requests by source', empty: 'No data yet',
     leads: 'Requests', noLeads: 'No requests yet. As soon as someone fills in a form on your site, it appears here — and the team sees it too.',
     st: { new: 'New', work: 'In progress', won: 'Client', lost: 'Lost' }, assign: 'Assign', nobody: 'Nobody', addLead: 'Add a request by hand', lName: 'Name', lContact: 'Phone or email', lMsg: 'What they need', add: 'Add',
-    ai: 'AI assistant', aiP: 'Ask about your numbers: why there are few requests, which channel works, what to do this week.', aiQ: 'e.g. What should I do this week to get more requests?', ask: 'Ask', thinking: 'Thinking…',
+    brief: ['Morning plan from AI', 'Today’s result from AI'], ai: 'AI assistant', aiP: 'Ask about your numbers: why there are few requests, which channel works, what to do this week.', aiQ: 'e.g. What should I do this week to get more requests?', ask: 'Ask', thinking: 'Thinking…',
     team: 'Team and roles', teamP: 'Add an employee by email. They sign in at vaxogroup.com/me with a code from that email and see only their part.', roles: { manager: 'Manager — requests and numbers', viewer: 'Viewer — numbers only' }, invite: 'Add', remove: 'Remove', you: 'You — owner',
     set: 'Settings and code', code: 'Put this line before </head> on every page of your site — or just send it to Vax in your project chat and we do it for you.', copy: 'Copy', copied: 'Copied ✓',
     about: 'About your business: services, prices, hours, area. The AI chat on your site answers from this text — fill it in and the chat switches on.', save: 'Save', saved: 'Saved ✓', roleIs: 'Your role',
@@ -30,7 +30,7 @@ const T = {
     sources: 'Откуда приходят', pages: 'Самые популярные страницы', actions: 'Что делают люди', leadSrc: 'Заявки по источникам', empty: 'Пока нет данных',
     leads: 'Заявки', noLeads: 'Заявок пока нет. Как только кто-то заполнит форму на вашем сайте, она появится здесь — и её увидит команда.',
     st: { new: 'Новая', work: 'В работе', won: 'Клиент', lost: 'Отказ' }, assign: 'Ответственный', nobody: 'Никто', addLead: 'Добавить заявку вручную', lName: 'Имя', lContact: 'Телефон или email', lMsg: 'Что нужно', add: 'Добавить',
-    ai: 'ИИ-помощник', aiP: 'Спросите про свои цифры: почему мало заявок, какой канал работает, что сделать на этой неделе.', aiQ: 'Например: что сделать на этой неделе, чтобы заявок стало больше?', ask: 'Спросить', thinking: 'Думаю…',
+    brief: ['Утренний план от ИИ', 'Итог дня от ИИ'], ai: 'ИИ-помощник', aiP: 'Спросите про свои цифры: почему мало заявок, какой канал работает, что сделать на этой неделе.', aiQ: 'Например: что сделать на этой неделе, чтобы заявок стало больше?', ask: 'Спросить', thinking: 'Думаю…',
     team: 'Команда и роли', teamP: 'Добавьте сотрудника по email. Он входит на vaxogroup.com/me по коду из этой почты и видит только своё.', roles: { manager: 'Менеджер — заявки и цифры', viewer: 'Наблюдатель — только цифры' }, invite: 'Добавить', remove: 'Убрать', you: 'Вы — владелец',
     set: 'Настройки и код', code: 'Вставьте эту строку перед </head> на всех страницах сайта — или просто отправьте её Vax в чате проекта, и мы всё сделаем за вас.', copy: 'Копировать', copied: 'Скопировано ✓',
     about: 'О бизнесе: услуги, цены, часы работы, район. По этому тексту отвечает ИИ-чат на вашем сайте — заполните, и чат включится.', save: 'Сохранить', saved: 'Сохранено ✓', roleIs: 'Ваша роль',
@@ -45,7 +45,7 @@ const T = {
     sources: 'Звідки приходять', pages: 'Найпопулярніші сторінки', actions: 'Що роблять люди', leadSrc: 'Заявки за джерелами', empty: 'Поки немає даних',
     leads: 'Заявки', noLeads: 'Заявок поки немає. Щойно хтось заповнить форму на вашому сайті, вона зʼявиться тут — і її побачить команда.',
     st: { new: 'Нова', work: 'У роботі', won: 'Клієнт', lost: 'Відмова' }, assign: 'Відповідальний', nobody: 'Ніхто', addLead: 'Додати заявку вручну', lName: 'Імʼя', lContact: 'Телефон або email', lMsg: 'Що потрібно', add: 'Додати',
-    ai: 'ШІ-помічник', aiP: 'Запитайте про свої цифри: чому мало заявок, який канал працює, що зробити цього тижня.', aiQ: 'Наприклад: що зробити цього тижня, щоб заявок стало більше?', ask: 'Запитати', thinking: 'Думаю…',
+    brief: ['Ранковий план від ШІ', 'Підсумок дня від ШІ'], ai: 'ШІ-помічник', aiP: 'Запитайте про свої цифри: чому мало заявок, який канал працює, що зробити цього тижня.', aiQ: 'Наприклад: що зробити цього тижня, щоб заявок стало більше?', ask: 'Запитати', thinking: 'Думаю…',
     team: 'Команда і ролі', teamP: 'Додайте працівника за email. Він входить на vaxogroup.com/me за кодом з цієї пошти і бачить лише своє.', roles: { manager: 'Менеджер — заявки й цифри', viewer: 'Спостерігач — лише цифри' }, invite: 'Додати', remove: 'Прибрати', you: 'Ви — власник',
     set: 'Налаштування і код', code: 'Вставте цей рядок перед </head> на всіх сторінках сайту — або просто надішліть його Vax у чаті проєкту, і ми все зробимо за вас.', copy: 'Копіювати', copied: 'Скопійовано ✓',
     about: 'Про бізнес: послуги, ціни, години роботи, район. За цим текстом відповідає ШІ-чат на вашому сайті — заповніть, і чат увімкнеться.', save: 'Зберегти', saved: 'Збережено ✓', roleIs: 'Ваша роль',
@@ -73,6 +73,7 @@ const T = {
 
   <div data-biz-main hidden>
     <p class="mut small" data-role></p>
+    <div class="card brief" data-brief hidden><h3 data-brief-h></h3><p data-brief-t></p></div>
     <div class="kpi" data-kpi></div>
     <div class="card"><div class="bars" data-bars></div></div>
     <div class="grid4" data-lists></div>
@@ -131,10 +132,11 @@ const T = {
     const pick = q<HTMLSelectElement>('[data-biz-pick]');
     pick.innerHTML = list.map((b) => `<option value="${b.id}">${esc(b.name)}</option>`).join('');
     pick.hidden = list.length < 2;
-    pick.onchange = () => { cur = Number(pick.value); load(); };
+    pick.onchange = () => { cur = Number(pick.value); load(); brief(); };
     cur = cur && list.some((b) => b.id === cur) ? cur : list[0].id;
     pick.value = String(cur);
     load();
+    brief();
   }
 
   const listCard = (h: string, rows: R[]) => {
@@ -180,6 +182,22 @@ const T = {
       (f.elements.namedItem('domain') as HTMLInputElement).value = b.domain || '';
       (f.elements.namedItem('about') as HTMLTextAreaElement).value = b.about || '';
     }
+  }
+
+  // Morning plan before 15:00 local time, the day's result after; cached for an hour per business.
+  async function brief() {
+    const evening = new Date().getHours() >= 15;
+    const ck = `vx_brief_${cur}_${evening ? 'e' : 'm'}`;
+    let text = '';
+    try { const c = JSON.parse(sessionStorage.getItem(ck) || 'null'); if (c && Date.now() - c.at < 3600e3) text = c.text; } catch {}
+    if (!text) {
+      const r = await fetch(`/api/biz/${cur}/brief?mode=${evening ? 'evening' : 'morning'}&lang=${T.lang}`).catch(() => null);
+      text = r?.ok ? (await r.json()).text : '';
+      if (text) try { sessionStorage.setItem(ck, JSON.stringify({ at: Date.now(), text })); } catch {}
+    }
+    q('[data-brief]').hidden = !text;
+    q('[data-brief-h]').textContent = T.brief[evening ? 1 : 0];
+    q('[data-brief-t]').textContent = text;
   }
 
   q('[data-days]').onclick = (e) => {
@@ -257,6 +275,8 @@ const T = {
   .biz .team { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
   .biz .team li { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
   .biz code { flex: 1 1 260px; font-size: 12px; padding: 10px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); overflow-x: auto; white-space: nowrap; }
+  .biz .brief { border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); background: color-mix(in srgb, var(--acc) 10%, var(--surf)); }
+  .biz .brief p { margin: 0; white-space: pre-wrap; line-height: 1.5; }
   .biz .ans { white-space: pre-wrap; line-height: 1.5; margin: 10px 0 0; }
   .biz .cta { padding: 10px 16px; border-radius: 999px; border: 0; background: var(--acc); color: var(--dark-ink, #111); font-weight: 700; cursor: pointer; }
   .biz .ghost { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: none; color: inherit; cursor: pointer; }

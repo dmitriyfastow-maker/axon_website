@@ -220,6 +220,20 @@ export async function handleBiz(db: DB, request: Request, path: string, ai: AiBi
       await db.prepare('DELETE FROM biz_members WHERE biz_id = ? AND email = ?').bind(a.id, cut(b.email, 190).toLowerCase()).run();
       return json(200, { ok: true });
     }
+    // AI report (Dmitry's note in Decision 29): a morning plan and an evening result, from live numbers, on every visit.
+    if (sub === 'brief' && m === 'GET') {
+      const url = new URL(request.url);
+      const evening = url.searchParams.get('mode') === 'evening', lang = cut(url.searchParams.get('lang'), 2);
+      const today = await stats(db, a.id, 1), week = await stats(db, a.id, 7);
+      const open = canLeads ? await db.prepare("SELECT COUNT(*) AS n FROM biz_leads WHERE biz_id = ? AND status = 'new'").bind(a.id).first<{ n: number }>() : null;
+      const prompt = `You are the AI manager of the small business "${a.name}" inside Vaxo. About it: ${(a.about || 'not filled in yet').slice(0, 1200)}
+Last 24 hours (JSON): ${JSON.stringify({ visits: today.visits, leads: today.leads, clicks: today.clicks, sources: today.sources, actions: today.actions })}
+Last 7 days (JSON): ${JSON.stringify({ visits: week.visits, leads: week.leads, clicks: week.clicks, sources: week.sources, pages: week.pages })}
+Requests still waiting for an answer: ${open?.n ?? 'unknown'}.
+Write the ${evening ? 'EVENING RESULT: what happened today in plain words, what worked, one thing to fix tomorrow' : 'MORNING PLAN: 2–3 concrete things to do today, the most important first (answer waiting requests first if any)'}.
+${lang === 'ru' ? 'Russian' : lang === 'ua' ? 'Ukrainian' : 'English'}, at most 4 short lines, no greetings, no invented numbers. If the site has no data yet, say the first step is to put the code on the site or share the site link, and that Vax in the project chat can do it.`;
+      return json(200, { ok: true, text: (await askAi(ai, prompt, 260)) || '' });
+    }
     if (sub === 'ask' && m === 'POST') {
       const q = cut(b.q, 500);
       if (!q) return json(400, { ok: false });
