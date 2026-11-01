@@ -15,6 +15,7 @@ import { handleCabinet, type CabinetEnv } from './cabinet.js';
 import { handleInvoicePublic } from './invoices.js';
 import { handleStaffLogin } from './staff.js';
 import { handleLevel } from './level.js';
+import { handleBiz, handleCollect, snippet } from './biz.js';
 import { handleDemoAi } from './demoai.js';
 import { monoCheck, monoPay, monoReceiptSweep, monoWebhook } from './mono.js';
 import { handleFinancePublic } from './finance.js';
@@ -99,6 +100,14 @@ export default {
     if (url.pathname === '/api/fin') return env.LEADS ? handleFinancePublic(env.LEADS, request, env.AI, notify) : json(503, { ok: false });
     if (url.pathname === '/api/demo/ai') return handleDemoAi(env.AI, request);
     if (url.pathname === '/api/staff/code' || url.pathname === '/api/staff/login') return env.LEADS ? handleStaffLogin(env.LEADS, request, url.pathname.slice('/api/staff/'.length), notify) : json(503, { ok: false });
+    // Owner app (Decision 29): one line of code on the client's site + their business in /me/.
+    if (url.pathname === '/w.js') {
+      const k = url.searchParams.get('k') || '';
+      if (!/^[a-f0-9]{24}$/.test(k)) return new Response('', { status: 400 });
+      return new Response(snippet(k, url.origin), { headers: { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'public, max-age=3600', 'Access-Control-Allow-Origin': '*' } });
+    }
+    if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request) : json(503, { ok: false });
+    if (url.pathname === '/api/biz' || url.pathname.startsWith('/api/biz/')) return env.LEADS ? handleBiz(env.LEADS, request, url.pathname.slice('/api/biz'.length).replace(/^\//, ''), env.AI, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify) : json(503, { ok: false });
     const invm = url.pathname.match(/^\/api\/invoice\/([a-f0-9]{32})$/);
     if (invm) return env.LEADS ? handleInvoicePublic(env.LEADS, invm[1], !!env.MONO_ACQ_TOKEN) : json(503, { ok: false });

@@ -1,0 +1,265 @@
+---
+// Owner app inside the client cabinet (Decision 29): the client's own business — visitors, sources, actions, requests
+// from their site, team with roles, an AI assistant, and the one line of code that connects any site. Data: /api/biz.
+import type { Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const T = {
+  en: {
+    h: 'Your business in Vaxo', sub: 'Everything your website brings, in one place: who comes, from where, what they do and every request. Your team works here too.',
+    soon: 'Your business dashboard switches on in the next few days. Nothing to do on your side.',
+    newH: 'Connect your website — one line of code', newP: 'Already have a site (Wix, WordPress, Shopify, anything)? Add one line and every visit and request appears here. No site yet — we build it, and it is connected from day one.',
+    name: 'Business name', domain: 'Website address (e.g. mybakery.com)', create: 'Connect', days: { 1: 'Today', 7: '7 days', 30: '30 days', 90: '90 days' },
+    k: ['Visitors', 'Requests', 'Conversion', 'Calls & messages'], kHint: ['people on your site', 'forms sent', 'visitors who left a request', 'taps on phone, WhatsApp, Telegram, buttons'],
+    sources: 'Where people come from', pages: 'Most visited pages', actions: 'What people do', leadSrc: 'Requests by source', empty: 'No data yet',
+    leads: 'Requests', noLeads: 'No requests yet. As soon as someone fills in a form on your site, it appears here — and the team sees it too.',
+    st: { new: 'New', work: 'In progress', won: 'Client', lost: 'Lost' }, assign: 'Assign', nobody: 'Nobody', addLead: 'Add a request by hand', lName: 'Name', lContact: 'Phone or email', lMsg: 'What they need', add: 'Add',
+    ai: 'AI assistant', aiP: 'Ask about your numbers: why there are few requests, which channel works, what to do this week.', aiQ: 'e.g. What should I do this week to get more requests?', ask: 'Ask', thinking: 'Thinking…',
+    team: 'Team and roles', teamP: 'Add an employee by email. They sign in at vaxogroup.com/me with a code from that email and see only their part.', roles: { manager: 'Manager — requests and numbers', viewer: 'Viewer — numbers only' }, invite: 'Add', remove: 'Remove', you: 'You — owner',
+    set: 'Settings and code', code: 'Put this line before </head> on every page of your site — or just send it to Vax in your project chat and we do it for you.', copy: 'Copy', copied: 'Copied ✓',
+    about: 'About your business for the AI: services, prices, hours, area', save: 'Save', saved: 'Saved ✓', roleIs: 'Your role',
+    roleName: { owner: 'Owner', manager: 'Manager', viewer: 'Viewer' }, more: 'Need something more — booking, payments, an app? Tell Vax in the project chat.',
+  },
+  ru: {
+    h: 'Ваш бизнес в Vaxo', sub: 'Всё, что приносит ваш сайт, в одном месте: кто приходит, откуда, что делает, и каждая заявка. Здесь же работает ваша команда.',
+    soon: 'Пульт вашего бизнеса включается в ближайшие дни. С вашей стороны ничего делать не нужно.',
+    newH: 'Подключите свой сайт — одна строка кода', newP: 'Уже есть сайт (Wix, WordPress, Tilda, Shopify — любой)? Добавьте одну строку, и каждый визит и каждая заявка появятся здесь. Сайта нет — сделаем, и он подключён с первого дня.',
+    name: 'Название бизнеса', domain: 'Адрес сайта (например, mybakery.com)', create: 'Подключить', days: { 1: 'Сегодня', 7: '7 дней', 30: '30 дней', 90: '90 дней' },
+    k: ['Посетители', 'Заявки', 'Конверсия', 'Звонки и сообщения'], kHint: ['людей на сайте', 'отправленных форм', 'посетителей оставили заявку', 'нажатия на телефон, WhatsApp, Telegram, кнопки'],
+    sources: 'Откуда приходят', pages: 'Самые популярные страницы', actions: 'Что делают люди', leadSrc: 'Заявки по источникам', empty: 'Пока нет данных',
+    leads: 'Заявки', noLeads: 'Заявок пока нет. Как только кто-то заполнит форму на вашем сайте, она появится здесь — и её увидит команда.',
+    st: { new: 'Новая', work: 'В работе', won: 'Клиент', lost: 'Отказ' }, assign: 'Ответственный', nobody: 'Никто', addLead: 'Добавить заявку вручную', lName: 'Имя', lContact: 'Телефон или email', lMsg: 'Что нужно', add: 'Добавить',
+    ai: 'ИИ-помощник', aiP: 'Спросите про свои цифры: почему мало заявок, какой канал работает, что сделать на этой неделе.', aiQ: 'Например: что сделать на этой неделе, чтобы заявок стало больше?', ask: 'Спросить', thinking: 'Думаю…',
+    team: 'Команда и роли', teamP: 'Добавьте сотрудника по email. Он входит на vaxogroup.com/me по коду из этой почты и видит только своё.', roles: { manager: 'Менеджер — заявки и цифры', viewer: 'Наблюдатель — только цифры' }, invite: 'Добавить', remove: 'Убрать', you: 'Вы — владелец',
+    set: 'Настройки и код', code: 'Вставьте эту строку перед </head> на всех страницах сайта — или просто отправьте её Vax в чате проекта, и мы всё сделаем за вас.', copy: 'Копировать', copied: 'Скопировано ✓',
+    about: 'О бизнесе для ИИ: услуги, цены, часы работы, район', save: 'Сохранить', saved: 'Сохранено ✓', roleIs: 'Ваша роль',
+    roleName: { owner: 'Владелец', manager: 'Менеджер', viewer: 'Наблюдатель' }, more: 'Нужно больше — запись, оплата, приложение? Напишите Vax в чате проекта.',
+  },
+  ua: {
+    h: 'Ваш бізнес у Vaxo', sub: 'Усе, що приносить ваш сайт, в одному місці: хто приходить, звідки, що робить, і кожна заявка. Тут же працює ваша команда.',
+    soon: 'Пульт вашого бізнесу вмикається найближчими днями. З вашого боку нічого робити не треба.',
+    newH: 'Підключіть свій сайт — один рядок коду', newP: 'Уже є сайт (Wix, WordPress, Tilda, Shopify — будь-який)? Додайте один рядок, і кожен візит і кожна заявка зʼявляться тут. Сайту немає — зробимо, і він підключений з першого дня.',
+    name: 'Назва бізнесу', domain: 'Адреса сайту (наприклад, mybakery.com)', create: 'Підключити', days: { 1: 'Сьогодні', 7: '7 днів', 30: '30 днів', 90: '90 днів' },
+    k: ['Відвідувачі', 'Заявки', 'Конверсія', 'Дзвінки й повідомлення'], kHint: ['людей на сайті', 'надісланих форм', 'відвідувачів залишили заявку', 'натискання на телефон, WhatsApp, Telegram, кнопки'],
+    sources: 'Звідки приходять', pages: 'Найпопулярніші сторінки', actions: 'Що роблять люди', leadSrc: 'Заявки за джерелами', empty: 'Поки немає даних',
+    leads: 'Заявки', noLeads: 'Заявок поки немає. Щойно хтось заповнить форму на вашому сайті, вона зʼявиться тут — і її побачить команда.',
+    st: { new: 'Нова', work: 'У роботі', won: 'Клієнт', lost: 'Відмова' }, assign: 'Відповідальний', nobody: 'Ніхто', addLead: 'Додати заявку вручну', lName: 'Імʼя', lContact: 'Телефон або email', lMsg: 'Що потрібно', add: 'Додати',
+    ai: 'ШІ-помічник', aiP: 'Запитайте про свої цифри: чому мало заявок, який канал працює, що зробити цього тижня.', aiQ: 'Наприклад: що зробити цього тижня, щоб заявок стало більше?', ask: 'Запитати', thinking: 'Думаю…',
+    team: 'Команда і ролі', teamP: 'Додайте працівника за email. Він входить на vaxogroup.com/me за кодом з цієї пошти і бачить лише своє.', roles: { manager: 'Менеджер — заявки й цифри', viewer: 'Спостерігач — лише цифри' }, invite: 'Додати', remove: 'Прибрати', you: 'Ви — власник',
+    set: 'Налаштування і код', code: 'Вставте цей рядок перед </head> на всіх сторінках сайту — або просто надішліть його Vax у чаті проєкту, і ми все зробимо за вас.', copy: 'Копіювати', copied: 'Скопійовано ✓',
+    about: 'Про бізнес для ШІ: послуги, ціни, години роботи, район', save: 'Зберегти', saved: 'Збережено ✓', roleIs: 'Ваша роль',
+    roleName: { owner: 'Власник', manager: 'Менеджер', viewer: 'Спостерігач' }, more: 'Потрібно більше — запис, оплата, застосунок? Напишіть Vax у чаті проєкту.',
+  },
+}[lang];
+---
+
+<section class="biz" data-biz hidden>
+  <script type="application/json" data-biz-t set:html={JSON.stringify({ ...T, lang })} />
+  <div class="head">
+    <div><h2>{T.h}</h2><p class="mut">{T.sub}</p></div>
+    <div class="ctl">
+      <select data-biz-pick hidden></select>
+      <div class="seg" data-days>{[1, 7, 30, 90].map((d) => <button type="button" data-d={d} aria-pressed={d === 7 ? 'true' : 'false'}>{(T.days as Record<number, string>)[d]}</button>)}</div>
+    </div>
+  </div>
+  <p class="card mut" data-biz-soon hidden>{T.soon}</p>
+
+  <form class="card new" data-biz-new hidden>
+    <h3>{T.newH}</h3>
+    <p class="mut">{T.newP}</p>
+    <div class="row"><input name="name" required maxlength="80" placeholder={T.name} /><input name="domain" maxlength="120" placeholder={T.domain} /><button class="cta">{T.create}</button></div>
+  </form>
+
+  <div data-biz-main hidden>
+    <p class="mut small" data-role></p>
+    <div class="kpi" data-kpi></div>
+    <div class="card"><div class="bars" data-bars></div></div>
+    <div class="grid4" data-lists></div>
+
+    <div class="card" data-leads-box>
+      <h3>{T.leads}</h3>
+      <div data-leads></div>
+      <details><summary>{T.addLead}</summary>
+        <form class="row" data-lead-add><input name="name" maxlength="80" placeholder={T.lName} /><input name="contact" maxlength="120" placeholder={T.lContact} /><input name="message" maxlength="500" placeholder={T.lMsg} /><button class="cta">{T.add}</button></form>
+      </details>
+    </div>
+
+    <form class="card ai" data-ai>
+      <h3>🤖 {T.ai}</h3>
+      <p class="mut small">{T.aiP}</p>
+      <div class="row"><input name="q" maxlength="500" required placeholder={T.aiQ} /><button class="cta">{T.ask}</button></div>
+      <p class="ans" data-ans></p>
+    </form>
+
+    <div class="card" data-owner hidden>
+      <h3>{T.team}</h3>
+      <p class="mut small">{T.teamP}</p>
+      <ul class="team" data-team></ul>
+      <form class="row" data-team-add><input type="email" name="email" required placeholder="email" /><select name="role"><option value="manager">{T.roles.manager}</option><option value="viewer">{T.roles.viewer}</option></select><button class="cta">{T.invite}</button></form>
+    </div>
+
+    <form class="card" data-owner data-settings hidden>
+      <h3>{T.set}</h3>
+      <p class="mut small">{T.code}</p>
+      <div class="row"><code data-code></code><button type="button" class="ghost" data-copy>{T.copy}</button></div>
+      <div class="row"><input name="name" maxlength="80" placeholder={T.name} /><input name="domain" maxlength="120" placeholder={T.domain} /></div>
+      <textarea name="about" rows="3" maxlength="4000" placeholder={T.about}></textarea>
+      <div class="row"><button class="cta">{T.save}</button><span class="mut small" data-saved></span></div>
+    </form>
+    <p class="mut small">{T.more}</p>
+  </div>
+</section>
+
+<script>
+  type R = Record<string, any>;
+  const root = document.querySelector<HTMLElement>('[data-biz]')!;
+  const T = JSON.parse(root.querySelector('[data-biz-t]')!.textContent!) as R;
+  const q = <E extends HTMLElement = HTMLElement>(s: string) => root.querySelector<E>(s)!;
+  const esc = (s: unknown) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+  const send = (u: string, body: R, method = 'POST') => fetch(u, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  let cur = 0, days = 7, team: R[] = [];
+
+  async function boot() {
+    const r = await fetch('/api/biz').catch(() => null);
+    if (!r || r.status === 401) return; // not signed in — the cabinet shows the sign-in
+    root.hidden = false;
+    if (r.status === 503) { q('[data-biz-soon]').hidden = false; q('[data-days]').hidden = true; return; }
+    const d = await r.json();
+    const list = d.list as R[];
+    if (!list.length) { q('[data-biz-new]').hidden = false; q('[data-days]').hidden = true; return; }
+    const pick = q<HTMLSelectElement>('[data-biz-pick]');
+    pick.innerHTML = list.map((b) => `<option value="${b.id}">${esc(b.name)}</option>`).join('');
+    pick.hidden = list.length < 2;
+    pick.onchange = () => { cur = Number(pick.value); load(); };
+    cur = cur && list.some((b) => b.id === cur) ? cur : list[0].id;
+    pick.value = String(cur);
+    load();
+  }
+
+  const listCard = (h: string, rows: R[]) => {
+    const max = Math.max(1, ...rows.map((x) => x.n));
+    return `<div class="card"><h4>${esc(h)}</h4>${rows.length ? `<ul class="lst">${rows.map((x) => `<li><span>${esc(x.k || '—')}</span><b>${x.n}</b><i style="width:${Math.round((x.n / max) * 100)}%"></i></li>`).join('')}</ul>` : `<p class="mut small">${esc(T.empty)}</p>`}</div>`;
+  };
+
+  async function load() {
+    const r = await fetch(`/api/biz/${cur}?days=${days}`);
+    if (!r.ok) return;
+    const d = await r.json();
+    const s = d.stats, b = d.biz;
+    team = d.team || [];
+    q('[data-biz-main]').hidden = false;
+    q('[data-role]').textContent = `${T.roleIs}: ${T.roleName[b.role]}${b.domain ? ' · ' + b.domain : ''}`;
+    const conv = s.visits ? `${((s.leads / s.visits) * 100).toFixed(1)}%` : '—';
+    q('[data-kpi]').innerHTML = [s.visits, s.leads, conv, s.clicks].map((v, i) => `<div class="card"><small>${esc(T.k[i])}</small><b>${esc(v)}</b><span class="mut small">${esc(T.kHint[i])}</span></div>`).join('');
+    const ld: Record<string, number> = Object.fromEntries((s.leadsByDay as R[]).map((x) => [x.d, x.n]));
+    const max = Math.max(1, ...(s.byDay as R[]).map((x) => x.visits));
+    q('[data-bars]').innerHTML = (s.byDay as R[]).length
+      ? (s.byDay as R[]).map((x) => `<div class="bar" title="${x.d}: ${x.visits} / ${ld[x.d] || 0}"><i style="height:${Math.max(4, Math.round((x.visits / max) * 100))}%"></i>${ld[x.d] ? `<em>${ld[x.d]}</em>` : ''}<small>${x.d.slice(5)}</small></div>`).join('')
+      : `<p class="mut small">${esc(T.empty)}</p>`;
+    q('[data-lists]').innerHTML = listCard(T.sources, s.sources) + listCard(T.pages, s.pages) + listCard(T.actions, s.actions) + listCard(T.leadSrc, s.leadSources);
+
+    const owner = b.role === 'owner';
+    q('[data-leads-box]').hidden = b.role === 'viewer';
+    const opts = (sel: string) => `<option value="">${esc(T.nobody)}</option>` + team.map((m) => `<option ${m.email === sel ? 'selected' : ''}>${esc(m.email)}</option>`).join('');
+    q('[data-leads]').innerHTML = (d.leads as R[]).length
+      ? `<div class="tw"><table><tbody>${(d.leads as R[]).map((l) => `<tr data-id="${l.id}"><td class="mut small">${esc(l.at.slice(5, 16))}<br>${esc(l.source || '')}</td><td><b>${esc(l.name || '—')}</b><br>${esc(l.contact || '')}</td><td>${esc(l.message || '')}</td><td><select data-st>${Object.entries(T.st).map(([k, v]) => `<option value="${k}" ${k === l.status ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select>${owner && team.length ? `<select data-as title="${esc(T.assign)}">${opts(l.assignee)}</select>` : ''}</td></tr>`).join('')}</tbody></table></div>`
+      : `<p class="mut">${esc(T.noLeads)}</p>`;
+    root.querySelectorAll<HTMLSelectElement>('[data-st],[data-as]').forEach((el) => (el.onchange = () => {
+      const id = el.closest('tr')!.dataset.id;
+      send(`/api/biz/${cur}/leads/${id}`, el.matches('[data-st]') ? { status: el.value } : { assignee: el.value });
+    }));
+
+    root.querySelectorAll<HTMLElement>('[data-owner]').forEach((el) => (el.hidden = !owner));
+    if (owner) {
+      q('[data-team]').innerHTML = `<li><b>${esc(T.you)}</b></li>` + team.map((m) => `<li><span>${esc(m.email)} · ${esc(T.roles[m.role])}</span><button type="button" class="ghost" data-rm="${esc(m.email)}">${esc(T.remove)}</button></li>`).join('');
+      root.querySelectorAll<HTMLButtonElement>('[data-rm]').forEach((x) => (x.onclick = async () => { await send(`/api/biz/${cur}/team`, { email: x.dataset.rm }, 'DELETE'); load(); }));
+      q('[data-code]').textContent = b.code;
+      const f = q<HTMLFormElement>('[data-settings]');
+      (f.elements.namedItem('name') as HTMLInputElement).value = b.name || '';
+      (f.elements.namedItem('domain') as HTMLInputElement).value = b.domain || '';
+      (f.elements.namedItem('about') as HTMLTextAreaElement).value = b.about || '';
+    }
+  }
+
+  q('[data-days]').onclick = (e) => {
+    const t = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-d]');
+    if (!t) return;
+    days = Number(t.dataset.d);
+    root.querySelectorAll('[data-d]').forEach((x) => x.setAttribute('aria-pressed', String(x === t)));
+    load();
+  };
+  q<HTMLFormElement>('[data-biz-new]').onsubmit = async (e) => {
+    e.preventDefault();
+    const r = await send('/api/biz', Object.fromEntries(new FormData(e.target as HTMLFormElement)));
+    if (r.ok) { q('[data-biz-new]').hidden = true; q('[data-days]').hidden = false; boot(); }
+  };
+  q<HTMLFormElement>('[data-lead-add]').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target as HTMLFormElement;
+    if ((await send(`/api/biz/${cur}/leads`, Object.fromEntries(new FormData(f)))).ok) { f.reset(); load(); }
+  };
+  q<HTMLFormElement>('[data-team-add]').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target as HTMLFormElement;
+    if ((await send(`/api/biz/${cur}/team`, Object.fromEntries(new FormData(f)))).ok) { f.reset(); load(); }
+  };
+  q<HTMLFormElement>('[data-settings]').onsubmit = async (e) => {
+    e.preventDefault();
+    if ((await send(`/api/biz/${cur}/settings`, Object.fromEntries(new FormData(e.target as HTMLFormElement)))).ok) { q('[data-saved]').textContent = T.saved; boot(); }
+  };
+  q<HTMLButtonElement>('[data-copy]').onclick = () => { navigator.clipboard.writeText(q('[data-code]').textContent || ''); q('[data-copy]').textContent = T.copied; };
+  q<HTMLFormElement>('[data-ai]').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target as HTMLFormElement;
+    const ans = q('[data-ans]');
+    ans.textContent = T.thinking;
+    const r = await send(`/api/biz/${cur}/ask`, { q: (f.elements.namedItem('q') as HTMLInputElement).value, lang: T.lang });
+    ans.textContent = r.ok ? (await r.json()).text : '…';
+  };
+  boot();
+</script>
+
+<style is:global>
+  .biz { margin: 32px 0; display: grid; gap: 14px; }
+  .biz h2 { margin: 0 0 4px; font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.02em; }
+  .biz h3 { margin: 0 0 8px; }
+  .biz h4 { margin: 0 0 8px; font-size: 14px; color: var(--mut); }
+  .biz .mut { color: var(--mut); }
+  .biz .small { font-size: 13px; }
+  .biz .card { border: 1px solid var(--line); border-radius: 18px; background: var(--surf); padding: 16px 18px; }
+  .biz .head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
+  .biz .head p { margin: 0; max-width: 60ch; }
+  .biz .ctl { display: flex; gap: 8px; flex-wrap: wrap; }
+  .biz .seg { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .biz .seg button { border: 0; background: none; padding: 8px 12px; cursor: pointer; color: inherit; font: inherit; font-size: 13px; }
+  .biz .seg button[aria-pressed='true'] { background: var(--acc); color: var(--dark-ink, #111); font-weight: 700; }
+  .biz .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+  .biz .row input, .biz .row select, .biz textarea { flex: 1 1 180px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: inherit; font: inherit; }
+  .biz textarea { width: 100%; box-sizing: border-box; margin-top: 8px; }
+  .biz .kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .biz .kpi .card { display: grid; gap: 2px; }
+  .biz .kpi b { font-size: 28px; letter-spacing: -0.02em; }
+  .biz .bars { display: flex; align-items: flex-end; gap: 4px; height: 140px; overflow-x: auto; }
+  .biz .bar { flex: 1 0 18px; max-width: 56px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
+  .biz .bar i { display: block; width: 100%; background: color-mix(in srgb, var(--acc) 70%, transparent); border-radius: 6px 6px 2px 2px; }
+  .biz .bar em { position: absolute; top: 0; font-style: normal; font-size: 11px; font-weight: 700; color: var(--accText, inherit); }
+  .biz .bar small { font-size: 10px; color: var(--mut); margin-top: 4px; }
+  .biz .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .biz .lst { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .biz .lst li { position: relative; display: flex; justify-content: space-between; gap: 8px; padding: 4px 8px; font-size: 13px; z-index: 0; }
+  .biz .lst li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .biz .lst li i { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--acc) 16%, transparent); border-radius: 8px; z-index: -1; }
+  .biz .tw { overflow-x: auto; }
+  .biz table { width: 100%; border-collapse: collapse; min-width: 560px; }
+  .biz td { padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 14px; }
+  .biz td select { display: block; margin-bottom: 4px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: inherit; }
+  .biz .team { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  .biz .team li { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  .biz code { flex: 1 1 260px; font-size: 12px; padding: 10px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); overflow-x: auto; white-space: nowrap; }
+  .biz .ans { white-space: pre-wrap; line-height: 1.5; margin: 10px 0 0; }
+  .biz .cta { padding: 10px 16px; border-radius: 999px; border: 0; background: var(--acc); color: var(--dark-ink, #111); font-weight: 700; cursor: pointer; }
+  .biz .ghost { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: none; color: inherit; cursor: pointer; }
+  @media (max-width: 900px) { .biz .kpi, .biz .grid4 { grid-template-columns: repeat(2, 1fr); }  }
+  @media (max-width: 480px) { .biz .kpi, .biz .grid4 { grid-template-columns: 1fr; }  }
+</style>

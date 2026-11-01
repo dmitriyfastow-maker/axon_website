@@ -31,7 +31,7 @@ const setCookie = (name: string, value: string, maxAge: number) => `${name}=${va
 export const LEVELS = [{ id: 'start', from: 0 }, { id: 'pro', from: 1000 }, { id: 'vip', from: 5000 }];
 export const BONUS = { cashback: 0.05, profile: 5, review: 10, maxShare: 0.2, months: 12 };
 
-async function sessionClient(db: DB, req: Request): Promise<{ id: number; email: string | null; name: string | null; profile: string | null; marketing: number; email_verified_at: string | null } | null> {
+export async function sessionClient(db: DB, req: Request): Promise<{ id: number; email: string | null; name: string | null; profile: string | null; marketing: number; email_verified_at: string | null } | null> {
   const t = cookie(req, COOKIE);
   if (!/^[a-f0-9]{64}$/.test(t)) return null;
   return db.prepare('SELECT c.id, c.email, c.name, c.profile, c.marketing, c.email_verified_at FROM client_sessions s JOIN clients c ON c.id = s.client_id WHERE s.token = ?').bind(t).first();
