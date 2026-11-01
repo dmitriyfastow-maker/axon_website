@@ -1111,14 +1111,14 @@ import Base from '../layouts/Base.astro';
     const fresh = s && Date.now() - Date.parse(s.at) < 15 * 60000;
     const card = (key: string, f: R | undefined, title: string) => {
       const lamp = !fresh ? '⚪' : f?.light === 'red' ? '🔴' : f?.light === 'yellow' ? '🟡' : '🟢';
-      const cmdLine = c && c.target === key ? el('p', { class: 'mut' }, `Команда «${({ pause: 'Пауза', resume: 'Продолжить', go: 'Работай сейчас' } as R)[c.cmd]}» — ${c.state === 'done' ? '✅ выполнено ' + ago(c.done_at) : '⏳ ждёт Mac (до 3 минут)'}`) : null;
+      const cmdLine = c && c.target === key ? el('p', { class: 'mut' }, `Команда «${({ pause: 'Пауза', resume: 'Снять паузу', go: 'Работай сейчас', login: 'Открыть окно входа' } as R)[c.cmd]}» — ${c.state === 'done' ? '✅ выполнено ' + ago(c.done_at) : '⏳ ждёт Mac (до 3 минут)'}`) : null;
       const btn = (cmd: string, label: string) => el('button', { type: 'button', class: 'ghost', onclick: async () => { await api('/factory', { cmd, target: key }); loadFactory(); } }, label);
       return el('div', { class: 'card' },
         el('h3', {}, `${lamp} ${title}`),
         el('p', {}, el('b', {}, f?.now || (fresh ? '—' : 'Mac не на связи: он выключен, спит или без интернета'))),
         ...((f?.nets || []) as R[]).map((n) => el('p', {}, `${n.ok === false ? '🔴' : n.ok === null ? '🟡' : '🟢'} ${n.name}: ${n.text}`)),
         ...((f?.todo || []) as string[]).map((t) => el('p', { class: 'todo' }, '👉 ' + t)),
-        key === 'personal' ? el('div', { class: 'row' }, btn('go', '▶️ Работай сейчас'), btn('pause', '⏸ Пауза 3 ч'), btn('resume', '🔄 Снять паузу')) : null,
+        key === 'personal' ? el('div', { class: 'row' }, btn('go', '▶️ Работай сейчас'), btn('pause', '⏸ Пауза 3 ч'), btn('resume', '🔄 Снять паузу'), btn('login', '🔑 Открыть окно входа')) : null,
         cmdLine,
         el('p', { class: 'mut' }, `Обновлено: ${ago(s?.at)}`));
     };

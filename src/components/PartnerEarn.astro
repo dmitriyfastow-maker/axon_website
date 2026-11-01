@@ -8,14 +8,13 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const r = RATES;
 const pct = (v: number, rate: number) => `$${((v * rate) / 100).toFixed(2).replace(/\.00$/, '')}`;
-const range = ([a, b]: number[], rate: number) => `${pct(a, rate)}–${pct(b, rate)}`;
 
 const C = {
   en: {
     h: 'What you get — and for what',
     sub: 'The same terms for every partner from day one. You are paid only for clients who actually paid.',
     cols: ['The client buys', 'Price', `You, first payment (${r.agencyOwn}%)`, `You, every later payment (${r.agencyRenewal}%)`, `Your team member sold it (+${r.team}%)`],
-    month: '/mo', once: 'one-off', vax: 'Vax names the price', site: 'Website build', custom: 'Custom: app, bot, integration', tpl: 'Templates',
+    month: '/mo', once: 'one-off', vax: 'Vax names the price', year: 'Growth paid for a year', next: 'then 30% of renewals', custom: 'Custom: app, bot, integration', tpl: 'Templates',
     example: (n: number) => `Example: ${n} clients on Growth = ${pct(PRICES.growth * n, r.agencyOwn)} at once, then ${pct(PRICES.growth * n, r.agencyRenewal)} every month while they pay. Example math, not a promise.`,
     free: 'The client\'s first month is free — your share is counted from their first real payment.',
     stepsH: 'How it works',
@@ -28,7 +27,7 @@ const C = {
     h: 'Сколько вы получаете — и за что',
     sub: 'Одни условия для всех партнёров с первого дня. Деньги — только за клиентов, которые реально оплатили.',
     cols: ['Что купил клиент', 'Цена', `Вам с первой оплаты (${r.agencyOwn}%)`, `Вам с каждой следующей (${r.agencyRenewal}%)`, `Продал партнёр из вашей команды (+${r.team}%)`],
-    month: '/мес', once: 'разово', vax: 'цену называет Vax', site: 'Создание сайта', custom: 'Кастом: приложение, бот, интеграция', tpl: 'Шаблоны',
+    month: '/мес', once: 'разово', vax: 'цену называет Vax', year: 'Growth на год сразу', next: 'дальше 30% с продлений', custom: 'Кастом: приложение, бот, интеграция', tpl: 'Шаблоны',
     example: (n: number) => `Пример: ${n} клиентов на Growth = ${pct(PRICES.growth * n, r.agencyOwn)} сразу, потом ${pct(PRICES.growth * n, r.agencyRenewal)} каждый месяц, пока они платят. Это расчёт, а не обещание.`,
     free: 'Первый месяц у клиента бесплатный — ваша доля считается с его первой настоящей оплаты.',
     stepsH: 'Как это работает',
@@ -41,7 +40,7 @@ const C = {
     h: 'Скільки ви отримуєте — і за що',
     sub: 'Однакові умови для всіх партнерів з першого дня. Гроші — лише за клієнтів, які справді оплатили.',
     cols: ['Що купив клієнт', 'Ціна', `Вам з першої оплати (${r.agencyOwn}%)`, `Вам з кожної наступної (${r.agencyRenewal}%)`, `Продав партнер з вашої команди (+${r.team}%)`],
-    month: '/міс', once: 'разово', vax: 'ціну називає Vax', site: 'Створення сайту', custom: 'Кастом: застосунок, бот, інтеграція', tpl: 'Шаблони',
+    month: '/міс', once: 'разово', vax: 'ціну називає Vax', year: 'Growth на рік одразу', next: 'далі 30% з продовжень', custom: 'Кастом: застосунок, бот, інтеграція', tpl: 'Шаблони',
     example: (n: number) => `Приклад: ${n} клієнтів на Growth = ${pct(PRICES.growth * n, r.agencyOwn)} одразу, потім ${pct(PRICES.growth * n, r.agencyRenewal)} щомісяця, поки вони платять. Це розрахунок, а не обіцянка.`,
     free: 'Перший місяць у клієнта безкоштовний — ваша частка рахується з його першої справжньої оплати.',
     stepsH: 'Як це працює',
@@ -57,7 +56,7 @@ const rows = [
   plan('Care', PRICES.care),
   plan('Growth', PRICES.growth),
   plan('Pro', PRICES.pro),
-  [C.site, `$${PRICES.site[0]}–${PRICES.site[1]}`, range(PRICES.site, r.agencyOwn), C.once, range(PRICES.site, r.team)],
+  plan(C.year, PRICES.growth * 10).map((x, i) => (i === 1 ? `$${(PRICES.growth * 10).toLocaleString('en-US')}` : i === 3 ? C.next : x)),
   [C.custom, C.vax, `${r.agencyOwn}%`, `${r.agencyRenewal}%`, `+${r.team}%`],
   [C.tpl, `$${PRICES.templates[0]}–${PRICES.templates[1]}`, `${r.products}%`, '—', `+${r.team}%`],
 ];

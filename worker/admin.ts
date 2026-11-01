@@ -139,7 +139,7 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   if (path === 'factory' && request.method === 'POST') {
     const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     const cmd = String(b.cmd), target = String(b.target);
-    if (!['pause', 'resume', 'go'].includes(cmd) || !['personal', 'vaxo'].includes(target)) return json(400, { ok: false });
+    if (!['pause', 'resume', 'go', 'login'].includes(cmd) || !['personal', 'vaxo'].includes(target)) return json(400, { ok: false });
     const v = JSON.stringify({ cmd, target, at: new Date().toISOString(), by: me.name, state: 'pending' });
     await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind('factory_cmd', v).run();
     return json(200, { ok: true });

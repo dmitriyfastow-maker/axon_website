@@ -4,7 +4,7 @@ const en = {
   "eyebrow": "All of your business online, done for you",
   "h1": "Website, clients, social media and ads — in one app",
   "sub": "We build or connect your website, add an AI employee that answers clients in every chat, and run your social media and ads. You see every lead and every dollar in one app. Already have a site? Connecting it is $0.",
-  "cta1": "Start free",
+  "cta1": "Describe your task",
   "cta2": "See examples",
   "cta3": "How much does it cost",
   "heroTags": [

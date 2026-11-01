@@ -17,12 +17,12 @@ export const RATES = {
 };
 
 /** Platform prices (Decision 29, 31.10.2026): subscription a month, website build range, templates range. */
-export const PRICES = { care: 39, growth: 129, pro: 299, site: [150, 400], templates: [9, 67] };
+export const PRICES = { care: 39, growth: 129, pro: 299, templates: [9, 67] };
 
 /** Calculator inputs; the calculator uses the middle of each range. */
 export const CALC = {
   packages: [39, 129, 299], // first payment of a new subscription: Care / Growth / Pro
-  project: 275, // website build, middle of $150–400
+  project: 1290, // a Growth year paid upfront (10 months; 2 are free)
   template: 10, // single templates cost $9–$12
   bundle: 67, // all templates in one bundle
   support: 129, // the Growth plan (plans: $39 / $129 / $299 a month)
@@ -128,7 +128,7 @@ const en: Text = {
   calcSub: 'Real prices from our site. Move the sliders — every line shows exactly how it is counted.',
   calcRows: [
     { id: 'pk', label: 'New clients on a plan', hint: `${r.agencyOwn}% of their first payment`, max: 20, step: 1, value: 2 },
-    { id: 'pr', label: 'Website builds ($150–400)', hint: `${r.agencyOwn}% of $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'pr', label: 'Clients paying for a year (Growth, $1,290)', hint: `${r.agencyOwn}% of $${c.project}`, max: 10, step: 1, value: 0 },
     { id: 'tp', label: 'Single templates ($9–$12)', hint: `${r.products}% of $${c.template}`, max: 200, step: 5, value: 20 },
     { id: 'bd', label: 'Template bundles ($67)', hint: `${r.products}% of $${c.bundle}`, max: 50, step: 1, value: 3 },
     { id: 'sp', label: 'Clients who keep paying (Growth $129)', hint: `${r.agencyRenewal}% of $${c.support} every month`, max: 30, step: 1, value: 2 },
@@ -233,7 +233,7 @@ const ua: Text = {
   calcSub: 'Реальні ціни з нашого сайту. Рухайте повзунки — кожен рядок показує, як саме рахується.',
   calcRows: [
     { id: 'pk', label: 'Нові клієнти на підписці', hint: `${r.agencyOwn}% їхньої першої оплати`, max: 20, step: 1, value: 2 },
-    { id: 'pr', label: 'Створення сайтів ($150–400)', hint: `${r.agencyOwn}% від $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'pr', label: 'Клієнти, що оплатили рік (Growth, $1 290)', hint: `${r.agencyOwn}% від $${c.project}`, max: 10, step: 1, value: 0 },
     { id: 'tp', label: 'Окремі шаблони ($9–$12)', hint: `${r.products}% від $${c.template}`, max: 200, step: 5, value: 20 },
     { id: 'bd', label: 'Набори шаблонів ($67)', hint: `${r.products}% від $${c.bundle}`, max: 50, step: 1, value: 3 },
     { id: 'sp', label: 'Клієнти, які платять далі (Growth $129)', hint: `${r.agencyRenewal}% від $${c.support} щомісяця`, max: 30, step: 1, value: 2 },
@@ -338,7 +338,7 @@ const ru: Text = {
   calcSub: 'Реальные цены с нашего сайта. Двигайте ползунки — каждая строка показывает, как именно считается.',
   calcRows: [
     { id: 'pk', label: 'Новые клиенты на подписке', hint: `${r.agencyOwn}% их первой оплаты`, max: 20, step: 1, value: 2 },
-    { id: 'pr', label: 'Создание сайтов ($150–400)', hint: `${r.agencyOwn}% от $${c.project}`, max: 10, step: 1, value: 0 },
+    { id: 'pr', label: 'Клиенты, оплатившие год (Growth, $1 290)', hint: `${r.agencyOwn}% от $${c.project}`, max: 10, step: 1, value: 0 },
     { id: 'tp', label: 'Отдельные шаблоны ($9–$12)', hint: `${r.products}% от $${c.template}`, max: 200, step: 5, value: 20 },
     { id: 'bd', label: 'Наборы шаблонов ($67)', hint: `${r.products}% от $${c.bundle}`, max: 50, step: 1, value: 3 },
     { id: 'sp', label: 'Клиенты, которые платят дальше (Growth $129)', hint: `${r.agencyRenewal}% от $${c.support} каждый месяц`, max: 30, step: 1, value: 2 },
