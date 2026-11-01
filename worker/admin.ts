@@ -246,3 +246,22 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   const ok = m[1] === 'lead' ? await ownerUpdateLead(db, id, b, notify) : await ownerUpdatePartner(db, id, b);
   return json(ok ? 200 : 400, { ok });
 }
+
+/** The Mac's video-factory link (scripts/factory-sync.py): POST /api/factory-sync with its own key (only the sha-256 is
+ *  stored, settings.factory_key_hash). Saves the status snapshot, confirms an executed button press, returns the pending one. */
+export async function handleFactorySync(db: DB, request: Request): Promise<Response> {
+  if (request.method !== 'POST') return json(405, { ok: false });
+  const bearer = (request.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '');
+  const st = await settings(db);
+  const h = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(bearer))), (b) => b.toString(16).padStart(2, '0')).join('');
+  if (!/^[a-f0-9]{48}$/.test(bearer) || !st.factory_key_hash || h !== st.factory_key_hash) return json(401, { ok: false });
+  const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+  const put = (k: string, v: string) => db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind(k, v).run();
+  if (b.status && typeof b.status === 'object') await put('factory_status', JSON.stringify(b.status).slice(0, 20000));
+  let cmd = st.factory_cmd ? JSON.parse(st.factory_cmd) : null;
+  if (b.ack && cmd && cmd.state === 'pending' && cmd.at === b.ack) {
+    cmd = { ...cmd, state: 'done', done_at: new Date().toISOString() };
+    await put('factory_cmd', JSON.stringify(cmd));
+  }
+  return json(200, { ok: true, cmd });
+}

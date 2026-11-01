@@ -1,7 +1,7 @@
 // Cloudflare Worker: serves the static site from ./dist and handles the lead form.
 import { handleLead, type LeadEnv, type LeadInput } from '../src/lib/lead.js';
 import { handlePartnerApi, handleRedirect, type DB } from './partner.js';
-import { handleAdminApi } from './admin.js';
+import { handleAdminApi, handleFactorySync } from './admin.js';
 import { handleChat, type AiBinding } from './chat.js';
 import { draftBrief, logEvent, sweep, type Notify } from './deals.js';
 import { bindReturningClient, handleRoomApi, newRoom } from './rooms.js';
@@ -108,6 +108,7 @@ export default {
       const chatName = env.LEADS ? ((await env.LEADS.prepare("SELECT name FROM biz WHERE key = ? AND about IS NOT NULL AND about != ''").bind(k).first<{ name: string }>().catch(() => null))?.name ?? '') : '';
       return new Response(snippet(k, url.origin, chatName), { headers: { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'public, max-age=600', 'Access-Control-Allow-Origin': '*' } });
     }
+    if (url.pathname === '/api/factory-sync') return env.LEADS ? handleFactorySync(env.LEADS, request) : json(503, { ok: false });
     if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     if (url.pathname === '/api/biz' || url.pathname.startsWith('/api/biz/')) return env.LEADS ? handleBiz(env.LEADS, request, url.pathname.slice('/api/biz'.length).replace(/^\//, ''), env.AI, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify) : json(503, { ok: false });
