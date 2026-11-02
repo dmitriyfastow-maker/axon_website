@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mila Hart — Brand Strategist & Speaker</title>
+<meta name="description" content="Mila Hart helps founders become the obvious choice in their market. Book a strategy call, join the newsletter, read case studies. A demo personal-brand site by Vaxo.">
+<meta name="theme-color" content="#0f1115">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1115;--bg2:#161922;--card:#1b1f2a;--line:rgba(255,255,255,.1);--ink:#f4f1ea;--mute:#a7a9b4;--a:#ffcf5c;--b:#ff7a59;--r:22px;--pad:clamp(16px,4vw,48px);--serif:"Fraunces",Georgia,serif;--body:"Inter",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}html,body{overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.65 var(--body);-webkit-font-smoothing:antialiased}
+a{color:inherit}button,input{font:inherit;color:inherit}button{cursor:pointer;border:0}
+:focus-visible{outline:2px solid var(--a);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 var(--pad)}
+.vx{display:block;background:var(--ink);color:#15171c;font:600 12.5px/1.3 var(--body);text-align:center;padding:9px 16px;text-decoration:none}
+.vx span{text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.nav{position:sticky;top:0;z-index:20;background:rgba(15,17,21,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:18px;height:62px}
+.logo{font:600 20px var(--serif);text-decoration:none}.logo i{color:var(--a)}
+.links{display:flex;gap:24px;margin-left:auto;font-size:14px;color:var(--mute)}
+.links a{text-decoration:none}.links a:hover{color:var(--ink)}
+.lang{display:flex;gap:2px;border:1px solid var(--line);border-radius:99px;padding:2px}
+.lang button{background:none;color:var(--mute);font-size:12px;font-weight:600;padding:4px 9px;border-radius:99px}
+.lang button.on{background:var(--ink);color:#15171c}
+.btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(100deg,var(--a),var(--b));color:#1a1206;font-weight:700;padding:14px 26px;border-radius:99px;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(255,122,89,.6)}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.hero{padding:clamp(48px,9vw,110px) 0 60px;display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:center}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--a);font-weight:600}
+h1{font:600 clamp(38px,6.4vw,76px)/1.04 var(--serif);letter-spacing:-.02em;margin:16px 0 22px}
+h1 em{font-style:italic;font-weight:500;color:var(--a)}
+.lead{color:var(--mute);font-size:clamp(17px,2vw,20px);max-width:34em;margin-bottom:30px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.portrait{aspect-ratio:4/5;border-radius:var(--r);background:radial-gradient(circle at 30% 20%,#ffcf5c55,transparent 55%),radial-gradient(circle at 80% 90%,#ff7a5966,transparent 55%),var(--card);border:1px solid var(--line);position:relative;overflow:hidden;display:grid;place-items:center}
+.portrait svg{width:62%;opacity:.9}
+.badge{position:absolute;left:14px;bottom:14px;right:14px;background:rgba(15,17,21,.72);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:13px;color:var(--mute)}
+.badge b{color:var(--ink)}
+.logos{border-block:1px solid var(--line);padding:22px 0;color:var(--mute);font-size:13px}
+.logos .wrap{display:flex;flex-wrap:wrap;gap:12px 34px;justify-content:center;font:600 17px var(--serif);letter-spacing:.02em}
+.logos .wrap span{opacity:.7}
+section{padding:clamp(56px,8vw,100px) 0}
+h2{font:600 clamp(28px,4.2vw,46px)/1.1 var(--serif);letter-spacing:-.015em;margin:10px 0 14px}
+.sub{color:var(--mute);max-width:40em}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.stat b{display:block;font:600 40px var(--serif);color:var(--a)}
+.stat span{color:var(--mute);font-size:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px;transition:transform .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);border-color:rgba(255,207,92,.5)}
+.card h3{font:600 22px var(--serif);margin:10px 0 8px}.card p{color:var(--mute);font-size:15px}
+.tag{font-size:12px;color:var(--a);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.price{margin-top:16px;font-weight:700}
+.quote{background:var(--bg2);border-block:1px solid var(--line)}
+.quote blockquote{font:500 italic clamp(24px,3.6vw,38px)/1.3 var(--serif);max-width:24em}
+.quote cite{display:block;margin-top:18px;font:500 14px var(--body);color:var(--mute);font-style:normal}
+.nl{background:linear-gradient(120deg,#ffcf5c22,#ff7a5922),var(--card);border:1px solid var(--line);border-radius:28px;padding:clamp(26px,5vw,56px);display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center}
+.nl form{display:flex;gap:8px;flex-wrap:wrap}
+.nl input{flex:1 1 200px;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:14px 20px}
+.nl .ok{display:none;color:var(--a);font-weight:600;margin-top:10px}
+.book{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:34px;align-items:start}
+.days,.slots{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:600;transition:.2s}
+.chip:hover{border-color:var(--a)}.chip.on{background:var(--a);color:#1a1206;border-color:var(--a)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.panel h4{font:600 18px var(--serif);margin-bottom:12px}
+.panel .btn{margin-top:16px;width:100%;justify-content:center}
+.done{display:none;margin-top:14px;padding:14px;border-radius:14px;background:#7fd6a022;color:#9be8b8;font-weight:600}
+footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mute);font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}.rv.in{opacity:1;transform:none}
+@media(max-width:860px){.hero,.nl,.book{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.links{display:none}.lang{margin-left:auto}.portrait{max-height:380px;aspect-ratio:auto;min-height:300px}}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="vx" href="/?vax=demo-personal-brand"><b data-i="vx1">Demo by Vaxo</b> — <span data-i="vx2">the person is fictional, the functions are real. Want one like this? →</span></a>
+<header class="nav"><div class="wrap">
+<a class="logo" href="#top">Mila<i>.</i>Hart</a>
+<nav class="links"><a href="#work" data-i="n1">Work with me</a><a href="#proof" data-i="n2">Results</a><a href="#letter" data-i="n3">Newsletter</a><a href="#call" data-i="n4">Book a call</a></nav>
+<div class="lang" role="group" aria-label="Language"><button data-l="en" class="on">EN</button><button data-l="ru">RU</button><button data-l="ua">UA</button></div>
+</div></header>
+
+<main id="top">
+<div class="wrap hero">
+<div class="rv">
+<div class="eyebrow" data-i="eb">Brand strategist · speaker · 11 years</div>
+<h1 data-i="h1">Become the <em>obvious choice</em> in your market.</h1>
+<p class="lead" data-i="lead">I help founders turn expertise into a brand people remember, recommend and pay more for. No buzzwords — a clear message, a plan and weekly proof it works.</p>
+<div class="cta"><a class="btn" href="#call" data-i="c1">Book a free 20-min call →</a><a class="btn ghost" href="#proof" data-i="c2">See the results</a></div>
+</div>
+<div class="portrait rv" aria-label="Portrait placeholder">
+<svg viewBox="0 0 120 120" fill="none" stroke="#f4f1ea" stroke-width="2" stroke-linecap="round"><circle cx="60" cy="42" r="22"/><path d="M16 112c4-28 22-40 44-40s40 12 44 40"/></svg>
+<div class="badge"><b data-i="b1">Your photo goes here.</b> <span data-i="b2">We shoot the direction, you approve the frame.</span></div>
+</div>
+</div>
+
+<div class="logos"><div class="wrap"><span>Northwind</span><span>Kestrel Labs</span><span>Olive &amp; Oak</span><span>Brightpath</span><span>Quill</span></div></div>
+
+<section id="proof"><div class="wrap">
+<div class="eyebrow rv" data-i="p0">Results</div>
+<h2 class="rv" data-i="p1">Numbers I can put my name under</h2>
+<p class="sub rv" data-i="p2">Averages across founders who completed the 12-week program.</p>
+<div class="stats">
+<div class="stat rv"><b data-count="3.4" data-suf="×">0</b><span data-i="s1">more inbound requests</span></div>
+<div class="stat rv"><b data-count="42" data-suf="%">0</b><span data-i="s2">higher average price</span></div>
+<div class="stat rv"><b data-count="12" data-suf="">0</b><span data-i="s3">weeks to a new positioning</span></div>
+<div class="stat rv"><b data-count="140" data-suf="+">0</b><span data-i="s4">founders coached</span></div>
+</div></div></section>
+
+<section id="work" style="padding-top:0"><div class="wrap">
+<div class="eyebrow rv" data-i="w0">Work with me</div>
+<h2 class="rv" data-i="w1">Three ways to start</h2>
+<div class="grid3">
+<article class="card rv"><div class="tag" data-i="t1">Self-paced</div><h3 data-i="k1">Brand Sprint</h3><p data-i="d1">A 5-day workbook and 3 live sessions to find your message and your one-line pitch.</p><div class="price">$290</div></article>
+<article class="card rv"><div class="tag" data-i="t2">Most chosen</div><h3 data-i="k2">12-week Program</h3><p data-i="d2">Positioning, content system and launch. Weekly calls, a private chat and my review of everything you publish.</p><div class="price">$2 400</div></article>
+<article class="card rv"><div class="tag" data-i="t3">By application</div><h3 data-i="k3">Done-with-you</h3><p data-i="d3">I join your team for a quarter: strategy, talks, press, and your public presence.</p><div class="price" data-i="d3p">from $9 000</div></article>
+</div></div></section>
+
+<section class="quote"><div class="wrap">
+<blockquote class="rv" data-i="q">“In three months people stopped asking what I do and started asking when I’m free.”</blockquote>
+<cite class="rv" data-i="qc">— Daniel R., founder of a 14-person studio (fictional)</cite>
+</div></section>
+
+<section id="letter"><div class="wrap"><div class="nl rv">
+<div><div class="eyebrow" data-i="l0">Newsletter</div><h2 data-i="l1">One idea every Friday</h2><p class="sub" data-i="l2">Short, practical, no spam. 9 400 founders read it.</p></div>
+<div><form id="nf"><input type="email" required placeholder="you@company.com" data-ph="ph" aria-label="Email"><button class="btn" type="submit" data-i="l3">Subscribe</button></form><div class="ok" id="nok" data-i="l4">You’re in. First issue on Friday ✓</div></div>
+</div></div></section>
+
+<section id="call" style="padding-top:0"><div class="wrap">
+<div class="eyebrow rv" data-i="b0">Free call</div>
+<h2 class="rv" data-i="bk1">Pick a time — it takes 20 seconds</h2>
+<div class="book">
+<div><div class="sub" style="margin-bottom:10px" data-i="bk2">Day</div><div class="days" id="days"></div>
+<div class="sub" style="margin:22px 0 10px" data-i="bk3">Time</div><div class="slots" id="slots"></div></div>
+<div class="panel"><h4 data-i="bk4">Your booking</h4><div id="sum" class="sub" data-i="bk5">Choose a day and a time.</div>
+<input id="em" type="email" placeholder="you@company.com" aria-label="Email" style="width:100%;margin-top:14px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:13px 16px">
+<button class="btn" id="go" data-i="bk6">Confirm the call</button>
+<div class="done" id="done" data-i="bk7">Booked ✓ A calendar invite and a reminder 2 hours before are on the way.</div></div>
+</div></div></section>
+</main>
+
+<footer><div class="wrap"><span>© Mila Hart</span><span data-i="f1">Site, booking, newsletter and reminders — built and run by Vaxo.</span></div></footer>
+
+<script>
+const T={
+en:{},
+ru:{vx1:"Демо Vaxo",vx2:"человек вымышленный, функции настоящие. Хотите такой же? →",n1:"Работа со мной",n2:"Результаты",n3:"Рассылка",n4:"Записаться",eb:"Бренд-стратег · спикер · 11 лет",h1:"Станьте <em>очевидным выбором</em> на своём рынке.",lead:"Помогаю основателям превращать опыт в бренд, который помнят, рекомендуют и за который платят больше. Без модных слов — ясное послание, план и еженедельные доказательства.",c1:"Бесплатный созвон 20 минут →",c2:"Смотреть результаты",b1:"Здесь будет ваше фото.",b2:"Мы продумаем кадр, вы утверждаете.",p0:"Результаты",p1:"Цифры, под которыми я подпишусь",p2:"Средние значения у основателей, прошедших 12-недельную программу.",s1:"больше входящих заявок",s2:"выше средний чек",s3:"недель до новой позиции",s4:"основателей прошли",w0:"Работа со мной",w1:"Три способа начать",t1:"В своём темпе",k1:"Бренд-спринт",d1:"Рабочая тетрадь на 5 дней и 3 живые сессии: найдём ваше послание и фразу-визитку.",t2:"Выбирают чаще",k2:"Программа 12 недель",d2:"Позиционирование, система контента и запуск. Еженедельные созвоны, закрытый чат и мой разбор всего, что вы публикуете.",t3:"По заявке",k3:"Работаем вместе",d3:"Я вхожу в вашу команду на квартал: стратегия, выступления, пресса и публичный образ.",d3p:"от $9 000",q:"«За три месяца люди перестали спрашивать, чем я занимаюсь, и стали спрашивать, когда я свободен.»",qc:"— Даниил Р., основатель студии на 14 человек (вымышленный)",l0:"Рассылка",l1:"Одна идея каждую пятницу",l2:"Коротко, по делу, без спама. Читают 9 400 основателей.",l3:"Подписаться",l4:"Вы в списке. Первое письмо в пятницу ✓",ph:"вы@компания.com",b0:"Бесплатный созвон",bk1:"Выберите время — это 20 секунд",bk2:"День",bk3:"Время",bk4:"Ваша запись",bk5:"Выберите день и время.",bk6:"Подтвердить созвон",bk7:"Записано ✓ Приглашение в календарь и напоминание за 2 часа уже в пути.",f1:"Сайт, запись, рассылка и напоминания — сделаны и ведутся Vaxo."},
+ua:{vx1:"Демо Vaxo",vx2:"людина вигадана, функції справжні. Хочете такий самий? →",n1:"Робота зі мною",n2:"Результати",n3:"Розсилка",n4:"Записатися",eb:"Бренд-стратег · спікер · 11 років",h1:"Станьте <em>очевидним вибором</em> на своєму ринку.",lead:"Допомагаю засновникам перетворювати досвід на бренд, який пам’ятають, радять і за який платять більше. Без модних слів — зрозуміле послання, план і щотижневі докази.",c1:"Безкоштовний дзвінок 20 хвилин →",c2:"Дивитись результати",b1:"Тут буде ваше фото.",b2:"Ми продумаємо кадр, ви затверджуєте.",p0:"Результати",p1:"Цифри, під якими я підпишусь",p2:"Середні значення у засновників, які пройшли 12-тижневу програму.",s1:"більше вхідних заявок",s2:"вищий середній чек",s3:"тижнів до нової позиції",s4:"засновників пройшли",w0:"Робота зі мною",w1:"Три способи почати",t1:"У своєму темпі",k1:"Бренд-спринт",d1:"Робочий зошит на 5 днів і 3 живі сесії: знайдемо ваше послання і фразу-візитівку.",t2:"Обирають частіше",k2:"Програма 12 тижнів",d2:"Позиціонування, система контенту і запуск. Щотижневі дзвінки, закритий чат і мій розбір усього, що ви публікуєте.",t3:"За заявкою",k3:"Працюємо разом",d3:"Я входжу у вашу команду на квартал: стратегія, виступи, преса і публічний образ.",d3p:"від $9 000",q:"«За три місяці люди перестали питати, чим я займаюсь, і стали питати, коли я вільний.»",qc:"— Данило Р., засновник студії на 14 осіб (вигаданий)",l0:"Розсилка",l1:"Одна ідея щоп’ятниці",l2:"Коротко, по суті, без спаму. Читають 9 400 засновників.",l3:"Підписатися",l4:"Ви в списку. Перший лист у п’ятницю ✓",ph:"ви@компанія.com",b0:"Безкоштовний дзвінок",bk1:"Оберіть час — це 20 секунд",bk2:"День",bk3:"Час",bk4:"Ваш запис",bk5:"Оберіть день і час.",bk6:"Підтвердити дзвінок",bk7:"Записано ✓ Запрошення в календар і нагадування за 2 години вже в дорозі.",f1:"Сайт, запис, розсилка і нагадування — зроблені й ведуться Vaxo."}
+};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+$$('[data-i]').forEach(e=>e.dataset.en=e.innerHTML);
+$$('[data-ph]').forEach(e=>e.dataset.en=e.placeholder);
+let L='en',day=null,slot=null;
+const DN={en:['Mon','Tue','Wed','Thu','Fri'],ru:['Пн','Вт','Ср','Чт','Пт'],ua:['Пн','Вт','Ср','Чт','Пт']};
+function setLang(l){L=l;document.documentElement.lang=l==='ua'?'uk':l;
+ $$('[data-i]').forEach(e=>{e.innerHTML=(T[l][e.dataset.i])??e.dataset.en});
+ $$('[data-ph]').forEach(e=>{e.placeholder=(T[l][e.dataset.ph])??e.dataset.en});
+ $$('.lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
+ renderDays();sum();try{localStorage.setItem('mh-l',l)}catch(e){}}
+function renderDays(){const d=$('#days');d.innerHTML='';DN[L].forEach((n,i)=>{const b=document.createElement('button');b.className='chip'+(day===i?' on':'');b.textContent=n+' '+(10+i);b.onclick=()=>{day=i;renderDays();sum()};d.appendChild(b)});
+ const s=$('#slots');s.innerHTML='';['10:00','11:30','14:00','16:30'].forEach(t=>{const b=document.createElement('button');b.className='chip'+(slot===t?' on':'');b.textContent=t;b.onclick=()=>{slot=t;renderDays();sum()};s.appendChild(b)})}
+function sum(){const e=$('#sum');if(day===null||!slot){e.textContent=T[L].bk5??'Choose a day and a time.';return}e.textContent=DN[L][day]+' '+(10+day)+', '+slot+' · 20 min · video'}
+$$('.lang button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+$('#go').onclick=()=>{if(day===null||!slot){sum();return}if(!$('#em').checkValidity()||!$('#em').value){$('#em').focus();return}$('#done').style.display='block';$('#go').disabled=true};
+$('#nf').onsubmit=e=>{e.preventDefault();$('#nok').style.display='block'};
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);const c=x.target.querySelector('[data-count]');if(c)count(c)}}),{threshold:.15});
+$$('.rv').forEach(e=>io.observe(e));
+function count(el){const to=parseFloat(el.dataset.count),suf=el.dataset.suf,dec=String(to).includes('.')?1:0,t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/1200),v=to*(1-Math.pow(1-p,3));el.textContent=v.toFixed(dec)+suf;if(p<1)requestAnimationFrame(f)})(t0)}
+renderDays();
+try{const s=localStorage.getItem('mh-l');const q=new URLSearchParams(location.search).get('lang');const l=q||s;if(l&&T[l]&&l!=='en')setLang(l)}catch(e){}
+</script>
+</body>
+</html>
