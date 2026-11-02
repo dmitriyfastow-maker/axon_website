@@ -57,7 +57,7 @@ const T = {
 <section class="biz" data-biz hidden>
   <script type="application/json" data-biz-t set:html={JSON.stringify({ ...T, lang })} />
   <div class="head">
-    <div><h2>{T.h}</h2><p class="mut">{T.sub}</p></div>
+    <div class="head-txt"><span class="biz-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><rect x="5" y="11" width="3" height="6" rx="1"/><rect x="10.5" y="7" width="3" height="10" rx="1"/><rect x="16" y="4" width="3" height="13" rx="1"/></svg></span><div><p class="eyebrow">Vaxo App</p><h2>{T.h}</h2><p class="mut">{T.sub}</p></div></div>
     <div class="ctl">
       <select data-biz-pick hidden></select>
       <div class="seg" data-days>{[1, 7, 30, 90].map((d) => <button type="button" data-d={d} aria-pressed={d === 7 ? 'true' : 'false'}>{(T.days as Record<number, string>)[d]}</button>)}</div>
@@ -66,9 +66,12 @@ const T = {
   <p class="card mut" data-biz-soon hidden>{T.soon}</p>
 
   <form class="card new" data-biz-new hidden>
+    <img src="/mascot/vax-allinone.webp" alt="" width="402" height="520" loading="lazy" />
+    <div class="new-txt">
     <h3>{T.newH}</h3>
     <p class="mut">{T.newP}</p>
     <div class="row"><input name="name" required maxlength="80" placeholder={T.name} /><input name="domain" maxlength="120" placeholder={T.domain} /><button class="cta">{T.create}</button></div>
+    </div>
   </form>
 
   <div data-biz-main hidden>
@@ -87,7 +90,7 @@ const T = {
     </div>
 
     <form class="card ai" data-ai>
-      <h3>🤖 {T.ai}</h3>
+      <h3><span class="ai-dot" aria-hidden="true"></span>{T.ai}</h3>
       <p class="mut small">{T.aiP}</p>
       <div class="row"><input name="q" maxlength="500" required placeholder={T.aiQ} /><button class="cta">{T.ask}</button></div>
       <p class="ans" data-ans></p>
@@ -120,9 +123,14 @@ const T = {
   const esc = (s: unknown) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
   const send = (u: string, body: R, method = 'POST') => fetch(u, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   let cur = 0, days = 7, team: R[] = [];
+  const ki = (d: string) => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  const KI = [ki('<circle cx="12" cy="12" r="3"/><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>'), ki('<path d="M3 13h5l1.5 3h5l1.5-3h5"/><path d="M5.5 5h13L21 13v6H3v-6z"/>'), ki('<path d="M4 19 19 4M7 7h.01M17 17h.01"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>'), ki('<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>')];
 
+  let booting = false;
   async function boot() {
+    booting = true;
     const r = await fetch('/api/biz').catch(() => null);
+    booting = false;
     if (!r || r.status === 401) return; // not signed in — the cabinet shows the sign-in
     root.hidden = false;
     if (r.status === 503) { q('[data-biz-soon]').hidden = false; q('[data-days]').hidden = true; return; }
@@ -153,7 +161,7 @@ const T = {
     q('[data-biz-main]').hidden = false;
     q('[data-role]').textContent = `${T.roleIs}: ${T.roleName[b.role]}${b.domain ? ' · ' + b.domain : ''}`;
     const conv = s.visits ? `${((s.leads / s.visits) * 100).toFixed(1)}%` : '—';
-    q('[data-kpi]').innerHTML = [s.visits, s.leads, conv, s.clicks].map((v, i) => `<div class="card"><small>${esc(T.k[i])}</small><b>${esc(v)}</b><span class="mut small">${esc(T.kHint[i])}</span></div>`).join('');
+    q('[data-kpi]').innerHTML = [s.visits, s.leads, conv, s.clicks].map((v, i) => `<div class="card"><span class="k-ico" aria-hidden="true">${KI[i]}</span><small>${esc(T.k[i])}</small><b>${esc(v)}</b><span class="mut small">${esc(T.kHint[i])}</span></div>`).join('');
     const ld: Record<string, number> = Object.fromEntries((s.leadsByDay as R[]).map((x) => [x.d, x.n]));
     const max = Math.max(1, ...(s.byDay as R[]).map((x) => x.visits));
     q('[data-bars]').innerHTML = (s.byDay as R[]).length
@@ -210,7 +218,7 @@ const T = {
   q<HTMLFormElement>('[data-biz-new]').onsubmit = async (e) => {
     e.preventDefault();
     const r = await send('/api/biz', Object.fromEntries(new FormData(e.target as HTMLFormElement)));
-    if (r.ok) { q('[data-biz-new]').hidden = true; q('[data-days]').hidden = false; boot(); }
+    if (r.ok) { q('[data-biz-new]').hidden = true; q('[data-days]').hidden = false; boot(); window.dispatchEvent(new CustomEvent('vx:biz')); }
   };
   q<HTMLFormElement>('[data-lead-add]').onsubmit = async (e) => {
     e.preventDefault();
@@ -235,51 +243,73 @@ const T = {
     const r = await send(`/api/biz/${cur}/ask`, { q: (f.elements.namedItem('q') as HTMLInputElement).value, lang: T.lang });
     ans.textContent = r.ok ? (await r.json()).text : '…';
   };
+  // The cabinet signs the client in without a reload — then the app boots too.
+  window.addEventListener('vx:signed-in', () => { if (root.hidden && !booting) boot(); });
   boot();
 </script>
 
 <style is:global>
-  .biz { margin: 32px 0; display: grid; gap: 14px; }
-  .biz h2 { margin: 0 0 4px; font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.02em; }
-  .biz h3 { margin: 0 0 8px; }
-  .biz h4 { margin: 0 0 8px; font-size: 14px; color: var(--mut); }
+  .biz { margin: 8px 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; --r: 22px; min-width: 0; }
+  .biz [data-biz-main] { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .biz .eyebrow { margin: 0 0 6px; font: 700 12px/1 var(--font); letter-spacing: .12em; text-transform: uppercase; color: var(--accText); }
+  .biz h2 { margin: 0 0 6px; font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.025em; }
+  .biz h3 { margin: 0 0 8px; font-size: 18px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+  .biz h4 { margin: 0 0 10px; font-size: 12px; color: var(--mut); text-transform: uppercase; letter-spacing: .08em; }
   .biz .mut { color: var(--mut); }
   .biz .small { font-size: 13px; }
-  .biz .card { border: 1px solid var(--line); border-radius: 18px; background: var(--surf); padding: 16px 18px; }
+  .biz .card { border: 1px solid var(--line); border-radius: var(--r); background: var(--surf); padding: clamp(16px, 2.6vw, 22px); box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 4%, transparent), 0 24px 48px -36px color-mix(in srgb, var(--ink) 35%, transparent); min-width: 0; }
   .biz .head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
-  .biz .head p { margin: 0; max-width: 60ch; }
+  .biz .head-txt { display: flex; gap: 14px; align-items: flex-start; }
+  .biz .biz-ico { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 16px; background: var(--deep); color: var(--acc); flex: none; }
+  .biz .head p.mut { margin: 0; max-width: 60ch; }
   .biz .ctl { display: flex; gap: 8px; flex-wrap: wrap; }
-  .biz .seg { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
-  .biz .seg button { border: 0; background: none; padding: 8px 12px; cursor: pointer; color: inherit; font: inherit; font-size: 13px; }
-  .biz .seg button[aria-pressed='true'] { background: var(--acc); color: var(--dark-ink, #111); font-weight: 700; }
+  .biz .ctl select { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surf); color: inherit; font: inherit; }
+  .biz .seg { display: flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surf); }
+  .biz .seg button { border: 0; background: none; padding: 7px 12px; border-radius: 999px; cursor: pointer; color: var(--mut); font: 600 13px var(--font); }
+  .biz .seg button[aria-pressed='true'] { background: var(--ink); color: var(--bg); }
   .biz .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
-  .biz .row input, .biz .row select, .biz textarea { flex: 1 1 180px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: inherit; font: inherit; }
+  .biz .row input, .biz .row select, .biz textarea { flex: 1 1 180px; min-width: 0; padding: 11px 13px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); color: inherit; font: 16px var(--font); }
+  .biz input:focus-visible, .biz select:focus-visible, .biz textarea:focus-visible { outline: none; border-color: var(--acc); box-shadow: 0 0 0 4px color-mix(in srgb, var(--acc) 25%, transparent); }
   .biz textarea { width: 100%; box-sizing: border-box; margin-top: 8px; }
-  .biz .kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .biz .kpi .card { display: grid; gap: 2px; }
-  .biz .kpi b { font-size: 28px; letter-spacing: -0.02em; }
-  .biz .bars { display: flex; align-items: flex-end; gap: 4px; height: 140px; overflow-x: auto; }
+  .biz .new { display: flex; gap: 20px; align-items: center; border: 2px dashed color-mix(in srgb, var(--acc) 55%, var(--line)); background: color-mix(in srgb, var(--acc) 5%, var(--surf)); }
+  .biz .new img { width: 110px; height: auto; flex: none; }
+  .biz .new-txt { flex: 1; min-width: 0; } .biz .new p { margin: 0 0 6px; }
+  .biz .kpi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .biz .kpi .card { display: grid; gap: 3px; align-content: start; }
+  .biz .k-ico { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; background: color-mix(in srgb, var(--acc) 16%, transparent); color: var(--accText); margin-bottom: 6px; }
+  .biz .kpi small { color: var(--mut); font-weight: 600; }
+  .biz .kpi b { font-size: clamp(26px, 3.4vw, 34px); letter-spacing: -0.03em; line-height: 1.1; }
+  .biz .bars { display: flex; align-items: flex-end; gap: 4px; height: 150px; overflow-x: auto; padding-top: 16px; }
   .biz .bar { flex: 1 0 18px; max-width: 56px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
-  .biz .bar i { display: block; width: 100%; background: color-mix(in srgb, var(--acc) 70%, transparent); border-radius: 6px 6px 2px 2px; }
+  .biz .bar i { display: block; width: 100%; background: linear-gradient(180deg, var(--acc), color-mix(in srgb, var(--acc) 45%, transparent)); border-radius: 8px 8px 3px 3px; transition: opacity .2s; }
+  .biz .bar:hover i { opacity: .8; }
   .biz .bar em { position: absolute; top: 0; font-style: normal; font-size: 11px; font-weight: 700; color: var(--accText, inherit); }
   .biz .bar small { font-size: 10px; color: var(--mut); margin-top: 4px; }
-  .biz .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .biz .grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
   .biz .lst { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-  .biz .lst li { position: relative; display: flex; justify-content: space-between; gap: 8px; padding: 4px 8px; font-size: 13px; z-index: 0; }
+  .biz .lst li { position: relative; display: flex; justify-content: space-between; gap: 8px; padding: 5px 9px; font-size: 13px; z-index: 0; }
   .biz .lst li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .biz .lst li i { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--acc) 16%, transparent); border-radius: 8px; z-index: -1; }
   .biz .tw { overflow-x: auto; }
   .biz table { width: 100%; border-collapse: collapse; min-width: 560px; }
-  .biz td { padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 14px; }
+  .biz td { padding: 12px 8px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 14px; }
   .biz td select { display: block; margin-bottom: 4px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: inherit; }
+  .biz details summary { cursor: pointer; color: var(--accText); font-weight: 600; font-size: 14px; margin-top: 10px; }
   .biz .team { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
-  .biz .team li { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
-  .biz code { flex: 1 1 260px; font-size: 12px; padding: 10px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); overflow-x: auto; white-space: nowrap; }
-  .biz .brief { border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); background: color-mix(in srgb, var(--acc) 10%, var(--surf)); }
-  .biz .brief p { margin: 0; white-space: pre-wrap; line-height: 1.5; }
-  .biz .ans { white-space: pre-wrap; line-height: 1.5; margin: 10px 0 0; }
-  .biz .cta { padding: 10px 16px; border-radius: 999px; border: 0; background: var(--acc); color: var(--dark-ink, #111); font-weight: 700; cursor: pointer; }
-  .biz .ghost { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: none; color: inherit; cursor: pointer; }
-  @media (max-width: 900px) { .biz .kpi, .biz .grid4 { grid-template-columns: repeat(2, 1fr); }  }
-  @media (max-width: 480px) { .biz .kpi, .biz .grid4 { grid-template-columns: 1fr; }  }
+  .biz .team li { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .biz code { flex: 1 1 260px; min-width: 0; font: 12px var(--mono); padding: 11px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); overflow-x: auto; white-space: nowrap; }
+  .biz .brief { position: relative; overflow: hidden; isolation: isolate; border: 0; background: var(--deep); color: var(--deepInk); }
+  .biz .brief::before { content: ''; position: absolute; width: 360px; height: 360px; right: -120px; top: -180px; background: radial-gradient(circle, color-mix(in srgb, var(--acc) 35%, transparent), transparent 62%); z-index: -1; }
+  .biz .brief h3 { color: var(--acc); }
+  .biz .brief p { margin: 0; white-space: pre-wrap; line-height: 1.55; }
+  .biz .ai { border-color: color-mix(in srgb, var(--acc) 35%, var(--line)); }
+  .biz .ai-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 4px color-mix(in srgb, var(--acc) 25%, transparent); }
+  .biz .ans { white-space: pre-wrap; line-height: 1.55; margin: 10px 0 0; } .biz .ans:empty { display: none; }
+  .biz .cta { padding: 11px 18px; border-radius: 999px; border: 0; background: var(--acc); color: var(--dark-ink, #111); font: 700 15px var(--font); cursor: pointer; transition: transform .2s; }
+  .biz .cta:hover { transform: translateY(-1px); }
+  .biz .ghost { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: none; color: inherit; cursor: pointer; font: 600 13px var(--font); }
+  @media (prefers-reduced-motion: no-preference) { .biz:not([hidden]) { animation: bizUp .6s cubic-bezier(.2,.8,.2,1) both; } }
+  @keyframes bizUp { from { opacity: 0; transform: translateY(14px); } }
+  @media (max-width: 900px) { .biz .kpi, .biz .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .biz .grid4 { grid-template-columns: 1fr; } .biz .new { flex-direction: column; align-items: flex-start; } .biz .new img { width: 80px; } .biz .kpi { gap: 8px; } }
 </style>

@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Aurelia HQ — your whole business on one screen · Vaxo demo</title>
+<meta name="description" content="Interactive demo of an owner app and CRM: chats from Instagram, WhatsApp, Telegram and the site in one inbox, deals kanban, calendar, marketing, money, team roles and an AI assistant. Built by Vaxo.">
+<meta name="theme-color" content="#0F0E0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0F0E0C;--s1:#181713;--s2:#22201B;--s3:#2c2922;--line:rgba(245,242,236,.08);--line2:rgba(245,242,236,.14);--ink:#F5F2EC;--mute:#ABA596;--acc:#E4A93F;--acct:#E8B65A;--on:#17150F;--ok:#62d39c;--bad:#ff8a78;--blue:#7fa8ff;--vio:#b49cff;--rose:#ff9db5;--glow:rgba(228,169,63,.16);--sh:0 1px 0 rgba(255,255,255,.04) inset,0 20px 50px -24px rgba(0,0,0,.7);--r:20px;--d:'Instrument Serif',Georgia,serif;--b:'Manrope',system-ui,-apple-system,sans-serif;--tab:64px}
+[data-theme=light]{--bg:#F5F2EC;--s1:#FFFDF9;--s2:#EFE9DE;--s3:#E5DDCF;--line:rgba(23,21,15,.09);--line2:rgba(23,21,15,.16);--ink:#17150F;--mute:#635C4F;--acct:#865800;--ok:#1d7f50;--bad:#b83a28;--blue:#2f5fc4;--vio:#6a4fc9;--rose:#b8406a;--glow:rgba(228,169,63,.22);--sh:0 1px 0 rgba(255,255,255,.7) inset,0 18px 40px -26px rgba(60,45,20,.35)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;color-scheme:dark}
+[data-theme=light]{color-scheme:light}
+body{background:var(--bg);color:var(--ink);font:500 15px/1.5 var(--b);overflow-x:clip;-webkit-font-smoothing:antialiased;min-height:100dvh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(900px 520px at 78% -8%,var(--glow),transparent 62%),radial-gradient(700px 500px at -10% 110%,rgba(180,120,40,.09),transparent 60%)}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+a{color:inherit}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:10px}
+.skip{position:absolute;left:-999px;top:0;z-index:99;background:var(--acc);color:var(--on);padding:8px 14px;border-radius:0 0 10px 0}
+.skip:focus{left:0}
+.num{font-variant-numeric:tabular-nums}
+/* strip */
+.strip{position:relative;z-index:5;background:#1b1712;color:#efe6d6;border-bottom:1px solid rgba(228,169,63,.25);font:600 13px/1.35 var(--b);text-align:center;padding:9px 16px}
+.strip a{color:#E8B65A;font-weight:800;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+/* shell */
+.app{position:relative;display:grid;grid-template-columns:252px minmax(0,1fr);min-height:calc(100dvh - 38px)}
+.side{position:sticky;top:0;height:100dvh;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:14px;padding:20px 16px 16px;border-right:1px solid var(--line);background:linear-gradient(180deg,color-mix(in srgb,var(--s1) 80%,transparent),color-mix(in srgb,var(--bg) 70%,transparent));backdrop-filter:blur(20px)}
+.brand{display:flex;align-items:center;gap:12px;padding:0 8px 6px}
+.mark{width:38px;height:38px;border-radius:12px;flex:none;background:radial-gradient(circle at 32% 28%,#ffe2a4,#E4A93F 45%,#7a4d10);box-shadow:0 8px 24px -8px rgba(228,169,63,.7),inset 0 -3px 6px rgba(0,0,0,.25);display:grid;place-items:center;color:#2a1c05;font:italic 22px/1 var(--d)}
+.brand b{display:block;font:400 22px/1 var(--d);letter-spacing:-.01em}
+.brand small{color:var(--mute);font-size:12px;font-weight:600}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:12px;color:var(--mute);font-weight:650;font-size:14.5px;text-align:left;transition:background .2s,color .2s}
+.nav button:hover{background:var(--s2);color:var(--ink)}
+.nav button[aria-current=page]{color:var(--ink);background:linear-gradient(90deg,rgba(228,169,63,.18),rgba(228,169,63,.03));box-shadow:inset 0 0 0 1px rgba(228,169,63,.22)}
+.nav button[aria-current=page]:before{content:"";position:absolute;left:-16px;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--acc);box-shadow:0 0 12px var(--acc)}
+.nav button[aria-current=page] svg{color:var(--acct)}
+.nav .cnt{margin-left:auto;font-size:11.5px;font-weight:800;min-width:22px;padding:2px 7px;border-radius:99px;background:var(--acc);color:var(--on);text-align:center}
+.nav .cnt.soft{background:var(--s3);color:var(--ink)}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.streakc{display:flex;align-items:center;gap:10px;padding:12px;border-radius:16px;background:var(--s2);border:1px solid var(--line)}
+.flame{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(160deg,#ffcf6b,#e0742c);color:#3a1600;flex:none;animation:flick 2.4s ease-in-out infinite}
+.flame svg{width:20px;height:20px;fill:currentColor;stroke:none}
+@keyframes flick{50%{transform:scale(1.07) rotate(-3deg)}}
+.streakc b{display:block;font-size:14px}
+.streakc small{color:var(--mute);font-size:12px;line-height:1.3;display:block}
+.morex{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;color:var(--mute);font-weight:700;font-size:13.5px;text-decoration:none;border:1px dashed var(--line2)}
+.morex:hover{color:var(--acct);border-color:var(--acc)}
+.byv{font-size:11.5px;color:var(--mute);padding:0 12px}
+.byv a{color:var(--acct);font-weight:700;text-decoration:none}
+/* top bar */
+.main{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:14px 28px;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid var(--line)}
+.mtitle{display:none;align-items:center;gap:10px;font:400 24px/1 var(--d);min-width:0}
+.mtitle .mark{width:30px;height:30px;font-size:17px;border-radius:10px}
+.search{flex:1;max-width:460px;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;background:var(--s1);border:1px solid var(--line);color:var(--mute);font-weight:600;font-size:14px;transition:border-color .2s,box-shadow .2s}
+.search:hover{border-color:rgba(228,169,63,.45);box-shadow:0 0 0 4px rgba(228,169,63,.08)}
+.search span[data-i]{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+kbd{font:700 11px var(--b);padding:3px 7px;border-radius:7px;background:var(--s3);color:var(--ink);border:1px solid var(--line2)}
+.tools{margin-left:auto;display:flex;align-items:center;gap:8px}
+.seg{display:flex;padding:3px;border-radius:99px;background:var(--s1);border:1px solid var(--line)}
+.seg button{font:800 11.5px var(--b);padding:6px 10px;border-radius:99px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.ib{position:relative;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--s1);border:1px solid var(--line);transition:transform .2s,border-color .2s}
+.ib:hover{border-color:var(--line2);transform:translateY(-1px)}
+.ib .dot{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:9px;background:var(--acc);color:var(--on);font:800 10.5px/18px var(--b);text-align:center;box-shadow:0 0 0 3px var(--bg);animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(0)}}
+.ava{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:400 20px var(--d);background:linear-gradient(140deg,#f3d6a0,#b67a2a);color:#2a1a04;flex:none}
+.bellw{position:relative}
+.drop{position:absolute;right:0;top:50px;width:340px;max-width:calc(100vw - 32px);padding:10px;border-radius:18px;background:var(--s1);border:1px solid var(--line2);box-shadow:0 30px 60px -20px rgba(0,0,0,.6);opacity:0;transform:translateY(-8px) scale(.98);pointer-events:none;transition:.22s cubic-bezier(.2,.8,.2,1);transform-origin:top right}
+.drop.on{opacity:1;transform:none;pointer-events:auto}
+.drop h4{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 10px;font-size:14px}
+.drop h4 button{font-size:12px;color:var(--acct);font-weight:800}
+.ni{display:flex;gap:10px;padding:10px 8px;border-radius:12px;font-size:13.5px;line-height:1.35}
+.ni:hover{background:var(--s2)}
+.ni i{width:8px;height:8px;border-radius:50%;background:var(--acc);margin-top:6px;flex:none}
+.ni.read i{background:transparent;box-shadow:inset 0 0 0 1.5px var(--line2)}
+.ni small{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+/* content */
+main{padding:28px 28px 40px;min-width:0;flex:1}
+.view{display:none}
+.view.on{display:block;animation:vin .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes vin{from{opacity:0;transform:translateY(10px)}}
+.vh{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.vh h1{font:400 clamp(34px,4vw,52px)/1 var(--d);letter-spacing:-.02em}
+.vh h1 em{color:var(--acct)}
+.vh p{color:var(--mute);margin-top:8px;font-weight:600}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:99px;font-size:12px;font-weight:800;background:var(--s2);border:1px solid var(--line);color:var(--mute);white-space:nowrap}
+.pill.gold{background:rgba(228,169,63,.14);border-color:rgba(228,169,63,.35);color:var(--acct)}
+.pill.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
+.pill.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent);border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
+.card{position:relative;min-width:0;border-radius:var(--r);padding:20px;background:linear-gradient(var(--s1),var(--s1)) padding-box,linear-gradient(160deg,rgba(232,182,90,.32),var(--line) 38%,var(--line)) border-box;border:1px solid transparent;box-shadow:var(--sh)}
+.card h3{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
+.card h3 small{color:var(--mute);font-weight:600;font-size:12.5px}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;font-weight:800;font-size:14px;transition:transform .2s,box-shadow .2s,background .2s}
+.btn.pri{background:linear-gradient(180deg,#f0bd5c,#E4A93F);color:var(--on);box-shadow:0 10px 26px -10px rgba(228,169,63,.8),inset 0 1px 0 rgba(255,255,255,.4)}
+.btn.pri:hover{transform:translateY(-1px)}
+.btn.gh{background:var(--s2);border:1px solid var(--line2)}
+.btn.gh:hover{border-color:var(--acc)}
+.btn svg{width:17px;height:17px}
+.g{display:grid;gap:18px}
+/* today */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:end;margin-bottom:22px}
+.hero h1{font:400 clamp(38px,5vw,64px)/.98 var(--d);letter-spacing:-.025em}
+.hero h1 em{color:var(--acct);font-style:italic}
+.hero p{color:var(--mute);margin-top:10px;font-weight:600}
+.hero .date{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--acct);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.hero .date:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 20%,transparent);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px transparent}}
+.goal{display:flex;align-items:center;gap:14px;padding:12px 18px 12px 12px;border-radius:22px;background:var(--s1);border:1px solid var(--line);box-shadow:var(--sh)}
+.ring{position:relative;width:74px;height:74px;flex:none}
+.ring svg{width:74px;height:74px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8}
+.ring .tr{stroke:var(--s3)}
+.ring .pr{stroke:url(#gg);stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:16px;font-weight:800}
+.goal strong{display:block;font-size:14px}
+.goal small{display:block;color:var(--mute);font-size:12.5px;font-weight:600}
+.goal .st{margin-top:6px;display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;color:#ffb35c}
+[data-theme=light] .goal .st,[data-theme=light] .deal .hot{color:#b1520f}
+.goal .st svg{width:14px;height:14px;fill:currentColor;stroke:none}
+.tgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}
+.plan{grid-column:span 5;background:linear-gradient(var(--s1),var(--s1)) padding-box,linear-gradient(150deg,rgba(232,182,90,.7),rgba(232,182,90,.08) 50%,var(--line)) border-box;overflow:hidden}
+.plan:after{content:"";position:absolute;right:-80px;top:-80px;width:220px;height:220px;border-radius:50%;background:radial-gradient(var(--glow),transparent 70%);pointer-events:none}
+.aibadge{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--acct)}
+.aibadge svg{width:15px;height:15px}
+.task{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:12px;border-radius:14px;margin-top:8px;background:var(--s2);border:1px solid var(--line);transition:background .25s,transform .2s}
+.task:hover{transform:translateX(3px)}
+.cb{width:22px;height:22px;border-radius:7px;border:2px solid var(--line2);flex:none;display:grid;place-items:center;transition:.3s cubic-bezier(.3,1.5,.5,1);margin-top:1px}
+.cb svg{width:14px;height:14px;stroke:var(--on);stroke-width:3;fill:none;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .35s .1s}
+.task[aria-checked=true] .cb{background:var(--acc);border-color:var(--acc);transform:scale(1.1)}
+.task[aria-checked=true] .cb svg{stroke-dashoffset:0}
+.task span{font-weight:650;font-size:14px;line-height:1.4}
+.task small{display:block;color:var(--mute);font-weight:600;font-size:12.5px;margin-top:2px}
+.task[aria-checked=true] span>b{text-decoration:line-through;text-decoration-color:var(--acc);color:var(--mute)}
+.task b{font-weight:700}
+.prog{height:6px;border-radius:6px;background:var(--s3);margin-top:16px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c98a26,#ffd27a);border-radius:6px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.kpis{grid-column:span 7;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.kpi{padding:18px 18px 12px;overflow:hidden;transition:transform .3s}
+.kpi:hover{transform:translateY(-3px)}
+.kpi .lb{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--mute);font-size:13px;font-weight:700}
+.kpi .v{font:800 clamp(26px,2.6vw,34px)/1.1 var(--b);letter-spacing:-.03em;margin:8px 0 2px}
+.dl{font-size:12px;font-weight:800}
+.dl.up{color:var(--ok)}
+.kpi svg.sp{width:100%;height:46px;display:block;margin-top:6px;overflow:visible}
+.sp .ln{fill:none;stroke:var(--acc);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.6s .2s cubic-bezier(.2,.8,.2,1) forwards}
+.sp .ar{opacity:0;animation:fade .8s .9s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fade{to{opacity:1}}
+.demo{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);border:1px dashed var(--line2);padding:3px 8px;border-radius:99px}
+.feed{grid-column:span 7}
+.fi{display:flex;gap:12px;align-items:center;padding:11px 4px;border-top:1px solid var(--line)}
+.fi:first-of-type{border-top:0}
+.fi.new{animation:slin .6s cubic-bezier(.2,.8,.2,1)}
+@keyframes slin{from{opacity:0;transform:translateY(-12px);background:rgba(228,169,63,.12)}}
+.fic{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex:none;background:var(--s2);color:var(--acct)}
+.fic svg{width:17px;height:17px}
+.fi p{flex:1;font-size:14px;font-weight:600;line-height:1.35;min-width:0}
+.fi time{color:var(--mute);font-size:12px;font-weight:700;white-space:nowrap}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--ok)}
+.live:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 1.6s infinite}
+.next{grid-column:span 5}
+.bk{display:flex;gap:12px;align-items:center;padding:10px;border-radius:14px;margin-top:8px;background:var(--s2)}
+.bk time{font-weight:800;font-size:14px;width:48px}
+.bk i{width:4px;align-self:stretch;border-radius:4px}
+.bk p{font-weight:700;font-size:14px;line-height:1.3}
+.bk small{display:block;color:var(--mute);font-weight:600;font-size:12.5px}
+/* inbox */
+.inbox{display:grid;grid-template-columns:330px minmax(0,1fr);height:calc(100dvh - 210px);min-height:520px;padding:0;overflow:hidden}
+.ilist{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.filt{display:flex;gap:6px;padding:14px;overflow-x:auto;scrollbar-width:none;flex:none}
+.filt button{padding:6px 11px;border-radius:99px;font-size:12.5px;font-weight:800;color:var(--mute);background:var(--s2);white-space:nowrap}
+.filt button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.chats{overflow-y:auto;flex:1;padding:0 8px 8px}
+.ci{display:flex;gap:12px;width:100%;text-align:left;padding:12px 10px;border-radius:14px;transition:background .2s;align-items:flex-start}
+.ci:hover{background:var(--s2)}
+.ci[aria-selected=true]{background:linear-gradient(90deg,rgba(228,169,63,.14),transparent);box-shadow:inset 0 0 0 1px rgba(228,169,63,.2)}
+.av{position:relative;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;flex:none;color:#1a1408}
+.chb{position:absolute;right:-3px;bottom:-3px;width:19px;height:19px;border-radius:7px;display:grid;place-items:center;font:900 8.5px/1 var(--b);color:#fff;box-shadow:0 0 0 2.5px var(--s1);letter-spacing:-.02em}
+.ch-ig{background:linear-gradient(45deg,#f9a14a,#e1306c 50%,#8a3ab9)}
+.ch-wa{background:#22b35e}
+.ch-tg{background:#2aa1da}
+.ch-web{background:#E4A93F;color:#17150F!important}
+.ci .tx{flex:1;min-width:0;display:block}
+.ci .r1{display:flex;justify-content:space-between;gap:8px;font-weight:800;font-size:14px}
+.ci .r1 time{font-size:11.5px;color:var(--mute);font-weight:700}
+.ci .pv{display:block;color:var(--mute);font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.ci.unr .pv{color:var(--ink)}
+.ci .ud{width:9px;height:9px;border-radius:50%;background:var(--acc);margin-top:6px;flex:none;box-shadow:0 0 10px var(--acc)}
+.thread{display:flex;flex-direction:column;min-height:0;min-width:0}
+.th{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);flex:none}
+.th b{display:block;font-size:15px}
+.th small{color:var(--mute);font-size:12.5px;font-weight:600}
+.th .back{display:none}
+.msgs{flex:1;overflow-y:auto;padding:20px 18px;display:flex;flex-direction:column;gap:10px;background:radial-gradient(500px 300px at 80% 0,rgba(228,169,63,.05),transparent)}
+.m{max-width:min(78%,520px);padding:11px 14px;border-radius:18px;font-size:14.5px;line-height:1.45;font-weight:550;animation:bub .4s cubic-bezier(.3,1.4,.5,1)}
+@keyframes bub{from{opacity:0;transform:translateY(8px) scale(.96)}}
+.m.c{background:var(--s2);border-bottom-left-radius:6px;align-self:flex-start}
+.m.ai,.m.me{align-self:flex-end;border-bottom-right-radius:6px;background:linear-gradient(160deg,#f2c46c,#E4A93F);color:#17150F}
+.m.me{background:var(--ink);color:var(--bg)}
+.aim{align-self:flex-end;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:var(--acct);letter-spacing:.04em;text-transform:uppercase;margin:-4px 4px 0}
+.aim svg{width:13px;height:13px}
+.typing{align-self:flex-start;display:flex;gap:4px;padding:14px;border-radius:18px;background:var(--s2)}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--mute);animation:ty 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes ty{30%{transform:translateY(-5px);opacity:.5}}
+.reply{flex:none;padding:12px 14px 14px;border-top:1px solid var(--line);background:var(--s1)}
+.reply .rb{display:flex;gap:8px;align-items:flex-end;background:var(--s2);border:1px solid var(--line2);border-radius:16px;padding:6px 6px 6px 14px;transition:border-color .2s,box-shadow .2s}
+.reply .rb:focus-within{border-color:var(--acc);box-shadow:0 0 0 4px rgba(228,169,63,.12)}
+.reply textarea{scrollbar-width:thin;flex:1;border:0;background:none;resize:none;outline:0;font-size:14.5px;font-weight:550;line-height:1.45;padding:7px 0;max-height:120px;min-width:0}
+.reply textarea::placeholder{color:var(--mute)}
+.sug{display:inline-flex;align-items:center;gap:6px;padding:9px 12px;border-radius:12px;font-size:13px;font-weight:800;color:var(--acct);background:rgba(228,169,63,.12);white-space:nowrap}
+.sug:hover{background:rgba(228,169,63,.22)}
+.sug svg{width:16px;height:16px}
+.snd{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--acc);color:var(--on);flex:none}
+.snd svg{width:18px;height:18px}
+.rnote{font-size:12px;color:var(--mute);font-weight:600;margin-top:8px;display:flex;align-items:center;gap:6px}
+.rnote svg{width:14px;height:14px;color:var(--acct)}
+/* deals */
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:start}
+.col{border-radius:20px;padding:12px;background:color-mix(in srgb,var(--s1) 70%,transparent);border:1px solid var(--line);min-height:240px;transition:background .2s,border-color .2s,box-shadow .2s}
+.col.over{border-color:var(--acc);background:rgba(228,169,63,.07);box-shadow:0 0 0 4px rgba(228,169,63,.08)}
+.colh{display:flex;align-items:center;justify-content:space-between;padding:4px 6px 12px;gap:8px}
+.colh b{display:flex;align-items:center;gap:8px;font-size:14px}
+.colh b i{width:9px;height:9px;border-radius:50%}
+.colh .tot{font-weight:800;font-size:13px;color:var(--mute)}
+.colh .tot.bump{animation:bump .5s}
+@keyframes bump{40%{transform:scale(1.18);color:var(--acct)}}
+.cards{display:flex;flex-direction:column;gap:10px;min-height:120px}
+.deal{position:relative;padding:14px;border-radius:16px;background:var(--s2);border:1px solid var(--line);cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .2s,box-shadow .2s,opacity .2s}
+.deal:hover{transform:translateY(-2px);box-shadow:0 14px 30px -18px rgba(0,0,0,.7);border-color:var(--line2)}
+.deal.ph{opacity:.25;border-style:dashed}
+.deal.lift{transform:scale(1.03);box-shadow:0 0 0 2px var(--acc)}
+.deal.ghost{position:fixed;z-index:80;margin:0;pointer-events:none;cursor:grabbing;box-shadow:0 30px 60px -16px rgba(0,0,0,.7),0 0 0 1.5px var(--acc);transition:none;rotate:2.5deg;scale:1.03}
+.deal .dt{font-weight:800;font-size:14px;line-height:1.3}
+.deal .dm{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
+.deal .dv{font-weight:800;font-size:15px;color:var(--acct)}
+.deal .dw{display:flex;align-items:center;gap:7px;color:var(--mute);font-size:12.5px;font-weight:700;min-width:0}
+.deal .dw .av{width:24px;height:24px;font-size:10px}
+.deal .tg{font-size:11px;font-weight:800;color:var(--mute);margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}
+.deal .hot{color:#ffb35c}
+.hint{font-size:12.5px;color:var(--mute);font-weight:600}
+/* calendar */
+.days{display:none;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:12px}
+.days button{flex:1;min-width:44px;padding:8px 4px;border-radius:14px;background:var(--s1);border:1px solid var(--line);font-weight:800;font-size:12px;color:var(--mute);line-height:1.2}
+.days button b{display:block;font-size:17px;color:var(--ink)}
+.days button[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:var(--on)}
+.days button[aria-pressed=true] b{color:var(--on)}
+.wk{--h:54px;display:grid;grid-template-columns:52px repeat(7,minmax(0,1fr));padding:0;overflow:hidden}
+.wk .hd{position:sticky;top:0;padding:12px 6px;text-align:center;font-size:12px;font-weight:800;color:var(--mute);border-bottom:1px solid var(--line);border-left:1px solid var(--line);background:var(--s1)}
+.wk .hd b{display:block;font-size:20px;color:var(--ink);font-weight:800}
+.wk .hd.td b{display:grid;margin:2px auto 0;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--acc);color:var(--on)}
+.wk .hd.c0{border-left:0}
+.tcol{position:relative}
+.tcol span{display:block;height:var(--h);font-size:11px;font-weight:700;color:var(--mute);text-align:right;padding-right:8px;transform:translateY(-7px)}
+.dcol{position:relative;border-left:1px solid var(--line);background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--h) - 1px),var(--line) calc(var(--h) - 1px),var(--line) var(--h))}
+.dcol.td{background-color:rgba(228,169,63,.035)}
+.ev{position:absolute;left:4px;right:4px;border-radius:10px;padding:6px 8px;font-size:12px;font-weight:700;line-height:1.25;overflow:hidden;text-align:left;border-left:3px solid;transition:transform .2s,box-shadow .2s;animation:evin .5s cubic-bezier(.2,.8,.2,1) backwards}
+.ev:hover{transform:scale(1.03);z-index:2;box-shadow:0 12px 24px -12px rgba(0,0,0,.6)}
+.ev b{display:block;font-weight:800}
+.ev small{opacity:.8;font-weight:700}
+@keyframes evin{from{opacity:0;transform:translateY(6px)}}
+.nowl{position:absolute;left:0;right:0;height:2px;background:var(--bad);z-index:3}
+.nowl:before{content:"";position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--bad)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;font-weight:700;color:var(--mute)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px}
+/* marketing */
+.mg{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px}
+.posts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.post{border-radius:16px;overflow:hidden;background:var(--s2);border:1px solid var(--line);transition:transform .25s}
+.post:hover{transform:translateY(-4px) rotate(-.5deg)}
+.pimg{position:relative;aspect-ratio:4/5;display:flex;align-items:flex-end;padding:12px;color:#fff;font:italic 400 21px/1.05 var(--d);text-shadow:0 2px 12px rgba(0,0,0,.4)}
+.pimg .chb{position:absolute;top:10px;left:10px;right:auto;bottom:auto;box-shadow:none;width:24px;height:24px;font-size:9.5px}
+.pimg .pd{position:absolute;top:10px;right:10px;font:800 11px var(--b);background:rgba(0,0,0,.45);backdrop-filter:blur(6px);padding:4px 8px;border-radius:99px;font-style:normal;text-shadow:none}
+.post .pm{padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--mute)}
+.chart{width:100%;display:block;overflow:visible}
+.chart text{fill:var(--mute);font:700 11px var(--b)}
+.chart .vl{fill:var(--ink);font-weight:800}
+.bar{transform-box:fill-box;transform-origin:bottom;animation:grow 1s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes grow{from{transform:scaleY(0)}}
+.chn{display:grid;grid-template-columns:92px 1fr auto;gap:10px;align-items:center;margin-top:12px;font-size:13px;font-weight:700}
+.chn .tr{height:10px;border-radius:6px;background:var(--s3);overflow:hidden}
+.chn .tr i{display:block;height:100%;border-radius:6px;transform-origin:left;animation:grx 1.1s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes grx{from{transform:scaleX(0)}}
+.chn em{font-style:normal;color:var(--mute);font-size:12px}
+.tip{margin-top:16px;padding:12px 14px;border-radius:14px;background:rgba(228,169,63,.1);border:1px solid rgba(228,169,63,.3);font-size:13.5px;font-weight:600;display:flex;gap:10px;align-items:flex-start}
+.tip svg{color:var(--acct);margin-top:1px}
+.stats3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.stats3 div{padding:12px;border-radius:14px;background:var(--s2)}
+.stats3 small{display:block;color:var(--mute);font-size:12px;font-weight:700}
+.stats3 b{font-size:20px;font-weight:800;letter-spacing:-.02em}
+/* money */
+.mtop{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:18px}
+.mt .v{font:800 30px/1.1 var(--b);letter-spacing:-.03em;margin-top:6px}
+.mt small{color:var(--mute);font-weight:700;font-size:13px}
+.mg2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:18px}
+.inv{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--line)}
+.inv:first-of-type{border-top:0}
+.inv .nm{flex:1;min-width:0}
+.inv .nm b{display:block;font-size:14px}
+.inv .nm small{color:var(--mute);font-size:12.5px;font-weight:600}
+.inv .am{font-weight:800;font-size:15px;white-space:nowrap}
+.inv .btn{padding:7px 11px;font-size:12.5px;border-radius:10px}
+/* team */
+.tg2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px}
+.mem{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--line)}
+.mem:first-of-type{border-top:0}
+.mem .nm{flex:1;min-width:0}
+.mem b{display:block;font-size:14.5px}
+.mem small{color:var(--mute);font-size:12.5px;font-weight:600}
+.role{font-size:11.5px;font-weight:800;padding:4px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em}
+.role.owner{background:var(--acc);color:var(--on)}
+.role.manager{background:color-mix(in srgb,var(--blue) 18%,transparent);color:var(--blue)}
+.role.viewer{background:var(--s3);color:var(--mute)}
+.mx{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px;margin-top:6px}
+.mx th,.mx td{padding:11px 8px;text-align:center;border-top:1px solid var(--line)}
+.mx th:first-child,.mx td:first-child{text-align:left;font-weight:700}
+.mx thead th{border-top:0;font-size:12px;color:var(--mute);font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+.mx td.hl,.mx th.hl{background:rgba(228,169,63,.09)}
+.mx thead th.hl{color:var(--acct);border-radius:12px 12px 0 0}
+.lv{display:inline-block;font-size:12px;font-weight:800;padding:3px 8px;border-radius:8px}
+.lv.f{color:var(--ok);background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.lv.e{color:var(--blue);background:color-mix(in srgb,var(--blue) 13%,transparent)}
+.lv.v{color:var(--mute);background:var(--s2)}
+.lv.n{color:var(--mute);opacity:.6}
+.rsum{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--s2);font-size:13.5px;font-weight:600;min-height:48px}
+.lb2{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:13.5px;font-weight:700}
+.lb2 .tr{flex:1;height:8px;border-radius:6px;background:var(--s3);overflow:hidden}
+.lb2 .tr i{display:block;height:100%;background:linear-gradient(90deg,#c98a26,#ffd27a);border-radius:6px;transform-origin:left;animation:grx 1.2s cubic-bezier(.2,.8,.2,1) backwards}
+.medal{width:24px;text-align:center}
+/* ai */
+.aiw{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px}
+.aibox{display:flex;flex-direction:column;height:calc(100dvh - 230px);min-height:480px;padding:0;overflow:hidden}
+.aimsgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+.aimsgs .m.c{align-self:flex-end;background:var(--ink);color:var(--bg);border-bottom-left-radius:18px;border-bottom-right-radius:6px}
+.aimsgs .m.a{align-self:flex-start;background:var(--s2);border:1px solid rgba(228,169,63,.25);border-bottom-left-radius:6px;max-width:min(88%,600px)}
+.aimsgs .m.a b{color:var(--acct)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 12px}
+.chips button{padding:8px 12px;border-radius:99px;font-size:13px;font-weight:700;background:var(--s2);border:1px solid var(--line2);transition:border-color .2s,transform .2s}
+.chips button:hover{border-color:var(--acc);transform:translateY(-1px)}
+.orb{width:84px;height:84px;border-radius:50%;margin:6px auto 16px;background:radial-gradient(circle at 35% 30%,#fff3cf,#E4A93F 40%,#6b3f08 80%);box-shadow:0 0 50px rgba(228,169,63,.45),inset 0 -8px 20px rgba(0,0,0,.3);animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.06);box-shadow:0 0 80px rgba(228,169,63,.6),inset 0 -8px 20px rgba(0,0,0,.3)}}
+.aside p{color:var(--mute);font-size:13.5px;font-weight:600;text-align:center}
+.aside ul{list-style:none;margin-top:16px;display:grid;gap:8px}
+.aside li{display:flex;gap:10px;align-items:center;font-size:13.5px;font-weight:700;padding:10px 12px;border-radius:12px;background:var(--s2)}
+.aside li svg{color:var(--acct);width:17px;height:17px}
+/* footer */
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:20px 28px 28px;color:var(--mute);font-size:13px;font-weight:600;border-top:1px solid var(--line)}
+.foot a{color:var(--acct);font-weight:800;text-decoration:none}
+/* palette */
+.ov{position:fixed;inset:0;z-index:90;background:rgba(8,7,5,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:12vh 16px 16px}
+.ov.on{display:flex;animation:fade .2s forwards;opacity:0}
+.palb{width:min(600px,100%);border-radius:22px;background:var(--s1);border:1px solid var(--line2);box-shadow:0 40px 100px -20px rgba(0,0,0,.8);overflow:hidden;animation:vin .3s cubic-bezier(.2,.8,.2,1)}
+.pali{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.pali input{flex:1;border:0;background:none;outline:0;font-size:17px;font-weight:600;min-width:0}
+.pall{max-height:min(380px,50vh);overflow-y:auto;padding:8px;list-style:none}
+.pall li{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;font-weight:650;font-size:14.5px;cursor:pointer}
+.pall li[aria-selected=true]{background:rgba(228,169,63,.14);color:var(--acct)}
+.pall li small{margin-left:auto;color:var(--mute);font-size:12px;font-weight:700}
+.pall .empty{color:var(--mute);justify-content:center;cursor:default}
+/* sheet + tabbar */
+.tabbar{display:none}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:70;padding:10px 16px calc(var(--tab) + 18px + env(safe-area-inset-bottom));border-radius:26px 26px 0 0;background:var(--s1);border-top:1px solid var(--line2);box-shadow:0 -30px 60px -20px rgba(0,0,0,.6);transform:translateY(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.sheet.on{transform:none}
+.sheet .grab{width:40px;height:5px;border-radius:5px;background:var(--line2);margin:0 auto 14px}
+.sgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sgrid button{display:flex;align-items:center;gap:10px;padding:16px 14px;border-radius:16px;background:var(--s2);font-weight:800;font-size:14.5px}
+.sgrid button svg{color:var(--acct)}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px}
+.shade{position:fixed;inset:0;z-index:65;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .3s}
+.shade.on{opacity:1;pointer-events:auto}
+/* toasts */
+.toasts{position:fixed;z-index:95;right:20px;bottom:20px;display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:14px;background:var(--ink);color:var(--bg);font-weight:700;font-size:14px;box-shadow:0 20px 40px -14px rgba(0,0,0,.6);animation:tin .45s cubic-bezier(.3,1.4,.5,1)}
+.toast svg{color:var(--acc)}
+.toast.out{opacity:0;transform:translateY(8px);transition:.3s}
+@keyframes tin{from{opacity:0;transform:translateY(16px) scale(.95)}}
+.cf{position:fixed;z-index:96;width:8px;height:12px;border-radius:2px;pointer-events:none}
+/* responsive */
+@media (max-width:1180px){.plan,.kpis,.feed,.next{grid-column:span 12}.mg,.mg2,.tg2,.aiw{grid-template-columns:minmax(0,1fr)}.aiw .aside{display:none}.inbox{grid-template-columns:280px minmax(0,1fr)}}
+@media (max-width:980px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:820px){
+ .app{grid-template-columns:minmax(0,1fr)}
+ .side{display:none}
+ .top{padding:10px 16px;gap:8px}
+ .mtitle{display:flex}
+ .search{flex:0 0 40px;width:40px;height:40px;padding:0;justify-content:center;margin-left:auto;border-radius:12px}
+ .search span[data-i],.search kbd,.tools .seg,#themeBtn,.tools .ava{display:none}
+ .tools{margin-left:0}
+ main{padding:18px 16px calc(var(--tab) + 30px + env(safe-area-inset-bottom))}
+ .foot{padding:16px 16px calc(var(--tab) + 28px + env(safe-area-inset-bottom));display:block}
+ .foot>*{display:block;margin-top:6px}
+ .hero{grid-template-columns:minmax(0,1fr)}
+ .goal{justify-self:start;width:100%}
+ .tgrid,.g{gap:14px}
+ .kpis{gap:12px}
+ .kpi{padding:14px 14px 10px}
+ .kpi .lb{font-size:12px}
+ .kpi .lb .dl{display:none}
+ .card{padding:16px;border-radius:18px}
+ .vh{margin-bottom:16px}
+ .inbox{grid-template-columns:minmax(0,1fr);height:auto;min-height:0;overflow:visible;background:none;border:0;box-shadow:none}
+ .ilist{border-right:0}
+ .filt{padding:0 0 12px}
+ .chats{padding:0;overflow:visible}
+ .thread{display:none}
+ .inbox.open .ilist{display:none}
+ .inbox.open .thread{display:flex;position:fixed;inset:0;z-index:60;background:var(--bg);padding-bottom:0}
+ .inbox.open .th{padding-top:calc(12px + env(safe-area-inset-top))}
+ .th .back{display:grid}
+ body:has(.inbox.open) .tabbar{display:none}
+ .sug span{display:none}
+ .sug{padding:9px}
+ .reply textarea{font-size:16px}
+ .reply{padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+ .board{grid-template-columns:minmax(0,1fr)}
+ .col{min-height:0}
+ .cards{min-height:60px}
+ .days{display:flex}
+ .wk{grid-template-columns:44px minmax(0,1fr)}
+ .wk .hd{display:none}
+ .wk .dcol{display:none}
+ .wk .dcol.sel{display:block;border-left:0}
+ .mtop{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mtop .mt:first-child{grid-column:span 2}
+ .mt .v{font-size:26px}
+ .posts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .aibox{height:calc(100dvh - 250px - var(--tab))}
+ .tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:75;height:var(--tab);border-radius:22px;background:color-mix(in srgb,var(--s1) 82%,transparent);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--line2);box-shadow:0 20px 40px -12px rgba(0,0,0,.6)}
+ .tabbar button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;font-weight:800;color:var(--mute);-webkit-tap-highlight-color:transparent}
+ .tabbar button[aria-current=page]{color:var(--acct)}
+ .tabbar button[aria-current=page]:before{content:"";position:absolute;top:7px;width:44px;height:30px;border-radius:12px;background:rgba(228,169,63,.14);z-index:-1;animation:pop .35s cubic-bezier(.3,1.5,.5,1)}
+ .tabbar .cnt{position:absolute;top:6px;left:calc(50% + 6px);min-width:17px;height:17px;border-radius:9px;background:var(--acc);color:var(--on);font-size:10px;line-height:17px;text-align:center;padding:0 4px}
+ .toasts{left:16px;right:16px;bottom:calc(var(--tab) + 22px + env(safe-area-inset-bottom));align-items:center}
+ .ov{padding-top:70px}
+ .drop{position:fixed;left:16px;right:16px;top:64px;width:auto;max-width:none}
+}
+@media (max-width:560px){.inv{flex-wrap:wrap;row-gap:8px}.inv .nm{flex:1 1 calc(100% - 60px)}.inv>.pill{margin-left:54px}.inv .am{margin-left:auto}}
+@media (max-width:420px){.stats3 b{font-size:17px}.chn{grid-template-columns:76px 1fr auto}.posts{gap:10px}.pimg{font-size:18px}}
+@media (min-width:821px){.sheet,.shade{display:none}}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.sp .ln{stroke-dashoffset:0}.sp .ar{opacity:1}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-i="skip">Skip to content</a>
+<div class="strip"><span data-i="strip">Demo by Vaxo — the business is fictional, the functions are real</span> · <a href="/?vax=demo-crm" data-i="stripCta">Want this for you? →</a></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c98a26"/></linearGradient><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4A93F" stop-opacity=".35"/><stop offset="1" stop-color="#E4A93F" stop-opacity="0"/></linearGradient></defs></svg>
+<div class="app">
+ <aside class="side" aria-label="Sidebar">
+  <div class="brand"><span class="mark">A</span><div><b>Aurelia</b><small data-i="ws">Skin Studio · Pro</small></div></div>
+  <nav class="nav" id="nav" aria-label="Main"></nav>
+  <div class="side-foot">
+   <div class="streakc"><span class="flame" id="flame1"></span><div><b class="num" id="streakTxt"></b><small data-i="streak_s"></small></div></div>
+   <a class="morex" href="/examples/"><span data-i="more_ex">More examples</span><span>→</span></a>
+   <div class="byv"><span data-i="built">Built by</span> <a href="/?vax=demo-crm">Vaxo</a></div>
+  </div>
+ </aside>
+ <div class="main">
+  <header class="top">
+   <div class="mtitle"><span class="mark">A</span><span id="mTitle">Aurelia</span></div>
+   <button class="search" id="openPal" aria-label="Search"><span id="sIco"></span><span data-i="search_ph">Search or jump to…</span><kbd>⌘K</kbd></button>
+   <div class="tools">
+    <div class="seg" id="langSeg" role="group" aria-label="Language"></div>
+    <button class="ib" id="themeBtn" aria-label="Toggle theme"></button>
+    <div class="bellw"><button class="ib" id="bell" aria-label="Notifications" aria-expanded="false"></button><div class="drop" id="notif" role="dialog" aria-label="Notifications"></div></div>
+    <span class="ava" aria-hidden="true">M</span>
+   </div>
+  </header>
+  <main id="main" tabindex="-1">
+   <section class="view" id="v-today"></section>
+   <section class="view" id="v-inbox"></section>
+   <section class="view" id="v-deals"></section>
+   <section class="view" id="v-cal"></section>
+   <section class="view" id="v-mkt"></section>
+   <section class="view" id="v-money"></section>
+   <section class="view" id="v-team"></section>
+   <section class="view" id="v-ai"></section>
+  </main>
+  <footer class="foot"><span data-i="foot">Aurelia HQ is a fictional demo. Built by Vaxo — sites, apps, CRM and AI for business.</span><a href="/examples/" data-i="more_ex2">More examples →</a></footer>
+ </div>
+</div>
+<nav class="tabbar" id="tabbar" aria-label="Tabs"></nav>
+<div class="shade" id="shade"></div>
+<div class="sheet" id="sheet" role="dialog" aria-label="More"></div>
+<div class="ov" id="pal" role="dialog" aria-modal="true" aria-label="Command palette"><div class="palb"><div class="pali"><span id="pIco"></span><input id="palIn" autocomplete="off" aria-label="Command"><kbd>Esc</kbd></div><ul class="pall" id="palL" role="listbox"></ul></div></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script>
+(()=>{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const P={today:'M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',inbox:'M3 13h5l1.5 3h5l1.5-3h5M5 5h14l2 8v6H3v-6z',deals:'M4 4h4v16H4zM10 4h4v11h-4zM16 4h4v7h-4z',cal:'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4',mkt:'M3 10v4l11 5V5zM14 9h3a3 3 0 0 1 0 6h-3M6 15l1.5 5h3',money:'M3 6h18v12H3zM12 9.5a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5M6.5 10v4M17.5 10v4',team:'M9 11a3.5 3.5 0 1 0 0-7a3.5 3.5 0 1 0 0 7M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14.5c2.2.7 3.5 2.7 3.5 5.5',ai:'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z',search:'M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4-4',bell:'M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21a2 2 0 0 0 4 0',moon:'M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z',sun:'M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',more:'M5 12h.01M12 12h.01M19 12h.01',send:'M4 12l16-8-6 16-2.5-6.5z',back:'M15 5l-7 7 7 7',check:'M5 12.5l4.5 4.5L19 7',flame:'M12 2c1 4.5 6 6 6 12a6 6 0 0 1-12 0c0-3.5 2.2-5 2.5-8 1.6 1.2 2.6 2.6 3 4 .8-2.4.8-5 .5-8z',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',bolt:'M13 2L4 14h7l-1 8 9-12h-7z',globe:'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',arrow:'M5 12h14M13 6l6 6-6 6',chat:'M4 5h16v11H9l-5 4z',lock:'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3',eye:'M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12zM12 9.5a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5'};
+const I=(n,c='i')=>`<svg class="${c}" viewBox="0 0 24 24" aria-hidden="true"${n=='more'?' style="stroke-width:3.2"':''}><path d="${P[n]}"/></svg>`;
+const FL=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${P.flame}"/></svg>`;
+
+/* ---------- i18n ---------- */
+const T={
+en:{lt:'Light',dk:'Dark',hot:'hot',skip:'Skip to content',strip:'Demo by Vaxo — the business is fictional, the functions are real',stripCta:'Want this for you? →',ws:'Skin Studio · Pro',today:'Today',inbox:'Inbox',deals:'Clients & deals',cal:'Calendar',mkt:'Marketing',money:'Money',team:'Team',ai:'AI assistant',more:'More',more_ex:'More examples',more_ex2:'More examples →',built:'Built by',foot:'Aurelia HQ is a fictional demo. Built by Vaxo — sites, apps, CRM and AI for business.',search_ph:'Search or jump to…',
+gm:'Good morning',ga:'Good afternoon',ge:'Good evening',tsub:'Everything about your business — on one screen.',plan:'AI morning plan',plan_s:'3 things that matter most today',plan_ok:'Plan done — streak +1 day!',t1:'Reply to 2 hot leads from Instagram',t1s:'AI already drafted both answers',t2:'Confirm tomorrow’s 4 bookings',t2s:'Reminders are ready to send',t3:'Chase invoice #1042 — $420',t3s:'Kate M. · 6 days late',demo:'demo numbers',kreq:'Requests',kbook:'Bookings',krev:'Revenue',kcpr:'Cost per request',k30:'last 30 days',feed:'Live activity',live:'Live',nextt:'Today’s bookings',open_cal:'Calendar',goal:'Team goal this week',goal_s:'{a} of {b} bookings',streak:'{n}-day streak',streak_s:'AI plan finished every day',now:'now',min:'min',
+ib_s:'Instagram, WhatsApp, Telegram and the site — one inbox',all:'All',site:'Site',ai_rep:'AI replied',ai_sug:'AI suggest',send:'Send',reply_ph:'Write a reply…',r_note:'AI answers 24/7 · average reply 9 sec',sent:'Message sent',back:'Back',online:'online',
+d_s:'Drag cards between stages — on a phone, hold and drag',s_new:'New',s_talk:'Talking',s_prop:'Proposal',s_won:'Won',won:'Deal won: {x}',moved:'Moved to “{x}”',pipe:'Pipeline',
+c_s:'This week · {n} bookings',
+m_s:'Posts planned this week and what ads brought in',posts:'Posts this week',pub:'Published',sch:'Scheduled',ads:'Ad results · 30 days',spend:'Spend',leads:'Requests',cpl:'Per request',wk:'Week',ads_tip:'Instagram brings requests 2× cheaper than TikTok. AI suggests moving $50/week there.',
+mo_s:'Invoices, payments and the month at a glance',paid:'Paid this month',unpaid:'Unpaid',overdue:'Overdue',inv:'Invoices',remind:'Remind',reminded:'Reminder sent to {x}',revm:'Revenue by month',st_paid:'Paid',st_unp:'Due in {n} days',st_late:'{n} days late',
+te_s:'Roles decide who sees what',members:'People',owner:'Owner',manager:'Manager',viewer:'Viewer',access:'Who sees what',as:'Preview as',lb:'Bookings this week',p1:'Money & revenue',p2:'Client chats',p3:'Deals',p4:'Calendar',p5:'Marketing',p6:'Team & settings',lf:'Full',le:'Edit',lv:'View',ln:'—',r_owner:'Owner sees and changes everything, including money and who has access.',r_manager:'Manager runs chats, deals, calendar and posts — but never sees revenue or settings.',r_viewer:'Viewer (e.g. accountant) can only look: money and the calendar, no client chats.',
+ai_s:'Ask anything — answers come from your own data',ai_ph:'Ask about revenue, ads, bookings…',ask:'Ask',ai_hi:'Hi Mira! I see all your chats, deals, calendar and money. What do you want to know?',ai_side:'Your AI knows the whole business and answers in seconds.',ai_l1:'Reads every chat and deal',ai_l2:'Counts money and ads',ai_l3:'Suggests the next step',
+q1:'How much did we earn this month?',q2:'Who hasn’t paid?',q3:'Which ads work best?',q4:'What’s tomorrow?',q5:'How is the team doing?',
+a_rev:'This month: <b>$18,420</b> revenue, +12% vs last month. Top service — <b>HydraFacial</b>, $6,300. 2 invoices are still open for <b>$2,420</b> — want me to send reminders?',a_unp:'2 unpaid: <b>Nova Tech $2,000</b> (due in 5 days) and <b>Kate M. $420</b> — 6 days late. I can send Kate a polite reminder right now.',a_ads:'<b>Instagram</b> is your best channel: 94 requests at <b>$3.40</b> each. TikTok is the weakest — $6.92. I suggest moving $50/week from TikTok to Instagram.',a_tom:'Tomorrow: <b>4 bookings</b>. First at 10:00 (Olena, peel), last at 17:00 (Ivan, laser). 13:00 is free — I can offer it to 3 people from the waitlist.',a_deal:'Pipeline: <b>9 deals for $8,880</b>. Biggest — corporate gift cards, $2,000 (Nova Tech). Mila S. hasn’t replied for 3 days — worth a follow-up.',a_team:'The team has <b>{a} of 60</b> bookings this week. Lena leads with 17. {b} more to hit the goal — about 3 a day.',a_post:'This week: <b>5 posts</b>, 2 already out. The before/after reel got 4.1k views and 9 requests — your best format.',a_hi:'Hi! Ask me about revenue, unpaid invoices, ads, tomorrow’s bookings, deals or the team.',a_def:'I can answer about <b>revenue, unpaid invoices, ads, bookings, deals, team and posts</b>. Try: “Who hasn’t paid?”',
+nt:'Notifications',markr:'Mark all read',n1:'Sofia K. booked HydraFacial for Fri 16:30',n2:'Invoice #1046 from Nova Tech is due in 5 days',n3:'New 5★ review on Google',n4:'Instagram ad “Glow week” got 12 requests',na:'via AI chat · 2 min',nb:'Money · 1 h',nc:'Reviews · 3 h',nd:'Marketing · today',
+cmd_ph:'Type a command or search…',go:'Go to',cmd_theme:'Switch light / dark',cmd_lang:'Language',none:'Nothing found',cmd_ask:'Ask AI',theme:'Theme',lang:'Language',
+hydra:'HydraFacial',laser:'Laser',peel:'Peel',massage:'Massage',consult:'Consultation'},
+ru:{lt:'Светлая',dk:'Тёмная',hot:'горячая',skip:'К содержимому',strip:'Демо от Vaxo — бизнес вымышленный, функции настоящие',stripCta:'Хочу так же →',ws:'Студия кожи · Pro',today:'Сегодня',inbox:'Входящие',deals:'Клиенты и сделки',cal:'Календарь',mkt:'Маркетинг',money:'Деньги',team:'Команда',ai:'ИИ-помощник',more:'Ещё',more_ex:'Другие примеры',more_ex2:'Другие примеры →',built:'Сделано в',foot:'Aurelia HQ — вымышленное демо. Сделано в Vaxo: сайты, приложения, CRM и ИИ для бизнеса.',search_ph:'Поиск или переход…',
+gm:'Доброе утро',ga:'Добрый день',ge:'Добрый вечер',tsub:'Всё о вашем бизнесе — на одном экране.',plan:'Утренний план от ИИ',plan_s:'3 самых важных дела на сегодня',plan_ok:'План выполнен — серия +1 день!',t1:'Ответить 2 горячим заявкам из Instagram',t1s:'ИИ уже написал оба ответа',t2:'Подтвердить 4 записи на завтра',t2s:'Напоминания готовы к отправке',t3:'Напомнить про счёт #1042 — $420',t3s:'Kate M. · просрочка 6 дней',demo:'демо-цифры',kreq:'Заявки',kbook:'Записи',krev:'Выручка',kcpr:'Цена заявки',k30:'за 30 дней',feed:'Что происходит',live:'Live',nextt:'Записи на сегодня',open_cal:'Календарь',goal:'Цель команды на неделю',goal_s:'{a} из {b} записей',streak:'Серия {n} дней',streak_s:'План ИИ выполнен каждый день',now:'сейчас',min:'мин',
+ib_s:'Instagram, WhatsApp, Telegram и сайт — в одном окне',all:'Все',site:'Сайт',ai_rep:'Ответил ИИ',ai_sug:'Ответ ИИ',send:'Отправить',reply_ph:'Напишите ответ…',r_note:'ИИ отвечает 24/7 · в среднем за 9 секунд',sent:'Сообщение отправлено',back:'Назад',online:'в сети',
+d_s:'Перетаскивайте карточки между этапами — на телефоне зажмите и тяните',s_new:'Новые',s_talk:'Переговоры',s_prop:'Предложение',s_won:'Успех',won:'Сделка закрыта: {x}',moved:'Перенесено в «{x}»',pipe:'Воронка',
+c_s:'Эта неделя · {n} записей',
+m_s:'Посты на этой неделе и что дала реклама',posts:'Посты недели',pub:'Опубликован',sch:'Запланирован',ads:'Реклама · 30 дней',spend:'Расход',leads:'Заявки',cpl:'За заявку',wk:'Нед.',ads_tip:'Instagram даёт заявки в 2 раза дешевле TikTok. ИИ советует перенести туда $50 в неделю.',
+mo_s:'Счета, оплаты и месяц одним взглядом',paid:'Оплачено за месяц',unpaid:'Не оплачено',overdue:'Просрочено',inv:'Счета',remind:'Напомнить',reminded:'Напоминание отправлено: {x}',revm:'Выручка по месяцам',st_paid:'Оплачен',st_unp:'Срок через {n} дн.',st_late:'Просрочка {n} дн.',
+te_s:'Роли решают, кто что видит',members:'Люди',owner:'Владелец',manager:'Менеджер',viewer:'Наблюдатель',access:'Кто что видит',as:'Посмотреть как',lb:'Записи за неделю',p1:'Деньги и выручка',p2:'Чаты с клиентами',p3:'Сделки',p4:'Календарь',p5:'Маркетинг',p6:'Команда и настройки',lf:'Всё',le:'Правка',lv:'Просмотр',ln:'—',r_owner:'Владелец видит и меняет всё, включая деньги и доступы.',r_manager:'Менеджер ведёт чаты, сделки, календарь и посты — но не видит выручку и настройки.',r_viewer:'Наблюдатель (например, бухгалтер) только смотрит: деньги и календарь, без переписок.',
+ai_s:'Спросите что угодно — ответ из ваших же данных',ai_ph:'Спросите про выручку, рекламу, записи…',ask:'Спросить',ai_hi:'Привет, Мира! Я вижу все чаты, сделки, календарь и деньги. Что хотите узнать?',ai_side:'Ваш ИИ знает весь бизнес и отвечает за секунды.',ai_l1:'Читает все чаты и сделки',ai_l2:'Считает деньги и рекламу',ai_l3:'Подсказывает следующий шаг',
+q1:'Сколько заработали в этом месяце?',q2:'Кто не оплатил?',q3:'Какая реклама лучше?',q4:'Что завтра?',q5:'Как дела у команды?',
+a_rev:'В этом месяце: <b>$18 420</b> выручки, +12% к прошлому. Лучшая услуга — <b>HydraFacial</b>, $6 300. Ещё 2 счёта открыты на <b>$2 420</b> — отправить напоминания?',a_unp:'Не оплачены 2: <b>Nova Tech $2 000</b> (срок через 5 дней) и <b>Kate M. $420</b> — просрочка 6 дней. Могу прямо сейчас вежливо напомнить Kate.',a_ads:'Лучший канал — <b>Instagram</b>: 94 заявки по <b>$3,40</b>. Хуже всего TikTok — $6,92. Советую перенести $50 в неделю из TikTok в Instagram.',a_tom:'Завтра <b>4 записи</b>. Первая в 10:00 (Олена, пилинг), последняя в 17:00 (Иван, лазер). 13:00 свободно — могу предложить 3 людям из листа ожидания.',a_deal:'В воронке <b>9 сделок на $8 880</b>. Самая крупная — корпоративные сертификаты, $2 000 (Nova Tech). Mila S. молчит 3 дня — стоит написать.',a_team:'У команды <b>{a} из 60</b> записей за неделю. Лидер — Лена, 17. До цели {b} — примерно 3 в день.',a_post:'На этой неделе <b>5 постов</b>, 2 уже вышли. Рилс «до/после» набрал 4,1 тыс. просмотров и 9 заявок — ваш лучший формат.',a_hi:'Привет! Спросите про выручку, неоплаченные счета, рекламу, записи на завтра, сделки или команду.',a_def:'Я отвечаю про <b>выручку, счета, рекламу, записи, сделки, команду и посты</b>. Попробуйте: «Кто не оплатил?»',
+nt:'Уведомления',markr:'Прочитать все',n1:'Sofia K. записалась на HydraFacial, пт 16:30',n2:'Счёт #1046 Nova Tech — срок через 5 дней',n3:'Новый отзыв 5★ в Google',n4:'Реклама «Glow week» дала 12 заявок',na:'через ИИ-чат · 2 мин',nb:'Деньги · 1 ч',nc:'Отзывы · 3 ч',nd:'Маркетинг · сегодня',
+cmd_ph:'Команда или поиск…',go:'Перейти',cmd_theme:'Светлая / тёмная тема',cmd_lang:'Язык',none:'Ничего не найдено',cmd_ask:'Спросить ИИ',theme:'Тема',lang:'Язык',
+hydra:'HydraFacial',laser:'Лазер',peel:'Пилинг',massage:'Массаж',consult:'Консультация'},
+ua:{lt:'Світла',dk:'Темна',hot:'гаряча',skip:'До вмісту',strip:'Демо від Vaxo — бізнес вигаданий, функції справжні',stripCta:'Хочу так само →',ws:'Студія шкіри · Pro',today:'Сьогодні',inbox:'Вхідні',deals:'Клієнти та угоди',cal:'Календар',mkt:'Маркетинг',money:'Гроші',team:'Команда',ai:'ШІ-помічник',more:'Ще',more_ex:'Інші приклади',more_ex2:'Інші приклади →',built:'Зроблено у',foot:'Aurelia HQ — вигадане демо. Зроблено у Vaxo: сайти, застосунки, CRM і ШІ для бізнесу.',search_ph:'Пошук або перехід…',
+gm:'Доброго ранку',ga:'Добрий день',ge:'Добрий вечір',tsub:'Усе про ваш бізнес — на одному екрані.',plan:'Ранковий план від ШІ',plan_s:'3 найважливіші справи на сьогодні',plan_ok:'План виконано — серія +1 день!',t1:'Відповісти 2 гарячим заявкам з Instagram',t1s:'ШІ вже написав обидві відповіді',t2:'Підтвердити 4 записи на завтра',t2s:'Нагадування готові до відправки',t3:'Нагадати про рахунок #1042 — $420',t3s:'Kate M. · прострочка 6 днів',demo:'демо-цифри',kreq:'Заявки',kbook:'Записи',krev:'Виручка',kcpr:'Ціна заявки',k30:'за 30 днів',feed:'Що відбувається',live:'Live',nextt:'Записи на сьогодні',open_cal:'Календар',goal:'Ціль команди на тиждень',goal_s:'{a} з {b} записів',streak:'Серія {n} днів',streak_s:'План ШІ виконано щодня',now:'зараз',min:'хв',
+ib_s:'Instagram, WhatsApp, Telegram і сайт — в одному вікні',all:'Усі',site:'Сайт',ai_rep:'Відповів ШІ',ai_sug:'Відповідь ШІ',send:'Надіслати',reply_ph:'Напишіть відповідь…',r_note:'ШІ відповідає 24/7 · в середньому за 9 секунд',sent:'Повідомлення надіслано',back:'Назад',online:'у мережі',
+d_s:'Перетягуйте картки між етапами — на телефоні затисніть і тягніть',s_new:'Нові',s_talk:'Перемовини',s_prop:'Пропозиція',s_won:'Успіх',won:'Угоду закрито: {x}',moved:'Перенесено в «{x}»',pipe:'Воронка',
+c_s:'Цей тиждень · {n} записів',
+m_s:'Пости цього тижня і що дала реклама',posts:'Пости тижня',pub:'Опубліковано',sch:'Заплановано',ads:'Реклама · 30 днів',spend:'Витрати',leads:'Заявки',cpl:'За заявку',wk:'Тиж.',ads_tip:'Instagram дає заявки вдвічі дешевше за TikTok. ШІ радить перенести туди $50 на тиждень.',
+mo_s:'Рахунки, оплати й місяць одним поглядом',paid:'Оплачено за місяць',unpaid:'Не оплачено',overdue:'Прострочено',inv:'Рахунки',remind:'Нагадати',reminded:'Нагадування надіслано: {x}',revm:'Виручка по місяцях',st_paid:'Оплачено',st_unp:'Термін через {n} дн.',st_late:'Прострочка {n} дн.',
+te_s:'Ролі вирішують, хто що бачить',members:'Люди',owner:'Власник',manager:'Менеджер',viewer:'Спостерігач',access:'Хто що бачить',as:'Переглянути як',lb:'Записи за тиждень',p1:'Гроші та виручка',p2:'Чати з клієнтами',p3:'Угоди',p4:'Календар',p5:'Маркетинг',p6:'Команда й налаштування',lf:'Усе',le:'Редагування',lv:'Перегляд',ln:'—',r_owner:'Власник бачить і змінює все, включно з грошима та доступами.',r_manager:'Менеджер веде чати, угоди, календар і пости — але не бачить виручку й налаштування.',r_viewer:'Спостерігач (наприклад, бухгалтер) лише дивиться: гроші й календар, без листувань.',
+ai_s:'Запитайте будь-що — відповідь з ваших же даних',ai_ph:'Запитайте про виручку, рекламу, записи…',ask:'Запитати',ai_hi:'Привіт, Міро! Я бачу всі чати, угоди, календар і гроші. Що хочете дізнатися?',ai_side:'Ваш ШІ знає весь бізнес і відповідає за секунди.',ai_l1:'Читає всі чати й угоди',ai_l2:'Рахує гроші й рекламу',ai_l3:'Підказує наступний крок',
+q1:'Скільки заробили цього місяця?',q2:'Хто не оплатив?',q3:'Яка реклама найкраща?',q4:'Що завтра?',q5:'Як справи в команди?',
+a_rev:'Цього місяця: <b>$18 420</b> виручки, +12% до минулого. Найкраща послуга — <b>HydraFacial</b>, $6 300. Ще 2 рахунки відкриті на <b>$2 420</b> — надіслати нагадування?',a_unp:'Не оплачені 2: <b>Nova Tech $2 000</b> (термін через 5 днів) і <b>Kate M. $420</b> — прострочка 6 днів. Можу просто зараз ввічливо нагадати Kate.',a_ads:'Найкращий канал — <b>Instagram</b>: 94 заявки по <b>$3,40</b>. Найгірший TikTok — $6,92. Раджу перенести $50 на тиждень з TikTok в Instagram.',a_tom:'Завтра <b>4 записи</b>. Перший о 10:00 (Олена, пілінг), останній о 17:00 (Іван, лазер). 13:00 вільно — можу запропонувати 3 людям зі списку очікування.',a_deal:'У воронці <b>9 угод на $8 880</b>. Найбільша — корпоративні сертифікати, $2 000 (Nova Tech). Mila S. мовчить 3 дні — варто написати.',a_team:'У команди <b>{a} з 60</b> записів за тиждень. Лідерка — Лена, 17. До цілі {b} — приблизно 3 на день.',a_post:'Цього тижня <b>5 постів</b>, 2 вже вийшли. Рілс «до/після» набрав 4,1 тис. переглядів і 9 заявок — ваш найкращий формат.',a_hi:'Привіт! Запитайте про виручку, неоплачені рахунки, рекламу, записи на завтра, угоди чи команду.',a_def:'Я відповідаю про <b>виручку, рахунки, рекламу, записи, угоди, команду й пости</b>. Спробуйте: «Хто не оплатив?»',
+nt:'Сповіщення',markr:'Прочитати всі',n1:'Sofia K. записалася на HydraFacial, пт 16:30',n2:'Рахунок #1046 Nova Tech — термін через 5 днів',n3:'Новий відгук 5★ у Google',n4:'Реклама «Glow week» дала 12 заявок',na:'через ШІ-чат · 2 хв',nb:'Гроші · 1 год',nc:'Відгуки · 3 год',nd:'Маркетинг · сьогодні',
+cmd_ph:'Команда або пошук…',go:'Перейти',cmd_theme:'Світла / темна тема',cmd_lang:'Мова',none:'Нічого не знайдено',cmd_ask:'Запитати ШІ',theme:'Тема',lang:'Мова',
+hydra:'HydraFacial',laser:'Лазер',peel:'Пілінг',massage:'Масаж',consult:'Консультація'}
+};
+let L=(new URLSearchParams(location.search).get('lang')||'en').toLowerCase();if(!T[L])L='en';
+const t=(k,v)=>{let s=(T[L][k]??T.en[k]??k);if(v)for(const x in v)s=s.replace('{'+x+'}',v[x]);return s};
+const X=o=>o==null?'':typeof o=='string'?o:(o[L]||o.en);
+const LOC={en:'en-US',ru:'ru-RU',ua:'uk-UA'};
+const money=n=>'$'+n.toLocaleString(L=='en'?'en-US':'ru-RU');
+
+/* ---------- data ---------- */
+const VIEWS=[['today','today'],['inbox','inbox'],['deals','deals'],['cal','cal'],['mkt','mkt'],['money','money'],['team','team'],['ai','ai']];
+const S={view:'today',tasks:[0,0,0],streak:12,chat:0,filter:'all',role:'owner',day:null,goalA:42,notifRead:false,reminded:{},aiLog:null};
+const CH={ig:'IG',wa:'WA',tg:'TG',web:'WEB'};
+const AVC=['#f3d29a','#bfe3c8','#c9d6ff','#ffc9b8','#e6cffc','#f8e3a3','#b8e6e1'];
+const chats=[
+{n:'Sofia Kim',ch:'ig',tm:2,un:1,ms:[['c',{en:'Hi! Do you have a slot for HydraFacial this Friday?',ru:'Привет! Есть окно на HydraFacial в эту пятницу?',ua:'Привіт! Є вікно на HydraFacial у цю пʼятницю?'}],['ai',{en:'Hi Sofia! Yes — Friday 12:00 or 16:30 are free. The 60-min HydraFacial is $140. Shall I book one?',ru:'Привет, Софья! Да — в пятницу свободно 12:00 или 16:30. HydraFacial 60 минут — $140. Записать?',ua:'Привіт, Софіє! Так — у пʼятницю вільно 12:00 або 16:30. HydraFacial 60 хвилин — $140. Записати?'}],['c',{en:'16:30 please! Can I pay at the studio?',ru:'16:30, пожалуйста! Можно оплатить на месте?',ua:'16:30, будь ласка! Можна оплатити на місці?'}]],sg:{en:'Booked you for Friday 16:30 ✨ Yes, you can pay at the studio by card or cash. We’ll remind you the day before!',ru:'Записали вас на пятницу 16:30 ✨ Да, оплатить можно на месте картой или наличными. Напомним за день!',ua:'Записали вас на пʼятницю 16:30 ✨ Так, оплатити можна на місці карткою або готівкою. Нагадаємо за день!'}},
+{n:'Olena Bondar',ch:'tg',tm:9,un:1,ms:[['c',{en:'Hello! Can I move my peel to next week?',ru:'Здравствуйте! Можно перенести пилинг на следующую неделю?',ua:'Добрий день! Можна перенести пілінг на наступний тиждень?'}]],sg:{en:'Of course, Olena! Next week we have Tue 11:00, Wed 14:00 or Sat 10:30. Which one suits you?',ru:'Конечно, Олена! На следующей неделе есть вт 11:00, ср 14:00 или сб 10:30. Что удобнее?',ua:'Звісно, Олено! Наступного тижня є вт 11:00, ср 14:00 або сб 10:30. Що зручніше?'}},
+{n:'Daniel Reyes',ch:'wa',tm:24,un:0,ms:[['c',{en:'How much is laser for the beard line?',ru:'Сколько стоит лазер для линии бороды?',ua:'Скільки коштує лазер для лінії бороди?'}],['ai',{en:'Hi Daniel! Beard line laser is $90 per session, most clients need 4–6. The first consultation is free. Want a time this week?',ru:'Привет, Даниэль! Лазер линии бороды — $90 за сеанс, обычно нужно 4–6. Первая консультация бесплатно. Подобрать время на этой неделе?',ua:'Привіт, Даніелю! Лазер лінії бороди — $90 за сеанс, зазвичай потрібно 4–6. Перша консультація безкоштовна. Підібрати час цього тижня?'}],['c',{en:'Thursday after 3?',ru:'Четверг после 15?',ua:'Четвер після 15?'}],['ai',{en:'Done — Thursday 15:00 with Dr. Lena. See you!',ru:'Готово — четверг 15:00, доктор Лена. До встречи!',ua:'Готово — четвер 15:00, лікарка Лена. До зустрічі!'}]],sg:{en:'Thanks, Daniel! Quick tip: no sun or shaving 24h before the session. Any questions — just write here.',ru:'Спасибо, Даниэль! Совет: за сутки до сеанса без солнца и бритья. Вопросы — пишите сюда.',ua:'Дякуємо, Даніелю! Порада: за добу до сеансу без сонця й гоління. Питання — пишіть сюди.'}},
+{n:'Mark Turner',ch:'web',tm:41,un:0,ms:[['c',{en:'Do you sell gift cards?',ru:'У вас есть подарочные сертификаты?',ua:'У вас є подарункові сертифікати?'}],['ai',{en:'Yes! Gift cards from $50, sent instantly by email. Want a link?',ru:'Да! Сертификаты от $50, приходят сразу на почту. Прислать ссылку?',ua:'Так! Сертифікати від $50, приходять одразу на пошту. Надіслати посилання?'}],['c',{en:'Yes, a $150 one please',ru:'Да, на $150, пожалуйста',ua:'Так, на $150, будь ласка'}]],sg:{en:'Here you go: aurelia.studio/gift — choose $150 and it arrives by email in a minute 🎁',ru:'Вот ссылка: aurelia.studio/gift — выберите $150, и сертификат придёт на почту за минуту 🎁',ua:'Ось посилання: aurelia.studio/gift — оберіть $150, і сертифікат прийде на пошту за хвилину 🎁'}},
+{n:'Ana Lopez',ch:'ig',tm:75,un:0,ms:[['c',{en:'Thank you so much, my skin looks amazing!!',ru:'Спасибо огромное, кожа просто сияет!!',ua:'Дякую величезне, шкіра просто сяє!!'}]],sg:{en:'So happy to hear that, Ana! 💛 Would you leave us a quick review? It helps a lot: aurelia.studio/review',ru:'Так рады, Ана! 💛 Оставите короткий отзыв? Это очень помогает: aurelia.studio/review',ua:'Так раді, Ано! 💛 Залишите короткий відгук? Це дуже допомагає: aurelia.studio/review'}}
+];
+const STG=[['new','#7fa8ff'],['talk','#b49cff'],['prop','#E4A93F'],['won','#62d39c']];
+let deals=[
+{id:1,s:'new',t:{en:'Bridal glow package',ru:'Свадебный пакет «Сияние»',ua:'Весільний пакет «Сяйво»'},v:1200,w:'Kate M.',hot:1},
+{id:2,s:'new',t:{en:'Acne program · 6 sessions',ru:'Программа от акне · 6 сеансов',ua:'Програма від акне · 6 сеансів'},v:780,w:'Ivan P.'},
+{id:3,s:'new',t:{en:'Corporate gift cards',ru:'Корпоративные сертификаты',ua:'Корпоративні сертифікати'},v:2000,w:'Nova Tech',hot:1},
+{id:4,s:'talk',t:{en:'Laser · 6 sessions',ru:'Лазер · 6 сеансов',ua:'Лазер · 6 сеансів'},v:540,w:'Daniel R.'},
+{id:5,s:'talk',t:{en:'Anti-age course',ru:'Курс anti-age',ua:'Курс anti-age'},v:960,w:'Mila S.'},
+{id:6,s:'prop',t:{en:'Spa day for 4',ru:'Спа-день на четверых',ua:'Спа-день на чотирьох'},v:880,w:'Julia P.'},
+{id:7,s:'prop',t:{en:'Yearly membership',ru:'Годовой абонемент',ua:'Річний абонемент'},v:1500,w:'Oksana V.'},
+{id:8,s:'won',t:{en:'HydraFacial × 3',ru:'HydraFacial × 3',ua:'HydraFacial × 3'},v:420,w:'Sofia K.'},
+{id:9,s:'won',t:{en:'Peel course',ru:'Курс пилингов',ua:'Курс пілінгів'},v:600,w:'Olena B.'}];
+const SVC={hydra:'#E4A93F',laser:'#7fa8ff',peel:'#62d39c',massage:'#ff9db5',consult:'#b49cff'};
+const now=new Date();const tdi=(now.getDay()+6)%7;const tmi=(tdi+1)%7;
+const BK=[];
+[[10,1,'Olena B.','peel'],[11.5,1,'Mila S.','consult'],[14,1.5,'Kate M.','hydra'],[17,1,'Ivan P.','laser']].forEach(b=>BK.push([tmi,...b]));
+[[1,10,1,'Julia P.','massage'],[1,12,1.5,'Anna R.','hydra'],[1,15,1,'Daniel R.','laser'],[2,9.5,1,'Lina K.','peel'],[2,13,1,'Sofia K.','hydra'],[2,16.5,1.5,'Oksana V.','massage'],[3,11,1,'Tom W.','consult'],[3,14.5,1,'Mark T.','laser'],[4,10,2,'Hen party','massage'],[4,15,1,'Ana L.','hydra'],[5,11,1,'Eva S.','peel'],[6,10.5,1,'Nora D.','hydra'],[6,13,1,'Ivan P.','consult'],[6,16,1,'Kira M.','laser'],[5,13,1,'Lena V.','hydra'],[5,15,1,'Zoe A.','massage'],[5,17,1.5,'Max H.','laser']].forEach(b=>BK.push([(tmi+b[0])%7,...b.slice(1)]));
+const posts=[[0,'ig',{en:'Before / after: 3 weeks of peel',ru:'До / после: 3 недели пилинга',ua:'До / після: 3 тижні пілінгу'},1,'linear-gradient(150deg,#e8b48a,#8a4b3a 70%,#3a1c14)'],[1,'tg',{en:'60-second glow routine',ru:'Сияние за 60 секунд',ua:'Сяйво за 60 секунд'},1,'linear-gradient(160deg,#ffd98a,#c4782c 60%,#4a2508)'],[2,'ig',{en:'Friday slots left',ru:'Окна на пятницу',ua:'Вікна на пʼятницю'},0,'linear-gradient(140deg,#c9b8ff,#6b4fc9 60%,#221445)'],[4,'web',{en:'Glow week −15%',ru:'Неделя сияния −15%',ua:'Тиждень сяйва −15%'},0,'linear-gradient(160deg,#f6e7c8,#d8a24a 55%,#5a3a0e)'],[5,'ig',{en:'5 myths about laser',ru:'5 мифов о лазере',ua:'5 міфів про лазер'},0,'linear-gradient(150deg,#a9d8ff,#3c6fc4 60%,#0f1d3a)']];
+const invs=[['#1048','Sofia K.',140,'p',0],['#1047','Mila S.',260,'p',0],['#1046','Nova Tech',2000,'u',5],['#1045','Julia P.',880,'p',0],['#1042','Kate M.',420,'l',6],['#1041','Daniel R.',360,'p',0]];
+const team=[['Mira Aurelia','owner',{en:'Founder',ru:'Основательница',ua:'Засновниця'},12],['Lena Park','manager',{en:'Lead cosmetologist',ru:'Ведущий косметолог',ua:'Провідна косметологиня'},17],['Viktor Hale','manager',{en:'Front desk & sales',ru:'Администратор и продажи',ua:'Адміністратор і продажі'},13],['Tom Weber','viewer',{en:'Accountant',ru:'Бухгалтер',ua:'Бухгалтер'},0]];
+const PERM=[['p1','f','n','v'],['p2','f','f','n'],['p3','f','f','v'],['p4','f','f','v'],['p5','f','e','v'],['p6','f','n','n']];
+const FEEDPOOL=[
+['chat',{en:'New request on Instagram — <b>Sofia K.</b>, HydraFacial',ru:'Новая заявка в Instagram — <b>Sofia K.</b>, HydraFacial',ua:'Нова заявка в Instagram — <b>Sofia K.</b>, HydraFacial'}],
+['ai',{en:'AI booked <b>Daniel R.</b> for Thu 15:00',ru:'ИИ записал <b>Daniel R.</b> на чт 15:00',ua:'ШІ записав <b>Daniel R.</b> на чт 15:00'}],
+['money',{en:'Invoice #1047 paid — <b>$260</b>',ru:'Счёт #1047 оплачен — <b>$260</b>',ua:'Рахунок #1047 оплачено — <b>$260</b>'}],
+['star',{en:'New 5★ review on Google from <b>Lina</b>',ru:'Новый отзыв 5★ в Google от <b>Lina</b>',ua:'Новий відгук 5★ у Google від <b>Lina</b>'}],
+['mkt',{en:'Ad “Glow week” brought <b>3 new requests</b>',ru:'Реклама «Glow week» принесла <b>3 заявки</b>',ua:'Реклама «Glow week» принесла <b>3 заявки</b>'}],
+['deals',{en:'Viktor moved <b>Spa day for 4</b> to Proposal',ru:'Виктор перенёс <b>Спа-день</b> в «Предложение»',ua:'Віктор переніс <b>Спа-день</b> у «Пропозиція»'}],
+['ai',{en:'WhatsApp: AI answered <b>Ana</b> about prices in 8 sec',ru:'WhatsApp: ИИ ответил <b>Ana</b> про цены за 8 сек',ua:'WhatsApp: ШІ відповів <b>Ana</b> про ціни за 8 сек'}],
+['cal',{en:'<b>Eva S.</b> rescheduled peel to Saturday 11:00',ru:'<b>Eva S.</b> перенесла пилинг на субботу 11:00',ua:'<b>Eva S.</b> перенесла пілінг на суботу 11:00'}],
+['chat',{en:'Telegram: <b>Olena</b> asked to move her booking',ru:'Telegram: <b>Олена</b> просит перенести запись',ua:'Telegram: <b>Олена</b> просить перенести запис'}],
+['money',{en:'Gift card sold online — <b>$150</b>',ru:'Продан сертификат онлайн — <b>$150</b>',ua:'Продано сертифікат онлайн — <b>$150</b>'}]];
+let feed=FEEDPOOL.slice(0,6).map((f,i)=>({f,ts:Date.now()-(i*7+1)*60000}));let fpi=6;
+
+/* ---------- helpers ---------- */
+const ini=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2);
+const avc=n=>AVC[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%AVC.length];
+const AV=(n,ch)=>`<span class="av" style="background:${avc(n)}">${ini(n)}${ch?`<i class="chb ch-${ch}">${CH[ch]}</i>`:''}</span>`;
+const ago=ts=>{const m=Math.round((Date.now()-ts)/60000);return m<1?t('now'):m+' '+t('min')};
+const fmtH=h=>`${Math.floor(h)}:${h%1?'30':'00'}`;
+function toast(msg,ic='check'){const el=document.createElement('div');el.className='toast';el.innerHTML=I(ic)+`<span>${msg}</span>`;$('#toasts').append(el);setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),350)},2600)}
+function confetti(x,y){if(RM)return;const cs=['#E4A93F','#ffd98a','#62d39c','#7fa8ff','#ff9db5','#F5F2EC'];for(let i=0;i<34;i++){const e=document.createElement('i');e.className='cf';e.style.cssText=`left:${x}px;top:${y}px;background:${cs[i%6]}`;document.body.append(e);const a=Math.random()*Math.PI*2,d=70+Math.random()*130;e.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d-60}px) rotate(${Math.random()*720}deg)`,opacity:1,offset:.6},{transform:`translate(${Math.cos(a)*d*1.2}px,${Math.sin(a)*d+90}px) rotate(${Math.random()*900}deg)`,opacity:0}],{duration:1200+Math.random()*500,easing:'cubic-bezier(.2,.7,.4,1)'}).onfinish=()=>e.remove()}}
+function count(el,to,dec=0,pre='',dur=1400){if(RM){el.textContent=pre+to.toLocaleString(LOC[L],{minimumFractionDigits:dec,maximumFractionDigits:dec});return}const st=performance.now();const f=n=>{const p=Math.min(1,(n-st)/dur),e=1-Math.pow(1-p,4);el.textContent=pre+(to*e).toLocaleString(LOC[L],{minimumFractionDigits:dec,maximumFractionDigits:dec});if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+function spark(d){const w=200,h=46,mx=Math.max(...d),mn=Math.min(...d);const pts=d.map((v,i)=>[i*w/(d.length-1),h-4-(v-mn)/(mx-mn||1)*(h-10)]);const p=pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' ');const l=pts[pts.length-1];return `<svg class="sp" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><path class="ar" d="${p} L${w} ${h} L0 ${h}Z" fill="url(#ga)"/><path class="ln" pathLength="1" d="${p}"/></svg>`}
+
+/* ---------- static text ---------- */
+function applyStatic(){
+ document.documentElement.lang=L=='ua'?'uk':L;
+ $$('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
+ document.title=(L=='en'?'Aurelia HQ — your whole business on one screen':L=='ru'?'Aurelia HQ — весь бизнес на одном экране':'Aurelia HQ — весь бізнес на одному екрані')+' · Vaxo demo';
+ $('#nav').innerHTML=VIEWS.map(([v,ic])=>`<button data-go="${v}"${S.view==v?' aria-current="page"':''}>${I(ic)}<span>${t(v)}</span>${v=='inbox'?`<span class="cnt" id="ibc">${chats.filter(c=>c.un).length||''}</span>`:v=='deals'?`<span class="cnt soft">${deals.length}</span>`:''}</button>`).join('');
+ const tb=[['today','today'],['inbox','inbox'],['deals','deals'],['cal','cal'],['more','more']];
+ $('#tabbar').innerHTML=tb.map(([v,ic])=>`<button data-go="${v}"${(S.view==v||(v=='more'&&['mkt','money','team','ai'].includes(S.view)))?' aria-current="page"':''}>${I(ic)}<span>${v=='deals'?t('pipe'):t(v)}</span>${v=='inbox'&&chats.some(c=>c.un)?`<span class="cnt">${chats.filter(c=>c.un).length}</span>`:''}</button>`).join('');
+ $('#langSeg').innerHTML=['en','ru','ua'].map(l=>`<button data-lang="${l}" aria-pressed="${l==L}">${l}</button>`).join('');
+ const light=document.documentElement.dataset.theme=='light';
+ $('#themeBtn').innerHTML=I(light?'moon':'sun');
+ $('#bell').innerHTML=I('bell')+(S.notifRead?'':'<i class="dot">4</i>');
+ $('#sIco').innerHTML=I('search');$('#pIco').innerHTML=I('search');
+ $('#flame1').innerHTML=FL;$('#streakTxt').textContent=t('streak',{n:S.streak});
+  const nr=['n1','n2','n3','n4'],ns=['na','nb','nc','nd'];
+ $('#notif').innerHTML=`<h4>${t('nt')}<button id="markR">${t('markr')}</button></h4>`+nr.map((k,i)=>`<div class="ni${S.notifRead?' read':''}"><i></i><div>${t(k)}<small>${t(ns[i])}</small></div></div>`).join('');
+ $('#sheet').innerHTML=`<div class="grab"></div><div class="sgrid">${['mkt','money','team','ai'].map(v=>`<button data-go="${v}">${I(v)}${t(v)}</button>`).join('')}</div><div class="srow"><span style="font-weight:800">${t('lang')}</span><div class="seg">${['en','ru','ua'].map(l=>`<button data-lang="${l}" aria-pressed="${l==L}">${l}</button>`).join('')}</div></div><div class="srow"><span style="font-weight:800">${t('theme')}</span><button class="btn gh" data-theme-t>${I(light?'moon':'sun')}${t(light?'lt':'dk')}</button></div><a class="morex" style="margin-top:14px" href="/examples/"><span>${t('more_ex')}</span><span>→</span></a>`;
+}
+
+/* ---------- views ---------- */
+function greet(){const h=now.getHours();return h<12?t('gm'):h<18?t('ga'):t('ge')}
+function rToday(){
+ const done=S.tasks.filter(Boolean).length;
+ const kp=[['kreq',148,0,'',[90,96,92,104,110,101,118,115,124,130,127,138,141,148],'+18%'],['kbook',61,0,'',[38,41,40,44,43,47,50,49,52,55,54,58,60,61],'+9%'],['krev',18420,0,'$',[11,12.4,12,13.1,13.6,13.2,14.4,15,15.6,16.1,16.8,17.2,17.9,18.4],'+12%'],['kcpr',4.19,2,'$',[5.6,5.4,5.5,5.2,5.1,4.9,5,4.8,4.7,4.6,4.5,4.4,4.3,4.19],'−14%']];
+ const todayB=BK.filter(b=>b[0]==tdi).sort((a,b)=>a[1]-b[1]);
+ $('#v-today').innerHTML=`
+ <div class="hero"><div><div class="date">${now.toLocaleDateString(LOC[L],{weekday:'long',day:'numeric',month:'long'})}</div><h1>${greet()}, <em>${L=='en'?'Mira':L=='ru'?'Мира':'Міро'}</em></h1><p>${t('tsub')}</p></div>
+ <div class="goal"><div class="ring"><svg viewBox="0 0 80 80"><circle class="tr" cx="40" cy="40" r="34"/><circle class="pr" id="gring" cx="40" cy="40" r="34" pathLength="100"/></svg><b class="num" id="gpct">0%</b></div><div><strong>${t('goal')}</strong><small class="num">${t('goal_s',{a:S.goalA,b:60})}</small><span class="st">${FL}${t('streak',{n:S.streak})}</span></div></div></div>
+ <div class="tgrid">
+  <div class="card plan"><div class="ch"><div><span class="aibadge">${I('ai')}${t('plan')}</span><h3 style="margin-top:6px">${t('plan_s')}</h3></div><span class="pill gold num" id="pcnt">${done}/3</span></div>
+  ${[1,2,3].map((n,i)=>`<button class="task" role="checkbox" aria-checked="${!!S.tasks[i]}" data-task="${i}"><span class="cb"><svg viewBox="0 0 24 24"><path d="${P.check}"/></svg></span><span><b>${t('t'+n)}</b><small>${t('t'+n+'s')}</small></span></button>`).join('')}
+  <div class="prog"><i id="pbar" style="width:${done/3*100}%"></i></div></div>
+  <div class="kpis">${kp.map(k=>`<div class="card kpi"><div class="lb"><span>${t(k[0])}</span><span class="dl up">${k[5]}</span></div><div class="v num" data-to="${k[1]}" data-dec="${k[2]}" data-pre="${k[3]}">0</div><div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap"><small style="color:var(--mute);font-weight:700;font-size:12px">${t('k30')}</small><span class="demo">${t('demo')}</span></div>${spark(k[4])}</div>`).join('')}</div>
+  <div class="card feed"><div class="ch"><h3>${t('feed')}</h3><span class="live">${t('live')}</span></div><div id="feedL"></div></div>
+  <div class="card next"><div class="ch"><h3>${t('nextt')} <small>· ${todayB.length}</small></h3><button class="btn gh" data-go="cal" style="padding:7px 12px;font-size:13px">${t('open_cal')} ${I('arrow')}</button></div>${todayB.map(b=>`<div class="bk"><time class="num">${fmtH(b[1])}</time><i style="background:${SVC[b[4]]}"></i><div><p>${b[3]}</p><small>${t(b[4])} · ${b[2]*60} ${t('min')}</small></div></div>`).join('')}</div>
+ </div>`;
+ rFeed();
+ $$('#v-today .kpi .v').forEach(e=>count(e,+e.dataset.to,+e.dataset.dec,e.dataset.pre));
+ const pct=Math.round(S.goalA/60*100);
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{const g=$('#gring');if(g)g.style.strokeDashoffset=100-pct}));
+ count($('#gpct'),pct,0,'',1500);setTimeout(()=>{const e=$('#gpct');if(e)e.textContent=pct+'%'},RM?0:1550);
+}
+const FIC={chat:'chat',ai:'ai',money:'money',star:'star',mkt:'mkt',deals:'deals',cal:'cal'};
+function rFeed(nw){const el=$('#feedL');if(!el)return;el.innerHTML=feed.map((x,i)=>`<div class="fi${nw&&i==0?' new':''}"><span class="fic">${I(FIC[x.f[0]])}</span><p>${X(x.f[1])}</p><time>${ago(x.ts)}</time></div>`).join('')}
+setInterval(()=>{feed.unshift({f:FEEDPOOL[fpi++%FEEDPOOL.length],ts:Date.now()});feed=feed.slice(0,6);if(S.view=='today')rFeed(1)},5200);
+
+function rInbox(){
+ const list=chats.map((c,i)=>({c,i})).filter(o=>S.filter=='all'||o.c.ch==S.filter);
+ $('#v-inbox').innerHTML=`<div class="vh"><div><h1>${t('inbox')}</h1><p>${t('ib_s')}</p></div><span class="pill gold">${I('ai')} ${t('r_note')}</span></div>
+ <div class="card inbox" id="ibx"><div class="ilist"><div class="filt" role="group">${['all','ig','wa','tg','web'].map(f=>`<button data-filt="${f}" aria-pressed="${S.filter==f}">${f=='all'?t('all'):f=='ig'?'Instagram':f=='wa'?'WhatsApp':f=='tg'?'Telegram':t('site')}</button>`).join('')}</div>
+ <div class="chats" role="listbox">${list.map(({c,i})=>{const lm=c.ms[c.ms.length-1];return `<button class="ci${c.un?' unr':''}" role="option" data-chat="${i}" aria-selected="${i==S.chat}">${AV(c.n,c.ch)}<span class="tx"><span class="r1"><span>${c.n}</span><time>${c.tm<60?c.tm+' '+t('min'):'1h'}</time></span><span class="pv">${lm[0]=='ai'?'✦ ':lm[0]=='me'?'↪ ':''}${esc(X(lm[1]))}</span></span>${c.un?'<span class="ud"></span>':''}</button>`}).join('')}</div></div>
+ <div class="thread" id="thr"></div></div>`;
+ rThread();
+}
+function rThread(){
+ const c=chats[S.chat],el=$('#thr');if(!el)return;
+ el.innerHTML=`<div class="th"><button class="ib back" id="bk" aria-label="${t('back')}">${I('back')}</button>${AV(c.n,c.ch)}<div><b>${c.n}</b><small>${c.ch=='ig'?'Instagram':c.ch=='wa'?'WhatsApp':c.ch=='tg'?'Telegram':t('site')} · ${t('online')}</small></div></div>
+ <div class="msgs" id="msgs">${c.ms.map(m=>`<div class="m ${m[0]}">${esc(X(m[1]))}</div>${m[0]=='ai'?`<span class="aim">${I('ai')}${t('ai_rep')}</span>`:''}`).join('')}</div>
+ <div class="reply"><div class="rb"><textarea id="rta" rows="1" placeholder="${t('reply_ph')}" aria-label="${t('reply_ph')}"></textarea><button class="sug" id="sugB">${I('ai')}<span>${t('ai_sug')}</span></button><button class="snd" id="sndB" aria-label="${t('send')}">${I('send')}</button></div><div class="rnote">${I('bolt')}${t('r_note')}</div></div>`;
+ const ms=$('#msgs');ms.scrollTop=ms.scrollHeight;
+ const ta=$('#rta');ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(120,ta.scrollHeight)+'px'});
+ ta.addEventListener('keydown',e=>{if(e.key=='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}});
+}
+let typingT;
+function suggest(){const ta=$('#rta');if(!ta)return;const s=X(chats[S.chat].sg);clearInterval(typingT);if(RM){ta.value=s;ta.dispatchEvent(new Event('input'));return}ta.value='';let i=0;typingT=setInterval(()=>{ta.value=s.slice(0,i+=2);ta.dispatchEvent(new Event('input'));if(i>=s.length){clearInterval(typingT);ta.focus()}},14)}
+function sendMsg(){const ta=$('#rta');const v=ta.value.trim();if(!v)return;clearInterval(typingT);const c=chats[S.chat];c.ms.push(['me',v]);c.un=0;c.tm=0;ta.value='';const ms=$('#msgs');ms.insertAdjacentHTML('beforeend',`<div class="m me">${esc(v)}</div>`);ms.scrollTop=ms.scrollHeight;toast(t('sent'));const ci=$(`.ci[data-chat="${S.chat}"]`);if(ci){ci.classList.remove('unr');ci.querySelector('.ud')?.remove();ci.querySelector('.pv').textContent='↪ '+v;ci.querySelector('time').textContent=t('now')}updBadges();
+ setTimeout(()=>{if(S.view!='inbox'||chats[S.chat]!==c)return;ms.insertAdjacentHTML('beforeend','<div class="typing"><i></i><i></i><i></i></div>');ms.scrollTop=ms.scrollHeight;setTimeout(()=>{ms.querySelector('.typing')?.remove();const r={en:'Thank you! 🙏',ru:'Спасибо! 🙏',ua:'Дякую! 🙏'};c.ms.push(['c',r]);ms.insertAdjacentHTML('beforeend',`<div class="m c">${X(r)}</div>`);ms.scrollTop=ms.scrollHeight},1600)},900)}
+function updBadges(){const n=chats.filter(c=>c.un).length;const b=$('#ibc');if(b)b.textContent=n||'';const tc=$('#tabbar [data-go=inbox] .cnt');if(tc){if(n)tc.textContent=n;else tc.remove()}}
+
+function rDeals(){
+ $('#v-deals').innerHTML=`<div class="vh"><div><h1>${t('deals')}</h1><p>${t('d_s')}</p></div><span class="pill gold num" id="ptot">${t('pipe')}: ${money(deals.reduce((a,d)=>a+d.v,0))}</span></div>
+ <div class="board" id="board">${STG.map(([s,c])=>{const ds=deals.filter(d=>d.s==s);return `<div class="col" data-stage="${s}"><div class="colh"><b><i style="background:${c}"></i>${t('s_'+s)} <span style="color:var(--mute)">${ds.length}</span></b><span class="tot num">${money(ds.reduce((a,d)=>a+d.v,0))}</span></div><div class="cards">${ds.map(dealH).join('')}</div></div>`}).join('')}</div>`;
+}
+const dealH=d=>`<div class="deal" tabindex="0" data-id="${d.id}" aria-label="${esc(X(d.t))}, ${money(d.v)}"><div class="dt">${X(d.t)}</div><div class="tg">${d.hot?`<span class="hot">● ${t('hot')}</span>`:''}<span>${t('s_'+d.s)}</span></div><div class="dm"><span class="dw">${AV(d.w)}<span>${d.w}</span></span><span class="dv num">${money(d.v)}</span></div></div>`;
+function totals(){$$('#board .col').forEach(col=>{const s=col.dataset.stage,ds=deals.filter(d=>d.s==s);const tt=col.querySelector('.tot');const nv=money(ds.reduce((a,d)=>a+d.v,0));if(tt.textContent!=nv){tt.textContent=nv;tt.classList.remove('bump');void tt.offsetWidth;tt.classList.add('bump')}col.querySelector('.colh b span').textContent=ds.length;col.querySelectorAll('.deal').forEach(el=>{const d=deals.find(x=>x.id==el.dataset.id);el.querySelector('.tg span:last-child').textContent=t('s_'+d.s)})})}
+function syncFromDom(movedId,rect){const order=[];$$('#board .col').forEach(col=>col.querySelectorAll('.deal').forEach(el=>{const d=deals.find(x=>x.id==el.dataset.id);const old=d.s;d.s=col.dataset.stage;order.push(d);if(d.id==movedId&&old!=d.s){if(d.s=='won'){toast(t('won',{x:money(d.v)}),'star');const r=el.getBoundingClientRect();confetti(r.left+r.width/2,r.top+r.height/2)}else toast(t('moved',{x:t('s_'+d.s)}),'arrow')}}));deals=order;totals()}
+let holdReady=false,dragging=false;
+document.addEventListener('touchmove',e=>{if(holdReady||dragging)e.preventDefault()},{passive:false});
+document.addEventListener('pointerdown',e=>{
+ const card=e.target.closest('#board .deal');if(!card||e.button>0)return;
+ const sx=e.clientX,sy=e.clientY,touch=e.pointerType!='mouse';let ready=!touch,ghost=null,ox=0,oy=0,lx=sx,ly=sy,raf=0,timer=0,over=null;
+ if(touch)timer=setTimeout(()=>{ready=holdReady=true;card.classList.add('lift');navigator.vibrate&&navigator.vibrate(12)},230);
+ const start=()=>{const r=card.getBoundingClientRect();ox=sx-r.left;oy=sy-r.top;ghost=card.cloneNode(true);ghost.classList.remove('lift');ghost.classList.add('ghost');ghost.style.width=r.width+'px';document.body.append(ghost);card.classList.remove('lift');card.classList.add('ph');dragging=true;loop()};
+ const place=()=>{ghost.style.left=(lx-ox)+'px';ghost.style.top=(ly-oy)+'px';const el=document.elementFromPoint(lx,ly);const col=el&&el.closest('#board .col');if(over&&over!=col)over.classList.remove('over');over=col;if(!col)return;col.classList.add('over');const list=col.querySelector('.cards');const sibs=[...list.querySelectorAll('.deal:not(.ph)')];const nx=sibs.find(s=>{const r=s.getBoundingClientRect();return ly<r.top+r.height/2});if(nx){if(nx.previousElementSibling!==card)list.insertBefore(card,nx)}else if(list.lastElementChild!==card)list.append(card)};
+ const loop=()=>{if(!dragging)return;if(ly<70)scrollBy(0,-12);else if(ly>innerHeight-110)scrollBy(0,12);place();raf=requestAnimationFrame(loop)};
+ const mv=ev=>{lx=ev.clientX;ly=ev.clientY;const dd=Math.hypot(lx-sx,ly-sy);if(!dragging){if(!ready){if(dd>9)end(true);return}if(dd<5)return;start()}};
+ const end=cancel=>{clearTimeout(timer);cancelAnimationFrame(raf);removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',cc);card.classList.remove('lift');holdReady=false;if(dragging){dragging=false;ghost.remove();card.classList.remove('ph');over&&over.classList.remove('over');if(!cancel){if(!RM)card.animate([{transform:'scale(1.05)'},{transform:'scale(1)'}],{duration:300,easing:'cubic-bezier(.3,1.5,.5,1)'});syncFromDom(+card.dataset.id)}else syncFromDom(-1)}};
+ const up=()=>end(false),cc=()=>end(!dragging?true:false);
+ addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',cc);
+});
+document.addEventListener('contextmenu',e=>{if(e.target.closest('#board .deal'))e.preventDefault()});
+document.addEventListener('keydown',e=>{const c=e.target.closest&&e.target.closest('#board .deal');if(!c||!['ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const d=deals.find(x=>x.id==c.dataset.id);const i=STG.findIndex(s=>s[0]==d.s)+(e.key=='ArrowRight'?1:-1);if(i<0||i>3)return;$(`#board .col[data-stage=${STG[i][0]}] .cards`).append(c);syncFromDom(d.id);c.focus()});
+
+function rCal(){
+ if(S.day==null)S.day=tdi;
+ const mon=new Date(now);mon.setDate(now.getDate()-tdi);
+ const dd=[...Array(7)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d});
+ const H0=9,H1=20,hs=[...Array(H1-H0)].map((_,i)=>H0+i);
+ const nh=now.getHours()+now.getMinutes()/60;
+ $('#v-cal').innerHTML=`<div class="vh"><div><h1>${t('cal')}</h1><p>${t('c_s',{n:BK.length})}</p></div><span class="demo">${t('demo')}</span></div>
+ <div class="days" role="group">${dd.map((d,i)=>`<button data-day="${i}" aria-pressed="${S.day==i}">${d.toLocaleDateString(LOC[L],{weekday:'short'})}<b>${d.getDate()}</b></button>`).join('')}</div>
+ <div class="card wk"><div class="hd c0"></div>${dd.map((d,i)=>`<div class="hd${i==tdi?' td':''}">${d.toLocaleDateString(LOC[L],{weekday:'short'})}<b>${d.getDate()}</b></div>`).join('')}
+ <div class="tcol">${hs.map(h=>`<span>${h}:00</span>`).join('')}</div>
+ ${dd.map((d,i)=>`<div class="dcol${i==tdi?' td':''}${i==S.day?' sel':''}" style="height:calc(var(--h)*${H1-H0})">${BK.filter(b=>b[0]==i).map((b,j)=>`<button class="ev" style="top:calc(var(--h)*${b[1]-H0} + 2px);height:calc(var(--h)*${b[2]} - 4px);background:color-mix(in srgb,${SVC[b[4]]} 20%,var(--s1));border-color:${SVC[b[4]]};animation-delay:${(i*3+j)*40}ms" data-ev="${b[3]}|${t(b[4])}|${fmtH(b[1])}"><b>${b[3]}</b><small>${fmtH(b[1])} · ${t(b[4])}</small></button>`).join('')}${i==tdi&&nh>H0&&nh<H1?`<div class="nowl" style="top:calc(var(--h)*${(nh-H0).toFixed(2)})"></div>`:''}</div>`).join('')}</div>
+ <div class="legend">${Object.keys(SVC).map(k=>`<span><i style="background:${SVC[k]}"></i>${t(k)}</span>`).join('')}</div>`;
+}
+
+function rMkt(){
+ const mon=new Date(now);mon.setDate(now.getDate()-tdi);
+ const wk=[31,35,38,44],mx=50;
+ const ch=[['Instagram',320,94,'linear-gradient(90deg,#f9a14a,#e1306c,#8a3ab9)'],['Google',210,41,'linear-gradient(90deg,#7fa8ff,#3c6fc4)'],['TikTok',90,13,'linear-gradient(90deg,#9a9a9a,#555)']];
+ $('#v-mkt').innerHTML=`<div class="vh"><div><h1>${t('mkt')}</h1><p>${t('m_s')}</p></div><span class="demo">${t('demo')}</span></div>
+ <div class="mg"><div class="card"><div class="ch"><h3>${t('posts')} <small>· 5</small></h3><span class="pill ok">✓ ${t('pub')}: 2/5</span></div>
+ <div class="posts">${posts.map(p=>{const d=new Date(mon);d.setDate(mon.getDate()+p[0]);return `<div class="post"><div class="pimg" style="background:${p[4]}"><i class="chb ch-${p[1]}">${CH[p[1]]}</i><span class="pd">${d.toLocaleDateString(LOC[L],{weekday:'short',day:'numeric'})}</span>${X(p[2])}</div><div class="pm"><span>${p[3]?t('pub'):t('sch')}</span><span class="pill ${p[3]?'ok':'gold'}" style="padding:3px 8px">${p[3]?'✓':'◷'}</span></div></div>`}).join('')}</div></div>
+ <div class="card"><div class="ch"><h3>${t('ads')}</h3></div>
+ <div class="stats3"><div><small>${t('spend')}</small><b class="num">$620</b></div><div><small>${t('leads')}</small><b class="num">148</b></div><div><small>${t('cpl')}</small><b class="num">$4.19</b></div></div>
+ <svg class="chart" viewBox="0 0 320 150" role="img" aria-label="${t('leads')}">${wk.map((v,i)=>{const h=v/mx*110,x=18+i*76;return `<rect class="bar" x="${x}" y="${125-h}" width="52" height="${h}" rx="9" fill="${i==3?'url(#gg)':'var(--s3)'}" style="animation-delay:${i*90}ms"/><text class="vl" x="${x+26}" y="${118-h}" text-anchor="middle">${v}</text><text x="${x+26}" y="143" text-anchor="middle">${t('wk')} ${i+1}</text>`}).join('')}</svg>
+ ${ch.map((c,i)=>`<div class="chn"><span>${c[0]}</span><span class="tr"><i style="width:${c[2]/94*100}%;background:${c[3]};animation-delay:${i*120}ms"></i></span><span class="num">${c[2]} <em>· $${(c[1]/c[2]).toFixed(2)}</em></span></div>`).join('')}
+ <div class="tip">${I('ai')}<span>${t('ads_tip')}</span></div></div></div>`;
+}
+
+function rMoney(){
+ const ms=[11200,12900,14100,13600,16400,18420];
+ const lbl=ms.map((_,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-5+i,1);return d.toLocaleDateString(LOC[L],{month:'short'})});
+ const mx=20000;
+ $('#v-money').innerHTML=`<div class="vh"><div><h1>${t('money')}</h1><p>${t('mo_s')}</p></div><span class="demo">${t('demo')}</span></div>
+ <div class="mtop"><div class="card mt"><small>${t('paid')}</small><div class="v num" style="color:var(--ok)">${money(18420)}</div></div><div class="card mt"><small>${t('unpaid')}</small><div class="v num">${money(2000)}</div></div><div class="card mt"><small>${t('overdue')}</small><div class="v num" style="color:var(--bad)">$420</div></div></div>
+ <div class="mg2"><div class="card"><div class="ch"><h3>${t('revm')}</h3><span class="pill ok">+12%</span></div>
+ <svg class="chart" viewBox="0 0 360 200" role="img" aria-label="${t('revm')}">${[0,.5,1].map(f=>`<line x1="0" x2="360" y1="${170-f*140}" y2="${170-f*140}" stroke="var(--line)"/>`).join('')}${ms.map((v,i)=>{const h=v/mx*140,x=10+i*58;return `<rect class="bar" x="${x}" y="${170-h}" width="40" height="${h}" rx="8" fill="${i==5?'url(#gg)':'var(--s3)'}" style="animation-delay:${i*80}ms"/><text class="vl" x="${x+20}" y="${163-h}" text-anchor="middle">${(v/1000).toFixed(1)}k</text><text x="${x+20}" y="192" text-anchor="middle">${lbl[i]}</text>`}).join('')}</svg></div>
+ <div class="card"><div class="ch"><h3>${t('inv')} <small>· ${invs.length}</small></h3></div>${invs.map(v=>`<div class="inv">${AV(v[1])}<div class="nm"><b>${v[1]}</b><small class="num">${v[0]}</small></div><span class="pill ${v[3]=='p'?'ok':v[3]=='l'?'bad':'gold'}">${v[3]=='p'?t('st_paid'):v[3]=='l'?t('st_late',{n:v[4]}):t('st_unp',{n:v[4]})}</span><span class="am num">${money(v[2])}</span>${v[3]!='p'?`<button class="btn gh" data-remind="${v[1]}"${S.reminded[v[1]]?' disabled style="opacity:.5"':''}>${S.reminded[v[1]]?'✓':t('remind')}</button>`:''}</div>`).join('')}</div></div>`;
+}
+
+function rTeam(){
+ const r=S.role,ci={owner:1,manager:2,viewer:3}[r];
+ const mx=Math.max(...team.map(m=>m[3]));
+ $('#v-team').innerHTML=`<div class="vh"><div><h1>${t('team')}</h1><p>${t('te_s')}</p></div><div class="goal" style="box-shadow:none"><div class="ring" style="width:56px;height:56px"><svg viewBox="0 0 80 80" style="width:56px;height:56px"><circle class="tr" cx="40" cy="40" r="34"/><circle class="pr" id="gring2" cx="40" cy="40" r="34" pathLength="100"/></svg><b class="num" style="font-size:13px">${Math.round(S.goalA/60*100)}%</b></div><div><strong>${t('goal')}</strong><small class="num">${t('goal_s',{a:S.goalA,b:60})}</small></div></div></div>
+ <div class="tg2"><div class="card"><div class="ch"><h3>${t('access')}</h3><div class="seg" role="group" aria-label="${t('as')}">${['owner','manager','viewer'].map(x=>`<button data-role="${x}" aria-pressed="${r==x}">${t(x)}</button>`).join('')}</div></div>
+ <div style="overflow-x:auto"><table class="mx"><thead><tr><th></th>${['owner','manager','viewer'].map((x,i)=>`<th class="${ci==i+1?'hl':''}">${t(x)}</th>`).join('')}</tr></thead><tbody>${PERM.map(p=>`<tr><td>${t(p[0])}</td>${p.slice(1).map((l,i)=>`<td class="${ci==i+1?'hl':''}"><span class="lv ${l}">${t('l'+l)}</span></td>`).join('')}</tr>`).join('')}</tbody></table></div>
+ <div class="rsum">${I(r=='viewer'?'eye':r=='manager'?'chat':'lock')} ${t('r_'+r)}</div></div>
+ <div class="card"><div class="ch"><h3>${t('members')} <small>· ${team.length}</small></h3></div>${team.map(m=>`<div class="mem">${AV(m[0])}<div class="nm"><b>${m[0]}</b><small>${X(m[2])}</small></div><span class="role ${m[1]}">${t(m[1])}</span></div>`).join('')}
+ <h3 style="margin-top:22px;font-size:15px;font-weight:800">${t('lb')}</h3>${team.filter(m=>m[3]).sort((a,b)=>b[3]-a[3]).map((m,i)=>`<div class="lb2"><span class="medal">${['🥇','🥈','🥉'][i]}</span><span style="width:96px">${m[0].split(' ')[0]}</span><span class="tr"><i style="width:${m[3]/mx*100}%;animation-delay:${i*120}ms"></i></span><span class="num">${m[3]}</span></div>`).join('')}</div></div>`;
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{const g=$('#gring2');if(g)g.style.strokeDashoffset=100-Math.round(S.goalA/60*100)}));
+}
+
+const RULES=[['a_unp',['unpaid','paid','invoice','owe','debt','не оплат','неоплач','оплатил','оплатив','счет','счёт','рахун','долг','борг']],['a_rev',['revenue','earn','income','money','profit','выручк','заработ','доход','деньг','виручк','заробил','дохід','гроші','прибут']],['a_ads',['ad','ads','channel','instagram','tiktok','google','lead','реклам','канал','заявк']],['a_tom',['tomorrow','booking','calendar','schedule','завтра','запис','календ']],['a_deal',['deal','pipeline','client','сделк','воронк','клиент','угод','клієнт']],['a_team',['team','staff','goal','команд','сотрудн','співроб','ціль','цель']],['a_post',['post','content','reel','пост','контент','рилс','рілс']],['a_hi',['hello','hi','hey','привет','привіт','здрав','добр']]];
+function answer(q){const s=' '+q.toLowerCase()+' ';for(const [k,ws] of RULES){if(ws.some(w=>w.length<4?new RegExp('[^a-zа-яіїє]'+w+'[^a-zа-яіїє]').test(s):s.includes(w)))return t(k,{a:S.goalA,b:60-S.goalA})}return t('a_def')}
+function rAI(){
+ if(!S.aiLog)S.aiLog=[];
+ $('#v-ai').innerHTML=`<div class="vh"><div><h1>${t('ai')}</h1><p>${t('ai_s')}</p></div><span class="pill gold">${I('lock')} offline · demo</span></div>
+ <div class="aiw"><div class="card aibox"><div class="aimsgs" id="aim"><div class="m a">${t('ai_hi')}</div>${S.aiLog.map(m=>`<div class="m ${m[0]}">${m[0]=='c'?esc(m[1]):m[1]}</div>`).join('')}</div>
+ <div class="chips">${['q1','q2','q3','q4','q5'].map(q=>`<button data-q="${q}">${t(q)}</button>`).join('')}</div>
+ <form class="reply" id="aif"><div class="rb"><textarea id="aiq" rows="1" placeholder="${t('ai_ph')}" aria-label="${t('ai_ph')}"></textarea><button class="snd" aria-label="${t('ask')}">${I('send')}</button></div></form></div>
+ <div class="card aside"><div class="orb"></div><p>${t('ai_side')}</p><ul><li>${I('chat')}${t('ai_l1')}</li><li>${I('money')}${t('ai_l2')}</li><li>${I('bolt')}${t('ai_l3')}</li></ul></div></div>`;
+ const box=$('#aim');box.scrollTop=box.scrollHeight;
+ $('#aiq').addEventListener('keydown',e=>{if(e.key=='Enter'&&!e.shiftKey){e.preventDefault();$('#aif').requestSubmit()}});
+}
+function ask(q){q=q.trim();if(!q)return;go('ai');const box=$('#aim');S.aiLog.push(['c',q]);box.insertAdjacentHTML('beforeend',`<div class="m c">${esc(q)}</div><div class="typing"><i></i><i></i><i></i></div>`);box.scrollTop=box.scrollHeight;const a=answer(q);setTimeout(()=>{box.querySelector('.typing')?.remove();S.aiLog.push(['a',a]);const el=document.createElement('div');el.className='m a';box.append(el);if(RM){el.innerHTML=a}else{const plain=a;let i=0;const tm=setInterval(()=>{i+=3;el.innerHTML=plain.slice(0,i).replace(/<[^>]*$/,'');box.scrollTop=box.scrollHeight;if(i>=plain.length){clearInterval(tm);el.innerHTML=plain}},12)}box.scrollTop=box.scrollHeight},RM?100:850)}
+
+const R={today:rToday,inbox:rInbox,deals:rDeals,cal:rCal,mkt:rMkt,money:rMoney,team:rTeam,ai:rAI};
+function go(v,push=true){
+ if(v=='more'){openSheet(true);return}
+ openSheet(false);
+ const same=S.view==v;S.view=v;
+ $$('.view').forEach(s=>s.classList.toggle('on',s.id=='v-'+v));
+ $$('[data-go]').forEach(b=>{const on=b.dataset.go==v||(b.dataset.go=='more'&&['mkt','money','team','ai'].includes(v));on&&b.closest('#nav,#tabbar')?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current')});
+ if(!same||!$('#v-'+v).innerHTML)R[v]();
+ if(!same){scrollTo({top:0,behavior:'instant'})}
+ if(push)try{history.replaceState(null,'',`?lang=${L}#${v}`)}catch(e){}
+}
+function openSheet(on){$('#sheet').classList.toggle('on',on);$('#shade').classList.toggle('on',on)}
+function renderAll(){applyStatic();Object.keys(R).forEach(k=>$('#v-'+k).innerHTML='');go(S.view,true);}
+function setLang(l){L=l;renderAll()}
+function setTheme(x){document.documentElement.dataset.theme=x;$('meta[name=theme-color]').content=x=='light'?'#F5F2EC':'#0F0E0C';try{localStorage.setItem('aur-theme',x)}catch(e){}applyStatic()}
+
+/* ---------- palette ---------- */
+let pIdx=0,pItems=[];
+function cmds(){return [...VIEWS.map(([v,ic])=>({ic,l:t('go')+': '+t(v),k:v+' '+T.en[v],run:()=>go(v)})),{ic:'moon',l:t('cmd_theme'),k:'theme dark light',run:()=>setTheme(document.documentElement.dataset.theme=='light'?'dark':'light')},...['en','ru','ua'].map(l=>({ic:'globe',l:t('cmd_lang')+': '+l.toUpperCase(),k:'language lang '+l,run:()=>setLang(l)})),...['q1','q2','q3','q4'].map(q=>({ic:'ai',l:t('cmd_ask')+': '+t(q),k:'ai ask '+T.en[q],run:()=>ask(t(q))})),{ic:'ai',l:t('ai_sug')+' → '+chats[0].n,k:'ai suggest reply',run:()=>{S.chat=0;go('inbox');rInbox();setTimeout(suggest,300)}}]}
+function rPal(){const q=$('#palIn').value.trim().toLowerCase();const all=cmds();pItems=q?all.filter(c=>(c.l+' '+c.k).toLowerCase().includes(q)):all;if(q&&!pItems.length)pItems=[{ic:'ai',l:t('cmd_ask')+': “'+$('#palIn').value+'”',k:'',run:()=>ask($('#palIn').value)}];pIdx=Math.min(pIdx,Math.max(0,pItems.length-1));$('#palL').innerHTML=pItems.map((c,i)=>`<li role="option" data-pi="${i}" aria-selected="${i==pIdx}">${I(c.ic)}<span>${esc(c.l)}</span>${i==pIdx?'<small>↵</small>':''}</li>`).join('')||`<li class="empty">${t('none')}</li>`}
+function openPal(){$('#pal').classList.add('on');$('#palIn').placeholder=t('cmd_ph');$('#palIn').value='';pIdx=0;rPal();setTimeout(()=>$('#palIn').focus(),30)}
+function closePal(){$('#pal').classList.remove('on')}
+function runP(i){const c=pItems[i];closePal();c&&c.run()}
+$('#palIn').addEventListener('input',()=>{pIdx=0;rPal()});
+$('#palIn').addEventListener('keydown',e=>{if(e.key=='ArrowDown'){e.preventDefault();pIdx=(pIdx+1)%pItems.length;rPal()}else if(e.key=='ArrowUp'){e.preventDefault();pIdx=(pIdx-1+pItems.length)%pItems.length;rPal()}else if(e.key=='Enter'){e.preventDefault();runP(pIdx)}});
+$('#palL').addEventListener('click',e=>{const li=e.target.closest('[data-pi]');li&&runP(+li.dataset.pi)});
+$('#pal').addEventListener('click',e=>{if(e.target.id=='pal')closePal()});
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()=='k'){e.preventDefault();$('#pal').classList.contains('on')?closePal():openPal()}else if(e.key=='Escape'){closePal();openSheet(false);$('#notif').classList.remove('on');if($('#ibx.open'))$('#ibx').classList.remove('open')}});
+
+/* ---------- global clicks ---------- */
+document.addEventListener('click',e=>{
+ const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go);return}
+ const lg=e.target.closest('[data-lang]');if(lg){setLang(lg.dataset.lang);return}
+ if(e.target.closest('#themeBtn,[data-theme-t]')){setTheme(document.documentElement.dataset.theme=='light'?'dark':'light');return}
+ if(e.target.closest('#openPal')){openPal();return}
+ if(e.target.closest('#bell')){const n=$('#notif');n.classList.toggle('on');$('#bell').setAttribute('aria-expanded',n.classList.contains('on'));return}
+ if(e.target.closest('#markR')){S.notifRead=true;applyStatic();$('#notif').classList.add('on');return}
+ if(!e.target.closest('#notif'))$('#notif').classList.remove('on');
+ if(e.target.closest('#shade')){openSheet(false);return}
+ const tk=e.target.closest('[data-task]');if(tk){const i=+tk.dataset.task;S.tasks[i]=S.tasks[i]?0:1;tk.setAttribute('aria-checked',!!S.tasks[i]);const d=S.tasks.filter(Boolean).length;$('#pbar').style.width=d/3*100+'%';$('#pcnt').textContent=d+'/3';if(S.tasks[i]&&!RM)tk.animate([{transform:'scale(.98)'},{transform:'scale(1.01)'},{transform:'scale(1)'}],{duration:350});if(d==3){S.streak++;const r=tk.getBoundingClientRect();confetti(r.left+30,r.top+r.height/2);toast(t('plan_ok'),'flame');setTimeout(()=>{applyStatic();const st=$('#v-today .goal .st');if(st)st.innerHTML=FL+t('streak',{n:S.streak})},200)}return}
+ const ch=e.target.closest('[data-chat]');if(ch){S.chat=+ch.dataset.chat;const c=chats[S.chat];c.un=0;$$('.ci').forEach(b=>b.setAttribute('aria-selected',b==ch));ch.classList.remove('unr');ch.querySelector('.ud')?.remove();rThread();$('#ibx').classList.add('open');updBadges();return}
+ if(e.target.closest('#bk')){$('#ibx').classList.remove('open');return}
+ const f=e.target.closest('[data-filt]');if(f){S.filter=f.dataset.filt;rInbox();return}
+ if(e.target.closest('#sugB')){suggest();return}
+ if(e.target.closest('#sndB')){sendMsg();return}
+ const dy=e.target.closest('[data-day]');if(dy){S.day=+dy.dataset.day;$$('[data-day]').forEach(b=>b.setAttribute('aria-pressed',b==dy));$$('.dcol').forEach((c,i)=>c.classList.toggle('sel',i==S.day));return}
+ const ev=e.target.closest('[data-ev]');if(ev){const [n,s,h]=ev.dataset.ev.split('|');toast(`${h} · ${n} · ${s}`,'cal');return}
+ const rm=e.target.closest('[data-remind]');if(rm){S.reminded[rm.dataset.remind]=1;rm.textContent='✓';rm.disabled=true;rm.style.opacity=.5;toast(t('reminded',{x:rm.dataset.remind}),'send');return}
+ const ro=e.target.closest('[data-role]');if(ro){S.role=ro.dataset.role;rTeam();return}
+ const q=e.target.closest('[data-q]');if(q){ask(t(q.dataset.q));return}
+});
+document.addEventListener('submit',e=>{if(e.target.id=='aif'){e.preventDefault();const v=$('#aiq').value;$('#aiq').value='';ask(v)}});
+
+/* ---------- init ---------- */
+try{const th=new URLSearchParams(location.search).get('theme')||localStorage.getItem('aur-theme');if(th=='light'||th=='dark')document.documentElement.dataset.theme=th}catch(e){}
+$('meta[name=theme-color]').content=document.documentElement.dataset.theme=='light'?'#F5F2EC':'#0F0E0C';
+const h=location.hash.slice(1);if(R[h])S.view=h;
+applyStatic();go(S.view,false);
+setInterval(()=>{if(S.view=='today')$$('#feedL .fi time').forEach((e,i)=>e.textContent=ago(feed[i].ts))},30000);
+})();
+</script>
+</body>
+</html>

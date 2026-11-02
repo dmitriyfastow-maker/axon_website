@@ -79,6 +79,27 @@ async function paidUsd(db: DB, leadIds: number[]): Promise<number> {
   return Math.round(rows.reduce((s, p) => s + (p.currency === 'USD' ? p.amount : p.amount_uah / usdRate), 0));
 }
 
+/** Ecosystem facts for the cabinet's checklist and badges: connected sites, requests they brought, friends referred.
+ *  Every part is optional — a missing table (migration not applied yet) just leaves zeros. */
+async function ecosystem(db: DB, me: { id: number; email: string | null; email_verified_at: string | null }) {
+  const eco = { sites: 0, bizLeads: 0, partner: false, friends: 0 };
+  try {
+    eco.sites = (await db.prepare('SELECT COUNT(*) AS n FROM biz WHERE owner_id = ?').bind(me.id).first<{ n: number }>())?.n ?? 0;
+    if (me.email && me.email_verified_at) eco.sites += (await db.prepare('SELECT COUNT(*) AS n FROM biz_members WHERE email = ?').bind(me.email.toLowerCase()).first<{ n: number }>())?.n ?? 0;
+    eco.bizLeads = (await db.prepare('SELECT COUNT(*) AS n FROM biz_leads WHERE biz_id IN (SELECT id FROM biz WHERE owner_id = ?)').bind(me.id).first<{ n: number }>())?.n ?? 0;
+  } catch { /* biz tables not migrated yet */ }
+  try {
+    if (me.email && me.email_verified_at) {
+      const p = await db.prepare('SELECT id FROM partners WHERE lower(email) = ?').bind(me.email.toLowerCase()).first<{ id: number }>();
+      if (p) {
+        eco.partner = true;
+        eco.friends = (await db.prepare(`SELECT COUNT(*) AS n FROM leads d JOIN links r ON r.slug = d.ref WHERE r.partner_id = ? AND lower(trim(COALESCE(d.contact, ''))) != ?`).bind(p.id, me.email.toLowerCase()).first<{ n: number }>())?.n ?? 0;
+      }
+    }
+  } catch { /* partner tables differ — no referral facts */ }
+  return eco;
+}
+
 async function linkLeads(db: DB, clientId: number, email: string | null, room: string | null) {
   if (email) await db.prepare(`UPDATE leads SET client_id = ? WHERE client_id IS NULL AND (lower(email_addr) = ? OR lower(trim(contact)) = ?)`).bind(clientId, email, email).run();
   if (room && ROOM_RE.test(room)) await db.prepare('UPDATE leads SET client_id = ? WHERE room = ? AND client_id IS NULL').bind(clientId, room).run();
@@ -113,7 +134,7 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
       const ids = list.map((l) => l.id);
       const paid = await paidUsd(db, ids);
       const history = (await db.prepare(`SELECT at, kind, amount_usd FROM bonuses WHERE client_id = ? OR lead_id IN (${(ids.length ? ids : [0]).join(',')}) ORDER BY id DESC LIMIT 30`).bind(me.id).all()).results;
-      return json(200, { ok: true, signedIn: true, ways, me: { email: me.email, name: me.name, profile: me.profile ? JSON.parse(me.profile) : null, marketing: !!me.marketing, verified: !!me.email_verified_at }, projects: list, paidUsd: paid, level: [...LEVELS].reverse().find((x) => paid >= x.from)!.id, bonus: await bonusBalance(db, me.id, ids), bonusHistory: history, rules: BONUS });
+      return json(200, { ok: true, signedIn: true, ways, me: { email: me.email, name: me.name, profile: me.profile ? JSON.parse(me.profile) : null, marketing: !!me.marketing, verified: !!me.email_verified_at }, projects: list, paidUsd: paid, level: [...LEVELS].reverse().find((x) => paid >= x.from)!.id, bonus: await bonusBalance(db, me.id, ids), bonusHistory: history, rules: BONUS, levels: LEVELS, eco: await ecosystem(db, me) });
     }
     if (ROOM_RE.test(room)) {
       const list = await projects(db, 'room = ?', room);
