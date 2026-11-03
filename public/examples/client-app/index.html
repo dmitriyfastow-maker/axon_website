@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pulse Studio — Client app demo</title>
+<meta name="description" content="A demo client app by Vaxo: class booking, membership, chat with the coach and reminders — opens from a link, no app store.">
+<meta name="theme-color" content="#0f1115">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1115;--bg2:#161922;--card:#1b1f2a;--line:rgba(255,255,255,.1);--ink:#f4f1ea;--mute:#a7a9b4;--a:#ffcf5c;--b:#ff7a59;--r:22px;--pad:clamp(16px,4vw,48px);--serif:"Fraunces",Georgia,serif;--body:"Inter",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}html,body{overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.65 var(--body);-webkit-font-smoothing:antialiased}
+a{color:inherit}button,input{font:inherit;color:inherit}button{cursor:pointer;border:0}
+:focus-visible{outline:2px solid var(--a);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 var(--pad)}
+.vx{display:block;background:var(--ink);color:#15171c;font:600 12.5px/1.3 var(--body);text-align:center;padding:9px 16px;text-decoration:none}
+.vx span{text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.nav{position:sticky;top:0;z-index:20;background:rgba(15,17,21,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:18px;height:62px}
+.logo{font:600 20px var(--serif);text-decoration:none}.logo i{color:var(--a)}
+.links{display:flex;gap:24px;margin-left:auto;font-size:14px;color:var(--mute)}
+.links a{text-decoration:none}.links a:hover{color:var(--ink)}
+.lang{display:flex;gap:2px;border:1px solid var(--line);border-radius:99px;padding:2px}
+.lang button{background:none;color:var(--mute);font-size:12px;font-weight:600;padding:4px 9px;border-radius:99px}
+.lang button.on{background:var(--ink);color:#15171c}
+.btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(100deg,var(--a),var(--b));color:#1a1206;font-weight:700;padding:14px 26px;border-radius:99px;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(255,122,89,.6)}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.hero{padding:0;display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:center}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--a);font-weight:600}
+h1{font:600 clamp(38px,6.4vw,76px)/1.04 var(--serif);letter-spacing:-.02em;margin:16px 0 22px}
+h1 em{font-style:italic;font-weight:500;color:var(--a)}
+.lead{color:var(--mute);font-size:clamp(17px,2vw,20px);max-width:34em;margin-bottom:30px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.portrait{aspect-ratio:4/5;border-radius:var(--r);background:radial-gradient(circle at 30% 20%,#ffcf5c55,transparent 55%),radial-gradient(circle at 80% 90%,#ff7a5966,transparent 55%),var(--card);border:1px solid var(--line);position:relative;overflow:hidden;display:grid;place-items:center}
+.portrait svg{width:62%;opacity:.9}
+.badge{position:absolute;left:14px;bottom:14px;right:14px;background:rgba(15,17,21,.72);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:13px;color:var(--mute)}
+.badge b{color:var(--ink)}
+.logos{border-block:1px solid var(--line);padding:22px 0;color:var(--mute);font-size:13px}
+.logos .wrap{display:flex;flex-wrap:wrap;gap:12px 34px;justify-content:center;font:600 17px var(--serif);letter-spacing:.02em}
+.logos .wrap span{opacity:.7}
+section{padding:clamp(56px,8vw,100px) 0}
+h2{font:600 clamp(28px,4.2vw,46px)/1.1 var(--serif);letter-spacing:-.015em;margin:10px 0 14px}
+.sub{color:var(--mute);max-width:40em}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.stat b{display:block;font:600 40px var(--serif);color:var(--a)}
+.stat span{color:var(--mute);font-size:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px;transition:transform .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);border-color:rgba(255,207,92,.5)}
+.card h3{font:600 22px var(--serif);margin:10px 0 8px}.card p{color:var(--mute);font-size:15px}
+.tag{font-size:12px;color:var(--a);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.price{margin-top:16px;font-weight:700}
+.quote{background:var(--bg2);border-block:1px solid var(--line)}
+.quote blockquote{font:500 italic clamp(24px,3.6vw,38px)/1.3 var(--serif);max-width:24em}
+.quote cite{display:block;margin-top:18px;font:500 14px var(--body);color:var(--mute);font-style:normal}
+.nl{background:linear-gradient(120deg,#ffcf5c22,#ff7a5922),var(--card);border:1px solid var(--line);border-radius:28px;padding:clamp(26px,5vw,56px);display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center}
+.nl form{display:flex;gap:8px;flex-wrap:wrap}
+.nl input{flex:1 1 200px;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:14px 20px}
+.nl .ok{display:none;color:var(--a);font-weight:600;margin-top:10px}
+.book{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:34px;align-items:start}
+.days,.slots{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:600;transition:.2s}
+.chip:hover{border-color:var(--a)}.chip.on{background:var(--a);color:#1a1206;border-color:var(--a)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.panel h4{font:600 18px var(--serif);margin-bottom:12px}
+.panel .btn{margin-top:16px;width:100%;justify-content:center}
+.done{display:none;margin-top:14px;padding:14px;border-radius:14px;background:#7fd6a022;color:#9be8b8;font-weight:600}
+footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mute);font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}.rv.in{opacity:1;transform:none}
+@media(max-width:860px){.hero,.nl,.book{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.links{display:none}.lang{margin-left:auto}.portrait{max-height:380px;aspect-ratio:auto;min-height:300px}}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+.hero1{padding:clamp(40px,7vw,90px) 0 30px;text-align:center}
+.hero1 .lead{margin:0 auto 26px}
+.ask{display:flex;gap:8px;max-width:620px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px}
+.ask input{flex:1;background:none;border:0;padding:12px 18px;outline:0;min-width:0}
+.ask .btn{padding:12px 22px}
+.aiout{max-width:620px;margin:14px auto 0;color:var(--mute);font-size:15px;min-height:24px}
+.aiout b{color:var(--a)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 8px}
+.pg{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
+.pc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .25s,border-color .25s}
+.pc:hover{transform:translateY(-4px);border-color:rgba(255,207,92,.5)}
+.pc.hl{border-color:var(--a);box-shadow:0 0 0 2px #ffcf5c55}
+.pi{aspect-ratio:1;display:grid;place-items:center;font-size:64px}
+.pb{padding:16px}.pb h3{font:600 17px var(--serif)}.pb small{color:var(--mute);display:block;margin:2px 0 10px}
+.pr{display:flex;justify-content:space-between;align-items:center}.pr b{font-size:18px}
+.add{background:var(--ink);color:#15171c;font-weight:700;border-radius:99px;padding:8px 14px;font-size:13px}
+.cartbtn{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:600;font-size:14px}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(380px,100%);background:var(--bg2);border-left:1px solid var(--line);z-index:40;transform:translateX(100%);transition:transform .3s;padding:22px;display:flex;flex-direction:column;gap:12px}
+.drawer.open{transform:none}
+.drawer .ln{display:flex;justify-content:space-between;gap:10px;font-size:14px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.drawer .tot{display:flex;justify-content:space-between;font:600 20px var(--serif);margin-top:auto}
+.drawer .btn{justify-content:center}
+.ship{height:8px;border-radius:9px;background:var(--card);overflow:hidden}.ship i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--b));width:0;transition:width .4s}
+.trk{display:flex;gap:0;margin-top:30px;flex-wrap:wrap}
+.trk div{flex:1 1 140px;padding:16px;background:var(--card);border:1px solid var(--line);font-size:14px;color:var(--mute)}
+.trk div.on{color:var(--ink);border-color:var(--a)}.trk b{display:block;color:var(--a)}
+@media(max-width:860px){.pg{grid-template-columns:1fr 1fr}}
+
+.hero2{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;padding:clamp(40px,7vw,90px) 0}
+.phone{width:min(340px,100%);margin:0 auto;border:10px solid #2a2f3d;border-radius:44px;background:var(--bg2);overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.7);display:flex;flex-direction:column;height:640px}
+.scr{flex:1;overflow:auto;padding:18px 16px;display:none}.scr.on{display:block}
+.tabs{display:flex;border-top:1px solid var(--line);background:var(--card)}
+.tabs button{flex:1;background:none;color:var(--mute);padding:12px 4px;font-size:13px;font-weight:600}.tabs button.on{color:var(--a)}
+.mc{background:linear-gradient(120deg,var(--a),var(--b));color:#1a1206;border-radius:20px;padding:18px;margin:10px 0 16px}.mc b{font:600 30px var(--serif);display:block}
+.cl{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;font-size:14px}
+.cl small{color:var(--mute);display:block}.cl .add.on{background:#7fd6a0;color:#0d2a17}
+.st3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.st3 div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;font-size:12px;color:var(--mute)}.st3 b{display:block;font:600 24px var(--serif);color:var(--a)}
+.bd{display:flex;gap:8px;flex-wrap:wrap}.bd span{background:var(--card);border:1px solid var(--a);border-radius:99px;padding:6px 12px;font-size:13px}
+.msg{max-width:82%;padding:10px 14px;border-radius:16px;margin-bottom:8px;font-size:14px;background:var(--card)}.msg.me{margin-left:auto;background:var(--a);color:#1a1206}
+.cf{display:flex;gap:6px;margin-top:10px}.cf input{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:10px 14px}
+.toast{font-size:12px;color:#9be8b8;margin:0 0 8px;min-height:16px}
+@media(max-width:860px){.hero2{grid-template-columns:1fr}}
+</style></head><body>
+<a class="vx" href="/?vax=demo-client-app"><b data-i="vx1">Demo by Vaxo</b> — <span data-i="vx2">x</span></a>
+<header class="nav"><div class="wrap"><a class="logo" href="#top">Pulse<i>.</i>Studio</a><div class="lang" role="group" aria-label="Language" style="margin-left:auto"><button data-l="en" class="on">EN</button><button data-l="ru">RU</button><button data-l="ua">UA</button></div></div></header>
+<main id="top"><div class="wrap">
+<div class="hero2"><div class="rv"><div class="eyebrow" data-i="eb">x</div><h1 data-i="h1">x</h1><p class="lead" data-i="lead">x</p></div>
+<div class="phone rv" aria-label="App">
+<div class="scr on" id="s1"><div class="mc"><span data-i="hi">Hi</span><b data-i="mem">x</b><span><b style="display:inline;font-size:inherit" id="lf">8</b> <span data-i="left">x</span></span></div><div class="toast" id="ts"></div><div id="cls"></div></div>
+<div class="scr" id="s2"><div class="mc"><span data-i="hi">Hi</span><b data-i="mem">x</b></div><div class="st3"><div><b>6</b><span data-i="streak">x</span></div><div><b id="vc">24</b><span data-i="visits">x</span></div><div><b>480</b><span data-i="pts">x</span></div></div><h4 style="font:600 18px var(--serif);margin-bottom:10px" data-i="ach">x</h4><div class="bd"><span>🏅 <i data-i="a1" style="font-style:normal">x</i></span><span>🔥 <i data-i="a2" style="font-style:normal">x</i></span><span>🌅 <i data-i="a3" style="font-style:normal">x</i></span></div></div>
+<div class="scr" id="s3"><div class="msg" data-i="c1">x</div><div class="msg me" data-i="c2">x</div><div id="mm"></div><p class="sub" style="font-size:12px;margin-top:10px" data-i="rep">x</p><form class="cf" id="cf"><input id="ci" data-ph="ph" aria-label="msg"><button class="add" data-i="send">x</button></form></div>
+<div class="tabs"><button class="on" data-t="s1" data-i="tab1">x</button><button data-t="s2" data-i="tab2">x</button><button data-t="s3" data-i="tab3">x</button></div></div></div>
+<section style="padding-top:0"><div class="grid3">
+<div class="card rv"><span class="tag">01</span><h3 data-i="f1">x</h3><p data-i="f1t">x</p></div>
+<div class="card rv"><span class="tag">02</span><h3 data-i="f2">x</h3><p data-i="f2t">x</p></div>
+<div class="card rv"><span class="tag">03</span><h3 data-i="f3">x</h3><p data-i="f3t">x</p></div></div></section>
+</div></main>
+<footer><div class="wrap"><span>© Pulse Studio</span><span data-i="ft">x</span></div></footer>
+<script>
+const T={"en": {"vx1": "Demo by Vaxo", "vx2": "the studio is fictional, the functions are real. Want an app like this? →", "eb": "Client app · works as an icon on the phone", "h1": "Your studio, <em>in your pocket</em>.", "lead": "Book a class in two taps, see your membership, chat with the coach, get reminders. No app store needed — opens from a link.", "hi": "Hi, Anna", "mem": "Membership · 12 classes", "left": "visits left", "tab1": "Classes", "tab2": "Me", "tab3": "Chat", "book": "Book", "booked": "Booked ✓", "cancel": "Cancel", "done": "Reminder will arrive 2 hours before", "streak": "Week streak", "visits": "Visits", "pts": "Points", "ach": "Achievements", "a1": "First class", "a2": "5 in a row", "a3": "Early bird", "ph": "Write to the coach…", "send": "Send", "c1": "Hi Anna! Tomorrow's yoga at 09:00 has 2 spots left 🙌", "c2": "Thanks! Booked.", "rep": "Coach replies within minutes. AI answers questions about prices and schedule at night.", "f1": "Booking & calendar", "f1t": "Live schedule, spots left, waitlist and reminders in the messenger.", "f2": "Membership & payments", "f2t": "Pay or renew in one tap, receipts, freeze a membership, referral bonus.", "f3": "Chat & push", "f3t": "Coach and AI in one thread. Push and Telegram reminders cut no-shows by half.", "ft": "Client app, booking, payments and reminders — built and run by Vaxo.", "cls": ["Morning yoga", "HIIT 45", "Stretch & relax", "Strength basics"], "spots": "spots"}, "ru": {"vx1": "Демо Vaxo", "vx2": "студия вымышленная, функции настоящие. Хотите такое приложение? →", "eb": "Приложение клиента · иконка на телефоне", "h1": "Ваша студия — <em>в кармане</em>.", "lead": "Запись на занятие в два касания, абонемент на виду, чат с тренером, напоминания. Магазин приложений не нужен — открывается по ссылке.", "hi": "Привет, Анна", "mem": "Абонемент · 12 занятий", "left": "визитов осталось", "tab1": "Занятия", "tab2": "Я", "tab3": "Чат", "book": "Записаться", "booked": "Вы записаны ✓", "cancel": "Отменить", "done": "Напоминание придёт за 2 часа", "streak": "Недель подряд", "visits": "Визитов", "pts": "Баллы", "ach": "Достижения", "a1": "Первое занятие", "a2": "5 подряд", "a3": "Жаворонок", "ph": "Напишите тренеру…", "send": "Отправить", "c1": "Привет, Анна! На завтрашнюю йогу в 09:00 осталось 2 места 🙌", "c2": "Спасибо! Записалась.", "rep": "Тренер отвечает за минуты. Ночью ИИ отвечает про цены и расписание.", "f1": "Запись и календарь", "f1t": "Живое расписание, остаток мест, лист ожидания и напоминания в мессенджере.", "f2": "Абонемент и оплата", "f2t": "Оплата и продление в одно касание, чеки, заморозка, бонус за друга.", "f3": "Чат и пуши", "f3t": "Тренер и ИИ в одной переписке. Пуши и Telegram вдвое сокращают неявки.", "ft": "Приложение клиента, запись, оплата и напоминания — построены и ведутся Vaxo.", "cls": ["Утренняя йога", "HIIT 45", "Растяжка и релакс", "Силовая база"], "spots": "мест"}, "ua": {"vx1": "Демо Vaxo", "vx2": "студія вигадана, функції справжні. Хочете такий застосунок? →", "eb": "Застосунок клієнта · іконка на телефоні", "h1": "Ваша студія — <em>в кишені</em>.", "lead": "Запис на заняття в два дотики, абонемент на виду, чат із тренером, нагадування. Магазин застосунків не потрібен — відкривається за посиланням.", "hi": "Привіт, Анно", "mem": "Абонемент · 12 занять", "left": "візитів залишилось", "tab1": "Заняття", "tab2": "Я", "tab3": "Чат", "book": "Записатись", "booked": "Ви записані ✓", "cancel": "Скасувати", "done": "Нагадування прийде за 2 години", "streak": "Тижнів поспіль", "visits": "Візитів", "pts": "Бали", "ach": "Досягнення", "a1": "Перше заняття", "a2": "5 поспіль", "a3": "Жайворонок", "ph": "Напишіть тренеру…", "send": "Надіслати", "c1": "Привіт, Анно! На завтрашню йогу о 09:00 залишилось 2 місця 🙌", "c2": "Дякую! Записалась.", "rep": "Тренер відповідає за хвилини. Вночі ШІ відповідає про ціни й розклад.", "f1": "Запис і календар", "f1t": "Живий розклад, залишок місць, лист очікування й нагадування в месенджері.", "f2": "Абонемент і оплата", "f2t": "Оплата й продовження в один дотик, чеки, заморозка, бонус за друга.", "f3": "Чат і пуші", "f3t": "Тренер і ШІ в одній переписці. Пуші й Telegram удвічі зменшують неявки.", "ft": "Застосунок клієнта, запис, оплата й нагадування — збудовані й ведуться Vaxo.", "cls": ["Ранкова йога", "HIIT 45", "Розтяжка й релакс", "Силова база"], "spots": "місць"}};
+const TIMES=["09:00 · 2","18:30 · 6","20:00 · 9","07:30 · 4"];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let L='en',bk={},left=8;
+function cls(){$('#cls').innerHTML=T[L].cls.map((n,i)=>{const [t,s]=TIMES[i].split(' · ');return '<div class="cl"><div><b>'+n+'</b><small>'+t+' · '+(+s-(bk[i]?0:0)-(bk[i]?1:0))+' '+T[L].spots+'</small></div><button class="add'+(bk[i]?' on':'')+'" data-b="'+i+'">'+(bk[i]?T[L].booked:T[L].book)+'</button></div>'}).join('')}
+function setLang(l){L=l;document.documentElement.lang=l==='ua'?'uk':l;$$('[data-i]').forEach(e=>{e.innerHTML=T[l][e.dataset.i]});$$('[data-ph]').forEach(e=>e.placeholder=T[l][e.dataset.ph]);$$('.lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));cls();try{localStorage.setItem('ps-l',l)}catch(e){}}
+$('#cls').onclick=e=>{const b=e.target.closest('[data-b]');if(!b)return;const i=b.dataset.b;bk[i]=!bk[i];left+=bk[i]?-1:1;$('#lf').textContent=left;$('#ts').textContent=bk[i]?T[L].done:'';cls()};
+$$('.tabs button').forEach(b=>b.onclick=()=>{$$('.scr').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));$$('.tabs button').forEach(x=>x.classList.toggle('on',x===b))});
+$('#cf').onsubmit=e=>{e.preventDefault();const v=$('#ci').value.trim();if(!v)return;const d=document.createElement('div');d.className='msg me';d.textContent=v;$('#mm').appendChild(d);$('#ci').value=''};
+$$('.lang button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.1});$$('.rv').forEach(e=>io.observe(e));
+setLang('en');try{const q=new URLSearchParams(location.search).get('lang')||localStorage.getItem('ps-l');if(q&&T[q]&&q!=='en')setLang(q)}catch(e){}
+</script></body></html>
