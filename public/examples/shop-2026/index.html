@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kettle &amp; Leaf — Tea shop with an AI picker</title>
+<meta name="description" content="A demo online store by Vaxo: AI product picker, one-click checkout, free-shipping meter and live order tracking.">
+<meta name="theme-color" content="#0f1115">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1115;--bg2:#161922;--card:#1b1f2a;--line:rgba(255,255,255,.1);--ink:#f4f1ea;--mute:#a7a9b4;--a:#ffcf5c;--b:#ff7a59;--r:22px;--pad:clamp(16px,4vw,48px);--serif:"Fraunces",Georgia,serif;--body:"Inter",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}html,body{overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.65 var(--body);-webkit-font-smoothing:antialiased}
+a{color:inherit}button,input{font:inherit;color:inherit}button{cursor:pointer;border:0}
+:focus-visible{outline:2px solid var(--a);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 var(--pad)}
+.vx{display:block;background:var(--ink);color:#15171c;font:600 12.5px/1.3 var(--body);text-align:center;padding:9px 16px;text-decoration:none}
+.vx span{text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.nav{position:sticky;top:0;z-index:20;background:rgba(15,17,21,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:18px;height:62px}
+.logo{font:600 20px var(--serif);text-decoration:none}.logo i{color:var(--a)}
+.links{display:flex;gap:24px;margin-left:auto;font-size:14px;color:var(--mute)}
+.links a{text-decoration:none}.links a:hover{color:var(--ink)}
+.lang{display:flex;gap:2px;border:1px solid var(--line);border-radius:99px;padding:2px}
+.lang button{background:none;color:var(--mute);font-size:12px;font-weight:600;padding:4px 9px;border-radius:99px}
+.lang button.on{background:var(--ink);color:#15171c}
+.btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(100deg,var(--a),var(--b));color:#1a1206;font-weight:700;padding:14px 26px;border-radius:99px;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(255,122,89,.6)}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.hero{padding:0;display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:center}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--a);font-weight:600}
+h1{font:600 clamp(38px,6.4vw,76px)/1.04 var(--serif);letter-spacing:-.02em;margin:16px 0 22px}
+h1 em{font-style:italic;font-weight:500;color:var(--a)}
+.lead{color:var(--mute);font-size:clamp(17px,2vw,20px);max-width:34em;margin-bottom:30px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.portrait{aspect-ratio:4/5;border-radius:var(--r);background:radial-gradient(circle at 30% 20%,#ffcf5c55,transparent 55%),radial-gradient(circle at 80% 90%,#ff7a5966,transparent 55%),var(--card);border:1px solid var(--line);position:relative;overflow:hidden;display:grid;place-items:center}
+.portrait svg{width:62%;opacity:.9}
+.badge{position:absolute;left:14px;bottom:14px;right:14px;background:rgba(15,17,21,.72);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:13px;color:var(--mute)}
+.badge b{color:var(--ink)}
+.logos{border-block:1px solid var(--line);padding:22px 0;color:var(--mute);font-size:13px}
+.logos .wrap{display:flex;flex-wrap:wrap;gap:12px 34px;justify-content:center;font:600 17px var(--serif);letter-spacing:.02em}
+.logos .wrap span{opacity:.7}
+section{padding:clamp(56px,8vw,100px) 0}
+h2{font:600 clamp(28px,4.2vw,46px)/1.1 var(--serif);letter-spacing:-.015em;margin:10px 0 14px}
+.sub{color:var(--mute);max-width:40em}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.stat b{display:block;font:600 40px var(--serif);color:var(--a)}
+.stat span{color:var(--mute);font-size:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px;transition:transform .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);border-color:rgba(255,207,92,.5)}
+.card h3{font:600 22px var(--serif);margin:10px 0 8px}.card p{color:var(--mute);font-size:15px}
+.tag{font-size:12px;color:var(--a);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.price{margin-top:16px;font-weight:700}
+.quote{background:var(--bg2);border-block:1px solid var(--line)}
+.quote blockquote{font:500 italic clamp(24px,3.6vw,38px)/1.3 var(--serif);max-width:24em}
+.quote cite{display:block;margin-top:18px;font:500 14px var(--body);color:var(--mute);font-style:normal}
+.nl{background:linear-gradient(120deg,#ffcf5c22,#ff7a5922),var(--card);border:1px solid var(--line);border-radius:28px;padding:clamp(26px,5vw,56px);display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center}
+.nl form{display:flex;gap:8px;flex-wrap:wrap}
+.nl input{flex:1 1 200px;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:14px 20px}
+.nl .ok{display:none;color:var(--a);font-weight:600;margin-top:10px}
+.book{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:34px;align-items:start}
+.days,.slots{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:600;transition:.2s}
+.chip:hover{border-color:var(--a)}.chip.on{background:var(--a);color:#1a1206;border-color:var(--a)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.panel h4{font:600 18px var(--serif);margin-bottom:12px}
+.panel .btn{margin-top:16px;width:100%;justify-content:center}
+.done{display:none;margin-top:14px;padding:14px;border-radius:14px;background:#7fd6a022;color:#9be8b8;font-weight:600}
+footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mute);font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}.rv.in{opacity:1;transform:none}
+@media(max-width:860px){.hero,.nl,.book{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.links{display:none}.lang{margin-left:auto}.portrait{max-height:380px;aspect-ratio:auto;min-height:300px}}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+.hero1{padding:clamp(40px,7vw,90px) 0 30px;text-align:center}
+.hero1 .lead{margin:0 auto 26px}
+.ask{display:flex;gap:8px;max-width:620px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px}
+.ask input{flex:1;background:none;border:0;padding:12px 18px;outline:0;min-width:0}
+.ask .btn{padding:12px 22px}
+.aiout{max-width:620px;margin:14px auto 0;color:var(--mute);font-size:15px;min-height:24px}
+.aiout b{color:var(--a)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 8px}
+.pg{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
+.pc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .25s,border-color .25s}
+.pc:hover{transform:translateY(-4px);border-color:rgba(255,207,92,.5)}
+.pc.hl{border-color:var(--a);box-shadow:0 0 0 2px #ffcf5c55}
+.pi{aspect-ratio:1;display:grid;place-items:center;font-size:64px}
+.pb{padding:16px}.pb h3{font:600 17px var(--serif)}.pb small{color:var(--mute);display:block;margin:2px 0 10px}
+.pr{display:flex;justify-content:space-between;align-items:center}.pr b{font-size:18px}
+.add{background:var(--ink);color:#15171c;font-weight:700;border-radius:99px;padding:8px 14px;font-size:13px}
+.cartbtn{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:600;font-size:14px}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(380px,100%);background:var(--bg2);border-left:1px solid var(--line);z-index:40;transform:translateX(100%);transition:transform .3s;padding:22px;display:flex;flex-direction:column;gap:12px}
+.drawer.open{transform:none}
+.drawer .ln{display:flex;justify-content:space-between;gap:10px;font-size:14px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.drawer .tot{display:flex;justify-content:space-between;font:600 20px var(--serif);margin-top:auto}
+.drawer .btn{justify-content:center}
+.ship{height:8px;border-radius:9px;background:var(--card);overflow:hidden}.ship i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--b));width:0;transition:width .4s}
+.trk{display:flex;gap:0;margin-top:30px;flex-wrap:wrap}
+.trk div{flex:1 1 140px;padding:16px;background:var(--card);border:1px solid var(--line);font-size:14px;color:var(--mute)}
+.trk div.on{color:var(--ink);border-color:var(--a)}.trk b{display:block;color:var(--a)}
+@media(max-width:860px){.pg{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<a class="vx" href="/?vax=demo-shop-2026"><b data-i="vx1">Demo by Vaxo</b> — <span data-i="vx2">the shop is fictional, the functions are real. Want one like this? →</span></a>
+<header class="nav"><div class="wrap">
+<a class="logo" href="#top">Kettle<i>&amp;</i>Leaf</a>
+<nav class="links"><a href="#shop" data-i="n1">Catalog</a><a href="#delivery" data-i="n2">Delivery</a></nav>
+<div class="lang" role="group" aria-label="Language"><button data-l="en" class="on">EN</button><button data-l="ru">RU</button><button data-l="ua">UA</button></div>
+<button class="cartbtn" id="cb">🛒 <span id="cn">0</span></button>
+</div></header>
+<main id="top"><div class="wrap">
+<div class="hero1 rv"><div class="eyebrow" data-i="eb">Tea shop · 2-day delivery</div>
+<h1 data-i="h1">Tea that <em>picks itself</em> for you.</h1>
+<p class="lead" data-i="lead">Tell the AI what you like and it fills your cart. One-click checkout, order status in Telegram.</p>
+<form class="ask" id="af"><input id="aq" data-ph="ph" placeholder="I want an energising tea without caffeine…" aria-label="AI"><button class="btn" data-i="ask">Pick for me</button></form>
+<div class="aiout" id="ao" data-i="ai3">Describe a taste or an occasion — e.g. “gift for mum” or “energy without coffee”.</div></div>
+<section id="shop" style="padding-top:20px"><div class="filters" id="fl"><button class="chip on" data-f="all" data-i="f0">All</button><button class="chip" data-f="tea" data-i="f1">Tea</button><button class="chip" data-f="ware" data-i="f2">Ware</button><button class="chip" data-f="gift" data-i="f3">Gifts</button></div>
+<div class="pg" id="pg"><article class="pc rv" data-id="0" data-cat="tea" data-p="24"><div class="pi">🍵</div><div class="pb"><h3 data-pn="0">Ceremonial matcha</h3><small data-ps="0">Japan · 30 g</small><div class="pr"><b>$24</b><button class="add" data-i="add">Add</button></div></div></article><article class="pc rv" data-id="1" data-cat="ware" data-p="58"><div class="pi">🫖</div><div class="pb"><h3 data-pn="1">Cast-iron teapot</h3><small data-ps="1">0.8 L</small><div class="pr"><b>$58</b><button class="add" data-i="add">Add</button></div></div></article><article class="pc rv" data-id="2" data-cat="tea" data-p="18"><div class="pi">🌿</div><div class="pb"><h3 data-pn="2">Sencha leaf tea</h3><small data-ps="2">Shizuoka · 100 g</small><div class="pr"><b>$18</b><button class="add" data-i="add">Add</button></div></div></article><article class="pc rv" data-id="3" data-cat="ware" data-p="16"><div class="pi">🥄</div><div class="pb"><h3 data-pn="3">Bamboo whisk</h3><small data-ps="3">Handmade</small><div class="pr"><b>$16</b><button class="add" data-i="add">Add</button></div></div></article><article class="pc rv" data-id="4" data-cat="gift" data-p="79"><div class="pi">🎁</div><div class="pb"><h3 data-pn="4">Starter gift set</h3><small data-ps="4">Tea + whisk + bowl</small><div class="pr"><b>$79</b><button class="add" data-i="add">Add</button></div></div></article><article class="pc rv" data-id="5" data-cat="gift" data-p="14"><div class="pi">🍯</div><div class="pb"><h3 data-pn="5">Wild honey</h3><small data-ps="5">Carpathians · 250 g</small><div class="pr"><b>$14</b><button class="add" data-i="add">Add</button></div></div></article><article class="pc rv" data-id="6" data-cat="ware" data-p="22"><div class="pi">🍶</div><div class="pb"><h3 data-pn="6">Ceramic tea bowl</h3><small data-ps="6">Hand-glazed</small><div class="pr"><b>$22</b><button class="add" data-i="add">Add</button></div></div></article><article class="pc rv" data-id="7" data-cat="tea" data-p="21"><div class="pi">☕</div><div class="pb"><h3 data-pn="7">Milk oolong</h3><small data-ps="7">Taiwan · 50 g</small><div class="pr"><b>$21</b><button class="add" data-i="add">Add</button></div></div></article></div></section>
+<section id="delivery" style="padding-top:0"><div class="eyebrow rv" data-i="dl0">Delivery</div><h2 class="rv" data-i="dl1">How it goes</h2><p class="sub rv" data-i="dl2">Every order has a status in the buyer cabinet and in messengers. No “where is my parcel” calls.</p>
+<div class="trk rv"><div class="on"><b>1</b><span data-i="t1">Accepted</span></div><div class="on"><b>2</b><span data-i="t2">Packed</span></div><div><b>3</b><span data-i="t3">On the way</span></div><div><b>4</b><span data-i="t4">Delivered</span></div></div></section>
+</div></main>
+<aside class="drawer" id="dr" aria-label="Cart"><div style="display:flex;justify-content:space-between"><h3 style="font:600 22px var(--serif)" data-i="cart">Cart</h3><button class="chip" id="cx">✕</button></div>
+<div id="ln" style="overflow:auto"></div><div><div class="sub" style="font-size:13px;margin-bottom:6px" id="st"></div><div class="ship"><i id="sb"></i></div></div>
+<div class="tot"><span data-i="tot">Total</span><span id="tt">$0</span></div><button class="btn" id="pay" data-i="pay">Pay in one click</button><div class="done" id="dn" data-i="paid">Paid ✓ Receipt and status will arrive in Telegram and email.</div></aside>
+<footer><div class="wrap"><span>© Kettle &amp; Leaf</span><span data-i="f_">Shop, payments, stock, AI consultant and mailings — built and run by Vaxo.</span></div></footer>
+<script>
+const T={"en": {}, "ru": {"vx1": "Демо Vaxo", "vx2": "магазин вымышленный, функции настоящие. Хотите такой же? →", "n1": "Каталог", "n2": "Доставка", "n3": "Заказ", "eb": "Магазин чая · доставка за 2 дня", "h1": "Чай, который <em>подбирает</em> себя сам.", "lead": "Расскажите ИИ, что любите, — он соберёт корзину. Оплата в один клик, статус заказа в Telegram.", "ph": "Хочу бодрящий чай без кофеина…", "ask": "Подобрать", "f0": "Всё", "f1": "Чай", "f2": "Посуда", "f3": "Подарки", "add": "В корзину", "cart": "Корзина", "empty": "Пока пусто", "ship": "До бесплатной доставки", "shipok": "Доставка бесплатная ✓", "tot": "Итого", "pay": "Оплатить в один клик", "paid": "Оплачено ✓ Чек и статус придут в Telegram и на почту.", "dl0": "Доставка", "dl1": "Как это идёт", "dl2": "Статус каждого заказа — в кабинете покупателя и в мессенджере. Без звонков «где моя посылка».", "t1": "Принят", "t2": "Собран", "t3": "В пути", "t4": "Доставлен", "f_": "Магазин, оплата, склад, ИИ-консультант и рассылки — построены и ведутся Vaxo.", "ai1": "ИИ советует", "ai2": "Положил в подборку — посмотрите выделенное.", "ai3": "Опишите вкус или повод — например «подарок маме» или «бодрость без кофе»."}, "ua": {"vx1": "Демо Vaxo", "vx2": "магазин вигаданий, функції справжні. Хочете такий самий? →", "n1": "Каталог", "n2": "Доставка", "n3": "Замовлення", "eb": "Магазин чаю · доставка за 2 дні", "h1": "Чай, який <em>добирає</em> себе сам.", "lead": "Розкажіть ШІ, що любите, — він збере кошик. Оплата в один клік, статус замовлення в Telegram.", "ph": "Хочу бадьорий чай без кофеїну…", "ask": "Підібрати", "f0": "Усе", "f1": "Чай", "f2": "Посуд", "f3": "Подарунки", "add": "У кошик", "cart": "Кошик", "empty": "Поки порожньо", "ship": "До безкоштовної доставки", "shipok": "Доставка безкоштовна ✓", "tot": "Разом", "pay": "Оплатити в один клік", "paid": "Оплачено ✓ Чек і статус прийдуть у Telegram та на пошту.", "dl0": "Доставка", "dl1": "Як це йде", "dl2": "Статус кожного замовлення — в кабінеті покупця і в месенджері. Без дзвінків «де моя посилка».", "t1": "Прийнято", "t2": "Зібрано", "t3": "У дорозі", "t4": "Доставлено", "f_": "Магазин, оплата, склад, ШІ-консультант і розсилки — збудовані й ведуться Vaxo.", "ai1": "ШІ радить", "ai2": "Поклав у добірку — гляньте виділене.", "ai3": "Опишіть смак чи привід — наприклад «подарунок мамі» чи «бадьорість без кави»."}};
+const N={"en": [["Ceremonial matcha", "Japan · 30 g"], ["Cast-iron teapot", "0.8 L"], ["Sencha leaf tea", "Shizuoka · 100 g"], ["Bamboo whisk", "Handmade"], ["Starter gift set", "Tea + whisk + bowl"], ["Wild honey", "Carpathians · 250 g"], ["Ceramic tea bowl", "Hand-glazed"], ["Milk oolong", "Taiwan · 50 g"]], "ru": [["Церемониальная матча", "Япония · 30 г"], ["Чугунный чайник", "0,8 л"], ["Сенча листовой", "Сидзуока · 100 г"], ["Бамбуковый венчик", "Ручная работа"], ["Подарочный набор", "Чай + венчик + пиала"], ["Дикий мёд", "Карпаты · 250 г"], ["Керамическая пиала", "Ручная глазурь"], ["Молочный улун", "Тайвань · 50 г"]], "ua": [["Церемоніальна матча", "Японія · 30 г"], ["Чавунний чайник", "0,8 л"], ["Сенча листовий", "Шізуока · 100 г"], ["Бамбуковий вінчик", "Ручна робота"], ["Подарунковий набір", "Чай + вінчик + піала"], ["Дикий мед", "Карпати · 250 г"], ["Керамічна піала", "Ручна глазур"], ["Молочний улун", "Тайвань · 50 г"]]};
+const P=[[24, "tea"], [58, "ware"], [18, "tea"], [16, "ware"], [79, "gift"], [14, "gift"], [22, "ware"], [21, "tea"]];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+$$('[data-i]').forEach(e=>e.dataset.en=e.innerHTML);$$('[data-ph]').forEach(e=>e.dataset.en=e.placeholder);
+let L='en',cart={};const FREE=60;
+function setLang(l){L=l;document.documentElement.lang=l==='ua'?'uk':l;
+$$('[data-i]').forEach(e=>{e.innerHTML=(T[l][e.dataset.i])??e.dataset.en});$$('[data-ph]').forEach(e=>{e.placeholder=(T[l][e.dataset.ph])??e.dataset.en});
+$$('[data-pn]').forEach(e=>e.textContent=N[l][e.dataset.pn][0]);$$('[data-ps]').forEach(e=>e.textContent=N[l][e.dataset.ps][1]);
+$$('.lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));render();try{localStorage.setItem('kl-l',l)}catch(e){}}
+function render(){let sum=0,n=0,h='';for(const i in cart){const q=cart[i];sum+=q*P[i][0];n+=q;h+='<div class="ln"><span>'+N[L][i][0]+' × '+q+'</span><b>$'+q*P[i][0]+'</b></div>'}
+$('#ln').innerHTML=h||'<div class="sub">'+(T[L].empty||'Nothing yet')+'</div>';$('#cn').textContent=n;$('#tt').textContent='$'+sum;
+const left=Math.max(0,FREE-sum);$('#st').textContent=left?(T[L].ship||'To free shipping')+': $'+left:(T[L].shipok||'Free shipping ✓');$('#sb').style.width=Math.min(100,sum/FREE*100)+'%'}
+$('#pg').onclick=e=>{const b=e.target.closest('.add');if(!b)return;const i=b.closest('.pc').dataset.id;cart[i]=(cart[i]||0)+1;$('#dn').style.display='none';$('#pay').disabled=false;render();$('#dr').classList.add('open')};
+$('#cb').onclick=()=>$('#dr').classList.add('open');$('#cx').onclick=()=>$('#dr').classList.remove('open');
+$('#pay').onclick=()=>{if(!Object.keys(cart).length)return;$('#dn').style.display='block';$('#pay').disabled=true;cart={};render()};
+$('#fl').onclick=e=>{const b=e.target.closest('[data-f]');if(!b)return;$$('#fl .chip').forEach(c=>c.classList.toggle('on',c===b));$$('.pc').forEach(c=>c.style.display=(b.dataset.f==='all'||c.dataset.cat===b.dataset.f)?'':'none')};
+const KW=[[/gift|подар|mum|mom|ма[мт]|present/i,'gift'],[/bowl|pot|ware|посуд|чайник|піал|пиал/i,'ware'],[/.*/,'tea']];
+$('#af').onsubmit=e=>{e.preventDefault();const q=$('#aq').value;if(!q)return;const cat=KW.find(k=>k[0].test(q))[1];$$('.pc').forEach(c=>{c.style.display='';c.classList.toggle('hl',c.dataset.cat===cat)});$$('#fl .chip').forEach(c=>c.classList.toggle('on',c.dataset.f==='all'));$('#ao').innerHTML='<b>'+(T[L].ai1||'AI suggests')+':</b> '+(T[L].ai2||'I picked a few — look at the highlighted ones.');$('#shop').scrollIntoView({behavior:'smooth'})};
+$$('.lang button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.1});$$('.rv').forEach(e=>io.observe(e));
+render();try{const q=new URLSearchParams(location.search).get('lang')||localStorage.getItem('kl-l');if(q&&T[q]&&q!=='en')setLang(q)}catch(e){}
+</script>
+</body></html>
