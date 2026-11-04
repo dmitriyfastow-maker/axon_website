@@ -504,7 +504,7 @@ const en = {
   "faq": [
     {
       "q": "How much does it cost?",
-      "a": "Two parts. Creating it — once, depending on complexity: a simple website $150–400, a site with booking or a catalog $400–1,000, a store or app from $1,000. Or creation for free with a 12-month Growth or Pro plan. Then a monthly plan: Care $39, Growth $129 or Pro $299 — the first month is free."
+      "a": "Just a monthly plan: Care $39, Growth $129 or Pro $299 — the first month is free. Your website, chat, CRM and the work itself are included, with no separate creation fee. Only fully custom projects (your own app or system) cost extra, and you see the price before we start."
     },
     {
       "q": "What do I actually get?",
