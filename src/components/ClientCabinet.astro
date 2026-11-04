@@ -138,6 +138,20 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       </div>
     </section>
 
+    <!-- Invite a friend (client referrals): link + copy, plain rules -->
+    <section class="cab-card invite" id="invite" data-invite hidden aria-labelledby="cab-inv-h">
+      <div class="w-head"><span class="ico-box" data-ico="friend"></span><h2 id="cab-inv-h">{T.invH}</h2></div>
+      <p class="inv-got" data-inv-got hidden></p>
+      <p class="mut">{T.invP}</p>
+      <div class="inv-row">
+        <input class="inv-link" data-inv-link readonly aria-label={T.invH} value="" />
+        <button type="button" class="cta" data-inv-copy>{T.invCopy}</button>
+        <button type="button" class="ghost" data-inv-share hidden>{T.invShare}</button>
+      </div>
+      <p class="small" data-inv-stats></p>
+      <p class="mut small">{T.invFine} <a href={`${home === '/' ? '' : home.replace(/\/$/, '')}/partners/`}>{T.invPartner} →</a></p>
+    </section>
+
     <!-- Achievements -->
     <section class="cab-ach" data-ach-sec hidden aria-labelledby="cab-ach-h">
       <div class="sec-head"><h2 id="cab-ach-h">{T.achH}</h2><p class="mut">{T.achP}</p></div>
@@ -265,7 +279,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       profile: !!(prof.business && prof.niche && (prof.goal || '').length >= 10),
       site: (eco.sites || 0) > 0,
       lead: (eco.bizLeads || 0) > 0,
-      friend: (eco.friends || 0) > 0,
+      friend: (eco.friends || 0) > 0 || (d.invite?.invited || 0) > 0,
       review: ps.some((p) => p.reviewed),
       reviewOpen: delivered.find((p) => !p.reviewed),
       project: ps.length > 0,
@@ -291,12 +305,33 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     $('[data-hist-list]').replaceChildren(...(hist.length ? hist.map((h) => el('li', {}, el('span', {}, `${day(h.at)} · ${T.kinds[h.kind] || h.kind}`), el('b', { class: h.amount_usd > 0 ? 'plus' : '' }, `${h.amount_usd > 0 ? '+' : ''}${money(h.amount_usd)}`))) : [el('li', { class: 'mut' }, T.histEmpty)]));
   }
 
+  function renderInvite(d: R) {
+    const v: R = d.invite || {};
+    const link = v.slug ? `${location.origin}/r/${v.slug}` : '';
+    const inp = $<HTMLInputElement>('[data-inv-link]');
+    inp.value = link || T.invNo;
+    const copy = $<HTMLButtonElement>('[data-inv-copy]');
+    copy.disabled = !link;
+    copy.onclick = async () => {
+      try { await navigator.clipboard.writeText(link); } catch { inp.select(); document.execCommand('copy'); }
+      copy.textContent = T.invCopied; setTimeout(() => (copy.textContent = T.invCopy), 1800);
+    };
+    const sh = $<HTMLButtonElement>('[data-inv-share]');
+    sh.hidden = !link || !('share' in navigator);
+    sh.onclick = () => navigator.share({ title: 'Vaxo', text: T.invP, url: link }).catch(() => {});
+    const r = v.rules || { maxMonthsYear: 12 };
+    $('[data-inv-stats]').textContent = T.invStats.replace('{i}', v.invited || 0).replace('{p}', v.pending || 0).replace('{c}', v.credited || 0) + ' ' + T.invYear.replace('{y}', v.yearMonths || 0).replace('{m}', r.maxMonthsYear);
+    const got = $('[data-inv-got]');
+    got.hidden = !v.friendBonus;
+    if (v.friendBonus) got.textContent = T.invGot.replace('{n}', v.friendBonus.months);
+  }
+
   function renderSetup(d: R, f: R) {
     const steps = [
       { id: 'email', ic: 'mail', done: f.email, h: T.sEmail, p: T.sEmailP, act: T.sEmailDo, go: confirmEmail },
       { id: 'profile', ic: 'store', done: f.profile, h: T.sProfile, p: T.sProfileP, reward: '+$5', act: T.sProfileDo, go: () => { const pf = $('[data-profile]'); pf.hidden = !pf.hidden; if (!pf.hidden) pf.querySelector('input')!.focus(); } },
       { id: 'site', ic: 'globe', done: f.site, h: T.sSite, p: T.sSiteP, act: T.sSiteDo, go: () => { const b = document.getElementById('biz')!; b.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); setTimeout(() => b.querySelector<HTMLInputElement>('[data-biz-new] input')?.focus({ preventScroll: true }), 400); } },
-      { id: 'friend', ic: 'friend', done: f.friend, h: T.sFriend, p: T.sFriendP, reward: '50% + 30%', act: T.sFriendDo, href: `${homePre}/partners/` },
+      { id: 'friend', ic: 'friend', done: f.friend, h: T.sFriend, p: T.sFriendP, reward: T.invReward, act: T.sFriendDo, go: () => document.getElementById('invite')!.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
       { id: 'review', ic: 'star', done: f.review, h: T.sReview, p: f.reviewOpen || f.review ? T.sReviewP : T.sReviewWait, reward: '+$10', act: f.reviewOpen ? T.sReviewDo : '', go: () => { const b = root.querySelector<HTMLButtonElement>(`[data-rev="${f.reviewOpen?.id}"]`); b?.scrollIntoView({ block: 'center' }); b?.click(); } },
     ];
     const n = steps.length, done = steps.filter((s) => s.done).length;
@@ -365,7 +400,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     root.classList.toggle('is-guest', guest);
     root.classList.toggle('is-in', si);
     $('[data-auth]').hidden = si;
-    for (const s of ['[data-dash]', '[data-setup]', '[data-ach-sec]', '[data-acct]']) $(s).hidden = !si;
+    for (const s of ['[data-dash]', '[data-setup]', '[data-ach-sec]', '[data-acct]', '[data-invite]']) $(s).hidden = !si;
     $('[data-proj-sec]').hidden = !si && !guest;
     $('[data-ph]').textContent = guest ? T.guestH : T.projects;
     $('[data-none]').hidden = !si || ps.length > 0;
@@ -381,7 +416,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       return;
     }
     const f = facts(d);
-    renderHero(d, f); renderSetup(d, f); renderAch(f);
+    renderHero(d, f); renderSetup(d, f); renderAch(f); renderInvite(d);
     $<HTMLInputElement>('[data-news]').checked = !!d.me?.marketing;
     playRings();
     window.dispatchEvent(new CustomEvent('vx:signed-in'));
@@ -589,6 +624,12 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 .cab .ico-box { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: color-mix(in srgb, var(--acc) 16%, transparent); color: var(--accText); flex: none; }
 .w-sum { font-size: clamp(40px, 6vw, 56px); letter-spacing: -0.04em; line-height: 1; margin: 6px 0 2px; }
 .wallet p { margin: 0; }
+.invite { display: flex; flex-direction: column; gap: 10px; }
+.invite h2 { margin: 0; font-size: 1.15rem; }
+.invite p { margin: 0; }
+.inv-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.inv-link { flex: 1 1 220px; min-width: 0; padding: 11px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg, transparent); color: var(--ink); font: 500 14px var(--font); }
+.inv-got { background: color-mix(in srgb, var(--acc) 14%, transparent); border-radius: 12px; padding: 8px 12px; font-weight: 600; }
 .w-hist summary, .pays summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--accText); }
 .w-hist ul, .pays ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; font-size: 14px; position: relative; z-index: 1; }
 .w-hist li, .pays li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); } .w-hist li span, .pays li span { color: var(--mut); }

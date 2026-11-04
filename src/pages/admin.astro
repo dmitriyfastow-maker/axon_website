@@ -55,6 +55,7 @@ import Base from '../layouts/Base.astro';
           <button type="button" data-view="social" data-g="content" aria-pressed="false">📣 Соцсети</button>
           <button type="button" data-view="cartoon" data-g="content" aria-pressed="false">🦝 Мультик</button>
           <button type="button" data-view="fin" data-g="money" aria-pressed="false">💰 Деньги</button>
+          <button type="button" data-view="econ" data-g="money" aria-pressed="false">📊 Экономика</button>
           <button type="button" data-view="pay" data-g="money" aria-pressed="false">💸 Выплаты <span class="pill" data-n="pay" hidden></span></button>
           <button type="button" data-view="team" data-g="money" aria-pressed="false">👥 Партнёры <span class="pill" data-n="team" hidden></span></button>
           <button type="button" data-view="links" data-g="system" aria-pressed="false">🔗 Ссылки и вход как клиент</button>
@@ -213,6 +214,10 @@ import Base from '../layouts/Base.astro';
         <div class="table"><table><thead><tr><th>Партнёр</th><th>Клиент</th><th>За что</th><th>Сделка</th><th>%</th><th>К выплате</th><th>Статус</th><th></th></tr></thead><tbody data-pay></tbody></table></div>
       </section>
 
+      <section data-panel="econ" hidden>
+        <div data-econ><p class="mut">Загружаю экономику…</p></div>
+      </section>
+
       <section data-panel="fin" hidden>
         <p class="hint">Все деньги компании: что пришло, что ушло, налоги ФОП 3 группы и лимит. Подруга с ФОП видит то же на vaxogroup.com/fin/ по своему коду (все деньги, клиенты и переписки — только смотреть) и может спросить помощника в любое время.</p>
         <div class="card fopc"><b>👩‍💼 Чат с ФОП</b> <small class="mut">Её вопросы и ответы помощника. Что решаете только вы — придёт в Telegram; ответ отсюда она увидит у себя.</small><div class="oc" data-fopc></div><form class="oc-in" data-fopc-form><textarea rows="2" placeholder="Ответить ей от вашего имени…" data-fopc-text></textarea><button type="button" class="ghost oc-mic" data-fopc-mic aria-label="Голосовой ввод"></button><button class="cta">Ответить</button></form></div>
@@ -300,6 +305,7 @@ import Base from '../layouts/Base.astro';
 
 <script>
   import { renderFinance, FIN_CSS } from '../scripts/finance-view';
+  import { renderEcon, ECON_CSS } from '../scripts/econ-view';
   import { attachMic, MIC_SVG } from '../scripts/voice';
   import { composer, grow } from '../scripts/compose';
   import { attachFiles, linkify } from '../scripts/attach';
@@ -361,7 +367,7 @@ import Base from '../layouts/Base.astro';
     if (!r?.ok) return;
     me = r.me;
     $('[data-who]').textContent = me.role === 'owner' ? '' : `· ${me.name} (${me.role_name})`;
-    $$<HTMLButtonElement>('[data-view]').forEach((b) => { const v = b.dataset.view!; b.hidden = v !== 'help' && !(me.sections as string[]).includes(v === 'access' ? 'access' : v === 'outbox' || v === 'social' || v === 'video' ? 'work' : v); });
+    $$<HTMLButtonElement>('[data-view]').forEach((b) => { const v = b.dataset.view!; b.hidden = v !== 'help' && !(me.sections as string[]).includes(v === 'access' ? 'access' : v === 'outbox' || v === 'social' || v === 'video' ? 'work' : v === 'econ' ? 'fin' : v); });
     if ((me.sections as string[]).includes('access')) loadAccess();
   }
 
@@ -454,7 +460,14 @@ import Base from '../layouts/Base.astro';
     $('[data-loginbox]').hidden = true; $('[data-app]').hidden = false; $('[data-on]').hidden = false;
     loadOutbox();
     renderToday(); renderInbox(); renderLeads(); renderTeam(); renderPay(); renderCartoon(); renderLinks();
-    loadAuto(); loadStats(); loadFin(); loadClaude(); loadWork(); loadSocial();
+    loadAuto(); loadStats(); loadFin(); loadClaude(); loadWork(); loadSocial(); loadEcon();
+  }
+
+  async function loadEcon() {
+    const box = $('[data-econ]');
+    const d = await api('/economics').catch(() => null);
+    if (!d?.ok) { box.replaceChildren(el('p', { class: 'mut' }, 'Экономика недоступна (нет доступа к разделу «Финансы» или сервер не ответил).')); return; }
+    renderEcon(box, d, api, loadEcon);
   }
 
   async function loadClaude() {
@@ -491,6 +504,7 @@ import Base from '../layouts/Base.astro';
   })();
   document.querySelector('[data-go-chats]')?.addEventListener('click', () => show('chats'));
   const finStyle = document.createElement('style'); finStyle.textContent = FIN_CSS; document.head.append(finStyle);
+  const ecStyle = document.createElement('style'); ecStyle.textContent = ECON_CSS; document.head.append(ecStyle);
   const WK: R = { clients: ['🎯', 'Клиенты'], partners: ['🤝', 'Партнёры'], draft: ['🖥', 'Черновики сайтов'], video: ['🎬', 'Ролики'], doc: ['📄', 'Документы'], site: ['🛠', 'Сайт и Штаб'], research: ['🔎', 'Исследования'], outreach: ['✉️', 'Рассылки'], social: ['📣', 'Соцсети'] };
   const WS: R = { ready: ['готово', 'g'], waiting: ['ждёт вашего «да»', 'y'], approved: ['одобрено — отправляю', 'p'], sent: ['отправлено', 'b'], rejected: ['забраковано', 'r'], done: ['закрыто', 'n'] };
   let workFilter = '';

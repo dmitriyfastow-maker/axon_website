@@ -20,6 +20,7 @@ import { handleDemoAi } from './demoai.js';
 import { monoCheck, monoPay, monoReceiptSweep, monoWebhook } from './mono.js';
 import { handleFinancePublic } from './finance.js';
 import { handleIntake } from './intake.js';
+import { attributeLead, clientRedirect, matureReferrals, SLUG_C } from './referrals.js';
 import { handleLab, handleLabManage, labSweep } from './lab.js';
 import { handleShopBuy, handleShopDownload } from './shop.js';
 import { notifyOwnerChat } from './ownerchat.js';
@@ -65,6 +66,7 @@ export default {
       }).catch(() => {});
     };
     const r = url.pathname.match(/^\/r\/([^/]+)\/?$/);
+    if (r && env.LEADS && SLUG_C.test(r[1].toLowerCase())) return clientRedirect(env.LEADS, request, r[1].toLowerCase());
     if (r) return env.LEADS ? handleRedirect(env.LEADS, request, r[1].toLowerCase()) : Response.redirect(new URL('/', url).toString(), 302);
     if (url.pathname.startsWith('/api/partner/')) {
       if (!env.LEADS) return json(503, { ok: false });
@@ -173,6 +175,8 @@ export default {
             const src = (request.headers.get('X-Vx-Src') || '').slice(0, 80);
             if (id && src) await db.prepare('UPDATE leads SET source = ? WHERE id = ?').bind(src, id).run();
             // A client from a partner's "for friends" link gets the friends mode.
+            // Who invited them (client or partner link): first link wins, the friend gets 2 free months.
+            if (id && l.ref) await attributeLead(db, id, l.ref, request.headers.get('CF-Connecting-IP'), notify);
             if (id && l.ref && !l.promo) {
               const fl = await db.prepare('SELECT friend FROM links WHERE slug = ?').bind(l.ref).first<{ friend: number }>();
               if (fl?.friend) await db.prepare(`UPDATE leads SET promo = 'FRIEND' WHERE id = ?`).bind(id).run();
@@ -220,7 +224,7 @@ export default {
       }).catch(() => {});
     };
     // The autopilot's hourly round: deadlines, AI grading, quality control, client summaries, the morning digest.
-    for (const job of [() => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => labSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify)]) {
+    for (const job of [() => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => labSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => matureReferrals(env.LEADS!, notify)]) {
       await job().catch((e) => console.error('[cron]', e));
     }
   },  // Letters to hello@vaxogroup.com (Cloudflare Email Routing → this worker) go into the client's project chat.

@@ -4,6 +4,7 @@
 import type { DB } from './partner.js';
 import { logEvent, type Notify } from './deals.js';
 import { addMessage, newRoom } from './rooms.js';
+import { attributeLead } from './referrals.js';
 
 const s = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -34,6 +35,7 @@ export async function handleIntake(db: DB, request: Request, notify: Notify, onN
     .run()) as { meta?: { last_row_id?: number } };
   const id = res?.meta?.last_row_id;
   if (!id) return json(500, { ok: false });
+  if (ref) await attributeLead(db, id, ref, request.headers.get('CF-Connecting-IP'), notify);
   // A client from a partner's "for friends" link gets the friends mode.
   if (ref && !promo) {
     const fl = await db.prepare('SELECT friend FROM links WHERE slug = ?').bind(ref).first<{ friend: number }>();

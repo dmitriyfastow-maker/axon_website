@@ -89,17 +89,24 @@ const jsonLd = {
       // Partner links: ?ref=CODE. First touch wins and is kept for life (localStorage + 400-day cookie).
       (function () {
         try {
+          // Client invite links (c_…) count for 60 days; after that a new link may win.
+          var held = localStorage.getItem('vaxo_ref');
+          if (held && /^c_/.test(held) && Date.now() - Number(localStorage.getItem('vaxo_ref_at') || 0) > 5184e6) {
+            localStorage.removeItem('vaxo_ref'); localStorage.removeItem('vaxo_ref_at');
+            document.cookie = 'vaxo_ref=; max-age=0; path=/';
+          }
           var r = new URLSearchParams(location.search).get('ref');
           if (r && /^[A-Za-z0-9_-]{1,64}$/.test(r) && !localStorage.getItem('vaxo_ref')) {
             localStorage.setItem('vaxo_ref', r);
-            document.cookie = 'vaxo_ref=' + r + '; max-age=34560000; path=/; samesite=lax';
+            localStorage.setItem('vaxo_ref_at', String(Date.now()));
+            document.cookie = 'vaxo_ref=' + r + '; max-age=' + (/^c_/.test(r) ? 5184000 : 34560000) + '; path=/; samesite=lax';
           }
           // Friend promo code: ?code=CODE (latest wins).
           var c = new URLSearchParams(location.search).get('code');
           if (c && /^[A-Za-z0-9_-]{2,20}$/.test(c)) localStorage.setItem('vaxo_code', c.toUpperCase());
           if (!localStorage.getItem('vaxo_ref')) {
             var m = document.cookie.match(/(?:^|; )vaxo_ref=([A-Za-z0-9_-]{1,64})/);
-            if (m) localStorage.setItem('vaxo_ref', m[1]);
+            if (m) { localStorage.setItem('vaxo_ref', m[1]); if (!localStorage.getItem('vaxo_ref_at')) localStorage.setItem('vaxo_ref_at', String(Date.now())); }
           }
         } catch (e) {}
       })();

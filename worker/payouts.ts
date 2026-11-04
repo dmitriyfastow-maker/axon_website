@@ -5,6 +5,7 @@
 // The referrer's direct sponsor (partners.parent_id) gets the team bonus on every sale and renewal.
 import type { DB } from './partner.js';
 import { RATES } from '../src/data/partners.js';
+import { firstReferral } from './referrals.js';
 
 export async function createPayouts(db: DB, leadId: number) {
   const l = await db
@@ -19,6 +20,8 @@ export async function createPayouts(db: DB, leadId: number) {
   if (!l) return;
   // Buying through your own link earns nothing (partner terms).
   if (l.self_ref) { if (l.closer_id === l.referrer_id) l.closer_id = null; l.referrer_id = null; }
+  // First link wins: if this person first came by a client's invite link, no partner commission (the client gets a free month instead).
+  if (l.referrer_id) { const f = await firstReferral(db, leadId); if (f && f.kind === 'client') l.referrer_id = null; }
   const rows: [number, string, number][] = [];
   if (l.referrer_id && l.referrer_id === l.closer_id) rows.push([l.referrer_id, 'referral', RATES.fullCycle]);
   else if (l.referrer_id) rows.push([l.referrer_id, 'referral', RATES.agencyOwn]);
@@ -84,6 +87,7 @@ export async function addRenewal(db: DB, leadId: number, amountUsd: number) {
     .bind(leadId)
     .first<{ closer_id: number | null; closer_status: string | null; referrer_id: number | null; referrer_plan: string | null }>();
   if (!l) return false;
+  if (l.referrer_id) { const f = await firstReferral(db, leadId); if (f && f.kind === 'client') l.referrer_id = null; }
   const tag = Date.now().toString(36);
   const rows: [number, string][] = [];
   if (l.referrer_id) rows.push([l.referrer_id, `renewal-referral:${tag}`]);

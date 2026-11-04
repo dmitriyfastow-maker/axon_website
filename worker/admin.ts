@@ -16,6 +16,8 @@ import { OWNER_KEY, ROLES, SECTION_NAMES, handleStaffAdmin, sectionOf, staffFrom
 import { settings } from './autopilot.js';
 import type { AiBinding } from './chat.js';
 import { assistAnswer, tipsFor } from './assist.js';
+import { economics, saveEconSettings } from './economics.js';
+import { decideReferral } from './referrals.js';
 
 /** An invoice was paid (by hand in the HQ, or by card through the mono webhook): record it through Finance (taxes,
  * cashback) and let Vax thank the client. Returns 400 when the invoice is not open (already paid or cancelled). */
@@ -95,6 +97,14 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   }
   if (path === 'staff' || path.startsWith('staff/')) return handleStaffAdmin(db, request, path.slice('staff'.length).replace(/^\//, ''), me, new URL(request.url).origin);
   if (path === '' && request.method === 'GET') return json(200, { ok: true, ...(await ownerOverview(db, notify)), payouts: await allPayouts(db), hq: HQ });
+  // 📊 Экономика: live unit economics, editable costs, client referral review.
+  if (path === 'economics' && request.method === 'GET') return json(200, { ok: true, ...(await economics(db)) });
+  if (path === 'economics' && request.method === 'POST') return json(200, { ok: true, settings: await saveEconSettings(db, (await request.json().catch(() => ({}))) as Record<string, unknown>) });
+  const refDecide = path.match(/^economics\/referral\/(\d+)$/);
+  if (refDecide && request.method === 'POST') {
+    const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    return json(200, { ok: await decideReferral(db, Number(refDecide[1]), !!b.approve) });
+  }
   if (path === 'analytics' && request.method === 'GET') return json(200, { ok: true, ...(await analytics(db)) });
   if (path === 'autopilot' && request.method === 'GET') {
     const st = (await db.prepare('SELECT key, value FROM settings').all()).results;

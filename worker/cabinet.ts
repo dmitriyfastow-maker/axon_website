@@ -5,6 +5,7 @@
 import type { DB } from './partner.js';
 import type { Notify } from './deals.js';
 import { mailReady, sendMail } from './mail.js';
+import { clientInvite } from './referrals.js';
 
 export interface CabinetEnv { GOOGLE_CLIENT_ID?: string; GOOGLE_CLIENT_SECRET?: string }
 
@@ -134,7 +135,7 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
       const ids = list.map((l) => l.id);
       const paid = await paidUsd(db, ids);
       const history = (await db.prepare(`SELECT at, kind, amount_usd FROM bonuses WHERE client_id = ? OR lead_id IN (${(ids.length ? ids : [0]).join(',')}) ORDER BY id DESC LIMIT 30`).bind(me.id).all()).results;
-      return json(200, { ok: true, signedIn: true, ways, me: { email: me.email, name: me.name, profile: me.profile ? JSON.parse(me.profile) : null, marketing: !!me.marketing, verified: !!me.email_verified_at }, projects: list, paidUsd: paid, level: [...LEVELS].reverse().find((x) => paid >= x.from)!.id, bonus: await bonusBalance(db, me.id, ids), bonusHistory: history, rules: BONUS, levels: LEVELS, eco: await ecosystem(db, me) });
+      return json(200, { ok: true, signedIn: true, ways, me: { email: me.email, name: me.name, profile: me.profile ? JSON.parse(me.profile) : null, marketing: !!me.marketing, verified: !!me.email_verified_at }, projects: list, paidUsd: paid, level: [...LEVELS].reverse().find((x) => paid >= x.from)!.id, bonus: await bonusBalance(db, me.id, ids), bonusHistory: history, rules: BONUS, levels: LEVELS, eco: await ecosystem(db, me), invite: await clientInvite(db, me.id) });
     }
     if (ROOM_RE.test(room)) {
       const list = await projects(db, 'room = ?', room);
