@@ -300,7 +300,7 @@ const en = {
       ],
       "referral": "",
       "cta": "Try it free",
-      "price": "$150–400"
+      "price": "included in your plan"
     },
     {
       "tag": "Popular",
@@ -317,7 +317,7 @@ const en = {
       ],
       "referral": "",
       "cta": "Try it free",
-      "price": "$400–1,000"
+      "price": "included in your plan"
     },
     {
       "tag": "Big",
@@ -334,7 +334,7 @@ const en = {
       ],
       "referral": "",
       "cta": "Discuss my project",
-      "price": "from $1,000"
+      "price": "custom — price before we start"
     }
   ],
   "ref": {
