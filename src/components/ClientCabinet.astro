@@ -749,4 +749,13 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
   .cab .otp input { height: 52px; font-size: 21px; }
   .otp { gap: 6px; }
 }
+
+/* Design pass 05.11.2026 */
+.cab-card { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.cab-card:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--acc) 55%, var(--line)); }
+.cab-card h2 { letter-spacing: -0.02em; font-weight: 750; }
+.cab-card :is(b, strong, .num) { font-variant-numeric: tabular-nums; }
+.cab-card :is(button, a, input, summary):focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.inv-why { margin-top: 4px; } .inv-why summary { cursor: pointer; font-weight: 650; color: var(--accText, var(--ink)); padding: 6px 0; }
+@media (prefers-reduced-motion: reduce) { .cab-card { transition: none; } .cab-card:hover { transform: none; } }
 </style>

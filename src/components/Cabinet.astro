@@ -824,4 +824,11 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
     .next::after, .soon .gift { animation: none; }
   }
   .plan p { margin: 6px 0 10px; }
+
+  /* Design pass 05.11.2026 */
+  :global(.wrap) :is(button, a, input, select, textarea, summary):focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+  :global(.wrap) :is(b, strong, td, th) { font-variant-numeric: tabular-nums; }
+  :global(.wrap) :is(.card, .panel, section) { transition: border-color .18s ease, box-shadow .18s ease; }
+  h1 { font-weight: 800; }
+  @media (prefers-reduced-motion: reduce) { :global(.wrap) * { transition: none !important; } }
 </style>
