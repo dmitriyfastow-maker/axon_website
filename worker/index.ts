@@ -25,7 +25,7 @@ import { monthlyBilling } from './billing.js';
 import { handleLab, handleLabManage, labSweep } from './lab.js';
 import { handleShopBuy, handleShopDownload } from './shop.js';
 import { notifyOwnerChat } from './ownerchat.js';
-import { gradePending, maybeDigest, qcSweep, summarizeClients, trackEvent, trackUx, trackView, triageLead } from './autopilot.js';
+import { gradePending, pruneBots, maybeDigest, qcSweep, summarizeClients, trackEvent, trackUx, trackView, triageLead } from './autopilot.js';
 
 interface Env extends LeadEnv, CabinetEnv {
   ASSETS: { fetch(request: Request): Promise<Response> };
