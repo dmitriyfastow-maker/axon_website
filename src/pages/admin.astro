@@ -396,7 +396,7 @@ import Base from '../layouts/Base.astro';
       ['🛠', 'Проекты в работе', `${L.in_work || 0}`, [`средний прогресс ${L.progress ?? 0}%`, `${L.late || 0} просрочено`, `${L.human || 0} ждут человека`], PROC_LIGHT((L.late || 0) > 0, (L.human || 0) > 0), 'chats'],
       ['💰', 'Деньги', uah(M.month_uah), [`за год ${uah(M.year_uah)}`, `${M.open_inv || 0} неоплаченных счетов`, `${M.payouts_due || 0} выплат партнёрам`], PROC_LIGHT(false, (M.payouts_due || 0) > 0), 'fin'],
       ['🤝', 'Партнёры', `${P.total || 0}`, [`${P.closers || 0} менеджеров`, `${P.applied || 0} анкет ждут`], PROC_LIGHT(false, (P.applied || 0) > 0), 'team'],
-      ['🌐', 'Сайт', `${S.views7 || 0} визитов`, [`за 7 дней`, `${S.chats7 || 0} чатов с Vax`], PROC_LIGHT(false, false), 'stats'],
+      ['🌐', 'Сайт', `${S.views7 || 0} живых визитов`, [`за 7 дней · ботов отдельно: ${S.bots7 || 0}`, `${S.chats7 || 0} чатов с Vax`], PROC_LIGHT(false, false), 'stats'],
       ['🎬', 'Соцсети и мультик', `${W.videos_waiting || 0} на «да»`, [`${W.videos_out || 0} роликов вышло`, `Instagram · TikTok · YouTube · Threads`], PROC_LIGHT(false, (W.videos_waiting || 0) > 0), 'work'],
       ['🧠', 'Claude', `${W.today || 0} работ за сутки`, [`${W.waiting || 0} ждут вашего «да»`, `${C.tasks || 0} ваших задач в очереди`, `${C.questions || 0} вопросов к вам`], PROC_LIGHT(false, (W.waiting || 0) + (C.questions || 0) > 0), 'claude'],
       ['🤖', 'Автопилот', `${A.on || 0} из ${A.total || 0} вкл.`, [A.price_owner ? 'цены решаете вы (до ФОП)' : 'цены по прайсу'], PROC_LIGHT(false, false), 'auto'],

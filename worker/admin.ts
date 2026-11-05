@@ -68,6 +68,7 @@ async function pulse(db: DB) {
   const partners = await one<Record<string, number>>(`SELECT COUNT(*) AS total, SUM(closer='approved') AS closers, SUM(closer='applied') AS applied FROM partners`);
   const site = await one<Record<string, number>>(`SELECT
     (SELECT COUNT(*) FROM pageviews WHERE at > datetime('now','-7 days')) AS views7,
+    (SELECT COUNT(*) FROM events WHERE kind IN ('bot','dc') AND at > datetime('now','-7 days')) AS bots7,
     (SELECT COUNT(*) FROM events WHERE kind = 'chat_open' AND at > datetime('now','-7 days')) AS chats7`).catch(() => ({} as Record<string, number>));
   const work = await one<Record<string, number>>(`SELECT SUM(status='waiting') AS waiting, SUM(at > datetime('now','-1 day')) AS today,
     SUM(kind='video' AND status='waiting') AS videos_waiting, SUM(kind='video' AND status IN ('sent','done')) AS videos_out FROM claude_work`);

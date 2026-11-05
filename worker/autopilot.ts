@@ -39,12 +39,23 @@ const on = (s: Record<string, string>, k: string) => s[k] !== '0';
 const BOT = /bot|crawl|spider|slurp|preview|monitor|headless|lighthouse|facebookexternalhit|curl|wget/i;
 const DC = /amazon|aws|google cloud|google llc|microsoft|azure|digitalocean|ovh|hetzner|linode|akamai|alibaba|tencent|oracle|vultr|contabo|leaseweb|scaleway|choopa|m247|datacamp|cloudflare|fastly|hostinger|ionos|colocrossing|zenlayer|gthost|psychz|servers\.com|selectel|netcup|clouvider|hivelocity|quadranet|ipxo|kamatera|upcloud|constant|packet|host|server|cloud|data ?cent/i;
 
+/** Bots are not counted as visitors but kept apart (events kind 'bot' = by user agent, 'dc' = from a data center), so the HQ shows reality AND how much is noise. */
+async function noteBot(db: DB, kind: 'bot' | 'dc', request: Request, url: URL) {
+  const country = (request as { cf?: { country?: string } }).cf?.country ?? null;
+  await db.prepare('INSERT INTO events (kind, path, country) VALUES (?, ?, ?)').bind(kind, url.pathname.slice(0, 120), country).run().catch(() => {});
+}
+
+/** Hourly: bot hits older than 30 days are not needed any more. */
+export async function pruneBots(db: DB) {
+  await db.prepare(`DELETE FROM events WHERE kind IN ('bot', 'dc') AND at < datetime('now', '-30 days')`).run().catch(() => {});
+}
+
 export async function trackView(db: DB, request: Request, url: URL) {
-  if (BOT.test(request.headers.get('User-Agent') || '')) return;
+  if (BOT.test(request.headers.get('User-Agent') || '')) return noteBot(db, 'bot', request, url);
   // Bots that pretend to be browsers come from data centers, people do not: skip cloud/hosting networks (28.10:
   // ~90% of "direct" views were US/IE/SG data centers, which made the numbers useless).
   const org = String((request as unknown as { cf?: { asOrganization?: string } }).cf?.asOrganization || '');
-  if (DC.test(org)) return;
+  if (DC.test(org)) return noteBot(db, 'dc', request, url);
   let ref: string | null = null;
   try { const r = new URL(request.headers.get('Referer') || ''); if (r.hostname !== url.hostname) ref = r.hostname.replace(/^www\./, ''); } catch {}
   const utm = url.searchParams.get('utm_source') || (url.searchParams.get('ref') ? 'partner' : null);
