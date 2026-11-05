@@ -17,7 +17,7 @@ export const RATES = {
 };
 
 /** Platform prices (Decision 29, 31.10.2026): subscription a month, website build range, templates range. */
-export const PRICES = { care: 39, growth: 129, pro: 299, templates: [9, 67] };
+export const PRICES = { personal: 19, care: 39, growth: 129, pro: 299, templates: [9, 67] };
 
 /** Calculator inputs; the calculator uses the middle of each range. */
 export const CALC = {

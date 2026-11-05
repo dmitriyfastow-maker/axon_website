@@ -38,12 +38,13 @@ const C = {
     demos: [["A website that takes your breath away", "Motion, bold type, online orders and an AI barista — 2026 level", "flagship"], ["Marketing on autopilot", "Ad creatives, AI posts, a content calendar and a report on requests — every month", "marketing"], ["An AI employee in every chat", "Answers in Instagram, WhatsApp, Telegram, books and takes payment — try it yourself", "ai-assistant"], ["Your control app", "Requests, chats, team and AI reports on one screen", "eco-crm"]],
     open: 'Open →', allDemos: 'All examples',
     priceH: 'Plans', priceSub: 'Everything in a plan is included — the website too. You pay extra only for something custom. Every client gets their own setup: the functions follow your business.',
-    plans: [['Care', '$39', 'Start online', 'A one-page site or a connection to yours, AI in the site chat, every request in the app', 'flagship'], ['Growth', '$129', 'Most popular', 'A full site with booking and payments, AI in all messengers, AI posts, team with roles', 'ai-assistant'], ['Pro', '$299', 'Everything done for you', 'A store or an app under your brand, we run your social media and ads, priority', 'marketing']],
+    plans: [['Personal', '$19', 'For one person, no business needed', 'Your personal tasks done for you: texts, designs, small sites, planning — with a monthly task limit', 'personal-brand'], ['Care', '$39', 'Start online', 'A one-page site or a connection to yours, AI in the site chat, every request in the app', 'flagship'], ['Growth', '$129', 'Most popular', 'A full site with booking and payments, AI in all messengers, AI posts, team with roles', 'ai-assistant'], ['Pro', '$299', 'Everything done for you', 'A store or an app under your brand, we run your social media and ads, priority', 'marketing']],
     look: 'Looks like this',
     custom: ['Something of your own', 'A custom app, a bot, an integration, a game — for a business or a personal task. Vax names a fixed price upfront; you see the progress live in your cabinet, and the result connects to the platform. Already have a CRM? We connect it — your data stays in both places.', 'Describe the task'],
-    mo: '/mo', priceNote: 'First month free on any plan · a year = 2 months free · change or cancel any time',
+    mo: '/mo', priceNote: 'Start is free forever · first month free on any paid plan (a trial with a task limit) · a year = 2 months free · change or cancel any time',
     more: 'What exactly is in each plan',
     planFull: [
+      ['Personal — $19/mo', ['For one person — no business needed', 'Texts, designs, presentations, small sites, planning', 'A monthly task limit that is shown in your cabinet', 'Free "Start" plan before that: plan, price and one free mini-result']],
       ['Care — $39/mo', ['A one-page site built for you — or a connection to yours', 'Basic SEO, analytics: visitors, sources, actions', 'AI answers in your site chat 24/7', 'Every request in one app', 'Hosting, fixes, a monthly AI report']],
       ['Growth — $129/mo', ['Everything in Care', 'A full multi-page site with booking and payments', 'AI employee in Instagram, WhatsApp, Telegram, Facebook', 'AI asks for reviews and answers them, 12 AI posts a month', 'Team up to 5 with roles, an AI assistant for each', '2 improvements a month, weekly report']],
       ['Pro — $299/mo', ['Everything in Growth', 'A store or an app under your brand', 'We run your social media: 8 videos or posts a month + stories', 'We set up and run your ads (ad budget separate)', 'Unlimited team, partner program, 5 improvements a month, priority']],
@@ -91,12 +92,13 @@ const C = {
     demos: [["Сайт, от которого захватывает дух", "Движение, крупная типографика, заказ онлайн и ИИ-бариста — уровень 2026 года", "flagship"], ["Маркетинг на автопилоте", "Креативы, посты от ИИ, контент-план и отчёт по заявкам — каждый месяц", "marketing"], ["ИИ-сотрудник в каждом чате", "Отвечает в Instagram, WhatsApp, Telegram, записывает и принимает оплату — попробуйте сами", "ai-assistant"], ["Ваше приложение управления", "Заявки, переписки, команда и отчёты ИИ на одном экране", "eco-crm"]],
     open: 'Открыть →', allDemos: 'Все примеры',
     priceH: 'Тарифы', priceSub: 'Всё, что есть в тарифе, уже включено — и сайт тоже. Доплата — только за своё, нестандартное решение. Каждый клиент получает свою сборку: функции подстраиваются под ваш бизнес.',
-    plans: [['Care', '$39', 'Чтобы начать', 'Одностраничный сайт или подключение к вашему, ИИ в чате сайта, все заявки в приложении', 'flagship'], ['Growth', '$129', 'Выбирают чаще всего', 'Полный сайт с записью и оплатой, ИИ во всех мессенджерах, посты от ИИ, команда с ролями', 'ai-assistant'], ['Pro', '$299', 'Всё делаем за вас', 'Магазин или приложение под вашим брендом, ведём соцсети и рекламу, приоритет', 'marketing']],
+    plans: [['Personal', '$19', 'Для одного человека, бизнес не нужен', 'Ваши личные задачи за вас: тексты, дизайн, небольшие сайты, планирование — с лимитом задач в месяц', 'personal-brand'], ['Care', '$39', 'Чтобы начать', 'Одностраничный сайт или подключение к вашему, ИИ в чате сайта, все заявки в приложении', 'flagship'], ['Growth', '$129', 'Выбирают чаще всего', 'Полный сайт с записью и оплатой, ИИ во всех мессенджерах, посты от ИИ, команда с ролями', 'ai-assistant'], ['Pro', '$299', 'Всё делаем за вас', 'Магазин или приложение под вашим брендом, ведём соцсети и рекламу, приоритет', 'marketing']],
     look: 'Как это выглядит',
     custom: ['Своё решение', 'Своё приложение, бот, интеграция, игра — для бизнеса или личная задача. Vax заранее называет точную цену, прогресс вы видите в кабинете в реальном времени, а результат подключается к платформе. Есть своя CRM? Подключим — данные будут и у вас, и у нас.', 'Описать задачу'],
-    mo: '/мес', priceNote: 'Первый месяц бесплатно на любом тарифе · год — 2 месяца в подарок · сменить или отменить можно в любой момент',
+    mo: '/мес', priceNote: '«Старт» бесплатен всегда · первый месяц бесплатно на любом платном тарифе (проба с лимитом задач) · год — 2 месяца в подарок · сменить или отменить можно в любой момент',
     more: 'Что именно входит в каждый тариф',
     planFull: [
+      ['Personal — $19/мес', ['Для одного человека — бизнес не нужен', 'Тексты, дизайн, презентации, небольшие сайты, планирование', 'Лимит задач в месяц виден в кабинете', 'До этого — бесплатный «Старт»: план, цена и один бесплатный мини-результат']],
       ['Care — $39/мес', ['Одностраничный сайт под ключ — или подключение к вашему', 'Базовое SEO, аналитика: посетители, источники, действия', 'ИИ отвечает в чате сайта 24/7', 'Все заявки в одном приложении', 'Хостинг, исправления, отчёт ИИ раз в месяц']],
       ['Growth — $129/мес', ['Всё из Care', 'Полный многостраничный сайт с записью и оплатой', 'ИИ-сотрудник в Instagram, WhatsApp, Telegram, Facebook', 'ИИ просит отзывы и отвечает на них, 12 постов от ИИ в месяц', 'Команда до 5 человек с ролями, каждому ИИ-помощник', '2 доработки в месяц, отчёт каждую неделю']],
       ['Pro — $299/мес', ['Всё из Growth', 'Магазин или приложение под вашим брендом', 'Ведём ваши соцсети: 8 роликов или постов в месяц + сторис', 'Настраиваем и ведём рекламу (бюджет отдельно)', 'Команда без ограничений, партнёрская программа, 5 доработок в месяц, приоритет']],
@@ -144,12 +146,13 @@ const C = {
     demos: [["Сайт, від якого перехоплює подих", "Рух, велика типографіка, замовлення онлайн і ШІ-бариста — рівень 2026 року", "flagship"], ["Маркетинг на автопілоті", "Креативи, пости від ШІ, контент-план і звіт по заявках — щомісяця", "marketing"], ["ШІ-працівник у кожному чаті", "Відповідає в Instagram, WhatsApp, Telegram, записує і приймає оплату — спробуйте самі", "ai-assistant"], ["Ваш застосунок керування", "Заявки, листування, команда і звіти ШІ на одному екрані", "eco-crm"]],
     open: 'Відкрити →', allDemos: 'Усі приклади',
     priceH: 'Тарифи', priceSub: 'Усе, що є в тарифі, уже включено — і сайт теж. Доплата — лише за своє, нестандартне рішення. Кожен клієнт отримує свою збірку: функції підлаштовуються під ваш бізнес.',
-    plans: [['Care', '$39', 'Щоб почати', 'Односторінковий сайт або підключення до вашого, ШІ в чаті сайту, усі заявки в застосунку', 'flagship'], ['Growth', '$129', 'Обирають найчастіше', 'Повний сайт із записом і оплатою, ШІ в усіх месенджерах, пости від ШІ, команда з ролями', 'ai-assistant'], ['Pro', '$299', 'Усе робимо за вас', 'Магазин або застосунок під вашим брендом, ведемо соцмережі й рекламу, пріоритет', 'marketing']],
+    plans: [['Personal', '$19', 'Для однієї людини, бізнес не потрібен', 'Ваші особисті задачі за вас: тексти, дизайн, невеликі сайти, планування — з лімітом задач на місяць', 'personal-brand'], ['Care', '$39', 'Щоб почати', 'Односторінковий сайт або підключення до вашого, ШІ в чаті сайту, усі заявки в застосунку', 'flagship'], ['Growth', '$129', 'Обирають найчастіше', 'Повний сайт із записом і оплатою, ШІ в усіх месенджерах, пости від ШІ, команда з ролями', 'ai-assistant'], ['Pro', '$299', 'Усе робимо за вас', 'Магазин або застосунок під вашим брендом, ведемо соцмережі й рекламу, пріоритет', 'marketing']],
     look: 'Як це виглядає',
     custom: ['Своє рішення', 'Власний застосунок, бот, інтеграція, гра — для бізнесу чи особисте завдання. Vax заздалегідь називає точну ціну, прогрес ви бачите в кабінеті в реальному часі, а результат підключається до платформи. Є своя CRM? Підключимо — дані будуть і у вас, і в нас.', 'Описати завдання'],
-    mo: '/міс', priceNote: 'Перший місяць безкоштовно на будь-якому тарифі · рік — 2 місяці в подарунок · змінити чи скасувати можна будь-коли',
+    mo: '/міс', priceNote: '«Старт» безкоштовний завжди · перший місяць безкоштовно на будь-якому платному тарифі (проба з лімітом задач) · рік — 2 місяці в подарунок · змінити чи скасувати можна будь-коли',
     more: 'Що саме входить у кожен тариф',
     planFull: [
+      ['Personal — $19/міс', ['Для однієї людини — бізнес не потрібен', 'Тексти, дизайн, презентації, невеликі сайти, планування', 'Ліміт задач на місяць видно в кабінеті', 'До цього — безкоштовний «Старт»: план, ціна й один безкоштовний міні-результат']],
       ['Care — $39/міс', ['Односторінковий сайт під ключ — або підключення до вашого', 'Базове SEO, аналітика: відвідувачі, джерела, дії', 'ШІ відповідає в чаті сайту 24/7', 'Усі заявки в одному застосунку', 'Хостинг, виправлення, звіт ШІ щомісяця']],
       ['Growth — $129/міс', ['Усе з Care', 'Повний багатосторінковий сайт із записом і оплатою', 'ШІ-працівник в Instagram, WhatsApp, Telegram, Facebook', 'ШІ просить відгуки й відповідає на них, 12 постів від ШІ на місяць', 'Команда до 5 людей з ролями, кожному ШІ-помічник', '2 доопрацювання на місяць, звіт щотижня']],
       ['Pro — $299/міс', ['Усе з Growth', 'Магазин або застосунок під вашим брендом', 'Ведемо ваші соцмережі: 8 роликів або постів на місяць + сторіс', 'Налаштовуємо і ведемо рекламу (бюджет окремо)', 'Команда без обмежень, партнерська програма, 5 доопрацювань на місяць, пріоритет']],
@@ -277,7 +280,7 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
       <p class="sub">{C.priceSub}</p>
       <div class="plans">
         {C.plans.map(([n, v, tag, d, slug], i) => (
-          <div class:list={['plan', { mid: i === 1 }]}>
+          <div class:list={['plan', { mid: i === 2 }]}>
             <a class="pv" href={ex(slug)} target="_blank" rel="noopener" aria-label={`${n}: ${C.look}`}>
               <img src={thumb(slug)} alt="" width="480" height="300" loading="lazy" />
               <em>{C.look} →</em>
@@ -532,7 +535,7 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
   .dt i { font-style: normal; color: var(--accText); font-weight: 700; margin-top: 4px; }
   .all { display: inline-block; margin-top: 16px; color: var(--accText); font-weight: 700; text-decoration: none; }
 
-  .plans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .plans { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
   .plan { border: 1px solid var(--line); border-radius: var(--r); background: var(--surf); display: flex; flex-direction: column; overflow: hidden; }
   .plan.mid { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc) inset; }
   .plan.custom { background: var(--deep, #111); color: var(--deepInk, #fff); border-color: transparent; }
@@ -581,6 +584,7 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
   #faq { padding-bottom: clamp(64px, 8vw, 110px); }
 
   .sticky { display: none; }
+  @media (max-width: 1280px) { .plans { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 1060px) { .plans { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 960px) {
     .hero-grid, .bill, .start-grid { grid-template-columns: 1fr; }
