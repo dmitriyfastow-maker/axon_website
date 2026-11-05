@@ -37,7 +37,7 @@ export function unitTable(st: { cost: Record<string, number>; fee: number }) {
     const price = PLAN_PRICES[p], cost = st.cost[p] ?? 0, fee = (price * st.fee) / 100;
     const first = (price * RATES.agencyOwn) / 100, later = (price * RATES.agencyRenewal) / 100, team = (price * RATES.team) / 100;
     const credit = price; // worst case: the inviter's free month is worth this plan
-    const freeCost = CLIENT_REF.friendMonths * cost; // an invited friend's 2 free months still cost us
+    const freeCost = cost; // only the usual free first month costs us before payment; the gift month comes after money
     const r = (n: number) => Math.round(n * 100) / 100;
     return {
       plan: p, price, cost, fee: r(fee), partnerFirst: r(first), partnerLater: r(later), team: r(team), credit, freeCost: r(freeCost),

@@ -1,5 +1,5 @@
 // Client referrals (04.11.2026). Every client has a personal invite link vaxogroup.com/r/c_<code>. The invited friend
-// (by a client OR a partner link) gets 2 free months instead of 1. The inviting client gets +1 free month of their own
+// (by a client OR a partner link) gets the usual free first month + 1 gift month after their first paid payment (kept 14 days) — no cost before money comes in. The inviting client gets +1 free month of their own
 // plan — a service credit, never cash — per friend whose first PAID payment stays 14 days (the refund window).
 // Credit value = the cheaper of the two plans; at most 12 free months a year. Partners keep cash commissions.
 // Anti-abuse: one attribution per new client (first link wins), no self-referral (same email, same company email
@@ -138,7 +138,7 @@ export async function attributeLead(db: DB, leadId: number, ref: string | null |
     await db.prepare('INSERT OR IGNORE INTO referrals (lead_id, slug, kind, referrer_client_id, referrer_partner_id, ip_hash, friend_months, status, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
       .bind(leadId, ref, kind, cid, pid, ipHash, CLIENT_REF.friendMonths, status, reason).run();
     await db.prepare(`INSERT INTO lead_events (lead_id, actor, kind, text) VALUES (?, 'system', 'note', ?)`)
-      .bind(leadId, `Came by an invite link (${kind}): the friend gets ${CLIENT_REF.friendMonths} free months instead of 1`).run().catch(() => {});
+      .bind(leadId, `Came by an invite link (${kind}): the friend gets +1 gift month after the first paid payment`).run().catch(() => {});
     if (status === 'review') await notify?.(`⚠️ Реферал на проверку: заявка #${leadId}, клиент #${cid} — много приглашений с одного IP за день. Штаб → 📊 Экономика.`);
   } catch (e) { console.error('[referral attribute]', e); }
 }
@@ -227,7 +227,7 @@ export async function clientInvite(db: DB, clientId: number) {
       FROM referrals WHERE referrer_client_id = ?`).bind(clientId).first<Record<string, number>>();
     out.invited = r?.invited ?? 0; out.pending = r?.pending ?? 0; out.credited = r?.credited ?? 0; out.creditUsd = r?.usd ?? 0; out.yearMonths = r?.year ?? 0;
     out.clicks = (await db.prepare('SELECT clicks FROM client_refs WHERE client_id = ?').bind(clientId).first<{ clicks: number }>())?.clicks ?? 0;
-    // This client came by an invite: show their 2 free months.
+    // This client came by an invite: show their gift month (after the first payment).
     const mine = await db.prepare(`SELECT r.friend_months FROM referrals r JOIN leads d ON d.id = r.lead_id WHERE d.client_id = ? AND r.status NOT IN ('rejected') ORDER BY r.at LIMIT 1`).bind(clientId).first<{ friend_months: number }>();
     if (mine) out.friendBonus = { months: mine.friend_months };
   } catch {}
