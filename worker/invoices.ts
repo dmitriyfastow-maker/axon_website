@@ -24,6 +24,25 @@ const CARD_MSG: Record<string, string> = {
   ua: '🧾 Ваш рахунок {n} на {sum}: {url}\nСплатити можна там же карткою, Apple Pay чи Google Pay — або переказом за реквізитами з рахунку. Щойно оплата надійде, починаємо роботу — я підтверджу тут.',
 };
 
+export type NewInvoice = { leadId: number | null; amount: number; currency: string; description: string; part?: string; lang: string; buyer?: string | null; send?: boolean; origin: string; card?: boolean };
+
+/** One place that numbers, stores and (optionally) sends an invoice to the client's project chat. */
+export async function createInvoice(db: DB, o: NewInvoice) {
+  const year = new Date().getUTCFullYear();
+  const n = ((await db.prepare(`SELECT COUNT(*) AS n FROM invoices WHERE number LIKE ?`).bind(`VX-${year}-%`).first<{ n: number }>())?.n ?? 0) + 1;
+  const number = `VX-${year}-${String(n).padStart(4, '0')}`, token = hex(16);
+  const lead = o.leadId ? await db.prepare('SELECT name FROM leads WHERE id = ?').bind(o.leadId).first<{ name: string }>() : null;
+  const buyer = o.buyer && o.buyer.trim() ? o.buyer.trim().slice(0, 200) : lead?.name || null;
+  await db.prepare(`INSERT INTO invoices (number, token, lead_id, buyer, currency, amount, description, part, lang, due) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, date('now', '+7 days'))`)
+    .bind(number, token, o.leadId, buyer, o.currency, o.amount, o.description, PARTS.includes(String(o.part)) ? String(o.part) : 'full', o.lang).run();
+  const url = `${o.origin}/invoice/?t=${token}`;
+  if (o.leadId && o.send !== false) {
+    const sum = `${o.amount.toLocaleString('en-US')} ${o.currency}`;
+    await addMessage(db, o.leadId, 'owner', 'text', ((o.card ? CARD_MSG : LINK_MSG)[o.lang] || LINK_MSG.en).replace('{n}', number).replace('{sum}', sum).replace('{url}', url));
+  }
+  return { number, url };
+}
+
 export async function handleInvoiceAdmin(db: DB, request: Request, path: string, origin: string, card = false): Promise<Response> {
   if (path === '' && request.method === 'GET') {
     const { results } = await db.prepare(`SELECT i.*, d.name AS client FROM invoices i LEFT JOIN leads d ON d.id = i.lead_id ORDER BY i.id DESC LIMIT 200`).all();
@@ -37,18 +56,8 @@ export async function handleInvoiceAdmin(db: DB, request: Request, path: string,
     const leadId = Number(b.lead_id) || null;
     const lead = leadId ? await db.prepare('SELECT name, lang FROM leads WHERE id = ?').bind(leadId).first<{ name: string; lang: string | null }>() : null;
     const lang = ['en', 'ru', 'ua'].includes(String(b.lang)) ? String(b.lang) : lead?.lang || (currency === 'UAH' ? 'ua' : 'en');
-    const year = new Date().getUTCFullYear();
-    const n = ((await db.prepare(`SELECT COUNT(*) AS n FROM invoices WHERE number LIKE ?`).bind(`VX-${year}-%`).first<{ n: number }>())?.n ?? 0) + 1;
-    const number = `VX-${year}-${String(n).padStart(4, '0')}`, token = hex(16);
-    const buyer = typeof b.buyer === 'string' && b.buyer.trim() ? b.buyer.trim().slice(0, 200) : lead?.name || null;
-    await db.prepare(`INSERT INTO invoices (number, token, lead_id, buyer, currency, amount, description, part, lang, due) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, date('now', '+7 days'))`)
-      .bind(number, token, leadId, buyer, currency, amount, description, PARTS.includes(String(b.part)) ? String(b.part) : 'full', lang).run();
-    const url = `${origin}/invoice/?t=${token}`;
-    if (leadId && b.send !== false) {
-      const sum = `${amount.toLocaleString('en-US')} ${currency}`;
-      await addMessage(db, leadId, 'owner', 'text', ((card ? CARD_MSG : LINK_MSG)[lang] || LINK_MSG.en).replace('{n}', number).replace('{sum}', sum).replace('{url}', url));
-    }
-    return json(200, { ok: true, number, url });
+    const made = await createInvoice(db, { leadId, amount, currency, description, part: String(b.part), lang, buyer: typeof b.buyer === 'string' ? b.buyer : null, send: b.send !== false, origin, card });
+    return json(200, { ok: true, number: made.number, url: made.url });
   }
   const m = path.match(/^(\d+)\/(cancel)$/);
   if (m && request.method === 'POST') {

@@ -7,7 +7,7 @@ const NAMES: R = { personal: 'Personal', care: 'Care', growth: 'Growth', pro: 'P
 const PLANS = ['personal', 'care', 'growth', 'pro'];
 const usd = (n: number) => `${n < 0 ? '−' : ''}$${Math.abs(Number(n) || 0).toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
 const usd0 = (n: number) => `${n < 0 ? '−' : ''}$${Math.round(Math.abs(Number(n) || 0)).toLocaleString('en-US')}`;
-const REF_ST: R = { attributed: 'ждёт оплаты', pending: '14 дней', credited: 'начислен', cancelled: 'отменён', review: 'на проверке', rejected: 'отклонён' };
+const REF_ST: R = { attributed: 'ждёт оплаты', pending: '14 дней', credited: 'начислен', applied: 'вычтен из счёта', cancelled: 'отменён', review: 'на проверке', rejected: 'отклонён' };
 
 function el(tag: string, attrs: R = {}, ...kids: (Node | string | number | null | undefined | false)[]) {
   const e = document.createElement(tag);
@@ -54,6 +54,23 @@ export function renderEcon(box: HTMLElement, d: R, api: Api, reload: () => void)
     kpi('Бесплатные месяцы клиентам', `${rs.credited || 0} начислено`, `${usd0(rs.credited_usd || 0)} · ещё ${rs.pending || 0} ждут 14 дней (${usd0(rs.pending_usd || 0)})`),
     kpi('Пришли по приглашениям', String((rs.client || 0) + (rs.partner || 0)), `от клиентов ${rs.client || 0} · от партнёров ${rs.partner || 0}`),
   ));
+
+  // Decisions with reasons (rule-based on the live ledger) and the dated trail
+  const advice = (d.advice || []) as R[];
+  if (advice.length) {
+    parts.push(el('h3', {}, 'Что я решил и почему'));
+    parts.push(el('p', { class: 'hint' }, 'Каждое решение: зачем, что делаю дальше и работает ли оно само. Хотите изменить или уточнить — напишите во вкладке «🧠 Claude», я отвечу с цифрами.'));
+    parts.push(el('div', { class: 'ec-alerts' }, ...advice.map((a) => el('div', { class: `ec-alert ${a.level}` },
+      el('b', {}, (a.level === 'r' ? '🔴 ' : a.level === 'y' ? '🟡 ' : '🟢 ') + a.title),
+      el('div', {}, el('i', {}, 'Почему: '), a.why),
+      el('div', {}, el('i', {}, 'Решение: '), a.decision),
+      el('div', {}, el('i', {}, 'Дальше: '), a.next, a.auto ? ' ⚙️ работает само' : ' 👤 нужен вы')))));
+  }
+  const trail = (d.log || []) as R[];
+  if (trail.length) {
+    parts.push(el('h3', {}, 'Журнал решений'));
+    parts.push(table(['Дата', 'Решение', 'Что решено', 'Почему'], trail.map((x) => [x.at, x.title, x.decision, x.why])));
+  }
 
   // Margin per plan
   parts.push(el('h3', {}, 'Маржа и LTV по тарифам'));
