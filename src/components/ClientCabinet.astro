@@ -108,6 +108,15 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       </article>
     </section>
 
+    <!-- Your map: portrait, branches, next move with the reason -->
+    <section class="cab-card vmap" data-map hidden aria-labelledby="cab-map-h">
+      <h2 id="cab-map-h">{T.mapH}</h2>
+      <p class="mut">{T.mapP}</p>
+      <div class="map-root" data-map-root></div>
+      <div class="map-grid" data-map-grid></div>
+      <div class="map-next" data-map-next></div>
+    </section>
+
     <!-- Setup checklist -->
     <section class="cab-card setup" data-setup hidden aria-labelledby="cab-setup-h">
       <div class="setup-head">
@@ -352,6 +361,19 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     $('[data-profile-btn]').textContent = f.profile ? T.save : T.saveBonus;
   }
 
+  function renderMap(d: R, f: R) {
+    const goal = String(d.me?.profile?.goal || '').trim();
+    $('[data-map-root]').replaceChildren(el('b', {}, T.mapRoot), el('span', {}, goal || T.mapNoGoal));
+    const BR: string[][] = [['email', 'profile'], ['project', 'site'], ['lead', 'review'], ['friend']];
+    const order = BR.flat();
+    const nextKey = order.find((k) => !f[k]);
+    $('[data-map-grid]').replaceChildren(...BR.map((keys, bi) => el('div', { class: 'br' }, el('h3', {}, T.mapBranches[bi]),
+      el('ul', {}, ...keys.map((k) => el('li', { class: f[k] ? 'on' : k === nextKey ? 'nx' : '' }, el('span', { class: 'dot' }, f[k] ? '✓' : k === nextKey ? '→' : '·'), el('b', {}, T.mapNodes[k][0])))))));
+    const nx = $('[data-map-next]');
+    nx.hidden = !nextKey;
+    if (nextKey) nx.replaceChildren(el('img', { src: '/mascot/vax-happy.webp', alt: 'Vax', width: '56', height: '56' }), el('div', {}, el('small', {}, T.mapNext), el('b', {}, T.mapNodes[nextKey][0]), el('span', { class: 'mut small' }, `${T.mapWhy} ${T.mapNodes[nextKey][1]}`)));
+  }
+
   function renderAch(f: R) {
     const A: [string, string][] = [['project', 'rocket'], ['profile', 'store'], ['site', 'globe'], ['lead', 'inbox'], ['review', 'star'], ['friend', 'friend']];
     $('[data-ach]').replaceChildren(...A.map(([k, ic], i) => el('li', { class: f[k] ? 'on' : '', style: `--i:${i}` },
@@ -401,7 +423,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     root.classList.toggle('is-guest', guest);
     root.classList.toggle('is-in', si);
     $('[data-auth]').hidden = si;
-    for (const s of ['[data-dash]', '[data-setup]', '[data-ach-sec]', '[data-acct]', '[data-invite]']) $(s).hidden = !si;
+    for (const s of ['[data-dash]', '[data-setup]', '[data-map]', '[data-ach-sec]', '[data-acct]', '[data-invite]']) $(s).hidden = !si;
     $('[data-proj-sec]').hidden = !si && !guest;
     $('[data-ph]').textContent = guest ? T.guestH : T.projects;
     $('[data-none]').hidden = !si || ps.length > 0;
@@ -417,7 +439,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       return;
     }
     const f = facts(d);
-    renderHero(d, f); renderSetup(d, f); renderAch(f); renderInvite(d);
+    renderHero(d, f); renderSetup(d, f); renderMap(d, f); renderAch(f); renderInvite(d);
     $<HTMLInputElement>('[data-news]').checked = !!d.me?.marketing;
     playRings();
     window.dispatchEvent(new CustomEvent('vx:signed-in'));
@@ -758,4 +780,19 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 .cab-card :is(button, a, input, summary):focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
 .inv-why { margin-top: 4px; } .inv-why summary { cursor: pointer; font-weight: 650; color: var(--accText, var(--ink)); padding: 6px 0; }
 @media (prefers-reduced-motion: reduce) { .cab-card { transition: none; } .cab-card:hover { transform: none; } }
+
+  .vmap .map-root { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border-radius: 16px; background: color-mix(in srgb, var(--acc) 14%, var(--surf)); border: 1px solid var(--acc); margin: 12px 0; }
+  .vmap .map-root span { font-size: 17px; font-weight: 600; line-height: 1.35; }
+  .vmap .map-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .vmap .br { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--surf); position: relative; }
+  .vmap .br h3 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--mut); }
+  .vmap .br ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .vmap .br li { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: var(--mut); }
+  .vmap .br li .dot { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); font-size: 12px; }
+  .vmap .br li.on { color: var(--ink); } .vmap .br li.on .dot { background: var(--acc); border-color: var(--acc); color: #17150F; }
+  .vmap .br li.nx { color: var(--ink); font-weight: 700; } .vmap .br li.nx .dot { border-color: var(--acc); color: var(--acc); }
+  .vmap .map-next { display: flex; gap: 12px; align-items: center; margin-top: 12px; padding: 12px 14px; border-radius: 16px; border: 1px dashed var(--acc); }
+  .vmap .map-next img { width: 56px; height: 56px; object-fit: contain; flex: none; }
+  .vmap .map-next div { display: grid; gap: 2px; } .vmap .map-next small { text-transform: uppercase; letter-spacing: .06em; font-size: 11px; color: var(--mut); }
+  @media (max-width: 860px) { .vmap .map-grid { grid-template-columns: repeat(2, 1fr); } }
 </style>
