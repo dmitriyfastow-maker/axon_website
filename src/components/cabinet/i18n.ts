@@ -3,7 +3,7 @@
 import type { Lang } from '../../i18n';
 
 const en = {
-  title: 'Your cabinet', lead: 'All your projects, your business app and rewards in one place.',
+  title: 'Your cabinet', lead: 'Your goal, Vax’s next moves and why, your projects, business app and rewards — in one place.',
   loginH: 'Sign in to Vaxo', loginP: 'Your projects, your business app and your rewards — in one place.',
   email: 'Your email', cont: 'Continue', noPass: 'No password needed — we email you a 6-digit code.',
   codeH: 'Enter the code', codeP: 'We sent a 6-digit code to {email}. It works for 15 minutes.', codeLabel: 'Digit {n} of 6',
@@ -61,7 +61,7 @@ const en = {
 type Dict = typeof en;
 
 const ru: Dict = {
-  title: 'Личный кабинет', lead: 'Все ваши проекты, приложение бизнеса и бонусы в одном месте.',
+  title: 'Личный кабинет', lead: 'Ваша цель, следующие шаги Vax и почему, проекты, приложение бизнеса и бонусы — в одном месте.',
   loginH: 'Вход в Vaxo', loginP: 'Ваши проекты, приложение вашего бизнеса и бонусы — в одном месте.',
   email: 'Ваша почта', cont: 'Продолжить', noPass: 'Пароль не нужен — пришлём 6-значный код на почту.',
   codeH: 'Введите код', codeP: 'Мы отправили 6-значный код на {email}. Он действует 15 минут.', codeLabel: 'Цифра {n} из 6',
@@ -118,7 +118,7 @@ const ru: Dict = {
 };
 
 const ua: Dict = {
-  title: 'Особистий кабінет', lead: 'Усі ваші проєкти, застосунок бізнесу та бонуси в одному місці.',
+  title: 'Особистий кабінет', lead: 'Ваша мета, наступні кроки Vax і чому, проєкти, застосунок бізнесу та бонуси — в одному місці.',
   loginH: 'Вхід у Vaxo', loginP: 'Ваші проєкти, застосунок вашого бізнесу та бонуси — в одному місці.',
   email: 'Ваша пошта', cont: 'Продовжити', noPass: 'Пароль не потрібен — надішлемо 6-значний код на пошту.',
   codeH: 'Введіть код', codeP: 'Ми надіслали 6-значний код на {email}. Він діє 15 хвилин.', codeLabel: 'Цифра {n} з 6',
