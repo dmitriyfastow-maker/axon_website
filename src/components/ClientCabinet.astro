@@ -122,6 +122,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       <p class="mut">{T.allowP}</p>
       <div class="al-rows" data-allow-rows></div>
       <p class="mut small" data-allow-trial hidden>{T.allowTrial}</p>
+      <p data-allow-more hidden><a class="btn" href="/#pricing">{T.allowMore}</a></p>
     </section>
 
     <!-- Setup checklist -->
@@ -392,6 +393,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     };
     $('[data-allow-rows]').replaceChildren(row(T.allowDay, a.day), row(T.allowWeek, a.week));
     $('[data-allow-trial]').hidden = !a.trial;
+    $('[data-allow-more]').hidden = !(a.day.used / a.day.cap >= 0.75 || a.week.used / a.week.cap >= 0.75);
   }
 
   function renderAch(f: R) {
