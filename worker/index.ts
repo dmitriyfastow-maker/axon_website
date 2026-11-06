@@ -131,7 +131,7 @@ export default {
     if (url.pathname === '/api/mono/webhook') return env.LEADS ? monoWebhook(env.LEADS, env.MONO_ACQ_TOKEN, env.AI, notify, request) : json(503, { ok: false });
     if (url.pathname === '/api/file') return env.LEADS ? handleFileUpload(env.FILES, env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     // Short tracked links for bios (vaxogroup.com/go/<name>): count the click, then send the person on.
-    const go = url.pathname.match(/^\/go\/([a-z0-9-]{2,30})\/?$/);
+    const go = url.pathname.match(/^\/go\/([a-z0-9-]{2,30})(?:\/([A-Za-z0-9_-]{1,40}))?\/?$/);
     if (go) {
       const GO: Record<string, string> = {
         vaxo: '/?utm_source=instagram_dmitriy&utm_content=linktree',
@@ -141,10 +141,13 @@ export default {
         'vaxo-tt': '/?utm_source=tiktok_dmitriy',
         'vaxo-discord': '/?utm_source=discord&utm_content=insiders',
       };
+      // Vaxo brand accounts: /go/<network>[/<video>] -> every click is tagged source_vaxo / social / network / content.
+      const NET = ['ig', 'tt', 'yt', 'th', 'x', 'li', 'fb', 'dc', 'tg', 'pin'];
+      if (NET.includes(go[1])) GO[go[1]] = '/?utm_source=' + go[1] + '_vaxo&utm_medium=social&utm_campaign=' + go[1] + '&utm_content=' + (go[2] || 'bio');
       const to = GO[go[1]];
       if (!to) return Response.redirect(url.origin + '/', 302);
       if (env.LEADS && !/bot|crawl|spider|preview|facebookexternalhit|curl|wget/i.test(request.headers.get('User-Agent') || ''))
-        waitUntil(env.LEADS.prepare('INSERT INTO events (kind, path, country) VALUES (?, ?, ?)').bind('go', '/go/' + go[1], (request as { cf?: { country?: string } }).cf?.country ?? null).run().catch(() => {}));
+        waitUntil(env.LEADS.prepare('INSERT INTO events (kind, path, country) VALUES (?, ?, ?)').bind('go', '/go/' + go[1] + (go[2] ? '/' + go[2] : ''), (request as { cf?: { country?: string } }).cf?.country ?? null).run().catch(() => {}));
       return Response.redirect(to.startsWith('http') ? to : url.origin + to, 302);
     }
     const file = url.pathname.match(/^\/f\/([a-f0-9]{20})(?:\/|$)/);

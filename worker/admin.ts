@@ -37,14 +37,16 @@ export async function settleInvoice(db: DB, ai: AiBinding | undefined, notify: N
 async function afterPayment(db: DB, leadId: number, amount: number, currency: string, notify: Notify) {
   const l = await db.prepare(`SELECT status, contact, page, value_usd FROM leads WHERE id = ?`).bind(leadId).first<{ status: string; contact: string | null; page: string | null; value_usd: number | null }>();
   if (!l || l.page === 'test' || /^test/i.test(l.contact || '') || /@vaxogroup\.com$/i.test(l.contact || '')) return;
-  const rate = (await db.prepare(`SELECT rate FROM payments WHERE currency = 'USD' ORDER BY id DESC LIMIT 1`).first<{ rate: number }>().catch(() => null))?.rate || 41.5;
-  const usd = currency === 'USD' ? amount : amount / rate;
-  if (!(usd >= 1)) return; // contact/test payments of a few hryvnias are never commissionable
+  let rate = (await db.prepare(`SELECT rate FROM payments WHERE currency = 'USD' ORDER BY id DESC LIMIT 1`).first<{ rate: number }>().catch(() => null))?.rate || 41.5;
+  if (!(rate > 20 && rate < 100)) rate = 41.5;
+  const usd = Math.round((currency === 'UAH' ? amount / rate : amount) * 100) / 100;
+  // From 10 UAH or $1 a payment counts (smaller ones are card checks). Cents are kept, so a 10 UAH test pays a real tiny commission.
+  if (!(usd >= 1 || (currency === 'UAH' && amount >= 10))) return;
   if (l.status !== 'won') {
-    await db.prepare(`UPDATE leads SET status = 'won', value_usd = ? WHERE id = ?`).bind(Math.round(usd), leadId).run();
-    await db.prepare(`INSERT INTO lead_events (lead_id, actor, kind, text) VALUES (?, 'system', 'note', ?)`).bind(leadId, `Won automatically: first payment $${Math.round(usd)}`).run();
+    await db.prepare(`UPDATE leads SET status = 'won', value_usd = ? WHERE id = ?`).bind(usd, leadId).run();
+    await db.prepare(`INSERT INTO lead_events (lead_id, actor, kind, text) VALUES (?, 'system', 'note', ?)`).bind(leadId, `Won automatically: first payment $${usd}`).run();
     await createPayouts(db, leadId);
-    await notify(`✅ Лид #${leadId}: первая оплата $${Math.round(usd)} — сделка закрыта автоматически, комиссии партнёрам начислены.`).catch(() => {});
+    await notify(`✅ Лид #${leadId}: первая оплата $${usd} — сделка закрыта автоматически, комиссии партнёрам начислены.`).catch(() => {});
   } else {
     await addRenewal(db, leadId, usd);
   }

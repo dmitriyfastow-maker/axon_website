@@ -45,7 +45,7 @@ export async function createPayouts(db: DB, leadId: number) {
          ON CONFLICT (lead_id, kind) DO UPDATE SET partner_id = excluded.partner_id, base_usd = excluded.base_usd, amount_usd = excluded.amount_usd
          WHERE payouts.status = 'due'`,
       )
-      .bind(pid, leadId, kind, rate, l.value_usd, Math.round((l.value_usd * rate) / 100))
+      .bind(pid, leadId, kind, rate, l.value_usd, Math.round(l.value_usd * rate) / 100)
       .run();
   }
 }
@@ -102,7 +102,7 @@ export async function addRenewal(db: DB, leadId: number, amountUsd: number) {
   for (const [pid, kind] of rows) {
     await db
       .prepare('INSERT INTO payouts (partner_id, lead_id, kind, rate, base_usd, amount_usd) VALUES (?, ?, ?, ?, ?, ?)')
-      .bind(pid, leadId, kind, RATES.agencyRenewal, amountUsd, Math.round((amountUsd * RATES.agencyRenewal) / 100))
+      .bind(pid, leadId, kind, RATES.agencyRenewal, amountUsd, Math.round(amountUsd * RATES.agencyRenewal) / 100)
       .run();
   }
   // Team bonus on renewals too: 10% to the referrer's direct sponsor.
@@ -110,7 +110,7 @@ export async function addRenewal(db: DB, leadId: number, amountUsd: number) {
     const up = await db.prepare('SELECT parent_id FROM partners WHERE id = ?').bind(l.referrer_id).first<{ parent_id: number | null }>();
     if (up?.parent_id && up.parent_id !== l.referrer_id) {
       await db.prepare('INSERT INTO payouts (partner_id, lead_id, kind, rate, base_usd, amount_usd) VALUES (?, ?, ?, ?, ?, ?)')
-        .bind(up.parent_id, leadId, `renewal-team:${tag}`, RATES.team, amountUsd, Math.round((amountUsd * RATES.team) / 100)).run();
+        .bind(up.parent_id, leadId, `renewal-team:${tag}`, RATES.team, amountUsd, Math.round(amountUsd * RATES.team) / 100).run();
     }
   }
   return true;
