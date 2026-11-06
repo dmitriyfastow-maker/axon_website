@@ -2,6 +2,7 @@
 // Google. All the client's projects in one place: progress %, revision counter, confirmed brief, payments, the
 // strategy document, bonuses (5% cashback, tasks), level and the next step. Without signing in, the personal project
 // link (/me/?t=<room>) shows that one project, like the project chat does.
+import { allowance } from './allowance.js';
 import type { DB } from './partner.js';
 import type { Notify } from './deals.js';
 import { mailReady, sendMail } from './mail.js';
@@ -135,7 +136,7 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
       const ids = list.map((l) => l.id);
       const paid = await paidUsd(db, ids);
       const history = (await db.prepare(`SELECT at, kind, amount_usd FROM bonuses WHERE client_id = ? OR lead_id IN (${(ids.length ? ids : [0]).join(',')}) ORDER BY id DESC LIMIT 30`).bind(me.id).all()).results;
-      return json(200, { ok: true, signedIn: true, ways, me: { email: me.email, name: me.name, profile: me.profile ? JSON.parse(me.profile) : null, marketing: !!me.marketing, verified: !!me.email_verified_at }, projects: list, paidUsd: paid, level: [...LEVELS].reverse().find((x) => paid >= x.from)!.id, bonus: await bonusBalance(db, me.id, ids), bonusHistory: history, rules: BONUS, levels: LEVELS, eco: await ecosystem(db, me), invite: await clientInvite(db, me.id) });
+      return json(200, { ok: true, signedIn: true, ways, me: { email: me.email, name: me.name, profile: me.profile ? JSON.parse(me.profile) : null, marketing: !!me.marketing, verified: !!me.email_verified_at }, projects: list, paidUsd: paid, level: [...LEVELS].reverse().find((x) => paid >= x.from)!.id, bonus: await bonusBalance(db, me.id, ids), bonusHistory: history, rules: BONUS, levels: LEVELS, eco: await ecosystem(db, me), invite: await clientInvite(db, me.id), allowance: await allowance(db, ids).catch(() => null) });
     }
     if (ROOM_RE.test(room)) {
       const list = await projects(db, 'room = ?', room);

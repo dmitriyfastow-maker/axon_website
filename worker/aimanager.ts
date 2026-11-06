@@ -1,6 +1,7 @@
 // AI manager: Vax leads every client from the first message to the repeat order — answers in seconds, gathers the
 // brief, recommends one package, reports project status, follows up after silence and after delivery.
 // A human manager joins only when the client needs a live conversation (call, complaint, refund, special price).
+import { allowance, limitText } from './allowance.js';
 import { filesForAi } from './files.js';
 import { bonusBalance } from './cabinet.js';
 import type { DB } from './partner.js';
@@ -138,6 +139,11 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
     .bind(leadId)
     .first();
   if (humanRecent && !opts.nudge) return false;
+  // Allowance (Decision 34): daily and weekly caps of Vax replies, by plan; the trial month gets a third.
+  if (!opts.greet && !opts.nudge) {
+    const al = await allowance(db, [leadId]).catch(() => null);
+    if (al?.blocked) { await addMessage(db, leadId, 'ai', 'text', limitText(l.lang, al)); return true; }
+  }
   const convo = await Promise.all(msgs.filter((m) => m.sender !== 'system').map(async (m) => ({ role: m.sender === 'client' ? 'user' : 'assistant', content: (await filesForAi(db, m.text).catch(() => m.text)).slice(0, 2500) })));
   if (opts.greet) convo.push({ role: 'user', content: `(The client just sent the request above via the site form and opened this chat. Greet them by name, say you are Vax, the AI manager, and ask the first 1–2 questions. Never re-ask what the request already says (the "Need" chips, the about text); build on it, mention the subscription entry point (first month free, then from $39/mo) in one short line, and ask only the next missing detail.)` });
   if (opts.nudge) convo.push({ role: 'user', content: `(System, not the client: ${opts.nudge})` });

@@ -173,6 +173,9 @@ export default {
               .bind(l.mode, l.name, l.contact, l.interest, l.message, l.lang, l.ref ?? null, country, page, roomToken, l.promo ?? null)
               .run()) as { meta?: { last_row_id?: number } };
             const id = res?.meta?.last_row_id;
+            // A plan button on the site writes "[PLAN care] ...": remember the chosen plan (the free first month starts).
+            const pm = /^\[PLAN (personal|care|growth|pro)\]/.exec(l.message || '');
+            if (id && pm) await db.prepare('UPDATE leads SET plan = ? WHERE id = ?').bind(pm[1], id).run().catch(() => {});
             // Lifetime partner attribution by e-mail: a returning buyer keeps the partner they first came by.
             if (id) {
               const lr = await buyerRef(db, l.contact, l.ref ?? null);

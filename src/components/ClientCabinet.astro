@@ -117,6 +117,13 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       <div class="map-next" data-map-next></div>
     </section>
 
+    <section class="cab-card allow" data-allow hidden aria-labelledby="cab-allow-h">
+      <h2 id="cab-allow-h">{T.allowH}</h2>
+      <p class="mut">{T.allowP}</p>
+      <div class="al-rows" data-allow-rows></div>
+      <p class="mut small" data-allow-trial hidden>{T.allowTrial}</p>
+    </section>
+
     <!-- Setup checklist -->
     <section class="cab-card setup" data-setup hidden aria-labelledby="cab-setup-h">
       <div class="setup-head">
@@ -374,6 +381,19 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     if (nextKey) nx.replaceChildren(el('img', { src: '/mascot/vax-happy.webp', alt: 'Vax', width: '56', height: '56' }), el('div', {}, el('small', {}, T.mapNext), el('b', {}, T.mapNodes[nextKey][0]), el('span', { class: 'mut small' }, `${T.mapWhy} ${T.mapNodes[nextKey][1]}`)));
   }
 
+  function renderAllow(d: R) {
+    const a: R | null = d.allowance;
+    $('[data-allow]').hidden = !a;
+    if (!a) return;
+    const row = (label: string, x: R) => {
+      const left = Math.max(0, 1 - x.used / x.cap);
+      const word = left <= 0 ? T.allowOut : left < 0.25 ? T.allowLow : T.allowOk;
+      return el('div', { class: 'al-row' }, el('b', {}, label), el('div', { class: 'al-bar' }, el('i', { style: `width:${Math.round(left * 100)}%` })), el('span', { class: left < 0.25 ? 'low' : '' }, word));
+    };
+    $('[data-allow-rows]').replaceChildren(row(T.allowDay, a.day), row(T.allowWeek, a.week));
+    $('[data-allow-trial]').hidden = !a.trial;
+  }
+
   function renderAch(f: R) {
     const A: [string, string][] = [['project', 'rocket'], ['profile', 'store'], ['site', 'globe'], ['lead', 'inbox'], ['review', 'star'], ['friend', 'friend']];
     $('[data-ach]').replaceChildren(...A.map(([k, ic], i) => el('li', { class: f[k] ? 'on' : '', style: `--i:${i}` },
@@ -423,7 +443,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     root.classList.toggle('is-guest', guest);
     root.classList.toggle('is-in', si);
     $('[data-auth]').hidden = si;
-    for (const s of ['[data-dash]', '[data-setup]', '[data-map]', '[data-ach-sec]', '[data-acct]', '[data-invite]']) $(s).hidden = !si;
+    for (const s of ['[data-dash]', '[data-setup]', '[data-map]', '[data-allow]', '[data-ach-sec]', '[data-acct]', '[data-invite]']) $(s).hidden = !si;
     $('[data-proj-sec]').hidden = !si && !guest;
     $('[data-ph]').textContent = guest ? T.guestH : T.projects;
     $('[data-none]').hidden = !si || ps.length > 0;
@@ -439,7 +459,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       return;
     }
     const f = facts(d);
-    renderHero(d, f); renderSetup(d, f); renderMap(d, f); renderAch(f); renderInvite(d);
+    renderHero(d, f); renderSetup(d, f); renderMap(d, f); renderAllow(d); renderAch(f); renderInvite(d);
     $<HTMLInputElement>('[data-news]').checked = !!d.me?.marketing;
     playRings();
     window.dispatchEvent(new CustomEvent('vx:signed-in'));
@@ -795,4 +815,10 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
   .vmap .map-next img { width: 56px; height: 56px; object-fit: contain; flex: none; }
   .vmap .map-next div { display: grid; gap: 2px; } .vmap .map-next small { text-transform: uppercase; letter-spacing: .06em; font-size: 11px; color: var(--mut); }
   @media (max-width: 860px) { .vmap .map-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .allow .al-row { display: grid; grid-template-columns: 110px 1fr 150px; gap: 12px; align-items: center; margin: 10px 0; font-size: 14px; }
+  .allow .al-bar { height: 10px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 10%, transparent); overflow: hidden; }
+  .allow .al-bar i { display: block; height: 100%; border-radius: 999px; background: var(--acc); }
+  .allow .al-row span.low { color: #B4531A; font-weight: 700; }
+  @media (max-width: 560px) { .allow .al-row { grid-template-columns: 1fr; gap: 4px; } }
 </style>
