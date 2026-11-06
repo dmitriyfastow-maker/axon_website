@@ -15,13 +15,13 @@ const thumb = (slug: string) => `/examples/thumbs/${slug === 'eco-crm' ? 'eco-os
 
 const C = {
   en: {
-    eyebrow: 'Vaxo · an AI partner that moves first',
-    tryH: "Try it yourself — ask anything", tryS: "Not a website builder — a partner for anything. A game, a recipe, code, ads, a plan, an automation, a site. Vax moves first, chooses the right AI for you and keeps every project in one place. Tap a card to start.", tryCards: [["🎮", "Make me a simple browser game"], ["🥧", "How do I bake an apple pie?"], ["🌐", "A website for my coffee shop"], ["📈", "Plan my first 90 days as a freelancer"], ["🤖", "A bot that books clients in WhatsApp"], ["✍️", "Write a speech for my sister’s wedding"], ["📣", "Instagram ads for my clinic"], ["📱", "Compare two phones and tell me which to buy"], ["🧩", "Automate my weekly report"], ["🎁", "A birthday video script for mom"], ["💻", "Find the bug in my code"], ["🌍", "A 3-month plan to learn Spanish"]],
+    eyebrow: "Vaxo · your AI partner",
+    tryH: "Try it yourself — ask anything", tryS: "Tap a card — Vax starts right away.", tryCards: [["🎮", "Make me a simple browser game"], ["🥧", "How do I bake an apple pie?"], ["🌐", "A website for my coffee shop"], ["📈", "Plan my first 90 days as a freelancer"], ["🤖", "A bot that books clients in WhatsApp"], ["✍️", "Write a speech for my sister’s wedding"], ["📣", "Instagram ads for my clinic"], ["📱", "Compare two phones and tell me which to buy"], ["🧩", "Automate my weekly report"], ["🎁", "A birthday video script for mom"], ["💻", "Find the bug in my code"], ["🌍", "A 3-month plan to learn Spanish"]],
     limH: "How the allowance works", limP: "Think of it like a phone data plan, only simpler. Vax tells you in plain words how much is left before it runs out. Here is how it works:", lim: [["📅", "A fresh allowance every day", "Your daily allowance renews every 24 hours. Used it up? Tomorrow it is back — nothing to buy."], ["🗓️", "And one for the week", "It stops the whole allowance going in a single day. It renews once a week."], ["🔁", "Month or year, from the day you pay", "A plan runs from the day you pay to the same date next month. A year is 2 months free. We never charge your card on our own: you get an invoice and pay when you are ready."], ["➕", "Need more? Three ways", "Wait for the refresh, move up a plan in your cabinet, or ask Vax for a top-up on an invoice — no plan change."], ["🧭", "No models to choose", "Vax picks the right AI for every task — light for simple, strong for hard. You never switch anything, and quality only goes up."]], tali: ["I wash my food. And your to-do list.", "Fun fact: I have no hands. Still faster than you.", "Hold on, I’m thinking… done. Wow.", "Yes, I’m a raccoon. No, I won’t steal your data.", "I don’t sleep. Not the coffee — I’m just a raccoon.", "Your goal is safe with me. Cookies are not.", "Psst… I already have an idea.", "Plan first, pie later. Both are possible.", "Break? Never heard of it.", "Careful: I might get really good at this."],
-    h1: ['Your goal. Vax moves first —', 'and gets it done.'],
-    sub: 'Not a chat that waits for your question. Vax thinks about your goal, proposes the next step, does the work together with our team and AI, explains why — and reports back. A site, an app, ads, social media, a personal task. On your phone, computer or in the browser.',
+    h1: ["What do you want", "to get done?"],
+    sub: "Ask anything. Vax plans it, does it and explains why. No sign-up.",
     cta: 'Tell Vax your goal', see: 'See real examples',
-    trust: ['Plan and price free, before you pay', 'Everything in your plan is included', 'Cancel any time'],
+    trust: ["Free to start", "No card needed", "Cancel any time"],
     scenes: [["I need a website for my coffee shop and Instagram ads", "Plan and price are ready: site in 3 days, ads from week one.", "Coffee shop · site + ads", ["Design", "Website", "Ads"], "🌐 Site is live · 📣 first requests came in"], ["Make me a portfolio site — I'm a photographer", "Done in 2 days. Want a booking button for shoots?", "Portfolio · personal", ["Style", "Gallery", "Booking"], "📸 Portfolio is live · 💬 AI answers clients"], ["A bot that books my clients in WhatsApp", "Connected. It answers 24/7 and books into your calendar.", "WhatsApp bot · beauty studio", ["Script", "Calendar", "Launch"], "🤖 Bot is live · 📅 bookings at night too"]], sceneLab: ["You", "Vax", "Your project"],
     getH: 'What Vax does for you', getSub: 'One subscription instead of five services and three hires — and anything beyond it on request.',
     get: [
@@ -66,17 +66,17 @@ const C = {
       ["Who sees my chats and data?", "Only you and the people at Vaxo working on your task. Your accounts, site and data stay in your name, and you can export them any time. We never sell your data."],
       ["I only need answers — do I have to pay?", "No. Answers, plans and prices are free in Start. You pay only when you want Vax to remember your goal and get real things done and running."],
     ],
-    sticky: 'Describe your task',
+    sticky: "Ask Vax",
     tasks: ["A website for a coffee shop", "A bot that books clients", "Instagram ads for a clinic", "A portfolio for a photographer", "An app for a fitness coach", "An online store", "Automatic replies to reviews", "A landing for a course", "A CRM for a team of five", "A wedding invitation site", "A Telegram bot for orders", "A price calculator"], plainEy: "The difference", plainH: "Vaxo is a partner that acts first.", plainP: "Vax does not wait until you know what to ask: it suggests what to do next and why, does the work, and asks for your “yes” only on what matters. Our team and our AI training are built in — you do not have to learn anything.", roles: [["🎨", "Designer"], ["💻", "Developer"], ["📣", "Marketer"], ["🤖", "Admin 24/7"]],
   },
   ru: {
-    eyebrow: 'Vaxo · ИИ-партнёр, который действует первым',
-    tryH: "Попробуйте сами — спросите что угодно", tryS: "Не конструктор сайтов, а партнёр для чего угодно. Игра, рецепт, код, реклама, план, автоматизация, сайт. Vax действует первым, сам выбирает подходящий ИИ и хранит каждый проект в одном месте. Нажмите на карточку — и начнём.", tryCards: [["🎮", "Сделай простую игру в браузере"], ["🥧", "Как испечь яблочный пирог?"], ["🌐", "Сайт для моей кофейни"], ["📈", "План первых 90 дней фрилансера"], ["🤖", "Бот, который записывает клиентов в WhatsApp"], ["✍️", "Напиши тост на свадьбу сестры"], ["📣", "Реклама в Instagram для моей клиники"], ["📱", "Сравни два телефона и скажи, какой взять"], ["🧩", "Автоматизируй мой еженедельный отчёт"], ["🎁", "Сценарий видео-поздравления для мамы"], ["💻", "Найди ошибку в моём коде"], ["🌍", "План: выучить испанский за 3 месяца"]],
+    eyebrow: "Vaxo · ваш ИИ-партнёр",
+    tryH: "Попробуйте сами — спросите что угодно", tryS: "Нажмите на карточку — Vax сразу начнёт.", tryCards: [["🎮", "Сделай простую игру в браузере"], ["🥧", "Как испечь яблочный пирог?"], ["🌐", "Сайт для моей кофейни"], ["📈", "План первых 90 дней фрилансера"], ["🤖", "Бот, который записывает клиентов в WhatsApp"], ["✍️", "Напиши тост на свадьбу сестры"], ["📣", "Реклама в Instagram для моей клиники"], ["📱", "Сравни два телефона и скажи, какой взять"], ["🧩", "Автоматизируй мой еженедельный отчёт"], ["🎁", "Сценарий видео-поздравления для мамы"], ["💻", "Найди ошибку в моём коде"], ["🌍", "План: выучить испанский за 3 месяца"]],
     limH: "Как работает запас", limP: "Это как мобильный интернет, только проще. Vax простыми словами скажет, сколько осталось, заранее. Вот как это устроено:", lim: [["📅", "Каждый день — новый запас", "Дневной запас обновляется каждые 24 часа. Израсходовали? Завтра он снова с вами — докупать ничего не нужно."], ["🗓️", "И один на неделю", "Он нужен, чтобы весь запас не ушёл за один день. Обновляется раз в неделю."], ["🔁", "Месяц или год — со дня оплаты", "Тариф действует со дня оплаты до того же числа следующего месяца. Год — 2 месяца в подарок. Карту мы сами не списываем: вы получаете счёт и платите, когда готовы."], ["➕", "Не хватило? Три выхода", "Подождать обновления, перейти на тариф выше в кабинете или попросить Vax о докупке по счёту — тариф менять не нужно."], ["🧭", "Выбирать модели не нужно", "Vax сам выбирает подходящий ИИ для каждой задачи: лёгкий для простых, сильный для сложных. Вы ничего не переключаете, а качество только растёт."]], tali: ["Я мою еду. И ваш список дел.", "Рук у меня нет. Но всё равно быстрее вас.", "Секунду, думаю… готово. Ого.", "Да, я енот. Нет, данные я не ворую.", "Не сплю. И не от кофе — просто енот.", "Цель в надёжных лапах. Печеньки — под вопросом.", "Псс… у меня уже есть идея.", "Сначала план, потом пирог. Можно и то и другое.", "Перерыв? Не знаю такого слова.", "Осторожно: я могу стать очень хорош."],
-    h1: ['Ваша цель. Vax действует первым —', 'и доводит до результата.'],
-    sub: 'Это не чат, который ждёт вопроса. Vax думает о вашей цели, предлагает следующий шаг, делает работу вместе с нашей командой и ИИ, объясняет почему — и отчитывается. Сайт, приложение, реклама, соцсети, личная задача. На телефоне, компьютере или в браузере.',
+    h1: ["Что хотите", "сделать?"],
+    sub: "Спросите что угодно. Vax составит план, сделает и объяснит. Без регистрации.",
     cta: 'Назвать цель Vax', see: 'Посмотреть примеры',
-    trust: ['План и цена — бесплатно, до оплаты', 'Всё из тарифа уже включено', 'Отмена в любой момент'],
+    trust: ["Начать бесплатно", "Карта не нужна", "Отмена в любой момент"],
     scenes: [["Нужен сайт для кофейни и реклама в Instagram", "План и цена готовы: сайт за 3 дня, реклама — с первой недели.", "Кофейня · сайт + реклама", ["Дизайн", "Сайт", "Реклама"], "🌐 Сайт запущен · 📣 пришли первые заявки"], ["Сделайте мне сайт-портфолио — я фотограф", "Готово за 2 дня. Добавить кнопку записи на съёмку?", "Портфолио · личный проект", ["Стиль", "Галерея", "Запись"], "📸 Портфолио работает · 💬 ИИ отвечает клиентам"], ["Бот, который записывает клиентов в WhatsApp", "Подключили. Отвечает 24/7 и пишет в ваш календарь.", "Бот WhatsApp · студия красоты", ["Сценарий", "Календарь", "Запуск"], "🤖 Бот работает · 📅 записи даже ночью"]], sceneLab: ["Вы", "Vax", "Ваш проект"],
     getH: 'Что Vax делает для вас', getSub: 'Одна подписка вместо пяти сервисов и трёх сотрудников — и всё, что сверх неё, по запросу.',
     get: [
@@ -121,17 +121,17 @@ const C = {
       ["Кто видит мои переписки и данные?", "Только вы и сотрудники Vaxo, которые делают вашу задачу. Аккаунты, сайт и данные остаются на ваше имя, и вы можете выгрузить их в любой момент. Данные мы не продаём."],
       ["Мне нужны только ответы — платить обязательно?", "Нет. Ответы, планы и цены бесплатны в «Старте». Платите, только когда хотите, чтобы Vax помнил вашу цель и доводил реальные дела до результата."],
     ],
-    sticky: 'Описать задачу',
+    sticky: "Спросить Vax",
     tasks: ["Сайт для кофейни", "Бот, который записывает клиентов", "Реклама в Instagram для клиники", "Портфолио фотографа", "Приложение для фитнес-тренера", "Интернет-магазин", "Ответы на отзывы сами", "Лендинг для курса", "CRM для команды из пяти", "Сайт-приглашение на свадьбу", "Telegram-бот для заказов", "Калькулятор цены"], plainEy: "В чём разница", plainH: "Vaxo — партнёр, который действует первым.", plainP: "Vax не ждёт, пока вы поймёте, что спросить: предлагает, что делать дальше и почему, делает работу и просит ваше «да» только по важному. Наша команда и наше обучение ИИ уже внутри — учиться ничему не нужно.", roles: [["🎨", "Дизайнер"], ["💻", "Программист"], ["📣", "Маркетолог"], ["🤖", "Администратор 24/7"]],
   },
   ua: {
-    eyebrow: 'Vaxo · ШІ-партнер, який діє першим',
-    tryH: "Спробуйте самі — запитайте що завгодно", tryS: "Не конструктор сайтів, а партнер для чого завгодно. Гра, рецепт, код, реклама, план, автоматизація, сайт. Vax діє першим, сам обирає потрібний ШІ й зберігає кожен проєкт в одному місці. Натисніть на картку — і почнемо.", tryCards: [["🎮", "Зроби просту гру в браузері"], ["🥧", "Як спекти яблучний пиріг?"], ["🌐", "Сайт для моєї кав’ярні"], ["📈", "План перших 90 днів фрилансера"], ["🤖", "Бот, що записує клієнтів у WhatsApp"], ["✍️", "Напиши тост на весілля сестри"], ["📣", "Реклама в Instagram для моєї клініки"], ["📱", "Порівняй два телефони й скажи, який взяти"], ["🧩", "Автоматизуй мій щотижневий звіт"], ["🎁", "Сценарій відео-привітання для мами"], ["💻", "Знайди помилку в моєму коді"], ["🌍", "План: вивчити іспанську за 3 місяці"]],
+    eyebrow: "Vaxo · ваш ШІ-партнер",
+    tryH: "Спробуйте самі — запитайте що завгодно", tryS: "Натисніть на картку — Vax одразу почне.", tryCards: [["🎮", "Зроби просту гру в браузері"], ["🥧", "Як спекти яблучний пиріг?"], ["🌐", "Сайт для моєї кав’ярні"], ["📈", "План перших 90 днів фрилансера"], ["🤖", "Бот, що записує клієнтів у WhatsApp"], ["✍️", "Напиши тост на весілля сестри"], ["📣", "Реклама в Instagram для моєї клініки"], ["📱", "Порівняй два телефони й скажи, який взяти"], ["🧩", "Автоматизуй мій щотижневий звіт"], ["🎁", "Сценарій відео-привітання для мами"], ["💻", "Знайди помилку в моєму коді"], ["🌍", "План: вивчити іспанську за 3 місяці"]],
     limH: "Як працює запас", limP: "Це як мобільний інтернет, тільки простіше. Vax простими словами скаже, скільки залишилось, заздалегідь. Ось як це влаштовано:", lim: [["📅", "Щодня — новий запас", "Денний запас оновлюється кожні 24 години. Витратили? Завтра він знову з вами — докуповувати нічого не треба."], ["🗓️", "І один на тиждень", "Він потрібен, щоб увесь запас не пішов за один день. Оновлюється раз на тиждень."], ["🔁", "Місяць або рік — від дня оплати", "Тариф діє від дня оплати до тієї ж дати наступного місяця. Рік — 2 місяці в подарунок. Картку ми самі не списуємо: ви отримуєте рахунок і платите, коли готові."], ["➕", "Не вистачило? Три виходи", "Зачекати на оновлення, перейти на вищий тариф у кабінеті або попросити Vax про докупку за рахунком — тариф міняти не треба."], ["🧭", "Обирати моделі не треба", "Vax сам обирає потрібний ШІ для кожного завдання: легкий для простих, сильний для складних. Ви нічого не перемикаєте, а якість лише зростає."]], tali: ["Я мию їжу. І ваш список справ.", "Рук у мене нема. Але все одно швидше за вас.", "Секунду, думаю… готово. Ого.", "Так, я єнот. Ні, дані я не краду.", "Не сплю. І не від кави — просто єнот.", "Мета в надійних лапах. Печиво — під питанням.", "Псс… у мене вже є ідея.", "Спочатку план, потім пиріг. Можна і те, і те.", "Перерва? Не знаю такого слова.", "Обережно: я можу стати дуже добрим."],
-    h1: ['Ваша мета. Vax діє першим —', 'і доводить до результату.'],
-    sub: 'Це не чат, що чекає на питання. Vax думає про вашу мету, пропонує наступний крок, робить роботу разом з нашою командою та ШІ, пояснює чому — і звітує. Сайт, застосунок, реклама, соцмережі, особисте завдання. На телефоні, комп’ютері чи в браузері.',
+    h1: ["Що хочете", "зробити?"],
+    sub: "Питайте що завгодно. Vax складе план, зробить і пояснить. Без реєстрації.",
     cta: 'Назвати мету Vax', see: 'Подивитися приклади',
-    trust: ['План і ціна — безкоштовно, до оплати', 'Усе з тарифу вже включено', 'Скасування будь-коли'],
+    trust: ["Почати безкоштовно", "Картка не потрібна", "Скасування будь-коли"],
     scenes: [["Потрібен сайт для кавʼярні й реклама в Instagram", "План і ціна готові: сайт за 3 дні, реклама — з першого тижня.", "Кавʼярня · сайт + реклама", ["Дизайн", "Сайт", "Реклама"], "🌐 Сайт запущено · 📣 прийшли перші заявки"], ["Зробіть мені сайт-портфоліо — я фотограф", "Готово за 2 дні. Додати кнопку запису на зйомку?", "Портфоліо · особистий проєкт", ["Стиль", "Галерея", "Запис"], "📸 Портфоліо працює · 💬 ШІ відповідає клієнтам"], ["Бот, який записує клієнтів у WhatsApp", "Підключили. Відповідає 24/7 і пише у ваш календар.", "Бот WhatsApp · студія краси", ["Сценарій", "Календар", "Запуск"], "🤖 Бот працює · 📅 записи навіть уночі"]], sceneLab: ["Ви", "Vax", "Ваш проєкт"],
     getH: 'Що Vax робить для вас', getSub: 'Одна підписка замість пʼяти сервісів і трьох працівників — і все, що понад неї, на запит.',
     get: [
@@ -176,11 +176,11 @@ const C = {
       ["Хто бачить мої листування й дані?", "Лише ви та співробітники Vaxo, які виконують ваше завдання. Акаунти, сайт і дані лишаються на ваше імʼя, і ви можете вивантажити їх будь-коли. Дані ми не продаємо."],
       ["Мені потрібні лише відповіді — платити обов’язково?", "Ні. Відповіді, плани й ціни безкоштовні в «Старті». Платіть, лише коли хочете, щоб Vax памʼятав вашу мету й доводив реальні справи до результату."],
     ],
-    sticky: 'Описати завдання',
+    sticky: "Запитати Vax",
     tasks: ["Сайт для кавʼярні", "Бот, який записує клієнтів", "Реклама в Instagram для клініки", "Портфоліо фотографа", "Застосунок для фітнес-тренера", "Інтернет-магазин", "Відповіді на відгуки самі", "Лендинг для курсу", "CRM для команди з пʼяти", "Сайт-запрошення на весілля", "Telegram-бот для замовлень", "Калькулятор ціни"], plainEy: "У чому різниця", plainH: "Vaxo — партнер, який діє першим.", plainP: "Vax не чекає, поки ви зрозумієте, що спитати: пропонує, що робити далі й чому, робить роботу й просить ваше «так» лише щодо важливого. Наша команда й наше навчання ШІ вже всередині — вчитися нічого не треба.", roles: [["🎨", "Дизайнер"], ["💻", "Програміст"], ["📣", "Маркетолог"], ["🤖", "Адміністратор 24/7"]],
   },
 }[lang];
-const HQ = {"en": {"ph": "What do you need? e.g. a plan to learn Spanish, a site for my café…", "go": "Ask Vax →", "note": "No sign-up. Free to start. Write it like you would tell a friend.", "start": ["Start", "$0", "Free forever", "Ask anything, get a plan and a price for your task, one free mini-result and free tools. No card, no sign-up.", "A typical month: questions answered, plans and prices for any idea, free tools"]}, "ru": {"ph": "Что нужно? Например: план выучить испанский, сайт для моей кофейни…", "go": "Спросить Vax →", "note": "Без регистрации. Начать бесплатно. Пишите, как другу.", "start": ["Старт", "$0", "Бесплатно навсегда", "Спрашивайте что угодно, получайте план и цену задачи, один бесплатный мини-результат и бесплатные инструменты. Без карты и без регистрации.", "Типичный месяц: ответы на вопросы, план и цена для любой идеи, бесплатные инструменты"]}, "ua": {"ph": "Що потрібно? Наприклад: план вивчити іспанську, сайт для моєї кав’ярні…", "go": "Запитати Vax →", "note": "Без реєстрації. Почати безкоштовно. Пишіть, як другу.", "start": ["Старт", "$0", "Безкоштовно назавжди", "Питайте що завгодно, отримуйте план і ціну завдання, один безкоштовний міні-результат та безкоштовні інструменти. Без картки й без реєстрації.", "Типовий місяць: відповіді на питання, план і ціна для будь-якої ідеї, безкоштовні інструменти"]}}[lang];
+const HQ = {"en": {"ph": "What do you need? e.g. a plan to learn Spanish, a site for my café…", "go": "Ask Vax →", "note": "No sign-up. Free to start. Write it like you would tell a friend.", "start": ["Start", "$0", "Free forever", "Ask anything, get a plan and a price for your task, one free mini-result and free tools. No card, no sign-up.", "A typical month: questions answered, plans and prices for any idea, free tools"], "hint": "↓ Below: what you get, how it works and plans", "ben": [["🦝", "Moves first", "Suggests the next step — and tells you why."], ["✅", "Real results", "A site online, replies sent, posts out."], ["📱", "One place", "Phone, computer or browser. All in one app."]], "btnStart": "Start free", "btnTrial": "Try a month free", "dgo": "Start free month →", "dnote": "Free first month. No card. We send an invoice only if you stay.", "demail": "Your email", "dfail": "Something went wrong — please try again.", "dbad": "Enter a valid email."}, "ru": {"ph": "Что нужно? Например: план выучить испанский, сайт для моей кофейни…", "go": "Спросить Vax →", "note": "Без регистрации. Начать бесплатно. Пишите, как другу.", "start": ["Старт", "$0", "Бесплатно навсегда", "Спрашивайте что угодно, получайте план и цену задачи, один бесплатный мини-результат и бесплатные инструменты. Без карты и без регистрации.", "Типичный месяц: ответы на вопросы, план и цена для любой идеи, бесплатные инструменты"], "hint": "↓ Ниже: что вы получите, как это работает и тарифы", "ben": [["🦝", "Действует первым", "Предлагает следующий шаг — и объясняет почему."], ["✅", "Настоящий результат", "Сайт онлайн, ответы отправлены, посты вышли."], ["📱", "Всё в одном месте", "Телефон, компьютер или браузер. Одно приложение."]], "btnStart": "Начать бесплатно", "btnTrial": "Месяц бесплатно", "dgo": "Начать бесплатный месяц →", "dnote": "Первый месяц бесплатно. Без карты. Счёт пришлём, только если останетесь.", "demail": "Ваша почта", "dfail": "Что-то пошло не так — попробуйте ещё раз.", "dbad": "Введите настоящую почту."}, "ua": {"ph": "Що потрібно? Наприклад: план вивчити іспанську, сайт для моєї кав’ярні…", "go": "Запитати Vax →", "note": "Без реєстрації. Почати безкоштовно. Пишіть, як другу.", "start": ["Старт", "$0", "Безкоштовно назавжди", "Питайте що завгодно, отримуйте план і ціну завдання, один безкоштовний міні-результат та безкоштовні інструменти. Без картки й без реєстрації.", "Типовий місяць: відповіді на питання, план і ціна для будь-якої ідеї, безкоштовні інструменти"], "hint": "↓ Нижче: що ви отримаєте, як це працює й тарифи", "ben": [["🦝", "Діє першим", "Пропонує наступний крок — і пояснює чому."], ["✅", "Справжній результат", "Сайт онлайн, відповіді надіслано, пости вийшли."], ["📱", "Усе в одному місці", "Телефон, комп’ютер чи браузер. Один застосунок."]], "btnStart": "Почати безкоштовно", "btnTrial": "Місяць безкоштовно", "dgo": "Почати безкоштовний місяць →", "dnote": "Перший місяць безкоштовно. Без картки. Рахунок надішлемо, лише якщо залишитесь.", "demail": "Ваша пошта", "dfail": "Щось пішло не так — спробуйте ще раз.", "dbad": "Введіть справжню пошту."}}[lang];
 const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
 ---
 
@@ -196,50 +196,17 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
           <input name="q" type="text" maxlength="400" autocomplete="off" placeholder={HQ.ph} aria-label={HQ.ph} />
           <button class="btn" type="submit">{HQ.go}</button>
         </form>
-        <p class="hqn">{HQ.note}</p>
         <div class="hqc">{C.tryCards.slice(0, 3).map(([e, tx]) => <button type="button" data-hqc={tx}>{e} {tx}</button>)}</div>
-        <div class="acts"><a class="btn ghost" href="#demos">{C.see}</a></div>
+        <a class="hint" href="#get">{HQ.hint}</a>
         <ul class="trust">{C.trust.map((x) => <li>✓ {x}</li>)}</ul>
       </div>
-      <div class="stage" aria-hidden="true" data-stage data-scenes={JSON.stringify(C.scenes)}>
-        <div class="glow"></div>
-        <div class="msg me"><small>{C.sceneLab[0]}</small><span data-q>{C.scenes[0][0]}</span></div>
-        <div class="msg vax"><small>🦝 {C.sceneLab[1]}</small><span data-a>{C.scenes[0][1]}</span></div>
-        <div class="proj">
-          <div class="ph"><b>{C.sceneLab[2]}</b><small data-t>{C.scenes[0][2]}</small></div>
-          <div class="bar"><i data-bar></i></div>
-          <ol class="stp" data-steps>{C.scenes[0][3].map((x) => <li>{x}</li>)}</ol>
-        </div>
-        <div class="res" data-r>{C.scenes[0][4]}</div>
-      </div>
     </div>
-    <div class="marq" aria-hidden="true"><div>{[...C.tasks, ...C.tasks].map((x) => <span>{x}</span>)}</div></div>
   </section>
 
-  <section class="sec plain rv">
-    <div class="in plain-in">
-      <p class="eyebrow">{C.plainEy}</p>
-      <h2>{C.plainH}</h2>
-      <p class="sub">{C.plainP}</p>
-      <ul class="roles">{C.roles.map(([e, r]) => <li><span>{e}</span>{r}</li>)}</ul>
-    </div>
-  </section>
 
   <section class="sec rv" id="get">
     <div class="in">
-      <h2>{C.getH}</h2>
-      <p class="sub">{C.getSub}</p>
-      <div class="get">
-        {C.get.map(([i, h, p], n) => (
-          <article class={`b${n}`}>
-            <span class="ico">{i}</span><h3>{h}</h3><p>{p}</p>
-            {n === 0 && <div class="viz site" aria-hidden="true"><i></i><b></b><b></b><em></em></div>}
-            {n === 1 && <div class="viz chat" aria-hidden="true"><span>{C.scenes[0][0]}</span><span class="v">{C.scenes[0][1]}</span></div>}
-            {n === 3 && <div class="viz bars" aria-hidden="true"><i style="--h:40%"></i><i style="--h:65%"></i><i style="--h:52%"></i><i style="--h:80%"></i><i style="--h:95%"></i></div>}
-            {n === 4 && <svg class="viz spark" viewBox="0 0 120 40" aria-hidden="true"><path d="M2 34 L20 28 L36 30 L52 20 L70 22 L88 12 L104 14 L118 4" /></svg>}
-          </article>
-        ))}
-      </div>
+      <div class="ben">{HQ.ben.map(([e, h, tx]) => <article><span>{e}</span><h3>{h}</h3><p>{tx}</p></article>)}</div>
     </div>
   </section>
 
@@ -276,6 +243,7 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
               <span class="v">{v}<small>{C.mo}</small></span>
               <p>{d}</p>
               <em class="sc">{sc}</em>
+              <button type="button" class:list={['btn', 'pbtn', { ghost: i === 0 }]} data-plan={['start', 'personal', 'care', 'growth', 'pro'][i]} data-pn={n}>{i === 0 ? HQ.btnStart : HQ.btnTrial}</button>
             </div>
           </div>
         ))}
@@ -290,11 +258,11 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
       </div>
       <p class="pnote">{C.priceNote}</p>
       <p class="pnote"><a href={`${lang === 'en' ? '' : '/' + lang}/how/`}>{{ en: 'How Vaxo works →', ru: 'Как работает Vaxo →', ua: 'Як працює Vaxo →' }[lang]}</a> · <a href={`${lang === 'en' ? '' : '/' + lang}/score/`}>{{ en: 'Free Vaxo Score →', ru: 'Бесплатный Vaxo Score →', ua: 'Безкоштовний Vaxo Score →' }[lang]}</a></p>
-      <div class="lim">
-        <h3>{C.limH}</h3>
+      <details class="lim">
+        <summary>{C.limH}</summary>
         <p class="sub">{C.limP}</p>
         <div class="limg">{C.lim.map(([e, h, tx]) => <article><span>{e}</span><h4>{h}</h4><p>{tx}</p></article>)}</div>
-      </div>
+      </details>
       <details class="more">
         <summary>{C.more}</summary>
         <div class="full">{C.planFull.map(([h, li]) => <div><h4>{h}</h4><ul>{(li as string[]).map((x) => <li>{x}</li>)}</ul></div>)}</div>
@@ -302,41 +270,26 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
     </div>
   </section>
 
-  <section class="sec start" id="contact">
-    <div class="in start-grid">
-      <div>
-        <h2>{C.startH}</h2>
-        <p class="sub">{C.startSub}</p>
-        <ul class="free">{C.free.map(([h, p]) => <li><b>{h}</b><span>{p}</span></li>)}</ul>
-        <a class="askvax" href="#" data-vax-chat>{C.ask}</a>
-      </div>
-      <form class="sform" data-start data-lang={lang} data-msg={JSON.stringify(msgs)} novalidate>
-        <div data-s1>
-          <textarea name="task" rows="3" maxlength="1500" placeholder={C.taskPh} aria-label={C.startH}></textarea>
-          <div class="chips">{C.chips.map((c) => <button type="button">{c}</button>)}</div>
-          <button class="btn wide" type="button" data-go>{C.next1}</button>
-        </div>
-        <div data-s2 hidden>
-          <p class="s2h">{C.step2}</p>
-          <label>{C.name}<input name="name" autocomplete="name" maxlength="100" /></label>
-          <label>{C.contact}<input name="contact" autocomplete="email" maxlength="100" /></label>
-          <button class="btn wide" type="submit">{C.send}</button>
-          <p class="after">{C.after}</p>
-        </div>
-        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <p class="msg" data-smsg role="status"></p>
-      </form>
-    </div>
-  </section>
 
   <section class="sec" id="faq">
     <div class="in narrow">
       <h2>{C.faqH}</h2>
-      {C.faq.map(([q, a]) => <details class="qa"><summary>{q}</summary><p>{a}</p></details>)}
+      {C.faq.slice(-4).concat(C.faq.slice(0, 2)).map(([q, a]) => <details class="qa"><summary>{q}</summary><p>{a}</p></details>)}
     </div>
   </section>
 
-  <a class="sticky" href="#contact">{C.sticky} →</a>
+  <a class="sticky" href="#top" data-focus-hq>{C.sticky} →</a>
+<dialog class="pdlg" data-pdlg>
+    <form data-pform novalidate data-bad={HQ.dbad} data-fail={HQ.dfail}>
+      <button type="button" class="x" data-pclose aria-label="×">×</button>
+      <h3 data-pname></h3>
+      <p>{HQ.dnote}</p>
+      <input type="email" name="email" required autocomplete="email" placeholder={HQ.demail} aria-label={HQ.demail} />
+      <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <button class="btn wide" type="submit">{HQ.dgo}</button>
+      <p class="pm" data-pmsg role="status"></p>
+    </form>
+  </dialog>
 </main>
 
 <script>
@@ -344,12 +297,36 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
   const askVax = (q: string) => { const a = document.createElement('a'); a.href = '#'; a.setAttribute('data-vax-chat', ''); a.dataset.vaxAsk = q; a.hidden = true; document.body.appendChild(a); a.click(); a.remove(); };
   hq?.addEventListener('submit', (e) => { e.preventDefault(); const inp = hq.elements.namedItem('q') as HTMLInputElement; const q = inp.value.trim(); if (!q) { inp.focus(); return; } inp.value = ''; askVax(q); });
   document.querySelectorAll<HTMLButtonElement>('[data-hqc]').forEach((b) => (b.onclick = () => askVax(b.dataset.hqc || '')));
-  document.querySelectorAll<HTMLButtonElement>('.tc').forEach((b) => (b.onclick = () => {
-    const ta = document.querySelector<HTMLTextAreaElement>('textarea[name=task]');
-    if (ta) { ta.value = b.dataset.try || ''; ta.dispatchEvent(new Event('input')); }
-    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-    setTimeout(() => ta?.focus({ preventScroll: true }), 600);
+  document.querySelectorAll<HTMLButtonElement>('.tc').forEach((b) => (b.onclick = () => askVax(b.dataset.try || '')));
+  const toTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => hq?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), 500); };
+  document.querySelectorAll<HTMLElement>('[data-focus-hq]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); toTop(); }));
+  // Plans: one tap + an email starts the free month (the lead opens the private project chat). Start = just ask Vax.
+  const dlg = document.querySelector<HTMLDialogElement>('[data-pdlg]');
+  const pf = document.querySelector<HTMLFormElement>('[data-pform]');
+  let planSlug = '', planName = '';
+  document.querySelectorAll<HTMLButtonElement>('[data-plan]').forEach((b) => (b.onclick = () => {
+    if (b.dataset.plan === 'start') { toTop(); return; }
+    planSlug = b.dataset.plan || ''; planName = b.dataset.pn || '';
+    const nm = dlg?.querySelector('[data-pname]'); if (nm) nm.textContent = planName;
+    const pm = dlg?.querySelector('[data-pmsg]'); if (pm) pm.textContent = '';
+    dlg?.showModal?.();
+    setTimeout(() => pf?.querySelector<HTMLInputElement>('[name=email]')?.focus(), 50);
   }));
+  dlg?.querySelector('[data-pclose]')?.addEventListener('click', () => dlg.close());
+  const pstart = Date.now();
+  pf?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const d = new FormData(pf); const email = String(d.get('email') || '').trim();
+    const pm = pf.querySelector<HTMLElement>('[data-pmsg]')!;
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { pm.textContent = pf.dataset.bad || ''; return; }
+    const btn = pf.querySelector<HTMLButtonElement>('button[type=submit]')!; btn.disabled = true; pm.textContent = '…';
+    let ref = ''; try { ref = localStorage.getItem('vaxo_ref') || ''; } catch {}
+    const r = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Vx-Src': (window as unknown as { vxSrc?: () => string }).vxSrc?.() || '' },
+      body: JSON.stringify({ mode: 'request', interest: 'any', name: email.split('@')[0], contact: email, lang: document.documentElement.lang === 'uk' ? 'ua' : document.documentElement.lang, ref, website: d.get('website'), startedAt: Math.min(pstart, Date.now() - 2500), message: `[PLAN ${planSlug}] ${planName}: start the free first month` }) }).catch(() => null);
+    const out = r ? await r.json().catch(() => null) : null;
+    if (r?.ok && out?.room) { location.href = `/room/?t=${out.room}`; return; }
+    btn.disabled = false; pm.textContent = r?.status === 400 ? (pf.dataset.bad || '') : (pf.dataset.fail || '');
+  });
   document.querySelectorAll<HTMLElement>('[data-tali]').forEach((el) => {
     let ph: string[] = []; try { ph = JSON.parse(el.dataset.phrases || '[]'); } catch { /* none */ }
     const t = el.querySelector('[data-tali-t]'); let n = 0;
@@ -638,4 +615,29 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
   .plan.custom { grid-column: 1 / -1; }
   .limg { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)) !important; }
   @media (max-width: 560px) { .hq { flex-direction: column; } .hq .btn { width: 100%; } }
+
+  .hero-grid { grid-template-columns: 1fr !important; justify-items: center; text-align: center; }
+  .hero-copy { max-width: 780px; }
+  .hero h1 { font-size: clamp(40px, 7vw, 84px); }
+  .hero .lead { font-size: clamp(17px, 2vw, 21px); margin-inline: auto; max-width: 560px; }
+  .hq { margin-inline: auto; max-width: 640px; }
+  .hq input { font-size: 18px; padding: 18px 22px; }
+  .hqc { justify-content: center; }
+  .hero .trust { justify-content: center; }
+  .hint { display: inline-block; margin: 6px 0 26px; font-size: 14px; color: rgba(245, 242, 236, 0.7); text-decoration: none; animation: nudge 2.4s ease-in-out infinite; }
+  @keyframes nudge { 50% { transform: translateY(4px); } }
+  @media (prefers-reduced-motion: reduce) { .hint { animation: none; } }
+  .ben { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .ben article { border: 1px solid var(--line); border-radius: var(--r); background: var(--surf); padding: 22px; }
+  .ben span { font-size: 30px; } .ben h3 { margin: 10px 0 6px; font-size: 20px; } .ben p { margin: 0; color: var(--mut); line-height: 1.4; }
+  @media (max-width: 760px) { .ben { grid-template-columns: 1fr; } }
+  .pbtn { margin-top: 12px; width: 100%; }
+  .lim > summary { cursor: pointer; font-weight: 700; font-size: 18px; padding: 14px 0; }
+  .pdlg { border: 1px solid var(--line); border-radius: 20px; padding: 24px; max-width: 420px; width: calc(100% - 32px); background: var(--surf); color: var(--ink); }
+  .pdlg::backdrop { background: rgba(0, 0, 0, 0.5); }
+  .pdlg h3 { margin: 0 0 8px; font-size: 24px; } .pdlg p { margin: 0 0 14px; color: var(--mut); line-height: 1.45; }
+  .pdlg input[type=email] { width: 100%; font: inherit; font-size: 17px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); margin-bottom: 12px; box-sizing: border-box; }
+  .pdlg .hp { position: absolute; left: -9999px; opacity: 0; height: 0; }
+  .pdlg .x { position: absolute; right: 14px; top: 10px; border: 0; background: none; font-size: 26px; cursor: pointer; color: var(--mut); }
+  .pdlg .pm { margin: 10px 0 0; font-size: 14px; }
 </style>
