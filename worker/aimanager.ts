@@ -356,8 +356,18 @@ export async function aiFollowups(db: DB, ai: AiBinding | undefined, notify: Not
     } else if (r.status !== 'won' && r.last_sender === 'ai' && r.followups === 0 && ago(r.last_at) >= 2) {
       nudge = 'The client has not answered for 2 days. Send one short, friendly follow-up with value (an idea or a relevant real case). Make it easy to answer. Never pressure.';
     }
+    // Vax moves first (Decision 33): every week a paying / delivered client gets three concrete next moves with reasons.
+    let weekly = false;
+    if (!nudge && r.status === 'won') {
+      const wk = await db.prepare(`SELECT 1 AS x FROM lead_events WHERE lead_id = ? AND kind = 'note' AND text = 'Weekly next moves sent' AND at > datetime('now', '-7 days')`).bind(r.id).first().catch(() => null);
+      if (!wk && ago(r.last_at) >= 1) {
+        weekly = true; report = true;
+        nudge = 'Weekly next moves (you are proactive, the client should never have to ask). In at most 6 lines: 1) one line on what was done or what is going on; 2) exactly three concrete next moves for THEIR goal, each as "idea — why it helps — rough effort"; 3) ask which one to start (or say you can start the first one right away). Base it only on what you know about this client from the chat and summary. Never invent numbers, results or case studies; if you lack facts, make the moves about getting them (a quick question). No pressure.';
+      }
+    }
     if (!nudge) continue;
     if (await aiReply(db, ai, r.id, notify, { nudge })) {
+      if (weekly) await logEvent(db, r.id, 'ai', 'note', 'Weekly next moves sent');
       if (!report) await db.prepare('UPDATE leads SET followups = followups + 1 WHERE id = ?').bind(r.id).run();
       await logEvent(db, r.id, 'ai', 'note', 'AI follow-up sent');
     }
