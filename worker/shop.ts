@@ -6,6 +6,8 @@ import type { Notify } from './deals.js';
 import type { KV } from './files.js';
 import { monoPay } from './mono.js';
 import { sendMail } from './mail.js';
+import { buyerRef } from './buyers.js';
+import { createPayouts } from './payouts.js';
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -37,9 +39,11 @@ export async function handleShopBuy(db: DB, request: Request, monoToken: string 
   const lang = ['en', 'ru', 'ua'].includes(String(b.lang)) ? String(b.lang) : 'en';
   if (!p || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json(400, { ok: false, error: 'fields' });
   if (!monoToken) return json(503, { ok: false, error: 'card_off' });
+  // Partner attribution for life: the first partner link this e-mail ever came by (or the one it arrives with now).
+  const ref = await buyerRef(db, email, typeof b.ref === 'string' ? b.ref.slice(0, 40) : null);
   const lead = await db
-    .prepare(`INSERT INTO leads (mode, name, contact, interest, message, lang, page, room, status, email_addr, source) VALUES ('request', ?, ?, 'shop', ?, ?, '/shop/', ?, 'new', ?, ?)`)
-    .bind(email.split('@')[0], email, `Shop: ${p.name}`, lang, hex(12), email, typeof b.src === 'string' ? b.src.slice(0, 80) : 'shop')
+    .prepare(`INSERT INTO leads (mode, name, contact, interest, message, lang, ref, page, room, status, email_addr, source) VALUES ('request', ?, ?, 'shop', ?, ?, ?, '/shop/', ?, 'new', ?, ?)`)
+    .bind(email.split('@')[0], email, `Shop: ${p.name}`, lang, ref, hex(12), email, typeof b.src === 'string' ? b.src.slice(0, 80) : 'shop')
     .run();
   const leadId = Number((lead as { meta?: { last_row_id?: number } }).meta?.last_row_id) || null;
   const year = new Date().getUTCFullYear();
@@ -55,7 +59,7 @@ export async function handleShopBuy(db: DB, request: Request, monoToken: string 
 
 /** Called by mono.ts after a card invoice is paid: email the download link for shop invoices. */
 export async function shopOnPaid(db: DB, invoiceId: number, notify: Notify) {
-  const inv = await db.prepare(`SELECT i.token, i.description, i.lang, l.email_addr FROM invoices i LEFT JOIN leads l ON l.id = i.lead_id WHERE i.id = ?`).bind(invoiceId).first<{ token: string; description: string; lang: string | null; email_addr: string | null }>();
+  const inv = await db.prepare(`SELECT i.id AS inv_id, i.lead_id, i.amount, i.token, i.description, i.lang, l.email_addr FROM invoices i LEFT JOIN leads l ON l.id = i.lead_id WHERE i.id = ?`).bind(invoiceId).first<{ inv_id: number; lead_id: number | null; amount: number; token: string; description: string; lang: string | null; email_addr: string | null }>();
   if (!inv?.description?.startsWith(PREFIX) || !inv.email_addr) return;
   const name = inv.description.slice(PREFIX.length);
   const link = `https://vaxogroup.com/api/shop/dl?t=${inv.token}`;
@@ -66,6 +70,15 @@ export async function shopOnPaid(db: DB, invoiceId: number, notify: Notify) {
       : { s: `Your template: ${name}`, t: `Thank you for your purchase! Download “${name}”: ${link}\nThe link is permanent — keep this email. Questions? Just reply.` };
   await sendMail(inv.email_addr, L.s, L.t).catch(() => false);
   await notify(`🛒 Продажа: «${name}» — ${inv.email_addr}, ссылка на файл отправлена.`).catch(() => {});
+  // Partner money: the purchase becomes a won deal; createPayouts pays 50% on the buyer's first purchase and the
+  // lifetime 30% (+10% to the sponsor) on every later one by the same e-mail. Once per lead.
+  if (inv.lead_id) {
+    const st = await db.prepare('SELECT status FROM leads WHERE id = ?').bind(inv.lead_id).first<{ status: string }>();
+    if (st && st.status !== 'won') {
+      await db.prepare(`UPDATE leads SET status = 'won', value_usd = ? WHERE id = ?`).bind(inv.amount, inv.lead_id).run();
+      await createPayouts(db, inv.lead_id).catch((e) => console.error('[shop payouts]', e));
+    }
+  }
 }
 
 export async function handleShopDownload(db: DB, kv: KV | undefined, request: Request): Promise<Response> {

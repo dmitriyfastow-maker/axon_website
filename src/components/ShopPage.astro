@@ -207,7 +207,7 @@ const C = {
     const btn = d.querySelector<HTMLButtonElement>('[data-paybtn]')!;
     btn.disabled = true; msg.textContent = '…';
     try {
-      const r = await fetch('/api/shop/buy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, email: new FormData(f).get('email'), lang: d.dataset.lang, src: (window as unknown as { vxSrc?: () => string }).vxSrc?.() }) });
+      const r = await fetch('/api/shop/buy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, email: new FormData(f).get('email'), lang: d.dataset.lang, src: (window as unknown as { vxSrc?: () => string }).vxSrc?.(), ref: (() => { try { return localStorage.getItem('vaxo_ref') || ''; } catch { return ''; } })() }) });
       const j = await r.json();
       if (j?.url) { location.href = j.url; return; }
       msg.textContent = (j?.error === 'card_off' ? d.dataset.off : d.dataset.err) || '';

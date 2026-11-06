@@ -24,6 +24,7 @@ import { attributeLead, clientRedirect, matureReferrals, SLUG_C } from './referr
 import { monthlyBilling } from './billing.js';
 import { handleLab, handleLabManage, labSweep } from './lab.js';
 import { handleShopBuy, handleShopDownload } from './shop.js';
+import { buyerRef } from './buyers.js';
 import { notifyOwnerChat } from './ownerchat.js';
 import { gradePending, pruneBots, maybeDigest, qcSweep, summarizeClients, trackEvent, trackUx, trackView, triageLead } from './autopilot.js';
 
@@ -172,6 +173,11 @@ export default {
               .bind(l.mode, l.name, l.contact, l.interest, l.message, l.lang, l.ref ?? null, country, page, roomToken, l.promo ?? null)
               .run()) as { meta?: { last_row_id?: number } };
             const id = res?.meta?.last_row_id;
+            // Lifetime partner attribution by e-mail: a returning buyer keeps the partner they first came by.
+            if (id) {
+              const lr = await buyerRef(db, l.contact, l.ref ?? null);
+              if (lr && lr !== (l.ref ?? null)) { l.ref = lr; await db.prepare('UPDATE leads SET ref = ? WHERE id = ?').bind(lr, id).run(); }
+            }
             // Where the visitor first came from (scripts/track.ts sends it in a header).
             const src = (request.headers.get('X-Vx-Src') || '').slice(0, 80);
             if (id && src) await db.prepare('UPDATE leads SET source = ? WHERE id = ?').bind(src, id).run();

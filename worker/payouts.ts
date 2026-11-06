@@ -18,6 +18,12 @@ export async function createPayouts(db: DB, leadId: number) {
     .bind(leadId)
     .first<{ value_usd: number; closer_id: number | null; referrer_id: number | null; referrer_plan: string | null; self_ref: number | null }>();
   if (!l) return;
+  // Lifetime attribution by e-mail (migration 0035): a buyer who already paid before is a renewal (30%), not a new sale.
+  try {
+    const br = await db.prepare(`SELECT b.first_lead FROM buyer_ref b JOIN leads d ON lower(trim(d.contact)) = b.email WHERE d.id = ?`).bind(leadId).first<{ first_lead: number | null }>();
+    if (br?.first_lead && br.first_lead !== leadId) { await addRenewal(db, br.first_lead, l.value_usd); return; }
+    if (br && !br.first_lead && l.referrer_id) await db.prepare(`UPDATE buyer_ref SET first_lead = ? WHERE email = (SELECT lower(trim(contact)) FROM leads WHERE id = ?) AND first_lead IS NULL`).bind(leadId, leadId).run();
+  } catch { /* migration not applied yet */ }
   // Buying through your own link earns nothing (partner terms).
   if (l.self_ref) { if (l.closer_id === l.referrer_id) l.closer_id = null; l.referrer_id = null; }
   // First link wins: if this person first came by a client's invite link, no partner commission (the client gets a free month instead).
