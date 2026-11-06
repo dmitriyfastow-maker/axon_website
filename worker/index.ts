@@ -217,6 +217,16 @@ export default {
     }
     // Anonymous page-view analytics for public pages (no cookies, no IP).
     // Only pages that exist count: scanners probing /wordpress/, /cms/ and the like got 404 and inflated the numbers (01.11).
+    // Language by browser (Accept-Language) on a first visit to an unprefixed page; any other language gets clean EN.
+    // Skipped when the person came from our own site (they chose a language) or when it is not a plain page request.
+    if (request.method === 'GET' && ['/', '/me/', '/examples/', '/how/', '/partners/', '/shop/', '/start/', '/about/'].includes(url.pathname)) {
+      const al = (request.headers.get('Accept-Language') || '').toLowerCase();
+      const first = al.split(',')[0].trim().slice(0, 2);
+      const ours = (request.headers.get('Referer') || '').includes(url.host);
+      const target = first === 'uk' ? '/ua' : first === 'ru' ? '/ru' : '';
+      if (target && !ours && !/bot|crawl|spider|preview/i.test(request.headers.get('User-Agent') || ''))
+        return Response.redirect(url.origin + target + url.pathname + url.search, 302);
+    }
     const page = await env.ASSETS.fetch(request);
     if (page.status === 200 && env.LEADS && request.method === 'GET' && !/^\/(admin|room|partner|ua\/partner|ru\/partner|demo)\b/.test(url.pathname) && (url.pathname.endsWith('/') || !url.pathname.includes('.'))) {
       waitUntil(trackView(env.LEADS, request, url).catch(() => {}));

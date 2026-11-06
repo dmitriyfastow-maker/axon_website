@@ -43,7 +43,7 @@ export async function monoPay(db: DB, token: string | undefined, invToken: strin
   const d = await mono(token, 'invoice/create', {
     amount: kop, ccy: 980,
     merchantPaymInfo: {
-      reference: inv.number, destination: `Оплата за ${inv.description}, рахунок ${inv.number}`.slice(0, 280),
+      reference: inv.number, destination: `VAXO · Оплата за ${inv.description}, рахунок ${inv.number}`.slice(0, 280),
       ...(email ? { customerEmails: [email] } : {}),
       basketOrder: [{ name, qty: 1, sum: kop, total: kop, code: inv.number, unit: 'посл.' }],
     },

@@ -11,8 +11,8 @@ const labels = { en: 'English', ua: 'Українська', ru: 'Русский'
   <main class="nf">
     <a href="/" class="logo">VAXO<span>.</span></a>
     <div class="eyebrow">◆ 404</div>
-    <h1>Page not found</h1>
-    <p>The page you are looking for doesn’t exist. Choose a language to go to the homepage.</p>
+    <h1 data-h>Page not found</h1>
+    <p data-p>The page you are looking for doesn’t exist. Choose a language to go to the homepage.</p>
     <VaxSays text={t.vax.notFound} pose="lost" />
     <nav>
       {LANGS.map((l) => <a href={langPath(l)} class="btn">{labels[l]}</a>)}
@@ -73,3 +73,13 @@ const labels = { en: 'English', ua: 'Українська', ru: 'Русский'
     color: var(--dark-ink);
   }
 </style>
+
+<script>
+  const D: Record<string, [string, string]> = {
+    ua: ['Сторінку не знайдено', 'Такої сторінки не існує. Оберіть мову, щоб перейти на головну.'],
+    ru: ['Страница не найдена', 'Такой страницы нет. Выберите язык, чтобы перейти на главную.'],
+  };
+  const l = (navigator.language || 'en').slice(0, 2).replace('uk', 'ua');
+  const d = D[location.pathname.startsWith('/ua/') ? 'ua' : location.pathname.startsWith('/ru/') ? 'ru' : l];
+  if (d) { document.querySelector('[data-h]')!.textContent = d[0]; document.querySelector('[data-p]')!.textContent = d[1]; document.title = 'Vaxo — ' + d[0]; }
+</script>

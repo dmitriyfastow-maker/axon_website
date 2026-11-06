@@ -24,9 +24,12 @@ import Base from '../layouts/Base.astro';
     (async () => {
       const r = await fetch(`/api/invoice/${q}`).catch(() => null);
       const d: R | null = r?.ok ? await r.json() : null;
-      if (!d) { $('[data-msg]').textContent = T.en.bad; return; }
-      const i = d.invoice, s = d.seller || {}, b = d.bank || {}, t = T[i.lang] || T.en;
-      document.documentElement.lang = i.lang === 'ua' ? 'uk' : i.lang;
+      if (!d) { const nl = (navigator.language || 'en').slice(0, 2).replace('uk', 'ua'); $('[data-msg]').textContent = (T[nl] || T.en).bad; return; }
+      const i = d.invoice, s = d.seller || {}, b = d.bank || {};
+      const qs = new URLSearchParams(location.search).get('lang'), nav = (navigator.language || 'en').slice(0, 2).replace('uk', 'ua');
+      const lg = [qs, i.lang, nav].find((x) => x && T[x]) || 'en';
+      const t = T[lg];
+      document.documentElement.lang = lg === 'ua' ? 'uk' : lg;
       document.title = `${t.inv} ${i.number} — Vaxo`;
       const date = String(i.at).slice(0, 10), sum = `${Number(i.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })} ${i.currency}`;
       const purpose = `Payment for ${i.description} by the invoice № ${i.number} from ${date}`;
