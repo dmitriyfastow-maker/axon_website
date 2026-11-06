@@ -1,5 +1,6 @@
 ---
-// Vaxo Score (Decision 33): free 8-question readiness check. Runs fully in the browser; nothing is stored.
+// Vaxo Score: a free readiness check for a person or a business. 8 yes/no questions → score, level and the 3 most useful next steps.
+// Everything is computed in the browser (nothing is sent anywhere), the result leads to the free Start plan.
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
@@ -10,92 +11,138 @@ const { lang } = Astro.props;
 const t = getDict(lang);
 const home = langPath(lang);
 const alts = { en: '/score/', ua: '/ua/score/', ru: '/ru/score/' };
-const h = (p: string) => navHref(p, lang, home);
+const start = navHref('/start/', lang, home);
+
 const D = {
   en: {
-    title: 'Vaxo Score — is your business ready for AI? Free, 2 minutes', desc: 'Eight quick questions, a score from 0 to 100 and three concrete next moves. Free, no sign-up.',
-    eyebrow: 'Free · 2 minutes', h1: 'Vaxo Score: how ready is your business for AI?', sub: 'Eight questions, a score from 0 to 100 and three concrete next steps. No sign-up, nothing is saved.',
-    start: 'Get my score', again: 'Start over', res: 'Your Vaxo Score', next: 'Your three next moves', cta: 'Get a free plan for this', cta2: 'How it works', unit: 'of 100',
-    q: [['Do you have a website that brings in requests?', ['No site', 'A site, but few requests', 'Yes, requests arrive']], ['How fast do you reply to a new customer?', ['Hours or days', 'Within the day', 'Minutes, any time']], ['Where do your requests live?', ['Messengers and memory', 'Several places', 'One system']], ['Do you post content regularly?', ['Almost never', 'Sometimes', 'On a schedule']], ['Do you know where your customers come from?', ['No', 'Roughly', 'Yes, with numbers']], ['Do you run ads or other paid channels?', ['No', 'Tried, no system', 'Yes, and I measure them']], ['Do you use AI in your work today?', ['Not at all', 'Now and then', 'Daily, on real tasks']], ['How much routine eats your week?', ['Most of it', 'Some', 'Little']]],
-    steps: [['Put replies on autopilot', 'Add an AI chat to your site and messengers so every new request gets an answer in minutes.'], ['Collect every request in one place', 'One app for requests, chats and statuses — nothing is lost and you see what sells.'], ['Publish on a schedule', 'A weekly content plan that runs on its own and brings people to the site.'], ['Build a site that takes requests', 'One page with a clear offer and a form is enough to start.'], ['Measure the source', 'Know which channel brings customers and put the budget there.'], ['Hand the routine to AI', 'Let AI do the repeatable work; you keep the decisions.']],
-    bands: [[0, 34, 'Starting point', 'You have the most room to grow — and the quickest wins.'], [35, 64, 'On the way', 'The basics exist. A few steps will turn them into a system.'], [65, 100, 'Ahead of most', 'You are ready to scale — now it is about speed and focus.']],
+    title: 'Vaxo Score — how ready are you for AI? Free check', desc: 'Eight quick questions. Your score, your level and the three most useful next steps — free, nothing is sent anywhere.',
+    eyebrow: 'Free · 1 minute', h1: 'How ready are you for AI?', sub: 'Eight yes / no questions. You get a score from 0 to 100 and the three steps that will help you most. Nothing leaves your browser.',
+    modes: [['me', 'I am a person'], ['biz', 'I have a business']],
+    yes: 'Yes', no: 'Not yet', result: 'Your Vaxo Score', plan: 'Your three best next steps', again: 'Start over', cta: 'Let Vax do these for me — free', share: 'Copy my result',
+    copied: 'Copied!', progress: 'Question',
+    levels: [[0, 'Warming up', 'You are at the start — the best moment: small steps will change a lot.'], [40, 'On the way', 'You already do several things right. A few steps will give a big jump.'], [70, 'Strong', 'You are ahead of most people. Now it is about speed and scale.'], [90, 'Leader', 'Excellent. We can take the routine away so you move even faster.']],
+    q: {
+      me: [['Do you know exactly what you want to achieve in the next 3 months?', 'Write one clear goal and break it into weekly steps — Vax can do it with you in a minute.'], ['Do you use AI tools every week?', 'Start with one daily task for AI: summaries, drafts, planning. Vax shows how.'], ['Is your CV or portfolio up to date and online?', 'A fresh CV or a one-page portfolio site brings replies. We can build it for you.'], ['Do you have a weekly plan you actually follow?', 'A simple weekly plan with three priorities beats a long to-do list.'], ['Do you automate repeated tasks (messages, documents, reminders)?', 'Pick the one task you repeat most and let AI do the first draft every time.'], ['Do you track your money and your time?', 'A one-page monthly budget and a time log show where the hours and money go.'], ['Do you learn a new skill on a schedule?', 'Twenty minutes a day with a clear course beats a weekend marathon once a quarter.'], ['Do you have someone or something that reminds you of the next step?', 'A weekly check-in with Vax gives you the next move without asking.']],
+      biz: [['Do you have a website where people can learn about you and write to you?', 'A one-page site with a clear offer and one button is the base. It is included in every business plan.'], ['Can a customer contact you in one tap (WhatsApp, Telegram or a form)?', 'One visible contact button removes the most common reason people leave.'], ['Does every enquiry get an answer within 5 minutes, also at night?', 'An AI assistant in your chat answers at once, 24/7, and passes hot leads to you.'], ['Do you post to social media at least three times a week?', 'A monthly content plan with ready posts keeps you visible without daily effort.'], ['Do you ask every happy customer for a review?', 'Reviews are the cheapest trust you can get. Ask by message right after the job.'], ['Do you know where your customers come from?', 'Simple analytics show which channel brings people — so you stop paying for the wrong ones.'], ['Do you follow up with everyone who wrote but did not buy?', 'One friendly follow-up brings back a large share of silent leads. AI can send it.'], ['Are all your requests and conversations in one place?', 'One app for requests, chats and the team means nothing gets lost.']],
+    },
   },
   ru: {
-    title: 'Vaxo Score — готов ли ваш бизнес к ИИ? Бесплатно, 2 минуты', desc: 'Восемь быстрых вопросов, оценка от 0 до 100 и три конкретных следующих шага. Бесплатно, без регистрации.',
-    eyebrow: 'Бесплатно · 2 минуты', h1: 'Vaxo Score: насколько ваш бизнес готов к ИИ?', sub: 'Восемь вопросов, оценка от 0 до 100 и три конкретных шага. Без регистрации, ничего не сохраняется.',
-    start: 'Узнать оценку', again: 'Пройти заново', res: 'Ваш Vaxo Score', next: 'Три ваших следующих шага', cta: 'Получить бесплатный план', cta2: 'Как это работает', unit: 'из 100',
-    q: [['Есть ли у вас сайт, который приносит заявки?', ['Сайта нет', 'Есть, но заявок мало', 'Да, заявки приходят']], ['Как быстро вы отвечаете новому клиенту?', ['Часы или дни', 'В течение дня', 'За минуты, в любое время']], ['Где живут ваши заявки?', ['В мессенджерах и памяти', 'В нескольких местах', 'В одной системе']], ['Публикуете ли вы контент регулярно?', ['Почти нет', 'Иногда', 'По расписанию']], ['Знаете ли вы, откуда приходят клиенты?', ['Нет', 'Примерно', 'Да, с цифрами']], ['Ведёте ли рекламу или другие платные каналы?', ['Нет', 'Пробовал(а), без системы', 'Да, и считаю результат']], ['Используете ли вы ИИ в работе?', ['Совсем нет', 'Время от времени', 'Каждый день, на реальных задачах']], ['Сколько рутины съедает вашу неделю?', ['Почти всё', 'Часть', 'Немного']]],
-    steps: [['Поставьте ответы на автопилот', 'Добавьте ИИ-чат на сайт и в мессенджеры: каждая новая заявка получит ответ за минуты.'], ['Соберите все заявки в одном месте', 'Одно приложение для заявок, чатов и статусов — ничего не теряется, видно, что продаёт.'], ['Публикуйте по расписанию', 'Недельный контент-план, который идёт сам и приводит людей на сайт.'], ['Сделайте сайт, который принимает заявки', 'Для старта хватит одной страницы с понятным предложением и формой.'], ['Измеряйте источник', 'Узнайте, какой канал приводит клиентов, и вложите бюджет туда.'], ['Отдайте рутину ИИ', 'Пусть ИИ делает повторяющуюся работу, а решения остаются за вами.']],
-    bands: [[0, 34, 'Точка старта', 'Больше всего пространства для роста — и самые быстрые победы.'], [35, 64, 'В пути', 'Основа есть. Несколько шагов превратят её в систему.'], [65, 100, 'Впереди большинства', 'Вы готовы масштабироваться — дальше важны скорость и фокус.']],
+    title: 'Vaxo Score — насколько вы готовы к ИИ? Бесплатная проверка', desc: 'Восемь быстрых вопросов. Ваш балл, уровень и три самых полезных следующих шага — бесплатно, ничего никуда не отправляется.',
+    eyebrow: 'Бесплатно · 1 минута', h1: 'Насколько вы готовы к ИИ?', sub: 'Восемь вопросов «да / нет». Вы получаете балл от 0 до 100 и три шага, которые помогут больше всего. Ничего не покидает ваш браузер.',
+    modes: [['me', 'Я человек'], ['biz', 'У меня бизнес']],
+    yes: 'Да', no: 'Пока нет', result: 'Ваш Vaxo Score', plan: 'Ваши три лучших следующих шага', again: 'Пройти заново', cta: 'Пусть Vax сделает это за меня — бесплатно', share: 'Скопировать результат',
+    copied: 'Скопировано!', progress: 'Вопрос',
+    levels: [[0, 'Разогрев', 'Вы в начале — и это лучший момент: маленькие шаги изменят очень многое.'], [40, 'В пути', 'Вы уже многое делаете правильно. Несколько шагов дадут большой скачок.'], [70, 'Сильный уровень', 'Вы впереди большинства. Теперь речь о скорости и масштабе.'], [90, 'Лидер', 'Отлично. Мы можем забрать рутину, чтобы вы двигались ещё быстрее.']],
+    q: {
+      me: [['Вы точно знаете, чего хотите достичь за ближайшие 3 месяца?', 'Запишите одну ясную цель и разбейте на недельные шаги — Vax сделает это с вами за минуту.'], ['Вы пользуетесь ИИ-инструментами каждую неделю?', 'Начните с одной ежедневной задачи для ИИ: конспекты, черновики, планирование. Vax покажет как.'], ['Ваше резюме или портфолио актуально и лежит онлайн?', 'Свежее резюме или одностраничное портфолио приносит отклики. Мы можем сделать его за вас.'], ['У вас есть недельный план, которому вы следуете?', 'Простой план на неделю с тремя приоритетами лучше длинного списка дел.'], ['Вы автоматизируете повторяющиеся дела (сообщения, документы, напоминания)?', 'Выберите задачу, которую повторяете чаще всего, и пусть ИИ каждый раз делает первый черновик.'], ['Вы следите за деньгами и временем?', 'Бюджет на одну страницу и учёт времени показывают, куда уходят часы и деньги.'], ['Вы учитесь новому по расписанию?', 'Двадцать минут в день по ясной программе лучше марафона раз в квартал.'], ['Есть тот, кто напоминает вам о следующем шаге?', 'Еженедельная сверка с Vax даёт следующий шаг без вашего вопроса.']],
+      biz: [['У вас есть сайт, где о вас узнают и могут написать?', 'Одностраничный сайт с ясным предложением и одной кнопкой — основа. Он входит в каждый бизнес-тариф.'], ['Клиент может связаться с вами в одно касание (WhatsApp, Telegram или форма)?', 'Одна заметная кнопка связи убирает самую частую причину, почему люди уходят.'], ['Каждое обращение получает ответ за 5 минут, в том числе ночью?', 'ИИ-помощник в чате отвечает сразу, 24/7, и передаёт вам горячих клиентов.'], ['Вы публикуете в соцсетях хотя бы три раза в неделю?', 'Контент-план на месяц с готовыми постами держит вас на виду без ежедневных усилий.'], ['Вы просите отзыв у каждого довольного клиента?', 'Отзывы — самое дешёвое доверие. Просите сообщением сразу после работы.'], ['Вы знаете, откуда приходят клиенты?', 'Простая аналитика показывает, какой канал приводит людей — и вы перестаёте платить не за то.'], ['Вы пишете всем, кто обратился, но не купил?', 'Одно дружелюбное напоминание возвращает заметную долю молчунов. ИИ может отправлять его сам.'], ['Все обращения и переписки лежат в одном месте?', 'Одно приложение для заявок, чатов и команды — и ничего не теряется.']],
+    },
   },
   ua: {
-    title: 'Vaxo Score — чи готовий ваш бізнес до ШІ? Безкоштовно, 2 хвилини', desc: 'Вісім швидких питань, оцінка від 0 до 100 і три конкретні наступні кроки. Безкоштовно, без реєстрації.',
-    eyebrow: 'Безкоштовно · 2 хвилини', h1: 'Vaxo Score: наскільки ваш бізнес готовий до ШІ?', sub: 'Вісім питань, оцінка від 0 до 100 і три конкретні кроки. Без реєстрації, нічого не зберігається.',
-    start: 'Дізнатися оцінку', again: 'Пройти знову', res: 'Ваш Vaxo Score', next: 'Три ваші наступні кроки', cta: 'Отримати безкоштовний план', cta2: 'Як це працює', unit: 'зі 100',
-    q: [['Чи є у вас сайт, що приносить заявки?', ['Сайту немає', 'Є, але заявок мало', 'Так, заявки приходять']], ['Як швидко ви відповідаєте новому клієнту?', ['Години або дні', 'Протягом дня', 'За хвилини, у будь-який час']], ['Де живуть ваші заявки?', ['У месенджерах і пам’яті', 'У кількох місцях', 'В одній системі']], ['Чи публікуєте ви контент регулярно?', ['Майже ні', 'Іноді', 'За розкладом']], ['Чи знаєте ви, звідки приходять клієнти?', ['Ні', 'Приблизно', 'Так, з цифрами']], ['Чи ведете рекламу або інші платні канали?', ['Ні', 'Пробував(ла), без системи', 'Так, і рахую результат']], ['Чи користуєтеся ШІ в роботі?', ['Зовсім ні', 'Час від часу', 'Щодня, на реальних задачах']], ['Скільки рутини з’їдає ваш тиждень?', ['Майже все', 'Частину', 'Небагато']]],
-    steps: [['Поставте відповіді на автопілот', 'Додайте ШІ-чат на сайт і в месенджери: кожна нова заявка отримає відповідь за хвилини.'], ['Зберіть усі заявки в одному місці', 'Один застосунок для заявок, чатів і статусів — нічого не губиться, видно, що продає.'], ['Публікуйте за розкладом', 'Тижневий контент-план, що йде сам і приводить людей на сайт.'], ['Зробіть сайт, що приймає заявки', 'Для старту вистачить однієї сторінки зі зрозумілою пропозицією і формою.'], ['Вимірюйте джерело', 'Дізнайтеся, який канал приводить клієнтів, і вкладіть бюджет туди.'], ['Віддайте рутину ШІ', 'Нехай ШІ робить повторювану роботу, а рішення залишаються за вами.']],
-    bands: [[0, 34, 'Точка старту', 'Найбільше простору для росту — і найшвидші перемоги.'], [35, 64, 'У дорозі', 'Основа є. Кілька кроків перетворять її на систему.'], [65, 100, 'Попереду більшості', 'Ви готові масштабуватися — далі важливі швидкість і фокус.']],
+    title: 'Vaxo Score — наскільки ви готові до ШІ? Безкоштовна перевірка', desc: 'Вісім швидких питань. Ваш бал, рівень і три найкорисніші наступні кроки — безкоштовно, нічого нікуди не надсилається.',
+    eyebrow: 'Безкоштовно · 1 хвилина', h1: 'Наскільки ви готові до ШІ?', sub: 'Вісім питань «так / ні». Ви отримуєте бал від 0 до 100 і три кроки, які допоможуть найбільше. Нічого не залишає ваш браузер.',
+    modes: [['me', 'Я людина'], ['biz', 'Я маю бізнес']],
+    yes: 'Так', no: 'Поки ні', result: 'Ваш Vaxo Score', plan: 'Ваші три найкращі наступні кроки', again: 'Пройти знову', cta: 'Хай Vax зробить це за мене — безкоштовно', share: 'Скопіювати результат',
+    copied: 'Скопійовано!', progress: 'Питання',
+    levels: [[0, 'Розігрів', 'Ви на початку — і це найкращий момент: маленькі кроки змінять дуже багато.'], [40, 'У дорозі', 'Ви вже багато робите правильно. Кілька кроків дадуть великий стрибок.'], [70, 'Сильний рівень', 'Ви попереду більшості. Тепер мова про швидкість і масштаб.'], [90, 'Лідер', 'Чудово. Ми можемо забрати рутину, щоб ви рухалися ще швидше.']],
+    q: {
+      me: [['Ви точно знаєте, чого хочете досягти за найближчі 3 місяці?', 'Запишіть одну чітку ціль і розбийте на тижневі кроки — Vax зробить це з вами за хвилину.'], ['Ви користуєтеся ШІ-інструментами щотижня?', 'Почніть з однієї щоденної задачі для ШІ: конспекти, чернетки, планування. Vax покаже як.'], ['Ваше резюме чи портфоліо актуальне й лежить онлайн?', 'Свіже резюме чи односторінкове портфоліо приносить відгуки. Ми можемо зробити його за вас.'], ['У вас є тижневий план, якого ви дотримуєтесь?', 'Простий план на тиждень із трьома пріоритетами кращий за довгий список справ.'], ['Ви автоматизуєте повторювані справи (повідомлення, документи, нагадування)?', 'Оберіть задачу, яку повторюєте найчастіше, і хай ШІ щоразу робить першу чернетку.'], ['Ви стежите за грішми й часом?', 'Бюджет на одну сторінку й облік часу показують, куди йдуть години та гроші.'], ['Ви вчитеся новому за розкладом?', 'Двадцять хвилин на день за чіткою програмою краще за марафон раз на квартал.'], ['Є той, хто нагадує вам про наступний крок?', 'Щотижнева звірка з Vax дає наступний крок без вашого питання.']],
+      biz: [['У вас є сайт, де про вас дізнаються й можуть написати?', 'Односторінковий сайт із чіткою пропозицією та однією кнопкою — основа. Він входить у кожен бізнес-тариф.'], ['Клієнт може зв’язатися з вами одним дотиком (WhatsApp, Telegram або форма)?', 'Одна помітна кнопка зв’язку прибирає найчастішу причину, чому люди йдуть.'], ['Кожне звернення отримує відповідь за 5 хвилин, зокрема вночі?', 'ШІ-помічник у чаті відповідає одразу, 24/7, і передає вам гарячих клієнтів.'], ['Ви публікуєте в соцмережах щонайменше тричі на тиждень?', 'Контент-план на місяць із готовими постами тримає вас на видноті без щоденних зусиль.'], ['Ви просите відгук у кожного задоволеного клієнта?', 'Відгуки — найдешевша довіра. Просіть повідомленням одразу після роботи.'], ['Ви знаєте, звідки приходять клієнти?', 'Проста аналітика показує, який канал приводить людей — і ви перестаєте платити не за те.'], ['Ви пишете всім, хто звернувся, але не купив?', 'Одне дружнє нагадування повертає помітну частку мовчунів. ШІ може надсилати його сам.'], ['Усі звернення й листування лежать в одному місці?', 'Один застосунок для заявок, чатів і команди — і нічого не губиться.']],
+    },
   },
-};
-const C = D[lang];
+}[lang];
 ---
 
-<Base lang={lang} title={C.title} description={C.desc} path={alts[lang]} alts={alts}>
+<Base lang={lang} title={D.title} description={D.desc} path={alts[lang]} alts={alts}>
   <Header lang={lang} t={t} home={home} alts={alts} />
-  <main class="in">
-    <span class="eyebrow">{C.eyebrow}</span>
-    <h1>{C.h1}</h1>
-    <p class="sub">{C.sub}</p>
-    <div id="sc" data-c={JSON.stringify(C)} data-start={h('/start/')} data-how={h('/how/')}>
-      <button class="cta" id="go" type="button">{C.start}</button>
-    </div>
+  <main>
+    <section class="in hero">
+      <span class="eyebrow">{D.eyebrow}</span>
+      <h1>{D.h1}</h1>
+      <p class="sub">{D.sub}</p>
+      <div class="modes" role="group">{D.modes.map(([k, l], i) => <button type="button" data-mode={k} aria-pressed={i === 0 ? 'true' : 'false'}>{l}</button>)}</div>
+    </section>
+    <section class="in quiz" data-quiz>
+      <div class="bar"><i data-bar></i></div>
+      <p class="mut" data-prog></p>
+      <h2 data-q></h2>
+      <div class="ans"><button type="button" class="cta" data-yes>{D.yes}</button><button type="button" class="ghost" data-no>{D.no}</button></div>
+    </section>
+    <section class="in res" data-res hidden>
+      <p class="mut">{D.result}</p>
+      <div class="score"><b data-score>0</b><span>/100</span></div>
+      <h2 data-level></h2>
+      <p class="sub" data-levelp></p>
+      <h3>{D.plan}</h3>
+      <ol class="steps" data-steps></ol>
+      <div class="row"><a class="cta" href={start}>{D.cta}</a><button type="button" class="ghost" data-share>{D.share}</button><button type="button" class="ghost" data-again>{D.again}</button></div>
+    </section>
+    <script type="application/json" id="score-data" set:html={JSON.stringify({ q: D.q, levels: D.levels, copied: D.copied, progress: D.progress, share: D.title })} />
   </main>
   <Footer t={t} home={home} lang={lang} />
 </Base>
 
 <script>
-  const root = document.getElementById('sc')!;
-  const C = JSON.parse(root.dataset.c!);
-  const el = (h: string) => { root.innerHTML = h; };
-  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
-  let i = 0; let a: number[] = [];
-  const ask = () => {
-    const [q, o] = C.q[i];
-    el(`<div class="bar"><i style="width:${(i / C.q.length) * 100}%"></i></div><p class="n">${i + 1} / ${C.q.length}</p><h2>${esc(q)}</h2><div class="opts">${o.map((x: string, k: number) => `<button type="button" class="opt" data-k="${k}">${esc(x)}</button>`).join('')}</div>`);
-    root.querySelectorAll<HTMLButtonElement>('.opt').forEach((b) => b.addEventListener('click', () => { a.push(+b.dataset.k!); i++; i < C.q.length ? ask() : done(); }));
+  const data = JSON.parse(document.getElementById('score-data')!.textContent || '{}');
+  const $ = (s: string) => document.querySelector<HTMLElement>(s)!;
+  let mode: 'me' | 'biz' = 'me', i = 0, ans: boolean[] = [];
+  const qs = () => data.q[mode] as string[][];
+  const render = () => {
+    const q = qs();
+    $('[data-q]').textContent = q[i][0];
+    $('[data-prog]').textContent = `${data.progress} ${i + 1} / ${q.length}`;
+    $<HTMLElement>('[data-bar]' as any).style.width = `${(i / q.length) * 100}%`;
   };
-  const done = () => {
-    const score = Math.round((a.reduce((s, x) => s + x, 0) / (C.q.length * 2)) * 100);
-    const band = C.bands.find((b: number[]) => score >= b[0] && score <= b[1]);
-    // weakest answers first -> the three steps that matter most
-    const order = a.map((v, k) => [v, k]).sort((x, y) => x[0] - y[0] || x[1] - y[1]);
-    const stepOf = [3, 0, 1, 2, 4, 4, 5, 5];
-    const seen: number[] = [];
-    for (const [, k] of order) { const s = stepOf[k]; if (!seen.includes(s)) seen.push(s); if (seen.length === 3) break; }
-    el(`<div class="res"><small>${esc(C.res)}</small><div class="big">${score}<span>${esc(C.unit)}</span></div><b>${esc(band[2])}</b><p>${esc(band[3])}</p></div><h2>${esc(C.next)}</h2><ol class="st">${seen.map((s) => `<li><b>${esc(C.steps[s][0])}</b><span>${esc(C.steps[s][1])}</span></li>`).join('')}</ol><div class="row"><a class="cta" href="${root.dataset.start}">${esc(C.cta)}</a><a class="ghost" href="${root.dataset.how}">${esc(C.cta2)}</a><button class="ghost" id="rs" type="button">${esc(C.again)}</button></div>`);
-    document.getElementById('rs')!.addEventListener('click', () => { i = 0; a = []; ask(); });
+  const reset = () => { i = 0; ans = []; $('[data-res]').hidden = true; $('[data-quiz]').hidden = false; render(); };
+  const finish = () => {
+    const q = qs();
+    const score = Math.round((ans.filter(Boolean).length / q.length) * 100);
+    const lv = [...data.levels].reverse().find((l: any[]) => score >= l[0]) as any[];
+    $('[data-score]').textContent = String(score);
+    $('[data-level]').textContent = lv[1]; $('[data-levelp]').textContent = lv[2];
+    const miss = q.filter((_, k) => !ans[k]).slice(0, 3);
+    const list = $('[data-steps]'); list.innerHTML = '';
+    for (const m of (miss.length ? miss : q.slice(0, 1))) { const li = document.createElement('li'); const b = document.createElement('b'); b.textContent = m[0]; const p = document.createElement('span'); p.textContent = m[1]; li.append(b, p); list.append(li); }
+    $('[data-quiz]').hidden = true; $('[data-res]').hidden = false;
+    $('[data-res]').scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
-  document.getElementById('go')!.addEventListener('click', ask);
+  const answer = (v: boolean) => { ans[i] = v; i += 1; if (i >= qs().length) finish(); else render(); };
+  $('[data-yes]').addEventListener('click', () => answer(true));
+  $('[data-no]').addEventListener('click', () => answer(false));
+  $('[data-again]').addEventListener('click', reset);
+  document.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => b.addEventListener('click', () => {
+    mode = b.dataset.mode as 'me' | 'biz';
+    document.querySelectorAll('[data-mode]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    reset();
+  }));
+  $('[data-share]').addEventListener('click', async () => {
+    const txt = `${data.share}: ${$('[data-score]').textContent}/100 — ${location.href}`;
+    try { await navigator.clipboard.writeText(txt); const s = $('[data-share]'); const old = s.textContent; s.textContent = data.copied; setTimeout(() => (s.textContent = old), 1600); } catch {}
+  });
+  render();
 </script>
 
-<style is:global>
-  .in { max-width: 760px; margin: 0 auto; padding: 110px 16px 90px; }
-  .in h1 { font-size: clamp(32px, 6vw, 54px); line-height: 1.05; letter-spacing: -0.03em; margin: 16px 0; }
-  .in .sub { color: var(--mut); font-size: 19px; line-height: 1.5; margin-bottom: 26px; }
-  .in h2 { font-size: clamp(22px, 3.5vw, 30px); letter-spacing: -0.02em; margin: 18px 0 14px; }
-  .in .cta, .in .ghost { display: inline-flex; align-items: center; min-height: 46px; padding: 0 22px; border-radius: 14px; font-weight: 700; text-decoration: none; cursor: pointer; font-size: 16px; }
-  .in .cta { background: var(--acc); color: var(--dark-ink, #111); border: 0; } .in .ghost { border: 1px solid var(--line); color: var(--ink); background: none; }
-  .in .bar { height: 6px; border-radius: 6px; background: var(--line); overflow: hidden; } .in .bar i { display: block; height: 100%; background: var(--acc); transition: width .25s; }
-  .in .n { color: var(--mut); margin: 10px 0 0; }
-  .in .opts { display: flex; flex-direction: column; gap: 10px; }
-  .in .opt { text-align: left; min-height: 52px; padding: 0 18px; border-radius: 14px; border: 1px solid var(--line); background: var(--surf); color: var(--ink); font-size: 17px; cursor: pointer; }
-  .in .opt:hover, .in .opt:focus-visible { border-color: var(--acc); }
-  .in .res { background: var(--surf); border: 1px solid var(--line); border-radius: 20px; padding: 22px; }
-  .in .res small { color: var(--mut); text-transform: uppercase; letter-spacing: .06em; font-size: 12px; font-weight: 700; }
-  .in .big { font-size: 72px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; } .in .big span { font-size: 20px; color: var(--mut); font-weight: 600; margin-left: 8px; }
-  .in .res p { color: var(--mut); margin: 4px 0 0; }
-  .in .st { list-style: none; padding: 0; margin: 0 0 22px; display: flex; flex-direction: column; gap: 12px; counter-reset: s; }
-  .in .st li { counter-increment: s; border-top: 3px solid var(--acc); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
-  .in .st li b::before { content: counter(s) '. '; } .in .st li span { color: var(--mut); line-height: 1.5; }
-  .in .row { display: flex; gap: 10px; flex-wrap: wrap; }
+<style>
+  .in { max-width: 860px; margin: 0 auto; padding: 0 16px 40px; }
+  .hero { padding-top: 110px; }
+  h1 { font-size: clamp(34px, 6vw, 58px); line-height: 1.05; letter-spacing: -0.03em; margin: 16px 0; }
+  .sub { color: var(--mut); font-size: 19px; line-height: 1.5; }
+  .modes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  .modes button { border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 10px 18px; font: 650 15px var(--font); cursor: pointer; min-height: 44px; }
+  .modes button[aria-pressed='true'] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .quiz { background: var(--surf); border: 1px solid var(--line); border-radius: 24px; padding: 26px 24px; max-width: 828px; box-shadow: 0 14px 40px -24px rgba(0, 0, 0, .35); }
+  .bar { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; } .bar i { display: block; height: 100%; width: 0; background: var(--acc); transition: width .3s ease; }
+  .quiz h2 { font-size: clamp(22px, 3.4vw, 30px); letter-spacing: -0.02em; margin: 10px 0 20px; min-height: 2.6em; }
+  .ans { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cta, .ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 24px; border-radius: 14px; font: 700 16px var(--font); text-decoration: none; cursor: pointer; border: 0; }
+  .cta { background: var(--acc); color: var(--dark-ink, #111); } .ghost { border: 1px solid var(--line); background: transparent; color: var(--ink); }
+  .mut { color: var(--mut); }
+  .res { text-align: center; } .res[hidden], .quiz[hidden] { display: none; }
+  .score { display: inline-flex; align-items: baseline; gap: 4px; } .score b { font-size: clamp(72px, 16vw, 128px); line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; } .score span { font-size: 24px; color: var(--mut); }
+  .res h2 { font-size: clamp(26px, 4vw, 36px); margin: 4px 0; } .res h3 { margin: 28px 0 12px; font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: var(--mut); }
+  .steps { text-align: left; list-style: none; padding: 0; margin: 0 auto 24px; max-width: 640px; display: flex; flex-direction: column; gap: 10px; counter-reset: n; }
+  .steps li { counter-increment: n; background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px 14px 52px; position: relative; display: flex; flex-direction: column; gap: 4px; }
+  .steps li::before { content: counter(n); position: absolute; left: 14px; top: 14px; width: 28px; height: 28px; border-radius: 50%; background: var(--acc); color: var(--dark-ink, #111); font-weight: 800; display: grid; place-items: center; }
+  .steps li span { color: var(--mut); line-height: 1.45; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; padding-bottom: 60px; }
 </style>

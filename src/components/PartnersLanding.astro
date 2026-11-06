@@ -18,6 +18,11 @@ const VAXCALC = {
   ru: [[0, 'coin', 'Пока ноль. Даже на булочку не хватит — двигайте ползунки 👀'], [1, 'coin', 'На кофе с пончиком уже хватает. Неплохое начало ☕'], [100, 'cash', 'Это месячная аренда моего нового бизнеса!'], [500, 'rain', 'Стоп-стоп, я уже выбираю новую печь!'], [1500, 'rich', 'Я надел очки. Пора звать бухгалтера 😎']],
   ua: [[0, 'coin', 'Поки нуль. Навіть на булочку не вистачить — рухайте повзунки 👀'], [1, 'coin', 'На каву з пончиком уже вистачає. Непоганий початок ☕'], [100, 'cash', 'Це місячна оренда мого нового бізнесу!'], [500, 'rain', 'Стоп-стоп, я вже обираю нову піч!'], [1500, 'rich', 'Я вдягнув окуляри. Час кликати бухгалтера 😎']],
 }[lang];
+const AG = {
+  en: { h: 'Agencies and freelancers: grow with Vaxo', p: 'You already have clients and want to give them more? Offer Vaxo as the AI platform behind your service. Individual terms for teams that bring several clients.', li: ['Same transparent rates, a personal manager for your team', 'Your clients stay your clients; we do the work with AI behind the scenes', 'Priority support and early access to new features', 'Branded options are discussed individually — we say honestly what is possible now'], cta: 'Tell us about your agency' },
+  ru: { h: 'Агентствам и фрилансерам: растите вместе с Vaxo', p: 'У вас уже есть клиенты, и вы хотите дать им больше? Предложите Vaxo как ИИ-платформу за вашим сервисом. Индивидуальные условия для команд, которые приводят несколько клиентов.', li: ['Те же прозрачные ставки и персональный менеджер для вашей команды', 'Ваши клиенты остаются вашими; мы делаем работу с ИИ за кадром', 'Приоритетная поддержка и ранний доступ к новым функциям', 'Варианты под вашим брендом обсуждаем индивидуально — честно скажем, что возможно уже сейчас'], cta: 'Расскажите о вашем агентстве' },
+  ua: { h: 'Агентствам і фрилансерам: ростіть разом із Vaxo', p: 'У вас уже є клієнти, і ви хочете дати їм більше? Запропонуйте Vaxo як ШІ-платформу за вашим сервісом. Індивідуальні умови для команд, які приводять кількох клієнтів.', li: ['Ті самі прозорі ставки й персональний менеджер для вашої команди', 'Ваші клієнти лишаються вашими; ми робимо роботу з ШІ за кадром', 'Пріоритетна підтримка та ранній доступ до нових функцій', 'Варіанти під вашим брендом обговорюємо індивідуально — чесно скажемо, що можливо вже зараз'], cta: 'Розкажіть про ваше агентство' },
+}[lang];
 const p = PARTNERS_TEXT[lang];
 const home = langPath(lang);
 const cab = lang === 'en' ? '/partner/' : `/${lang}/partner/`;
@@ -84,6 +89,14 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
 
     <section id="earn" class="rv">
       <div class="in"><PartnerEarn lang={lang} /></div>
+    </section>
+    <section id="agency" class="rv">
+      <div class="in agency">
+        <h2>{AG.h}</h2>
+        <p>{AG.p}</p>
+        <ul>{AG.li.map((x) => <li>{x}</li>)}</ul>
+        <a class="agcta" href={`${home === '/' ? '' : home.replace(/\/$/, '')}/collab/`}>{AG.cta} →</a>
+      </div>
     </section>
 
     <section id="calc" class="rv">
@@ -273,6 +286,7 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
 </script>
 
 <style>
+  .agency { padding: 28px 0 8px; } .agency h2 { font-size: clamp(24px, 3.5vw, 34px); letter-spacing: -0.02em; margin: 0 0 10px; } .agency p { color: var(--mut); max-width: 66ch; line-height: 1.55; } .agency ul { line-height: 1.7; padding-left: 20px; } .agcta { display: inline-flex; align-items: center; min-height: 46px; padding: 0 22px; border-radius: 14px; background: var(--ink); color: var(--bg); font-weight: 700; text-decoration: none; margin-top: 8px; }
   .in { max-width: 1120px; margin: 0 auto; padding: 0 16px; position: relative; }
   .pl section { padding: 40px 0; }
   .pl .hero { padding: 96px 0 24px; position: relative; overflow: hidden; }

@@ -27,6 +27,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'Service', name: P.h1, d
     <section><h2>{U.pains}</h2><ul>{P.pains.map((x) => <li>{x}</li>)}</ul></section>
     <section><h2>{U.gets}</h2><ul>{P.gets.map((x) => <li>{x}</li>)}</ul></section>
     <div class="box"><b>{U.price}</b><p>{U.priceP}</p><a class="cta" href={`${home}#contact`}>{U.cta}</a></div>
+    <p class="more"><a href={`${pre}/score/`}>{{ en: 'Free check: how ready is your business for AI? Vaxo Score →', ru: 'Бесплатная проверка: насколько ваш бизнес готов к ИИ? Vaxo Score →', ua: 'Безкоштовна перевірка: наскільки ваш бізнес готовий до ШІ? Vaxo Score →' }[lang]}</a></p>
     <p class="more">{U.all}: {NICHES.filter((n) => n.slug !== niche.slug).map((n, i) => <>{i > 0 ? ' · ' : ''}<a href={`${pre}/for/${n.slug}/`}>{n.t[lang].name}</a></>)}</p>
   </main>
   <Footer t={t} home={home} lang={lang} />

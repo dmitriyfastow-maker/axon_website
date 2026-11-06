@@ -303,7 +303,7 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
         </div>
       </div>
       <p class="pnote">{C.priceNote}</p>
-      <p class="pnote"><a href={`${lang === 'en' ? '' : '/' + lang}/how/`}>{{ en: 'How Vaxo works →', ru: 'Как работает Vaxo →', ua: 'Як працює Vaxo →' }[lang]}</a></p>
+      <p class="pnote"><a href={`${lang === 'en' ? '' : '/' + lang}/how/`}>{{ en: 'How Vaxo works →', ru: 'Как работает Vaxo →', ua: 'Як працює Vaxo →' }[lang]}</a> · <a href={`${lang === 'en' ? '' : '/' + lang}/score/`}>{{ en: 'Free Vaxo Score →', ru: 'Бесплатный Vaxo Score →', ua: 'Безкоштовний Vaxo Score →' }[lang]}</a></p>
       <details class="more">
         <summary>{C.more}</summary>
         <div class="full">{C.planFull.map(([h, li]) => <div><h4>{h}</h4><ul>{(li as string[]).map((x) => <li>{x}</li>)}</ul></div>)}</div>
