@@ -102,7 +102,41 @@ export async function monthlyBilling(db: DB, notify?: Notify) {
       made++;
     }
   } catch (e) { console.error('[billing]', e); }
+  try { made += await firstInvoices(db, notify); } catch (e) { console.error('[billing first]', e); }
   return made;
+}
+
+const TRIAL_END: Record<string, string> = {
+  ru: 'Ваш бесплатный месяц с тарифом {plan} подходит к концу. Если хотите продолжить — счёт уже в кабинете, оплата картой в пару касаний. Если нет — ничего делать не нужно: тариф просто закончится, а всё сделанное останется у вас.',
+  ua: 'Ваш безкоштовний місяць з тарифом {plan} добігає кінця. Якщо хочете продовжити — рахунок уже в кабінеті, оплата карткою за пару дотиків. Якщо ні — нічого робити не треба: тариф просто закінчиться, а все зроблене лишиться у вас.',
+  en: 'Your free month on the {plan} plan is ending. If you want to continue, the invoice is already in your cabinet — pay by card in a couple of taps. If not, do nothing: the plan simply ends and everything we made stays yours.',
+};
+
+/** The first invoice of a subscription: 3 days before the free month ends, for leads that chose a plan on the site,
+ *  engaged with Vax (a signed-in client or at least two messages) and have no payment and no subscription invoice yet. */
+async function firstInvoices(db: DB, notify?: Notify): Promise<number> {
+  if (!(await hasPlan(db))) return 0;
+  const rows = (await db.prepare(`SELECT d.id, d.client_id, d.lang, d.service, d.interest, d.plan FROM leads d
+    WHERE d.plan IS NOT NULL AND d.status NOT IN ('lost', 'archived', 'test', 'collab', 'gift') AND COALESCE(d.page, '') != 'test'
+      AND COALESCE(d.contact, '') NOT LIKE 'test%' AND COALESCE(d.contact, '') NOT LIKE '%@vaxogroup.com'
+      AND d.created_at <= datetime('now', '-' || ? || ' days')
+      AND NOT EXISTS (SELECT 1 FROM payments p WHERE p.lead_id = d.id AND p.status = 'ok')
+      AND NOT EXISTS (SELECT 1 FROM invoices i WHERE i.lead_id = d.id AND i.description LIKE 'Vaxo %' AND i.status != 'cancelled')
+      AND (d.client_id IS NOT NULL OR (SELECT COUNT(*) FROM messages m WHERE m.lead_id = d.id AND m.sender = 'client') >= 2)
+    LIMIT 10`).bind(MONTH_DAYS - LEAD_DAYS).all<Row>()).results;
+  let n = 0;
+  for (const l of rows) {
+    const plan = planOf(l);
+    if (!plan || !(PLAN_PRICES[plan] > 0)) continue;
+    const lang = ['en', 'ru', 'ua'].includes(String(l.lang)) ? String(l.lang) : 'en';
+    const month = new Date().toISOString().slice(0, 7);
+    await createInvoice(db, { leadId: l.id, amount: PLAN_PRICES[plan], currency: 'USD', description: `Vaxo ${PLAN_NAME[plan]} subscription, ${month}`, part: 'other', lang, origin: ORIGIN });
+    const { addMessage } = await import('./rooms.js');
+    await addMessage(db, l.id, 'owner', 'text', (TRIAL_END[lang] || TRIAL_END.en).replace('{plan}', PLAN_NAME[plan]));
+    await notify?.(`🧾 Конец пробного месяца: лид #${l.id}, ${PLAN_NAME[plan]}, выставлен первый счёт $${PLAN_PRICES[plan]}.`);
+    n++;
+  }
+  return n;
 }
 
 async function hasPlan(db: DB) {

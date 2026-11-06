@@ -421,3 +421,19 @@ ${chats}`, 700);
   if (list.length) await save('vax_lessons', list.map((x) => `- ${x.trim().slice(0, 200)}`).join('\n'));
   await save('vax_lessons_at', now.toISOString());
 }
+
+/** Hourly: a client message that Vax never answered (model error, a missed trigger) gets one more try after 20 minutes. */
+export async function rescueUnanswered(db: DB, ai: AiBinding | undefined, notify: Notify) {
+  if (!ai) return;
+  const { results } = await db
+    .prepare(`SELECT m.id, m.lead_id FROM messages m
+      WHERE m.sender = 'client' AND m.kind != 'note' AND m.at < datetime('now', '-20 minutes') AND m.at > datetime('now', '-3 days')
+        AND m.id = (SELECT MAX(id) FROM messages x WHERE x.lead_id = m.lead_id AND x.kind != 'note')
+        AND NOT EXISTS (SELECT 1 FROM lead_events e WHERE e.lead_id = m.lead_id AND e.kind = 'rescue' AND e.text = 'msg:' || m.id)
+      LIMIT 5`)
+    .all<{ id: number; lead_id: number }>();
+  for (const r of results) {
+    await logEvent(db, r.lead_id, 'system', 'rescue', `msg:${r.id}`);
+    await aiReply(db, ai, r.lead_id, notify).catch(() => false);
+  }
+}

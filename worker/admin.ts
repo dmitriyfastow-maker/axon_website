@@ -7,7 +7,7 @@ import { handleFinanceAdmin } from './finance.js';
 import { handleInvoiceAdmin, invoiceForPayment } from './invoices.js';
 import { handleOwnerChat } from './ownerchat.js';
 import { newRoom } from './rooms.js';
-import { addRenewal, allPayouts, setPayout } from './payouts.js';
+import { addRenewal, allPayouts, createPayouts, setPayout } from './payouts.js';
 import HQ from './hq.json';
 import { analytics, makeDigest } from './autopilot.js';
 import { termsNotice } from './notices.js';
@@ -28,7 +28,26 @@ export async function settleInvoice(db: DB, ai: AiBinding | undefined, notify: N
   const got = { id: 0 };
   const res = await handleFinanceAdmin(db, fake, 'payment', notify, (lid) => { got.id = lid; });
   if (got.id) await aiReply(db, ai, got.id, notify, { nudge: PAID_NUDGE }).catch(() => false);
+  // Money loop (Audit 06.11): a paid invoice makes the lead WON (first payment) and pays the partners: 50% on the first
+  // payment, the lifetime 30% (+10% sponsor) on every later one. Before this, only a manual status change did it.
+  if (res.status < 300 && inv.lead_id) await afterPayment(db, inv.lead_id, Number(inv.amount), String(inv.currency), notify).catch((e) => console.error('[after payment]', e));
   return res;
+}
+
+async function afterPayment(db: DB, leadId: number, amount: number, currency: string, notify: Notify) {
+  const l = await db.prepare(`SELECT status, contact, page, value_usd FROM leads WHERE id = ?`).bind(leadId).first<{ status: string; contact: string | null; page: string | null; value_usd: number | null }>();
+  if (!l || l.page === 'test' || /^test/i.test(l.contact || '') || /@vaxogroup\.com$/i.test(l.contact || '')) return;
+  const rate = (await db.prepare(`SELECT rate FROM payments WHERE currency = 'USD' ORDER BY id DESC LIMIT 1`).first<{ rate: number }>().catch(() => null))?.rate || 41.5;
+  const usd = currency === 'USD' ? amount : amount / rate;
+  if (!(usd >= 1)) return; // contact/test payments of a few hryvnias are never commissionable
+  if (l.status !== 'won') {
+    await db.prepare(`UPDATE leads SET status = 'won', value_usd = ? WHERE id = ?`).bind(Math.round(usd), leadId).run();
+    await db.prepare(`INSERT INTO lead_events (lead_id, actor, kind, text) VALUES (?, 'system', 'note', ?)`).bind(leadId, `Won automatically: first payment $${Math.round(usd)}`).run();
+    await createPayouts(db, leadId);
+    await notify(`✅ Лид #${leadId}: первая оплата $${Math.round(usd)} — сделка закрыта автоматически, комиссии партнёрам начислены.`).catch(() => {});
+  } else {
+    await addRenewal(db, leadId, usd);
+  }
 }
 const PAID_NUDGE = 'The team has just RECEIVED the client\'s payment. Thank them warmly in one or two sentences, say the payment arrived and what happens next (work starts / continues, next preview or step). No amounts unless they ask.';
 
