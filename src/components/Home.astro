@@ -192,7 +192,7 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
         <p class="eyebrow">{C.eyebrow}</p>
         <h1 class="kin">{C.h1[0].split(' ').map((w, i) => <><span style={`--i:${i}`}>{w}</span>{' '}</>)}<span class="hl">{C.h1[1].split(' ').map((w, i) => <><span style={`--i:${i + 4}`}>{w}</span>{' '}</>)}</span></h1>
         <p class="lead">{C.sub}</p>
-        <form class="hq" data-hq>
+        <form class="hq" data-hq id="contact">
           <input name="q" type="text" maxlength="400" autocomplete="off" placeholder={HQ.ph} aria-label={HQ.ph} />
           <button class="btn" type="submit">{HQ.go}</button>
         </form>
@@ -252,7 +252,7 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
             <small class="tag">✨</small>
             <b>{C.custom[0]}</b>
             <p>{C.custom[1]}</p>
-            <a class="btn" href="#contact">{C.custom[2]} →</a>
+            <a class="btn" href="#" data-focus-hq>{C.custom[2]} →</a>
           </div>
         </div>
       </div>
@@ -298,6 +298,7 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
   hq?.addEventListener('submit', (e) => { e.preventDefault(); const inp = hq.elements.namedItem('q') as HTMLInputElement; const q = inp.value.trim(); if (!q) { inp.focus(); return; } inp.value = ''; askVax(q); });
   document.querySelectorAll<HTMLButtonElement>('[data-hqc]').forEach((b) => (b.onclick = () => askVax(b.dataset.hqc || '')));
   document.querySelectorAll<HTMLButtonElement>('.tc').forEach((b) => (b.onclick = () => askVax(b.dataset.try || '')));
+  if (location.hash === '#contact') setTimeout(() => hq?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), 400);
   const toTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => hq?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), 500); };
   document.querySelectorAll<HTMLElement>('[data-focus-hq]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); toTop(); }));
   // Plans: one tap + an email starts the free month (the lead opens the private project chat). Start = just ask Vax.
