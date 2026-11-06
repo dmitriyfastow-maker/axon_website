@@ -1,0 +1,19 @@
+{
+  "name": "Vaxo — ИИ-партнёр, который действует первым",
+  "short_name": "Vaxo",
+  "description": "One app for your goals, your business and your clients. Vax thinks ahead and does the work.",
+  "start_url": "/?utm_source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F5F2EC",
+  "theme_color": "#0F0E0C",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Cabinet", "url": "/me/" },
+    { "name": "Start", "url": "/start/" }
+  ]
+}
