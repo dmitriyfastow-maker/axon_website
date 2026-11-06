@@ -13,6 +13,11 @@ const pre = lang === 'en' ? '' : `/${lang}`;
 const alts = { en: `/for/${niche.slug}/`, ru: `/ru/for/${niche.slug}/`, ua: `/ua/for/${niche.slug}/` };
 const U = NICHE_UI[lang];
 const P = niche.t[lang];
+const LAUNCH = {
+  en: { h: 'Your first version in about 2 days', steps: [['Day 0', 'Tell Vax about your business in a chat — 5 minutes.'], ['Day 1', 'AI and our team prepare a ready draft: site, texts, booking and chat.'], ['Day 2', 'You look, say what to change — we fix it and go live.']], note: 'Typical timing for a standard launch; custom work gets its own deadline named before we start.' },
+  ru: { h: 'Первая версия — примерно за 2 дня', steps: [['День 0', 'Расскажите Vax о своём деле в чате — 5 минут.'], ['День 1', 'ИИ и наша команда готовят черновик: сайт, тексты, запись и чат.'], ['День 2', 'Вы смотрите, говорите что поправить — мы правим и запускаем.']], note: 'Обычный срок стандартного запуска; для особенного заказа срок называем до старта.' },
+  ua: { h: 'Перша версія — приблизно за 2 дні', steps: [['День 0', 'Розкажіть Vax про свою справу в чаті — 5 хвилин.'], ['День 1', 'ШІ та наша команда готують чернетку: сайт, тексти, запис і чат.'], ['День 2', 'Ви дивитесь, кажете що виправити — ми правимо й запускаємо.']], note: 'Звичайний термін стандартного запуску; для особливого замовлення термін називаємо до старту.' },
+}[lang];
 const ld = { '@context': 'https://schema.org', '@type': 'Service', name: P.h1, description: P.desc, inLanguage: lang === 'ua' ? 'uk' : lang, provider: { '@type': 'Organization', name: 'Vaxo', url: 'https://vaxogroup.com/' } };
 ---
 
@@ -26,6 +31,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'Service', name: P.h1, d
     <div class="row"><a class="cta" href={`${home}#contact`}>{U.cta}</a> <a class="ghost" href={`${pre}/start/`}>{U.start}</a></div>
     <section><h2>{U.pains}</h2><ul>{P.pains.map((x) => <li>{x}</li>)}</ul></section>
     <section><h2>{U.gets}</h2><ul>{P.gets.map((x) => <li>{x}</li>)}</ul></section>
+    <section><h2>{LAUNCH.h}</h2><ol class="steps">{LAUNCH.steps.map(([d, x]) => <li><b>{d}.</b> {x}</li>)}</ol><p class="note">{LAUNCH.note}</p></section>
     <div class="box"><b>{U.price}</b><p>{U.priceP}</p><a class="cta" href={`${home}#contact`}>{U.cta}</a></div>
     <p class="more"><a href={`${pre}/score/`}>{{ en: 'Free check: how ready is your business for AI? Vaxo Score →', ru: 'Бесплатная проверка: насколько ваш бизнес готов к ИИ? Vaxo Score →', ua: 'Безкоштовна перевірка: наскільки ваш бізнес готовий до ШІ? Vaxo Score →' }[lang]}</a></p>
     <p class="more">{U.all}: {NICHES.filter((n) => n.slug !== niche.slug).map((n, i) => <>{i > 0 ? ' · ' : ''}<a href={`${pre}/for/${n.slug}/`}>{n.t[lang].name}</a></>)}</p>
@@ -43,5 +49,6 @@ const ld = { '@context': 'https://schema.org', '@type': 'Service', name: P.h1, d
   .cta { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 600; padding: 12px 20px; border-radius: 999px; text-decoration: none; }
   .ghost { color: var(--ink); margin-left: 10px; }
   .box { margin-top: 36px; background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+  .steps { padding-left: 20px; } .note { color: var(--mut); font-size: 14px; }
   .more { margin-top: 28px; color: var(--mut); font-size: 15px; } .more a { color: var(--ink); }
 </style>
