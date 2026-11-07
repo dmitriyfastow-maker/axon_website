@@ -1,310 +1,308 @@
 ---
-// Home page (rebuilt 01.11.2026; model updated the same evening, Dmitry: "everything in the plan is free, only custom
-// costs extra; not only websites, not only businesses; starting must feel effortless").
-// One story: promise → what you get (+ what it costs elsewhere) → how it works → see it live / real cases →
-// plans with real examples + custom → a two-step start (the task first, the contact second) → questions.
+// Home page v2 (Dmitry, 07.11.2026): one dark surface from top to bottom. First screen: headline, subheadline, input.
+// Then the product itself (real Vax answers, shortened), what is instant and what is real work, the four sections of
+// Vaxo with interface mock-ups, plans with one focus offer, questions. Only promises that work today.
 import type { Lang } from '../i18n';
-import { getDict } from '../i18n';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const t = getDict(lang);
 const P = (p: string) => (lang === 'en' ? p : `/${lang}${p}`);
-const ex = (slug: string) => `/examples/${slug}/?lang=${lang}`;
-const thumb = (slug: string) => `/examples/thumbs/${slug === 'eco-crm' ? 'eco-os' : slug}-${lang}.jpg`;
 
-const C = {
-  en: {
-    eyebrow: "Vaxo · your personal operating system for life and work",
-    tryH: "Try it yourself — ask anything", tryS: "Tap a card — Vax starts right away.", tryCards: [["🎮", "Make me a simple browser game"], ["🥧", "How do I bake an apple pie?"], ["🌐", "A website for my coffee shop"], ["📈", "Plan my first 90 days as a freelancer"], ["🤖", "A bot that books clients in WhatsApp"], ["✍️", "Write a speech for my sister’s wedding"], ["📣", "Instagram ads for my clinic"], ["📱", "Compare two phones and tell me which to buy"], ["🧩", "Automate my weekly report"], ["🎁", "A birthday video script for mom"], ["💻", "Find the bug in my code"], ["🌍", "A 3-month plan to learn Spanish"]],
-    limH: "How the allowance works", limP: "Think of it like a phone data plan, only simpler. Vax tells you in plain words how much is left before it runs out. Here is how it works:", lim: [["📅", "A fresh allowance every day", "Your daily allowance renews every 24 hours. Used it up? Tomorrow it is back — nothing to buy."], ["🗓️", "And one for the week", "It stops the whole allowance going in a single day. It renews once a week."], ["🔁", "Month or year, from the day you pay", "A plan runs from the day you pay to the same date next month. A year is 2 months free. We never charge your card on our own: you get an invoice and pay when you are ready."], ["➕", "Need more? Three ways", "Wait for the refresh, move up a plan in your cabinet, or ask Vax for a top-up on an invoice — no plan change."], ["🧭", "No models to choose", "Vax picks the right AI for every task — light for simple, strong for hard. You never switch anything, and quality only goes up."]], tali: ["I wash my food. And your to-do list.", "Fun fact: I have no hands. Still faster than you.", "Hold on, I’m thinking… done. Wow.", "Yes, I’m a raccoon. No, I won’t steal your data.", "I don’t sleep. Not the coffee — I’m just a raccoon.", "Your goal is safe with me. Cookies are not.", "Psst… I already have an idea.", "Plan first, pie later. Both are possible.", "Break? Never heard of it.", "Careful: I might get really good at this."],
-    h1: ["Say what you want.", "Vax builds it."],
-    sub: "Your personal doer for life and work. Write the task and Vax starts right away. Free, no sign-up.",
-    cta: 'Tell Vax your goal', see: 'See real examples',
-    trust: ["Free to start", "No card needed", "Cancel any time"],
-    scenes: [["I need a website for my coffee shop and Instagram ads", "Plan and price are ready: site in 3 days, ads from week one.", "Coffee shop · site + ads", ["Design", "Website", "Ads"], "🌐 Site is live · 📣 first requests came in"], ["Make me a portfolio site — I'm a photographer", "Done in 2 days. Want a booking button for shoots?", "Portfolio · personal", ["Style", "Gallery", "Booking"], "📸 Portfolio is live · 💬 AI answers clients"], ["A bot that books my clients in WhatsApp", "Connected. It answers 24/7 and books into your calendar.", "WhatsApp bot · beauty studio", ["Script", "Calendar", "Launch"], "🤖 Bot is live · 📅 bookings at night too"]], sceneLab: ["You", "Vax", "Your project"],
-    getH: 'What Vax does for you', getSub: 'One subscription instead of five services and three hires — and anything beyond it on request.',
-    get: [
-      ["🧠", "Anything you ask", "Recipes, games, texts, code, plans — and the big things: a site, an app, ads. Vax picks the right AI engine itself."],
-      ['🤖', 'AI employee, 24/7', 'Answers in Instagram, WhatsApp, Telegram and on your site. Books and sells while you sleep.'],
-      ['📥', 'Everything in one app', 'Every client, chat, payment and task — on your phone. Your team works there too.'],
-      ['📣', 'Social media and ads', 'AI writes posts, we run ads and show you what pays off.'],
-      ['📊', 'Numbers, not guesses', 'Where people come from, what they do, what a request costs. A plan from AI every morning.'],
-      ['✨', 'Anything else', 'An app, a bot, an integration, even a game — for a business or for you. Price agreed upfront.'],
-    ],
-    billH: 'The same work, the usual way', bill: [['An administrator who answers clients', 'from $3,300/mo'], ['A marketing agency: social media + ads', 'from $1,500/mo'], ['A website built by a studio', 'from $1,000 once'], ['A site builder + CRM you set up yourself', 'from $17/mo + your evenings']],
-    billOld: 'Usually', billOldV: 'from $4,800/mo', billNew: 'With Vaxo', billNewV: 'from $39/mo', billNote: 'Typical US prices, 2026: administrator salary, small-agency retainers, studio website projects, Wix plans.',
-    howH: 'How it works', how: [['Tell your goal', 'In your own words — one line is enough. Not the task, the goal: “more clients”, “look professional”, “save my evenings”.'], ['Get the plan, price and the reason', 'Free, before any payment. Vax explains why this plan, what it will cost and what you get by when.'], ['Vax acts, you approve', 'Vax and the team do the work. Every week Vax comes with the next move and the reason. Anything important waits for your “yes”.']],
-    demosH: "See it for yourself", demosSub: "Working builds, not pictures. The brands are made up — everything else is real. We build yours the same way, or better.",
-    demos: [["A website that takes your breath away", "Motion, bold type, online orders and an AI barista — 2026 level", "flagship"], ["Marketing on autopilot", "Ad creatives, AI posts, a content calendar and a report on requests — every month", "marketing"], ["An AI employee in every chat", "Answers in Instagram, WhatsApp, Telegram, books and takes payment — try it yourself", "ai-assistant"], ["Your control app", "Requests, chats, team and AI reports on one screen", "eco-crm"]],
-    open: 'Open →', allDemos: 'All examples',
-    priceH: 'Plans', priceSub: "Plain questions are free almost everywhere — and with us too: Start is free forever. You pay when you want more than answers: a partner who remembers your goal, moves first and gets real things done and running — a site online, replies in your messengers, posts out. Each plan shows a typical month, so you can picture what you get.",
-    plans: [["Personal", "$19", "Everyday", "Questions, texts, plans, small builds — for one person, no business needed", "A typical month: a CV and cover letters, a trip plan, a small personal page, a weekly plan from Vax"], ["Care", "$39", "Regular use", "More room for real projects: a site or app, AI in your chat, every request in one app", "A typical month: your business site kept fresh, AI answering your site chat, new texts, a monthly report"], ["Growth", "$129", "Most popular", "Much more room plus automation: booking, payments, AI in every messenger, a team", "A typical month: bookings and payments running, AI in every messenger, 12 posts, 2 improvements, a weekly report"], ["Pro", "$299", "Heavy use", "The highest allowance: store or app, social media and ads run for you, priority", "A typical month: your social media and ads run for you, 8 videos or posts, new features, priority"]],
-    look: 'Looks like this',
-    custom: ["A company or something special", "Many users, your own rules, an app, a bot, an integration, a game — for a business, a team or a personal task. Tell Vax: a fixed price comes before any work starts, and you watch progress live. Already have a CRM? We connect it.", "Tell Vax"],
-    mo: '/mo', priceNote: 'Start is free forever · first month free on any paid plan (a trial with a smaller allowance) · a year = 2 months free · change or cancel any time',
-    more: 'What exactly is in each plan',
-    planFull: [["Personal — $19/mo", ["For one person — no business needed", "Everyday tasks: texts, designs, plans, small builds", "A monthly allowance shown in your cabinet", "Free “Start” plan before that: plan, price and one mini-result"]], ["Care — $39/mo", ["Everything in Personal, with more room", "A site or app for your business, or a connection to yours", "AI answers in your site chat 24/7", "Every request in one app, a monthly AI report"]], ["Growth — $129/mo", ["Everything in Care, with much more room", "Booking and payments, AI in Instagram, WhatsApp, Telegram, Facebook", "AI asks for reviews and answers them, 12 AI posts a month", "Team up to 5 with roles, weekly report"]], ["Pro — $299/mo", ["Everything in Growth, with the highest allowance", "A store or an app under your brand", "We run your social media and ads (ad budget separate)", "Unlimited team, partner program, priority"]]],
-    startH: 'What needs doing?', startSub: 'Write it the way you would tell a friend. Vax replies within a minute with questions, a plan and a price — free.',
-    free: [['Free', 'Plan, price and timeline — before you pay anything'], ['Included', 'Everything in your plan, the website too — no extra charge'], ['First month $0', 'Stay only if it pays off']],
-    taskPh: 'e.g. “a site for my bakery with online orders” or “a bot that answers my clients in Instagram”',
-    chips: ['A website', 'More clients', 'AI that answers clients', 'Social media and ads', 'An app or a bot', 'A personal task'],
-    next1: 'Continue →', step2: 'Where should Vax send the plan?', name: 'Your name', contact: 'Phone, email or @telegram', send: 'Get the plan and price →',
-    sending: 'Opening your project chat…', err: 'Write a few words about the task.', err2: 'Add your name and a way to reach you.', fail: 'Something went wrong — try once more or write to hello@vaxogroup.com.',
-    after: 'Next: your private project chat opens. You see every step there and can ask Vax anything.',
-    ask: 'Just a question? Ask Vax in the chat →',
-    faqH: 'Questions',
-    faq: [
-      ['What exactly is free?', 'The plan and the exact price for your task — always free, before any payment. The first month of any plan costs $0. Everything listed in your plan, including the website, is built at no extra charge.'],
-      ['What costs extra?', 'Only custom work: your own app, a bot, an integration, special design. Vax names a fixed price upfront and you pay in stages.'],
-      ['I am not a business — can I still come?', 'Yes. A personal project, a page for yourself, an automation, a gift video — anything. One-off tasks are priced as a task, no subscription needed.'],
-      ['I already have a website or a CRM', 'We connect with one line of code — $0, nothing to rebuild. Your data stays with you and appears in the Vaxo app too.'],
-      ['How do I see the progress?', 'In your cabinet: the stage, percent done, every file and preview, and a chat where Vax and the team answer any time.'],
-      ['Can I cancel?', 'Yes, any time before the next payment. No year-long contracts.'],
-      ["Will you charge my card on your own?", "No. We never store your card or charge it by ourselves. Before each month you get an invoice and pay when you are ready — or you simply do not, and the plan ends."],
-      ["I do not understand AI. Is Vaxo for me?", "Yes — that is who it is built for. Write what you want like a message to a friend. Vax asks what it needs, suggests the next step and explains why. No settings, no models, no special words."],
-      ["Who sees my chats and data?", "Only you and the people at Vaxo working on your task. Your accounts, site and data stay in your name, and you can export them any time. We never sell your data."],
-      ["I only need answers — do I have to pay?", "No. Answers, plans and prices are free in Start. You pay only when you want Vax to remember your goal and get real things done and running."],
-    ],
-    sticky: "Ask Vax",
-    tasks: ["A website for a coffee shop", "A bot that books clients", "Instagram ads for a clinic", "A portfolio for a photographer", "An app for a fitness coach", "An online store", "Automatic replies to reviews", "A landing for a course", "A CRM for a team of five", "A wedding invitation site", "A Telegram bot for orders", "A price calculator"], plainEy: "The difference", plainH: "Vaxo is a partner that acts first.", plainP: "Vax does not wait until you know what to ask: it suggests what to do next and why, does the work, and asks for your “yes” only on what matters. Our team and our AI training are built in — you do not have to learn anything.", roles: [["🎨", "Designer"], ["💻", "Developer"], ["📣", "Marketer"], ["🤖", "Admin 24/7"]],
-  },
+const T = {
   ru: {
-    eyebrow: "Vaxo · ваша личная операционная система для жизни и дел",
-    tryH: "Попробуйте сами — спросите что угодно", tryS: "Нажмите на карточку — Vax сразу начнёт.", tryCards: [["🎮", "Сделай простую игру в браузере"], ["🥧", "Как испечь яблочный пирог?"], ["🌐", "Сайт для моей кофейни"], ["📈", "План первых 90 дней фрилансера"], ["🤖", "Бот, который записывает клиентов в WhatsApp"], ["✍️", "Напиши тост на свадьбу сестры"], ["📣", "Реклама в Instagram для моей клиники"], ["📱", "Сравни два телефона и скажи, какой взять"], ["🧩", "Автоматизируй мой еженедельный отчёт"], ["🎁", "Сценарий видео-поздравления для мамы"], ["💻", "Найди ошибку в моём коде"], ["🌍", "План: выучить испанский за 3 месяца"]],
-    limH: "Как работает запас", limP: "Это как мобильный интернет, только проще. Vax простыми словами скажет, сколько осталось, заранее. Вот как это устроено:", lim: [["📅", "Каждый день — новый запас", "Дневной запас обновляется каждые 24 часа. Израсходовали? Завтра он снова с вами — докупать ничего не нужно."], ["🗓️", "И один на неделю", "Он нужен, чтобы весь запас не ушёл за один день. Обновляется раз в неделю."], ["🔁", "Месяц или год — со дня оплаты", "Тариф действует со дня оплаты до того же числа следующего месяца. Год — 2 месяца в подарок. Карту мы сами не списываем: вы получаете счёт и платите, когда готовы."], ["➕", "Не хватило? Три выхода", "Подождать обновления, перейти на тариф выше в кабинете или попросить Vax о докупке по счёту — тариф менять не нужно."], ["🧭", "Выбирать модели не нужно", "Vax сам выбирает подходящий ИИ для каждой задачи: лёгкий для простых, сильный для сложных. Вы ничего не переключаете, а качество только растёт."]], tali: ["Я мою еду. И ваш список дел.", "Рук у меня нет. Но всё равно быстрее вас.", "Секунду, думаю… готово. Ого.", "Да, я енот. Нет, данные я не ворую.", "Не сплю. И не от кофе — просто енот.", "Цель в надёжных лапах. Печеньки — под вопросом.", "Псс… у меня уже есть идея.", "Сначала план, потом пирог. Можно и то и другое.", "Перерыв? Не знаю такого слова.", "Осторожно: я могу стать очень хорош."],
-    h1: ["Скажите, что хотите.", "Vax соберёт."],
-    sub: "Ваш личный исполнитель для жизни и дел. Напишите задачу — Vax начнёт сразу. Бесплатно, без регистрации.",
-    cta: 'Назвать цель Vax', see: 'Посмотреть примеры',
-    trust: ["Начать бесплатно", "Карта не нужна", "Отмена в любой момент"],
-    scenes: [["Нужен сайт для кофейни и реклама в Instagram", "План и цена готовы: сайт за 3 дня, реклама — с первой недели.", "Кофейня · сайт + реклама", ["Дизайн", "Сайт", "Реклама"], "🌐 Сайт запущен · 📣 пришли первые заявки"], ["Сделайте мне сайт-портфолио — я фотограф", "Готово за 2 дня. Добавить кнопку записи на съёмку?", "Портфолио · личный проект", ["Стиль", "Галерея", "Запись"], "📸 Портфолио работает · 💬 ИИ отвечает клиентам"], ["Бот, который записывает клиентов в WhatsApp", "Подключили. Отвечает 24/7 и пишет в ваш календарь.", "Бот WhatsApp · студия красоты", ["Сценарий", "Календарь", "Запуск"], "🤖 Бот работает · 📅 записи даже ночью"]], sceneLab: ["Вы", "Vax", "Ваш проект"],
-    getH: 'Что Vax делает для вас', getSub: 'Одна подписка вместо пяти сервисов и трёх сотрудников — и всё, что сверх неё, по запросу.',
-    get: [
-      ["🧠", "Что угодно, о чём спросите", "Рецепты, игры, тексты, код, планы — и большое: сайт, приложение, реклама. Подходящий ИИ Vax выбирает сам."],
-      ['🤖', 'ИИ-сотрудник 24/7', 'Отвечает в Instagram, WhatsApp, Telegram и на сайте. Записывает и продаёт, пока вы спите.'],
-      ['📥', 'Всё в одном приложении', 'Каждый клиент, переписка, оплата и задача — у вас в телефоне. Там же работает ваша команда.'],
-      ['📣', 'Соцсети и реклама', 'ИИ пишет посты, мы ведём рекламу и показываем, что окупается.'],
-      ['📊', 'Цифры вместо догадок', 'Откуда приходят люди, что делают, сколько стоит заявка. Каждое утро — план от ИИ.'],
-      ['✨', 'Что угодно ещё', 'Приложение, бот, интеграция, даже игра — для бизнеса или для вас. Цена заранее.'],
-    ],
-    billH: 'Та же работа — как обычно', bill: [['Администратор, который отвечает клиентам', 'от $3 300/мес'], ['Агентство: соцсети + реклама', 'от $1 500/мес'], ['Сайт у студии', 'от $1 000 разово'], ['Конструктор + CRM, которые настраиваете сами', 'от $17/мес + ваши вечера']],
-    billOld: 'Обычно', billOldV: 'от $4 800/мес', billNew: 'С Vaxo', billNewV: 'от $39/мес', billNote: 'Типичные цены в США, 2026: зарплата администратора, абонентка небольшого агентства, сайт у студии, тарифы Wix.',
-    howH: 'Как это работает', how: [['Назовите цель', 'Своими словами, хватит одной строки. Не задачу, а цель: «больше клиентов», «выглядеть серьёзно», «освободить вечера».'], ['Получите план, цену и причину', 'Бесплатно и до оплаты. Vax объяснит, почему именно такой план, сколько это стоит и что вы получите к какому сроку.'], ['Vax действует, вы решаете', 'Vax и команда делают работу. Каждую неделю Vax приходит со следующим шагом и причиной. Важное ждёт вашего «да».']],
-    demosH: "Откройте и попробуйте сами", demosSub: "Это рабочие примеры, а не картинки. Бренды придуманы — всё остальное настоящее. Под вашу задачу соберём так же — или лучше.",
-    demos: [["Сайт, от которого захватывает дух", "Движение, крупная типографика, заказ онлайн и ИИ-бариста — уровень 2026 года", "flagship"], ["Маркетинг на автопилоте", "Креативы, посты от ИИ, контент-план и отчёт по заявкам — каждый месяц", "marketing"], ["ИИ-сотрудник в каждом чате", "Отвечает в Instagram, WhatsApp, Telegram, записывает и принимает оплату — попробуйте сами", "ai-assistant"], ["Ваше приложение управления", "Заявки, переписки, команда и отчёты ИИ на одном экране", "eco-crm"]],
-    open: 'Открыть →', allDemos: 'Все примеры',
-    priceH: 'Тарифы', priceSub: "Простые вопросы почти везде бесплатны — и у нас тоже: «Старт» бесплатен навсегда. Платите, когда нужно больше, чем ответы: партнёр, который помнит вашу цель, действует первым и доводит дела до рабочего состояния — сайт онлайн, ответы в мессенджерах, посты вышли. У каждого тарифа показан типичный месяц, чтобы вы представляли, что получите.",
-    plans: [["Личный", "$19", "На каждый день", "Вопросы, тексты, планы, небольшие сборки — для одного человека, бизнес не нужен", "Типичный месяц: резюме и письма, план поездки, небольшая личная страница, недельный план от Vax"], ["Care", "$39", "Регулярно", "Больше места для настоящих проектов: сайт или приложение, ИИ в чате, все заявки в одном приложении", "Типичный месяц: сайт бизнеса в порядке, ИИ отвечает в чате сайта, новые тексты, месячный отчёт"], ["Growth", "$129", "Самый популярный", "Намного больше места и автоматизация: запись, оплаты, ИИ во всех мессенджерах, команда", "Типичный месяц: запись и оплаты работают, ИИ во всех мессенджерах, 12 постов, 2 улучшения, еженедельный отчёт"], ["Pro", "$299", "Для больших задач", "Максимальный запас: магазин или приложение, соцсети и реклама ведутся за вас, приоритет", "Типичный месяц: соцсети и реклама ведутся за вас, 8 видео или постов, новые функции, приоритет"]],
-    look: 'Как это выглядит',
-    custom: ["Компания или что-то особенное", "Много пользователей, свои правила, приложение, бот, интеграция, игра — для бизнеса, команды или личной задачи. Расскажите Vax: фиксированная цена называется до начала работы, а прогресс вы видите вживую. Есть своя CRM? Подключим.", "Рассказать Vax"],
-    mo: '/мес', priceNote: '«Старт» бесплатен всегда · первый месяц бесплатно на любом платном тарифе (проба с меньшим запасом) · год — 2 месяца в подарок · сменить или отменить можно в любой момент',
-    more: 'Что именно входит в каждый тариф',
-    planFull: [["Личный — $19/мес", ["Для одного человека — бизнес не нужен", "Задачи на каждый день: тексты, дизайн, планы, небольшие сборки", "Месячный запас виден в кабинете", "До этого бесплатный «Старт»: план, цена и один мини-результат"]], ["Care — $39/мес", ["Всё из «Личного», больше места", "Сайт или приложение для бизнеса либо подключение к вашему", "ИИ отвечает в чате сайта 24/7", "Все заявки в одном приложении, месячный отчёт ИИ"]], ["Growth — $129/мес", ["Всё из Care, намного больше места", "Запись и оплаты, ИИ в Instagram, WhatsApp, Telegram, Facebook", "ИИ просит отзывы и отвечает на них, 12 постов ИИ в месяц", "Команда до 5 человек с ролями, еженедельный отчёт"]], ["Pro — $299/мес", ["Всё из Growth, максимальный запас", "Магазин или приложение под вашим брендом", "Мы ведём ваши соцсети и рекламу (рекламный бюджет отдельно)", "Команда без ограничений, партнёрская программа, приоритет"]]],
-    startH: 'Что нужно сделать?', startSub: 'Напишите так, как рассказали бы другу. Vax ответит в течение минуты: вопросы, план и цена — бесплатно.',
-    free: [['Бесплатно', 'План, цена и сроки — до любой оплаты'], ['Уже включено', 'Всё из тарифа, сайт тоже — без доплат'], ['Первый месяц $0', 'Остаётесь, только если окупается']],
-    taskPh: 'Например: «сайт для пекарни с заказами онлайн» или «бот, который отвечает клиентам в Instagram»',
-    chips: ['Сайт', 'Больше клиентов', 'ИИ, который отвечает клиентам', 'Соцсети и реклама', 'Приложение или бот', 'Личная задача'],
-    next1: 'Дальше →', step2: 'Куда прислать план?', name: 'Как вас зовут', contact: 'Телефон, email или @telegram', send: 'Получить план и цену →',
-    sending: 'Открываем чат вашего проекта…', err: 'Напишите пару слов о задаче.', err2: 'Напишите имя и как с вами связаться.', fail: 'Что-то пошло не так — попробуйте ещё раз или напишите на hello@vaxogroup.com.',
-    after: 'Дальше откроется личный чат вашего проекта. Там видно каждый шаг, и там можно спросить Vax о чём угодно.',
-    ask: 'Просто вопрос? Спросите Vax в чате →',
+    h1: ['Скажите, что нужно.', 'Vax берётся за дело.'],
+    sub: 'Личный исполнитель для жизни и работы. Напишите задачу своими словами. Бесплатно, без регистрации.',
+    ph: ['Посчитай юнит-экономику моей подписки', 'Сделай сайт для моей кофейни', 'План: выучить испанский за 3 месяца', 'Напиши письмо арендодателю', 'Разложи запуск курса по шагам'],
+    go: 'Начать', askL: 'Напишите задачу',
+    showT: 'Как это выглядит', showH: ['Не просто текст.', 'Готовая вещь.'], showP: 'Там, где нужен инструмент, Vax кладёт его прямо в разговор. Им можно пользоваться сразу, и он остаётся у вас в кабинете.',
+    tabs: ['Считает', 'Раскладывает по шагам', 'Спрашивает перед важным'],
+    side: ['Разговор с Vax', 'Мои инструменты', 'Проекты', 'Оплаты'], allow: 'Запас на сегодня', box: 'Напишите сообщение…',
+    s1: { q: 'Посчитай юнит-экономику подписки: $39 в месяц, клиент остаётся 8 месяцев, привлечение стоит $60', a: 'Клиент приносит $312, на привлечение уходит $60. Окупаемость 5,2×: модель устойчивая.', t: 'Юнит-экономика подписки', f: [['Цена', '$39'], ['Срок клиента', '8 мес'], ['Привлечение', '$60']], o: [['Выручка с клиента', '$312'], ['LTV / CAC', '5,2×'], ['Остаётся с клиента', '$252']] },
+    s2: { q: 'Разложи по шагам запуск онлайн-курса', a: 'Начните с аудитории, а не с видео. Вот весь путь.', t: 'Запуск онлайн-курса', n: '2/7', i: ['Анализ целевой аудитории и их болей', 'Программа и структура курса', 'Первая минимальная версия', 'Платформа для обучения', 'Контент: видео, тексты, задания', 'Воронка продаж и прогрев', 'Рекламная кампания'] },
+    s3: { q: 'Удали мой проект и все данные', a: 'Это нельзя будет вернуть, поэтому сначала спрошу.', t: 'Проект и все данные будут удалены без восстановления.', n: 'Пока вы не нажмёте, ничего не произойдёт.', y: 'Применить', x: 'Отклонить' },
+    cap: 'Ответы из настоящих разговоров с Vax, сокращены для экрана.',
+    getH: 'Что вы получаете', now: 'Сразу и бесплатно', nowL: ['Ответ на любой вопрос', 'Калькулятор, чек-лист или трекер прямо в чате', 'План и цена вашей задачи до любой оплаты'],
+    plan: 'На тарифе, шаг за шагом', planL: ['Сайт или приложение для вашего дела', 'ИИ, который отвечает вашим клиентам', 'Соцсети и реклама'], planN: 'Это настоящая работа, а не кнопка. Срок и цену называем заранее, прогресс виден в кабинете.',
+    inH: 'Что внутри Vaxo',
+    crm: ['CRM и штаб', 'Клиенты, сделки и задачи в одном месте.', 'Открыть', ['Новые', 'В работе', 'Оплачено']],
+    par: ['Партнёрская программа', 'Рекомендуете Vaxo и получаете долю с каждой оплаты клиента.', 'Подробнее', [['50%', 'первая оплата'], ['30%', 'каждая следующая'], ['+10%', 'с продаж вашей команды']]],
+    exa: ['Живые примеры', 'Рабочие страницы, которые можно открыть и потрогать.', 'Смотреть'],
+    cab: ['Кабинет клиента', 'Ваши проекты, оплаты и инструменты.', 'В кабинет', ['Готовность проекта', 'Запас на сегодня', 'Мои инструменты', 'Счёт оплачен']],
+    prH: 'Тарифы', prS: 'Начните бесплатно. Первый месяц любого платного тарифа тоже бесплатный, с меньшим запасом.',
+    mo: '/мес', focus: 'Лучше всего начать здесь', trial: 'Месяц бесплатно', startB: 'Начать бесплатно', more: 'Ещё два варианта',
+    start: ['Старт', 'Для вопросов и простых инструментов.', ['Ответы на вопросы', 'Калькуляторы, чек-листы, трекеры', 'План и цена вашей задачи', 'Без карты и регистрации']],
+    care: ['Care', 'Для вашего дела.', ['Сайт или приложение либо подключение к вашему', 'ИИ отвечает в чате сайта 24/7', 'Все заявки в одном приложении', 'Отчёт каждый месяц']],
+    grow: ['Growth', 'Когда дело растёт.', ['Всё из Care и намного больше запаса', 'Запись и оплаты', 'ИИ в Instagram, WhatsApp, Telegram, Facebook', '12 постов в месяц, команда до 5 человек']],
+    pers: ['Личный', 'Для одного человека: тексты, планы, небольшие сборки.'],
+    pro: ['Pro', 'Магазин или приложение, ваши соцсети и реклама, приоритет.'],
+    prN: 'Карту мы не храним: перед каждым месяцем приходит счёт, и вы платите, только если остаётесь. Нужно что-то особенное? Напишите Vax: цену назовём до начала работы.',
     faqH: 'Вопросы',
-    faq: [
-      ['Что именно бесплатно?', 'План и точная цена вашей задачи — всегда бесплатно и до оплаты. Первый месяц любого тарифа — $0. Всё, что указано в тарифе, включая сайт, делаем без доплат.'],
-      ['За что доплата?', 'Только за своё, нестандартное: отдельное приложение, бот, интеграция, особый дизайн. Vax заранее называет точную цену, оплата по этапам.'],
-      ['Я не бизнес — можно к вам?', 'Да. Личный проект, страница о себе, автоматизация, видео-подарок — что угодно. Разовые задачи оплачиваются как задача, подписка не нужна.'],
-      ['У меня уже есть сайт или CRM', 'Подключимся одной строкой кода — $0, ничего не переделываем. Данные остаются у вас и появляются в приложении Vaxo.'],
-      ['Как я увижу прогресс?', 'В кабинете: этап, процент готовности, все файлы и превью, и чат, где Vax и команда отвечают в любой момент.'],
-      ['Можно отменить?', 'Да, в любой момент до следующего платежа. Никаких договоров на год.'],
-      ["Вы сами спишете деньги с карты?", "Нет. Мы не храним карту и сами с неё не списываем. Перед каждым месяцем вы получаете счёт и платите, когда готовы — или просто не платите, и тариф заканчивается."],
-      ["Я не разбираюсь в ИИ. Мне подойдёт?", "Да — Vaxo сделан именно для этого. Пишите, что хотите, как сообщение другу. Vax задаст нужные вопросы, предложит следующий шаг и объяснит почему. Никаких настроек, моделей и особых слов."],
-      ["Кто видит мои переписки и данные?", "Только вы и сотрудники Vaxo, которые делают вашу задачу. Аккаунты, сайт и данные остаются на ваше имя, и вы можете выгрузить их в любой момент. Данные мы не продаём."],
-      ["Мне нужны только ответы — платить обязательно?", "Нет. Ответы, планы и цены бесплатны в «Старте». Платите, только когда хотите, чтобы Vax помнил вашу цель и доводил реальные дела до результата."],
-    ],
-    sticky: "Спросить Vax",
-    tasks: ["Сайт для кофейни", "Бот, который записывает клиентов", "Реклама в Instagram для клиники", "Портфолио фотографа", "Приложение для фитнес-тренера", "Интернет-магазин", "Ответы на отзывы сами", "Лендинг для курса", "CRM для команды из пяти", "Сайт-приглашение на свадьбу", "Telegram-бот для заказов", "Калькулятор цены"], plainEy: "В чём разница", plainH: "Vaxo — партнёр, который действует первым.", plainP: "Vax не ждёт, пока вы поймёте, что спросить: предлагает, что делать дальше и почему, делает работу и просит ваше «да» только по важному. Наша команда и наше обучение ИИ уже внутри — учиться ничему не нужно.", roles: [["🎨", "Дизайнер"], ["💻", "Программист"], ["📣", "Маркетолог"], ["🤖", "Администратор 24/7"]],
+    faq: [['Я не разбираюсь в ИИ. Мне подойдёт?', 'Да. Пишите, что хотите, как сообщение другу. Настройки и особые слова не нужны.'], ['Вы сами спишете деньги с карты?', 'Нет. Мы не храним карту и сами с неё не списываем. Не оплатили счёт — тариф просто заканчивается.'], ['Кто видит мои данные?', 'Только вы и те, кто делает вашу задачу. Данные мы не продаём, выгрузить их можно в любой момент.'], ['Можно отменить?', 'Да, в любой момент до следующего счёта. Договоров на год нет.']],
+    endQ: 'Я мою еду. И ваш список дел.', endH: 'С чего начнём?',
+    dnote: 'Первый месяц бесплатно. Без карты. Счёт пришлём, только если останетесь.', demail: 'Ваша почта', dgo: 'Начать бесплатный месяц', dbad: 'Введите настоящую почту.', dfail: 'Что-то пошло не так — попробуйте ещё раз.',
+  },
+  en: {
+    h1: ['Say what you need.', 'Vax gets on with it.'],
+    sub: 'A personal doer for life and work. Write the task in your own words. Free, no sign-up.',
+    ph: ['Work out the unit economics of my subscription', 'Make a website for my coffee shop', 'A plan to learn Spanish in 3 months', 'Write a letter to my landlord', 'Break my course launch into steps'],
+    go: 'Start', askL: 'Write your task',
+    showT: 'What it looks like', showH: ['More than text.', 'A finished thing.'], showP: 'When a tool is what you need, Vax puts it right into the conversation. You can use it at once, and it stays in your cabinet.',
+    tabs: ['Counts', 'Breaks it into steps', 'Asks before anything big'],
+    side: ['Chat with Vax', 'My tools', 'Projects', 'Payments'], allow: 'Allowance today', box: 'Write a message…',
+    s1: { q: 'Work out the unit economics of a subscription: $39 a month, a customer stays 8 months, acquiring one costs $60', a: 'A customer brings in $312 and costs $60 to win. Payback is 5.2×, so the model holds up.', t: 'Subscription unit economics', f: [['Price', '$39'], ['Customer stays', '8 mo'], ['Acquisition', '$60']], o: [['Revenue per customer', '$312'], ['LTV / CAC', '5.2×'], ['Left per customer', '$252']] },
+    s2: { q: 'Break an online course launch into steps', a: 'Start with the audience, not the videos. Here is the whole path.', t: 'Online course launch', n: '2/7', i: ['Research the audience and its problems', 'Course program and structure', 'First minimal version', 'Learning platform', 'Content: video, text, assignments', 'Sales funnel and warm-up', 'Ad campaign'] },
+    s3: { q: 'Delete my project and all my data', a: 'This cannot be undone, so I will ask first.', t: 'The project and all its data will be deleted for good.', n: 'Nothing happens until you press.', y: 'Apply', x: 'Decline' },
+    cap: 'Answers from real conversations with Vax, shortened for the screen.',
+    getH: 'What you get', now: 'Instant and free', nowL: ['An answer to any question', 'A calculator, checklist or tracker right in the chat', 'A plan and a price for your task before any payment'],
+    plan: 'On a plan, step by step', planL: ['A website or app for your business', 'AI that answers your customers', 'Social media and ads'], planN: 'This is real work, not a button. We name the time and price up front, and you see progress in your cabinet.',
+    inH: 'Inside Vaxo',
+    crm: ['CRM and control room', 'Clients, deals and tasks in one place.', 'Open', ['New', 'In progress', 'Paid']],
+    par: ['Partner program', 'Recommend Vaxo and earn a share of every client payment.', 'Learn more', [['50%', 'first payment'], ['30%', 'every later one'], ['+10%', 'on your team’s sales']]],
+    exa: ['Live examples', 'Working pages you can open and try.', 'See them'],
+    cab: ['Client cabinet', 'Your projects, payments and tools.', 'Open cabinet', ['Project progress', 'Allowance today', 'My tools', 'Invoice paid']],
+    prH: 'Plans', prS: 'Start free. The first month of any paid plan is free too, with a smaller allowance.',
+    mo: '/mo', focus: 'The best place to start', trial: 'Try a month free', startB: 'Start free', more: 'Two more options',
+    start: ['Start', 'For questions and simple tools.', ['Answers to your questions', 'Calculators, checklists, trackers', 'A plan and a price for your task', 'No card, no sign-up']],
+    care: ['Care', 'For your business.', ['A website or app, or a link to yours', 'AI answers in your site chat 24/7', 'All requests in one app', 'A report every month']],
+    grow: ['Growth', 'When the business grows.', ['Everything in Care, far more allowance', 'Booking and payments', 'AI in Instagram, WhatsApp, Telegram, Facebook', '12 posts a month, a team of up to 5']],
+    pers: ['Personal', 'For one person: texts, plans, small builds.'],
+    pro: ['Pro', 'A shop or app, your social media and ads, priority.'],
+    prN: 'We do not store your card: an invoice comes before each month, and you pay only if you stay. Need something special? Tell Vax and we name the price before work starts.',
+    faqH: 'Questions',
+    faq: [['I know nothing about AI. Will it work for me?', 'Yes. Write what you want like a message to a friend. No settings, no special words.'], ['Will you charge my card yourselves?', 'No. We do not store your card or charge it. If you do not pay the invoice, the plan simply ends.'], ['Who sees my data?', 'Only you and the people working on your task. We do not sell data, and you can export it at any time.'], ['Can I cancel?', 'Yes, at any time before the next invoice. No yearly contracts.']],
+    endQ: 'I wash my food. And your to-do list.', endH: 'Where do we start?',
+    dnote: 'First month free. No card. We send an invoice only if you stay.', demail: 'Your email', dgo: 'Start free month', dbad: 'Enter a valid email.', dfail: 'Something went wrong — please try again.',
   },
   ua: {
-    eyebrow: "Vaxo · ваша особиста операційна система для життя і справ",
-    tryH: "Спробуйте самі — запитайте що завгодно", tryS: "Натисніть на картку — Vax одразу почне.", tryCards: [["🎮", "Зроби просту гру в браузері"], ["🥧", "Як спекти яблучний пиріг?"], ["🌐", "Сайт для моєї кав’ярні"], ["📈", "План перших 90 днів фрилансера"], ["🤖", "Бот, що записує клієнтів у WhatsApp"], ["✍️", "Напиши тост на весілля сестри"], ["📣", "Реклама в Instagram для моєї клініки"], ["📱", "Порівняй два телефони й скажи, який взяти"], ["🧩", "Автоматизуй мій щотижневий звіт"], ["🎁", "Сценарій відео-привітання для мами"], ["💻", "Знайди помилку в моєму коді"], ["🌍", "План: вивчити іспанську за 3 місяці"]],
-    limH: "Як працює запас", limP: "Це як мобільний інтернет, тільки простіше. Vax простими словами скаже, скільки залишилось, заздалегідь. Ось як це влаштовано:", lim: [["📅", "Щодня — новий запас", "Денний запас оновлюється кожні 24 години. Витратили? Завтра він знову з вами — докуповувати нічого не треба."], ["🗓️", "І один на тиждень", "Він потрібен, щоб увесь запас не пішов за один день. Оновлюється раз на тиждень."], ["🔁", "Місяць або рік — від дня оплати", "Тариф діє від дня оплати до тієї ж дати наступного місяця. Рік — 2 місяці в подарунок. Картку ми самі не списуємо: ви отримуєте рахунок і платите, коли готові."], ["➕", "Не вистачило? Три виходи", "Зачекати на оновлення, перейти на вищий тариф у кабінеті або попросити Vax про докупку за рахунком — тариф міняти не треба."], ["🧭", "Обирати моделі не треба", "Vax сам обирає потрібний ШІ для кожного завдання: легкий для простих, сильний для складних. Ви нічого не перемикаєте, а якість лише зростає."]], tali: ["Я мию їжу. І ваш список справ.", "Рук у мене нема. Але все одно швидше за вас.", "Секунду, думаю… готово. Ого.", "Так, я єнот. Ні, дані я не краду.", "Не сплю. І не від кави — просто єнот.", "Мета в надійних лапах. Печиво — під питанням.", "Псс… у мене вже є ідея.", "Спочатку план, потім пиріг. Можна і те, і те.", "Перерва? Не знаю такого слова.", "Обережно: я можу стати дуже добрим."],
-    h1: ["Скажіть, що хочете.", "Vax збере."],
-    sub: "Ваш особистий виконавець для життя і справ. Напишіть завдання — Vax почне одразу. Безкоштовно, без реєстрації.",
-    cta: 'Назвати мету Vax', see: 'Подивитися приклади',
-    trust: ["Почати безкоштовно", "Картка не потрібна", "Скасування будь-коли"],
-    scenes: [["Потрібен сайт для кавʼярні й реклама в Instagram", "План і ціна готові: сайт за 3 дні, реклама — з першого тижня.", "Кавʼярня · сайт + реклама", ["Дизайн", "Сайт", "Реклама"], "🌐 Сайт запущено · 📣 прийшли перші заявки"], ["Зробіть мені сайт-портфоліо — я фотограф", "Готово за 2 дні. Додати кнопку запису на зйомку?", "Портфоліо · особистий проєкт", ["Стиль", "Галерея", "Запис"], "📸 Портфоліо працює · 💬 ШІ відповідає клієнтам"], ["Бот, який записує клієнтів у WhatsApp", "Підключили. Відповідає 24/7 і пише у ваш календар.", "Бот WhatsApp · студія краси", ["Сценарій", "Календар", "Запуск"], "🤖 Бот працює · 📅 записи навіть уночі"]], sceneLab: ["Ви", "Vax", "Ваш проєкт"],
-    getH: 'Що Vax робить для вас', getSub: 'Одна підписка замість пʼяти сервісів і трьох працівників — і все, що понад неї, на запит.',
-    get: [
-      ["🧠", "Усе, про що спитаєте", "Рецепти, ігри, тексти, код, плани — і велике: сайт, застосунок, реклама. Потрібний ШІ Vax обирає сам."],
-      ['🤖', 'ШІ-працівник 24/7', 'Відповідає в Instagram, WhatsApp, Telegram і на сайті. Записує і продає, поки ви спите.'],
-      ['📥', 'Усе в одному застосунку', 'Кожен клієнт, листування, оплата і задача — у вас у телефоні. Там же працює ваша команда.'],
-      ['📣', 'Соцмережі й реклама', 'ШІ пише пости, ми ведемо рекламу і показуємо, що окупається.'],
-      ['📊', 'Цифри замість здогадок', 'Звідки приходять люди, що роблять, скільки коштує заявка. Щоранку — план від ШІ.'],
-      ['✨', 'Будь-що ще', 'Застосунок, бот, інтеграція, навіть гра — для бізнесу чи для вас. Ціна заздалегідь.'],
-    ],
-    billH: 'Та сама робота — як зазвичай', bill: [['Адміністратор, який відповідає клієнтам', 'від $3 300/міс'], ['Агенція: соцмережі + реклама', 'від $1 500/міс'], ['Сайт у студії', 'від $1 000 разово'], ['Конструктор + CRM, які налаштовуєте самі', 'від $17/міс + ваші вечори']],
-    billOld: 'Зазвичай', billOldV: 'від $4 800/міс', billNew: 'З Vaxo', billNewV: 'від $39/міс', billNote: 'Типові ціни в США, 2026: зарплата адміністратора, абонплата невеликої агенції, сайт у студії, тарифи Wix.',
-    howH: 'Як це працює', how: [['Назвіть мету', 'Своїми словами, вистачить одного рядка. Не завдання, а мету: «більше клієнтів», «виглядати серйозно», «звільнити вечори».'], ['Отримайте план, ціну й причину', 'Безкоштовно і до оплати. Vax пояснить, чому саме такий план, скільки це коштує і що ви отримаєте до якого строку.'], ['Vax діє, ви вирішуєте', 'Vax і команда роблять роботу. Щотижня Vax приходить із наступним кроком і причиною. Важливе чекає на ваше «так».']],
-    demosH: "Відкрийте й спробуйте самі", demosSub: "Це робочі приклади, а не картинки. Бренди вигадані — усе інше справжнє. Під ваше завдання зберемо так само — або краще.",
-    demos: [["Сайт, від якого перехоплює подих", "Рух, велика типографіка, замовлення онлайн і ШІ-бариста — рівень 2026 року", "flagship"], ["Маркетинг на автопілоті", "Креативи, пости від ШІ, контент-план і звіт по заявках — щомісяця", "marketing"], ["ШІ-працівник у кожному чаті", "Відповідає в Instagram, WhatsApp, Telegram, записує і приймає оплату — спробуйте самі", "ai-assistant"], ["Ваш застосунок керування", "Заявки, листування, команда і звіти ШІ на одному екрані", "eco-crm"]],
-    open: 'Відкрити →', allDemos: 'Усі приклади',
-    priceH: 'Тарифи', priceSub: "Прості питання майже скрізь безкоштовні — і в нас теж: «Старт» безкоштовний назавжди. Платите, коли потрібно більше, ніж відповіді: партнер, який пам’ятає вашу мету, діє першим і доводить справи до робочого стану — сайт онлайн, відповіді в месенджерах, пости вийшли. У кожного тарифу показано типовий місяць, щоб ви уявляли, що отримаєте.",
-    plans: [["Особистий", "$19", "На щодень", "Питання, тексти, плани, невеликі збірки — для однієї людини, бізнес не потрібен", "Типовий місяць: резюме й листи, план поїздки, невелика особиста сторінка, тижневий план від Vax"], ["Care", "$39", "Регулярно", "Більше місця для справжніх проєктів: сайт або застосунок, ШІ в чаті, усі заявки в одному застосунку", "Типовий місяць: сайт бізнесу в порядку, ШІ відповідає в чаті сайту, нові тексти, місячний звіт"], ["Growth", "$129", "Найпопулярніший", "Набагато більше місця й автоматизація: запис, оплати, ШІ в усіх месенджерах, команда", "Типовий місяць: запис і оплати працюють, ШІ в усіх месенджерах, 12 постів, 2 покращення, щотижневий звіт"], ["Pro", "$299", "Для великих завдань", "Максимальний запас: магазин або застосунок, соцмережі й реклама ведуться за вас, пріоритет", "Типовий місяць: соцмережі й реклама ведуться за вас, 8 відео чи постів, нові функції, пріоритет"]],
-    look: 'Як це виглядає',
-    custom: ["Компанія або щось особливе", "Багато користувачів, свої правила, застосунок, бот, інтеграція, гра — для бізнесу, команди чи особистого завдання. Розкажіть Vax: фіксована ціна називається до початку роботи, а прогрес ви бачите наживо. Є своя CRM? Підключимо.", "Розповісти Vax"],
-    mo: '/міс', priceNote: '«Старт» безкоштовний завжди · перший місяць безкоштовно на будь-якому платному тарифі (проба з меншим запасом) · рік — 2 місяці в подарунок · змінити чи скасувати можна будь-коли',
-    more: 'Що саме входить у кожен тариф',
-    planFull: [["Особистий — $19/міс", ["Для однієї людини — бізнес не потрібен", "Завдання на щодень: тексти, дизайн, плани, невеликі збірки", "Місячний запас видно в кабінеті", "До цього безкоштовний «Старт»: план, ціна й один міні-результат"]], ["Care — $39/міс", ["Усе з «Особистого», більше місця", "Сайт або застосунок для бізнесу чи підключення до вашого", "ШІ відповідає в чаті сайту 24/7", "Усі заявки в одному застосунку, місячний звіт ШІ"]], ["Growth — $129/міс", ["Усе з Care, набагато більше місця", "Запис і оплати, ШІ в Instagram, WhatsApp, Telegram, Facebook", "ШІ просить відгуки й відповідає на них, 12 постів ШІ на місяць", "Команда до 5 людей із ролями, щотижневий звіт"]], ["Pro — $299/міс", ["Усе з Growth, максимальний запас", "Магазин або застосунок під вашим брендом", "Ми ведемо ваші соцмережі й рекламу (рекламний бюджет окремо)", "Команда без обмежень, партнерська програма, пріоритет"]]],
-    startH: 'Що потрібно зробити?', startSub: 'Напишіть так, як розповіли б другу. Vax відповість протягом хвилини: запитання, план і ціна — безкоштовно.',
-    free: [['Безкоштовно', 'План, ціна і терміни — до будь-якої оплати'], ['Уже включено', 'Усе з тарифу, сайт теж — без доплат'], ['Перший місяць $0', 'Залишаєтеся, лише якщо окупається']],
-    taskPh: 'Наприклад: «сайт для пекарні із замовленнями онлайн» або «бот, який відповідає клієнтам в Instagram»',
-    chips: ['Сайт', 'Більше клієнтів', 'ШІ, який відповідає клієнтам', 'Соцмережі й реклама', 'Застосунок або бот', 'Особисте завдання'],
-    next1: 'Далі →', step2: 'Куди надіслати план?', name: 'Як вас звати', contact: 'Телефон, email або @telegram', send: 'Отримати план і ціну →',
-    sending: 'Відкриваємо чат вашого проєкту…', err: 'Напишіть кілька слів про завдання.', err2: 'Напишіть імʼя і як з вами звʼязатися.', fail: 'Щось пішло не так — спробуйте ще раз або напишіть на hello@vaxogroup.com.',
-    after: 'Далі відкриється особистий чат вашого проєкту. Там видно кожен крок, і там можна запитати Vax про що завгодно.',
-    ask: 'Просто запитання? Запитайте Vax у чаті →',
-    faqH: 'Запитання',
-    faq: [
-      ['Що саме безкоштовно?', 'План і точна ціна вашого завдання — завжди безкоштовно й до оплати. Перший місяць будь-якого тарифу — $0. Усе, що вказано в тарифі, зокрема сайт, робимо без доплат.'],
-      ['За що доплата?', 'Лише за своє, нестандартне: окремий застосунок, бот, інтеграція, особливий дизайн. Vax заздалегідь називає точну ціну, оплата за етапами.'],
-      ['Я не бізнес — можна до вас?', 'Так. Особистий проєкт, сторінка про себе, автоматизація, відео-подарунок — будь-що. Разові завдання оплачуються як завдання, підписка не потрібна.'],
-      ['У мене вже є сайт або CRM', 'Підключимося одним рядком коду — $0, нічого не переробляємо. Дані залишаються у вас і зʼявляються в застосунку Vaxo.'],
-      ['Як я побачу прогрес?', 'У кабінеті: етап, відсоток готовності, усі файли й превʼю, і чат, де Vax і команда відповідають будь-коли.'],
-      ['Можна скасувати?', 'Так, будь-коли до наступного платежу. Жодних договорів на рік.'],
-      ["Ви самі спишете гроші з картки?", "Ні. Ми не зберігаємо картку й самі з неї не списуємо. Перед кожним місяцем ви отримуєте рахунок і платите, коли готові — або просто не платите, і тариф закінчується."],
-      ["Я не розбираюся в ШІ. Мені підійде?", "Так — Vaxo зроблений саме для цього. Пишіть, що хочете, як повідомлення другу. Vax поставить потрібні запитання, запропонує наступний крок і пояснить чому. Жодних налаштувань, моделей і особливих слів."],
-      ["Хто бачить мої листування й дані?", "Лише ви та співробітники Vaxo, які виконують ваше завдання. Акаунти, сайт і дані лишаються на ваше імʼя, і ви можете вивантажити їх будь-коли. Дані ми не продаємо."],
-      ["Мені потрібні лише відповіді — платити обов’язково?", "Ні. Відповіді, плани й ціни безкоштовні в «Старті». Платіть, лише коли хочете, щоб Vax памʼятав вашу мету й доводив реальні справи до результату."],
-    ],
-    sticky: "Запитати Vax",
-    tasks: ["Сайт для кавʼярні", "Бот, який записує клієнтів", "Реклама в Instagram для клініки", "Портфоліо фотографа", "Застосунок для фітнес-тренера", "Інтернет-магазин", "Відповіді на відгуки самі", "Лендинг для курсу", "CRM для команди з пʼяти", "Сайт-запрошення на весілля", "Telegram-бот для замовлень", "Калькулятор ціни"], plainEy: "У чому різниця", plainH: "Vaxo — партнер, який діє першим.", plainP: "Vax не чекає, поки ви зрозумієте, що спитати: пропонує, що робити далі й чому, робить роботу й просить ваше «так» лише щодо важливого. Наша команда й наше навчання ШІ вже всередині — вчитися нічого не треба.", roles: [["🎨", "Дизайнер"], ["💻", "Програміст"], ["📣", "Маркетолог"], ["🤖", "Адміністратор 24/7"]],
+    h1: ['Скажіть, що потрібно.', 'Vax береться до справи.'],
+    sub: 'Особистий виконавець для життя і роботи. Напишіть завдання своїми словами. Безкоштовно, без реєстрації.',
+    ph: ['Порахуй юніт-економіку моєї підписки', 'Зроби сайт для моєї кав’ярні', 'План: вивчити іспанську за 3 місяці', 'Напиши листа орендодавцю', 'Розклади запуск курсу на кроки'],
+    go: 'Почати', askL: 'Напишіть завдання',
+    showT: 'Як це виглядає', showH: ['Не просто текст.', 'Готова річ.'], showP: 'Там, де потрібен інструмент, Vax кладе його просто в розмову. Ним можна користуватися одразу, і він залишається у вас у кабінеті.',
+    tabs: ['Рахує', 'Розкладає на кроки', 'Питає перед важливим'],
+    side: ['Розмова з Vax', 'Мої інструменти', 'Проєкти', 'Оплати'], allow: 'Запас на сьогодні', box: 'Напишіть повідомлення…',
+    s1: { q: 'Порахуй юніт-економіку підписки: $39 на місяць, клієнт залишається 8 місяців, залучення коштує $60', a: 'Клієнт приносить $312, на залучення йде $60. Окупність 5,2×: модель стійка.', t: 'Юніт-економіка підписки', f: [['Ціна', '$39'], ['Строк клієнта', '8 міс'], ['Залучення', '$60']], o: [['Виручка з клієнта', '$312'], ['LTV / CAC', '5,2×'], ['Залишається з клієнта', '$252']] },
+    s2: { q: 'Розклади на кроки запуск онлайн-курсу', a: 'Почніть з аудиторії, а не з відео. Ось увесь шлях.', t: 'Запуск онлайн-курсу', n: '2/7', i: ['Аналіз цільової аудиторії та її болів', 'Програма і структура курсу', 'Перша мінімальна версія', 'Платформа для навчання', 'Контент: відео, тексти, завдання', 'Воронка продажів і прогрів', 'Рекламна кампанія'] },
+    s3: { q: 'Видали мій проєкт і всі дані', a: 'Це не можна буде повернути, тому спершу запитаю.', t: 'Проєкт і всі дані буде видалено без відновлення.', n: 'Доки ви не натиснете, нічого не станеться.', y: 'Застосувати', x: 'Відхилити' },
+    cap: 'Відповіді зі справжніх розмов з Vax, скорочені для екрана.',
+    getH: 'Що ви отримуєте', now: 'Одразу й безкоштовно', nowL: ['Відповідь на будь-яке питання', 'Калькулятор, чек-лист або трекер просто в чаті', 'План і ціна вашого завдання до будь-якої оплати'],
+    plan: 'На тарифі, крок за кроком', planL: ['Сайт або застосунок для вашої справи', 'ШІ, який відповідає вашим клієнтам', 'Соцмережі та реклама'], planN: 'Це справжня робота, а не кнопка. Строк і ціну називаємо заздалегідь, прогрес видно в кабінеті.',
+    inH: 'Що всередині Vaxo',
+    crm: ['CRM і штаб', 'Клієнти, угоди й завдання в одному місці.', 'Відкрити', ['Нові', 'В роботі', 'Оплачено']],
+    par: ['Партнерська програма', 'Рекомендуєте Vaxo й отримуєте частку з кожної оплати клієнта.', 'Детальніше', [['50%', 'перша оплата'], ['30%', 'кожна наступна'], ['+10%', 'з продажів вашої команди']]],
+    exa: ['Живі приклади', 'Робочі сторінки, які можна відкрити й спробувати.', 'Дивитися'],
+    cab: ['Кабінет клієнта', 'Ваші проєкти, оплати й інструменти.', 'До кабінету', ['Готовність проєкту', 'Запас на сьогодні', 'Мої інструменти', 'Рахунок оплачено']],
+    prH: 'Тарифи', prS: 'Почніть безкоштовно. Перший місяць будь-якого платного тарифу теж безкоштовний, з меншим запасом.',
+    mo: '/міс', focus: 'Найкраще почати тут', trial: 'Місяць безкоштовно', startB: 'Почати безкоштовно', more: 'Ще два варіанти',
+    start: ['Старт', 'Для питань і простих інструментів.', ['Відповіді на питання', 'Калькулятори, чек-листи, трекери', 'План і ціна вашого завдання', 'Без картки й реєстрації']],
+    care: ['Care', 'Для вашої справи.', ['Сайт або застосунок чи підключення до вашого', 'ШІ відповідає в чаті сайту 24/7', 'Усі заявки в одному застосунку', 'Звіт щомісяця']],
+    grow: ['Growth', 'Коли справа росте.', ['Усе з Care і набагато більше запасу', 'Запис і оплати', 'ШІ в Instagram, WhatsApp, Telegram, Facebook', '12 постів на місяць, команда до 5 людей']],
+    pers: ['Особистий', 'Для однієї людини: тексти, плани, невеликі збірки.'],
+    pro: ['Pro', 'Магазин або застосунок, ваші соцмережі й реклама, пріоритет.'],
+    prN: 'Картку ми не зберігаємо: перед кожним місяцем приходить рахунок, і ви платите, лише якщо залишаєтесь. Потрібно щось особливе? Напишіть Vax: ціну назвемо до початку роботи.',
+    faqH: 'Питання',
+    faq: [['Я не розбираюсь у ШІ. Мені підійде?', 'Так. Пишіть, що хочете, як повідомлення другу. Налаштування й особливі слова не потрібні.'], ['Ви самі спишете гроші з картки?', 'Ні. Ми не зберігаємо картку й самі з неї не списуємо. Не оплатили рахунок — тариф просто закінчується.'], ['Хто бачить мої дані?', 'Лише ви й ті, хто робить ваше завдання. Дані ми не продаємо, вивантажити їх можна будь-коли.'], ['Можна скасувати?', 'Так, будь-коли до наступного рахунку. Договорів на рік немає.']],
+    endQ: 'Я мию їжу. І ваш список справ.', endH: 'З чого почнемо?',
+    dnote: 'Перший місяць безкоштовно. Без картки. Рахунок надішлемо, лише якщо залишитесь.', demail: 'Ваша пошта', dgo: 'Почати безкоштовний місяць', dbad: 'Введіть справжню пошту.', dfail: 'Щось пішло не так — спробуйте ще раз.',
   },
 }[lang];
-const HQ = {"en": {"ph": "What do you need? e.g. a plan to learn Spanish, a site for my café…", "go": "Ask Vax →", "note": "No sign-up. Free to start. Write it like you would tell a friend.", "start": ["Start", "$0", "Free forever", "Ask anything, get a plan and a price for your task, one free mini-result and free tools. No card, no sign-up.", "A typical month: questions answered, plans and prices for any idea, free tools"], "hint": "↓ Below: what you get, how it works and plans", "ben": [["🦝", "Moves first", "Suggests the next step — and tells you why."], ["✅", "Real results", "A site online, replies sent, posts out."], ["📱", "One place", "Phone, computer or browser. All in one app."]], "btnStart": "Start free", "btnTrial": "Try a month free", "dgo": "Start free month →", "dnote": "Free first month. No card. We send an invoice only if you stay.", "demail": "Your email", "dfail": "Something went wrong — please try again.", "dbad": "Enter a valid email."}, "ru": {"ph": "Что нужно? Например: план выучить испанский, сайт для моей кофейни…", "go": "Спросить Vax →", "note": "Без регистрации. Начать бесплатно. Пишите, как другу.", "start": ["Старт", "$0", "Бесплатно навсегда", "Спрашивайте что угодно, получайте план и цену задачи, один бесплатный мини-результат и бесплатные инструменты. Без карты и без регистрации.", "Типичный месяц: ответы на вопросы, план и цена для любой идеи, бесплатные инструменты"], "hint": "↓ Ниже: что вы получите, как это работает и тарифы", "ben": [["🦝", "Действует первым", "Предлагает следующий шаг — и объясняет почему."], ["✅", "Настоящий результат", "Сайт онлайн, ответы отправлены, посты вышли."], ["📱", "Всё в одном месте", "Телефон, компьютер или браузер. Одно приложение."]], "btnStart": "Начать бесплатно", "btnTrial": "Месяц бесплатно", "dgo": "Начать бесплатный месяц →", "dnote": "Первый месяц бесплатно. Без карты. Счёт пришлём, только если останетесь.", "demail": "Ваша почта", "dfail": "Что-то пошло не так — попробуйте ещё раз.", "dbad": "Введите настоящую почту."}, "ua": {"ph": "Що потрібно? Наприклад: план вивчити іспанську, сайт для моєї кав’ярні…", "go": "Запитати Vax →", "note": "Без реєстрації. Почати безкоштовно. Пишіть, як другу.", "start": ["Старт", "$0", "Безкоштовно назавжди", "Питайте що завгодно, отримуйте план і ціну завдання, один безкоштовний міні-результат та безкоштовні інструменти. Без картки й без реєстрації.", "Типовий місяць: відповіді на питання, план і ціна для будь-якої ідеї, безкоштовні інструменти"], "hint": "↓ Нижче: що ви отримаєте, як це працює й тарифи", "ben": [["🦝", "Діє першим", "Пропонує наступний крок — і пояснює чому."], ["✅", "Справжній результат", "Сайт онлайн, відповіді надіслано, пости вийшли."], ["📱", "Усе в одному місці", "Телефон, комп’ютер чи браузер. Один застосунок."]], "btnStart": "Почати безкоштовно", "btnTrial": "Місяць безкоштовно", "dgo": "Почати безкоштовний місяць →", "dnote": "Перший місяць безкоштовно. Без картки. Рахунок надішлемо, лише якщо залишитесь.", "demail": "Ваша пошта", "dfail": "Щось пішло не так — спробуйте ще раз.", "dbad": "Введіть справжню пошту."}}[lang];
-const SH = {"en": {"h": "Inside Vaxo", "c": [["CRM and control room", "Clients, deals and tasks in one place.", "Open"], ["Partner program", "50% of the first payment, 30% of every later one.", "Learn more"], ["Live examples", "Real working pages you can open and click.", "See examples"], ["Client cabinet", "Your projects, payments and tools.", "Open cabinet"]]}, "ru": {"h": "Что внутри Vaxo", "c": [["CRM и штаб", "Клиенты, сделки и задачи в одном месте.", "Открыть"], ["Партнёрская программа", "50% с первой оплаты, 30% с каждой следующей.", "Подробнее"], ["Живые примеры", "Настоящие рабочие страницы, которые можно открыть.", "Смотреть"], ["Кабинет клиента", "Ваши проекты, оплаты и инструменты.", "В кабинет"]]}, "ua": {"h": "Що всередині Vaxo", "c": [["CRM і штаб", "Клієнти, угоди й завдання в одному місці.", "Відкрити"], ["Партнерська програма", "50% з першої оплати, 30% з кожної наступної.", "Детальніше"], ["Живі приклади", "Справжні робочі сторінки, які можна відкрити.", "Дивитися"], ["Кабінет клієнта", "Ваші проєкти, оплати й інструменти.", "До кабінету"]]}}[lang];
-const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
+const ava = '/mascot/vax-happy.webp';
 ---
 
-<main class="home" id="top">
+<main class="hm" id="top">
   <section class="hero">
-    <div class="aur" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="in hero-grid">
-      <div class="hero-copy">
-        <h1 class="kin">{C.h1[0].split(' ').map((w, i) => <><span style={`--i:${i}`}>{w}</span>{' '}</>)}<span class="hl">{C.h1[1].split(' ').map((w, i) => <><span style={`--i:${i + 4}`}>{w}</span>{' '}</>)}</span></h1>
-        <p class="lead">{C.sub}</p>
-        <form class="hq" data-hq id="contact">
-          <input name="q" type="text" maxlength="400" autocomplete="off" placeholder={HQ.ph} aria-label={HQ.ph} />
-          <button class="btn" type="submit">{HQ.go}</button>
-        </form>
-      </div>
+    <div class="w">
+      <h1>{T.h1[0]}<span>{T.h1[1]}</span></h1>
+      <p class="lead">{T.sub}</p>
+      <form class="ask" data-ask id="contact" data-ph={JSON.stringify(T.ph)}>
+        <input name="q" type="text" maxlength="400" autocomplete="off" placeholder={T.ph[0]} aria-label={T.askL} />
+        <button type="submit">{T.go}</button>
+      </form>
     </div>
   </section>
 
-
-  <section class="sec rv" id="get">
-    <div class="in">
-      <div class="ben">{HQ.ben.map(([e, h, tx]) => <article><span>{e}</span><h3>{h}</h3><p>{tx}</p></article>)}</div>
-    </div>
-  </section>
-
-  <section class="sec how rv">
-    <div class="in">
-      <h2>{C.howH}</h2>
-      <ol class="steps">{C.how.map(([h, p], i) => <li><span class="n">{i + 1}</span><h3>{h}</h3><p>{p}</p></li>)}</ol>
-    </div>
-  </section>
-
-  <section class="sec rv" id="inside">
-    <div class="in">
-      <h2>{SH.h}</h2>
-      <div class="ins">{SH.c.map(([h, tx, go], i) => <a href={[P('/me/') + '#biz', P('/partners/'), P('/examples/'), P('/me/')][i]}><h3>{h}</h3><p>{tx}</p><span>{go} →</span></a>)}</div>
-    </div>
-  </section>
-
-  <section class="sec rv" id="demos">
-    <div class="in">
-      <h2>{C.tryH}</h2>
-      <p class="sub">{C.tryS}</p>
-      <div class="try">
-        {C.tryCards.map(([e, tx]) => <button type="button" class="tc" data-try={tx}><span>{e}</span>{tx}</button>)}
-      </div>
-      <div class="tali" data-tali data-phrases={JSON.stringify(C.tali)}><img src="/mascot/vax-happy.webp" alt="Vax" width="72" height="72" loading="lazy" /><span data-tali-t>{C.tali[0]}</span></div>
-      <a class="all" href={P('/examples/')}>{C.allDemos} →</a>
-    </div>
-  </section>
-
-  <section class="sec rv" id="pricing">
-    <div class="in">
-      <h2>{C.priceH}</h2>
-      <p class="sub">{C.priceSub}</p>
-      <div class="plans">
-        {[HQ.start, ...C.plans].map(([n, v, tag, d, sc], i) => (
-          <div class:list={['plan', { mid: i === 3 }]}>
-            <div class="cap" aria-hidden="true"><i style={`--w:${[4, 16, 36, 66, 100][i]}%`}></i></div>
-            <div class="pb">
-              <small class="tag">{tag}</small>
-              <b>{n}</b>
-              <span class="v">{v}<small>{C.mo}</small></span>
-              <p>{d}</p>
-              <em class="sc">{sc}</em>
-              <button type="button" class:list={['btn', 'pbtn', { ghost: i === 0 }]} data-plan={['start', 'personal', 'care', 'growth', 'pro'][i]} data-pn={n}>{i === 0 ? HQ.btnStart : HQ.btnTrial}</button>
+  <section class="sec" id="get">
+    <div class="w">
+      <p class="tag">{T.showT}</p>
+      <div class="top"><h2>{T.showH[0]}<br />{T.showH[1]}</h2><p>{T.showP}</p></div>
+      <div class="seg" role="tablist">{T.tabs.map((x, i) => <button type="button" role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-s={i}>{x}</button>)}</div>
+      <div class="app">
+        <aside class="side">
+          <span class="lg">VAXO<i>.</i></span>
+          {T.side.map((x, i) => <span class:list={['nv', { on: i === 0 }]}>{x}</span>)}
+          <div class="al">{T.allow}<i></i></div>
+        </aside>
+        <div class="talk">
+          <div class="log">
+            <div class="sc on">
+              <div class="me">{T.s1.q}</div>
+              <div class="vx"><img src={ava} alt="Vax" width="34" height="34" loading="lazy" /><div><p>{T.s1.a}</p>
+                <div class="tl"><h3>{T.s1.t}</h3>
+                  <div class="kv">{T.s1.f.map(([k, v]) => <div>{k}<b>{v}</b></div>)}</div>
+                  <div class="kv out">{T.s1.o.map(([k, v]) => <div>{k}<b>{v}</b></div>)}</div>
+                </div></div></div>
+            </div>
+            <div class="sc">
+              <div class="me">{T.s2.q}</div>
+              <div class="vx"><img src={ava} alt="Vax" width="34" height="34" loading="lazy" /><div><p>{T.s2.a}</p>
+                <div class="tl"><h3>{T.s2.t}<em>{T.s2.n}</em></h3>
+                  <ul class="chk">{T.s2.i.map((x, i) => <li class:list={{ d: i < 2 }}><s></s>{x}</li>)}</ul>
+                </div></div></div>
+            </div>
+            <div class="sc">
+              <div class="me">{T.s3.q}</div>
+              <div class="vx"><img src={ava} alt="Vax" width="34" height="34" loading="lazy" /><div><p>{T.s3.a}</p>
+                <div class="tl"><h3>{T.s3.t}</h3><small>{T.s3.n}</small><div class="yes"><span>{T.s3.y}</span><span>{T.s3.x}</span></div></div></div></div>
             </div>
           </div>
-        ))}
-        <div class="plan custom">
-          <div class="pb">
-            <small class="tag">✨</small>
-            <b>{C.custom[0]}</b>
-            <p>{C.custom[1]}</p>
-            <a class="btn" href="#" data-focus-hq>{C.custom[2]} →</a>
-          </div>
+          <div class="box">{T.box}</div>
         </div>
       </div>
-      <p class="pnote">{C.priceNote}</p>
-      <p class="pnote"><a href={`${lang === 'en' ? '' : '/' + lang}/how/`}>{{ en: 'How Vaxo works →', ru: 'Как работает Vaxo →', ua: 'Як працює Vaxo →' }[lang]}</a> · <a href={`${lang === 'en' ? '' : '/' + lang}/score/`}>{{ en: 'Free Vaxo Score →', ru: 'Бесплатный Vaxo Score →', ua: 'Безкоштовний Vaxo Score →' }[lang]}</a></p>
-      <details class="lim">
-        <summary>{C.limH}</summary>
-        <p class="sub">{C.limP}</p>
-        <div class="limg">{C.lim.map(([e, h, tx]) => <article><span>{e}</span><h4>{h}</h4><p>{tx}</p></article>)}</div>
-      </details>
-      <details class="more">
-        <summary>{C.more}</summary>
-        <div class="full">{C.planFull.map(([h, li]) => <div><h4>{h}</h4><ul>{(li as string[]).map((x) => <li>{x}</li>)}</ul></div>)}</div>
-      </details>
+      <p class="cap">{T.cap}</p>
     </div>
   </section>
 
+  <section class="sec alt">
+    <div class="w">
+      <h2>{T.getH}</h2>
+      <div class="two">
+        <div><h3>{T.now}</h3><ul>{T.nowL.map((x) => <li>{x}</li>)}</ul></div>
+        <div><h3>{T.plan}</h3><ul>{T.planL.map((x) => <li>{x}</li>)}</ul><p>{T.planN}</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="demos">
+    <div class="w">
+      <h2>{T.inH}</h2>
+      <div class="grid">
+        <a class="card" href={P('/me/') + '#biz'}>
+          <div class="mock crm" aria-hidden="true">
+            {T.crm[3].map((col, c) => <div class="col"><b>{col}</b>{[...Array(3 - c)].map((_, r) => <div class="deal"><i></i><u style={`width:${[78, 58, 68][(r + c) % 3]}%`}></u></div>)}</div>)}
+          </div>
+          <h3>{T.crm[0]}</h3><p>{T.crm[1]}</p><span>{T.crm[2]} →</span>
+        </a>
+        <a class="card" href={P('/partners/')}>
+          <div class="mock par" aria-hidden="true">
+            {T.par[3].map(([n, k], i) => <div class:list={[{ hi: i === 0 }]}><b>{n}</b><small>{k}</small></div>)}
+          </div>
+          <h3>{T.par[0]}</h3><p>{T.par[1]}</p><span>{T.par[2]} →</span>
+        </a>
+        <a class="card" href={P('/examples/')}>
+          <div class="mock brw" aria-hidden="true">
+            <div class="bar"><i></i><i></i><i></i></div>
+            <img src={`/examples/thumbs/flagship-${lang}.jpg`} alt="" loading="lazy" width="640" height="400" />
+          </div>
+          <h3>{T.exa[0]}</h3><p>{T.exa[1]}</p><span>{T.exa[2]} →</span>
+        </a>
+        <a class="card" href={P('/me/')}>
+          <div class="mock cab" aria-hidden="true">
+            <div class="ln"><small>{T.cab[3][0]}</small><em>45%</em><u><i style="width:45%"></i></u></div>
+            <div class="ln"><small>{T.cab[3][1]}</small><u><i style="width:72%"></i></u></div>
+            <div class="rw"><span>{T.cab[3][2]}</span><span class="ok">✓ {T.cab[3][3]}</span></div>
+          </div>
+          <h3>{T.cab[0]}</h3><p>{T.cab[1]}</p><span>{T.cab[2]} →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="pricing">
+    <div class="w">
+      <h2>{T.prH}</h2>
+      <p class="ps">{T.prS}</p>
+      <div class="plans">
+        <article class="pl">
+          <h3>{T.start[0]}</h3><p class="pd">{T.start[1]}</p>
+          <div class="pr">$0</div>
+          <button type="button" class="pb" data-plan="start">{T.startB}</button>
+          <ul>{T.start[2].map((x) => <li>{x}</li>)}</ul>
+        </article>
+        <article class="pl focus">
+          <p class="fl">{T.focus}</p>
+          <h3>{T.care[0]}</h3><p class="pd">{T.care[1]}</p>
+          <div class="pr">$39<small>{T.mo}</small></div>
+          <button type="button" class="pb main" data-plan="care" data-pn={T.care[0]}>{T.trial}</button>
+          <ul>{T.care[2].map((x) => <li>{x}</li>)}</ul>
+        </article>
+        <article class="pl">
+          <h3>{T.grow[0]}</h3><p class="pd">{T.grow[1]}</p>
+          <div class="pr">$129<small>{T.mo}</small></div>
+          <button type="button" class="pb" data-plan="growth" data-pn={T.grow[0]}>{T.trial}</button>
+          <ul>{T.grow[2].map((x) => <li>{x}</li>)}</ul>
+        </article>
+      </div>
+      <p class="mo">{T.more}</p>
+      <div class="ex">
+        <div><div><b>{T.pers[0]}</b><p>{T.pers[1]}</p></div><strong>$19<small>{T.mo}</small></strong><button type="button" class="pb" data-plan="personal" data-pn={T.pers[0]}>{T.trial}</button></div>
+        <div><div><b>{T.pro[0]}</b><p>{T.pro[1]}</p></div><strong>$299<small>{T.mo}</small></strong><button type="button" class="pb" data-plan="pro" data-pn={T.pro[0]}>{T.trial}</button></div>
+      </div>
+      <p class="pn">{T.prN}</p>
+    </div>
+  </section>
 
   <section class="sec" id="faq">
-    <div class="in narrow">
-      <h2>{C.faqH}</h2>
-      {C.faq.slice(-4).concat(C.faq.slice(0, 2)).map(([q, a]) => <details class="qa"><summary>{q}</summary><p>{a}</p></details>)}
+    <div class="w nar">
+      <h2>{T.faqH}</h2>
+      <div class="faq">{T.faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}</div>
     </div>
   </section>
 
-  <a class="sticky" href="#top" data-focus-hq>{C.sticky} →</a>
-<dialog class="pdlg" data-pdlg>
-    <form data-pform novalidate data-bad={HQ.dbad} data-fail={HQ.dfail}>
+  <section class="sec end">
+    <div class="w">
+      <img src={ava} alt="Vax" width="88" height="88" loading="lazy" />
+      <q>{T.endQ}</q>
+      <h2>{T.endH}</h2>
+      <form class="ask" data-ask2>
+        <input name="q" type="text" maxlength="400" autocomplete="off" placeholder={T.askL} aria-label={T.askL} />
+        <button type="submit">{T.go}</button>
+      </form>
+    </div>
+  </section>
+
+  <dialog class="pdlg" data-pdlg>
+    <form data-pform novalidate data-bad={T.dbad} data-fail={T.dfail}>
       <button type="button" class="x" data-pclose aria-label="×">×</button>
       <h3 data-pname></h3>
-      <p>{HQ.dnote}</p>
-      <input type="email" name="email" required autocomplete="email" placeholder={HQ.demail} aria-label={HQ.demail} />
+      <p>{T.dnote}</p>
+      <input type="email" name="email" required autocomplete="email" placeholder={T.demail} aria-label={T.demail} />
       <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
-      <button class="btn wide" type="submit">{HQ.dgo}</button>
+      <button class="pb main" type="submit">{T.dgo}</button>
       <p class="pm" data-pmsg role="status"></p>
     </form>
   </dialog>
 </main>
 
 <script>
-  const hq = document.querySelector<HTMLFormElement>('[data-hq]');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hq = document.querySelector<HTMLFormElement>('[data-ask]');
+  const input = hq?.querySelector('input');
   const askVax = (q: string) => { const a = document.createElement('a'); a.href = '#'; a.setAttribute('data-vax-chat', ''); a.dataset.vaxAsk = q; a.hidden = true; document.body.appendChild(a); a.click(); a.remove(); };
-  hq?.addEventListener('submit', (e) => { e.preventDefault(); const inp = hq.elements.namedItem('q') as HTMLInputElement; const q = inp.value.trim(); if (!q) { inp.focus(); return; } inp.value = ''; askVax(q); });
+  document.querySelectorAll<HTMLFormElement>('[data-ask], [data-ask2]').forEach((f) => f.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const i = f.querySelector('input')!; const q = i.value.trim();
+    if (!q) { i.focus(); return; }
+    i.value = ''; askVax(q);
+  }));
+  const toTop = () => { window.scrollTo({ top: 0, behavior: calm ? 'auto' : 'smooth' }); setTimeout(() => input?.focus({ preventScroll: true }), 500); };
+  if (location.hash === '#contact') setTimeout(() => input?.focus({ preventScroll: true }), 400);
 
-  document.querySelectorAll<HTMLButtonElement>('.tc').forEach((b) => (b.onclick = () => askVax(b.dataset.try || '')));
-  if (location.hash === '#contact') setTimeout(() => hq?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), 400);
-  const toTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => hq?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), 500); };
-  document.querySelectorAll<HTMLElement>('[data-focus-hq]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); toTop(); }));
+  // The placeholder shows what people can ask.
+  if (hq && input && !calm) {
+    let ph: string[] = []; try { ph = JSON.parse(hq.dataset.ph || '[]'); } catch { /* none */ }
+    let n = 0;
+    setInterval(() => { n = (n + 1) % ph.length; input.placeholder = ph[n]; }, 3200);
+  }
+
+  // Product window: three scenes; rotates only while on screen and until the visitor picks one.
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('[data-s]')], scenes = [...document.querySelectorAll<HTMLElement>('.sc')];
+  let cur = 0, auto = true, seen = false;
+  const show = (n: number) => { cur = n; tabs.forEach((t, i) => t.setAttribute('aria-selected', String(i === n))); scenes.forEach((s, i) => s.classList.toggle('on', i === n)); };
+  tabs.forEach((t, i) => (t.onclick = () => { auto = false; show(i); }));
+  const app = document.querySelector('.app');
+  if (app && 'IntersectionObserver' in window) new IntersectionObserver((e) => { seen = e[0].isIntersecting; }).observe(app);
+  if (!calm) setInterval(() => { if (auto && seen) show((cur + 1) % scenes.length); }, 7000);
+
   // Plans: one tap + an email starts the free month (the lead opens the private project chat). Start = just ask Vax.
   const dlg = document.querySelector<HTMLDialogElement>('[data-pdlg]');
   const pf = document.querySelector<HTMLFormElement>('[data-pform]');
@@ -332,324 +330,184 @@ const msgs = { sending: C.sending, err: C.err, err2: C.err2, fail: C.fail };
     if (r?.ok && out?.room) { location.href = `/room/?t=${out.room}`; return; }
     btn.disabled = false; pm.textContent = r?.status === 400 ? (pf.dataset.bad || '') : (pf.dataset.fail || '');
   });
-  document.querySelectorAll<HTMLElement>('[data-tali]').forEach((el) => {
-    let ph: string[] = []; try { ph = JSON.parse(el.dataset.phrases || '[]'); } catch { /* none */ }
-    const t = el.querySelector('[data-tali-t]'); let n = 0;
-    if (t && ph.length > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(() => { n = (n + 1) % ph.length; t.textContent = ph[n]; }, 6000);
-  });
-  // Sections fade up as they enter the screen.
-  const io = 'IntersectionObserver' in window ? new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add('seen'), io!.unobserve(e.target))), { rootMargin: '0px 0px -10% 0px' }) : null;
-  document.querySelectorAll('.rv').forEach((el) => (io ? io.observe(el) : el.classList.add('seen')));
-
-  // Hero: one task after another — request, Vax's plan, live progress, result (not a business screenshot).
-  const st = document.querySelector<HTMLElement>('[data-stage]');
-  if (st) {
-    const S = JSON.parse(st.dataset.scenes!) as [string, string, string, string[], string][];
-    const q = (k: string) => st.querySelector<HTMLElement>(`[data-${k}]`)!;
-    let i = 0;
-    const play = () => {
-      const [ask, ans, title, steps, res] = S[i % S.length];
-      st.classList.remove('on'); void st.offsetWidth;
-      q('q').textContent = ask; q('a').textContent = ans; q('t').textContent = title; q('r').textContent = res;
-      q('steps').innerHTML = steps.map((x) => `<li>${x}</li>`).join('');
-      st.classList.add('on');
-      i++;
-    };
-    play();
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(play, 9500);
-  }
-
-  // Two steps, no "form" feeling: first the task (chips fill it), then only name + contact → the private project chat.
-  const f = document.querySelector<HTMLFormElement>('[data-start]');
-  if (f) {
-    const M = JSON.parse(f.dataset.msg!) as Record<string, string>;
-    const msg = f.querySelector<HTMLElement>('[data-smsg]')!;
-    const task = f.querySelector<HTMLTextAreaElement>('[name=task]')!;
-    const s1 = f.querySelector<HTMLElement>('[data-s1]')!, s2 = f.querySelector<HTMLElement>('[data-s2]')!;
-    const started = Date.now();
-    f.querySelectorAll<HTMLButtonElement>('.chips button').forEach((b) => (b.onclick = () => {
-      const v = b.textContent || '';
-      if (!task.value.includes(v)) task.value = task.value ? `${task.value.trim().replace(/[:,]$/, '')}, ${v.toLowerCase()}` : `${v}: `;
-      task.focus();
-    }));
-    const go = () => {
-      if (task.value.trim().replace(/[:,\s]+$/, '').length < 3) { msg.textContent = M.err; task.focus(); return; }
-      msg.textContent = ''; s1.hidden = true; s2.hidden = false;
-      f.querySelector<HTMLInputElement>('[name=name]')!.focus();
-    };
-    f.querySelector<HTMLButtonElement>('[data-go]')!.onclick = go;
-    task.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) go(); });
-    f.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const d = new FormData(f);
-      const name = String(d.get('name') || '').trim(), contact = String(d.get('contact') || '').trim();
-      if (!name || contact.length < 4) { msg.textContent = M.err2; return; }
-      let ref = '';
-      try { ref = localStorage.getItem('vaxo_ref') || ''; } catch {}
-      const btn = f.querySelector<HTMLButtonElement>('button[type=submit]')!;
-      btn.disabled = true; msg.textContent = M.sending;
-      const r = await fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Vx-Src': (window as unknown as { vxSrc?: () => string }).vxSrc?.() || '' },
-        body: JSON.stringify({ mode: 'request', interest: 'any', name, contact, lang: f.dataset.lang, ref, website: d.get('website'), startedAt: Math.min(started, Date.now() - 2500), message: task.value.trim() || '—' }),
-      }).catch(() => null);
-      const out = r ? await r.json().catch(() => null) : null;
-      if (r?.ok && out?.room) { location.href = `/room/?t=${out.room}`; return; }
-      btn.disabled = false;
-      msg.textContent = r?.status === 400 ? M.err2 : M.fail;
-    });
-  }
 </script>
 
 <style>
-  .home { --r: 22px; }
-  .in { max-width: 1160px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
-  .narrow { max-width: 820px; }
-  .sec { padding: clamp(64px, 8vw, 110px) 0 0; }
-  h1 { font-size: clamp(40px, 6vw, 72px); line-height: 1.02; letter-spacing: -0.035em; margin: 0 0 20px; }
-  h2 { font-size: clamp(30px, 4vw, 46px); line-height: 1.08; letter-spacing: -0.03em; margin: 0 0 12px; }
-  h3 { margin: 0 0 6px; font-size: 18px; letter-spacing: -0.01em; }
-  .hl { color: var(--accText); display: block; }
-  .eyebrow { color: var(--accText); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 12px; margin: 0 0 14px; }
-  .lead { font-size: clamp(17px, 1.6vw, 20px); line-height: 1.55; color: var(--mut); max-width: 56ch; margin: 0 0 28px; }
-  .sub { color: var(--mut); font-size: 18px; line-height: 1.5; max-width: 64ch; margin: 0 0 32px; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 15px 24px; border-radius: 999px; background: var(--acc); color: var(--dark-ink); text-decoration: none; border: 0; cursor: pointer; font: inherit; font-weight: 800; transition: transform 0.15s; }
-  .btn:hover { transform: translateY(-1px); }
-  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 600; }
-  .btn.wide { width: 100%; }
-  .acts { display: flex; gap: 12px; flex-wrap: wrap; }
-  .trust { list-style: none; padding: 0; margin: 22px 0 0; display: flex; gap: 18px; flex-wrap: wrap; color: var(--mut); font-size: 14px; }
+  .hm { --s1: #0d0c0a; --s2: #14120e; --s3: #1c1a15; --ln: rgba(255, 255, 255, 0.08); --tx: #f5f1e8; --mt: #a29c8f; --dm: #7c766b; --am: #e4a93f; background: var(--s1); color: var(--tx); overflow-x: clip; }
+  .w { max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+  .nar { max-width: 860px; }
+  h1, h2, h3, p, ul { margin: 0; padding: 0; }
+  ul { list-style: none; }
+  h2 { font-weight: 600; font-size: clamp(34px, 5.2vw, 68px); line-height: 1.03; letter-spacing: -0.035em; }
+  .sec { padding: clamp(72px, 10vw, 130px) 0; background: var(--s1); scroll-margin-top: 56px; }
+  .sec.alt { background: var(--s2); }
+  .tag { font: 500 12px/1 var(--mono, 'JetBrains Mono', monospace); letter-spacing: 0.06em; text-transform: uppercase; color: var(--am); margin-bottom: 16px; }
 
-  .hero { position: relative; overflow: hidden; padding: clamp(40px, 7vw, 96px) 0 0; background: #17150F; color: #F5F2EC; }
-  .hero .lead, .hero .trust { color: color-mix(in srgb, #F5F2EC 72%, transparent); }
-  .hero .eyebrow { color: #E8B65A; }
-  .hero .hl { color: #E4A93F; }
-  .hero .btn.ghost { color: #F5F2EC; border-color: rgba(245, 242, 236, 0.22); }
-  .aur i { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.55; animation: aur 18s ease-in-out infinite; }
-  .aur i:nth-child(1) { width: 46vw; height: 46vw; left: -12vw; top: -18vw; background: #E4A93F; opacity: 0.28; }
-  .aur i:nth-child(2) { width: 36vw; height: 36vw; right: -10vw; top: 6vw; background: #b4612a; opacity: 0.3; animation-delay: -6s; }
-  .aur i:nth-child(3) { width: 30vw; height: 30vw; left: 30vw; bottom: -18vw; background: #6d5dfc; opacity: 0.18; animation-delay: -12s; }
-  @keyframes aur { 50% { transform: translate(4vw, 3vw) scale(1.1); } }
-  .hero-grid { position: relative; }
-  .kin span { display: inline-block; opacity: 0; transform: translateY(0.5em) rotate(2deg); animation: rise 0.8s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(var(--i) * 90ms + 100ms); }
-  .kin .hl { display: block; }
-  @keyframes rise { to { opacity: 1; transform: none; } }
-  .marq { position: relative; margin-top: clamp(36px, 5vw, 64px); border-top: 1px solid rgba(245, 242, 236, 0.12); padding: 18px 0; overflow: hidden; white-space: nowrap; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-  .marq div { display: inline-flex; gap: 14px; animation: marq 48s linear infinite; }
-  .marq span { padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(245, 242, 236, 0.16); color: rgba(245, 242, 236, 0.85); font-size: 15px; }
-  .marq span:nth-child(3n) { border-color: rgba(228, 169, 63, 0.5); color: #E8B65A; }
-  @keyframes marq { to { transform: translateX(-50%); } }
-  .plain-in { text-align: center; display: grid; justify-items: center; }
-  .plain h2 { max-width: 20ch; font-size: clamp(32px, 4.6vw, 56px); }
-  .plain .sub { max-width: 60ch; font-size: 19px; }
-  .roles { list-style: none; padding: 0; margin: 6px 0 0; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-  .roles li { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: var(--surf); border: 1px solid var(--line); font-weight: 700; box-shadow: 0 10px 24px -18px rgba(0, 0, 0, 0.4); }
-  .roles span { font-size: 20px; }
-  .rv { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.8,.2,1); }
-  .rv.seen { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } .kin span { opacity: 1; transform: none; animation: none; } .marq div, .aur i { animation: none; } }
-  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; }
-  .stage { position: relative; min-height: 440px; display: grid; gap: 12px; align-content: center; padding: 28px; border-radius: 28px; background: radial-gradient(120% 90% at 85% 10%, color-mix(in srgb, var(--acc) 38%, transparent), transparent 60%), radial-gradient(90% 80% at 0% 100%, color-mix(in srgb, #6d5dfc 30%, transparent), transparent 60%), var(--deep, #111); color: var(--deepInk, #fff); overflow: hidden; box-shadow: 0 50px 90px -40px rgba(0, 0, 0, 0.55); }
-  .glow { position: absolute; inset: -40% -20% auto auto; width: 70%; aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, var(--acc) 30%, transparent); filter: blur(60px); animation: drift 12s ease-in-out infinite; }
-  @keyframes drift { 50% { transform: translate(-30%, 20%); } }
-  .msg { position: relative; max-width: 82%; padding: 12px 16px; border-radius: 18px; display: grid; gap: 4px; font-size: 16px; line-height: 1.4; backdrop-filter: blur(8px); }
-  .msg small { font-size: 12px; opacity: 0.7; }
-  .msg.me { justify-self: end; background: color-mix(in srgb, #fff 92%, transparent); color: #111; border-bottom-right-radius: 6px; }
-  .msg.vax { justify-self: start; background: color-mix(in srgb, #fff 12%, transparent); border: 1px solid color-mix(in srgb, #fff 18%, transparent); border-bottom-left-radius: 6px; }
-  .proj { position: relative; padding: 16px; border-radius: 18px; background: color-mix(in srgb, #fff 8%, transparent); border: 1px solid color-mix(in srgb, #fff 16%, transparent); display: grid; gap: 10px; }
-  .ph { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
-  .ph small { opacity: 0.75; }
-  .bar { height: 8px; border-radius: 99px; background: color-mix(in srgb, #fff 14%, transparent); overflow: hidden; }
-  .bar i { display: block; height: 100%; width: 8%; border-radius: inherit; background: linear-gradient(90deg, var(--acc), #ffd98a); }
-  .stp { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; flex-wrap: wrap; font-size: 13px; }
-  .stp li { padding: 5px 10px; border-radius: 99px; background: color-mix(in srgb, #fff 10%, transparent); opacity: 0.45; transition: opacity 0.3s, background 0.3s; }
-  .res { position: relative; justify-self: start; padding: 10px 14px; border-radius: 14px; background: #22c55e; color: #052e16; font-weight: 700; font-size: 14px; opacity: 0; transform: translateY(8px); }
-  .stage.on .msg.me { animation: pop 0.5s both; }
-  .stage.on .msg.vax { animation: pop 0.5s 0.9s both; }
-  .stage.on .proj { animation: pop 0.5s 1.6s both; }
-  .stage.on .bar i { animation: fill 2.6s 1.9s cubic-bezier(.3,.7,.2,1) forwards; }
-  .stage.on .stp li { animation: lit 0.3s forwards; }
-  .stage.on .stp li:nth-child(1) { animation-delay: 2.2s; } .stage.on .stp li:nth-child(2) { animation-delay: 3s; } .stage.on .stp li:nth-child(3) { animation-delay: 3.8s; }
-  .stage.on .res { animation: pop 0.5s 4.6s both; }
-  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
-  @keyframes fill { to { width: 100%; } }
-  @keyframes lit { to { opacity: 1; background: color-mix(in srgb, var(--acc) 55%, transparent); } }
-  @media (prefers-reduced-motion: reduce) { .stage * { animation: none !important; } .res, .stp li { opacity: 1; transform: none; } .bar i { width: 100%; } }
+  .hero { position: relative; min-height: calc(100svh - 72px); display: grid; place-items: center; text-align: center; overflow: hidden; padding: 56px 0 96px; background: var(--s1); }
+  .hero::before { content: ''; position: absolute; left: 50%; bottom: -118vw; width: 170vw; height: 130vw; transform: translateX(-50%); border-radius: 50%; background: var(--s1); box-shadow: 0 -1px 0 rgba(228, 169, 63, 0.75), 0 -10px 60px rgba(228, 169, 63, 0.3), 0 -60px 220px rgba(228, 169, 63, 0.16); }
+  .hero .w { position: relative; width: 100%; }
+  h1 { font-weight: 600; font-size: clamp(44px, 8.2vw, 112px); line-height: 0.98; letter-spacing: -0.045em; }
+  h1 span { display: block; color: var(--am); }
+  .lead { max-width: 600px; margin: 26px auto 0; font-size: clamp(17px, 1.7vw, 21px); line-height: 1.45; color: var(--mt); }
+  .ask { display: flex; align-items: center; gap: 8px; max-width: 680px; margin: 40px auto 0; padding: 8px 8px 8px 24px; border-radius: 999px; background: var(--s3); border: 1px solid rgba(255, 255, 255, 0.14); box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5); transition: border-color 0.2s; }
+  .ask:focus-within { border-color: var(--am); }
+  .ask input { flex: 1; min-width: 0; height: 48px; border: 0; outline: 0; background: none; color: var(--tx); font: 400 17px var(--font, inherit); }
+  .ask input::placeholder { color: #8d877b; }
+  .ask button { flex: none; height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: var(--am); color: #1a1408; font: 600 16px var(--font, inherit); cursor: pointer; transition: filter 0.2s; }
+  .ask button:hover { filter: brightness(1.08); }
 
-  .get { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
-  .get article { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: var(--r); padding: 24px; background: var(--surf); grid-column: span 2; transition: transform 0.25s, box-shadow 0.25s; }
-  .get article:hover { transform: translateY(-4px); box-shadow: 0 24px 50px -30px rgba(0, 0, 0, 0.45); }
-  .get .b0 { grid-column: span 3; grid-row: span 2; background: linear-gradient(160deg, color-mix(in srgb, var(--acc) 22%, var(--surf)), var(--surf) 60%); }
-  .get .b1, .get .b2 { grid-column: span 3; }
-  .get .b5 { background: var(--deep, #17150F); color: var(--deepInk, #F5F2EC); }
-  .get .b5 p { color: color-mix(in srgb, var(--deepInk, #F5F2EC) 72%, transparent); }
-  .viz { margin-top: 16px; }
-  .viz.site { position: relative; height: 170px; border-radius: 14px; background: var(--bg); border: 1px solid var(--line); padding: 14px; display: grid; gap: 10px; align-content: start; box-shadow: 0 30px 50px -36px rgba(0, 0, 0, 0.5); }
-  .viz.site i { height: 10px; width: 40%; border-radius: 6px; background: var(--ink); opacity: 0.85; }
-  .viz.site b { height: 8px; border-radius: 6px; background: var(--line); width: 80%; }
-  .viz.site b + b { width: 60%; }
-  .viz.site em { width: 110px; height: 30px; border-radius: 99px; background: var(--acc); animation: pulse 2.4s ease-in-out infinite; }
-  @keyframes pulse { 50% { transform: scale(1.06); box-shadow: 0 0 0 8px color-mix(in srgb, var(--acc) 22%, transparent); } }
-  .viz.chat { display: grid; gap: 8px; font-size: 13px; }
-  .viz.chat span { justify-self: end; max-width: 85%; padding: 8px 12px; border-radius: 14px 14px 4px 14px; background: var(--ink); color: var(--bg); }
-  .viz.chat .v { justify-self: start; border-radius: 14px 14px 14px 4px; background: color-mix(in srgb, var(--acc) 25%, var(--surf2, #ECE7DD)); color: var(--ink); }
-  .viz.bars { display: flex; align-items: flex-end; gap: 6px; height: 56px; }
-  .viz.bars i { flex: 1; height: var(--h); border-radius: 6px 6px 2px 2px; background: linear-gradient(var(--acc), color-mix(in srgb, var(--acc) 40%, transparent)); }
-  .viz.spark { width: 100%; height: 48px; }
-  .viz.spark path { fill: none; stroke: var(--acc); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 200; stroke-dashoffset: 200; transition: stroke-dashoffset 1.6s ease; }
-  .seen .viz.spark path { stroke-dashoffset: 0; }
-  .get .ico { font-size: 26px; display: block; margin-bottom: 10px; }
-  .get p, .steps p { margin: 0; color: var(--mut); line-height: 1.5; }
-  .bill { margin-top: 18px; display: grid; grid-template-columns: 1.5fr 1fr; border-radius: var(--r); overflow: hidden; border: 1px solid var(--line); }
-  .bill-l { padding: 26px; background: var(--surf); }
-  .bill-l ul { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 10px; }
-  .bill-l li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--line); padding-bottom: 10px; }
-  .bill-l s, .old s { color: var(--mut); white-space: nowrap; }
-  .note { color: var(--mut); font-size: 12px; margin: 0; }
-  .bill-r { padding: 26px; background: var(--deep, #111); color: var(--deepInk, #fff); display: grid; gap: 14px; align-content: center; }
-  .old, .new { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-  .old s { color: color-mix(in srgb, var(--deepInk, #fff) 55%, transparent); font-size: 20px; }
-  .new b { font-size: clamp(30px, 3.4vw, 40px); color: var(--acc); letter-spacing: -0.02em; }
+  .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+  .top p { max-width: 400px; color: var(--mt); }
+  .seg { display: flex; gap: 4px; margin: 44px 0 14px; overflow-x: auto; scrollbar-width: none; }
+  .seg button { flex: none; padding: 10px 16px; border: 0; border-radius: 999px; background: none; color: var(--mt); font: 400 15px var(--font, inherit); cursor: pointer; }
+  .seg button[aria-selected='true'] { background: var(--s3); color: var(--tx); }
+  .app { display: grid; grid-template-columns: 232px 1fr; min-height: 560px; border: 1px solid var(--ln); border-radius: 18px; background: var(--s2); overflow: hidden; box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55); }
+  .side { padding: 18px 14px; border-right: 1px solid var(--ln); display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--mt); }
+  .lg { padding: 2px 10px 16px; color: var(--tx); font-weight: 700; font-size: 16px; }
+  .lg i { color: var(--am); font-style: normal; }
+  .nv { padding: 8px 10px; border-radius: 8px; }
+  .nv.on { background: var(--s3); color: var(--tx); }
+  .al { margin-top: auto; padding: 12px 10px 4px; font-size: 13px; }
+  .al i { display: block; height: 4px; margin-top: 8px; border-radius: 9px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+  .al i::after { content: ''; display: block; width: 72%; height: 100%; background: var(--am); }
+  .talk { display: flex; flex-direction: column; min-width: 0; }
+  .log { flex: 1; padding: clamp(18px, 3vw, 32px); display: flex; flex-direction: column; gap: 16px; max-width: 680px; width: 100%; margin: 0 auto; }
+  .sc { display: none; }
+  .sc.on { display: contents; }
+  .sc.on .me { animation: up 0.3s both; }
+  .sc.on .vx { animation: up 0.3s 0.12s both; }
+  .sc.on .tl { animation: up 0.35s 0.28s both; }
+  @keyframes up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .sc.on * { animation: none !important; } }
+  .me { align-self: flex-end; max-width: 84%; padding: 10px 15px; border-radius: 16px 16px 4px 16px; background: var(--s3); font-size: 15px; }
+  .vx { display: flex; gap: 12px; }
+  .vx img { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--s3); }
+  .vx > div { min-width: 0; flex: 1; }
+  .vx p { padding-top: 5px; font-size: 15px; }
+  .tl { margin-top: 12px; padding: 16px; border: 1px solid var(--ln); border-radius: 14px; background: var(--s3); }
+  .tl h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+  .tl h3 em { float: right; font: 500 12px var(--mono, monospace); color: var(--mt); }
+  .kv { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .kv div { padding: 10px 12px; border: 1px solid var(--ln); border-radius: 10px; font-size: 12.5px; line-height: 1.3; color: var(--mt); }
+  .kv b { display: block; margin-top: 4px; font-size: 18px; font-weight: 500; color: var(--tx); }
+  .kv.out { margin-top: 8px; }
+  .kv.out div { border-color: transparent; background: rgba(228, 169, 63, 0.12); }
+  .kv.out b { font-size: 22px; font-weight: 600; color: var(--am); }
+  .chk { display: grid; gap: 8px; font-size: 14.5px; }
+  .chk li { display: flex; gap: 10px; align-items: flex-start; }
+  .chk s { flex: none; position: relative; width: 18px; height: 18px; margin-top: 2px; border: 1.5px solid #5d584d; border-radius: 5px; text-decoration: none; }
+  .chk li.d { color: var(--mt); text-decoration: line-through; }
+  .chk li.d s { background: var(--am); border-color: var(--am); }
+  .chk li.d s::after { content: ''; position: absolute; left: 5px; top: 1px; width: 4px; height: 9px; border: solid #1a1408; border-width: 0 2px 2px 0; transform: rotate(42deg); }
+  .tl small { display: block; font-size: 13px; color: var(--mt); }
+  .yes { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .yes span { padding: 9px 16px; border-radius: 9px; font-size: 14px; font-weight: 600; background: var(--am); color: #1a1408; }
+  .yes span + span { background: none; border: 1px solid var(--ln); color: var(--tx); font-weight: 500; }
+  .box { margin: 0 clamp(14px, 3vw, 32px) 16px; padding: 13px 16px; border: 1px solid var(--ln); border-radius: 12px; color: var(--dm); font-size: 15px; }
+  .cap { margin-top: 14px; font-size: 14px; color: var(--dm); }
 
-  .steps { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .steps li { position: relative; padding: 24px; border-radius: var(--r); background: color-mix(in srgb, var(--acc) 10%, var(--surf)); border: 1px solid color-mix(in srgb, var(--acc) 30%, var(--line)); }
-  .steps .n { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--acc); color: var(--dark-ink); font-weight: 800; margin-bottom: 12px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 88px); margin-top: clamp(36px, 5vw, 60px); }
+  .two h3 { font-size: clamp(21px, 2.2vw, 26px); font-weight: 600; letter-spacing: -0.015em; padding-bottom: 16px; border-bottom: 1px solid var(--am); }
+  .two li { padding: 17px 0; border-bottom: 1px solid var(--ln); font-size: clamp(18px, 1.7vw, 20px); }
+  .two p { margin-top: 16px; color: var(--mt); font-size: 15px; }
 
-  .demos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-  .demo { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--surf); text-decoration: none; color: inherit; transition: transform 0.15s, box-shadow 0.15s; }
-  .demo:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -24px rgba(0, 0, 0, 0.4); }
-  .demo img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
-  .dt { display: grid; gap: 4px; padding: 14px 16px 16px; flex: 1; align-content: start; }
-  .dt small { color: var(--mut); line-height: 1.4; font-size: 14px; }
-  .dt i { font-style: normal; color: var(--accText); font-weight: 700; margin-top: 4px; }
-  .all { display: inline-block; margin-top: 16px; color: var(--accText); font-weight: 700; text-decoration: none; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: clamp(32px, 5vw, 56px); }
+  .card { display: flex; flex-direction: column; padding: 16px 16px 24px; border: 1px solid var(--ln); border-radius: 20px; background: var(--s3); color: inherit; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+  .card:hover { border-color: rgba(228, 169, 63, 0.5); transform: translateY(-2px); }
+  .card h3 { margin: 20px 8px 0; font-size: 22px; font-weight: 600; letter-spacing: -0.015em; }
+  .card > p { margin: 6px 8px 0; color: var(--mt); font-size: 15px; }
+  .card > span { margin: 12px 8px 0; color: var(--am); font-size: 15px; font-weight: 600; }
+  .mock { height: 220px; border: 1px solid var(--ln); border-radius: 12px; background: var(--s1); overflow: hidden; }
+  .crm { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px; }
+  .col b { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 500; color: var(--mt); }
+  .deal { display: flex; gap: 8px; align-items: center; padding: 10px 8px; margin-bottom: 6px; border: 1px solid var(--ln); border-radius: 8px; background: var(--s2); }
+  .deal i { flex: none; width: 16px; height: 16px; border-radius: 50%; background: rgba(228, 169, 63, 0.35); }
+  .deal u { display: block; height: 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.16); text-decoration: none; }
+  .par { display: grid; grid-template-columns: 1.25fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; padding: 12px; }
+  .par div { display: flex; flex-direction: column; justify-content: flex-end; padding: 12px 14px; border: 1px solid var(--ln); border-radius: 10px; background: var(--s2); }
+  .par div.hi { grid-row: 1 / 3; background: rgba(228, 169, 63, 0.12); border-color: transparent; }
+  .par b { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+  .par .hi b { font-size: clamp(48px, 6vw, 68px); line-height: 1; color: var(--am); }
+  .par small { font-size: 12.5px; color: var(--mt); }
+  .brw { display: flex; flex-direction: column; }
+  .bar { flex: none; display: flex; gap: 5px; padding: 9px 12px; border-bottom: 1px solid var(--ln); }
+  .bar i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.16); }
+  .brw img { flex: 1; min-height: 0; width: 100%; object-fit: cover; object-position: top; display: block; }
+  .cab { display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 18px; }
+  .ln { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+  .ln small { font-size: 13px; color: var(--mt); }
+  .ln em { font: 600 15px var(--font, inherit); font-style: normal; }
+  .ln u { grid-column: 1 / 3; display: block; height: 6px; border-radius: 9px; background: rgba(255, 255, 255, 0.1); overflow: hidden; text-decoration: none; }
+  .ln u i { display: block; height: 100%; background: var(--am); }
+  .rw { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .rw span { padding: 8px 12px; border: 1px solid var(--ln); border-radius: 9px; background: var(--s2); font-size: 13px; }
+  .rw .ok { color: var(--am); }
 
-  .plans { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
-  .plan { border: 1px solid var(--line); border-radius: var(--r); background: var(--surf); display: flex; flex-direction: column; overflow: hidden; }
-  .plan.mid { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc) inset; }
-  .plan.custom { background: var(--deep, #111); color: var(--deepInk, #fff); border-color: transparent; }
-  .plan.custom p { color: color-mix(in srgb, var(--deepInk, #fff) 75%, transparent); }
-  .pv { position: relative; display: block; }
-  .pv img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
-  .pv em { position: absolute; left: 10px; bottom: 10px; font-style: normal; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: var(--surf); color: var(--ink); box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.4); }
-  .pb { padding: 18px 20px 22px; display: grid; gap: 6px; flex: 1; align-content: start; }
-  .pb .tag { color: var(--accText); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
-  .custom .tag { font-size: 20px; }
-  .pb b { font-size: 18px; }
-  .plan .v { font-size: 34px; font-weight: 800; letter-spacing: -0.03em; }
-  .plan .v small { font-size: 15px; color: var(--mut); font-weight: 600; }
-  .plan p { margin: 0; color: var(--mut); line-height: 1.45; }
-  .custom .btn { margin-top: 10px; }
-  .pnote { color: var(--mut); margin: 14px 0 0; font-size: 15px; }
-  .more { margin-top: 14px; border: 1px solid var(--line); border-radius: 16px; padding: 14px 18px; background: var(--surf); }
-  .more summary { cursor: pointer; font-weight: 700; }
-  .full { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 14px; }
-  .full h4 { margin: 0 0 8px; }
-  .full ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; color: var(--mut); line-height: 1.4; font-size: 14px; }
+  .ps { margin-top: 14px; color: var(--mt); max-width: 620px; }
+  .plans { display: grid; grid-template-columns: 1fr 1.14fr 1fr; gap: 16px; align-items: stretch; margin-top: clamp(32px, 5vw, 52px); }
+  .pl { display: flex; flex-direction: column; padding: clamp(22px, 2.6vw, 32px); border: 1px solid var(--ln); border-radius: 20px; background: var(--s3); }
+  .pl.focus { position: relative; border-color: var(--am); box-shadow: 0 0 0 1px var(--am), 0 30px 90px rgba(228, 169, 63, 0.14); }
+  .fl { position: absolute; top: -13px; left: clamp(22px, 2.6vw, 32px); padding: 4px 12px; border-radius: 999px; background: var(--am); color: #1a1408; font-size: 13px; font-weight: 600; }
+  .pl h3 { font-size: 24px; font-weight: 600; letter-spacing: -0.015em; }
+  .pd { margin-top: 4px; color: var(--mt); font-size: 15px; }
+  .pr { margin: 22px 0; font-size: clamp(44px, 4.6vw, 60px); font-weight: 600; letter-spacing: -0.035em; line-height: 1; }
+  .pr small, .ex strong small { font-size: 15px; font-weight: 400; letter-spacing: 0; color: var(--mt); }
+  .pb { display: block; width: 100%; padding: 13px 16px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; background: transparent; color: var(--tx); font: 600 15px var(--font, inherit); cursor: pointer; transition: border-color 0.2s, filter 0.2s; }
+  .pb:hover { border-color: var(--tx); }
+  .pb.main { border-color: var(--am); background: var(--am); color: #1a1408; }
+  .pb.main:hover { filter: brightness(1.08); }
+  .pl ul { display: grid; gap: 10px; margin-top: 22px; font-size: 15px; color: #d5d0c4; }
+  .pl li { position: relative; padding-left: 22px; }
+  .pl li::before { content: ''; position: absolute; left: 2px; top: 5px; width: 5px; height: 10px; border: solid var(--am); border-width: 0 1.6px 1.6px 0; transform: rotate(42deg); }
+  .mo { margin-top: 32px; font-size: 14px; color: var(--dm); }
+  .ex { display: grid; gap: 10px; margin-top: 10px; }
+  .ex > div { display: grid; grid-template-columns: 1fr auto 210px; gap: 20px; align-items: center; padding: 16px 20px; border: 1px solid var(--ln); border-radius: 14px; background: var(--s3); }
+  .ex b { font-size: 17px; font-weight: 600; }
+  .ex p { color: var(--mt); font-size: 14.5px; }
+  .ex strong { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; white-space: nowrap; }
+  .pn { margin-top: 20px; max-width: 760px; color: var(--mt); font-size: 15px; }
 
-  .start-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 56px); align-items: start; padding: clamp(28px, 4vw, 48px); border-radius: 28px; background: color-mix(in srgb, var(--acc) 12%, var(--surf)); border: 1px solid color-mix(in srgb, var(--acc) 35%, var(--line)); }
-  .free { list-style: none; padding: 0; margin: 0 0 20px; display: grid; gap: 10px; }
-  .free li { display: grid; gap: 2px; padding: 12px 14px; border-radius: 14px; background: var(--surf); border: 1px solid var(--line); }
-  .free b { font-size: 16px; }
-  .free span { color: var(--mut); font-size: 14px; }
-  .askvax { color: var(--accText); font-weight: 700; text-decoration: none; }
-  .sform { display: grid; gap: 14px; background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
-  .sform [data-s1], .sform [data-s2] { display: grid; gap: 14px; }
-  .sform [hidden] { display: none !important; }
-  .sform label { display: grid; gap: 6px; font-weight: 600; font-size: 14px; }
-  .sform input, .sform textarea { font: inherit; padding: 13px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
-  .sform textarea { font-size: 17px; line-height: 1.45; resize: vertical; }
-  .s2h { margin: 0; font-weight: 800; font-size: 18px; }
-  .after { margin: 0; color: var(--mut); font-size: 13px; line-height: 1.4; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chips button { font: inherit; font-size: 14px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
-  .chips button:hover { border-color: var(--acc); }
-  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-  .msg { margin: 0; color: var(--mut); min-height: 1.2em; font-size: 14px; }
+  .faq { margin-top: clamp(28px, 4vw, 44px); border-top: 1px solid var(--ln); }
+  details { border-bottom: 1px solid var(--ln); }
+  summary { list-style: none; display: flex; justify-content: space-between; gap: 20px; padding: 20px 0; font-size: clamp(18px, 1.8vw, 21px); font-weight: 500; cursor: pointer; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-size: 24px; line-height: 1; color: var(--mt); }
+  details[open] summary::after { content: '–'; }
+  details p { padding: 0 0 22px; max-width: 720px; color: var(--mt); }
 
-  .qa { border-bottom: 1px solid var(--line); padding: 16px 0; }
-  .qa summary { cursor: pointer; font-weight: 700; font-size: 17px; }
-  .qa p { color: var(--mut); line-height: 1.55; margin: 10px 0 0; }
-  #faq { padding-bottom: clamp(64px, 8vw, 110px); }
+  .end { text-align: center; background: var(--s2); }
+  .end img { display: block; width: 88px; height: 88px; margin: 0 auto 18px; border-radius: 50%; background: var(--s3); }
+  .end q { display: block; quotes: none; margin-bottom: 12px; color: var(--mt); }
 
-  .sticky { display: none; }
-  @media (max-width: 1280px) { .plans { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 1060px) { .plans { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 960px) {
-    .hero-grid, .bill, .start-grid { grid-template-columns: 1fr; }
-    .demos { grid-template-columns: repeat(2, 1fr); }
-    .get { grid-template-columns: repeat(2, 1fr); }
-    .get article, .get .b0, .get .b1, .get .b2 { grid-column: span 1; grid-row: auto; }
-    .steps, .full { grid-template-columns: 1fr; }
-    .stage { min-height: 380px; }
+  .pdlg { width: min(420px, calc(100vw - 32px)); padding: 28px; border: 1px solid var(--ln); border-radius: 20px; background: var(--s3); color: var(--tx); }
+  .pdlg::backdrop { background: rgba(0, 0, 0, 0.7); }
+  .pdlg h3 { font-size: 24px; font-weight: 600; }
+  .pdlg p { margin-top: 8px; color: var(--mt); font-size: 15px; }
+  .pdlg input[type='email'] { width: 100%; box-sizing: border-box; margin: 16px 0 10px; padding: 13px 14px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 12px; background: var(--s1); color: var(--tx); font: 400 16px var(--font, inherit); }
+  .pdlg .x { position: absolute; top: 12px; right: 14px; border: 0; background: none; color: var(--mt); font-size: 24px; cursor: pointer; }
+  .hp { position: absolute; left: -9999px; opacity: 0; }
+  .pm { min-height: 20px; }
+
+  @media (max-width: 980px) {
+    .plans { grid-template-columns: 1fr; }
+    .pl.focus { order: -1; margin-top: 12px; }
+    .ex > div { grid-template-columns: 1fr auto; }
+    .ex .pb { grid-column: 1 / 3; }
   }
-  @media (max-width: 560px) {
-    .get, .demos, .plans { grid-template-columns: 1fr; }
-    .get article, .get .b0, .get .b1, .get .b2 { grid-column: auto; }
-    .sticky { display: block; position: fixed; left: 16px; right: 88px; bottom: 14px; z-index: 40; text-align: center; padding: 15px; border-radius: 999px; background: var(--acc); color: var(--dark-ink); font-weight: 800; text-decoration: none; box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.45); }
+  @media (max-width: 820px) {
+    .app { grid-template-columns: 1fr; min-height: 0; }
+    .side { display: none; }
+    .two, .grid { grid-template-columns: 1fr; }
+    .hero::before { bottom: -150vw; width: 260vw; height: 180vw; }
   }
-
-  .try { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .tc { font: inherit; text-align: left; display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surf); color: var(--ink); cursor: pointer; line-height: 1.35; font-weight: 600; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s; }
-  .tc span { font-size: 26px; }
-  .tc:hover { transform: translateY(-2px); border-color: var(--acc); box-shadow: 0 12px 28px -18px rgba(0, 0, 0, 0.45); }
-  .tali { display: flex; align-items: center; gap: 12px; margin: 22px 0 0; }
-  .tali img { width: 72px; height: 72px; object-fit: contain; flex: none; }
-  .tali span { position: relative; padding: 10px 14px; border-radius: 16px 16px 16px 4px; background: var(--surf); border: 1px solid var(--line); font-weight: 600; font-size: 15px; transition: opacity 0.3s; }
-  .cap { height: 8px; margin: 18px 18px 0; border-radius: 999px; background: color-mix(in srgb, var(--ink) 10%, transparent); overflow: hidden; }
-  .cap i { display: block; height: 100%; width: var(--w); border-radius: 999px; background: var(--acc); }
-  .lim { margin-top: 32px; }
-  .lim h3 { font-size: clamp(22px, 3vw, 30px); margin: 0 0 6px; letter-spacing: -0.02em; }
-  .limg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
-  .limg article { border: 1px solid var(--line); border-radius: var(--r); background: var(--surf); padding: 16px; }
-  .limg article > span { font-size: 24px; }
-  .limg h4 { margin: 8px 0 6px; font-size: 16px; }
-  .limg p { margin: 0; color: var(--mut); line-height: 1.45; font-size: 14.5px; }
-  @media (max-width: 1060px) { .try, .limg { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) { .try, .limg { grid-template-columns: 1fr; } }
-  .plan .sc { font-style: normal; font-weight: 600; font-size: 13.5px; line-height: 1.4; color: var(--ink); margin-top: 6px; padding-top: 10px; border-top: 1px dashed var(--line); }
-
-  .hq { display: flex; gap: 8px; margin: 22px 0 8px; max-width: 560px; }
-  .hq input { flex: 1; min-width: 0; font: inherit; font-size: 16px; padding: 15px 18px; border-radius: 999px; border: 1px solid rgba(245, 242, 236, 0.28); background: rgba(255, 255, 255, 0.08); color: #F5F2EC; }
-  .hq input::placeholder { color: rgba(245, 242, 236, 0.55); }
-  .hq input:focus { outline: 2px solid #E4A93F; outline-offset: 2px; }
-  .hqn { margin: 0 0 12px; font-size: 13.5px; color: rgba(245, 242, 236, 0.62); }
-  .hqc { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-  .hqc button { font: inherit; font-size: 13.5px; padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(245, 242, 236, 0.2); background: transparent; color: #F5F2EC; cursor: pointer; }
-  .hqc button:hover { border-color: #E4A93F; }
-  .plan.custom { grid-column: 1 / -1; }
-  .limg { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)) !important; }
-  @media (max-width: 560px) { .hq { flex-direction: column; } .hq .btn { width: 100%; } }
-
-  .hero-grid { grid-template-columns: 1fr !important; justify-items: center; text-align: center; }
-  .hero-copy { max-width: 780px; }
-  .hero h1 { font-size: clamp(40px, 7vw, 84px); }
-  .hero .lead { font-size: clamp(17px, 2vw, 21px); margin-inline: auto; max-width: 560px; }
-  .hq { margin-inline: auto; max-width: 640px; }
-  .hq input { font-size: 18px; padding: 18px 22px; }
-  .hqc { justify-content: center; }
-  .hero .trust { justify-content: center; }
-  .hint { display: inline-block; margin: 6px 0 26px; font-size: 14px; color: rgba(245, 242, 236, 0.7); text-decoration: none; animation: nudge 2.4s ease-in-out infinite; }
-  @keyframes nudge { 50% { transform: translateY(4px); } }
-  @media (prefers-reduced-motion: reduce) { .hint { animation: none; } }
-  .ben { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .ben article { border: 1px solid var(--line); border-radius: var(--r); background: var(--surf); padding: 22px; }
-  .ben span { font-size: 30px; } .ben h3 { margin: 10px 0 6px; font-size: 20px; } .ben p { margin: 0; color: var(--mut); line-height: 1.4; }
-  @media (max-width: 760px) { .ben { grid-template-columns: 1fr; } }
-  .pbtn { margin-top: 12px; width: 100%; }
-  .lim > summary { cursor: pointer; font-weight: 700; font-size: 18px; padding: 14px 0; }
-  .pdlg { border: 1px solid var(--line); border-radius: 20px; padding: 24px; max-width: 420px; width: calc(100% - 32px); background: var(--surf); color: var(--ink); }
-  .pdlg::backdrop { background: rgba(0, 0, 0, 0.5); }
-  .pdlg h3 { margin: 0 0 8px; font-size: 24px; } .pdlg p { margin: 0 0 14px; color: var(--mut); line-height: 1.45; }
-  .pdlg input[type=email] { width: 100%; font: inherit; font-size: 17px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); margin-bottom: 12px; box-sizing: border-box; }
-  .pdlg .hp { position: absolute; left: -9999px; opacity: 0; height: 0; }
-  .pdlg .x { position: absolute; right: 14px; top: 10px; border: 0; background: none; font-size: 26px; cursor: pointer; color: var(--mut); }
-  .pdlg .pm { margin: 10px 0 0; font-size: 14px; }
-
-  .ins { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 20px; }
-  .ins a { display: grid; gap: 6px; align-content: start; padding: 20px; border: 1px solid var(--line); border-radius: 16px; color: inherit; text-decoration: none; transition: border-color .2s, transform .2s; }
-  .ins a:hover { border-color: var(--ink); transform: translateY(-2px); }
-  .ins h3 { margin: 0; font-size: 17px; }
-  .ins p { margin: 0; font-size: 14px; opacity: .75; }
-  .ins span { margin-top: 6px; font-size: 14px; font-weight: 600; }
+  @media (max-width: 520px) {
+    .ask { padding-left: 18px; }
+    .ask button { padding: 0 16px; }
+    .kv { grid-template-columns: 1fr 1fr; }
+    .kv.out div:last-child, .kv div:last-child { grid-column: 1 / 3; }
+    .mock { height: 190px; }
+    .mock.par { height: auto; min-height: 190px; }
+    .par div { padding: 10px 12px; }
+    .par b { font-size: 22px; }
+  }
 </style>
