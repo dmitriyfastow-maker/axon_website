@@ -83,8 +83,8 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
             <label>{c.auth.name}<input name="name" required maxlength="80" autocomplete="name" /></label>
             <label>{c.auth.email}<input name="email" type="email" required autocomplete="email" /></label>
             <label>{c.auth.pass}<input name="password" type="password" required minlength="8" autocomplete="new-password" /></label>
-            <label class="check"><input type="checkbox" name="adult" required /> {c.auth.adult}</label>
-            <label class="check"><input type="checkbox" name="rules" required /> {c.auth.rules1} <a href="#rules">{c.auth.rules2}</a> {c.auth.and} <a href={c.auth.privacyHref} target="_blank">{c.auth.privacy}</a></label>
+            <label class="check"><input type="checkbox" name="adult" required /> <span>{c.auth.adult}</span></label>
+            <label class="check"><input type="checkbox" name="rules" required /> <span>{c.auth.rules1} <a href="#rules">{c.auth.rules2}</a> {c.auth.and} <a href={c.auth.privacyHref} target="_blank">{c.auth.privacy}</a></span></label>
             <button type="submit" class="cta">{c.auth.create}</button>
             <p class="err" data-err hidden></p>
           </form>
@@ -301,8 +301,8 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
           <label>{PF.tax}<input name="tax_id" maxlength="40" /></label>
           <label>{PF.method}<select name="method"><option value="payoneer">Payoneer</option><option value="wise">Wise</option><option value="bank">Bank / IBAN</option></select></label>
           <label>{PF.account}<input name="account" required maxlength="200" /></label>
-          <label class="check"><input type="checkbox" name="adult" required /> {PF.adult}</label>
-          <label class="check"><input type="checkbox" name="offer" required /> {PF.offer} <a href="#rules">→</a></label>
+          <label class="check"><input type="checkbox" name="adult" required /> <span>{PF.adult}</span></label>
+          <label class="check"><input type="checkbox" name="offer" required /> <span>{PF.offer} <a href="#rules">→</a></span></label>
           <button type="submit">{PF.save}</button>
           <p class="mut" data-pmsg role="status"></p>
         </form>
@@ -683,8 +683,9 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   .small { font-size: 14px; }
   .card { background: var(--surf); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
   label { display: grid; gap: 4px; font-size: 14px; color: var(--mut); }
-  label.check { display: flex; gap: 8px; align-items: center; color: var(--ink); }
+  label.check { display: flex; gap: 10px; align-items: flex-start; color: var(--ink); line-height: 1.4; }
   input, select { font: inherit; font-size: 16px; min-height: 48px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); min-width: 0; }
+  input[type='checkbox'] { min-height: 0; width: 18px; height: 18px; padding: 0; flex: none; accent-color: var(--acc); }
   .cta { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; text-decoration: none; background: var(--acc); color: var(--dark-ink); font: inherit; font-weight: 600; border: 0; border-radius: 999px; padding: 12px 18px; cursor: pointer; transition: transform 0.15s; }
   .cta:hover { transform: translateY(-1px); }
   .ghost, .table :global(button) { font: inherit; font-size: 14px; background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
