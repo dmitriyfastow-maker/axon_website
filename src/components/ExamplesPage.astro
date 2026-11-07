@@ -175,6 +175,8 @@ const start = `${home}#contact`;
 </Base>
 
 <script>
+  // Links from other pages land on the real work; the page's smooth scroll does not always finish on load.
+  if (location.hash === '#real') requestAnimationFrame(() => document.getElementById('real')?.scrollIntoView({ behavior: 'instant' }));
   const box = document.querySelector<HTMLElement>('[data-filters]');
   box?.addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-f]');
