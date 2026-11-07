@@ -1,6 +1,7 @@
 // Cloudflare Worker: serves the static site from ./dist and handles the lead form.
 import { handleWorkspace } from './workspace.js';
 import { servePage } from './modules.js';
+import { checkDomains, serveOwnDomain, TARGET } from './domains.js';
 import { handleLead, type LeadEnv, type LeadInput } from '../src/lib/lead.js';
 import { handlePartnerApi, handleRedirect, type DB } from './partner.js';
 import { handleAdminApi, handleFactorySync } from './admin.js';
@@ -39,6 +40,7 @@ interface Env extends LeadEnv, CabinetEnv {
   FILES?: KV;
   MONO_ACQ_TOKEN?: string;
   ANTHROPIC_API_KEY?: string;
+  CF_SAAS_TOKEN?: string;
 }
 
 const ENV_KEYS = ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'RESEND_API_KEY', 'LEAD_EMAIL_TO', 'LEAD_EMAIL_FROM'] as const;
@@ -49,6 +51,15 @@ const json = (status: number, body: unknown) =>
 export default {
   async fetch(request: Request, env: Env, ctx?: { waitUntil(p: Promise<unknown>): void }): Promise<Response> {
     const url = new URL(request.url);
+    // Decision 42: the zone-wide route also brings clients' own domains and any other name on the zone. Our two names
+    // go on as usual; a client's domain gets its page; anything else passes straight through to where it pointed before.
+    const own = url.hostname === 'vaxogroup.com' || url.hostname === 'www.vaxogroup.com' || url.hostname === 'localhost' || url.hostname === '127.0.0.1' || url.hostname.endsWith('.workers.dev');
+    if (!own) {
+      if (url.hostname === TARGET) return new Response('Vaxo sites. Point a CNAME here from your domain: https://vaxogroup.com/me/#modules\n', { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+      const page = env.LEADS && !url.hostname.endsWith('.vaxogroup.com') ? await serveOwnDomain(env.LEADS, url) : null;
+      if (page === null) return fetch(request);
+      if (page !== 'pass') return page;
+    }
     if (url.hostname === 'www.vaxogroup.com') {
       url.hostname = 'vaxogroup.com';
       return Response.redirect(url.toString(), 301);
@@ -120,7 +131,7 @@ export default {
     if (url.pathname === '/api/factory-sync') return env.LEADS ? handleFactorySync(env.LEADS, request) : json(503, { ok: false });
     if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     if (url.pathname === '/api/biz' || url.pathname.startsWith('/api/biz/')) return env.LEADS ? handleBiz(env.LEADS, request, url.pathname.slice('/api/biz'.length).replace(/^\//, ''), env.AI, notify, url.origin) : json(503, { ok: false });
-    if (url.pathname === '/api/ws' || url.pathname.startsWith('/api/ws/')) return env.LEADS ? handleWorkspace(env.LEADS, env.AI, request, url.pathname.slice('/api/ws'.length).replace(/^\//, ''), notify, waitUntil) : json(503, { ok: false });
+    if (url.pathname === '/api/ws' || url.pathname.startsWith('/api/ws/')) return env.LEADS ? handleWorkspace(env.LEADS, env.AI, request, url.pathname.slice('/api/ws'.length).replace(/^\//, ''), notify, waitUntil, { token: env.CF_SAAS_TOKEN }) : json(503, { ok: false });
     const hosted = url.pathname.match(/^\/s\/([a-z0-9-]{3,60})(\/manifest\.webmanifest)?\/?$/);
     if (hosted) return env.LEADS ? servePage(env.LEADS, hosted[1], !!hosted[2]) : json(503, { ok: false });
     if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify, env.AI) : json(503, { ok: false });
@@ -256,7 +267,7 @@ export default {
       }).catch(() => {});
     };
     // The autopilot's hourly round: deadlines, AI grading, quality control, client summaries, the morning digest.
-    for (const job of [() => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => labSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => matureReferrals(env.LEADS!, notify), () => rescueUnanswered(env.LEADS!, env.AI, notify), () => monthlyBilling(env.LEADS!, notify), () => pruneBots(env.LEADS!)]) {
+    for (const job of [() => checkDomains(env.LEADS!, { token: env.CF_SAAS_TOKEN }, notify), () => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => labSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => matureReferrals(env.LEADS!, notify), () => rescueUnanswered(env.LEADS!, env.AI, notify), () => monthlyBilling(env.LEADS!, notify), () => pruneBots(env.LEADS!)]) {
       await job().catch((e) => console.error('[cron]', e));
     }
   },  // Letters to hello@vaxogroup.com (Cloudflare Email Routing → this worker) go into the client's project chat.

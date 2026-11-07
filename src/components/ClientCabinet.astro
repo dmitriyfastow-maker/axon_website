@@ -139,6 +139,11 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 
     <section class="me-pane" id="pane-modules" role="tabpanel" aria-labelledby="tab-modules" data-pane="modules" hidden>
       <div class="mods" data-mods></div>
+      <article class="cab-card dom" data-dom hidden aria-labelledby="dom-h">
+        <h3 id="dom-h">{T.domH}</h3>
+        <div data-dom-body></div>
+        <p class="msg" data-dom-msg role="status"></p>
+      </article>
       <section class="cab-projects" data-proj-sec hidden aria-labelledby="cab-proj-h">
         <div class="sec-head"><h2 id="cab-proj-h" data-ph>{T.projects}</h2></div>
         <div class="proj-grid" data-projects></div>
@@ -260,7 +265,8 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     $('[data-mods]').replaceChildren(
       row(T.mCrm, m.crm ? T.mCrmOn.replace('{n}', m.crm.total) : off, go('crm'), m.crm ? T.mOpen : T.mDeploy, !!m.crm),
       row(T.mSite, m.site ? T.mSiteOn.replace('{n}', m.requests ?? 0) : T.mOff, go('site'), m.site ? T.mOpen : T.mDeploy, !!m.site, !!m.site && el('a', { class: 'link', href: m.site.url, target: '_blank', rel: 'noopener' }, T.mSee + ' ↗')),
-      row(T.mPartner, m.partner ? T.mParOn.replace('{n}', m.partner.links.length) : off, go('partner'), m.partner ? T.mOpen : T.mDeploy, !!m.partner));
+      row(T.mPartner, m.partner ? T.mParOn.replace('{n}', m.partner.links.length) : T.mOff, go('partner'), m.partner ? T.mOpen : T.mDeploy, !!m.partner));
+    loadDomain();
     $('[data-biz]').hidden = !w.access;
     const f = $<HTMLFormElement>('[data-mem]');
     for (const k of ['niche', 'goals', 'project', 'limits']) { const t = f.elements.namedItem(k) as HTMLTextAreaElement; if (document.activeElement !== t) t.value = w.memory?.[k] || ''; }
@@ -305,6 +311,47 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     const d = r ? await r.json().catch(() => ({})) : { error: 'net' };
     if (r?.ok || d.error === 'wait') { $('[data-vcode-p]').textContent = T.codeSentInline.replace('{email}', D.me?.email || ''); box.hidden = false; box.querySelector('input')!.focus(); }
     else { $('[data-vcode-p]').textContent = d.error === 'mail_off' ? T.off : T.errNet; box.hidden = false; }
+  }
+
+  /* ---------- Own domain (Decision 42) ---------- */
+  let domTimer = 0;
+  const copyBtn = (v: string) => { const b = el('button', { type: 'button', class: 'ghost sm' }, T.domCopy) as HTMLButtonElement; b.onclick = async () => { try { await navigator.clipboard.writeText(v); } catch {} b.textContent = T.domCopied; setTimeout(() => (b.textContent = T.domCopy), 1500); }; return b; };
+  function drawDomain(x: R) {
+    const box = $('[data-dom-body]'), msgEl = $('[data-dom-msg]');
+    clearTimeout(domTimer);
+    $('[data-dom]').hidden = false;
+    if (!x.site) { box.replaceChildren(el('p', { class: 'mut' }, T.domNoSite)); return; }
+    const d: R | null = x.domain;
+    if (!d) {
+      if (!W.access) { box.replaceChildren(el('p', { class: 'mut' }, T.domP), el('p', { class: 'mut small' }, T.domLock), el('a', { class: 'cta', href: '#plan' }, T.tryBtn)); return; }
+      if (!x.ready) { box.replaceChildren(el('p', { class: 'mut' }, T.domP), el('p', { class: 'note' }, T.domSoon)); return; }
+      const f = el('form', { class: 'dom-f' }, el('label', {}, T.domS1, el('input', { name: 'host', required: true, maxlength: '253', placeholder: T.domPh, autocomplete: 'off', inputmode: 'url', spellcheck: 'false' })), el('button', { class: 'cta' }, T.domGo)) as HTMLFormElement;
+      f.onsubmit = async (e) => {
+        e.preventDefault(); msgEl.textContent = '';
+        const btn = f.querySelector('button')!; btn.disabled = true;
+        const r = await fetch('/api/ws/domain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ host: (f.elements.namedItem('host') as HTMLInputElement).value }) }).catch(() => null);
+        const j: R = r ? await r.json().catch(() => ({})) : {};
+        btn.disabled = false;
+        if (j.ok) drawDomain(j); else msgEl.textContent = ({ bad: T.domBad, taken: T.domTaken, plan: T.domLock, soon: T.domSoon } as R)[j.error] || T.domFail;
+      };
+      box.replaceChildren(el('p', { class: 'mut' }, T.domP), f); return;
+    }
+    const on = d.status === 'active';
+    const head = el('p', { class: on ? 'dom-on' : 'dom-wait' }, on ? '✓ ' + T.domOn : T.domWait);
+    const link = el('a', { class: 'link', href: `https://${d.host}`, target: '_blank', rel: 'noopener' }, d.host + ' ↗');
+    const off = el('button', { type: 'button', class: 'ghost sm danger' }, T.domOff) as HTMLButtonElement;
+    off.onclick = async () => { const r = await fetch('/api/ws/domain/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => null); if (r?.ok) drawDomain(await r.json()); };
+    if (on) { box.replaceChildren(head, el('div', { class: 'mod-act' }, link, off)); return; }
+    const rec = d.record;
+    const table = el('div', { class: 'dns' }, ...[[T.domType, rec.type], [T.domName, rec.name], [T.domValue, rec.value]].map(([k, v]) => el('div', { class: 'dns-r' }, el('span', { class: 'mut small' }, k), el('code', {}, v), copyBtn(v))));
+    const check = el('button', { type: 'button', class: 'ghost sm' }, T.domCheck) as HTMLButtonElement;
+    check.onclick = () => loadDomain();
+    box.replaceChildren(el('p', {}, el('b', {}, d.host)), el('p', { class: 'dom-step' }, T.domS2), table, el('p', { class: 'mut small' }, T.domWhere), d.apex ? el('p', { class: 'note' }, T.domApex) : '', d.error ? el('p', { class: 'mut small' }, T.domErr + d.error) : '', head, el('div', { class: 'mod-act' }, check, off));
+    domTimer = window.setTimeout(loadDomain, 30000);
+  }
+  async function loadDomain() {
+    const j = await fetch('/api/ws/domain').then((r) => r.json()).catch(() => null);
+    if (j?.ok) drawDomain(j);
   }
 
   /* ---------- Tabs ---------- */
@@ -631,6 +678,13 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 .mod > div:first-child { display: grid; gap: 2px; } .mod.on { border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); }
 .mod-act { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .cab-projects { margin-top: 10px; }
+.dom { display: flex; flex-direction: column; gap: 10px; } .dom p { margin: 0; } .dom h3 { font-size: 17px; }
+.dom-f { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; } .dom-f label { flex: 1 1 260px; display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.dom-step { font-weight: 650; }
+.dns { display: grid; gap: 6px; } .dns-r { display: grid; grid-template-columns: 130px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.dns-r code { font: 600 15px var(--mono); overflow-wrap: anywhere; }
+.dom-on { color: var(--accText); font-weight: 700; } .dom-wait { font-weight: 600; }
+@media (max-width: 560px) { .dns-r { grid-template-columns: minmax(0, 1fr) auto; } .dns-r span { grid-column: 1 / -1; } }
 .mem { display: flex; flex-direction: column; gap: 12px; } .mem p { margin: 0; }
 .mem label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
 .mem-go { display: flex; align-items: center; gap: 12px; }

@@ -73,7 +73,8 @@ export async function handleCollect(db: DB, request: Request, ai?: AiBinding, wa
   if (!biz) return json(404, { ok: false }, CORS);
   // Only the owner's own site may report (when a domain is set). Local previews are allowed for testing.
   const from = host(request.headers.get('Origin') || request.headers.get('Referer') || '');
-  if (biz.domain && from && from !== biz.domain && !from.endsWith('.' + biz.domain) && !/^(localhost|127\.0\.0\.1|vaxogroup\.com)$/.test(from)) return json(403, { ok: false }, CORS);
+  if (biz.domain && from && from !== biz.domain && !from.endsWith('.' + biz.domain) && !/^(localhost|127\.0\.0\.1|vaxogroup\.com)$/.test(from)
+    && !(await db.prepare('SELECT 1 FROM biz_domains WHERE biz_id = ? AND host = ?').bind(biz.id, from).first().catch(() => null))) return json(403, { ok: false }, CORS);
   const t = cut(b.t, 8), sid = cut(b.s, 16), path = cut(b.p, 200), source = cut(b.u, 80);
   if (t === 'pv' || t === 'click') {
     await db.prepare('INSERT INTO biz_events (biz_id, type, sid, path, source, label) VALUES (?, ?, ?, ?, ?, ?)').bind(biz.id, t, sid, path, source, cut(b.l, 60) || null).run();

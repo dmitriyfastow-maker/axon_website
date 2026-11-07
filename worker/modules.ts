@@ -53,7 +53,7 @@ async function ensureBiz(db: DB, clientId: number, name: string, lang: string) {
   return b!;
 }
 
-/** CRM, partner links and the site's AI chat belong to Care and above, the free month included; the site itself stays free.
+/** CRM, the site's AI chat and an own domain belong to Care and above, the free month included; the site itself stays free.
  *  They lock when a subscription invoice goes past its due date, so a trial, a month and a paid year all end the same way. */
 export async function moduleAccess(db: DB, clientId: number): Promise<boolean> {
   return !!(await db.prepare(`SELECT 1 FROM leads l WHERE l.client_id = ? AND l.plan IN ('care', 'growth', 'pro')
@@ -122,7 +122,7 @@ export async function modulesState(db: DB, clientId: number, origin: string, acc
     biz: { id: biz.id, name: biz.name },
     crm: access ? { url, total, leads } : null,
     requests: total,
-    partner: access && refs.length ? { links: refs.map((r) => ({ ...r, url: `${url}?utm_source=ref_${r.code}` })) } : null,
+    partner: refs.length ? { links: refs.map((r) => ({ ...r, url: `${url}?utm_source=ref_${r.code}` })) } : null,
     site: biz.kind === 'site' ? { url, ...(JSON.parse(biz.data || '{}') as Site) } : null,
   };
 }
