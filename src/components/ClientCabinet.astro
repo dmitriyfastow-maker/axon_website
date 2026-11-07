@@ -546,6 +546,8 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     inp.addEventListener('focus', () => inp.select());
   });
   let verifying = false;
+  // After sign-in the person lands in the workspace; a link to one project stays on that project.
+  const entered = () => { if (new URLSearchParams(location.search).has('t')) load(); else location.href = location.pathname.replace(/me\/?$/, 'app/'); };
   // Magic link from the letter: /me/#in=<email in base64>.<code>
   (async () => {
     const m = location.hash.match(/^#in=([^.]+)\.(\d{6})$/);
@@ -554,7 +556,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     let mail = ''; try { mail = atob(m[1]); } catch { return; }
     msg(T.checking);
     const r = await post('/api/me/verify', { email: mail, code: m[2] }).catch(() => null);
-    if (r?.ok) { msg(''); load(); return; }
+    if (r?.ok) { msg(''); entered(); return; }
     const d = r ? await r.json().catch(() => ({})) : { error: 'net' };
     msg(d.error === 'net' ? T.errNet : T.errExpired);
   })();
@@ -566,7 +568,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     const r = await post('/api/me/verify', { email, code }).catch(() => null);
     const d = r ? await r.json().catch(() => ({})) : { error: 'net' };
     otp.forEach((x) => (x.disabled = false)); verifying = false;
-    if (r?.ok) { msg(''); clearInterval(timer); showStep(false); load(); return; }
+    if (r?.ok) { msg(''); clearInterval(timer); showStep(false); entered(); return; }
     msg(d.error === 'expired' ? T.errExpired : d.error === 'net' ? T.errNet : T.errCode);
     const box = root.querySelector('[data-otp]')!; box.classList.remove('bad'); void (box as HTMLElement).offsetWidth; box.classList.add('bad');
     otp.forEach((x) => (x.value = '')); otp[0].focus();
@@ -584,13 +586,13 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
   $<HTMLFormElement>('[data-in]').onsubmit = async (e) => {
     e.preventDefault();
     const r = await post('/api/me/login', Object.fromEntries(new FormData(e.target as HTMLFormElement))).catch(() => null); const d = r ? await r.json().catch(() => ({})) : {};
-    if (r?.ok) { msg(''); load(); } else msg(r ? ERR[d.error] || T.errWrong : T.errNet);
+    if (r?.ok) { msg(''); entered(); } else msg(r ? ERR[d.error] || T.errWrong : T.errNet);
   };
   $<HTMLFormElement>('[data-up]').onsubmit = async (e) => {
     e.preventDefault();
     const fd = new FormData(e.target as HTMLFormElement);
     const r = await post('/api/me/register', { ...Object.fromEntries(fd), consent: fd.has('consent'), marketing: fd.has('marketing') }).catch(() => null); const d = r ? await r.json().catch(() => ({})) : {};
-    if (r?.ok) { msg(''); load(); } else msg(r ? ERR[d.error] || T.errEmail : T.errNet);
+    if (r?.ok) { msg(''); entered(); } else msg(r ? ERR[d.error] || T.errEmail : T.errNet);
   };
 
   /* ---------- Signed-in actions ---------- */

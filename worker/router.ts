@@ -1,19 +1,22 @@
-// Smart router (Decision 39): who gets which model, with a hard money limit.
-// Guests, the free plan and trial months stay on free Workers AI. A paying client gets Claude until their monthly
-// budget runs out, then free models again. All of Vaxo stops spending at MONTH_CAP. Without ANTHROPIC_API_KEY nothing
-// here runs, so turning it on is one secret, and turning it off is deleting that secret.
+// Smart router (Decisions 39, 40): who gets which model, and where the money for it comes from.
+// Guests, the free plan and trial months stay on free Workers AI. Paying clients get Claude at full quality from a shared
+// pool: every paying client adds POOL_SHARE of their plan price, and active clients use what quiet ones leave. Two limits
+// remain: one client never costs more than their plan price, and spending stops when the pool of the month is empty.
+// Without ANTHROPIC_API_KEY nothing here runs, so turning it on is one secret, and turning it off is deleting that secret.
 import Anthropic from '@anthropic-ai/sdk';
 import type { DB } from './partner.js';
 
-type Tier = { model: string; effort: 'low' | 'medium'; budget: number };
+type Tier = { model: string; effort: 'medium' | 'high'; price: number };
 
-// USD per month and client. Far below the plan price on purpose: this is the part of the fee that may go to tokens.
 export const TIERS: Record<string, Tier> = {
-  care: { model: 'claude-sonnet-5-5', effort: 'low', budget: 8 },
-  growth: { model: 'claude-sonnet-5-5', effort: 'low', budget: 25 },
-  pro: { model: 'claude-opus-5-5', effort: 'medium', budget: 60 },
+  care: { model: 'claude-sonnet-5-5', effort: 'medium', price: 39 },
+  growth: { model: 'claude-sonnet-5-5', effort: 'high', price: 129 },
+  pro: { model: 'claude-opus-5-5', effort: 'high', price: 299 },
 };
-export const MONTH_CAP = 50; // all clients together; raise it when revenue allows
+// The worst month of a plan is the first paid one through a partner: 50% partner, about 2% acquiring, 5% tax, 43% left.
+// 40% goes to the pool, 3% stays for servers, so that month closes at about zero. A two-level partner chain (+10%) can
+// go slightly below it if the client uses their whole share; research/decision-40-workspace.md has the numbers.
+export const POOL_SHARE = 0.4;
 
 // USD per 1M tokens: input, output, cache read, cache write (5 minutes). Anthropic price list, 2026-10.
 const PRICE: Record<string, [number, number, number, number]> = {
@@ -28,10 +31,13 @@ export function costUsd(model: string, u: Usage): number {
   return ((u.input_tokens ?? 0) * i + (u.output_tokens ?? 0) * o + (u.cache_read_input_tokens ?? 0) * r + (u.cache_creation_input_tokens ?? 0) * w) / 1e6;
 }
 
+/** What the paying clients of this month put into the pool, in USD. */
+export const monthPool = (plans: string[]) => plans.reduce((sum, p) => sum + (TIERS[p]?.price ?? 0) * POOL_SHARE, 0);
+
 /** The whole decision, with no I/O: null means free Workers AI. */
-export function pickTier(plan: string, trial: boolean, spentByLead: number, spentByAll: number, hasKey: boolean): Tier | null {
+export function pickTier(plan: string, trial: boolean, spentByLead: number, spentByAll: number, pool: number, hasKey: boolean): Tier | null {
   const t = TIERS[plan];
-  if (!hasKey || !t || trial || spentByLead >= t.budget || spentByAll >= MONTH_CAP) return null;
+  if (!hasKey || !t || trial || spentByLead >= t.price || spentByAll >= pool) return null;
   return t;
 }
 
@@ -46,7 +52,8 @@ export async function routeFor(db: DB, leadId: number, plan: string, trial: bool
   const lead = await db.prepare('SELECT usd FROM api_usage WHERE lead_id = ? AND month = ?').bind(leadId, m).first<{ usd: number }>().catch(() => null);
   const all = await db.prepare('SELECT COALESCE(SUM(usd), 0) AS usd FROM api_usage WHERE month = ?').bind(m).first<{ usd: number }>().catch(() => null);
   if (!all) return null; // the table is missing: spend nothing we cannot count
-  return pickTier(plan, trial, lead?.usd ?? 0, all.usd, true);
+  const paying = (await db.prepare(`SELECT l.plan FROM leads l WHERE l.plan IN ('care', 'growth', 'pro') AND EXISTS (SELECT 1 FROM invoices i WHERE i.lead_id = l.id AND i.status = 'paid' AND i.at > datetime('now', '-35 days'))`).all<{ plan: string }>().catch(() => ({ results: [] as { plan: string }[] }))).results;
+  return pickTier(plan, trial, lead?.usd ?? 0, all.usd, monthPool(paying.map((r) => r.plan)), true);
 }
 
 /** One reply from Claude, or null, and then the caller uses the free models. */

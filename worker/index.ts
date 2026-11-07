@@ -1,4 +1,6 @@
 // Cloudflare Worker: serves the static site from ./dist and handles the lead form.
+import { handleWorkspace } from './workspace.js';
+import { servePage } from './modules.js';
 import { handleLead, type LeadEnv, type LeadInput } from '../src/lib/lead.js';
 import { handlePartnerApi, handleRedirect, type DB } from './partner.js';
 import { handleAdminApi, handleFactorySync } from './admin.js';
@@ -118,6 +120,9 @@ export default {
     if (url.pathname === '/api/factory-sync') return env.LEADS ? handleFactorySync(env.LEADS, request) : json(503, { ok: false });
     if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     if (url.pathname === '/api/biz' || url.pathname.startsWith('/api/biz/')) return env.LEADS ? handleBiz(env.LEADS, request, url.pathname.slice('/api/biz'.length).replace(/^\//, ''), env.AI, notify, url.origin) : json(503, { ok: false });
+    if (url.pathname === '/api/ws' || url.pathname.startsWith('/api/ws/')) return env.LEADS ? handleWorkspace(env.LEADS, env.AI, request, url.pathname.slice('/api/ws'.length).replace(/^\//, ''), notify, waitUntil) : json(503, { ok: false });
+    const hosted = url.pathname.match(/^\/s\/([a-z0-9-]{3,60})(\/manifest\.webmanifest)?\/?$/);
+    if (hosted) return env.LEADS ? servePage(env.LEADS, hosted[1], !!hosted[2]) : json(503, { ok: false });
     if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify, env.AI) : json(503, { ok: false });
     const invm = url.pathname.match(/^\/api\/invoice\/([a-f0-9]{32})$/);
     if (invm) return env.LEADS ? handleInvoicePublic(env.LEADS, invm[1], !!env.MONO_ACQ_TOKEN) : json(503, { ok: false });
@@ -222,7 +227,7 @@ export default {
     // Only pages that exist count: scanners probing /wordpress/, /cms/ and the like got 404 and inflated the numbers (01.11).
     // Language by browser (Accept-Language) on a first visit to an unprefixed page; any other language gets clean EN.
     // Skipped when the person came from our own site (they chose a language) or when it is not a plain page request.
-    if (request.method === 'GET' && ['/', '/me/', '/examples/', '/how/', '/partners/', '/shop/', '/start/', '/about/'].includes(url.pathname)) {
+    if (request.method === 'GET' && ['/', '/app/', '/me/', '/examples/', '/how/', '/partners/', '/shop/', '/start/', '/about/'].includes(url.pathname)) {
       const al = (request.headers.get('Accept-Language') || '').toLowerCase();
       const first = al.split(',')[0].trim().slice(0, 2);
       const ours = (request.headers.get('Referer') || '').includes(url.host);

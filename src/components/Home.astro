@@ -7,7 +7,6 @@ import type { Lang } from '../i18n';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const P = (p: string) => (lang === 'en' ? p : `/${lang}${p}`);
-const demo = (slug: string) => `/examples/${slug}/?lang=${lang}`;
 
 const T = {
   ru: {
@@ -27,10 +26,10 @@ const T = {
     getH: 'Что вы получаете', now: 'Сразу и бесплатно', nowL: ['Ответ на любой вопрос', 'Калькулятор, чек-лист или трекер прямо в чате', 'План и цена вашей задачи до любой оплаты'],
     plan: 'На тарифе, шаг за шагом', planL: ['Сайт или приложение для вашего дела', 'ИИ, который отвечает вашим клиентам', 'Соцсети и реклама'], planN: 'Это настоящая работа, а не кнопка. Срок и цену называем заранее, прогресс виден в кабинете.',
     inH: 'Что внутри Vaxo',
-    crm: ['CRM и штаб', 'Клиенты, сделки и задачи в одном месте.', 'Открыть', ['Новые', 'В работе', 'Оплачено']],
-    par: ['Партнёрская программа', 'Рекомендуете Vaxo и получаете долю с каждой оплаты клиента.', 'Подробнее', [['50%', 'первая оплата'], ['30%', 'каждая следующая'], ['+10%', 'с продаж вашей команды']]],
-    exa: ['Живые примеры', 'Рабочие страницы, которые можно открыть и потрогать.', 'Смотреть'],
-    cab: ['Кабинет клиента', 'Ваши проекты, оплаты и инструменты.', 'В кабинет', ['Готовность проекта', 'Запас на сегодня', 'Мои инструменты', 'Счёт оплачен']],
+    crm: ['CRM', 'Форма заявок и доска в вашем аккаунте. Заявки приходят сами.', 'Развернуть', ['Новые', 'В работе', 'Оплачено']],
+    par: ['Партнёрские ссылки', 'Личная ссылка каждому партнёру. Переходы и заявки считаются сами.', 'Развернуть', [['1', 'ссылка на партнёра'], ['авто', 'учёт переходов'], ['авто', 'учёт заявок']]],
+    exa: ['Сайт', 'Одна страница с формой заявок. Текст пишет Vax, работает сразу.', 'Развернуть'],
+    cab: ['Рабочее пространство', 'Чат, память, инструменты и холст на одном экране.', 'Открыть', ['Готовность проекта', 'Запас на сегодня', 'Мои инструменты', 'Счёт оплачен']],
     prH: 'Тарифы', prS: 'Начните бесплатно. Первый месяц любого платного тарифа тоже бесплатный, с меньшим запасом.',
     mo: '/мес', focus: 'Лучше всего начать здесь', trial: 'Месяц бесплатно', startB: 'Начать бесплатно', more: 'Ещё два варианта',
     start: ['Старт', 'Для вопросов и простых инструментов.', ['Ответы на вопросы', 'Калькуляторы, чек-листы, трекеры', 'План и цена вашей задачи', 'Без карты и регистрации']],
@@ -61,10 +60,10 @@ const T = {
     getH: 'What you get', now: 'Instant and free', nowL: ['An answer to any question', 'A calculator, checklist or tracker right in the chat', 'A plan and a price for your task before any payment'],
     plan: 'On a plan, step by step', planL: ['A website or app for your business', 'AI that answers your customers', 'Social media and ads'], planN: 'This is real work, not a button. We name the time and price up front, and you see progress in your cabinet.',
     inH: 'Inside Vaxo',
-    crm: ['CRM and control room', 'Clients, deals and tasks in one place.', 'Open', ['New', 'In progress', 'Paid']],
-    par: ['Partner program', 'Recommend Vaxo and earn a share of every client payment.', 'Learn more', [['50%', 'first payment'], ['30%', 'every later one'], ['+10%', 'on your team’s sales']]],
-    exa: ['Live examples', 'Working pages you can open and try.', 'See them'],
-    cab: ['Client cabinet', 'Your projects, payments and tools.', 'Open cabinet', ['Project progress', 'Allowance today', 'My tools', 'Invoice paid']],
+    crm: ['CRM', 'A request form and a board in your account. Requests arrive by themselves.', 'Deploy', ['New', 'In progress', 'Paid']],
+    par: ['Partner links', 'A personal link for each partner. Visits and requests count themselves.', 'Deploy', [['1', 'link per partner'], ['auto', 'visit tracking'], ['auto', 'request tracking']]],
+    exa: ['Site', 'One page with a request form. Vax writes the text, it works at once.', 'Deploy'],
+    cab: ['Workspace', 'Chat, memory, tools and Canvas on one screen.', 'Open', ['Project progress', 'Allowance today', 'My tools', 'Invoice paid']],
     prH: 'Plans', prS: 'Start free. The first month of any paid plan is free too, with a smaller allowance.',
     mo: '/mo', focus: 'The best place to start', trial: 'Try a month free', startB: 'Start free', more: 'Two more options',
     start: ['Start', 'For questions and simple tools.', ['Answers to your questions', 'Calculators, checklists, trackers', 'A plan and a price for your task', 'No card, no sign-up']],
@@ -95,10 +94,10 @@ const T = {
     getH: 'Що ви отримуєте', now: 'Одразу й безкоштовно', nowL: ['Відповідь на будь-яке питання', 'Калькулятор, чек-лист або трекер просто в чаті', 'План і ціна вашого завдання до будь-якої оплати'],
     plan: 'На тарифі, крок за кроком', planL: ['Сайт або застосунок для вашої справи', 'ШІ, який відповідає вашим клієнтам', 'Соцмережі та реклама'], planN: 'Це справжня робота, а не кнопка. Строк і ціну називаємо заздалегідь, прогрес видно в кабінеті.',
     inH: 'Що всередині Vaxo',
-    crm: ['CRM і штаб', 'Клієнти, угоди й завдання в одному місці.', 'Відкрити', ['Нові', 'В роботі', 'Оплачено']],
-    par: ['Партнерська програма', 'Рекомендуєте Vaxo й отримуєте частку з кожної оплати клієнта.', 'Детальніше', [['50%', 'перша оплата'], ['30%', 'кожна наступна'], ['+10%', 'з продажів вашої команди']]],
-    exa: ['Живі приклади', 'Робочі сторінки, які можна відкрити й спробувати.', 'Дивитися'],
-    cab: ['Кабінет клієнта', 'Ваші проєкти, оплати й інструменти.', 'До кабінету', ['Готовність проєкту', 'Запас на сьогодні', 'Мої інструменти', 'Рахунок оплачено']],
+    crm: ['CRM', 'Форма заявок і дошка у вашому акаунті. Заявки приходять самі.', 'Розгорнути', ['Нові', 'В роботі', 'Оплачено']],
+    par: ['Партнерські посилання', 'Особисте посилання кожному партнеру. Переходи й заявки рахуються самі.', 'Розгорнути', [['1', 'посилання на партнера'], ['авто', 'облік переходів'], ['авто', 'облік заявок']]],
+    exa: ['Сайт', 'Одна сторінка з формою заявок. Текст пише Vax, працює одразу.', 'Розгорнути'],
+    cab: ['Робочий простір', 'Чат, памʼять, інструменти й полотно на одному екрані.', 'Відкрити', ['Готовність проєкту', 'Запас на сьогодні', 'Мої інструменти', 'Рахунок оплачено']],
     prH: 'Тарифи', prS: 'Почніть безкоштовно. Перший місяць будь-якого платного тарифу теж безкоштовний, з меншим запасом.',
     mo: '/міс', focus: 'Найкраще почати тут', trial: 'Місяць безкоштовно', startB: 'Почати безкоштовно', more: 'Ще два варіанти',
     start: ['Старт', 'Для питань і простих інструментів.', ['Відповіді на питання', 'Калькулятори, чек-листи, трекери', 'План і ціна вашого завдання', 'Без картки й реєстрації']],
@@ -185,21 +184,21 @@ const ava = '/mascot/vax-happy.webp';
     <div class="w">
       <h2>{T.inH}</h2>
       <div class="grid">
-        <a class="card" href={demo('eco-crm')}>
+        <a class="card" href={P('/app/') + '#deploy=crm'}>
           <em class="live">{T.live}</em>
           <div class="mock crm" aria-hidden="true">
             {T.crm[3].map((col, c) => <div class="col"><b>{col}</b>{[...Array(3 - c)].map((_, r) => <div class="deal"><i></i><u style={`width:${[78, 58, 68][(r + c) % 3]}%`}></u></div>)}</div>)}
           </div>
           <h3>{T.crm[0]}</h3><p>{T.crm[1]}</p><span>{T.crm[2]} →</span>
         </a>
-        <a class="card" href={demo('eco-partners')}>
+        <a class="card" href={P('/app/') + '#deploy=partner'}>
           <em class="live">{T.live}</em>
           <div class="mock par" aria-hidden="true">
             {T.par[3].map(([n, k], i) => <div class:list={[{ hi: i === 0 }]}><b>{n}</b><small>{k}</small></div>)}
           </div>
           <h3>{T.par[0]}</h3><p>{T.par[1]}</p><span>{T.par[2]} →</span>
         </a>
-        <a class="card" href={P('/examples/')}>
+        <a class="card" href={P('/app/') + '#deploy=site'}>
           <em class="live">{T.live}</em>
           <div class="mock brw" aria-hidden="true">
             <div class="bar"><i></i><i></i><i></i></div>
@@ -207,7 +206,7 @@ const ava = '/mascot/vax-happy.webp';
           </div>
           <h3>{T.exa[0]}</h3><p>{T.exa[1]}</p><span>{T.exa[2]} →</span>
         </a>
-        <a class="card" href={demo('client-app')}>
+        <a class="card" href={P('/app/')}>
           <em class="live">{T.live}</em>
           <div class="mock cab" aria-hidden="true">
             <div class="ln"><small>{T.cab[3][0]}</small><em>45%</em><u><i style="width:45%"></i></u></div>

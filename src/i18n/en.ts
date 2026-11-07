@@ -550,7 +550,7 @@ const en = {
     "question": "Your question",
     "send": "Submit request",
     "sendQ": "Send question",
-    "success": "Thank you! A manager will write to you within 24 hours — usually much sooner.",
+    "success": "Thank you! We got it.",
     "again": "Send another",
     "room": "Your private project chat is ready — open it and save the link:",
     "roomBtn": "Open my project chat →",

@@ -12,7 +12,7 @@ interface Props {
 const { lang, t, home = '', alts } = Astro.props;
 const nav = t.nav.map((label, i) => ({ label, href: navHref(NAV_HREFS[i], lang, home) }));
 const ME = { en: 'Sign in / Sign up', ru: 'Вход / регистрация', ua: 'Вхід / реєстрація' }[lang];
-const meHref = navHref('/me/', lang);
+const meHref = navHref('/app/', lang) + '#signin';
 const langs = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?.[l] ?? langPath(l) }));
 ---
 

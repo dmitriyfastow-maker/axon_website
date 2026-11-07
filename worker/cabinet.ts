@@ -183,7 +183,7 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
     const [subj, body] = CODE_MAIL[str('lang', 2)] || CODE_MAIL.en;
     // Magic link: everything after # stays in the browser, and only the page's script signs in, so mail scanners
     // that open links cannot use the code up. The six digits stay in the letter as a second way.
-    const l = str('lang', 2), base = l === 'ru' || l === 'ua' ? `/${l}/me/` : '/me/';
+    const l = str('lang', 2), base = l === 'ru' || l === 'ua' ? `/${l}/app/` : '/app/';
     const link = `${url.origin}${base}#in=${btoa(email)}.${code}`;
     return (await sendMail(email, subj, body.replace('{link}', link).replace('{code}', code))) ? json(200, { ok: true }) : json(502, { ok: false, error: 'send' });
   }
@@ -197,9 +197,11 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
       return json(400, { ok: false, error: 'code' });
     }
     await db.prepare('DELETE FROM client_codes WHERE email = ?').bind(email).run();
+    const fresh = !(await db.prepare('SELECT 1 FROM clients WHERE email = ?').bind(email).first());
     await db.prepare(`INSERT INTO clients (email, lang, email_verified_at) VALUES (?, ?, datetime('now')) ON CONFLICT (email) DO UPDATE SET email_verified_at = COALESCE(clients.email_verified_at, datetime('now'))`).bind(email, str('lang', 2) || null).run();
     const c = await db.prepare('SELECT id FROM clients WHERE email = ?').bind(email).first<{ id: number }>();
     await linkLeads(db, c!.id, email, str('room', 24) || null);
+    if (fresh) await notify(`👤 Новый человек в Workspace: ${email}`);
     return json(200, { ok: true }, { 'Set-Cookie': await startSession(db, c!.id) });
   }
 
@@ -248,7 +250,7 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
       await db.prepare("INSERT INTO sessions (token, partner_id, expires_at) VALUES (?, ?, datetime('now', '+1 day'))").bind(tok, v.id).run();
       return new Response(null, { status: 302, headers: { Location: `${pre}/partner/`, 'Set-Cookie': `vaxo_session=${tok}; Max-Age=86400; Path=/; HttpOnly; Secure; SameSite=Lax` } });
     }
-    return new Response(null, { status: 302, headers: { Location: `${pre}/me/`, 'Set-Cookie': await startSession(db, v.id) } });
+    return new Response(null, { status: 302, headers: { Location: `${pre}/app/`, 'Set-Cookie': await startSession(db, v.id) } });
   }
   // Google: /api/me/google?back=<room> → Google → /api/me/google/callback → /me/
   if (path === 'google' && request.method === 'GET') {
@@ -275,7 +277,7 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
       c = await db.prepare('SELECT id FROM clients WHERE google_sub = ?').bind(p.sub).first<{ id: number }>();
     } else await db.prepare(`UPDATE clients SET google_sub = ?, name = COALESCE(name, ?), email_verified_at = COALESCE(email_verified_at, datetime('now')) WHERE id = ?`).bind(p.sub, p.name || null, c.id).run();
     await linkLeads(db, c!.id, email, state.split('.')[1] || null);
-    const h = new Headers({ Location: new URL('/me/', url).toString() });
+    const h = new Headers({ Location: new URL('/app/', url).toString() });
     h.append('Set-Cookie', await startSession(db, c!.id));
     h.append('Set-Cookie', setCookie('vaxo_gst', '', 0));
     return new Response(null, { status: 302, headers: h });
@@ -300,7 +302,9 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
     }
     const bonuses = (await db.prepare('SELECT at, kind, amount_usd FROM bonuses WHERE client_id = ?').bind(me.id).all()).results;
     const reviews = (await db.prepare('SELECT at, lead_id, stars, text, public FROM reviews WHERE client_id = ?').bind(me.id).all()).results;
-    return new Response(JSON.stringify({ exported_at: new Date().toISOString(), client, projects: leads, bonuses, reviews }, null, 2), {
+    const memory = await db.prepare('SELECT niche, goals, project, limits FROM ws_memory WHERE client_id = ?').bind(me.id).first().catch(() => null);
+    const chats = (await db.prepare('SELECT c.title, m.at, m.role, m.text FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? ORDER BY m.id').bind(me.id).all().catch(() => ({ results: [] }))).results;
+    return new Response(JSON.stringify({ exported_at: new Date().toISOString(), client, projects: leads, bonuses, reviews, memory, chats }, null, 2), {
       headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Disposition': 'attachment; filename="vaxo-my-data.json"', 'Cache-Control': 'no-store' },
     });
   }
@@ -312,6 +316,10 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
     await db.prepare('UPDATE leads SET client_id = NULL WHERE client_id = ?').bind(me.id).run();
     await db.prepare('UPDATE bonuses SET client_id = NULL WHERE client_id = ?').bind(me.id).run();
     await db.prepare('UPDATE reviews SET client_id = NULL WHERE client_id = ?').bind(me.id).run();
+    await db.prepare('DELETE FROM ws_msgs WHERE chat_id IN (SELECT id FROM ws_chats WHERE client_id = ?)').bind(me.id).run().catch(() => {});
+    await db.prepare('DELETE FROM ws_chats WHERE client_id = ?').bind(me.id).run().catch(() => {});
+    await db.prepare('DELETE FROM ws_memory WHERE client_id = ?').bind(me.id).run().catch(() => {});
+    await db.prepare('DELETE FROM biz_pages WHERE biz_id IN (SELECT id FROM biz WHERE owner_id = ?)').bind(me.id).run().catch(() => {});
     await db.prepare('DELETE FROM client_sessions WHERE client_id = ?').bind(me.id).run();
     await db.prepare('DELETE FROM clients WHERE id = ?').bind(me.id).run();
     await notify(`🗑 Клиент удалил кабинет: ${me.email || '#' + me.id}`);

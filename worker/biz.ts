@@ -73,13 +73,16 @@ export async function handleCollect(db: DB, request: Request, ai?: AiBinding, wa
   if (!biz) return json(404, { ok: false }, CORS);
   // Only the owner's own site may report (when a domain is set). Local previews are allowed for testing.
   const from = host(request.headers.get('Origin') || request.headers.get('Referer') || '');
-  if (biz.domain && from && from !== biz.domain && !from.endsWith('.' + biz.domain) && !/^(localhost|127\.0\.0\.1)$/.test(from)) return json(403, { ok: false }, CORS);
+  if (biz.domain && from && from !== biz.domain && !from.endsWith('.' + biz.domain) && !/^(localhost|127\.0\.0\.1|vaxogroup\.com)$/.test(from)) return json(403, { ok: false }, CORS);
   const t = cut(b.t, 8), sid = cut(b.s, 16), path = cut(b.p, 200), source = cut(b.u, 80);
   if (t === 'pv' || t === 'click') {
     await db.prepare('INSERT INTO biz_events (biz_id, type, sid, path, source, label) VALUES (?, ?, ?, ?, ?, ?)').bind(biz.id, t, sid, path, source, cut(b.l, 60) || null).run();
   } else if (t === 'lead') {
     const contact = cut(b.contact, 120), message = cut(b.m, 2000);
     if (!contact && !message) return json(400, { ok: false }, CORS);
+    // A public form must not become a way to flood an owner's inbox.
+    const today = await db.prepare("SELECT COUNT(*) AS n FROM biz_leads WHERE biz_id = ? AND at > datetime('now', '-1 day')").bind(biz.id).first<{ n: number }>();
+    if ((today?.n ?? 0) >= 200) return json(200, { ok: true }, CORS);
     // One form, one row: the same visit sending the same text twice in a minute is a double click.
     const dup = await db.prepare("SELECT id FROM biz_leads WHERE biz_id = ? AND contact IS ? AND message IS ? AND at > datetime('now', '-1 minute')").bind(biz.id, contact || null, message || null).first();
     if (!dup) {

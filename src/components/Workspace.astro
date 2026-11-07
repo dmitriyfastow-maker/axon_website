@@ -1,0 +1,583 @@
+---
+// Workspace (Decision 40): the one screen a person works in. Projects, memory and modules on the left, the chat with Vax
+// in the middle, the Canvas with tools and documents on the right. Works for guests too, in this browser.
+import Base from '../layouts/Base.astro';
+import type { Lang } from '../i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const pre = lang === 'en' ? '' : `/${lang}`;
+
+const T = {
+  en: {
+    title: 'Vaxo Workspace', desc: 'Your workspace with Vax: chat, memory, tools and modules on one screen.',
+    new: 'New chat', chats: 'Projects', noChats: 'Your chats will appear here.', mods: 'Modules', crm: 'CRM', partner: 'Partner links', site: 'Site', you: 'You', memory: 'Memory', earn: 'Earn with Vaxo', profile: 'Profile and billing',
+    signin: 'Sign in', out: 'Sign out', guest: 'Guest: saved in this browser', short: 'Short', deep: 'Deep project', canvas: 'Canvas', menu: 'Menu', close: 'Close',
+    ph: 'Write your task…', send: 'Send', mic: 'Voice input', think: 'Vax is working…', err: 'That did not go through. Try again in a moment.', limit: 'That is all for today on this plan. It renews tomorrow, and everything is saved.', guestLimit: 'That is all for a guest today. Sign in for free to keep going.',
+    hello: 'What are we doing?', sub: 'Write it in your own words. Vax lays it out and does the work.', chips: ['Work out my unit economics', 'Plan an online course launch', 'Make a habit tracker', 'Draw a logo idea for a coffee shop'],
+    open: 'Open on Canvas', del: 'Delete chat', delQ: 'Delete this chat?', empty: 'Tools and documents from the chat open here.',
+    edit: 'Edit', done: 'Done', copy: 'Copy', copied: 'Copied', dl: 'Download',
+    memH: 'What Vax remembers', memP: 'Vax takes this into every new chat, so you never retell it. It also fills in by itself, and you can change it at any time.', mem: { niche: 'Niche or field', goals: 'Goals', project: 'Current project', limits: 'Limits: money, time, tools' }, save: 'Save', saved: 'Saved', memGuest: 'Kept in this browser. Sign in to have it on every device.',
+    dep: 'Deploy', depBusy: 'Deploying…', bizName: 'Name of your business or project', needIn: 'Sign in first: the module is created in your own account.', depFail: 'Did not deploy. Try again.',
+    crmH: 'CRM', crmP: 'A public request form and a board in your account. Every request lands here, and you get an email.', crmLink: 'Your form', crmTotal: 'Requests', crmNone: 'No requests yet. Share the form link.', crmFull: 'Full CRM and analytics', st: { new: 'New', work: 'In work', won: 'Won', lost: 'Lost' },
+    parH: 'Partner links', parP: 'A personal link for each partner. Visits and requests are counted automatically.', parName: 'Partner name', parAdd: 'Add', visits: 'Visits', leads: 'Requests',
+    siteH: 'Site', siteP: 'A one-page site with your request form, written from what Vax knows about you. It works at once on a vaxogroup.com address.', siteOpen: 'Open the site', fT: 'Headline', fS: 'One line under it', fA: 'About', fL: 'Services, one per line', fC: 'Form title', fTone: 'Style', tones: { clean: 'Clean', dark: 'Dark', warm: 'Warm' },
+    sH: 'Sign in to Vaxo', sP: 'Enter your email. We send a link: one tap and you are in. No password.', sEmail: 'Your email', sGo: 'Send the link', sSent: 'Check your email and tap the link. Or enter the code from the letter:', sCode: 'Six-digit code', sIn: 'Sign in', sBad: 'Check the email address.', sWrong: 'Wrong or expired code.', sWait: 'Wait a minute and try again.', sPw: 'Sign in with a password', sAgree: 'By continuing you accept the', terms: 'Terms', and: 'and', privacy: 'Privacy Policy',
+  },
+  ru: {
+    title: 'Vaxo Workspace', desc: 'Ваше рабочее пространство с Vax: чат, память, инструменты и модули на одном экране.',
+    new: 'Новый разговор', chats: 'Проекты', noChats: 'Здесь появятся ваши разговоры.', mods: 'Модули', crm: 'CRM', partner: 'Партнёрские ссылки', site: 'Сайт', you: 'Вы', memory: 'Память', earn: 'Заработать с Vaxo', profile: 'Профиль и оплата',
+    signin: 'Войти', out: 'Выйти', guest: 'Гость: сохраняется в этом браузере', short: 'Коротко в суть', deep: 'Развёрнутый проект', canvas: 'Холст', menu: 'Меню', close: 'Закрыть',
+    ph: 'Напишите задачу…', send: 'Отправить', mic: 'Голосовой ввод', think: 'Vax работает…', err: 'Не получилось. Попробуйте ещё раз через мгновение.', limit: 'На сегодня по тарифу всё. Завтра запас обновится, всё сохранено.', guestLimit: 'Для гостя на сегодня всё. Войдите бесплатно, чтобы продолжить.',
+    hello: 'Что делаем?', sub: 'Напишите своими словами. Vax разложит задачу и сделает.', chips: ['Посчитай мою юнит-экономику', 'Разложи запуск онлайн-курса', 'Сделай трекер привычки', 'Нарисуй идею логотипа для кофейни'],
+    open: 'Открыть на холсте', del: 'Удалить разговор', delQ: 'Удалить этот разговор?', empty: 'Здесь открываются инструменты и документы из чата.',
+    edit: 'Править', done: 'Готово', copy: 'Копировать', copied: 'Скопировано', dl: 'Скачать',
+    memH: 'Что Vax помнит', memP: 'Vax берёт это в каждый новый разговор, пересказывать не нужно. Заполняется и само, а вы можете поправить в любой момент.', mem: { niche: 'Ниша или сфера', goals: 'Цели', project: 'Текущий проект', limits: 'Ограничения: деньги, время, инструменты' }, save: 'Сохранить', saved: 'Сохранено', memGuest: 'Хранится в этом браузере. Войдите, чтобы было на всех устройствах.',
+    dep: 'Развернуть', depBusy: 'Разворачиваю…', bizName: 'Название бизнеса или проекта', needIn: 'Сначала войдите: модуль создаётся в вашем аккаунте.', depFail: 'Не развернулось. Попробуйте ещё раз.',
+    crmH: 'CRM', crmP: 'Публичная форма заявок и доска в вашем аккаунте. Каждая заявка попадает сюда, и вам приходит письмо.', crmLink: 'Ваша форма', crmTotal: 'Заявок', crmNone: 'Заявок пока нет. Поделитесь ссылкой на форму.', crmFull: 'Полная CRM и аналитика', st: { new: 'Новая', work: 'В работе', won: 'Сделка', lost: 'Отказ' },
+    parH: 'Партнёрские ссылки', parP: 'Личная ссылка для каждого партнёра. Переходы и заявки считаются сами.', parName: 'Имя партнёра', parAdd: 'Добавить', visits: 'Переходы', leads: 'Заявки',
+    siteH: 'Сайт', siteP: 'Одностраничный сайт с формой заявок, текст из того, что Vax о вас знает. Работает сразу, на адресе vaxogroup.com.', siteOpen: 'Открыть сайт', fT: 'Заголовок', fS: 'Строка под ним', fA: 'О вас', fL: 'Услуги, по одной в строке', fC: 'Заголовок формы', fTone: 'Стиль', tones: { clean: 'Чистый', dark: 'Тёмный', warm: 'Тёплый' },
+    sH: 'Вход в Vaxo', sP: 'Введите почту. Пришлём ссылку: одно нажатие, и вы внутри. Без пароля.', sEmail: 'Ваша почта', sGo: 'Прислать ссылку', sSent: 'Проверьте почту и нажмите ссылку. Или введите код из письма:', sCode: 'Код из шести цифр', sIn: 'Войти', sBad: 'Проверьте адрес почты.', sWrong: 'Код неверный или устарел.', sWait: 'Подождите минуту и попробуйте снова.', sPw: 'Войти с паролем', sAgree: 'Продолжая, вы принимаете', terms: 'Условия', and: 'и', privacy: 'Политику конфиденциальности',
+  },
+  ua: {
+    title: 'Vaxo Workspace', desc: 'Ваш робочий простір з Vax: чат, памʼять, інструменти й модулі на одному екрані.',
+    new: 'Нова розмова', chats: 'Проєкти', noChats: 'Тут зʼявляться ваші розмови.', mods: 'Модулі', crm: 'CRM', partner: 'Партнерські посилання', site: 'Сайт', you: 'Ви', memory: 'Памʼять', earn: 'Заробити з Vaxo', profile: 'Профіль і оплата',
+    signin: 'Увійти', out: 'Вийти', guest: 'Гість: зберігається в цьому браузері', short: 'Коротко в суть', deep: 'Розгорнутий проєкт', canvas: 'Полотно', menu: 'Меню', close: 'Закрити',
+    ph: 'Напишіть завдання…', send: 'Надіслати', mic: 'Голосове введення', think: 'Vax працює…', err: 'Не вийшло. Спробуйте ще раз за мить.', limit: 'На сьогодні за тарифом усе. Завтра запас оновиться, усе збережено.', guestLimit: 'Для гостя на сьогодні все. Увійдіть безкоштовно, щоб продовжити.',
+    hello: 'Що робимо?', sub: 'Напишіть своїми словами. Vax розкладе завдання і зробить.', chips: ['Порахуй мою юніт-економіку', 'Розклади запуск онлайн-курсу', 'Зроби трекер звички', 'Намалюй ідею логотипа для кавʼярні'],
+    open: 'Відкрити на полотні', del: 'Видалити розмову', delQ: 'Видалити цю розмову?', empty: 'Тут відкриваються інструменти й документи з чату.',
+    edit: 'Правити', done: 'Готово', copy: 'Копіювати', copied: 'Скопійовано', dl: 'Завантажити',
+    memH: 'Що Vax памʼятає', memP: 'Vax бере це в кожну нову розмову, переказувати не треба. Заповнюється і саме, а ви можете виправити будь-коли.', mem: { niche: 'Ніша або сфера', goals: 'Цілі', project: 'Поточний проєкт', limits: 'Обмеження: гроші, час, інструменти' }, save: 'Зберегти', saved: 'Збережено', memGuest: 'Зберігається в цьому браузері. Увійдіть, щоб було на всіх пристроях.',
+    dep: 'Розгорнути', depBusy: 'Розгортаю…', bizName: 'Назва бізнесу або проєкту', needIn: 'Спочатку увійдіть: модуль створюється у вашому акаунті.', depFail: 'Не розгорнулося. Спробуйте ще раз.',
+    crmH: 'CRM', crmP: 'Публічна форма заявок і дошка у вашому акаунті. Кожна заявка потрапляє сюди, і вам приходить лист.', crmLink: 'Ваша форма', crmTotal: 'Заявок', crmNone: 'Заявок поки немає. Поділіться посиланням на форму.', crmFull: 'Повна CRM і аналітика', st: { new: 'Нова', work: 'В роботі', won: 'Угода', lost: 'Відмова' },
+    parH: 'Партнерські посилання', parP: 'Особисте посилання для кожного партнера. Переходи й заявки рахуються самі.', parName: 'Імʼя партнера', parAdd: 'Додати', visits: 'Переходи', leads: 'Заявки',
+    siteH: 'Сайт', siteP: 'Односторінковий сайт із формою заявок, текст із того, що Vax про вас знає. Працює одразу, на адресі vaxogroup.com.', siteOpen: 'Відкрити сайт', fT: 'Заголовок', fS: 'Рядок під ним', fA: 'Про вас', fL: 'Послуги, по одній у рядку', fC: 'Заголовок форми', fTone: 'Стиль', tones: { clean: 'Чистий', dark: 'Темний', warm: 'Теплий' },
+    sH: 'Вхід у Vaxo', sP: 'Введіть пошту. Надішлемо посилання: одне натискання, і ви всередині. Без пароля.', sEmail: 'Ваша пошта', sGo: 'Надіслати посилання', sSent: 'Перевірте пошту й натисніть посилання. Або введіть код із листа:', sCode: 'Код із шести цифр', sIn: 'Увійти', sBad: 'Перевірте адресу пошти.', sWrong: 'Код неправильний або застарів.', sWait: 'Зачекайте хвилину й спробуйте знову.', sPw: 'Увійти з паролем', sAgree: 'Продовжуючи, ви приймаєте', terms: 'Умови', and: 'і', privacy: 'Політику конфіденційності',
+  },
+}[lang];
+const ico = {
+  crm: 'M4 5h16v3H4zm0 5.5h10v3H4zM4 16h7v3H4z',
+  partner: 'M10 13a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7L12 6m2 5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7L12 18',
+  site: 'M3 5h18v14H3zM3 9h18',
+  memory: 'M12 3a6 6 0 0 0-4 10.5V17h8v-3.5A6 6 0 0 0 12 3zM9 21h6',
+};
+---
+
+<Base lang={lang} title={T.title} description={T.desc} noindex noChat>
+  <div class="wsp" data-ws data-lang={lang} data-pre={pre}>
+    <script type="application/json" data-t set:html={JSON.stringify(T)} />
+    <aside class="side" data-side>
+      <a class="logo" href={`${pre}/`}>VAXO<span>.</span></a>
+      <button class="new" type="button" data-new>+ {T.new}</button>
+      <p class="lbl">{T.chats}</p>
+      <nav class="chats" data-chats></nav>
+      <p class="lbl">{T.mods}</p>
+      {(['crm', 'partner', 'site'] as const).map((k) => <button class="nav" type="button" data-panel={k}><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d={ico[k]} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T[k]}<i data-dot={k} hidden></i></button>)}
+      <p class="lbl">{T.you}</p>
+      <button class="nav" type="button" data-panel="memory"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d={ico.memory} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.memory}</button>
+      <a class="nav" href={`${pre}/partners/`}>{T.earn}</a>
+      <a class="nav" href={`${pre}/me/`}>{T.profile}</a>
+      <div class="foot">
+        <div class="who" data-who></div>
+        <div class="row">
+          <button class="mini" type="button" data-theme-toggle aria-label="Theme">◐</button>
+          <a class="mini" href="/app/">EN</a><a class="mini" href="/ua/app/">UA</a><a class="mini" href="/ru/app/">RU</a>
+        </div>
+      </div>
+    </aside>
+    <div class="veil" data-veil hidden></div>
+
+    <main class="mid">
+      <header class="top">
+        <button class="ic only-m" type="button" data-menu aria-label={T.menu}>☰</button>
+        <b class="ttl" data-title></b>
+        <div class="seg" role="group">
+          <button type="button" data-mode="short">{T.short}</button>
+          <button type="button" data-mode="deep">{T.deep}</button>
+        </div>
+        <button class="ic" type="button" data-del aria-label={T.del} title={T.del} hidden>🗑</button>
+        <button class="ic" type="button" data-cv aria-label={T.canvas} title={T.canvas}>▣</button>
+      </header>
+      <div class="log" data-log aria-live="polite"></div>
+      <form class="in" data-form>
+        <button type="button" class="ib" data-clip aria-label="📎"></button>
+        <textarea name="q" rows="1" maxlength="4000" placeholder={T.ph} aria-label={T.ph}></textarea>
+        <button type="button" class="ib" data-mic aria-label={T.mic}></button>
+        <button type="submit" class="go" aria-label={T.send}>➤</button>
+      </form>
+    </main>
+
+    <aside class="cv" data-canvas hidden>
+      <header><b data-cv-title>{T.canvas}</b><button class="ic" type="button" data-cv-x aria-label={T.close}>×</button></header>
+      <div class="cvb" data-cv-body></div>
+    </aside>
+
+    <dialog class="wsign" data-sign>
+      <button class="ic x" type="button" data-sign-x aria-label={T.close}>×</button>
+      <h2>{T.sH}</h2>
+      <p data-sign-p>{T.sP}</p>
+      <form data-sign-mail>
+        <input type="email" name="email" required maxlength="254" autocomplete="email" placeholder={T.sEmail} aria-label={T.sEmail} />
+        <button class="pri" type="submit">{T.sGo}</button>
+      </form>
+      <form data-sign-code hidden>
+        <input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder={T.sCode} aria-label={T.sCode} />
+        <button class="pri" type="submit">{T.sIn}</button>
+      </form>
+      <small class="bad" data-sign-err role="status"></small>
+      <small>{T.sAgree} <a href={`${pre}/terms/`}>{T.terms}</a> {T.and} <a href={`${pre}/privacy/`}>{T.privacy}</a>.</small>
+      <small><a href={`${pre}/me/`}>{T.sPw}</a></small>
+    </dialog>
+  </div>
+</Base>
+
+<script>
+  import { attachMic, MIC_SVG } from '../scripts/voice';
+  import { attachFiles, linkify } from '../scripts/attach';
+  import { composer } from '../scripts/compose';
+  import { renderTool } from '../scripts/tool';
+  import { initTheme } from '../scripts/theme';
+  import { md } from '../scripts/md';
+  import type { ToolSpec } from '../../worker/toolcore';
+
+  type Doc = { title: string; body: string };
+  type Msg = { id?: number; role: 'user' | 'assistant'; content: string; tool?: ToolSpec; doc?: Doc; image?: string; deploy?: string };
+  type Chat = { id: number; title: string; msgs?: Msg[] };
+  type Mem = { niche: string; goals: string; project: string; limits: string };
+  type Mods = { biz: { id: number; name: string } | null; crm: any; partner: any; site: any };
+
+  const root = document.querySelector<HTMLElement>('[data-ws]')!;
+  const T = JSON.parse(root.querySelector('[data-t]')!.textContent || '{}');
+  const lang = root.dataset.lang || 'en', pre = root.dataset.pre || '';
+  const $ = <E extends Element = HTMLElement>(s: string) => root.querySelector<E>(s)!;
+  const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls = '', text?: string) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+  const KEY = 'vaxo_ws', PEND = 'vaxo_ws_open';
+  const local = { get() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { return null; } }, set(v: unknown) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {} }, drop() { try { localStorage.removeItem(KEY); } catch {} } };
+  const post = (p: string, b: unknown) => fetch(p, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
+
+  const blank: Mem = { niche: '', goals: '', project: '', limits: '' };
+  const S = { signed: false, email: '', chats: [] as Chat[], cur: 0, msgs: [] as Msg[], memory: { ...blank }, mode: 'short', mods: null as Mods | null, busy: false, panel: '' };
+
+  const log = $('[data-log]'), form = $<HTMLFormElement>('[data-form]'), input = form.querySelector('textarea')!;
+  const cv = $('[data-canvas]'), cvBody = $('[data-cv-body]'), cvTitle = $('[data-cv-title]');
+  const sign = $<HTMLDialogElement>('[data-sign]');
+
+  const saveGuest = () => { if (!S.signed) local.set({ chats: S.chats, memory: S.memory, mode: S.mode }); };
+
+  /* ---------- Sidebar ---------- */
+  function side(yes: boolean) { $('[data-side]').classList.toggle('open', yes); $('[data-veil]').hidden = !yes; }
+  function drawChats() {
+    const nav = $('[data-chats]');
+    nav.replaceChildren(...S.chats.map((c) => { const b = el('button', 'chat' + (c.id === S.cur ? ' on' : ''), c.title); b.type = 'button'; b.onclick = () => { side(false); openChat(c.id); }; return b; }));
+    if (!S.chats.length) nav.append(el('small', '', T.noChats));
+    $('[data-title]').textContent = S.chats.find((c) => c.id === S.cur)?.title || '';
+    $('[data-del]').hidden = !S.cur;
+  }
+  function drawWho() {
+    const w = $('[data-who]');
+    if (S.signed) {
+      const b = el('button', 'lnk', T.out); b.type = 'button';
+      b.onclick = async () => { await fetch('/api/me/logout', { method: 'POST' }); location.href = location.pathname; };
+      w.replaceChildren(el('small', '', S.email), b);
+    } else {
+      const b = el('button', 'pri', T.signin); b.type = 'button'; b.onclick = () => openSign();
+      w.replaceChildren(b, el('small', '', T.guest));
+    }
+    for (const k of ['crm', 'partner', 'site']) $(`[data-dot=${k}]`).hidden = !S.mods?.[k as 'crm'];
+  }
+  function drawMode() { root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => b.classList.toggle('on', b.dataset.mode === S.mode)); }
+
+  /* ---------- Chat ---------- */
+  function drawEmpty() {
+    const box = el('div', 'hi');
+    box.append(el('h1', '', T.hello), el('p', '', T.sub));
+    const c = el('div', 'chips');
+    for (const q of T.chips as string[]) { const b = el('button', '', q); b.type = 'button'; b.onclick = () => ask(q); c.append(b); }
+    box.append(c);
+    log.replaceChildren(box);
+  }
+  function card(label: string, title: string, go: () => void) {
+    const b = el('button', 'card'); b.type = 'button';
+    b.append(el('b', '', title), el('small', '', label));
+    b.onclick = go;
+    return b;
+  }
+  function drawMsg(m: Msg) {
+    const d = el('div', 'm ' + (m.role === 'user' ? 'me' : 'vax'));
+    const t = el('div', 'tx'); t.innerHTML = linkify(m.content); d.append(t);
+    if (m.tool) d.append(card(T.open, m.tool.title, () => showArt(m)));
+    if (m.doc) d.append(card(T.open, m.doc.title, () => showArt(m)));
+    if (m.image) { const i = el('img', 'pic'); i.src = m.image; i.alt = ''; d.append(i); }
+    if (m.deploy) { const b = el('button', 'pri sm', `${T.dep}: ${T[m.deploy]}`); b.type = 'button'; b.onclick = () => panel(m.deploy!); d.append(b); }
+    log.append(d);
+    log.scrollTop = log.scrollHeight;
+    return d;
+  }
+  function drawAll() {
+    if (!S.msgs.length) { drawEmpty(); return; }
+    log.replaceChildren();
+    S.msgs.forEach(drawMsg);
+  }
+  async function openChat(id: number) {
+    S.cur = id;
+    const c = S.chats.find((x) => x.id === id);
+    if (S.signed) {
+      const d = await (await fetch('/api/ws/chat/' + id)).json().catch(() => null);
+      S.msgs = d?.msgs || [];
+    } else S.msgs = c?.msgs || [];
+    drawChats(); drawAll();
+    const last = [...S.msgs].reverse().find((m) => m.tool || m.doc);
+    if (last && matchMedia('(min-width: 1100px)').matches) showArt(last); else closeCv();
+  }
+  function fresh() { S.cur = 0; S.msgs = []; drawChats(); drawEmpty(); closeCv(); input.focus(); }
+
+  async function ask(q: string) {
+    q = q.trim();
+    if (!q || S.busy) return;
+    S.busy = true;
+    if (!S.msgs.length) log.replaceChildren();
+    const mine: Msg = { role: 'user', content: q };
+    S.msgs.push(mine); drawMsg(mine);
+    const wait = el('div', 'm vax wait', T.think); log.append(wait); log.scrollTop = log.scrollHeight;
+    const history = S.msgs.slice(-15, -1).map(({ role, content }) => ({ role, content }));
+    let say: Msg = { role: 'assistant', content: T.err };
+    try {
+      const r = await post('/api/ws/ask', { q, lang, mode: S.mode, chat: S.signed ? S.cur : 0, ...(S.signed ? {} : { history, memory: S.memory }) });
+      const d = await r.json();
+      if (r.status === 429) say.content = d.error === 'guest' ? T.guestLimit : T.limit;
+      else if (d.ok) {
+        say = { id: d.id ?? undefined, role: 'assistant', content: d.reply, tool: d.tool || undefined, doc: d.doc || undefined, image: d.image, deploy: d.deploy || undefined };
+        if (S.signed && d.chat && d.chat !== S.cur) { S.cur = d.chat; S.chats.unshift({ id: d.chat, title: q.slice(0, 60) }); }
+      }
+    } catch { /* the message above says so */ }
+    wait.remove();
+    S.msgs.push(say); drawMsg(say);
+    if (!S.signed) {
+      if (!S.cur) { S.cur = Date.now(); S.chats.unshift({ id: S.cur, title: q.slice(0, 60), msgs: S.msgs }); }
+      const c = S.chats.find((x) => x.id === S.cur); if (c) c.msgs = S.msgs.map((m) => ({ ...m, image: undefined }));
+      saveGuest();
+    }
+    drawChats();
+    if (say.tool || say.doc) showArt(say);
+    S.busy = false;
+  }
+
+  /* ---------- Canvas ---------- */
+  function openCv(title: string, ...body: Node[]) { cvTitle.textContent = title; cvBody.replaceChildren(...body); cv.hidden = false; root.classList.add('wide'); side(false); }
+  function closeCv() { cv.hidden = true; root.classList.remove('wide'); S.panel = ''; }
+
+  function showArt(m: Msg) {
+    S.panel = '';
+    if (m.tool) { openCv(m.tool.title, renderTool(m.tool)); return; }
+    if (!m.doc) return;
+    const view = el('div', 'doc'), area = el('textarea', 'src'), bar = el('div', 'bar');
+    const paint = () => { view.innerHTML = md(m.doc!.body); };
+    paint(); area.value = m.doc.body; area.hidden = true;
+    const edit = el('button', 'sec', T.edit), copy = el('button', 'sec', T.copy), dl = el('button', 'sec', T.dl);
+    edit.onclick = async () => {
+      if (area.hidden) { area.hidden = false; view.hidden = true; edit.textContent = T.done; area.focus(); return; }
+      m.doc!.body = area.value; area.hidden = true; view.hidden = false; edit.textContent = T.edit; paint();
+      if (S.signed && m.id) await post('/api/ws/doc', { id: m.id, ...m.doc }); else saveGuest();
+    };
+    copy.onclick = async () => { await navigator.clipboard.writeText(area.hidden ? m.doc!.body : area.value).catch(() => {}); copy.textContent = T.copied; setTimeout(() => (copy.textContent = T.copy), 1500); };
+    dl.onclick = () => { const a = el('a'); a.href = URL.createObjectURL(new Blob([m.doc!.body], { type: 'text/markdown' })); a.download = m.doc!.title.replace(/[^\p{L}\p{N} -]+/gu, '').slice(0, 60) + '.md'; a.click(); URL.revokeObjectURL(a.href); };
+    bar.append(edit, copy, dl);
+    openCv(m.doc.title, bar, view, area);
+  }
+
+  const field = (label: string, name: string, value: string, long = false) => {
+    const l = el('label', 'f', label), i = long ? el('textarea') : el('input');
+    i.name = name; i.value = value; l.append(i);
+    return l;
+  };
+
+  function memoryPanel() {
+    const f = el('form', 'pf');
+    f.append(el('p', '', T.memP));
+    for (const k of ['niche', 'goals', 'project', 'limits'] as const) f.append(field(T.mem[k], k, S.memory[k], true));
+    const b = el('button', 'pri', T.save); f.append(b);
+    if (!S.signed) f.append(el('small', '', T.memGuest));
+    f.onsubmit = async (e) => {
+      e.preventDefault();
+      S.memory = Object.fromEntries(new FormData(f)) as unknown as Mem;
+      if (S.signed) await post('/api/ws/memory', { ...S.memory, mode: S.mode }); else saveGuest();
+      b.textContent = T.saved; setTimeout(() => (b.textContent = T.save), 1500);
+    };
+    openCv(T.memH, f);
+  }
+
+  function linkRow(url: string) {
+    const r = el('div', 'lk'), a = el('a', '', url.replace(/^https?:\/\//, '')), c = el('button', 'sec', T.copy);
+    a.href = url; a.target = '_blank'; a.rel = 'noopener'; c.type = 'button';
+    c.onclick = async () => { await navigator.clipboard.writeText(url).catch(() => {}); c.textContent = T.copied; setTimeout(() => (c.textContent = T.copy), 1500); };
+    r.append(a, c);
+    return r;
+  }
+
+  function deployCard(kind: string, text: string) {
+    const box = el('div', 'pf'), b = el('button', 'pri', T.dep), err = el('small', 'bad');
+    box.append(el('p', '', text));
+    const name = el('input'); name.placeholder = T.bizName; name.setAttribute('aria-label', T.bizName); name.value = S.mods?.biz?.name || S.memory.project.slice(0, 60);
+    if (S.signed && !S.mods?.biz) box.append(name);
+    b.type = 'button';
+    b.onclick = async () => {
+      if (!S.signed) { try { sessionStorage.setItem(PEND, kind); } catch {} openSign(T.needIn); return; }
+      b.disabled = true; b.textContent = T.depBusy;
+      const r = await post('/api/ws/module', { kind, name: name.value, lang }).catch(() => null);
+      const d = r ? await r.json().catch(() => null) : null;
+      b.disabled = false; b.textContent = T.dep;
+      if (d?.ok) { S.mods = d.modules; drawWho(); panel(kind); } else err.textContent = T.depFail;
+    };
+    box.append(b, err);
+    return box;
+  }
+
+  function crmPanel() {
+    const c = S.mods?.crm;
+    if (!c) { openCv(T.crmH, deployCard('crm', T.crmP)); return; }
+    const box = el('div', 'pf');
+    box.append(el('b', '', T.crmLink), linkRow(c.url), el('b', '', `${T.crmTotal}: ${c.total}`));
+    if (!c.leads.length) box.append(el('small', '', T.crmNone));
+    for (const l of c.leads) {
+      const r = el('div', 'lead'), s = el('select');
+      for (const k of ['new', 'work', 'won', 'lost']) { const o = el('option', '', T.st[k]); o.value = k; o.selected = l.status === k; s.append(o); }
+      s.setAttribute('aria-label', 'Status');
+      s.onchange = () => post(`/api/biz/${S.mods!.biz!.id}/leads/${l.id}`, { status: s.value });
+      const who = el('div'); who.append(el('b', '', l.name || l.contact || '—'), el('small', '', [l.contact, l.message].filter(Boolean).join(' · ').slice(0, 160)));
+      r.append(who, s); box.append(r);
+    }
+    const a = el('a', 'lnk', T.crmFull + ' →'); a.href = `${pre}/me/`; box.append(a);
+    openCv(T.crmH, box);
+  }
+
+  function partnerPanel() {
+    const p = S.mods?.partner;
+    if (!p) { openCv(T.parH, deployCard('partner', T.parP)); return; }
+    const box = el('div', 'pf');
+    box.append(el('p', '', T.parP));
+    for (const l of p.links) { const r = el('div', 'lead col'); r.append(el('b', '', l.name), linkRow(l.url), el('small', '', `${T.visits}: ${l.visits} · ${T.leads}: ${l.leads}`)); box.append(r); }
+    const f = el('form', 'add'), i = el('input'), b = el('button', 'sec', T.parAdd);
+    i.placeholder = T.parName; i.maxLength = 80; i.required = true; i.setAttribute('aria-label', T.parName);
+    f.append(i, b);
+    f.onsubmit = async (e) => { e.preventDefault(); const d = await (await post('/api/ws/module/ref', { name: i.value })).json().catch(() => null); if (d?.modules) { S.mods = d.modules; partnerPanel(); } };
+    box.append(f);
+    openCv(T.parH, box);
+  }
+
+  function sitePanel() {
+    const s = S.mods?.site;
+    if (!s) { openCv(T.siteH, deployCard('site', T.siteP)); return; }
+    const f = el('form', 'pf');
+    f.append(el('b', '', T.siteOpen), linkRow(s.url), field(T.fT, 'title', s.title), field(T.fS, 'sub', s.sub), field(T.fA, 'about', s.about, true), field(T.fL, 'services', (s.services || []).join('\n'), true), field(T.fC, 'cta', s.cta));
+    const l = el('label', 'f', T.fTone), t = el('select'); t.name = 'tone';
+    for (const k of ['clean', 'dark', 'warm']) { const o = el('option', '', T.tones[k]); o.value = k; o.selected = s.tone === k; t.append(o); }
+    l.append(t);
+    const b = el('button', 'pri', T.save);
+    f.append(l, b);
+    f.onsubmit = async (e) => {
+      e.preventDefault();
+      const d = await (await post('/api/ws/module/site', Object.fromEntries(new FormData(f)))).json().catch(() => null);
+      if (d?.modules) S.mods = d.modules;
+      b.textContent = T.saved; setTimeout(() => (b.textContent = T.save), 1500);
+    };
+    openCv(T.siteH, f);
+  }
+
+  function panel(k: string) {
+    S.panel = k;
+    ({ memory: memoryPanel, crm: crmPanel, partner: partnerPanel, site: sitePanel } as Record<string, () => void>)[k]?.();
+  }
+
+  /* ---------- Sign-in ---------- */
+  let mail = '';
+  function openSign(note?: string) { $('[data-sign-p]').textContent = note || T.sP; $('[data-sign-err]').textContent = ''; sign.showModal(); }
+  async function enter(email: string, code: string) {
+    const r = await post('/api/me/verify', { email, code, lang }).catch(() => null);
+    return !!r?.ok;
+  }
+  $<HTMLFormElement>('[data-sign-mail]').onsubmit = async (e) => {
+    e.preventDefault();
+    mail = String(new FormData(e.target as HTMLFormElement).get('email') || '').trim();
+    const r = await post('/api/me/code', { email: mail, lang }).catch(() => null);
+    const d = r ? await r.json().catch(() => ({})) : {};
+    if (r?.ok || d.error === 'wait') { $('[data-sign-p]').textContent = T.sSent; $('[data-sign-mail]').hidden = true; $('[data-sign-code]').hidden = false; $('[data-sign-err]').textContent = d.error === 'wait' ? T.sWait : ''; }
+    else $('[data-sign-err]').textContent = T.sBad;
+  };
+  $<HTMLFormElement>('[data-sign-code]').onsubmit = async (e) => {
+    e.preventDefault();
+    const code = String(new FormData(e.target as HTMLFormElement).get('code') || '').replace(/\D/g, '');
+    if (await enter(mail, code)) location.href = location.pathname; else $('[data-sign-err]').textContent = T.sWrong;
+  };
+  $('[data-sign-x]').onclick = () => sign.close();
+
+  /* ---------- Wiring ---------- */
+  $('[data-new]').onclick = () => { side(false); fresh(); };
+  $('[data-menu]').onclick = () => side(true);
+  $('[data-veil]').onclick = () => side(false);
+  $('[data-cv-x]').onclick = closeCv;
+  $('[data-cv]').onclick = () => { if (!cv.hidden) { closeCv(); return; } const last = [...S.msgs].reverse().find((m) => m.tool || m.doc); if (last) showArt(last); else openCv(T.canvas, el('p', 'none', T.empty)); };
+  $('[data-del]').onclick = async () => {
+    if (!confirm(T.delQ)) return;
+    if (S.signed) await post('/api/ws/chat/' + S.cur, {});
+    S.chats = S.chats.filter((c) => c.id !== S.cur); saveGuest(); fresh();
+  };
+  root.querySelectorAll<HTMLButtonElement>('[data-panel]').forEach((b) => (b.onclick = () => panel(b.dataset.panel!)));
+  root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => (b.onclick = () => {
+    S.mode = b.dataset.mode!; drawMode();
+    if (S.signed) post('/api/ws/memory', { ...S.memory, mode: S.mode }); else saveGuest();
+  }));
+  form.onsubmit = (e) => { e.preventDefault(); const q = input.value; input.value = ''; ask(q); };
+  composer(input, () => form.requestSubmit());
+  const mic = $<HTMLButtonElement>('[data-mic]'); mic.innerHTML = MIC_SVG; attachMic(mic, input, () => lang);
+  attachFiles($<HTMLButtonElement>('[data-clip]'), input, () => lang, form);
+  initTheme();
+
+  (async () => {
+    const h = location.hash;
+    const link = h.match(/^#in=([^.]+)\.(\d{6})$/);
+    if (link) { history.replaceState(null, '', location.pathname); try { await enter(atob(link[1]), link[2]); } catch {} }
+    const d = await (await fetch('/api/ws')).json().catch(() => null);
+    if (d?.signedIn) {
+      // Signed in any way (link, Google, password): what the guest did in this browser joins the account.
+      const g = local.get();
+      if (g) { await post('/api/ws/import', g).catch(() => null); local.drop(); location.reload(); return; }
+      Object.assign(S, { signed: true, email: d.me.email || '', chats: d.chats, memory: d.memory, mode: d.mode, mods: d.modules });
+    } else {
+      const g = local.get();
+      if (g) Object.assign(S, { chats: g.chats || [], memory: { ...blank, ...g.memory }, mode: g.mode === 'deep' ? 'deep' : 'short' });
+    }
+    drawWho(); drawMode(); drawChats(); drawEmpty();
+    const q = h.match(/^#q=(.+)$/), dep = h.match(/^#deploy=(crm|partner|site)$/);
+    if (q || dep || h === '#signin') history.replaceState(null, '', location.pathname);
+    let pend = ''; try { pend = sessionStorage.getItem(PEND) || ''; sessionStorage.removeItem(PEND); } catch {}
+    if (q) ask(decodeURIComponent(q[1]));
+    else if (dep) panel(dep[1]);
+    else if (pend) panel(pend);
+    else if (h === '#signin' && !S.signed) openSign();
+    else if (matchMedia('(min-width: 761px)').matches) input.focus();
+  })();
+</script>
+
+<style is:global>
+  html, body { height: 100%; }
+  body:has(.wsp) { overflow: hidden; background: var(--bg); }
+  .wsp { display: grid; grid-template-columns: 264px minmax(0, 1fr); height: 100dvh; color: var(--ink); font-family: var(--font); }
+  .wsp.wide { grid-template-columns: 264px minmax(0, 1fr) minmax(360px, 44vw); }
+  .wsp button { font-family: inherit; color: inherit; }
+  .wsp .side { background: var(--surf); border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; padding: 16px 12px; overflow-y: auto; min-height: 0; }
+  .wsp .logo { font-weight: 800; font-size: 20px; letter-spacing: .02em; padding: 2px 8px 12px; color: var(--ink); text-decoration: none; }
+  .wsp .logo span { color: var(--accText); }
+  .wsp .new { border: 1px solid var(--line2, var(--line)); background: var(--bg); border-radius: 10px; padding: 10px 12px; font-weight: 600; font-size: 14px; text-align: left; cursor: pointer; }
+  .wsp .lbl { margin: 14px 8px 4px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--mut); }
+  .wsp .chats { display: grid; gap: 2px; max-height: 32vh; overflow-y: auto; flex: none; }
+  .wsp .chats small { padding: 4px 8px; color: var(--mut); font-size: 13px; }
+  .wsp .chat, .wsp .nav { display: flex; align-items: center; gap: 9px; width: 100%; background: none; border: 0; border-radius: 8px; padding: 8px; font-size: 14px; text-align: left; cursor: pointer; text-decoration: none; color: var(--ink); }
+  .wsp .chat { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--mut); }
+  .wsp .chat.on { background: var(--surf2, var(--bg)); color: var(--ink); }
+  .wsp .chat:hover, .wsp .nav:hover { background: var(--surf2, var(--bg)); }
+  .wsp .nav i { margin-left: auto; width: 7px; height: 7px; border-radius: 50%; background: #2fbf71; }
+  .wsp .nav i[hidden] { display: none; }
+  .wsp .foot { margin-top: auto; padding-top: 14px; display: grid; gap: 10px; }
+  .wsp .who { display: grid; gap: 6px; }
+  .wsp .who small { color: var(--mut); font-size: 12px; overflow-wrap: anywhere; }
+  .wsp .row { display: flex; gap: 4px; }
+  .wsp .mini { border: 1px solid var(--line); background: none; border-radius: 7px; padding: 4px 8px; font-size: 12px; color: var(--mut); text-decoration: none; cursor: pointer; }
+  .wsp .pri { border: 0; border-radius: 10px; background: var(--ink); color: var(--bg); padding: 11px 14px; font-weight: 700; font-size: 15px; cursor: pointer; }
+  .wsp .pri.sm { margin-top: 8px; padding: 8px 12px; font-size: 14px; }
+  .wsp .pri:disabled { opacity: .6; }
+  .wsp .sec { border: 1px solid var(--line); background: none; border-radius: 8px; padding: 7px 11px; font-size: 13px; cursor: pointer; }
+  .wsp .lnk { background: none; border: 0; padding: 0; color: var(--mut); font-size: 13px; text-align: left; cursor: pointer; text-decoration: underline; }
+  .wsp .mid { background: var(--bg); display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+  .wsp .top { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--line); min-height: 56px; }
+  .wsp .ttl { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+  .wsp .ic { background: none; border: 0; font-size: 18px; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; flex: none; }
+  .wsp .ic:hover { background: var(--surf2, var(--surf)); }
+  .wsp .ic[hidden] { display: none; }
+  .wsp .only-m { display: none; }
+  .wsp .seg { display: flex; border: 1px solid var(--line); border-radius: 9px; padding: 2px; flex: none; }
+  .wsp .seg button { border: 0; background: none; border-radius: 7px; padding: 6px 10px; font-size: 13px; cursor: pointer; color: var(--mut); white-space: nowrap; }
+  .wsp .seg button.on { background: var(--ink); color: var(--bg); font-weight: 600; }
+  .wsp .log { flex: 1; overflow-y: auto; min-height: 0; padding: 24px max(16px, calc((100% - 760px) / 2)); display: flex; flex-direction: column; gap: 14px; }
+  .wsp .hi { margin: auto 0; display: grid; gap: 10px; }
+  .wsp .hi h1 { margin: 0; font-size: clamp(30px, 4vw, 42px); letter-spacing: -.02em; }
+  .wsp .hi p { margin: 0; color: var(--mut); font-size: 17px; }
+  .wsp .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .wsp .chips button { border: 1px solid var(--line); background: var(--surf); border-radius: 999px; padding: 9px 14px; font-size: 14px; cursor: pointer; }
+  .wsp .chips button:hover { border-color: var(--ink); }
+  .wsp .m { max-width: 100%; font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
+  .wsp .m .tx { white-space: pre-wrap; }
+  .wsp .m.me { align-self: flex-end; max-width: 80%; background: var(--surf2, var(--surf)); border: 1px solid var(--line); border-radius: 16px 16px 4px 16px; padding: 9px 13px; }
+  .wsp .m.vax { align-self: flex-start; }
+  .wsp .m.wait { color: var(--mut); font-style: italic; }
+  .wsp .card { display: grid; gap: 2px; margin-top: 10px; width: min(100%, 360px); text-align: left; background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; cursor: pointer; }
+  .wsp .card:hover { border-color: var(--ink); }
+  .wsp .card small { color: var(--accText); font-size: 13px; }
+  .wsp .pic { display: block; max-width: min(100%, 440px); margin-top: 10px; border-radius: 12px; }
+  .wsp .in { display: flex; align-items: flex-end; gap: 6px; margin: 0 max(16px, calc((100% - 760px) / 2)) 16px; padding: 8px; border: 1px solid var(--line); border-radius: 16px; background: var(--surf); }
+  .wsp .att-tray { margin: 0 max(16px, calc((100% - 760px) / 2)) 6px; }
+  .wsp .in textarea { flex: 1; min-width: 0; resize: none; border: 0; outline: 0; background: none; color: var(--ink); font: 16px/1.4 var(--font); padding: 9px 6px; max-height: 160px; }
+  .wsp .ib, .wsp .go { flex: none; width: 40px; height: 40px; border: 0; border-radius: 10px; background: none; cursor: pointer; display: grid; place-items: center; }
+  .wsp .go { background: var(--ink); color: var(--bg); font-size: 16px; }
+  .wsp .ib.rec { background: var(--error, #e5484d); color: #fff; }
+  .wsp .cv { border-left: 1px solid var(--line); background: var(--surf); display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+  .wsp .cv[hidden] { display: none; }
+  .wsp .cv header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--line); min-height: 56px; }
+  .wsp .cv header b { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wsp .cvb { flex: 1; overflow-y: auto; padding: 16px; display: grid; gap: 12px; align-content: start; }
+  .wsp .cvb .none { color: var(--mut); }
+  .wsp .bar { display: flex; flex-wrap: wrap; gap: 6px; }
+  .wsp .src { width: 100%; min-height: 60vh; font: 14px/1.5 ui-monospace, monospace; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  .wsp .src[hidden], .wsp .doc[hidden] { display: none; }
+  .wsp .doc { line-height: 1.55; font-size: 15px; overflow-wrap: anywhere; }
+  .wsp .doc h1, .wsp .doc h2, .wsp .doc h3 { line-height: 1.25; margin: 18px 0 8px; }
+  .wsp .doc h1 { font-size: 22px; } .wsp .doc h2 { font-size: 18px; } .wsp .doc h3 { font-size: 16px; }
+  .wsp .doc > :first-child { margin-top: 0; }
+  .wsp .doc p, .wsp .doc ul, .wsp .doc ol { margin: 0 0 10px; }
+  .wsp .doc ul, .wsp .doc ol { padding-left: 20px; }
+  .wsp .doc .tbl { overflow-x: auto; margin-bottom: 10px; }
+  .wsp .doc table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  .wsp .doc th, .wsp .doc td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+  .wsp .doc pre { background: var(--bg); padding: 10px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+  .wsp .pf { display: grid; gap: 10px; }
+  .wsp .pf p { margin: 0; color: var(--mut); font-size: 15px; line-height: 1.5; }
+  .wsp .pf small { color: var(--mut); }
+  .wsp .pf input, .wsp .pf textarea, .wsp .pf select, .wsp .lead select { width: 100%; font: 16px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; box-sizing: border-box; }
+  .wsp .pf textarea { min-height: 76px; resize: vertical; }
+  .wsp .f { display: grid; gap: 4px; font-size: 13px; color: var(--mut); }
+  .wsp .bad { color: var(--error, #e5484d); min-height: 1em; }
+  .wsp .lk { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .wsp .lk a { flex: 1; min-width: 0; font-size: 14px; color: var(--accText); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wsp .lead { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--bg); }
+  .wsp .lead.col { display: grid; gap: 6px; }
+  .wsp .lead > div:first-child:not(.lk) { display: grid; gap: 2px; min-width: 0; }
+  .wsp .lead select { width: auto; flex: none; font-size: 14px; padding: 5px 7px; }
+  .wsp .add { display: flex; gap: 8px; }
+  .wsp .veil { display: none; }
+  .wsp .wsign:not([open]) { display: none; }
+  .wsp .wsign { margin: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surf); color: var(--ink); padding: 24px; width: min(420px, calc(100vw - 32px)); }
+  .wsp .wsign::backdrop { background: rgba(0, 0, 0, .55); }
+  .wsp .wsign[open] { display: grid; gap: 10px; }
+  .wsp .wsign h2 { margin: 0; font-size: 22px; }
+  .wsp .wsign p { margin: 0; color: var(--mut); line-height: 1.45; }
+  .wsp .wsign form { display: grid; gap: 8px; }
+  .wsp .wsign form[hidden] { display: none; }
+  .wsp .wsign input { font: 16px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; }
+  .wsp .wsign small { color: var(--mut); font-size: 12.5px; }
+  .wsp .wsign a { color: inherit; }
+  .wsp .wsign .x { position: absolute; top: 10px; right: 10px; }
+  @media (max-width: 1100px) {
+    .wsp.wide { grid-template-columns: 264px minmax(0, 1fr); }
+    .wsp .cv { position: fixed; inset: 0 0 0 auto; width: min(560px, 100vw); z-index: 30; box-shadow: -10px 0 30px rgba(0, 0, 0, .25); }
+  }
+  @media (max-width: 760px) {
+    .wsp, .wsp.wide { grid-template-columns: minmax(0, 1fr); }
+    .wsp .only-m { display: block; }
+    .wsp .side { position: fixed; inset: 0 auto 0 0; width: min(300px, 86vw); z-index: 40; transform: translateX(-102%); transition: transform .2s; }
+    .wsp .side.open { transform: none; }
+    .wsp .veil:not([hidden]) { display: block; position: fixed; inset: 0; z-index: 35; background: rgba(0, 0, 0, .5); }
+    .wsp .ttl { display: none; }
+    .wsp .seg { margin-right: auto; }
+    .wsp .seg button { padding: 6px 8px; font-size: 12.5px; }
+    .wsp .in { margin: 0 10px max(10px, env(safe-area-inset-bottom)); }
+    .wsp .cv { width: 100vw; box-shadow: none; }
+  }
+</style>

@@ -1,243 +1,27 @@
 ---
-// Vax AI chat on every page: answers in the visitor's language, recommends one next step and hands warm leads to /api/lead.
-// It is also a live demo of the AI chat included in every Vaxo plan (Decision 29).
+// Vax on every page: one button into the workspace (Decision 40). There is no corner chat any more: any "ask Vax" link
+// (<a data-vax-chat data-vax-ask="…">) opens the workspace with that question.
 import type { Lang } from '../i18n';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-
-const T = {
-  en: {
-    open: 'Chat with Vax', title: 'Vax · Vaxo assistant', status: 'online · replies in seconds',
-    hello: "Hi! I'm Vax 🦝 Tell me what you need and I'll get on with it.",
-    teaser: 'Questions? I answer in 5 seconds 🦝',
-    chips: ['What can you build for me?', 'Website or app — prices', 'Ads and social media', 'AI and automation', 'Earn as a partner'],
-    more: ['💰 How much will it cost?', '⏱ How fast?', '📎 Send examples', '🙋 Talk to a human'], hint: 'Enter — send · Shift+Enter — new line',
-    ph: 'Type a message…', send: 'Send', mic: 'Voice input', thinking: 'Vax is typing…',
-    error: "My paws slipped 🙈 Try once more in a moment.",
-    fName: 'Your name', fContact: 'Email, phone or @telegram', fSend: 'Send to Vaxo', fDone: "Got it! Our manager will reply within 24 hours (usually much sooner). I'm keeping the cookies warm 🍪",
-    fBad: 'Please check the contact — email, phone or @telegram.',
-    room: 'Here is your private project chat — your manager will write there:', demo: 'Built by Vaxo: AI assistant + brand character. Want one?', demoHref: '/#contact', close: 'Close chat',
-  },
-  ua: {
-    open: 'Чат з Vax', title: 'Vax · помічник Vaxo', status: 'онлайн · відповідає за секунди',
-    hello: 'Привіт! Я Vax 🦝 Напишіть, що потрібно, і я одразу візьмусь.',
-    teaser: 'Є питання? Відповім за 5 секунд 🦝',
-    chips: ['Що ви можете зробити для мене?', 'Сайт або застосунок — ціни', 'Реклама і соцмережі', 'ШІ та автоматизація', 'Заробляти партнером'],
-    more: ['💰 Скільки це коштує?', '⏱ Як швидко?', '📎 Надіслати приклади', '🙋 Покликати людину'], hint: 'Enter — надіслати · Shift+Enter — новий рядок',
-    ph: 'Напишіть повідомлення…', send: 'Надіслати', mic: 'Голосове введення', thinking: 'Vax друкує…',
-    error: 'Лапки посковзнулися 🙈 Спробуйте ще раз за мить.',
-    fName: "Ваше ім'я", fContact: 'Email, телефон або @telegram', fSend: 'Надіслати у Vaxo', fDone: 'Готово! Наш менеджер відповість протягом 24 годин (зазвичай набагато швидше). А я поки тримаю печиво теплим 🍪',
-    fBad: 'Перевірте контакт — email, телефон або @telegram.',
-    room: 'Ось особистий чат вашого проєкту — менеджер напише туди:', demo: 'Зроблено у Vaxo: ШІ-помічник + персонаж бренду. Хочете такий?', demoHref: '/ua/#contact', close: 'Закрити чат',
-  },
-  ru: {
-    open: 'Чат с Vax', title: 'Vax · помощник Vaxo', status: 'онлайн · отвечает за секунды',
-    hello: 'Привет! Я Vax 🦝 Напишите, что нужно, и я сразу возьмусь.',
-    teaser: 'Есть вопросы? Отвечу за 5 секунд 🦝',
-    chips: ['Что вы можете сделать для меня?', 'Сайт или приложение — цены', 'Реклама и соцсети', 'ИИ и автоматизация', 'Заработать партнёром'],
-    more: ['💰 Сколько это стоит?', '⏱ Как быстро?', '📎 Прислать примеры', '🙋 Позвать человека'], hint: 'Enter — отправить · Shift+Enter — новая строка',
-    ph: 'Напишите сообщение…', send: 'Отправить', mic: 'Голосовой ввод', thinking: 'Vax печатает…',
-    error: 'Лапки соскользнули 🙈 Попробуйте ещё раз через мгновение.',
-    fName: 'Ваше имя', fContact: 'Email, телефон или @telegram', fSend: 'Отправить в Vaxo', fDone: 'Готово! Наш менеджер ответит в течение 24 часов (обычно гораздо быстрее). А я пока держу печенье тёплым 🍪',
-    fBad: 'Проверьте контакт — email, телефон или @telegram.',
-    room: 'Вот личный чат вашего проекта — менеджер напишет туда:', demo: 'Сделано в Vaxo: ИИ-помощник + персонаж бренда. Хотите такой?', demoHref: '/ru/#contact', close: 'Закрыть чат',
-  },
-}[lang];
+const href = lang === 'en' ? '/app/' : `/${lang}/app/`;
+const open = { en: 'Open the workspace with Vax', ru: 'Открыть рабочее пространство с Vax', ua: 'Відкрити робочий простір з Vax' }[lang];
 ---
 
-<div class="vchat" data-vchat data-lang={lang}>
-  <script type="application/json" data-vchat-t set:html={JSON.stringify(T)} />
-  <button class="vc-teaser" type="button" data-vc-teaser hidden>{T.teaser}</button>
-  <button class="vc-fab" type="button" data-vc-open aria-label={T.open} aria-expanded="false">
-    <img src="/mascot/vax-avatar.webp" alt="" width="64" height="64" />
-    <span class="vc-dot" aria-hidden="true"></span>
-  </button>
-  <section class="vc-panel" data-vc-panel role="dialog" aria-label={T.title} hidden>
-    <header>
-      <span class="vc-av"><img src="/mascot/vax-avatar.webp" alt="" width="46" height="46" /></span>
-      <div><b>{T.title}</b><small>{T.status}</small></div>
-      <button type="button" class="vc-x" data-vc-close aria-label={T.close}>×</button>
-    </header>
-    <div class="vc-log" data-vc-log aria-live="polite"></div>
-    <div class="vc-chips" data-vc-chips></div>
-    <form class="vc-in" data-vc-form>
-      <button type="button" class="vc-mic" data-vc-clip aria-label="📎"></button>
-      <textarea name="q" rows="1" autocomplete="off" maxlength="1500" placeholder={T.ph} aria-label={T.ph}></textarea>
-      <button type="button" class="vc-mic" data-vc-mic aria-label={T.mic}></button>
-      <button type="submit" aria-label={T.send}>➤</button>
-    </form>
-    <a class="vc-demo" href={T.demoHref}>{T.demo}</a>
-  </section>
-</div>
+<a class="vc-fab" href={href} data-vc-app aria-label={open} title={open} data-lang={lang}>
+  <img src="/mascot/vax-avatar.webp" alt="" width="64" height="64" />
+</a>
 
 <script>
-  import { attachMic, MIC_SVG } from '../scripts/voice';
-  import { attachFiles, linkify } from '../scripts/attach';
-  import { composer, isTouch } from '../scripts/compose';
-  import { renderTool } from '../scripts/tool';
-  import type { ToolSpec } from '../../worker/toolcore';
-  type Msg = { role: 'user' | 'assistant'; content: string; tool?: ToolSpec };
-  const root = document.querySelector<HTMLElement>('[data-vchat]');
-  if (root) {
-    const T = JSON.parse(root.querySelector('[data-vchat-t]')!.textContent || '{}');
-    const lang = root.dataset.lang || 'en';
-    const $ = <E extends Element>(s: string) => root.querySelector<E>(s)!;
-    const panel = $<HTMLElement>('[data-vc-panel]');
-    const fab = $<HTMLButtonElement>('[data-vc-open]');
-    const teaser = $<HTMLButtonElement>('[data-vc-teaser]');
-    const log = $<HTMLElement>('[data-vc-log]');
-    const chips = $<HTMLElement>('[data-vc-chips]');
-    const form = $<HTMLFormElement>('[data-vc-form]');
-    const input = form.querySelector('textarea')!;
-    const KEY = 'vaxo_chat_' + lang;
-    const store = {
-      get(k: string) { try { return localStorage.getItem(k); } catch { return null; } },
-      set(k: string, v: string) { try { localStorage.setItem(k, v); } catch {} },
-    };
-    let msgs: Msg[] = [];
-    try { msgs = JSON.parse(store.get(KEY) || '[]'); } catch {}
-    let busy = false;
-    let openedAt = 0;
-    let leadSent = store.get('vaxo_chat_lead') === '1';
-
-    const bubble = (role: string, text: string) => {
-      const d = document.createElement('div');
-      d.className = 'vc-m ' + (role === 'user' ? 'me' : 'vax');
-      d.innerHTML = linkify(text);
-      log.appendChild(d);
-      log.scrollTop = log.scrollHeight;
-      return d;
-    };
-    // Before the first question: topics. After it: quick replies that keep the talk moving (price, speed, examples, a human).
-    const renderChips = () => {
-      chips.replaceChildren();
-      const started = msgs.some((m) => m.role === 'user');
-      for (const [i, c] of ((started ? T.more : T.chips) as string[]).entries()) {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.textContent = c;
-        b.onclick = () => {
-          if (started && i === 2) { $<HTMLButtonElement>('[data-vc-clip]').click(); return; }
-          if (started && i === 3 && !leadSent) { leadForm(); return; }
-          ask(c.replace(/^\S+\s/, ''));
-        };
-        chips.appendChild(b);
-      }
-      chips.classList.toggle('more', started);
-    };
-    const leadForm = () => {
-      if (leadSent || log.querySelector('.vc-lead')) return;
-      const f = document.createElement('form');
-      f.className = 'vc-lead';
-      f.innerHTML = '<input name="name" maxlength="100" required><input name="contact" maxlength="100" required><button type="submit"></button><small hidden></small>';
-      const [n, c] = Array.from(f.querySelectorAll('input'));
-      n.placeholder = T.fName; c.placeholder = T.fContact;
-      n.autocomplete = 'name';
-      f.querySelector('button')!.textContent = T.fSend;
-      const err = f.querySelector('small')!;
-      f.onsubmit = async (e) => {
-        e.preventDefault();
-        const btn = f.querySelector('button')!;
-        btn.disabled = true;
-        let ref = '';
-        try { ref = localStorage.getItem('vaxo_ref') || ''; } catch {}
-        const transcript = msgs.map((m) => (m.role === 'user' ? 'Client: ' : 'Vax: ') + m.content).join('\n').slice(-1900);
-        try {
-          const r = await fetch('/api/lead', {
-            method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Vx-Src': (window as unknown as { vxSrc?: () => string }).vxSrc?.() || '' },
-            body: JSON.stringify({ mode: 'request', name: n.value, contact: c.value, interest: 'any', message: '[Vax chat] ' + location.pathname + '\n' + transcript, lang, ref, startedAt: Math.min(openedAt, Date.now() - 3000) }),
-          });
-          if (!r.ok) throw new Error(String(r.status));
-          const out = await r.json().catch(() => ({}));
-          leadSent = true;
-          store.set('vaxo_chat_lead', '1');
-          f.remove();
-          say(T.fDone);
-          if (out.room) {
-            const a = document.createElement('a');
-            a.href = `/room/?t=${out.room}`;
-            a.className = 'vc-m vax vc-room';
-            a.textContent = `${T.room} vaxogroup.com/room/ →`;
-            log.appendChild(a);
-            log.scrollTop = log.scrollHeight;
-            store.set('vaxo_chat_room', out.room);
-          }
-        } catch {
-          err.hidden = false; err.textContent = T.fBad; btn.disabled = false;
-        }
-      };
-      log.appendChild(f);
-      log.scrollTop = log.scrollHeight;
-      n.focus();
-    };
-    const say = (text: string, tool?: ToolSpec) => {
-      msgs.push({ role: 'assistant', content: text, ...(tool ? { tool } : {}) });
-      store.set(KEY, JSON.stringify(msgs.slice(-60)));
-      const b = bubble('assistant', text);
-      if (tool) { b.append(renderTool(tool)); log.scrollTop = log.scrollHeight; }
-    };
-    async function ask(q: string) {
-      q = q.trim();
-      if (!q || busy) return;
-      busy = true;
-      if (!msgs.some((m) => m.role === 'user')) navigator.sendBeacon?.('/api/ev', new Blob([JSON.stringify({ k: 'chat_msg', p: location.pathname })], { type: 'application/json' }));
-      msgs.push({ role: 'user', content: q });
-      store.set(KEY, JSON.stringify(msgs.slice(-60)));
-      bubble('user', q);
-      renderChips();
-      const wait = bubble('assistant', T.thinking);
-      wait.classList.add('wait');
-      try {
-        const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, messages: msgs.slice(-14).map(({ role, content }) => ({ role, content })) }) });
-        const d = await r.json();
-        wait.remove();
-        if (!d.ok) throw new Error();
-        say(d.reply, d.tool || undefined);
-        if (d.image) { const im = document.createElement('img'); im.src = d.image; im.alt = ''; im.className = 'vc-img'; im.onload = () => { log.scrollTop = log.scrollHeight; }; log.lastElementChild?.append(im); }
-        if (d.form) leadForm();
-      } catch {
-        wait.remove();
-        say(T.error);
-      }
-      busy = false;
-    }
-    const open = (yes: boolean) => {
-      panel.hidden = !yes;
-      root.classList.toggle('on', yes);
-      fab.setAttribute('aria-expanded', String(yes));
-      teaser.hidden = true;
-      store.set('vaxo_chat_seen', '1');
-      if (yes) {
-        if (!openedAt) navigator.sendBeacon?.('/api/ev', new Blob([JSON.stringify({ k: 'chat_open', p: location.pathname })], { type: 'application/json' }));
-        openedAt ||= Date.now();
-        if (!log.childElementCount) {
-          if (!msgs.length) msgs.push({ role: 'assistant', content: T.hello });
-          msgs.forEach((m) => { const b = bubble(m.role, m.content); if (m.tool) b.append(renderTool(m.tool)); });
-          renderChips();
-        }
-        if (matchMedia('(min-width: 761px)').matches) input.focus();
-      }
-    };
-    // Workspace: a task from the home page gets the whole screen, like Claude or ChatGPT, not a corner widget.
-    const workspace = (yes: boolean) => { root.classList.toggle('ws', yes); document.documentElement.classList.toggle('vc-lock', yes); };
-    fab.onclick = () => open(!!panel.hidden);
-    teaser.onclick = () => open(true);
-    $<HTMLButtonElement>('[data-vc-close]').onclick = () => { open(false); workspace(false); };
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) { open(false); workspace(false); } });
-    const mic = $<HTMLButtonElement>('[data-vc-mic]');
-    mic.innerHTML = MIC_SVG;
-    attachMic(mic, input, () => lang);
-    attachFiles($<HTMLButtonElement>('[data-vc-clip]'), input, () => lang, form);
-    form.onsubmit = (e) => { e.preventDefault(); const q = input.value; input.value = ''; ask(q); };
-    composer(input, () => form.requestSubmit());
-    if (!isTouch()) input.title = T.hint;
-    // Other parts of the site can open the chat: <a data-vax-chat href="#">.
+  const fab = document.querySelector<HTMLAnchorElement>('[data-vc-app]');
+  if (fab) {
+    const lang = fab.dataset.lang || 'en';
+    const go = (q = '') => { location.href = fab.href + (q ? '#q=' + encodeURIComponent(q) : ''); };
     document.addEventListener('click', (e) => {
       const a = (e.target as Element).closest?.('[data-vax-chat]') as HTMLElement | null;
-      if (a) { e.preventDefault(); if (a.dataset.vaxFull) workspace(true); open(true); if (a.dataset.vaxAsk) ask(a.dataset.vaxAsk); }
+      if (a) { e.preventDefault(); go(a.dataset.vaxAsk); }
     });
-    // Came from a demo's "Get one for my business" (?vax=demo-…): open the chat and start the conversation
-    // with what they just saw, so Vax picks up the context at once. Once per demo per visit.
+    // Came from a demo's "Get one for my business" (?vax=demo-…): start the talk with what they just saw.
     const DEMO: Record<string, [string, string, string]> = {
       'demo-os': ['the owner command center (Vaxo OS)', '«Пульт владельца» (Vaxo OS)', '«Пульт власника» (Vaxo OS)'],
       'demo-clinic': ['the aesthetic clinic (Aurelia)', 'клиники эстетики Aurelia', 'клініки естетики Aurelia'],
@@ -246,79 +30,18 @@ const T = {
     };
     const from = new URLSearchParams(location.search).get('vax') || '';
     if (DEMO[from]) {
-      history.replaceState(null, '', location.pathname + location.hash);
       const name = DEMO[from][lang === 'ru' ? 1 : lang === 'ua' ? 2 : 0];
-      const q = lang === 'ru' ? `Я посмотрел ваш пример ${name} и хочу такую же систему для своего бизнеса. С чего начнём?`
+      go(lang === 'ru' ? `Я посмотрел ваш пример ${name} и хочу такую же систему для своего бизнеса. С чего начнём?`
         : lang === 'ua' ? `Я подивився ваш приклад ${name} і хочу таку саму систему для свого бізнесу. З чого почнемо?`
-        : `I just tried your demo of ${name} and I want a system like that for my business. Where do we start?`;
-      open(true);
-      if (sessionStorage.getItem('vaxo_from') !== from) { try { sessionStorage.setItem('vaxo_from', from); } catch {} ask(q); }
+        : `I just tried your demo of ${name} and I want a system like that for my business. Where do we start?`);
     }
-    // A gentle teaser once per visit, after the visitor has had time to read.
-    if (!store.get('vaxo_chat_seen')) setTimeout(() => { if (panel.hidden) teaser.hidden = false; }, 9000);
   }
 </script>
 
 <style is:global>
-  html.vc-lock { overflow: hidden; }
-  .vchat.ws { inset: 0; }
-  .vchat.ws .vc-fab, .vchat.ws .vc-teaser, .vchat.ws .vc-demo { display: none; }
-  .vchat.ws .vc-panel { position: fixed; inset: 0; width: 100%; height: 100dvh; max-height: none; border: 0; border-radius: 0; background: var(--bg); }
-  .vchat.ws header { padding-inline: max(14px, calc((100vw - 800px) / 2)); }
-  .vchat.ws .vc-log { padding-inline: max(14px, calc((100vw - 800px) / 2)); gap: 14px; }
-  .vchat.ws .vc-m { max-width: min(100%, 680px); font-size: 16px; }
-  .vchat.ws .vc-chips { padding-inline: max(14px, calc((100vw - 800px) / 2)); }
-  .vchat.ws .vc-in { padding: 12px max(14px, calc((100vw - 800px) / 2)) 16px; }
-  .vchat .vc-img { display: block; width: 100%; max-width: 420px; margin-top: 8px; border-radius: 12px; }
-  .vchat { position: fixed; right: 18px; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 60; font-family: var(--font); }
-  .vchat .vc-fab { width: 64px; height: 64px; border-radius: 50%; border: 0; padding: 0; background: var(--acc); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25); cursor: pointer; position: relative; display: grid; place-items: center; transition: transform 0.2s; }
-  .vchat .vc-fab:hover { transform: translateY(-2px) rotate(-4deg); }
-  .vchat .vc-fab img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; }
-  .vchat .vc-dot { position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; border-radius: 50%; background: #2fbf71; border: 2px solid var(--surf); }
-  .vchat.on .vc-fab { display: none; }
-  .vchat .vc-teaser { position: absolute; right: 0; bottom: 76px; white-space: nowrap; background: var(--surf); color: var(--ink); border: 1px solid var(--line); border-radius: 14px 14px 4px 14px; padding: 10px 14px; font: 600 14px var(--font); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15); cursor: pointer; animation: vc-pop 0.3s ease; }
-  .vchat .vc-teaser[hidden], .vchat .vc-panel[hidden] { display: none; }
-  .vchat .vc-panel { width: min(380px, calc(100vw - 24px)); height: min(560px, calc(100dvh - 40px)); background: var(--surf); color: var(--ink); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); display: flex; flex-direction: column; overflow: hidden; animation: vc-pop 0.2s ease; }
-  .vchat header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--deep); color: var(--deepInk); }
-  .vchat .vc-av { position: relative; flex: none; width: 46px; height: 46px; border-radius: 50%; background: var(--acc); display: grid; place-items: center; }
-  .vchat .vc-av img { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; }
-  .vchat .vc-av::after { content: ''; position: absolute; top: 1px; right: 1px; width: 10px; height: 10px; border-radius: 50%; background: #2fbf71; border: 2px solid var(--deep); }
-  .vchat header div { flex: 1; display: flex; flex-direction: column; line-height: 1.25; }
-  .vchat header small { color: var(--deepMut); font-size: 12px; }
-  .vchat .vc-x { background: none; border: 0; color: var(--deepInk); font-size: 26px; cursor: pointer; line-height: 1; padding: 4px 8px; }
-  .vchat .vc-log { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; background: var(--bg); }
-  .vchat .vc-m { max-width: 85%; padding: 9px 12px; border-radius: 16px; font-size: 15px; line-height: 1.4; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .vchat .vc-m.vax { align-self: flex-start; background: var(--surf); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
-  .vchat .vc-m.me { align-self: flex-end; background: var(--acc); color: var(--dark-ink); border-bottom-right-radius: 4px; }
-  .vchat .vc-m.wait { color: var(--mut); font-style: italic; }
-  .vchat .vc-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px; background: var(--bg); }
-  .vchat .vc-chips:not(:empty) { padding-bottom: 10px; }
-  .vchat .vc-chips button { border: 1px solid var(--accText); color: var(--accText); background: transparent; border-radius: 999px; padding: 6px 11px; font: 600 13px var(--font); cursor: pointer; }
-  .vchat .vc-in { display: flex; align-items: flex-end; gap: 6px; padding: 10px; border-top: 1px solid var(--line); }
-  .vchat .vc-in button { height: 44px; flex: none; }
-  .vchat .vc-in textarea { resize: none; line-height: 1.35; max-height: 160px; overflow-y: hidden; }
-  .vchat .vc-chips.more { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-top: 2px; }
-  .vchat .vc-chips.more button { flex: none; font-size: 12.5px; padding: 6px 10px; }
-  .vchat .vc-in textarea, .vchat .vc-in input, .vchat .vc-lead input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 12px; padding: 10px 12px; font: 16px var(--font); }
-  .vchat .vc-in button { border: 0; background: var(--acc); color: var(--dark-ink); width: 44px; border-radius: 12px; font-size: 18px; cursor: pointer; }
-  .vchat .vc-in .vc-mic { background: var(--bg); color: var(--ink); border: 1px solid var(--line); display: grid; place-items: center; }
-  .vchat .vc-in .vc-mic.rec { background: var(--error, #e5484d); color: #fff; border-color: transparent; animation: vc-rec 1.2s ease-in-out infinite; }
-  .vchat .vc-in .vc-mic.busy { opacity: 0.5; }
-  @keyframes vc-rec { 50% { opacity: 0.6; } }
-  .vchat .vc-lead { align-self: stretch; display: flex; flex-direction: column; gap: 6px; padding: 10px; background: var(--surf); border: 1px solid var(--acc); border-radius: 14px; }
-  .vchat .vc-lead button { border: 0; background: var(--acc); color: var(--dark-ink); font: 700 15px var(--font); padding: 10px; border-radius: 12px; cursor: pointer; }
-  .vchat .vc-lead small { color: var(--error); }
-  .vchat .vc-room { display: block; text-decoration: none; font-weight: 700; color: var(--accText); border-color: var(--acc); }
-  .vchat .vc-demo { display: block; text-align: center; font-size: 12px; color: var(--mut); padding: 0 10px 10px; text-decoration: underline; }
-  @keyframes vc-pop { from { opacity: 0; transform: translateY(10px) scale(0.97); } }
-  @media (max-width: 760px) {
-    .vchat { right: 12px; bottom: calc(max(10px, env(safe-area-inset-bottom)) + 66px); }
-    .vchat .vc-fab { width: 54px; height: 54px; }
-    .vchat .vc-fab img { width: 48px; height: 48px; }
-    .vchat .vc-teaser { bottom: 64px; }
-    body.has-sticky-cta .vchat .vc-teaser { display: none; }
-    .vchat.on { right: 0; left: 0; bottom: 0; top: 0; }
-    .vchat .vc-panel { width: 100vw; height: 100dvh; border-radius: 0; border: 0; }
-  }
-  @media (prefers-reduced-motion: reduce) { .vchat .vc-fab, .vchat .vc-teaser, .vchat .vc-panel { animation: none; transition: none; } }
+  .vc-fab { position: fixed; right: 18px; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 60; width: 60px; height: 60px; border-radius: 50%; overflow: hidden; background: var(--acc); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25); transition: transform 0.2s; }
+  .vc-fab:hover { transform: translateY(-2px); }
+  .vc-fab img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 760px) { .vc-fab { right: 12px; width: 52px; height: 52px; bottom: calc(max(10px, env(safe-area-inset-bottom)) + 66px); } }
+  @media (prefers-reduced-motion: reduce) { .vc-fab { transition: none; } }
 </style>

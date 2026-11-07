@@ -1,25 +1,36 @@
 import { describe, expect, it } from 'vitest';
-import { costUsd, MONTH_CAP, pickTier, TIERS } from '../../worker/router';
+import { costUsd, monthPool, pickTier, POOL_SHARE, TIERS } from '../../worker/router';
+
+const POOL = 100;
 
 describe('pickTier', () => {
   it('keeps guests, the free plan and trials on free models', () => {
-    expect(pickTier('start', false, 0, 0, true)).toBeNull();
-    expect(pickTier('personal', false, 0, 0, true)).toBeNull();
-    expect(pickTier('care', true, 0, 0, true)).toBeNull();
+    expect(pickTier('start', false, 0, 0, POOL, true)).toBeNull();
+    expect(pickTier('personal', false, 0, 0, POOL, true)).toBeNull();
+    expect(pickTier('care', true, 0, 0, POOL, true)).toBeNull();
   });
-  it('does nothing without a key', () => expect(pickTier('pro', false, 0, 0, false)).toBeNull());
+  it('does nothing without a key', () => expect(pickTier('pro', false, 0, 0, POOL, false)).toBeNull());
   it('gives paying clients Claude', () => {
-    expect(pickTier('care', false, 0, 0, true)?.model).toBe('claude-sonnet-5-5');
-    expect(pickTier('pro', false, 0, 0, true)?.model).toBe('claude-opus-5-5');
+    expect(pickTier('care', false, 0, 0, POOL, true)?.model).toBe('claude-sonnet-5-5');
+    expect(pickTier('pro', false, 0, 0, POOL, true)?.model).toBe('claude-opus-5-5');
   });
-  it('stops at the client budget and at the monthly cap', () => {
-    expect(pickTier('care', false, TIERS.care.budget, 0, true)).toBeNull();
-    expect(pickTier('growth', false, 0, MONTH_CAP, true)).toBeNull();
+  it('lets an active client go past their own share while the pool has room', () => {
+    expect(pickTier('care', false, 30, 30, POOL, true)).not.toBeNull();
   });
-  it('never lets a budget reach the plan price', () => {
-    expect(TIERS.care.budget).toBeLessThan(39);
-    expect(TIERS.growth.budget).toBeLessThan(129);
-    expect(TIERS.pro.budget).toBeLessThan(299);
+  it('stops at the plan price and at the end of the pool', () => {
+    expect(pickTier('care', false, TIERS.care.price, 0, POOL, true)).toBeNull();
+    expect(pickTier('growth', false, 0, POOL, POOL, true)).toBeNull();
+    expect(pickTier('care', false, 0, 0, 0, true)).toBeNull();
+  });
+});
+
+describe('monthPool', () => {
+  it('sums the share of every paying client', () => {
+    expect(monthPool(['care', 'growth'])).toBeCloseTo(168 * POOL_SHARE);
+    expect(monthPool(['start'])).toBe(0);
+  });
+  it('fits into the worst month: partner 50%, acquiring 2%, tax 5%', () => {
+    expect(POOL_SHARE).toBeLessThanOrEqual(1 - 0.5 - 0.02 - 0.05);
   });
 });
 
