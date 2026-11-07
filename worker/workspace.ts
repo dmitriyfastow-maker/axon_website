@@ -5,6 +5,7 @@ import { json as parse, askAi } from './autopilot.js';
 import { allowance, CAPS } from './allowance.js';
 import { sessionClient } from './cabinet.js';
 import { FACTS, type AiBinding } from './chat.js';
+import { filesForAi } from './files.js';
 import { drawImage, WANTS_IMAGE } from './images.js';
 import type { Notify } from './deals.js';
 import { deployModule, modulesState, saveSite, addRef } from './modules.js';
@@ -45,6 +46,7 @@ function system(lang: string, memory: Memory, mode: string): string {
 Answer in the language of the person's latest message; when unclear, ${LANGS[lang] ?? 'English'}.
 Do the work now. You lay the task out in steps and give the solution at once. Never ask for a name, email, phone or Telegram, never mention a manager, a callback or a waiting time. Do not ask what you can work out yourself; ask at most one question, and only when the answer changes the result. If someone asks for a human, answer first, then say a person can be reached at hello@vaxogroup.com.
 Warm, plain, no hype, at most one light joke. Never sell or offer in this chat: no "I can also", no "say yes", no plans unless asked about them. Use what the notes below already say (a budget, a city) instead of asking for it again. Facts only: never invent numbers, clients or guarantees, and say so when something is unknown.
+FILES: an attachment appears as [client attached file "name" (type): description]. For images the description is what is on them, so use it. For other files you know only the name and type: say so plainly and ask them to paste the part that matters. Never pretend you read a file.
 MODULES that really exist here: CRM (a public form that collects requests into their board), Partner links (a personal link per partner with visits and requests counted), Site (a one-page site at vaxogroup.com/s/... with that form). Only when the person clearly asks for one of these, say what it gives in one line and end your message with [[DEPLOY:crm]], [[DEPLOY:partner]] or [[DEPLOY:site]]: a button appears, you do not deploy anything yourself. Anything bigger (a store, an app, ads) is built on a plan, step by step, so never say it is running.
 A calculator, checklist or tracker appears on the Canvas by itself when the wish fits; never write one out by hand.
 ${shape}
@@ -104,6 +106,9 @@ async function writeMemory(db: DB, id: number, m: Memory, mode: string) {
     .bind(id, m.niche, m.goals, m.project, m.limits, mode).run();
 }
 
+/** What the person wrote, without our attached-file lines: those must not trigger a tool or name a chat. */
+export const ownWords = (q: string) => q.replace(/^📎 \S+ \S+$/gmu, '').trim();
+
 /** Every third message: what the person said about their work goes into the memory, where they can see and change it. */
 async function learn(db: DB, ai: AiBinding, id: number, said: string[]) {
   const cur = await readMemory(db, id);
@@ -122,6 +127,7 @@ ${said.map((s) => '- ' + s.slice(0, 400)).join('\n')}`, 300);
 async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, unknown>, wait: (p: Promise<unknown>) => void) {
   const q = cut(b.q, 4000), lang = cut(b.lang, 2) in LANGS ? cut(b.lang, 2) : 'en', mode = b.mode === 'deep' ? 'deep' : 'short';
   if (!q) return out(400, { ok: false });
+  const said = ownWords(q);
   const me = await sessionClient(db, request);
   const ip = request.headers.get('CF-Connecting-IP') || 'local';
   let memory = cleanMemory(b.memory), history: Turn[] = [], chat = 0, leadIds: number[] = [];
@@ -138,7 +144,7 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
       const rows = (await db.prepare('SELECT role, text FROM ws_msgs WHERE chat_id = ? ORDER BY id DESC LIMIT 14').bind(chat).all<{ role: 'user' | 'assistant'; text: string }>()).results.reverse();
       history = rows.map((r) => ({ role: r.role, content: r.text.slice(0, 1600) }));
     } else {
-      const r = await db.prepare('INSERT INTO ws_chats (client_id, title) VALUES (?, ?) RETURNING id').bind(me.id, q.replace(/\s+/g, ' ').slice(0, 60)).first<{ id: number }>();
+      const r = await db.prepare('INSERT INTO ws_chats (client_id, title) VALUES (?, ?) RETURNING id').bind(me.id, (said || q.match(/^📎 (\S+)/u)?.[1] || q).replace(/\s+/g, ' ').slice(0, 60)).first<{ id: number }>();
       chat = r!.id;
     }
     await db.prepare(`INSERT INTO ws_msgs (chat_id, role, text) VALUES (?, 'user', ?)`).bind(chat, q).run();
@@ -159,15 +165,17 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     return r?.id ?? null;
   };
 
-  if (WANTS_IMAGE.test(q)) {
-    const pic = await drawImage(ai, db, q, lang, ip).catch((e) => { console.error('[ws image]', e); return null; });
+  if (WANTS_IMAGE.test(said)) {
+    const pic = await drawImage(ai, db, said, lang, ip).catch((e) => { console.error('[ws image]', e); return null; });
     if (pic) return out(200, { ok: true, chat, id: await save(pic.reply, { image: pic.image }), ...pic });
   }
 
-  const building = WANTS_TOOL.test(q) ? buildTool(ai, q, lang).catch(() => null) : Promise.resolve(null);
-  const sys = system(lang, memory, mode) + (WANTS_TOOL.test(q) && mode === 'short' ? '\nA ready tool appears on the Canvas. Do not ask for numbers: answer in 1–3 sentences and say they can enter their own values there.' : '');
+  const building = WANTS_TOOL.test(said) ? buildTool(ai, said, lang).catch(() => null) : Promise.resolve(null);
+  const sys = system(lang, memory, mode) + (WANTS_TOOL.test(said) && mode === 'short' ? '\nA ready tool appears on the Canvas. Do not ask for numbers: answer in 1–3 sentences and say they can enter their own values there.' : '');
   const turns: { role: string; content: string }[] = [];
-  for (const m of [...history, { role: 'user' as const, content: q }]) {
+  // Attached files reach the model as their name and, for images, what is on them.
+  const seen = await Promise.all([...history, { role: 'user' as const, content: q }].map(async (m) => ({ ...m, content: await filesForAi(db, m.content).catch(() => m.content) })));
+  for (const m of seen) {
     const prev = turns[turns.length - 1];
     if (prev?.role === m.role) prev.content += '\n' + m.content;
     else turns.push({ ...m });
@@ -192,9 +200,9 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   const id = await save(reply, { tool, doc: shaped.doc, deploy: shaped.deploy });
 
   if (me) {
-    const said = (await db.prepare(`SELECT text FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user' ORDER BY m.id DESC LIMIT 6`).bind(me.id).all<{ text: string }>()).results.map((r) => r.text);
+    const recent = (await db.prepare(`SELECT text FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user' ORDER BY m.id DESC LIMIT 6`).bind(me.id).all<{ text: string }>()).results.map((r) => r.text);
     const n = (await db.prepare(`SELECT COUNT(*) AS n FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user'`).bind(me.id).first<{ n: number }>())?.n ?? 0;
-    if (n === 1 || n % 3 === 0) wait(learn(db, ai, me.id, said).catch((e) => console.error('[ws learn]', e)));
+    if (n === 1 || n % 3 === 0) wait(learn(db, ai, me.id, recent).catch((e) => console.error('[ws learn]', e)));
   }
   return out(200, { ok: true, chat, id, reply, tool, doc: shaped.doc, deploy: shaped.deploy, paid });
 }

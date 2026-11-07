@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cleanMemory, memoryBlock, shapeReply } from '../../worker/workspace';
+import { cleanMemory, memoryBlock, ownWords, shapeReply } from '../../worker/workspace';
 import { cleanSite, slugOf } from '../../worker/modules';
 import { md } from '../../src/scripts/md';
 
@@ -65,5 +65,18 @@ describe('md', () => {
   it('never lets markup through', () => {
     expect(md('<img src=x onerror=alert(1)>')).not.toContain('<img');
     expect(md('- **<script>**')).not.toContain('<script');
+  });
+});
+
+describe('ownWords', () => {
+  const file = '📎 logo.png https://vaxogroup.com/f/0123456789abcdef0123/logo.png';
+  it('drops attached-file lines and keeps the text', () => {
+    expect(ownWords(`Что скажешь?\n${file}`)).toBe('Что скажешь?');
+  });
+  it('is empty for a message that is only a file', () => {
+    expect(ownWords(file)).toBe('');
+  });
+  it('leaves ordinary text alone', () => {
+    expect(ownWords('Посчитай юнит-экономику')).toBe('Посчитай юнит-экономику');
   });
 });
