@@ -12,7 +12,8 @@
   "routes": [
     { "pattern": "vaxogroup.com", "custom_domain": true },
     { "pattern": "www.vaxogroup.com", "custom_domain": true },
-    { "pattern": "domains.vaxogroup.com", "custom_domain": true }
+    { "pattern": "domains.vaxogroup.com", "custom_domain": true },
+    { "pattern": "*/*", "zone_name": "vaxogroup.com" }
   ],
   "ai": { "binding": "AI", "remote": true },
   "workers_dev": false,
