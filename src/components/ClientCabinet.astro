@@ -24,7 +24,6 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
   <Header lang={lang} t={t} home={home} alts={alts} />
   <main class="cab" data-me data-lang={lang} data-home={home} aria-busy="true">
     <script type="application/json" data-me-t set:html={JSON.stringify(T)} />
-    <div class="cab-glow" aria-hidden="true"></div>
     <div class="cab-skel" data-skel aria-hidden="true"><i></i><i></i><i></i></div>
 
     <!-- Sign-in: one screen, email first -->
@@ -616,21 +615,20 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 </script>
 
 <style is:global>
-.cab { --r: 24px; --sh: 0 1px 0 color-mix(in srgb, var(--ink) 4%, transparent), 0 24px 48px -32px color-mix(in srgb, var(--ink) 35%, transparent); position: relative; max-width: 1120px; margin: 0 auto; padding: 116px 16px 72px; display: flex; flex-direction: column; gap: 22px; overflow-x: clip; }
+.cab { --r: 18px; --sh: none; position: relative; max-width: 1180px; margin: 0 auto; padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 40px) clamp(64px, 9vw, 116px); display: flex; flex-direction: column; gap: 22px; overflow-x: clip; }
 .cab [hidden] { display: none !important; }
 .cab > * { min-width: 0; }
 .cab .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .cab .mut { color: var(--mut); } .cab .small { font-size: 13px; line-height: 1.45; }
-.cab h1 { font-size: clamp(30px, 5.4vw, 52px); letter-spacing: -0.035em; line-height: 1.02; margin: 0; }
-.cab h2 { font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.025em; margin: 0; }
-.cab h3 { margin: 0; font-size: 19px; letter-spacing: -0.015em; }
-.cab .eyebrow { margin: 0; font: 700 12px/1 var(--font); letter-spacing: 0.12em; text-transform: uppercase; color: var(--accText); }
-.cab-glow { position: absolute; inset: 0 0 auto; height: 620px; pointer-events: none; z-index: -1; background: radial-gradient(420px 320px at 22% 120px, color-mix(in srgb, var(--acc) 20%, transparent), transparent), radial-gradient(360px 260px at 85% 60px, color-mix(in srgb, var(--acc) 11%, transparent), transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
+.cab h1 { font-weight: 600; font-size: clamp(32px, 5vw, 56px); letter-spacing: -0.035em; line-height: 1.02; margin: 0; }
+.cab h2 { font-weight: 600; font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.025em; margin: 0; }
+.cab h3 { font-weight: 600; margin: 0; font-size: 19px; letter-spacing: -0.015em; }
+.cab .eyebrow { margin: 0; font: 500 12px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accText); }
 .cab-card { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); padding: clamp(18px, 3vw, 28px); box-shadow: var(--sh); }
 .cab .sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin-bottom: 14px; } .cab .sec-head p { margin: 0; }
 
 /* buttons */
-.cab .cta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; background: var(--acc); color: var(--dark-ink); font: 700 15px var(--font); padding: 12px 20px; border-radius: 999px; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .2s, filter .2s; }
+.cab .cta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; background: var(--acc); color: var(--dark-ink); font: 600 15px var(--font); padding: 12px 20px; border-radius: 999px; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .2s, filter .2s; }
 .cab .cta:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--acc) 80%, transparent); }
 .cab .cta:disabled { opacity: .6; cursor: wait; transform: none; }
 .cab .cta.big { min-height: 54px; font-size: 16px; padding: 14px 24px; }
@@ -650,7 +648,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 .cab-skel i:first-child { height: 220px; }
 
 /* ---------- auth ---------- */
-.cab-auth { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); background: var(--surf); border: 1px solid var(--line); border-radius: 32px; overflow: hidden; box-shadow: var(--sh); max-width: 940px; width: 100%; margin: 0 auto; }
+.cab-auth { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; box-shadow: var(--sh); max-width: 940px; width: 100%; margin: 0 auto; }
 .auth-side { position: relative; background: var(--deep); color: var(--deepInk); padding: 36px 28px; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; isolation: isolate; overflow: hidden; }
 .auth-side::before { content: ''; position: absolute; inset: -30% -30% auto auto; width: 120%; aspect-ratio: 1; background: radial-gradient(circle, color-mix(in srgb, var(--acc) 40%, transparent), transparent 60%); z-index: -1; }
 .auth-side img { width: min(220px, 70%); height: auto; align-self: center; filter: drop-shadow(0 24px 30px rgba(0,0,0,.35)); }
@@ -702,7 +700,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 .ring-txt { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1.1; }
 .ring-txt b { font-size: 22px; letter-spacing: -0.02em; } .ring-txt small { font-size: 11px; opacity: .7; text-transform: uppercase; letter-spacing: .1em; }
 .ring-wrap.sm .ring-txt b { font-size: 17px; }
-.wallet { background: var(--surf); border: 1px solid var(--line); border-radius: 28px; padding: clamp(20px, 3vw, 28px); box-shadow: var(--sh); display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden; }
+.wallet { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); padding: clamp(20px, 3vw, 28px); box-shadow: var(--sh); display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden; }
 .wallet::after { content: ''; position: absolute; right: -60px; bottom: -60px; width: 200px; height: 200px; border-radius: 50%; border: 28px solid color-mix(in srgb, var(--acc) 10%, transparent); pointer-events: none; }
 .w-head { display: flex; align-items: center; gap: 10px; }
 .cab .ico-box { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: color-mix(in srgb, var(--acc) 16%, transparent); color: var(--accText); flex: none; }
