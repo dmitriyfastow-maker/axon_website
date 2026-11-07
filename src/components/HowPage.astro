@@ -16,7 +16,7 @@ const h = (p: string) => navHref(p, lang, home);
 const C = {
   en: {
     title: 'How Vaxo works — your personal operating system', desc: 'Write a wish. Vax answers, builds a working tool in the chat and names the next step. Bigger work runs step by step on a plan.',
-    eyebrow: 'How it works', h1: 'You say what you want. Vax takes the rest.',
+    pos: "Already paying for ChatGPT or Claude? They give you text and code, and servers, databases and payments are yours to set up. At Vaxo we take that work on, on your plan.", eyebrow: 'How it works', h1: 'You say what you want. Vax takes the rest.',
     sub: "Vax works out what you really need, answers at once, builds the tool in the chat and names the next step. You do not need to know what to ask or how anything works.",
     cta1: 'Start free', cta2: 'See real examples',
     loopH: 'The loop, in five steps',
@@ -37,7 +37,7 @@ const C = {
   },
   ru: {
     title: 'Как работает Vaxo — личная операционная система', desc: 'Напишите желание. Vax ответит, соберёт рабочий инструмент в чате и назовёт следующий шаг. Большие работы идут по шагам на тарифе.',
-    eyebrow: 'Как это работает', h1: 'Вы говорите, что хотите. Остальное берёт Vax.',
+    pos: "Уже платите за ChatGPT или Claude? Они дают вам текст и код, а серверы, базы и платежи вы настраиваете сами. В Vaxo эту работу берём на себя, на вашем тарифе.", eyebrow: 'Как это работает', h1: 'Вы говорите, что хотите. Остальное берёт Vax.',
     sub: "Vax понимает, что вам нужно на самом деле, сразу отвечает, собирает инструмент в чате и называет следующий шаг. Вам не нужно знать, что спрашивать и как всё устроено.",
     cta1: 'Начать бесплатно', cta2: 'Посмотреть примеры',
     loopH: 'Как это устроено: пять шагов',
@@ -58,7 +58,7 @@ const C = {
   },
   ua: {
     title: 'Як працює Vaxo — особиста операційна система', desc: 'Напишіть бажання. Vax відповість, збере робочий інструмент у чаті й назве наступний крок. Великі роботи йдуть крок за кроком на тарифі.',
-    eyebrow: 'Як це працює', h1: 'Ви кажете, що хочете. Решту бере Vax.',
+    pos: "Вже платите за ChatGPT чи Claude? Вони дають вам текст і код, а сервери, бази й платежі ви налаштовуєте самі. У Vaxo цю роботу беремо на себе, на вашому тарифі.", eyebrow: 'Як це працює', h1: 'Ви кажете, що хочете. Решту бере Vax.',
     sub: "Vax розуміє, що вам потрібно насправді, одразу відповідає, збирає інструмент у чаті й називає наступний крок. Вам не треба знати, що питати і як усе влаштовано.",
     cta1: 'Почати безкоштовно', cta2: 'Дивитися приклади',
     loopH: 'Як це влаштовано: п’ять кроків',
@@ -88,6 +88,7 @@ const C = {
         <p class="tag">{C.eyebrow}</p>
         <h1>{C.h1}</h1>
         <p class="lead">{C.sub}</p>
+        <p class="lead pos">{C.pos}</p>
         <div class="row"><a class="cta" href={h('/start/')}>{C.cta1}</a><a class="ghost" href={h('/examples/')}>{C.cta2}</a></div>
       </div>
     </section>
@@ -185,4 +186,5 @@ const C = {
   @media (max-width: 960px) { .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } .plan:first-child { grid-column: 1 / -1; } .cells { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 760px) { .split, .doors { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 520px) { .plans, .cells { grid-template-columns: minmax(0, 1fr); } .cells { gap: 24px; } .row a { width: 100%; justify-content: center; } }
+  .pos { margin-top: 12px; color: var(--ink); font-weight: 500; }
 </style>

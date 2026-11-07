@@ -17,6 +17,7 @@
     "og": "node scripts/make-og.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.6.0",
     "@astrojs/sitemap": "^3.7.4",
     "astro": "^7.3.8",
     "postal-mime": "^2.4.4"

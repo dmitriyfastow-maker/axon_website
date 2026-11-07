@@ -8,6 +8,7 @@ import { bindReturningClient, handleRoomApi, newRoom } from './rooms.js';
 import { aiFollowups, aiReply, decideOffer, learnFromChats, rescueUnanswered } from './aimanager.js';
 import { configureTelegram, ensureWebhook, handleTelegram } from './telegram.js';
 import { handleCollab } from './collab.js';
+import { configureRouter } from './router.js';
 import { configureMail, handleEmail, type IncomingEmail } from './mail.js';
 import { handleStt } from './stt.js';
 import { handleFileUpload, servePreview, serveFile, type KV } from './files.js';
@@ -35,6 +36,7 @@ interface Env extends LeadEnv, CabinetEnv {
   AI?: AiBinding;
   FILES?: KV;
   MONO_ACQ_TOKEN?: string;
+  ANTHROPIC_API_KEY?: string;
 }
 
 const ENV_KEYS = ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'RESEND_API_KEY', 'LEAD_EMAIL_TO', 'LEAD_EMAIL_FROM'] as const;
@@ -57,6 +59,7 @@ export default {
     const waitUntil = (p: Promise<unknown>) => (ctx ? ctx.waitUntil(p) : void p);
     configureTelegram(env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_CHAT_ID);
     configureMail(env.RESEND_API_KEY, env.LEAD_EMAIL_FROM);
+    configureRouter(env.ANTHROPIC_API_KEY);
     if (env.LEADS && url.hostname === 'vaxogroup.com') waitUntil(ensureWebhook(env.LEADS, url.origin).catch(() => {}));
     const notify: Notify = async (text) => {
       const tok = env.TELEGRAM_BOT_TOKEN?.trim();
@@ -240,6 +243,7 @@ export default {
     const chat = env.TELEGRAM_CHAT_ID?.trim();
     configureTelegram(tok, chat);
     configureMail(env.RESEND_API_KEY, env.LEAD_EMAIL_FROM);
+    configureRouter(env.ANTHROPIC_API_KEY);
     const notify: Notify = async (text) => {
       if (!tok || !chat) return;
       await fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
@@ -257,6 +261,7 @@ export default {
     const chat = env.TELEGRAM_CHAT_ID?.trim();
     configureTelegram(tok, chat);
     configureMail(env.RESEND_API_KEY, env.LEAD_EMAIL_FROM);
+    configureRouter(env.ANTHROPIC_API_KEY);
     const notify: Notify = async (text) => {
       if (!tok || !chat) return;
       await fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {

@@ -11,6 +11,7 @@ const demo = (slug: string) => `/examples/${slug}/?lang=${lang}`;
 
 const T = {
   ru: {
+    pos: ['Уже платите за ChatGPT или Claude?', 'Они дают вам текст и код. Серверы, базы и платежи вы настраиваете сами.', 'В Vaxo эту работу берём на себя: сайт, CRM и приём оплат на вашем тарифе. Срок и цену называем заранее.'],
     chips: [['Автоматизировать клиентов', 'Чек-лист: как автоматизировать ответы клиентам'], ['Собрать сайт под ключ', 'Чек-лист: что нужно для сайта под ключ для моего дела'], ['План запуска за 14 дней', 'План запуска продукта за 14 дней: чек-лист'], ['Рассчитать БЖУ и тренировки', 'Сделай калькулятор калорий и БЖУ под мою цель'], ['Юнит-экономика проекта', 'Сделай калькулятор юнит-экономики: цена, срок клиента, стоимость привлечения']], live: 'Интерактивно',
     h1: ['Скажите, что нужно.', 'Vax берётся за дело.'],
     sub: 'Личный исполнитель для жизни и работы. Напишите задачу своими словами. Бесплатно, без регистрации.',
@@ -44,6 +45,7 @@ const T = {
     dnote: 'Первый месяц бесплатно. Без карты. Счёт пришлём, только если останетесь.', demail: 'Ваша почта', dgo: 'Начать бесплатный месяц', dbad: 'Введите настоящую почту.', dfail: 'Что-то пошло не так — попробуйте ещё раз.',
   },
   en: {
+    pos: ['Already paying for ChatGPT or Claude?', 'They give you text and code. Servers, databases and payments are yours to set up.', 'At Vaxo we take that work on: the website, CRM and payments on your plan. We name the time and price up front.'],
     chips: [['Automate my clients', 'Checklist: how to automate replies to my clients'], ['A website, done for me', 'Checklist: what a done-for-me website for my business needs'], ['14-day launch plan', 'A 14-day product launch plan: checklist'], ['Macros and training', 'Make a calorie and macro calculator for my goal'], ['Project unit economics', 'Make a unit economics calculator: price, customer lifetime, acquisition cost']], live: 'Interactive',
     h1: ['Say what you need.', 'Vax gets on with it.'],
     sub: 'A personal doer for life and work. Write the task in your own words. Free, no sign-up.',
@@ -77,6 +79,7 @@ const T = {
     dnote: 'First month free. No card. We send an invoice only if you stay.', demail: 'Your email', dgo: 'Start free month', dbad: 'Enter a valid email.', dfail: 'Something went wrong — please try again.',
   },
   ua: {
+    pos: ['Вже платите за ChatGPT чи Claude?', 'Вони дають вам текст і код. Сервери, бази й платежі ви налаштовуєте самі.', 'У Vaxo цю роботу беремо на себе: сайт, CRM і прийом оплат на вашому тарифі. Строк і ціну називаємо заздалегідь.'],
     chips: [['Автоматизувати клієнтів', 'Чек-лист: як автоматизувати відповіді клієнтам'], ['Зібрати сайт під ключ', 'Чек-лист: що потрібно для сайту під ключ для моєї справи'], ['План запуску за 14 днів', 'План запуску продукту за 14 днів: чек-лист'], ['Порахувати БЖВ і тренування', 'Зроби калькулятор калорій і БЖВ під мою мету'], ['Юніт-економіка проєкту', 'Зроби калькулятор юніт-економіки: ціна, строк клієнта, вартість залучення']], live: 'Інтерактивно',
     h1: ['Скажіть, що потрібно.', 'Vax береться до справи.'],
     sub: 'Особистий виконавець для життя і роботи. Напишіть завдання своїми словами. Безкоштовно, без реєстрації.',
@@ -169,7 +172,8 @@ const ava = '/mascot/vax-happy.webp';
 
   <section class="sec alt">
     <div class="w">
-      <h2>{T.getH}</h2>
+      <div class="pos"><h2>{T.pos[0]}</h2><div><p>{T.pos[1]}</p><p class="b">{T.pos[2]}</p></div></div>
+      <h2 class="gh">{T.getH}</h2>
       <div class="two">
         <div><h3>{T.now}</h3><ul>{T.nowL.map((x) => <li>{x}</li>)}</ul></div>
         <div><h3>{T.plan}</h3><ul>{T.planL.map((x) => <li>{x}</li>)}</ul><p>{T.planN}</p></div>
@@ -286,7 +290,7 @@ const ava = '/mascot/vax-happy.webp';
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hq = document.querySelector<HTMLFormElement>('[data-ask]');
   const input = hq?.querySelector('input');
-  const askVax = (q: string) => { const a = document.createElement('a'); a.href = '#'; a.setAttribute('data-vax-chat', ''); a.dataset.vaxAsk = q; a.hidden = true; document.body.appendChild(a); a.click(); a.remove(); };
+  const askVax = (q: string) => { const a = document.createElement('a'); a.href = '#'; a.setAttribute('data-vax-chat', ''); a.dataset.vaxAsk = q; a.dataset.vaxFull = '1'; a.hidden = true; document.body.appendChild(a); a.click(); a.remove(); };
   document.querySelectorAll<HTMLFormElement>('[data-ask], [data-ask2]').forEach((f) => f.addEventListener('submit', (e) => {
     e.preventDefault();
     const i = f.querySelector('input')!; const q = i.value.trim();
@@ -425,6 +429,9 @@ const ava = '/mascot/vax-happy.webp';
   .box { margin: 0 clamp(14px, 3vw, 32px) 16px; padding: 13px 16px; border: 1px solid var(--ln); border-radius: 12px; color: var(--dm); font-size: 15px; }
   .cap { margin-top: 14px; font-size: 14px; color: var(--dm); }
 
+  .pos { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 5vw, 72px); align-items: end; padding-bottom: clamp(56px, 8vw, 100px); }
+  .pos p { color: var(--mt); font-size: clamp(18px, 1.8vw, 21px); line-height: 1.4; }
+  .pos p.b { margin-top: 12px; color: var(--tx); font-weight: 500; }
   .two { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 88px); margin-top: clamp(36px, 5vw, 60px); }
   .two h3 { font-size: clamp(21px, 2.2vw, 26px); font-weight: 600; letter-spacing: -0.015em; padding-bottom: 16px; border-bottom: 1px solid var(--am); }
   .two li { padding: 17px 0; border-bottom: 1px solid var(--ln); font-size: clamp(18px, 1.7vw, 20px); }
@@ -520,7 +527,7 @@ const ava = '/mascot/vax-happy.webp';
   @media (max-width: 820px) {
     .app { grid-template-columns: 1fr; min-height: 0; }
     .side { display: none; }
-    .two, .grid { grid-template-columns: 1fr; }
+    .two, .grid, .pos { grid-template-columns: 1fr; }
     .hero::before { bottom: -150vw; width: 260vw; height: 180vw; }
   }
   @media (max-width: 520px) {

@@ -30,6 +30,7 @@ const title = (id: string) => c.titles[id] ?? byId(id).title;
 const ptext = (id: string) => (lang === 'en' ? byId(id).text : PROMPT_TEXT[lang][id] ?? byId(id).text);
 const offersLocal = OFFERS.map((o) => ({ ...o, text: lang === 'en' ? o.text : OFFER_TEXT[lang][o.id] ?? o.text }));
 const labels = c.card;
+const PT = {"en": {"h": "Promotion tools", "p": "Ready posts with your link. Numbers above are live.", "copy": "Copy", "idea": "Give me 3 post ideas", "wait": "Vax is thinking…", "fail": "No ideas right now. Try again a bit later.", "ask": "Give me 3 short post ideas for my social media that recommend Vaxo honestly. No promises of income. Each idea: a hook and one line of text. Language: English.", "posts": [["Short post", "I found a thing that helps with the boring part of work: you write what you need and Vax answers and builds a working calculator or checklist right in the chat. Free to start, no sign-up: {link}"], ["For a small business owner", "If you have a small business and no time for a website and client replies, take a look at Vaxo. The first month of a plan is free: {link}"], ["Story or reel caption", "Tried writing one line to an AI and getting a ready tool back? Try it: {link}"]]}, "ru": {"h": "Инструменты продвижения", "p": "Готовые посты с вашей ссылкой. Цифры выше живые.", "copy": "Скопировать", "idea": "Дай 3 идеи постов", "wait": "Vax думает…", "fail": "Сейчас идей нет. Попробуйте чуть позже.", "ask": "Дай 3 короткие идеи постов для моих соцсетей, которые честно рекомендуют Vaxo. Без обещаний дохода. В каждой идее: зацепка и одна строка текста. Язык: русский.", "posts": [["Короткий пост", "Нашёл штуку, которая снимает скучную часть работы: пишешь, что нужно, а Vax отвечает и собирает рабочий калькулятор или чек-лист прямо в чате. Бесплатно и без регистрации: {link}"], ["Для владельца малого бизнеса", "Если у вас небольшое дело и нет времени на сайт и ответы клиентам, посмотрите Vaxo. Первый месяц тарифа бесплатный: {link}"], ["Подпись к сторис или ролику", "Пробовали написать ИИ одну строку и получить готовый инструмент? Попробуйте: {link}"]]}, "ua": {"h": "Інструменти просування", "p": "Готові пости з вашим посиланням. Цифри вище живі.", "copy": "Скопіювати", "idea": "Дай 3 ідеї постів", "wait": "Vax думає…", "fail": "Зараз ідей немає. Спробуйте трохи пізніше.", "ask": "Дай 3 короткі ідеї постів для моїх соцмереж, які чесно рекомендують Vaxo. Без обіцянок доходу. У кожній ідеї: зачіпка й один рядок тексту. Мова: українська.", "posts": [["Короткий пост", "Знайшов штуку, що знімає нудну частину роботи: пишеш, що потрібно, а Vax відповідає і збирає робочий калькулятор чи чек-лист просто в чаті. Безкоштовно й без реєстрації: {link}"], ["Для власника малого бізнесу", "Якщо у вас невелика справа й немає часу на сайт і відповіді клієнтам, подивіться Vaxo. Перший місяць тарифу безкоштовний: {link}"], ["Підпис до сторіс чи ролика", "Пробували написати ШІ один рядок і отримати готовий інструмент? Спробуйте: {link}"]]}}[lang];
 const tabs: [string, string][] = [['home', '🏠'], ['deals', '🤝'], ['links', '🔗'], ['academy', '🎓'], ['prompts', '🤖'], ['team', '👥'], ['rules', '💸']];
 const offerSelect = OFFERS.map((o) => ({ id: o.id, name: c.offers[o.id] }));
 // Vax's road: 6 levels × 4 missions (data/roadmap.ts). Levels are just for fun — rates are the same for everyone.
@@ -157,6 +158,14 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
 
         <div class="stats">
           {['clicks', 'leads', 'sales', 'team'].map((k, i) => <div class="card"><b data-total={k}>0</b><span>{c.home.stats[i]}</span></div>)}
+        </div>
+
+        <div class="card promo" data-promo data-ask={PT.ask} data-wait={PT.wait} data-fail={PT.fail}>
+          <h2>{PT.h}</h2>
+          <p class="mut small">{PT.p}</p>
+          <div class="pgrid">{PT.posts.map(([t, x]) => <div><b>{t}</b><p data-post={x}>{x}</p><button type="button" class="ghost" data-post-copy>{PT.copy}</button></div>)}</div>
+          <button type="button" class="cta" data-idea>{PT.idea}</button>
+          <p class="idea" data-idea-out></p>
         </div>
 
         <div class="grid2">
@@ -334,6 +343,19 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   };
 
   // ---- tabs ----
+  // Promotion tools: ready posts with the partner's own link and post ideas from the coach (same daily limit).
+  document.querySelectorAll<HTMLButtonElement>('[data-post-copy]').forEach((b) => b.addEventListener('click', () => {
+    const t = b.previousElementSibling?.textContent || '';
+    navigator.clipboard?.writeText(t).then(() => { const was = b.textContent; b.textContent = '✓'; setTimeout(() => { b.textContent = was; }, 1200); });
+  }));
+  document.querySelector<HTMLButtonElement>('[data-idea]')?.addEventListener('click', async (e) => {
+    const b = e.currentTarget as HTMLButtonElement, box = document.querySelector<HTMLElement>('[data-promo]')!, o = document.querySelector<HTMLElement>('[data-idea-out]')!;
+    b.disabled = true; o.textContent = box.dataset.wait || '';
+    const r = await api('coach', { message: box.dataset.ask, lang: document.documentElement.lang === 'uk' ? 'ua' : document.documentElement.lang }).catch(() => null);
+    const d = r?.ok ? await r.json().catch(() => null) : null;
+    o.textContent = d?.reply || d?.text || box.dataset.fail || '';
+    b.disabled = false;
+  });
   const PANELS = ['home', 'deals', 'links', 'academy', 'prompts', 'team', 'rules'];
   function go(tab: string, lesson?: string, scroll = true) {
     if (!PANELS.includes(tab)) tab = 'home';
@@ -551,6 +573,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
     const active = data.links.find((l) => l.active);
     mainLink = active ? `${location.origin}/r/${active.slug}` : location.origin;
     $('[data-main-link]').textContent = mainLink.replace(/^https?:\/\//, '');
+    document.querySelectorAll<HTMLElement>('[data-post]').forEach((p) => { p.textContent = (p.dataset.post || '').replace('{link}', mainLink); });
 
     metrics = { links: data.links.length - 1, clicks, leads, sales, team: data.team, channels: data.links.filter((l) => l.leads > 0).length };
     renderRoad();
@@ -831,4 +854,8 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   :global(.wrap) :is(.card, .panel, section) { transition: border-color .18s ease, box-shadow .18s ease; }
   h1 { font-weight: 800; }
   @media (prefers-reduced-motion: reduce) { :global(.wrap) * { transition: none !important; } }
+  .promo .pgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 14px 0; }
+  .promo .pgrid > div { display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; }
+  .promo .pgrid p { flex: 1; margin: 0; font-size: 14px; overflow-wrap: anywhere; }
+  .promo .idea { margin: 12px 0 0; white-space: pre-wrap; font-size: 15px; }
 </style>

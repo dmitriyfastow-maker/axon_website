@@ -1,6 +1,7 @@
 // AI manager: Vax leads every client from the first message to the repeat order — answers in seconds, gathers the
 // brief, recommends one package, reports project status, follows up after silence and after delivery.
 // A human manager joins only when the client needs a live conversation (call, complaint, refund, special price).
+import { claudeReply, routeFor } from './router.js';
 import { buildTool, plainText, tidyReply, toolMarker, WANTS_TOOL } from './tools.js';
 import { allowance, limitText } from './allowance.js';
 import { filesForAi } from './files.js';
@@ -99,10 +100,12 @@ Proposal: ${(l.message || '').slice(0, 1500)}
 Known: ${(l.brief || '—').slice(0, 800)}`;
 }
 
-async function run(ai: AiBinding, messages: { role: string; content: string }[]): Promise<{ reply: string; human: string | null; brief: string | null; order: string | null; contact: { name: string; contact: string } | null; offer: { price: string; task: string } | null } | null> {
-  for (const model of MODELS) {
+async function run(ai: AiBinding, messages: { role: string; content: string }[], paid?: () => Promise<string | null>): Promise<{ reply: string; human: string | null; brief: string | null; order: string | null; contact: { name: string; contact: string } | null; offer: { price: string; task: string } | null } | null> {
+  // A paying client's reply comes from Claude (worker/router.ts); null means free models take over.
+  const first = paid ? await paid() : null;
+  for (const model of [...(first ? ['claude'] : []), ...MODELS]) {
     try {
-      const r = (await ai.run(model, { messages, max_tokens: 700, temperature: 0.4, chat_template_kwargs: { enable_thinking: false } })) as Record<string, any>;
+      const r = (model === 'claude' ? { response: first } : await ai.run(model, { messages, max_tokens: 700, temperature: 0.4, chat_template_kwargs: { enable_thinking: false } })) as Record<string, any>;
       const t = (typeof r?.response === 'string' ? r.response : r?.choices?.[0]?.message?.content || '').trim();
       if (!t) continue;
       const j = json<{ reply?: unknown; human?: unknown; brief?: unknown; order?: unknown; contact?: { name?: unknown; contact?: unknown } | null; offer?: { price?: unknown; task?: unknown } | null }>(t);
@@ -166,7 +169,10 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
   const friend = !!l.promo && (codes.includes(l.promo.toUpperCase()) || l.promo === 'FRIEND');
   const ownerPrice = friend && st.price_owner !== '0' && l.status !== 'won';
   const lessons = l.mode === 'collab' ? '' : (st.vax_lessons || '').slice(0, 1500);
-  let out = await run(ai, [{ role: 'system', content: system(l, '', ownerPrice, friend, lessons) }, ...merged]);
+  const sys = system(l, '', ownerPrice, friend, lessons);
+  const al2 = await allowance(db, [leadId]).catch(() => null);
+  const tier = al2 ? await routeFor(db, leadId, al2.plan, al2.trial).catch(() => null) : null;
+  let out = await run(ai, [{ role: 'system', content: sys }, ...merged], tier ? () => claudeReply(db, leadId, tier, sys, merged) : undefined);
   if (out && ownerPrice && PRICE_RE.test(out.reply)) {
     // Named a price anyway: rewrite once without any amounts.
     const again = await run(ai, [{ role: 'system', content: system(l, 'Your previous draft named a price. Rewrite it WITHOUT any prices or amounts; ask for their budget instead, or say the team confirms the price.', ownerPrice, friend, lessons) }, ...merged]);

@@ -13,7 +13,7 @@ const T = {
     chips: ['What can you build for me?', 'Website or app — prices', 'Ads and social media', 'AI and automation', 'Earn as a partner'],
     more: ['💰 How much will it cost?', '⏱ How fast?', '📎 Send examples', '🙋 Talk to a human'], hint: 'Enter — send · Shift+Enter — new line',
     ph: 'Type a message…', send: 'Send', mic: 'Voice input', thinking: 'Vax is typing…',
-    error: "My paws slipped 🙈 Leave your contact and our manager will reply within 24 hours (usually much sooner).",
+    error: "My paws slipped 🙈 Try once more in a moment.",
     fName: 'Your name', fContact: 'Email, phone or @telegram', fSend: 'Send to Vaxo', fDone: "Got it! Our manager will reply within 24 hours (usually much sooner). I'm keeping the cookies warm 🍪",
     fBad: 'Please check the contact — email, phone or @telegram.',
     room: 'Here is your private project chat — your manager will write there:', demo: 'Built by Vaxo: AI assistant + brand character. Want one?', demoHref: '/#contact', close: 'Close chat',
@@ -25,7 +25,7 @@ const T = {
     chips: ['Що ви можете зробити для мене?', 'Сайт або застосунок — ціни', 'Реклама і соцмережі', 'ШІ та автоматизація', 'Заробляти партнером'],
     more: ['💰 Скільки це коштує?', '⏱ Як швидко?', '📎 Надіслати приклади', '🙋 Покликати людину'], hint: 'Enter — надіслати · Shift+Enter — новий рядок',
     ph: 'Напишіть повідомлення…', send: 'Надіслати', mic: 'Голосове введення', thinking: 'Vax друкує…',
-    error: 'Лапки посковзнулися 🙈 Залиште контакт — людина з Vaxo відповість протягом 24 годин.',
+    error: 'Лапки посковзнулися 🙈 Спробуйте ще раз за мить.',
     fName: "Ваше ім'я", fContact: 'Email, телефон або @telegram', fSend: 'Надіслати у Vaxo', fDone: 'Готово! Наш менеджер відповість протягом 24 годин (зазвичай набагато швидше). А я поки тримаю печиво теплим 🍪',
     fBad: 'Перевірте контакт — email, телефон або @telegram.',
     room: 'Ось особистий чат вашого проєкту — менеджер напише туди:', demo: 'Зроблено у Vaxo: ШІ-помічник + персонаж бренду. Хочете такий?', demoHref: '/ua/#contact', close: 'Закрити чат',
@@ -37,7 +37,7 @@ const T = {
     chips: ['Что вы можете сделать для меня?', 'Сайт или приложение — цены', 'Реклама и соцсети', 'ИИ и автоматизация', 'Заработать партнёром'],
     more: ['💰 Сколько это стоит?', '⏱ Как быстро?', '📎 Прислать примеры', '🙋 Позвать человека'], hint: 'Enter — отправить · Shift+Enter — новая строка',
     ph: 'Напишите сообщение…', send: 'Отправить', mic: 'Голосовой ввод', thinking: 'Vax печатает…',
-    error: 'Лапки соскользнули 🙈 Оставьте контакт — человек из Vaxo ответит в течение 24 часов.',
+    error: 'Лапки соскользнули 🙈 Попробуйте ещё раз через мгновение.',
     fName: 'Ваше имя', fContact: 'Email, телефон или @telegram', fSend: 'Отправить в Vaxo', fDone: 'Готово! Наш менеджер ответит в течение 24 часов (обычно гораздо быстрее). А я пока держу печенье тёплым 🍪',
     fBad: 'Проверьте контакт — email, телефон или @telegram.',
     room: 'Вот личный чат вашего проекта — менеджер напишет туда:', demo: 'Сделано в Vaxo: ИИ-помощник + персонаж бренда. Хотите такой?', demoHref: '/ru/#contact', close: 'Закрыть чат',
@@ -193,11 +193,11 @@ const T = {
         wait.remove();
         if (!d.ok) throw new Error();
         say(d.reply, d.tool || undefined);
-        if (d.form && msgs.filter((m) => m.role === 'user').length >= 2) leadForm();
+        if (d.image) { const im = document.createElement('img'); im.src = d.image; im.alt = ''; im.className = 'vc-img'; im.onload = () => { log.scrollTop = log.scrollHeight; }; log.lastElementChild?.append(im); }
+        if (d.form) leadForm();
       } catch {
         wait.remove();
         say(T.error);
-        leadForm();
       }
       busy = false;
     }
@@ -218,10 +218,12 @@ const T = {
         if (matchMedia('(min-width: 761px)').matches) input.focus();
       }
     };
+    // Workspace: a task from the home page gets the whole screen, like Claude or ChatGPT, not a corner widget.
+    const workspace = (yes: boolean) => { root.classList.toggle('ws', yes); document.documentElement.classList.toggle('vc-lock', yes); };
     fab.onclick = () => open(!!panel.hidden);
     teaser.onclick = () => open(true);
-    $<HTMLButtonElement>('[data-vc-close]').onclick = () => open(false);
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) open(false); });
+    $<HTMLButtonElement>('[data-vc-close]').onclick = () => { open(false); workspace(false); };
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) { open(false); workspace(false); } });
     const mic = $<HTMLButtonElement>('[data-vc-mic]');
     mic.innerHTML = MIC_SVG;
     attachMic(mic, input, () => lang);
@@ -232,7 +234,7 @@ const T = {
     // Other parts of the site can open the chat: <a data-vax-chat href="#">.
     document.addEventListener('click', (e) => {
       const a = (e.target as Element).closest?.('[data-vax-chat]') as HTMLElement | null;
-      if (a) { e.preventDefault(); open(true); if (a.dataset.vaxAsk) ask(a.dataset.vaxAsk); }
+      if (a) { e.preventDefault(); if (a.dataset.vaxFull) workspace(true); open(true); if (a.dataset.vaxAsk) ask(a.dataset.vaxAsk); }
     });
     // Came from a demo's "Get one for my business" (?vax=demo-…): open the chat and start the conversation
     // with what they just saw, so Vax picks up the context at once. Once per demo per visit.
@@ -258,6 +260,16 @@ const T = {
 </script>
 
 <style is:global>
+  html.vc-lock { overflow: hidden; }
+  .vchat.ws { inset: 0; }
+  .vchat.ws .vc-fab, .vchat.ws .vc-teaser, .vchat.ws .vc-demo { display: none; }
+  .vchat.ws .vc-panel { position: fixed; inset: 0; width: 100%; height: 100dvh; max-height: none; border: 0; border-radius: 0; background: var(--bg); }
+  .vchat.ws header { padding-inline: max(14px, calc((100vw - 800px) / 2)); }
+  .vchat.ws .vc-log { padding-inline: max(14px, calc((100vw - 800px) / 2)); gap: 14px; }
+  .vchat.ws .vc-m { max-width: min(100%, 680px); font-size: 16px; }
+  .vchat.ws .vc-chips { padding-inline: max(14px, calc((100vw - 800px) / 2)); }
+  .vchat.ws .vc-in { padding: 12px max(14px, calc((100vw - 800px) / 2)) 16px; }
+  .vchat .vc-img { display: block; width: 100%; max-width: 420px; margin-top: 8px; border-radius: 12px; }
   .vchat { position: fixed; right: 18px; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 60; font-family: var(--font); }
   .vchat .vc-fab { width: 64px; height: 64px; border-radius: 50%; border: 0; padding: 0; background: var(--acc); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25); cursor: pointer; position: relative; display: grid; place-items: center; transition: transform 0.2s; }
   .vchat .vc-fab:hover { transform: translateY(-2px) rotate(-4deg); }

@@ -1,7 +1,7 @@
 // Vax chat: the site's own AI assistant (the same AI chat every Vaxo plan includes).
 import { DEMOS, demoPrompt } from './demos.js';
 
-// Runs on Workers AI's free daily allocation; on any model error the widget falls back to the contact form.
+// Runs on Workers AI's free daily allocation (worker/router.ts: paying clients get Claude in their room).
 
 export interface AiBinding {
   run(model: string, input: Record<string, unknown>): Promise<unknown>;
@@ -9,6 +9,7 @@ export interface AiBinding {
 
 const MODELS = ['@cf/google/gemma-4-26b-a4b-it', '@cf/meta/llama-3.1-8b-instruct-fp8-fast'];
 import { buildTool, pullList, READY, tidyReply, WANTS_TOOL } from './tools.js';
+import { drawImage, WANTS_IMAGE } from './images.js';
 const MAX_TURNS = 14;
 const MAX_CHARS = 1600;
 
@@ -62,7 +63,7 @@ CONFIRMATION CARD: before anything irreversible or costly (charging money, delet
 ARCHITECT OF THE RESULT (Decision 38): take the pain on yourself. The person need not know how to ask: see the real need behind a plain request and decide the best way yourself. Never ask what can be worked out from the task, common practice or the conversation; ask only what cannot be known without them (their access, their budget limit, a serious health condition that changes the advice). Answer a real task in three short parts, in plain sentences and with no labels: 1) the exact answer now; 2) the working tool or whole system around it (a ready tool appears below your message when the wish fits, so refer to it as ready); 3) the next step. A one-fact question gets one line and no system around it. Never claim something is already done, deployed, connected or running unless it really is: a tracker, calculator or checklist appears in the chat, while sites, automations and integrations are built on a plan, step by step.
 WHAT VAXO IS (Decision 37): a personal operating system for life and work for every person — not an agency, not only a site builder. Whatever the person wants (a form, a language, a routine, a project, a presentation, a tracker, a budget), you think universally across health, learning, productivity, creativity and business: understand the point, give the instant answer, then offer the ready tool as the next step (tracker, planner, calculator, checklist, mini-app, automation) and name the next step. No lecturing, no needless questions. Stay strictly with facts and clean logic: evidence-based science for health (no miracle cures), clean working code, realistic effectiveness for life — and say so when something is unknown.
 WORKING STYLE (Decision 35): 1) Answer the request itself first — short and exact, no detours. 2) Then, only if a bigger result would clearly help this person, add ONE line offering it as something ready ("I can also set up X for you — say yes"); never a menu, never headings, never three layers of text. 3) Do not ask what you can infer; ask at most one question, and only when the answer changes what you do. 4) Never do anything irreversible (spend money, delete, publish in their name) without one line that says exactly what will happen and waits for a yes. 5) Facts over fashion: no pseudo-science, no guru funnels, no hype; on health, legal and money topics give general evidence-based information and say a professional should confirm. 6) Think one step ahead: name the next step and why. 7) Never over-build: a simple question gets a simple answer.
-CONTACT: the prompt box at the top of vaxogroup.com (the chat opens right there, no sign-up); we reply within 24 hours.`;
+START: the prompt box at the top of vaxogroup.com, no sign-up. Vax answers right here, at once.`;
 
 function systemPrompt(lang: string): string {
   const L = LANG_NAME[lang] ?? 'English';
@@ -72,10 +73,10 @@ STRAIGHT TALK: answers are short by default — never stack layers of text, list
 Personality: warm, funny, a bit cheeky, short answers (a simple question 1–3 sentences; a real task up to ~110 words). One light joke or raccoon touch at most per answer. No markdown headings, no long lists.
 Always answer in the language of the visitor's latest message, whatever it is (default ${L} when it is unclear), and switch the moment they switch.
 Goal: understand who the visitor is and what they want (a new project, growth, a product, or to earn as a partner) in 1–2 questions, then show that Vaxo can do it end to end and recommend ONE concrete next step from the facts below — a service with its price range, a growth tier, or an intro call with a strategist; offer starter packages or kits only when the visitor has a small budget or wants to test us first; or the partner program. Never imply we only work with small businesses. When they show interest, ask for their name and contact (email, phone or @telegram) so a human from Vaxo follows up.
-When the visitor wants to order, get a quote, talk to a human, or agrees to leave a contact, end your answer with the exact tag [FORM] (the site then shows a 2-field form). Do not ask for payment details, passwords or documents.
+You are a doer, not a form. NEVER ask for a name, email, phone or Telegram, never mention a manager, a team reply or any waiting time, and never send people to a project room. Give the result now. When someone wants paid work (a site, an app, ads), give the plan that fits and tell them to press the plan button under Plans on this page. Only if the visitor literally asks to talk to a human, end your answer with the exact tag [FORM]. Do not ask for payment details, passwords or documents.
 The visitor can send anything here: links (video examples, sites they like), photos, videos, files and voice notes (📎 and 🎤 buttons). Once you know what they want, invite them in one short line to send 1–3 examples they like or their current site/logo/photos — it makes the result much better. When they send a link or file, thank them and use it.
 You are living proof of what Vaxo builds: an AI assistant, a brand character and a cartoon series in one. If asked, a chat like you is included in every plan from $39 a month, first month free.
-Use only these facts; if unsure, say a human will answer and add [FORM]. Never promise results, discounts or dates not listed here.
+Use only these facts; if unsure, say honestly that you are not sure. Never promise results, discounts or dates not listed here.
 ${FACTS}`;
 }
 
@@ -101,6 +102,7 @@ function textOf(r: unknown): string {
 }
 
 export interface ChatEnv {
+  LEADS?: import('./partner.js').DB;
   AI?: AiBinding;
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_CHAT_ID?: string;
@@ -138,6 +140,11 @@ export async function handleChat(env: ChatEnv, request: Request, waitUntil?: (p:
   // A tool is being built next to this answer: it has its own fields, so never ask the person for those numbers.
   const toolHint = !demo && WANTS_TOOL.test(messages[messages.length - 1].content) ? '\nA ready tool appears under your answer. Do not ask for numbers or details: give the general answer in 1–3 sentences and say the person can enter their own values in the tool below.' : '';
   const input = { messages: [{ role: 'system', content: (demo ? demoPrompt(demo) : systemPrompt(lang)) + toolHint }, ...messages], max_tokens: 420, temperature: 0.6, chat_template_kwargs: { enable_thinking: false } };
+  // Pictures (Decision 39): free, on Workers AI, with a daily limit.
+  if (!demo && WANTS_IMAGE.test(messages[messages.length - 1].content)) {
+    const pic = await drawImage(ai, env.LEADS, messages[messages.length - 1].content, lang, request.headers.get('CF-Connecting-IP') || 'local').catch((e) => { console.error('[image]', e); return null; });
+    if (pic) return json(200, { ok: true, ...pic, form: false });
+  }
   // Execution engine (Decision 38): the tool is built next to the answer, so the wait stays the same.
   const wish = messages[messages.length - 1].content;
   const building = !demo && WANTS_TOOL.test(wish) ? buildTool(ai, wish, lang).catch(() => null) : Promise.resolve(null);
