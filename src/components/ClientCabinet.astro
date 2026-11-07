@@ -346,7 +346,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     const table = el('div', { class: 'dns' }, ...[[T.domType, rec.type], [T.domName, rec.name], [T.domValue, rec.value]].map(([k, v]) => el('div', { class: 'dns-r' }, el('span', { class: 'mut small' }, k), el('code', {}, v), copyBtn(v))));
     const check = el('button', { type: 'button', class: 'ghost sm' }, T.domCheck) as HTMLButtonElement;
     check.onclick = () => loadDomain();
-    box.replaceChildren(el('p', {}, el('b', {}, d.host)), el('p', { class: 'dom-step' }, T.domS2), table, el('p', { class: 'mut small' }, T.domWhere), d.apex ? el('p', { class: 'note' }, T.domApex) : '', d.error ? el('p', { class: 'mut small' }, T.domErr + d.error) : '', head, el('div', { class: 'mod-act' }, check, off));
+    box.replaceChildren(el('p', {}, el('b', {}, d.host)), el('p', { class: 'dom-step' }, T.domS2), table, el('p', { class: 'mut small' }, T.domWhere), d.apex ? el('p', { class: 'note' }, T.domApex) : '', d.error ? el('p', { class: 'mut small' }, /CNAME/i.test(d.error) ? T.domNoCname : T.domErr + d.error) : '', head, el('div', { class: 'mod-act' }, check, off));
     domTimer = window.setTimeout(loadDomain, 30000);
   }
   async function loadDomain() {
