@@ -5,7 +5,10 @@ import { DEMOS, demoPrompt } from './demos.js';
 
 export interface AiBinding {
   run(model: string, input: Record<string, unknown>): Promise<unknown>;
+  toMarkdown?(doc: { name: string; blob: Blob }): Promise<MarkdownResult | MarkdownResult[]>;
 }
+
+interface MarkdownResult { format: string; data?: string; error?: string }
 
 const MODELS = ['@cf/google/gemma-4-26b-a4b-it', '@cf/meta/llama-3.1-8b-instruct-fp8-fast'];
 import { buildTool, pullList, READY, tidyReply, WANTS_TOOL } from './tools.js';
