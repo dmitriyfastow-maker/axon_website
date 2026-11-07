@@ -8,7 +8,7 @@ const { lang } = Astro.props;
 const T = {
   en: {
     open: 'Chat with Vax', title: 'Vax · Vaxo assistant', status: 'online · replies in seconds',
-    hello: "Hi! I'm Vax 🦝 Vaxo builds everything for growth: websites, apps, AI, ads, content. What are you working on?",
+    hello: "Hi! I'm Vax 🦝 Tell me what you need and I'll get on with it.",
     teaser: 'Questions? I answer in 5 seconds 🦝',
     chips: ['What can you build for me?', 'Website or app — prices', 'Ads and social media', 'AI and automation', 'Earn as a partner'],
     more: ['💰 How much will it cost?', '⏱ How fast?', '📎 Send examples', '🙋 Talk to a human'], hint: 'Enter — send · Shift+Enter — new line',
@@ -20,7 +20,7 @@ const T = {
   },
   ua: {
     open: 'Чат з Vax', title: 'Vax · помічник Vaxo', status: 'онлайн · відповідає за секунди',
-    hello: 'Привіт! Я Vax 🦝 Vaxo робить усе для зростання: сайти, застосунки, ШІ, рекламу, контент. Над чим працюєте?',
+    hello: 'Привіт! Я Vax 🦝 Напишіть, що потрібно, і я одразу візьмусь.',
     teaser: 'Є питання? Відповім за 5 секунд 🦝',
     chips: ['Що ви можете зробити для мене?', 'Сайт або застосунок — ціни', 'Реклама і соцмережі', 'ШІ та автоматизація', 'Заробляти партнером'],
     more: ['💰 Скільки це коштує?', '⏱ Як швидко?', '📎 Надіслати приклади', '🙋 Покликати людину'], hint: 'Enter — надіслати · Shift+Enter — новий рядок',
@@ -32,7 +32,7 @@ const T = {
   },
   ru: {
     open: 'Чат с Vax', title: 'Vax · помощник Vaxo', status: 'онлайн · отвечает за секунды',
-    hello: 'Привет! Я Vax 🦝 Vaxo делает всё для роста: сайты, приложения, ИИ, рекламу, контент. Над чем работаете?',
+    hello: 'Привет! Я Vax 🦝 Напишите, что нужно, и я сразу возьмусь.',
     teaser: 'Есть вопросы? Отвечу за 5 секунд 🦝',
     chips: ['Что вы можете сделать для меня?', 'Сайт или приложение — цены', 'Реклама и соцсети', 'ИИ и автоматизация', 'Заработать партнёром'],
     more: ['💰 Сколько это стоит?', '⏱ Как быстро?', '📎 Прислать примеры', '🙋 Позвать человека'], hint: 'Enter — отправить · Shift+Enter — новая строка',
@@ -91,8 +91,8 @@ const T = {
     const input = form.querySelector('textarea')!;
     const KEY = 'vaxo_chat_' + lang;
     const store = {
-      get(k: string) { try { return sessionStorage.getItem(k); } catch { return null; } },
-      set(k: string, v: string) { try { sessionStorage.setItem(k, v); } catch {} },
+      get(k: string) { try { return localStorage.getItem(k); } catch { return null; } },
+      set(k: string, v: string) { try { localStorage.setItem(k, v); } catch {} },
     };
     let msgs: Msg[] = [];
     try { msgs = JSON.parse(store.get(KEY) || '[]'); } catch {}
@@ -172,7 +172,7 @@ const T = {
     };
     const say = (text: string, tool?: ToolSpec) => {
       msgs.push({ role: 'assistant', content: text, ...(tool ? { tool } : {}) });
-      store.set(KEY, JSON.stringify(msgs));
+      store.set(KEY, JSON.stringify(msgs.slice(-60)));
       const b = bubble('assistant', text);
       if (tool) { b.append(renderTool(tool)); log.scrollTop = log.scrollHeight; }
     };
@@ -182,7 +182,7 @@ const T = {
       busy = true;
       if (!msgs.some((m) => m.role === 'user')) navigator.sendBeacon?.('/api/ev', new Blob([JSON.stringify({ k: 'chat_msg', p: location.pathname })], { type: 'application/json' }));
       msgs.push({ role: 'user', content: q });
-      store.set(KEY, JSON.stringify(msgs));
+      store.set(KEY, JSON.stringify(msgs.slice(-60)));
       bubble('user', q);
       renderChips();
       const wait = bubble('assistant', T.thinking);

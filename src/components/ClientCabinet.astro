@@ -481,6 +481,8 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       const g = $<HTMLAnchorElement>('[data-google]'); g.hidden = !d.ways?.google; if (room) g.href = `/api/me/google?back=${room}`;
       $('[data-or]').hidden = !d.ways?.google;
       $('[data-off]').hidden = !!d.ways?.email;
+      // With mail working nobody needs a password: the link or Google is the whole sign-in.
+      $('[data-pw]').hidden = !!d.ways?.email;
       if (!d.ways?.email) $<HTMLDetailsElement>('[data-pw]').open = true;
       return;
     }
@@ -545,6 +547,19 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     inp.addEventListener('focus', () => inp.select());
   });
   let verifying = false;
+  // Magic link from the letter: /me/#in=<email in base64>.<code>
+  (async () => {
+    const m = location.hash.match(/^#in=([^.]+)\.(\d{6})$/);
+    if (!m) return;
+    history.replaceState(null, '', location.pathname + location.search);
+    let mail = ''; try { mail = atob(m[1]); } catch { return; }
+    msg(T.checking);
+    const r = await post('/api/me/verify', { email: mail, code: m[2] }).catch(() => null);
+    if (r?.ok) { msg(''); load(); return; }
+    const d = r ? await r.json().catch(() => ({})) : { error: 'net' };
+    msg(d.error === 'net' ? T.errNet : T.errExpired);
+  })();
+
   async function verify() {
     if (verifying) return; verifying = true;
     const code = otp.map((x) => x.value).join('');

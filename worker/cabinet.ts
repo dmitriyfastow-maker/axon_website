@@ -117,9 +117,9 @@ async function startSession(db: DB, clientId: number) {
 }
 
 const CODE_MAIL: Record<string, [string, string]> = {
-  en: ['Your Vaxo sign-in code', 'Your code: {code}\n\nIt works for 15 minutes. If you did not ask for it, just ignore this letter.\n\n— Vax, Vaxo'],
-  ru: ['Код входа в кабинет Vaxo', 'Ваш код: {code}\n\nОн действует 15 минут. Если вы не запрашивали код — просто проигнорируйте письмо.\n\n— Vax, Vaxo'],
-  ua: ['Код входу в кабінет Vaxo', 'Ваш код: {code}\n\nВін діє 15 хвилин. Якщо ви не запитували код — просто проігноруйте лист.\n\n— Vax, Vaxo'],
+  en: ['Your Vaxo sign-in link', 'Sign in with one tap:\n{link}\n\nOr enter the code: {code}\n\nBoth work for 15 minutes. If you did not ask for this, just ignore this letter.\n\n— Vax, Vaxo'],
+  ru: ['Ссылка для входа в Vaxo', 'Войти в одно касание:\n{link}\n\nИли введите код: {code}\n\nОбе работают 15 минут. Если вы этого не запрашивали, просто проигнорируйте письмо.\n\n— Vax, Vaxo'],
+  ua: ['Посилання для входу у Vaxo', 'Увійти одним дотиком:\n{link}\n\nАбо введіть код: {code}\n\nОбидва працюють 15 хвилин. Якщо ви цього не запитували, просто проігноруйте лист.\n\n— Vax, Vaxo'],
 };
 
 /** /api/me and /api/me/<action>. */
@@ -181,7 +181,11 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
                       ON CONFLICT (email) DO UPDATE SET code_hash = excluded.code_hash, expires_at = excluded.expires_at, tries = 0, sent_at = excluded.sent_at`)
       .bind(email, await sha(`vaxo-me:${email}:${code}`)).run();
     const [subj, body] = CODE_MAIL[str('lang', 2)] || CODE_MAIL.en;
-    return (await sendMail(email, subj, body.replace('{code}', code))) ? json(200, { ok: true }) : json(502, { ok: false, error: 'send' });
+    // Magic link: everything after # stays in the browser, and only the page's script signs in, so mail scanners
+    // that open links cannot use the code up. The six digits stay in the letter as a second way.
+    const l = str('lang', 2), base = l === 'ru' || l === 'ua' ? `/${l}/me/` : '/me/';
+    const link = `${url.origin}${base}#in=${btoa(email)}.${code}`;
+    return (await sendMail(email, subj, body.replace('{link}', link).replace('{code}', code))) ? json(200, { ok: true }) : json(502, { ok: false, error: 'send' });
   }
 
   if (path === 'verify' && request.method === 'POST') {

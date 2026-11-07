@@ -47,9 +47,12 @@ export async function buildTool(ai: AiBinding | undefined, wish: string, lang: s
 // and any stock tail about memory (it came out in the wrong language and promised more than the site chat keeps).
 const OFFER = /^\W*(я\s+(также\s+|ще\s+|теж\s+)?(могу|можу)|могу\s|можу\s|хотите|хочешь|хочете|хочеш|i\s+can\b|want\s+me\b|would\s+you\s+like\b|puedo\b|ich\s+kann\b)/i;
 const TAIL = /^\W*vax\s+(can|может|може|puede|kann)\b/i;
+// The same for "to calculate this I need your weight...": the tool under the answer already has those fields.
+const NEEDS = /^\W*(чтобы\s+я|чтобы\s+точно|для\s+точного|мне\s+нужн|щоб\s+я|щоб\s+точно|для\s+точного|мені\s+потрібн|to\s+(give|calculate|make|do)\b|i\s+need\b|please\s+(tell|share|give))/i;
 export function tidyReply(reply: string, hasTool: boolean): string {
-  return reply.split(/\n+/).map((p) => p.trim()).filter((p) => p && !TAIL.test(p) && !(hasTool && OFFER.test(p))).join('\n\n');
+  return reply.replace(/\[+\s*TOOL\b[^\]]*\]+/gi, '').split(/\n+/).map((p) => p.trim()).filter((p) => p && !TAIL.test(p) && !(hasTool && (OFFER.test(p) || NEEDS.test(p)))).join('\n\n');
 }
+export const READY: Record<string, string> = { en: 'Ready: enter your numbers below.', ru: 'Готово: введите свои данные ниже.', ua: 'Готово: введіть свої дані нижче.' };
 
 export const toolMarker = (t: ToolSpec) => `[[TOOL:${JSON.stringify(t)}]]`;
 

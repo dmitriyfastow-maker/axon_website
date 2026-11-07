@@ -7,9 +7,11 @@ import type { Lang } from '../i18n';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const P = (p: string) => (lang === 'en' ? p : `/${lang}${p}`);
+const demo = (slug: string) => `/examples/${slug}/?lang=${lang}`;
 
 const T = {
   ru: {
+    chips: [['Автоматизировать клиентов', 'Чек-лист: как автоматизировать ответы клиентам'], ['Собрать сайт под ключ', 'Чек-лист: что нужно для сайта под ключ для моего дела'], ['План запуска за 14 дней', 'План запуска продукта за 14 дней: чек-лист'], ['Рассчитать БЖУ и тренировки', 'Сделай калькулятор калорий и БЖУ под мою цель'], ['Юнит-экономика проекта', 'Сделай калькулятор юнит-экономики: цена, срок клиента, стоимость привлечения']], live: 'Интерактивно',
     h1: ['Скажите, что нужно.', 'Vax берётся за дело.'],
     sub: 'Личный исполнитель для жизни и работы. Напишите задачу своими словами. Бесплатно, без регистрации.',
     ph: ['Посчитай юнит-экономику моей подписки', 'Сделай сайт для моей кофейни', 'План: выучить испанский за 3 месяца', 'Напиши письмо арендодателю', 'Разложи запуск курса по шагам'],
@@ -42,6 +44,7 @@ const T = {
     dnote: 'Первый месяц бесплатно. Без карты. Счёт пришлём, только если останетесь.', demail: 'Ваша почта', dgo: 'Начать бесплатный месяц', dbad: 'Введите настоящую почту.', dfail: 'Что-то пошло не так — попробуйте ещё раз.',
   },
   en: {
+    chips: [['Automate my clients', 'Checklist: how to automate replies to my clients'], ['A website, done for me', 'Checklist: what a done-for-me website for my business needs'], ['14-day launch plan', 'A 14-day product launch plan: checklist'], ['Macros and training', 'Make a calorie and macro calculator for my goal'], ['Project unit economics', 'Make a unit economics calculator: price, customer lifetime, acquisition cost']], live: 'Interactive',
     h1: ['Say what you need.', 'Vax gets on with it.'],
     sub: 'A personal doer for life and work. Write the task in your own words. Free, no sign-up.',
     ph: ['Work out the unit economics of my subscription', 'Make a website for my coffee shop', 'A plan to learn Spanish in 3 months', 'Write a letter to my landlord', 'Break my course launch into steps'],
@@ -74,6 +77,7 @@ const T = {
     dnote: 'First month free. No card. We send an invoice only if you stay.', demail: 'Your email', dgo: 'Start free month', dbad: 'Enter a valid email.', dfail: 'Something went wrong — please try again.',
   },
   ua: {
+    chips: [['Автоматизувати клієнтів', 'Чек-лист: як автоматизувати відповіді клієнтам'], ['Зібрати сайт під ключ', 'Чек-лист: що потрібно для сайту під ключ для моєї справи'], ['План запуску за 14 днів', 'План запуску продукту за 14 днів: чек-лист'], ['Порахувати БЖВ і тренування', 'Зроби калькулятор калорій і БЖВ під мою мету'], ['Юніт-економіка проєкту', 'Зроби калькулятор юніт-економіки: ціна, строк клієнта, вартість залучення']], live: 'Інтерактивно',
     h1: ['Скажіть, що потрібно.', 'Vax береться до справи.'],
     sub: 'Особистий виконавець для життя і роботи. Напишіть завдання своїми словами. Безкоштовно, без реєстрації.',
     ph: ['Порахуй юніт-економіку моєї підписки', 'Зроби сайт для моєї кав’ярні', 'План: вивчити іспанську за 3 місяці', 'Напиши листа орендодавцю', 'Розклади запуск курсу на кроки'],
@@ -118,6 +122,7 @@ const ava = '/mascot/vax-happy.webp';
         <input name="q" type="text" maxlength="400" autocomplete="off" placeholder={T.ph[0]} aria-label={T.askL} />
         <button type="submit">{T.go}</button>
       </form>
+      <div class="chips">{T.chips.map(([label, ask]) => <button type="button" data-chip={ask}>{label}</button>)}</div>
     </div>
   </section>
 
@@ -176,26 +181,30 @@ const ava = '/mascot/vax-happy.webp';
     <div class="w">
       <h2>{T.inH}</h2>
       <div class="grid">
-        <a class="card" href={P('/me/') + '#biz'}>
+        <a class="card" href={demo('eco-crm')}>
+          <em class="live">{T.live}</em>
           <div class="mock crm" aria-hidden="true">
             {T.crm[3].map((col, c) => <div class="col"><b>{col}</b>{[...Array(3 - c)].map((_, r) => <div class="deal"><i></i><u style={`width:${[78, 58, 68][(r + c) % 3]}%`}></u></div>)}</div>)}
           </div>
           <h3>{T.crm[0]}</h3><p>{T.crm[1]}</p><span>{T.crm[2]} →</span>
         </a>
-        <a class="card" href={P('/partners/')}>
+        <a class="card" href={demo('eco-partners')}>
+          <em class="live">{T.live}</em>
           <div class="mock par" aria-hidden="true">
             {T.par[3].map(([n, k], i) => <div class:list={[{ hi: i === 0 }]}><b>{n}</b><small>{k}</small></div>)}
           </div>
           <h3>{T.par[0]}</h3><p>{T.par[1]}</p><span>{T.par[2]} →</span>
         </a>
         <a class="card" href={P('/examples/')}>
+          <em class="live">{T.live}</em>
           <div class="mock brw" aria-hidden="true">
             <div class="bar"><i></i><i></i><i></i></div>
             <img src={`/examples/thumbs/flagship-${lang}.jpg`} alt="" loading="lazy" width="640" height="400" />
           </div>
           <h3>{T.exa[0]}</h3><p>{T.exa[1]}</p><span>{T.exa[2]} →</span>
         </a>
-        <a class="card" href={P('/me/')}>
+        <a class="card" href={demo('client-app')}>
+          <em class="live">{T.live}</em>
           <div class="mock cab" aria-hidden="true">
             <div class="ln"><small>{T.cab[3][0]}</small><em>45%</em><u><i style="width:45%"></i></u></div>
             <div class="ln"><small>{T.cab[3][1]}</small><u><i style="width:72%"></i></u></div>
@@ -284,6 +293,11 @@ const ava = '/mascot/vax-happy.webp';
     if (!q) { i.focus(); return; }
     i.value = ''; askVax(q);
   }));
+  // Chips: the blank-page cure. A tap fills the input and starts the talk, so the first tool appears without typing.
+  document.querySelectorAll<HTMLButtonElement>('[data-chip]').forEach((b) => (b.onclick = () => {
+    if (input) input.value = b.dataset.chip || '';
+    hq?.requestSubmit();
+  }));
   const toTop = () => { window.scrollTo({ top: 0, behavior: calm ? 'auto' : 'smooth' }); setTimeout(() => input?.focus({ preventScroll: true }), 500); };
   if (location.hash === '#contact') setTimeout(() => input?.focus({ preventScroll: true }), 400);
 
@@ -345,7 +359,8 @@ const ava = '/mascot/vax-happy.webp';
 
   .hero { position: relative; min-height: calc(100svh - 72px); display: grid; place-items: center; text-align: center; overflow: hidden; padding: 56px 0 96px; background: var(--s1); }
   .hero::before { content: ''; position: absolute; left: 50%; bottom: -118vw; width: 170vw; height: 130vw; transform: translateX(-50%); border-radius: 50%; background: var(--s1); box-shadow: 0 -1px 0 rgba(228, 169, 63, 0.75), 0 -10px 60px rgba(228, 169, 63, 0.3), 0 -60px 220px rgba(228, 169, 63, 0.16); }
-  .hero .w { position: relative; width: 100%; }
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .hero .w { position: relative; width: 100%; min-width: 0; }
   h1 { font-weight: 600; font-size: clamp(44px, 8.2vw, 112px); line-height: 0.98; letter-spacing: -0.045em; }
   h1 span { display: block; color: var(--accHead); }
   .lead { max-width: 600px; margin: 26px auto 0; font-size: clamp(17px, 1.7vw, 21px); line-height: 1.45; color: var(--mt); }
@@ -355,6 +370,10 @@ const ava = '/mascot/vax-happy.webp';
   .ask input::placeholder { color: var(--mut); }
   .ask button { flex: none; height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: var(--am); color: #1a1408; font: 600 16px var(--font, inherit); cursor: pointer; transition: filter 0.2s; }
   .ask button:hover { filter: brightness(1.08); }
+
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 760px; margin: 18px auto 0; }
+  .chips button { flex: none; padding: 9px 15px; border: 1px solid var(--line2); border-radius: 999px; background: var(--s3); color: var(--tx); font: 400 14px var(--font, inherit); cursor: pointer; transition: border-color 0.2s, transform 0.2s; }
+  .chips button:hover { border-color: var(--am); transform: translateY(-1px); }
 
   .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
   .top p { max-width: 400px; color: var(--mt); }
@@ -413,7 +432,11 @@ const ava = '/mascot/vax-happy.webp';
 
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: clamp(32px, 5vw, 56px); }
   .card { display: flex; flex-direction: column; padding: 16px 16px 24px; border: 1px solid var(--ln); border-radius: 20px; background: var(--s3); color: inherit; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+  .card { position: relative; }
+  .live { order: 1; align-self: flex-start; margin: 16px 8px -10px; padding: 4px 10px; border-radius: 999px; background: var(--am); color: #1a1408; font: 600 12px var(--font, inherit); }
   .card:hover { border-color: rgba(228, 169, 63, 0.5); transform: translateY(-2px); }
+  .card .mock { order: 0; }
+  .card h3, .card > p, .card > span { order: 2; }
   .card h3 { margin: 20px 8px 0; font-size: 22px; font-weight: 600; letter-spacing: -0.015em; }
   .card > p { margin: 6px 8px 0; color: var(--mt); font-size: 15px; }
   .card > span { margin: 12px 8px 0; color: var(--amT); font-size: 15px; font-weight: 600; }
@@ -503,6 +526,8 @@ const ava = '/mascot/vax-happy.webp';
   @media (max-width: 520px) {
     .ask { padding-left: 18px; }
     .ask button { padding: 0 16px; }
+    .chips { flex-wrap: nowrap; justify-content: flex-start; margin: 18px calc(-1 * clamp(16px, 4vw, 40px)) 0; padding: 0 clamp(16px, 4vw, 40px) 4px; max-width: none; overflow-x: auto; scrollbar-width: none; text-align: left; }
+    .chips::-webkit-scrollbar { display: none; }
     .kv { grid-template-columns: 1fr 1fr; }
     .kv.out div:last-child, .kv div:last-child { grid-column: 1 / 3; }
     .mock { height: 190px; }

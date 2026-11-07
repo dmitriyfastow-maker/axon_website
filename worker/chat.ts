@@ -8,7 +8,7 @@ export interface AiBinding {
 }
 
 const MODELS = ['@cf/google/gemma-4-26b-a4b-it', '@cf/meta/llama-3.1-8b-instruct-fp8-fast'];
-import { buildTool, pullList, tidyReply, WANTS_TOOL } from './tools.js';
+import { buildTool, pullList, READY, tidyReply, WANTS_TOOL } from './tools.js';
 const MAX_TURNS = 14;
 const MAX_CHARS = 1600;
 
@@ -135,7 +135,9 @@ export async function handleChat(env: ChatEnv, request: Request, waitUntil?: (p:
     const p = pingDemo(env, demo.name, messages[messages.length - 1].content);
     if (waitUntil) waitUntil(p);
   }
-  const input = { messages: [{ role: 'system', content: demo ? demoPrompt(demo) : systemPrompt(lang) }, ...messages], max_tokens: 420, temperature: 0.6, chat_template_kwargs: { enable_thinking: false } };
+  // A tool is being built next to this answer: it has its own fields, so never ask the person for those numbers.
+  const toolHint = !demo && WANTS_TOOL.test(messages[messages.length - 1].content) ? '\nA ready tool appears under your answer. Do not ask for numbers or details: give the general answer in 1–3 sentences and say the person can enter their own values in the tool below.' : '';
+  const input = { messages: [{ role: 'system', content: (demo ? demoPrompt(demo) : systemPrompt(lang)) + toolHint }, ...messages], max_tokens: 420, temperature: 0.6, chat_template_kwargs: { enable_thinking: false } };
   // Execution engine (Decision 38): the tool is built next to the answer, so the wait stays the same.
   const wish = messages[messages.length - 1].content;
   const building = !demo && WANTS_TOOL.test(wish) ? buildTool(ai, wish, lang).catch(() => null) : Promise.resolve(null);
@@ -151,7 +153,7 @@ export async function handleChat(env: ChatEnv, request: Request, waitUntil?: (p:
       reply = reply.replace(/\[FORM\]/gi, '').replace(/\*\*/g, '').trim();
       const pulled = pullList(reply);
       const tool = await building;
-      return json(200, { ok: true, reply: tidyReply(pulled.reply, !!tool), form, tool });
+      return json(200, { ok: true, reply: tidyReply(pulled.reply, !!tool) || READY[lang] || READY.en, form, tool });
     } catch (err) {
       console.error('[chat]', model, err);
     }
