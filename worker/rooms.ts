@@ -1,5 +1,6 @@
 // Client rooms: a private project chat per lead (/room/?t=<room>).
 // Client ↔ their manager (partner-closer) ↔ owner. The owner sees everything; 'note' messages are internal.
+import { plainText } from './tools.js';
 import type { DB } from './partner.js';
 import { logEvent, type Notify } from './deals.js';
 import { guardMessage } from './autopilot.js';
@@ -22,8 +23,9 @@ export async function addMessage(db: DB, leadId: number, sender: string, kind: s
   await db.prepare('INSERT INTO messages (lead_id, sender, kind, text) VALUES (?, ?, ?, ?)').bind(leadId, sender, kind, text).run();
   // Clients who joined via Telegram or email get every reply there too.
   if (kind === 'text') {
-    await relayToClient(db, leadId, sender, text).catch(() => {});
-    await relayEmail(db, leadId, sender, text).catch(() => {});
+    const plain = plainText(text);
+    await relayToClient(db, leadId, sender, plain).catch(() => {});
+    await relayEmail(db, leadId, sender, plain).catch(() => {});
   }
 }
 
@@ -81,6 +83,8 @@ export async function handleRoomApi(db: DB, request: Request, token: string, not
     .first<{ n: number }>();
   if ((recent?.n ?? 0) >= 40) return json(429, { ok: false });
   await addMessage(db, lead.id, 'client', 'text', text);
+  // The Apply button on a confirmation card: Vax cannot delete or charge by itself, so a person must carry it out.
+  if (/^✅ (Apply|Применить|Застосувати):/.test(text)) await notify(`🟢 #${lead.id} ${lead.name} подтвердил действие, нужно выполнить вручную: ${text.slice(0, 300)}`);
   // Vax answers by itself; the owner hears about client messages only when the AI is paused for this client.
   if (lead.ai === 'on' && onClient) onClient(lead.id);
   else await notify(`💬 #${lead.id} ${lead.name}${lead.manager ? ` (manager ${lead.manager})` : ' (no manager yet)'}: ${text.slice(0, 300)}`);

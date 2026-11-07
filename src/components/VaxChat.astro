@@ -74,7 +74,9 @@ const T = {
   import { attachMic, MIC_SVG } from '../scripts/voice';
   import { attachFiles, linkify } from '../scripts/attach';
   import { composer, isTouch } from '../scripts/compose';
-  type Msg = { role: 'user' | 'assistant'; content: string };
+  import { renderTool } from '../scripts/tool';
+  import type { ToolSpec } from '../../worker/toolcore';
+  type Msg = { role: 'user' | 'assistant'; content: string; tool?: ToolSpec };
   const root = document.querySelector<HTMLElement>('[data-vchat]');
   if (root) {
     const T = JSON.parse(root.querySelector('[data-vchat-t]')!.textContent || '{}');
@@ -168,10 +170,11 @@ const T = {
       log.scrollTop = log.scrollHeight;
       n.focus();
     };
-    const say = (text: string) => {
-      msgs.push({ role: 'assistant', content: text });
+    const say = (text: string, tool?: ToolSpec) => {
+      msgs.push({ role: 'assistant', content: text, ...(tool ? { tool } : {}) });
       store.set(KEY, JSON.stringify(msgs));
-      bubble('assistant', text);
+      const b = bubble('assistant', text);
+      if (tool) { b.append(renderTool(tool)); log.scrollTop = log.scrollHeight; }
     };
     async function ask(q: string) {
       q = q.trim();
@@ -185,11 +188,11 @@ const T = {
       const wait = bubble('assistant', T.thinking);
       wait.classList.add('wait');
       try {
-        const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, messages: msgs.slice(-14) }) });
+        const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang, messages: msgs.slice(-14).map(({ role, content }) => ({ role, content })) }) });
         const d = await r.json();
         wait.remove();
         if (!d.ok) throw new Error();
-        say(d.reply);
+        say(d.reply, d.tool || undefined);
         if (d.form && msgs.filter((m) => m.role === 'user').length >= 2) leadForm();
       } catch {
         wait.remove();
@@ -209,7 +212,7 @@ const T = {
         openedAt ||= Date.now();
         if (!log.childElementCount) {
           if (!msgs.length) msgs.push({ role: 'assistant', content: T.hello });
-          msgs.forEach((m) => bubble(m.role, m.content));
+          msgs.forEach((m) => { const b = bubble(m.role, m.content); if (m.tool) b.append(renderTool(m.tool)); });
           renderChips();
         }
         if (matchMedia('(min-width: 761px)').matches) input.focus();

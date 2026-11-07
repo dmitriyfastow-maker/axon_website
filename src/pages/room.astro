@@ -34,6 +34,7 @@ const T = {
     import { attachMic, MIC_SVG } from '../scripts/voice';
     import { composer } from '../scripts/compose';
     import { attachFiles, linkify } from '../scripts/attach';
+    import { pullTool, renderTool } from '../scripts/tool';
     type R = Record<string, any>;
     const ALL = JSON.parse(document.getElementById('room-t')!.textContent || '{}');
     const token = new URLSearchParams(location.search).get('t') || '';
@@ -59,8 +60,11 @@ const T = {
       const cm = m.sender !== 'client' && typeof m.text === 'string' ? m.text.match(/\[\[CONFIRM:\s*([\s\S]*?)\]\]/) : null;
       const lm = m.sender !== 'client' && typeof m.text === 'string' ? m.text.match(/\[\[LIST:\s*([^|\]]+)\|([\s\S]*?)\]\]/) : null;
       let shown = cm ? m.text.replace(cm[0], '').trim() : m.text;
+      const pt = m.sender !== 'client' && typeof shown === 'string' ? pullTool(shown) : { text: shown, tool: null };
+      shown = pt.text;
       if (lm) shown = shown.replace(lm[0], '').trim();
       body.innerHTML = linkify(shown);
+      if (pt.tool) body.append(renderTool(pt.tool));
       if (lm) {
         // Artifact: a live checklist the client ticks off inside the chat (saved in this browser).
         const items = lm[2].split(';').map((x: string) => x.trim()).filter(Boolean).slice(0, 30);

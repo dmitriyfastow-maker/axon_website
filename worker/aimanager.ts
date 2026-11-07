@@ -1,6 +1,7 @@
 // AI manager: Vax leads every client from the first message to the repeat order — answers in seconds, gathers the
 // brief, recommends one package, reports project status, follows up after silence and after delivery.
 // A human manager joins only when the client needs a live conversation (call, complaint, refund, special price).
+import { buildTool, plainText, tidyReply, toolMarker, WANTS_TOOL } from './tools.js';
 import { allowance, limitText } from './allowance.js';
 import { filesForAi } from './files.js';
 import { bonusBalance } from './cabinet.js';
@@ -46,7 +47,7 @@ async function loadLead(db: DB, id: number): Promise<Lead | null> {
 function system(l: Lead, extra = '', ownerPrice = false, friend = false, lessons = ''): string {
   if (l.mode === 'collab') return collabSystem(l);
   const first = l.manager ? l.manager.trim().split(/\s+/)[0] : null;
-  return `You are Vax, the AI account manager of Vaxo (a full-cycle digital studio). You run this client's private project chat 24/7.
+  return `You are Vax, the personal AI doer of Vaxo: a personal operating system for life and work (from a calorie tracker to a full website). You run this person's private chat 24/7. Everyday wishes get done right here; only paid builds need the brief below.
 You are an AI assistant and say so honestly if asked or in your first message. ${first ? `The client's human manager is ${first}; they join for live calls.` : 'A human manager joins only for live calls.'}
 Answer in ${LANG[l.lang || 'en'] ?? 'English'} unless the client writes in another language — then use theirs.
 Style: short (1–4 sentences), warm, concrete, no markdown headings. Adapt to the client's communication profile below (tone, formality, what matters to them, their concerns). Ethical persuasion only: real facts, real cases (AiPro Partners, TrichoTech), honest timelines; never pressure, fake urgency or invented discounts.
@@ -130,7 +131,7 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
     .prepare(`SELECT sender, kind, text, at FROM messages WHERE lead_id = ? AND kind != 'note' ORDER BY id DESC LIMIT 20`)
     .bind(leadId)
     .all<{ sender: string; kind: string; text: string; at: string }>();
-  const msgs = results.reverse();
+  const msgs = results.reverse().map((m) => ({ ...m, text: plainText(m.text) }));
   const last = msgs[msgs.length - 1];
   if (opts.greet ? msgs.length > 0 : !opts.nudge && last?.sender !== 'client') return false;
   // A human manager or the owner wrote in the last 30 minutes: let them lead.
@@ -179,7 +180,10 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
     if (m) out = { ...out, offer: { price: m[0].trim(), task: (l.brief || l.message || l.interest || '').split('\n').pop()!.slice(0, 160) } };
   }
   if (!out) return false;
-  await addMessage(db, leadId, 'ai', 'text', out.reply);
+  // Execution engine (Decision 38): a wish that fits becomes a working tool under the reply.
+  const wish = !opts.greet && !opts.nudge && lastClient && WANTS_TOOL.test(lastClient.text) ? await buildTool(ai, lastClient.text, l.lang || 'en').catch(() => null) : null;
+  const said = tidyReply(out.reply, !!wish) || out.reply;
+  await addMessage(db, leadId, 'ai', 'text', wish ? `${said}\n${toolMarker(wish)}` : said);
   if (out.brief) {
     const brief = `${l.brief ? l.brief + '\n' : ''}• ${out.brief}`.slice(-3000);
     await db.prepare(`UPDATE leads SET brief = ?, updated_at = datetime('now') WHERE id = ?`).bind(brief, leadId).run();

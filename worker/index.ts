@@ -115,7 +115,7 @@ export default {
     if (url.pathname === '/api/factory-sync') return env.LEADS ? handleFactorySync(env.LEADS, request) : json(503, { ok: false });
     if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     if (url.pathname === '/api/biz' || url.pathname.startsWith('/api/biz/')) return env.LEADS ? handleBiz(env.LEADS, request, url.pathname.slice('/api/biz'.length).replace(/^\//, ''), env.AI, notify, url.origin) : json(503, { ok: false });
-    if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify) : json(503, { ok: false });
+    if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify, env.AI) : json(503, { ok: false });
     const invm = url.pathname.match(/^\/api\/invoice\/([a-f0-9]{32})$/);
     if (invm) return env.LEADS ? handleInvoicePublic(env.LEADS, invm[1], !!env.MONO_ACQ_TOKEN) : json(503, { ok: false });
     const invp = url.pathname.match(/^\/api\/invoice\/([a-f0-9]{32})\/(pay|check)$/);

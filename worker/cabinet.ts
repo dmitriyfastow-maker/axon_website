@@ -2,6 +2,8 @@
 // Google. All the client's projects in one place: progress %, revision counter, confirmed brief, payments, the
 // strategy document, bonuses (5% cashback, tasks), level and the next step. Without signing in, the personal project
 // link (/me/?t=<room>) shows that one project, like the project chat does.
+import { buildTool, toolMarker, toolsIn } from './tools.js';
+import type { AiBinding } from './chat.js';
 import { allowance } from './allowance.js';
 import type { DB } from './partner.js';
 import type { Notify } from './deals.js';
@@ -121,7 +123,13 @@ const CODE_MAIL: Record<string, [string, string]> = {
 };
 
 /** /api/me and /api/me/<action>. */
-export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, path: string, notify: Notify): Promise<Response> {
+async function myTools(db: DB, ids: number[]) {
+  if (!ids.length) return [];
+  const { results } = await db.prepare(`SELECT text FROM messages WHERE lead_id IN (${ids.map(() => '?').join(',')}) AND sender = 'ai' AND text LIKE '%[[TOOL:%' ORDER BY id DESC LIMIT 12`).bind(...ids).all<{ text: string }>();
+  return results.map((r) => toolsIn(r.text)).filter(Boolean);
+}
+
+export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, path: string, notify: Notify, ai?: AiBinding): Promise<Response> {
   const url = new URL(request.url);
   const b = request.method === 'POST' ? ((await request.json().catch(() => ({}))) as Record<string, unknown>) : {};
   const str = (k: string, max: number) => (typeof b[k] === 'string' ? (b[k] as string).trim().slice(0, max) : '');
@@ -136,7 +144,7 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
       const ids = list.map((l) => l.id);
       const paid = await paidUsd(db, ids);
       const history = (await db.prepare(`SELECT at, kind, amount_usd FROM bonuses WHERE client_id = ? OR lead_id IN (${(ids.length ? ids : [0]).join(',')}) ORDER BY id DESC LIMIT 30`).bind(me.id).all()).results;
-      return json(200, { ok: true, signedIn: true, ways, me: { email: me.email, name: me.name, profile: me.profile ? JSON.parse(me.profile) : null, marketing: !!me.marketing, verified: !!me.email_verified_at }, projects: list, paidUsd: paid, level: [...LEVELS].reverse().find((x) => paid >= x.from)!.id, bonus: await bonusBalance(db, me.id, ids), bonusHistory: history, rules: BONUS, levels: LEVELS, eco: await ecosystem(db, me), invite: await clientInvite(db, me.id), allowance: await allowance(db, ids).catch(() => null) });
+      return json(200, { ok: true, signedIn: true, tools: await myTools(db, ids), ways, me: { email: me.email, name: me.name, profile: me.profile ? JSON.parse(me.profile) : null, marketing: !!me.marketing, verified: !!me.email_verified_at }, projects: list, paidUsd: paid, level: [...LEVELS].reverse().find((x) => paid >= x.from)!.id, bonus: await bonusBalance(db, me.id, ids), bonusHistory: history, rules: BONUS, levels: LEVELS, eco: await ecosystem(db, me), invite: await clientInvite(db, me.id), allowance: await allowance(db, ids).catch(() => null) });
     }
     if (ROOM_RE.test(room)) {
       const list = await projects(db, 'room = ?', room);
@@ -144,6 +152,22 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
       return json(200, { ok: true, signedIn: false, ways, projects: list, bonus: await bonusBalance(db, null, list.map((l) => l.id)), rules: BONUS });
     }
     return json(200, { ok: true, signedIn: false, ways, projects: [] });
+  }
+
+  // Execution engine (Decision 38): a wish typed in the cabinet becomes a tool, saved in the latest project chat.
+  if (path === 'tool' && request.method === 'POST') {
+    const me = await sessionClient(db, request);
+    if (!me) return json(401, { ok: false });
+    const wish = str('q', 500), lang = ['en', 'ru', 'ua'].includes(str('lang', 2)) ? str('lang', 2) : 'en';
+    const list = await projects(db, 'client_id = ?', me.id);
+    const ids = list.map((l) => l.id);
+    if (!wish || !ids.length) return json(400, { ok: false, error: 'project' });
+    const al = await allowance(db, ids).catch(() => null);
+    if (al?.blocked) return json(429, { ok: false, error: 'limit' });
+    const tool = await buildTool(ai, wish, lang);
+    if (!tool) return json(200, { ok: false, error: 'none' });
+    await db.prepare(`INSERT INTO messages (lead_id, sender, kind, text) VALUES (?, 'ai', 'text', ?)`).bind(Math.max(...ids), toolMarker(tool)).run();
+    return json(200, { ok: true, tool });
   }
 
   if (path === 'code' && request.method === 'POST') {

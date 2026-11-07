@@ -109,6 +109,14 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     </section>
 
     <!-- Your map: portrait, branches, next move with the reason -->
+    <section class="cab-card tools" data-tools hidden aria-labelledby="cab-tools-h">
+      <h2 id="cab-tools-h">{T.toolsH}</h2>
+      <p class="mut">{T.toolsP}</p>
+      <form class="tb" data-tool-form><input name="q" maxlength="500" required placeholder={T.toolsPh} aria-label={T.toolsPh} /><button type="submit">{T.toolsGo}</button></form>
+      <p class="mut small" data-tool-msg></p>
+      <div class="tgrid" data-tool-list></div>
+    </section>
+
     <section class="cab-card vmap" data-map hidden aria-labelledby="cab-map-h">
       <h2 id="cab-map-h">{T.mapH}</h2>
       <p class="mut">{T.mapP}</p>
@@ -199,6 +207,8 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 </Base>
 
 <script>
+  import { renderTool } from '../scripts/tool';
+  import type { ToolSpec } from '../../worker/toolcore';
   type R = Record<string, any>;
   const root = document.querySelector<HTMLElement>('[data-me]')!;
   const T: R = JSON.parse(root.querySelector('[data-me-t]')!.textContent || '{}');
@@ -382,6 +392,20 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     if (nextKey) nx.replaceChildren(el('img', { src: '/mascot/vax-happy.webp', alt: 'Vax', width: '56', height: '56' }), el('div', {}, el('small', {}, T.mapNext), el('b', {}, T.mapNodes[nextKey][0]), el('span', { class: 'mut small' }, `${T.mapWhy} ${T.mapNodes[nextKey][1]}`)));
   }
 
+  function renderTools(d: R) {
+    $('[data-tool-list]').replaceChildren(...((d.tools || []) as ToolSpec[]).map((t) => renderTool(t)));
+  }
+  $<HTMLFormElement>('[data-tool-form]').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = e.target as HTMLFormElement, m = $('[data-tool-msg]'), b = f.querySelector('button')!;
+    b.disabled = true; m.textContent = T.toolsWait;
+    const r = await post('/api/me/tool', { q: new FormData(f).get('q') }).catch(() => null);
+    const j: R = r ? await r.json().catch(() => ({})) : {};
+    b.disabled = false;
+    if (j.ok) { m.textContent = ''; f.reset(); $('[data-tool-list]').prepend(renderTool(j.tool)); }
+    else m.textContent = j.error === 'limit' ? T.toolsLimit : j.error === 'project' ? T.toolsNoProj : T.toolsNone;
+  });
+
   function renderAllow(d: R) {
     const a: R | null = d.allowance;
     $('[data-allow]').hidden = !a;
@@ -445,7 +469,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     root.classList.toggle('is-guest', guest);
     root.classList.toggle('is-in', si);
     $('[data-auth]').hidden = si;
-    for (const s of ['[data-dash]', '[data-setup]', '[data-map]', '[data-allow]', '[data-ach-sec]', '[data-acct]', '[data-invite]']) $(s).hidden = !si;
+    for (const s of ['[data-dash]', '[data-tools]', '[data-setup]', '[data-map]', '[data-allow]', '[data-ach-sec]', '[data-acct]', '[data-invite]']) $(s).hidden = !si;
     $('[data-proj-sec]').hidden = !si && !guest;
     $('[data-ph]').textContent = guest ? T.guestH : T.projects;
     $('[data-none]').hidden = !si || ps.length > 0;
@@ -461,7 +485,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       return;
     }
     const f = facts(d);
-    renderHero(d, f); renderSetup(d, f); renderMap(d, f); renderAllow(d); renderAch(f); renderInvite(d);
+    renderHero(d, f); renderSetup(d, f); renderMap(d, f); renderAllow(d); renderTools(d); renderAch(f); renderInvite(d);
     $<HTMLInputElement>('[data-news]').checked = !!d.me?.marketing;
     playRings();
     window.dispatchEvent(new CustomEvent('vx:signed-in'));
@@ -823,4 +847,8 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
   .allow .al-bar i { display: block; height: 100%; border-radius: 999px; background: var(--acc); }
   .allow .al-row span.low { color: #B4531A; font-weight: 700; }
   @media (max-width: 560px) { .allow .al-row { grid-template-columns: 1fr; gap: 4px; } }
+  .tools .tb { display: flex; gap: 8px; margin-top: 10px; }
+  .tools .tb input { flex: 1; min-width: 0; font: 16px var(--font); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  .tools .tb button { border: 0; border-radius: 10px; padding: 10px 16px; background: var(--ink); color: var(--bg); font: inherit; cursor: pointer; }
+  .tools .tgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
 </style>
