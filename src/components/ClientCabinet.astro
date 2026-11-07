@@ -129,7 +129,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       <p class="mut">{T.allowP}</p>
       <div class="al-rows" data-allow-rows></div>
       <p class="mut small" data-allow-trial hidden>{T.allowTrial}</p>
-      <p data-allow-more hidden><a class="btn" href="/#pricing">{T.allowMore}</a></p>
+      <p data-allow-more hidden><a class="btn" href={`${home}#pricing`}>{T.allowMore}</a></p>
     </section>
 
     <!-- Setup checklist -->
@@ -158,7 +158,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       <div class="proj-grid" data-projects></div>
       <div class="cab-card none" data-none hidden>
         <img src="/mascot/vax-sprout.webp" alt="" width="429" height="520" loading="lazy" />
-        <div><p>{T.none}</p><a class="cta" href={`${home}#contact`}>{T.start} →</a></div>
+        <div><p>{T.none}</p><a class="cta" href={`${home}app/`}>{T.start} →</a></div>
       </div>
     </section>
 
@@ -207,6 +207,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 
 <script>
   import { renderTool } from '../scripts/tool';
+  import { PATH_BRANCHES, pathNext, type PathFacts } from './cabinet/path';
   import type { ToolSpec } from '../../worker/toolcore';
   type R = Record<string, any>;
   const root = document.querySelector<HTMLElement>('[data-me]')!;
@@ -353,14 +354,18 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     if (v.friendBonus) got.textContent = T.invGot.replace('{n}', v.friendBonus.months);
   }
 
-  function renderSetup(d: R, f: R) {
-    const steps = [
+  function setupSteps(f: R): R[] {
+    return [
       { id: 'email', ic: 'mail', done: f.email, h: T.sEmail, p: T.sEmailP, act: T.sEmailDo, go: confirmEmail },
       { id: 'profile', ic: 'store', done: f.profile, h: T.sProfile, p: T.sProfileP, reward: '+$5', act: T.sProfileDo, go: () => { const pf = $('[data-profile]'); pf.hidden = !pf.hidden; if (!pf.hidden) pf.querySelector('input')!.focus(); } },
       { id: 'site', ic: 'globe', done: f.site, h: T.sSite, p: T.sSiteP, act: T.sSiteDo, go: () => { const b = document.getElementById('biz')!; b.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); setTimeout(() => b.querySelector<HTMLInputElement>('[data-biz-new] input')?.focus({ preventScroll: true }), 400); } },
       { id: 'friend', ic: 'friend', done: f.friend, h: T.sFriend, p: T.sFriendP, reward: T.invReward, act: T.sFriendDo, go: () => document.getElementById('invite')!.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
       { id: 'review', ic: 'star', done: f.review, h: T.sReview, p: f.reviewOpen || f.review ? T.sReviewP : T.sReviewWait, reward: '+$10', act: f.reviewOpen ? T.sReviewDo : '', go: () => { const b = root.querySelector<HTMLButtonElement>(`[data-rev="${f.reviewOpen?.id}"]`); b?.scrollIntoView({ block: 'center' }); b?.click(); } },
     ];
+  }
+
+  function renderSetup(d: R, f: R) {
+    const steps = setupSteps(f);
     const n = steps.length, done = steps.filter((s) => s.done).length;
     $('[data-setup-ring]').innerHTML = ring((done / n) * 100, `${done}/${n}`, '', 76);
     $('[data-setup-p]').textContent = done === n ? T.setupDone : T.setupP.replace('{d}', done).replace('{n}', n);
@@ -378,17 +383,23 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     $('[data-profile-btn]').textContent = f.profile ? T.save : T.saveBonus;
   }
 
+  // The button on the "next step" card: the same action as in the setup list, plus the two steps that list does not have.
+  function mapAct(k: string, f: R) {
+    if (k === 'project') return el('a', { class: 'ghost sm', href: `${homePre}/app/` }, T.start + ' →');
+    if (k === 'lead') return el('a', { class: 'ghost sm', href: '#biz' }, T.mapLeadDo + ' →');
+    const s = setupSteps(f).find((x) => x.id === k);
+    return s?.act ? el('button', { type: 'button', class: 'ghost sm', onclick: s.go }, s.act) : '';
+  }
+
   function renderMap(d: R, f: R) {
     const goal = String(d.me?.profile?.goal || '').trim();
     $('[data-map-root]').replaceChildren(el('b', {}, T.mapRoot), el('span', {}, goal || T.mapNoGoal));
-    const BR: string[][] = [['email', 'profile'], ['project', 'site'], ['lead', 'review'], ['friend']];
-    const order = BR.flat();
-    const nextKey = order.find((k) => !f[k]);
-    $('[data-map-grid]').replaceChildren(...BR.map((keys, bi) => el('div', { class: 'br' }, el('h3', {}, T.mapBranches[bi]),
+    const nextKey = pathNext(f as PathFacts);
+    $('[data-map-grid]').replaceChildren(...PATH_BRANCHES.map((keys, bi) => el('div', { class: 'br' }, el('h3', {}, T.mapBranches[bi]),
       el('ul', {}, ...keys.map((k) => el('li', { class: f[k] ? 'on' : k === nextKey ? 'nx' : '' }, el('span', { class: 'dot' }, f[k] ? '✓' : k === nextKey ? '→' : '·'), el('b', {}, T.mapNodes[k][0])))))));
     const nx = $('[data-map-next]');
     nx.hidden = !nextKey;
-    if (nextKey) nx.replaceChildren(el('img', { src: '/mascot/vax-happy.webp', alt: 'Vax', width: '56', height: '56' }), el('div', {}, el('small', {}, T.mapNext), el('b', {}, T.mapNodes[nextKey][0]), el('span', { class: 'mut small' }, `${T.mapWhy} ${T.mapNodes[nextKey][1]}`)));
+    if (nextKey) nx.replaceChildren(el('img', { src: '/mascot/vax-happy.webp', alt: 'Vax', width: '56', height: '56' }), el('div', {}, el('small', {}, T.mapNext), el('b', {}, T.mapNodes[nextKey][0]), el('span', { class: 'mut small' }, `${T.mapWhy} ${T.mapNodes[nextKey][1]}`)), mapAct(nextKey, f));
   }
 
   function renderTools(d: R) {
@@ -853,6 +864,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
   .vmap .br li.on { color: var(--ink); } .vmap .br li.on .dot { background: var(--acc); border-color: var(--acc); color: #17150F; }
   .vmap .br li.nx { color: var(--ink); font-weight: 700; } .vmap .br li.nx .dot { border-color: var(--acc); color: var(--accText); }
   .vmap .map-next { display: flex; gap: 12px; align-items: center; margin-top: 12px; padding: 12px 14px; border-radius: 16px; border: 1px dashed var(--acc); }
+  .vmap .map-next { flex-wrap: wrap; } .vmap .map-next div { flex: 1 1 200px; } .vmap .map-next .ghost { flex: none; margin-left: auto; }
   .vmap .map-next img { width: 56px; height: 56px; object-fit: contain; flex: none; }
   .vmap .map-next div { display: grid; gap: 2px; } .vmap .map-next small { text-transform: uppercase; letter-spacing: .06em; font-size: 11px; color: var(--mut); }
   @media (max-width: 860px) { .vmap .map-grid { grid-template-columns: repeat(2, 1fr); } }
