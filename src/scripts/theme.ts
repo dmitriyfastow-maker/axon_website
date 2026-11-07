@@ -1,10 +1,20 @@
 import { save } from './storage';
 
+const KEY = 'axon_theme2';
+const set = (t: string) => document.documentElement.setAttribute('data-theme', t);
+
+/** One choice for the whole site, saved in this browser. Until the person chooses, the device setting decides. */
 export function initTheme(): void {
-  document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
-    const root = document.documentElement;
-    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    save('axon_theme2', next);
+  document.querySelectorAll('[data-theme-toggle]').forEach((b) => b.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    set(next);
+    save(KEY, next);
+  }));
+  // Other open tabs follow at once.
+  addEventListener('storage', (e) => { if (e.key === KEY && (e.newValue === 'light' || e.newValue === 'dark')) set(e.newValue); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    let saved: string | null = null;
+    try { saved = localStorage.getItem(KEY); } catch { /* private mode */ }
+    if (saved !== 'light' && saved !== 'dark') set(e.matches ? 'dark' : 'light');
   });
 }

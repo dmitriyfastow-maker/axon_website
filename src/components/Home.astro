@@ -333,7 +333,7 @@ const ava = '/mascot/vax-happy.webp';
 </script>
 
 <style>
-  .hm { --s1: #0d0c0a; --s2: #14120e; --s3: #1c1a15; --ln: rgba(255, 255, 255, 0.08); --tx: #f5f1e8; --mt: #a29c8f; --dm: #7c766b; --am: #e4a93f; background: var(--s1); color: var(--tx); overflow-x: clip; }
+  .hm { --s1: var(--bg); --s2: var(--surf2); --s3: var(--surf); --ln: var(--line); --tx: var(--ink); --mt: var(--mut); --dm: var(--mut); --am: var(--acc); --amT: var(--accText); background: var(--s1); color: var(--tx); overflow-x: clip; }
   .w { max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
   .nar { max-width: 860px; }
   h1, h2, h3, p, ul { margin: 0; padding: 0; }
@@ -341,18 +341,18 @@ const ava = '/mascot/vax-happy.webp';
   h2 { font-weight: 600; font-size: clamp(34px, 5.2vw, 68px); line-height: 1.03; letter-spacing: -0.035em; }
   .sec { padding: clamp(72px, 10vw, 130px) 0; background: var(--s1); scroll-margin-top: 56px; }
   .sec.alt { background: var(--s2); }
-  .tag { font: 500 12px/1 var(--mono, 'JetBrains Mono', monospace); letter-spacing: 0.06em; text-transform: uppercase; color: var(--am); margin-bottom: 16px; }
+  .tag { font: 500 12px/1 var(--mono, 'JetBrains Mono', monospace); letter-spacing: 0.06em; text-transform: uppercase; color: var(--amT); margin-bottom: 16px; }
 
   .hero { position: relative; min-height: calc(100svh - 72px); display: grid; place-items: center; text-align: center; overflow: hidden; padding: 56px 0 96px; background: var(--s1); }
   .hero::before { content: ''; position: absolute; left: 50%; bottom: -118vw; width: 170vw; height: 130vw; transform: translateX(-50%); border-radius: 50%; background: var(--s1); box-shadow: 0 -1px 0 rgba(228, 169, 63, 0.75), 0 -10px 60px rgba(228, 169, 63, 0.3), 0 -60px 220px rgba(228, 169, 63, 0.16); }
   .hero .w { position: relative; width: 100%; }
   h1 { font-weight: 600; font-size: clamp(44px, 8.2vw, 112px); line-height: 0.98; letter-spacing: -0.045em; }
-  h1 span { display: block; color: var(--am); }
+  h1 span { display: block; color: var(--accHead); }
   .lead { max-width: 600px; margin: 26px auto 0; font-size: clamp(17px, 1.7vw, 21px); line-height: 1.45; color: var(--mt); }
-  .ask { display: flex; align-items: center; gap: 8px; max-width: 680px; margin: 40px auto 0; padding: 8px 8px 8px 24px; border-radius: 999px; background: var(--s3); border: 1px solid rgba(255, 255, 255, 0.14); box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5); transition: border-color 0.2s; }
+  .ask { display: flex; align-items: center; gap: 8px; max-width: 680px; margin: 40px auto 0; padding: 8px 8px 8px 24px; border-radius: 999px; background: var(--s3); border: 1px solid var(--line2); box-shadow: var(--shadow); transition: border-color 0.2s; }
   .ask:focus-within { border-color: var(--am); }
   .ask input { flex: 1; min-width: 0; height: 48px; border: 0; outline: 0; background: none; color: var(--tx); font: 400 17px var(--font, inherit); }
-  .ask input::placeholder { color: #8d877b; }
+  .ask input::placeholder { color: var(--mut); }
   .ask button { flex: none; height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: var(--am); color: #1a1408; font: 600 16px var(--font, inherit); cursor: pointer; transition: filter 0.2s; }
   .ask button:hover { filter: brightness(1.08); }
 
@@ -361,14 +361,14 @@ const ava = '/mascot/vax-happy.webp';
   .seg { display: flex; gap: 4px; margin: 44px 0 14px; overflow-x: auto; scrollbar-width: none; }
   .seg button { flex: none; padding: 10px 16px; border: 0; border-radius: 999px; background: none; color: var(--mt); font: 400 15px var(--font, inherit); cursor: pointer; }
   .seg button[aria-selected='true'] { background: var(--s3); color: var(--tx); }
-  .app { display: grid; grid-template-columns: 232px 1fr; min-height: 560px; border: 1px solid var(--ln); border-radius: 18px; background: var(--s2); overflow: hidden; box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55); }
+  .app { display: grid; grid-template-columns: 232px 1fr; min-height: 560px; border: 1px solid var(--ln); border-radius: 18px; background: var(--s2); overflow: hidden; box-shadow: var(--shadow); }
   .side { padding: 18px 14px; border-right: 1px solid var(--ln); display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--mt); }
   .lg { padding: 2px 10px 16px; color: var(--tx); font-weight: 700; font-size: 16px; }
-  .lg i { color: var(--am); font-style: normal; }
+  .lg i { color: var(--amT); font-style: normal; }
   .nv { padding: 8px 10px; border-radius: 8px; }
   .nv.on { background: var(--s3); color: var(--tx); }
   .al { margin-top: auto; padding: 12px 10px 4px; font-size: 13px; }
-  .al i { display: block; height: 4px; margin-top: 8px; border-radius: 9px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+  .al i { display: block; height: 4px; margin-top: 8px; border-radius: 9px; background: var(--line); overflow: hidden; }
   .al i::after { content: ''; display: block; width: 72%; height: 100%; background: var(--am); }
   .talk { display: flex; flex-direction: column; min-width: 0; }
   .log { flex: 1; padding: clamp(18px, 3vw, 32px); display: flex; flex-direction: column; gap: 16px; max-width: 680px; width: 100%; margin: 0 auto; }
@@ -392,10 +392,10 @@ const ava = '/mascot/vax-happy.webp';
   .kv b { display: block; margin-top: 4px; font-size: 18px; font-weight: 500; color: var(--tx); }
   .kv.out { margin-top: 8px; }
   .kv.out div { border-color: transparent; background: rgba(228, 169, 63, 0.12); }
-  .kv.out b { font-size: 22px; font-weight: 600; color: var(--am); }
+  .kv.out b { font-size: 22px; font-weight: 600; color: var(--amT); }
   .chk { display: grid; gap: 8px; font-size: 14.5px; }
   .chk li { display: flex; gap: 10px; align-items: flex-start; }
-  .chk s { flex: none; position: relative; width: 18px; height: 18px; margin-top: 2px; border: 1.5px solid #5d584d; border-radius: 5px; text-decoration: none; }
+  .chk s { flex: none; position: relative; width: 18px; height: 18px; margin-top: 2px; border: 1.5px solid var(--mut); border-radius: 5px; text-decoration: none; }
   .chk li.d { color: var(--mt); text-decoration: line-through; }
   .chk li.d s { background: var(--am); border-color: var(--am); }
   .chk li.d s::after { content: ''; position: absolute; left: 5px; top: 1px; width: 4px; height: 9px; border: solid #1a1408; border-width: 0 2px 2px 0; transform: rotate(42deg); }
@@ -416,32 +416,32 @@ const ava = '/mascot/vax-happy.webp';
   .card:hover { border-color: rgba(228, 169, 63, 0.5); transform: translateY(-2px); }
   .card h3 { margin: 20px 8px 0; font-size: 22px; font-weight: 600; letter-spacing: -0.015em; }
   .card > p { margin: 6px 8px 0; color: var(--mt); font-size: 15px; }
-  .card > span { margin: 12px 8px 0; color: var(--am); font-size: 15px; font-weight: 600; }
+  .card > span { margin: 12px 8px 0; color: var(--amT); font-size: 15px; font-weight: 600; }
   .mock { height: 220px; border: 1px solid var(--ln); border-radius: 12px; background: var(--s1); overflow: hidden; }
   .crm { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px; }
   .col b { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 500; color: var(--mt); }
   .deal { display: flex; gap: 8px; align-items: center; padding: 10px 8px; margin-bottom: 6px; border: 1px solid var(--ln); border-radius: 8px; background: var(--s2); }
   .deal i { flex: none; width: 16px; height: 16px; border-radius: 50%; background: rgba(228, 169, 63, 0.35); }
-  .deal u { display: block; height: 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.16); text-decoration: none; }
+  .deal u { display: block; height: 6px; border-radius: 4px; background: var(--line2); text-decoration: none; }
   .par { display: grid; grid-template-columns: 1.25fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; padding: 12px; }
   .par div { display: flex; flex-direction: column; justify-content: flex-end; padding: 12px 14px; border: 1px solid var(--ln); border-radius: 10px; background: var(--s2); }
   .par div.hi { grid-row: 1 / 3; background: rgba(228, 169, 63, 0.12); border-color: transparent; }
   .par b { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
-  .par .hi b { font-size: clamp(48px, 6vw, 68px); line-height: 1; color: var(--am); }
+  .par .hi b { font-size: clamp(48px, 6vw, 68px); line-height: 1; color: var(--amT); }
   .par small { font-size: 12.5px; color: var(--mt); }
   .brw { display: flex; flex-direction: column; }
   .bar { flex: none; display: flex; gap: 5px; padding: 9px 12px; border-bottom: 1px solid var(--ln); }
-  .bar i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.16); }
+  .bar i { width: 8px; height: 8px; border-radius: 50%; background: var(--line2); }
   .brw img { flex: 1; min-height: 0; width: 100%; object-fit: cover; object-position: top; display: block; }
   .cab { display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 18px; }
   .ln { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
   .ln small { font-size: 13px; color: var(--mt); }
   .ln em { font: 600 15px var(--font, inherit); font-style: normal; }
-  .ln u { grid-column: 1 / 3; display: block; height: 6px; border-radius: 9px; background: rgba(255, 255, 255, 0.1); overflow: hidden; text-decoration: none; }
+  .ln u { grid-column: 1 / 3; display: block; height: 6px; border-radius: 9px; background: var(--line); overflow: hidden; text-decoration: none; }
   .ln u i { display: block; height: 100%; background: var(--am); }
   .rw { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
   .rw span { padding: 8px 12px; border: 1px solid var(--ln); border-radius: 9px; background: var(--s2); font-size: 13px; }
-  .rw .ok { color: var(--am); }
+  .rw .ok { color: var(--amT); }
 
   .ps { margin-top: 14px; color: var(--mt); max-width: 620px; }
   .plans { display: grid; grid-template-columns: 1fr 1.14fr 1fr; gap: 16px; align-items: stretch; margin-top: clamp(32px, 5vw, 52px); }
@@ -452,11 +452,11 @@ const ava = '/mascot/vax-happy.webp';
   .pd { margin-top: 4px; color: var(--mt); font-size: 15px; }
   .pr { margin: 22px 0; font-size: clamp(44px, 4.6vw, 60px); font-weight: 600; letter-spacing: -0.035em; line-height: 1; }
   .pr small, .ex strong small { font-size: 15px; font-weight: 400; letter-spacing: 0; color: var(--mt); }
-  .pb { display: block; width: 100%; padding: 13px 16px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; background: transparent; color: var(--tx); font: 600 15px var(--font, inherit); cursor: pointer; transition: border-color 0.2s, filter 0.2s; }
+  .pb { display: block; width: 100%; padding: 13px 16px; border: 1px solid var(--line2); border-radius: 12px; background: transparent; color: var(--tx); font: 600 15px var(--font, inherit); cursor: pointer; transition: border-color 0.2s, filter 0.2s; }
   .pb:hover { border-color: var(--tx); }
   .pb.main { border-color: var(--am); background: var(--am); color: #1a1408; }
   .pb.main:hover { filter: brightness(1.08); }
-  .pl ul { display: grid; gap: 10px; margin-top: 22px; font-size: 15px; color: #d5d0c4; }
+  .pl ul { display: grid; gap: 10px; margin-top: 22px; font-size: 15px; color: var(--ink); }
   .pl li { position: relative; padding-left: 22px; }
   .pl li::before { content: ''; position: absolute; left: 2px; top: 5px; width: 5px; height: 10px; border: solid var(--am); border-width: 0 1.6px 1.6px 0; transform: rotate(42deg); }
   .mo { margin-top: 32px; font-size: 14px; color: var(--dm); }
@@ -480,10 +480,10 @@ const ava = '/mascot/vax-happy.webp';
   .end q { display: block; quotes: none; margin-bottom: 12px; color: var(--mt); }
 
   .pdlg { width: min(420px, calc(100vw - 32px)); padding: 28px; border: 1px solid var(--ln); border-radius: 20px; background: var(--s3); color: var(--tx); }
-  .pdlg::backdrop { background: rgba(0, 0, 0, 0.7); }
+  .pdlg::backdrop { background: rgba(0, 0, 0, 0.55); }
   .pdlg h3 { font-size: 24px; font-weight: 600; }
   .pdlg p { margin-top: 8px; color: var(--mt); font-size: 15px; }
-  .pdlg input[type='email'] { width: 100%; box-sizing: border-box; margin: 16px 0 10px; padding: 13px 14px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 12px; background: var(--s1); color: var(--tx); font: 400 16px var(--font, inherit); }
+  .pdlg input[type='email'] { width: 100%; box-sizing: border-box; margin: 16px 0 10px; padding: 13px 14px; border: 1px solid var(--line2); border-radius: 12px; background: var(--s1); color: var(--tx); font: 400 16px var(--font, inherit); }
   .pdlg .x { position: absolute; top: 12px; right: 14px; border: 0; background: none; color: var(--mt); font-size: 24px; cursor: pointer; }
   .hp { position: absolute; left: -9999px; opacity: 0; }
   .pm { min-height: 20px; }

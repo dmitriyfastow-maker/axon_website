@@ -77,7 +77,7 @@ const c = CALC;
 
 const en: Text = {
   meta: {
-    title: 'Vaxo Partners — earn by recommending AI for business',
+    title: 'Vaxo Partners — earn by recommending Vax',
     description: `Promote AI automation, websites, chatbots and templates for small businesses. ${r.agencyOwn}% on services, ${r.products}% on templates from day one, free training and AI toolkit, weekly payouts.`,
   },
   eyebrow: 'Partner program',
@@ -186,7 +186,7 @@ const en: Text = {
 
 const ua: Text = {
   meta: {
-    title: 'Партнерка Vaxo — заробляйте, рекомендуючи ШІ для бізнесу',
+    title: 'Партнерка Vaxo — заробляйте, рекомендуючи Vax',
     description: `Рекомендуйте автоматизацію, сайти, чат-боти та шаблони для бізнесу. ${r.agencyOwn}% з послуг, ${r.products}% з шаблонів з першого дня, безкоштовне навчання і ШІ-набір, виплати щотижня.`,
   },
   eyebrow: 'Партнерська програма',
@@ -295,7 +295,7 @@ const ua: Text = {
 
 const ru: Text = {
   meta: {
-    title: 'Партнёрка Vaxo — зарабатывайте, рекомендуя ИИ для бизнеса',
+    title: 'Партнёрка Vaxo — зарабатывайте, рекомендуя Vax',
     description: `Рекомендуйте автоматизацию, сайты, чат-боты и шаблоны для бизнеса. ${r.agencyOwn}% с услуг, ${r.products}% с шаблонов с первого дня, бесплатное обучение и ИИ-набор, выплаты каждую неделю.`,
   },
   eyebrow: 'Партнёрская программа',

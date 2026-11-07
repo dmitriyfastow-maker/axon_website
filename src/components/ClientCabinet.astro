@@ -640,7 +640,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 .auth-side::before { content: ''; position: absolute; inset: -30% -30% auto auto; width: 120%; aspect-ratio: 1; background: radial-gradient(circle, color-mix(in srgb, var(--acc) 40%, transparent), transparent 60%); z-index: -1; }
 .auth-side img { width: min(220px, 70%); height: auto; align-self: center; filter: drop-shadow(0 24px 30px rgba(0,0,0,.35)); }
 .trust { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-weight: 600; font-size: 15px; }
-.trust li { display: flex; align-items: center; gap: 10px; } .trust .dot { font: 700 11px var(--mono); color: var(--acc); border: 1px solid var(--deepLine); border-radius: 999px; padding: 4px 7px; }
+.trust li { display: flex; align-items: center; gap: 10px; } .trust .dot { font: 700 11px var(--mono); color: var(--accText); border: 1px solid var(--deepLine); border-radius: 999px; padding: 4px 7px; }
 .auth-main { padding: clamp(24px, 4vw, 44px); display: flex; flex-direction: column; gap: 14px; }
 .auth-main h1 { font-size: clamp(28px, 4vw, 40px); }
 .auth-main > p { margin: 0; }
@@ -671,11 +671,11 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 .hero { position: relative; isolation: isolate; overflow: hidden; background: var(--deep); color: var(--deepInk); border-radius: 28px; padding: clamp(22px, 3.5vw, 36px); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: center; min-height: 240px; }
 .hero::before { content: ''; position: absolute; width: 520px; height: 520px; right: -160px; top: -220px; background: radial-gradient(circle, color-mix(in srgb, var(--acc) 38%, transparent), transparent 62%); z-index: -1; }
 .hero::after { content: ''; position: absolute; inset: 0; z-index: -1; opacity: .5; background-image: radial-gradient(color-mix(in srgb, var(--deepInk) 12%, transparent) 1px, transparent 1px); background-size: 18px 18px; mask-image: linear-gradient(120deg, transparent 40%, #000); }
-.hero .eyebrow.on-deep { color: var(--acc); margin-bottom: 10px; }
+.hero .eyebrow.on-deep { color: var(--accText); margin-bottom: 10px; }
 .hero-mail { margin: 8px 0 14px; color: var(--deepMut); word-break: break-all; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { display: inline-flex; align-items: center; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--deepLine); font-size: 13px; font-weight: 600; color: var(--deepInk); }
-.chip.gold { background: color-mix(in srgb, var(--acc) 18%, transparent); border-color: color-mix(in srgb, var(--acc) 45%, transparent); color: var(--acc); }
+.chip.gold { background: color-mix(in srgb, var(--acc) 18%, transparent); border-color: color-mix(in srgb, var(--acc) 45%, transparent); color: var(--accText); }
 .hero-note { margin: 10px 0 0; font-size: 12px; color: var(--deepMut); }
 .hero-lvl { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; max-width: 180px; position: relative; z-index: 1; }
 .lvl-next { margin: 0; font-size: 13px; color: var(--deepMut); }
@@ -836,7 +836,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
   .vmap .br li { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: var(--mut); }
   .vmap .br li .dot { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); font-size: 12px; }
   .vmap .br li.on { color: var(--ink); } .vmap .br li.on .dot { background: var(--acc); border-color: var(--acc); color: #17150F; }
-  .vmap .br li.nx { color: var(--ink); font-weight: 700; } .vmap .br li.nx .dot { border-color: var(--acc); color: var(--acc); }
+  .vmap .br li.nx { color: var(--ink); font-weight: 700; } .vmap .br li.nx .dot { border-color: var(--acc); color: var(--accText); }
   .vmap .map-next { display: flex; gap: 12px; align-items: center; margin-top: 12px; padding: 12px 14px; border-radius: 16px; border: 1px dashed var(--acc); }
   .vmap .map-next img { width: 56px; height: 56px; object-fit: contain; flex: none; }
   .vmap .map-next div { display: grid; gap: 2px; } .vmap .map-next small { text-transform: uppercase; letter-spacing: .06em; font-size: 11px; color: var(--mut); }

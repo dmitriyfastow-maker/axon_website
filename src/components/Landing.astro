@@ -11,14 +11,6 @@ const { lang } = Astro.props;
 const t = getDict(lang);
 ---
 
-<!-- The home page is one dark surface whatever the visitor's theme is (Dmitry, 07.11). -->
-<div class="mono" data-theme="dark">
-  <Header lang={lang} t={t} />
-  <Home lang={lang} />
-  <Footer t={t} lang={lang} />
-</div>
-
-<style>
-  .mono { --bg: #0d0c0a; --surf: #1c1a15; --surf2: #14120e; --line: rgba(255, 255, 255, 0.08); --deep: #14120e; background: #0d0c0a; color: #f5f1e8; }
-  .mono :global([data-theme-toggle]) { display: none; }
-</style>
+<Header lang={lang} t={t} />
+<Home lang={lang} />
+<Footer t={t} lang={lang} />

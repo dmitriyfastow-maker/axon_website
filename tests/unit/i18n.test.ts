@@ -14,7 +14,7 @@ describe('dictionaries', () => {
   });
   test('counts match design', () => {
     const t = getDict('en');
-    expect([t.cases.length, t.tiers.length, t.cat.items.length, t.faq.length, t.ref.why.length]).toEqual([8, 3, 8, 9, 4]);
+    expect([t.cases.length, t.tiers.length, t.cat.items.length, t.faq.length, t.ref.why.length]).toEqual([8, 3, 8, 8, 4]);
     expect(CASE_META).toHaveLength(8);
   });
   test('service rows align with prices', () => {
@@ -27,7 +27,7 @@ describe('dictionaries', () => {
     });
   });
   test('case images resolve to keys', () => {
-    expect(CASE_META[0].img).toBe('tricho-cover');
+    expect(CASE_META[0].img).toBe('tricho-hero');
     expect(CASE_META[1].gallery?.map((g) => g.src)).toEqual(['aipro-logo', 'aipro-laptop']);
   });
 });

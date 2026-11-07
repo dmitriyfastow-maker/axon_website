@@ -357,7 +357,7 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
   .seg button { border: 1px solid var(--line); background: var(--bg); color: var(--mut); padding: 6px 12px; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
   .seg button[aria-pressed='true'] { background: var(--acc); border-color: var(--acc); color: var(--dark-ink); }
   .calc-out { background: var(--deep); color: var(--deepInk); padding: 32px; display: flex; flex-direction: column; justify-content: center; position: sticky; top: 0; }
-  .big { font-size: clamp(52px, 8vw, 84px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--acc); }
+  .big { font-size: clamp(52px, 8vw, 84px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--accText); }
   .per { color: var(--deepMut); margin-top: 6px; }
   .bars { display: flex; gap: 3px; height: 10px; margin: 24px 0 12px; background: var(--deepLine); border-radius: 99px; overflow: hidden; }
   .bars i { flex: 0 1 0; background: var(--acc); transition: flex-grow 0.4s; }
@@ -377,7 +377,7 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
   .modules .num { font-family: var(--mono); color: var(--accText); font-weight: 700; font-size: 15px; padding-top: 2px; }
   .modules h3 { font-size: 17px; margin: 0 0 2px; }
   .way.max { background: var(--deep); border-color: var(--deepLine); }
-  .way.max h3 { color: var(--acc); }
+  .way.max h3 { color: var(--accText); }
   .way.max p { color: var(--deepMut); }
 
   .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); counter-reset: s; }
