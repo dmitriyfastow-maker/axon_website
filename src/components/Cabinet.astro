@@ -32,7 +32,7 @@ const title = (id: string) => c.titles[id] ?? byId(id).title;
 const ptext = (id: string) => (lang === 'en' ? byId(id).text : PROMPT_TEXT[lang][id] ?? byId(id).text);
 const offersLocal = OFFERS.map((o) => ({ ...o, text: lang === 'en' ? o.text : OFFER_TEXT[lang][o.id] ?? o.text }));
 const labels = c.card;
-const PT = {"en": {"h": "Promotion tools", "p": "Ready posts with your link. Numbers above are live.", "copy": "Copy", "idea": "Give me 3 post ideas", "wait": "Vax is thinking…", "fail": "No ideas right now. Try again a bit later.", "ask": "Give me 3 short post ideas for my social media that recommend Vaxo honestly. No promises of income. Each idea: a hook and one line of text. Language: English.", "posts": [["Short post", "I found a thing that helps with the boring part of work: you write what you need and Vax answers and builds a working calculator or checklist right in the chat. Free to start, no sign-up: {link}"], ["For a small business owner", "If you have a small business and no time for a website and client replies, take a look at Vaxo. The first month of a plan is free: {link}"], ["Story or reel caption", "Tried writing one line to an AI and getting a ready tool back? Try it: {link}"]]}, "ru": {"h": "Инструменты продвижения", "p": "Готовые посты с вашей ссылкой. Цифры выше живые.", "copy": "Скопировать", "idea": "Дай 3 идеи постов", "wait": "Vax думает…", "fail": "Сейчас идей нет. Попробуйте чуть позже.", "ask": "Дай 3 короткие идеи постов для моих соцсетей, которые честно рекомендуют Vaxo. Без обещаний дохода. В каждой идее: зацепка и одна строка текста. Язык: русский.", "posts": [["Короткий пост", "Нашёл штуку, которая снимает скучную часть работы: пишешь, что нужно, а Vax отвечает и собирает рабочий калькулятор или чек-лист прямо в чате. Бесплатно и без регистрации: {link}"], ["Для владельца малого бизнеса", "Если у вас небольшое дело и нет времени на сайт и ответы клиентам, посмотрите Vaxo. Первый месяц тарифа бесплатный: {link}"], ["Подпись к сторис или ролику", "Пробовали написать ИИ одну строку и получить готовый инструмент? Попробуйте: {link}"]]}, "ua": {"h": "Інструменти просування", "p": "Готові пости з вашим посиланням. Цифри вище живі.", "copy": "Скопіювати", "idea": "Дай 3 ідеї постів", "wait": "Vax думає…", "fail": "Зараз ідей немає. Спробуйте трохи пізніше.", "ask": "Дай 3 короткі ідеї постів для моїх соцмереж, які чесно рекомендують Vaxo. Без обіцянок доходу. У кожній ідеї: зачіпка й один рядок тексту. Мова: українська.", "posts": [["Короткий пост", "Знайшов штуку, що знімає нудну частину роботи: пишеш, що потрібно, а Vax відповідає і збирає робочий калькулятор чи чек-лист просто в чаті. Безкоштовно й без реєстрації: {link}"], ["Для власника малого бізнесу", "Якщо у вас невелика справа й немає часу на сайт і відповіді клієнтам, подивіться Vaxo. Перший місяць тарифу безкоштовний: {link}"], ["Підпис до сторіс чи ролика", "Пробували написати ШІ один рядок і отримати готовий інструмент? Спробуйте: {link}"]]}}[lang];
+const PT = {"en": {"bal": "To withdraw", "balNote": "Commission for paid clients. Sent weekly, 14 days after the client pays.", "balGo": "Payout details", "more": "How much you get and for what", "h": "Ready posts", "p": "Your link is already inside: copy and publish.", "copy": "Copy", "idea": "Give me 3 post ideas", "wait": "Vax is thinking…", "fail": "No ideas right now. Try again a bit later.", "ask": "Give me 3 short post ideas for my social media that recommend Vaxo honestly. No promises of income. Each idea: a hook and one line of text. Language: English.", "posts": [["Short post", "I found a thing that helps with the boring part of work: you write what you need and Vax answers and builds a working calculator or checklist right in the chat. Free to start, no sign-up: {link}"], ["For a small business owner", "If you have a small business and no time for a website and client replies, take a look at Vaxo. The first month of a plan is free: {link}"], ["Story or reel caption", "Tried writing one line to an AI and getting a ready tool back? Try it: {link}"]]}, "ru": {"bal": "К выводу", "balNote": "Комиссия за оплативших клиентов. Выплата раз в неделю, через 14 дней после оплаты клиента.", "balGo": "Данные для выплат", "more": "Сколько вы получаете и за что", "h": "Готовые посты", "p": "Ваша ссылка уже внутри: скопируйте и публикуйте.", "copy": "Скопировать", "idea": "Дай 3 идеи постов", "wait": "Vax думает…", "fail": "Сейчас идей нет. Попробуйте чуть позже.", "ask": "Дай 3 короткие идеи постов для моих соцсетей, которые честно рекомендуют Vaxo. Без обещаний дохода. В каждой идее: зацепка и одна строка текста. Язык: русский.", "posts": [["Короткий пост", "Нашёл штуку, которая снимает скучную часть работы: пишешь, что нужно, а Vax отвечает и собирает рабочий калькулятор или чек-лист прямо в чате. Бесплатно и без регистрации: {link}"], ["Для владельца малого бизнеса", "Если у вас небольшое дело и нет времени на сайт и ответы клиентам, посмотрите Vaxo. Первый месяц тарифа бесплатный: {link}"], ["Подпись к сторис или ролику", "Пробовали написать ИИ одну строку и получить готовый инструмент? Попробуйте: {link}"]]}, "ua": {"bal": "До виведення", "balNote": "Комісія за клієнтів, які оплатили. Виплата раз на тиждень, через 14 днів після оплати клієнта.", "balGo": "Дані для виплат", "more": "Скільки ви отримуєте і за що", "h": "Готові пости", "p": "Ваше посилання вже всередині: скопіюйте й публікуйте.", "copy": "Скопіювати", "idea": "Дай 3 ідеї постів", "wait": "Vax думає…", "fail": "Зараз ідей немає. Спробуйте трохи пізніше.", "ask": "Дай 3 короткі ідеї постів для моїх соцмереж, які чесно рекомендують Vaxo. Без обіцянок доходу. У кожній ідеї: зачіпка й один рядок тексту. Мова: українська.", "posts": [["Короткий пост", "Знайшов штуку, що знімає нудну частину роботи: пишеш, що потрібно, а Vax відповідає і збирає робочий калькулятор чи чек-лист просто в чаті. Безкоштовно й без реєстрації: {link}"], ["Для власника малого бізнесу", "Якщо у вас невелика справа й немає часу на сайт і відповіді клієнтам, подивіться Vaxo. Перший місяць тарифу безкоштовний: {link}"], ["Підпис до сторіс чи ролика", "Пробували написати ШІ один рядок і отримати готовий інструмент? Спробуйте: {link}"]]}}[lang];
 const tabs: [string, string][] = [['home', '🏠'], ['deals', '🤝'], ['links', '🔗'], ['academy', '🎓'], ['prompts', '🤖'], ['team', '👥'], ['rules', '💸']];
 const offerSelect = OFFERS.map((o) => ({ id: o.id, name: c.offers[o.id] }));
 // Vax's road: 6 levels × 4 missions (data/roadmap.ts). Levels are just for fun — rates are the same for everyone.
@@ -110,17 +110,34 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
           <p class="mut">{c.home.today}</p>
         </div>
 
+        <div class="mylink card">
+          <div class="ml-link">
+            <span class="eyebrow-s">{c.home.mainLink}</span><code data-main-link></code>
+            <div class="row tight"><button type="button" class="cta" data-copy-main>{c.home.copy}</button><button type="button" class="ghost" data-share-main>{c.home.share}</button></div>
+          </div>
+          <div class="ml-bal">
+            <span class="eyebrow-s">{PT.bal}</span><b data-balance>$0</b>
+            <small class="mut">{PT.balNote}</small>
+            <button type="button" class="ghost sm" data-go="rules">{PT.balGo}</button>
+          </div>
+        </div>
+
+        <div class="card promo" data-promo data-ask={PT.ask} data-wait={PT.wait} data-fail={PT.fail}>
+          <h2>{PT.h}</h2>
+          <p class="mut small">{PT.p}</p>
+          <div class="pgrid">{PT.posts.map(([t, x]) => <div><b>{t}</b><p data-post={x}>{x}</p><button type="button" class="ghost" data-post-copy>{PT.copy}</button></div>)}</div>
+          <button type="button" class="cta" data-idea>{PT.idea}</button>
+          <p class="idea" data-idea-out></p>
+        </div>
+
+        <div class="stats">
+          {['clicks', 'leads', 'sales', 'team'].map((k, i) => <div class="card"><b data-total={k}>0</b><span>{c.home.stats[i]}</span></div>)}
+        </div>
+
         <div class="next card">
           <span class="eyebrow-s">{c.home.next}</span>
           <h2 data-next-text>…</h2>
           <button type="button" class="cta" data-next-go>{c.home.doIt}</button>
-        </div>
-
-        <div class="card"><PartnerEarn lang={lang} /></div>
-
-        <div class="mylink card">
-          <div><span class="eyebrow-s">{c.home.mainLink}</span><code data-main-link></code></div>
-          <div class="row tight"><button type="button" class="cta" data-copy-main>{c.home.copy}</button><button type="button" class="ghost" data-share-main>{c.home.share}</button></div>
         </div>
 
         <div class="road card" data-road>
@@ -154,17 +171,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
           <p class="mut small">{ROAD.note}</p>
         </div>
 
-        <div class="stats">
-          {['clicks', 'leads', 'sales', 'team'].map((k, i) => <div class="card"><b data-total={k}>0</b><span>{c.home.stats[i]}</span></div>)}
-        </div>
-
-        <div class="card promo" data-promo data-ask={PT.ask} data-wait={PT.wait} data-fail={PT.fail}>
-          <h2>{PT.h}</h2>
-          <p class="mut small">{PT.p}</p>
-          <div class="pgrid">{PT.posts.map(([t, x]) => <div><b>{t}</b><p data-post={x}>{x}</p><button type="button" class="ghost" data-post-copy>{PT.copy}</button></div>)}</div>
-          <button type="button" class="cta" data-idea>{PT.idea}</button>
-          <p class="idea" data-idea-out></p>
-        </div>
+        <details class="card earn"><summary>{PT.more}</summary><PartnerEarn lang={lang} /></details>
 
         <div class="grid2">
           <div class="card">
@@ -555,13 +562,14 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   async function load() {
     const res = await api('me');
     if (!res.ok) return show('auth');
-    const data = (await res.json()) as { partner: { name: string; code: string; email?: string }; links: Link[]; team: number; sales?: number };
+    const data = (await res.json()) as { partner: { name: string; code: string; email?: string }; links: Link[]; team: number; sales?: number; balance?: number };
     code = data.partner.code;
     $('[data-name]').textContent = data.partner.name;
     $('[data-email]').textContent = data.partner.email ?? '';
     const clicks = data.links.reduce((n, l) => n + l.clicks, 0);
     const leads = data.links.reduce((n, l) => n + l.leads, 0);
     const sales = data.sales ?? 0;
+    $('[data-balance]').textContent = '$' + (Math.round((data.balance ?? 0) * 100) / 100).toLocaleString('en-US');
     $('[data-total="clicks"]').textContent = String(clicks);
     $('[data-total="leads"]').textContent = String(leads);
     $('[data-total="sales"]').textContent = String(sales);
@@ -717,7 +725,14 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   @keyframes pulse { 50% { transform: scale(1.2); opacity: 0.6; } }
   .next .eyebrow-s { color: var(--acc); }
   .next h2 { margin: 0; font-size: clamp(20px, 3vw, 26px); }
-  .mylink { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .mylink { margin-top: 12px; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 20px; }
+  .ml-link, .ml-bal { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; min-width: 0; }
+  .ml-link code { font-size: 18px; }
+  .ml-bal { border-left: 1px solid var(--line); padding-left: 20px; }
+  .ml-bal b { font-size: clamp(30px, 4vw, 40px); letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .earn summary { cursor: pointer; font-weight: 650; }
+  .earn[open] summary { margin-bottom: 14px; }
+  @media (max-width: 680px) { .mylink { grid-template-columns: 1fr; } .ml-bal { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 16px; } }
   .mylink code, [data-invite] { display: block; font: 600 16px var(--mono); margin-top: 4px; word-break: break-all; }
   [data-invite] { background: var(--bg); padding: 12px; border-radius: 10px; margin: 12px 0; font-size: 14px; }
   .road { margin-top: 12px; }

@@ -194,7 +194,8 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
       .all();
     const team = await db.prepare('SELECT COUNT(*) AS n FROM partners WHERE parent_id = ?').bind(me.id).first<{ n: number }>();
     const plan = await db.prepare('SELECT plan, friend FROM partners WHERE id = ?').bind(me.id).first<{ plan: string; friend: number }>();
-    return json(200, { ok: true, partner: me, links, team: team?.n ?? 0, plan: plan?.plan ?? 'classic', friend: plan?.friend === 1 });
+    const earned = await db.prepare(`SELECT COALESCE(SUM(CASE WHEN status = 'due' THEN amount_usd END), 0) AS due, COALESCE(SUM(CASE WHEN status = 'paid' THEN amount_usd END), 0) AS paid FROM payouts WHERE partner_id = ?`).bind(me.id).first<{ due: number; paid: number }>().catch(() => null);
+    return json(200, { ok: true, partner: me, links, team: team?.n ?? 0, balance: earned?.due ?? 0, paidOut: earned?.paid ?? 0, plan: plan?.plan ?? 'classic', friend: plan?.friend === 1 });
   }
 
   if (path === 'plan' && method === 'POST') {

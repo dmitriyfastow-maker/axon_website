@@ -1,9 +1,8 @@
 ---
-// Client cabinet (Decision 16): vaxogroup.com/me/. Sign-in: email first → 6-digit code (auto-submit), Google second, a
-// password tucked away. Signed in: hero with level ring and points, bonus wallet, a first-run welcome, a setup checklist
-// (only rewards the backend really pays), project cards with a stage timeline, achievements and the business app.
-// Without signing in, the personal project link (/me/?t=<room>) shows that project and a "save it — 1 step" card.
-// Data: /api/me (worker/cabinet.ts). Texts: ./cabinet/i18n.ts.
+// Client cabinet: vaxogroup.com/me/, the account around the workspace (Decision 41). Sign-in: email first → 6-digit code
+// (auto-submit), Google second, a password tucked away. Signed in: three tabs, plan and balance, modules and projects,
+// what Vax remembers. Daily work happens in /app/. Without signing in, the personal project link (/me/?t=<room>) shows
+// that project and a "save it — 1 step" card. Data: /api/me (worker/cabinet.ts), /api/ws (worker/workspace.ts). Texts: ./cabinet/i18n.ts.
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
@@ -17,6 +16,7 @@ const t = getDict(lang);
 const home = langPath(lang);
 const alts = { en: '/me/', ua: '/ua/me/', ru: '/ru/me/' };
 const T = CAB_T[lang];
+const pre = home === '/' ? '' : home.replace(/\/$/, '');
 const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>`;
 ---
 
@@ -83,132 +83,82 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       </div>
     </section>
 
-    <!-- Signed in: hero + wallet -->
-    <section class="cab-top" data-dash hidden>
-      <article class="hero">
-        <div class="hero-txt">
-          <p class="eyebrow on-deep" data-hello-eye></p>
-          <h1 data-hello></h1>
-          <p class="hero-mail" data-mail></p>
-          <div class="chips"><span class="chip gold" data-points title={T.pointsNote}></span><span class="chip" data-paid></span></div>
-          <p class="hero-note">{T.pointsNote}</p>
+    <!-- Signed in: three tabs. Daily work lives in the workspace, this is the account around it. -->
+    <section class="me-top" data-dash hidden>
+      <div><h1 data-hello></h1><p class="mut" data-mail></p></div>
+      <a class="cta" href={`${pre}/app/`}>{T.toWs} <span aria-hidden="true">→</span></a>
+    </section>
+    <div class="me-tabs" role="tablist" aria-label={T.title} data-tabs hidden>
+      {[['plan', T.tabPlan], ['modules', T.tabMods], ['memory', T.tabMem]].map(([id, name]) => <button type="button" role="tab" id={`tab-${id}`} aria-controls={`pane-${id}`} aria-selected="false" data-go={id}>{name}</button>)}
+    </div>
+
+    <section class="me-pane" id="pane-plan" role="tabpanel" aria-labelledby="tab-plan" data-pane="plan" hidden>
+      <article class="cab-card plan">
+        <div class="plan-head">
+          <div><p class="eyebrow">{T.planH}</p><h2 data-plan-name></h2><p class="mut" data-plan-st></p></div>
+          <div class="plan-act"><a class="cta" data-plan-link hidden></a><button type="button" class="cta" data-plan-try hidden>{T.tryBtn}</button></div>
         </div>
-        <div class="hero-lvl">
-          <div class="ring-wrap" data-lvl-ring></div>
-          <p class="lvl-next" data-next></p>
+        <p class="msg" data-plan-msg role="status"></p>
+        <div class="allow" data-allow hidden>
+          <h3>{T.allowH}</h3>
+          <div class="al-rows" data-allow-rows></div>
         </div>
-        <img class="hero-vax" src="/mascot/vax-happy.webp" alt="" width="203" height="210" aria-hidden="true" />
       </article>
-      <article class="wallet">
-        <div class="w-head"><span class="ico-box" data-ico="wallet"></span><p class="eyebrow">{T.bonus}</p></div>
+      <article class="cab-card wal">
+        <p class="eyebrow">{T.bonus}</p>
         <b class="w-sum" data-bonus>$0</b>
         <p class="mut small">{T.bonusRule}</p>
         <details class="w-hist"><summary>{T.history}</summary><ul data-hist-list></ul></details>
       </article>
+      <article class="cab-card" data-mailbox hidden>
+        <div class="acct-row"><div><b>{T.sEmail}</b><p class="mut small">{T.sEmailP}</p></div><button type="button" class="ghost sm" data-mail-go>{T.sEmailDo}</button></div>
+        <form class="vcode" data-vcode hidden>
+          <p class="mut small" data-vcode-p></p>
+          <div class="row"><input inputmode="numeric" autocomplete="one-time-code" maxlength="6" required aria-label={T.codeH} placeholder="000000" /><button class="cta">{T.confirm}</button></div>
+        </form>
+      </article>
+      <details class="cab-card more invite" id="invite" data-invite>
+        <summary>{T.invH}</summary>
+        <p class="inv-got" data-inv-got hidden></p>
+        <p class="mut">{T.invP}</p>
+        <div class="inv-row">
+          <input class="inv-link" data-inv-link readonly aria-label={T.invH} value="" />
+          <button type="button" class="cta" data-inv-copy>{T.invCopy}</button>
+          <button type="button" class="ghost" data-inv-share hidden>{T.invShare}</button>
+        </div>
+        <p class="small" data-inv-stats></p>
+        <details class="inv-why"><summary>{T.fairH}</summary><p class="mut small">{T.fairP}</p></details>
+        <p class="mut small">{T.invFine} <a href={`${pre}/partners/`}>{T.invPartner} →</a></p>
+      </details>
+      <details class="cab-card more acct">
+        <summary>{T.account}</summary>
+        <label class="check"><input type="checkbox" data-news /> <span>{T.newsOn}</span></label>
+        <div class="btns"><a class="ghost" href="/api/me/export" download>{T.export}</a><button type="button" class="ghost" data-out>{T.out}</button><button type="button" class="ghost danger" data-del>{T.del}</button></div>
+      </details>
     </section>
 
-    <!-- Your map: portrait, branches, next move with the reason -->
-    <section class="cab-card tools" data-tools hidden aria-labelledby="cab-tools-h">
-      <h2 id="cab-tools-h">{T.toolsH}</h2>
-      <p class="mut">{T.toolsP}</p>
-      <form class="tb" data-tool-form><input name="q" maxlength="500" required placeholder={T.toolsPh} aria-label={T.toolsPh} /><button type="submit">{T.toolsGo}</button></form>
-      <p class="mut small" data-tool-msg></p>
-      <div class="tgrid" data-tool-list></div>
+    <section class="me-pane" id="pane-modules" role="tabpanel" aria-labelledby="tab-modules" data-pane="modules" hidden>
+      <div class="mods" data-mods></div>
+      <section class="cab-projects" data-proj-sec hidden aria-labelledby="cab-proj-h">
+        <div class="sec-head"><h2 id="cab-proj-h" data-ph>{T.projects}</h2></div>
+        <div class="proj-grid" data-projects></div>
+      </section>
+      <div id="biz" class="cab-biz" data-biz hidden><BizApp lang={lang} /></div>
     </section>
 
-    <section class="cab-card vmap" data-map hidden aria-labelledby="cab-map-h">
-      <h2 id="cab-map-h">{T.mapH}</h2>
-      <p class="mut">{T.mapP}</p>
-      <div class="map-root" data-map-root></div>
-      <div class="map-grid" data-map-grid></div>
-      <div class="map-next" data-map-next></div>
-    </section>
-
-    <section class="cab-card allow" data-allow hidden aria-labelledby="cab-allow-h">
-      <h2 id="cab-allow-h">{T.allowH}</h2>
-      <p class="mut">{T.allowP}</p>
-      <div class="al-rows" data-allow-rows></div>
-      <p class="mut small" data-allow-trial hidden>{T.allowTrial}</p>
-      <p data-allow-more hidden><a class="btn" href={`${home}#pricing`}>{T.allowMore}</a></p>
-    </section>
-
-    <!-- Setup checklist -->
-    <section class="cab-card setup" data-setup hidden aria-labelledby="cab-setup-h">
-      <div class="setup-head">
-        <div class="ring-wrap sm" data-setup-ring></div>
-        <div><h2 id="cab-setup-h">{T.setupH}</h2><p class="mut" data-setup-p></p></div>
-      </div>
-      <ol class="steps" data-steps></ol>
-      <form class="profile" data-profile hidden>
-        <div class="two"><input name="business" placeholder={T.pBusiness} aria-label={T.pBusiness} /><input name="name" placeholder={T.pName} aria-label={T.pName} /></div>
-        <div class="two"><input name="niche" placeholder={T.pNiche} aria-label={T.pNiche} /><input name="city" placeholder={T.pCity} aria-label={T.pCity} /></div>
-        <input name="site" placeholder={T.pSite} aria-label={T.pSite} />
-        <textarea name="goal" rows="2" placeholder={T.pGoal} aria-label={T.pGoal}></textarea>
-        <button class="cta" data-profile-btn>{T.saveBonus}</button>
-      </form>
-      <form class="vcode" data-vcode hidden>
-        <p class="mut small" data-vcode-p></p>
-        <div class="row"><input inputmode="numeric" autocomplete="one-time-code" maxlength="6" required aria-label={T.codeH} placeholder="000000" /><button class="cta">{T.confirm}</button></div>
+    <section class="me-pane" id="pane-memory" role="tabpanel" aria-labelledby="tab-memory" data-pane="memory" hidden>
+      <form class="cab-card mem" data-mem>
+        <h2>{T.memH}</h2>
+        <p class="mut">{T.memP}</p>
+        {[['niche', T.memNiche], ['goals', T.memGoals], ['project', T.memProject], ['limits', T.memLimits]].map(([k, name]) => <label>{name}<textarea name={k} rows="2" maxlength="600"></textarea></label>)}
+        <div class="mem-go"><button class="cta">{T.memSave}</button><span class="mut small" data-mem-msg role="status"></span></div>
       </form>
     </section>
-
-    <!-- Projects (also for a guest with the project link) -->
-    <section class="cab-projects" data-proj-sec hidden aria-labelledby="cab-proj-h">
-      <div class="sec-head"><h2 id="cab-proj-h" data-ph>{T.projects}</h2></div>
-      <div class="proj-grid" data-projects></div>
-      <div class="cab-card none" data-none hidden>
-        <img src="/mascot/vax-sprout.webp" alt="" width="429" height="520" loading="lazy" />
-        <div><p>{T.none}</p><a class="cta" href={`${home}app/`}>{T.start} →</a></div>
-      </div>
-    </section>
-
-    <!-- Invite a friend (client referrals): link + copy, plain rules -->
-    <section class="cab-card invite" id="invite" data-invite hidden aria-labelledby="cab-inv-h">
-      <div class="w-head"><span class="ico-box" data-ico="friend"></span><h2 id="cab-inv-h">{T.invH}</h2></div>
-      <p class="inv-got" data-inv-got hidden></p>
-      <p class="mut">{T.invP}</p>
-      <div class="inv-row">
-        <input class="inv-link" data-inv-link readonly aria-label={T.invH} value="" />
-        <button type="button" class="cta" data-inv-copy>{T.invCopy}</button>
-        <button type="button" class="ghost" data-inv-share hidden>{T.invShare}</button>
-      </div>
-      <p class="small" data-inv-stats></p>
-      <details class="inv-why"><summary>{T.fairH}</summary><p class="mut small">{T.fairP}</p></details>
-      <p class="mut small">{T.invFine} <a href={`${home === '/' ? '' : home.replace(/\/$/, '')}/partners/`}>{T.invPartner} →</a></p>
-    </section>
-
-    <!-- Achievements -->
-    <section class="cab-ach" data-ach-sec hidden aria-labelledby="cab-ach-h">
-      <div class="sec-head"><h2 id="cab-ach-h">{T.achH}</h2><p class="mut">{T.achP}</p></div>
-      <ul class="ach" data-ach></ul>
-    </section>
-
-    <div id="biz" class="cab-biz"><BizApp lang={lang} /></div>
-
-    <section class="cab-card acct" data-acct hidden>
-      <div class="acct-row"><b>{T.account}</b><button type="button" class="ghost" data-out>{T.out}</button></div>
-      <label class="check"><input type="checkbox" data-news /> <span>{T.newsOn}</span></label>
-      <div class="btns"><a class="ghost" href="/api/me/export" download>{T.export}</a><button type="button" class="ghost danger" data-del>{T.del}</button></div>
-    </section>
-
-    <dialog class="welcome" data-welcome aria-labelledby="cab-w-h">
-      <form method="dialog" class="w-in">
-        <div class="w-art"><img data-w-img src="/mascot/vax-checklist.webp" alt="" width="371" height="420" /></div>
-        <p class="eyebrow" data-w-step></p>
-        <h2 id="cab-w-h" data-w-h></h2>
-        <p class="mut" data-w-p></p>
-        <div class="w-dots" aria-hidden="true"><i></i><i></i><i></i></div>
-        <div class="w-btns"><button value="skip" class="link" data-w-skip>{T.wSkip}</button><button type="button" class="cta" data-w-next></button></div>
-      </form>
-    </dialog>
   </main>
   <Footer t={t} home={home} lang={lang} />
 </Base>
 
 <script>
-  import { renderTool } from '../scripts/tool';
-  import { PATH_BRANCHES, pathNext, type PathFacts } from './cabinet/path';
-  import type { ToolSpec } from '../../worker/toolcore';
   type R = Record<string, any>;
   const root = document.querySelector<HTMLElement>('[data-me]')!;
   const T: R = JSON.parse(root.querySelector('[data-me-t]')!.textContent || '{}');
@@ -223,29 +173,12 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     return e;
   };
   const P: R = {
-    mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
-    store: '<path d="M4 10v10h16V10"/><path d="M2.5 10 4.5 4h15l2 6z"/><path d="M9.5 20v-5h5v5"/>',
-    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/>',
-    friend: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M18 9v6M15 12h6"/>',
-    star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/>',
-    rocket: '<path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2"/><path d="m9 15-3-3c1-4 4.5-8.5 12-9 0 7.5-5 11-9 12z"/><circle cx="14.5" cy="9.5" r="1.6"/>',
-    inbox: '<path d="M3 13h5l1.5 3h5l1.5-3h5"/><path d="M5.5 5h13L21 13v6H3v-6z"/>',
     check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
-    lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+    star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/>',
     chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
-    wallet: '<path d="M3 7a2 2 0 0 1 2-2h12v3"/><rect x="3" y="7" width="18" height="13" rx="2.5"/><circle cx="16.5" cy="13.5" r="1.3"/>',
     doc: '<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/>',
-    pen: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
   };
   const svg = (n: string, s = 20) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n] || ''}</svg>`;
-  const ico = (n: string, cls = 'ico-box') => el('span', { class: cls, html: svg(n) });
-  $$('[data-ico]').forEach((x) => (x.innerHTML = svg(x.dataset.ico!)));
-  /** A progress ring: pct 0–100, centre text. */
-  const ring = (pct: number, big: string, small = '', size = 132) => {
-    const r = 44, c = 2 * Math.PI * r, off = c * (1 - Math.max(0, Math.min(100, pct)) / 100);
-    return `<svg class="ring" viewBox="0 0 100 100" width="${size}" height="${size}" role="img" aria-label="${big} ${small}"><circle class="tr" cx="50" cy="50" r="${r}"/><circle class="arc" cx="50" cy="50" r="${r}" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${c.toFixed(1)}" data-off="${off.toFixed(1)}" transform="rotate(-90 50 50)"/></svg><div class="ring-txt"><b>${big}</b>${small ? `<small>${small}</small>` : ''}</div>`;
-  };
-  const playRings = () => requestAnimationFrame(() => requestAnimationFrame(() => $$<SVGCircleElement>('.ring .arc').forEach((a) => a.setAttribute('stroke-dashoffset', a.dataset.off!))));
 
   const q = new URLSearchParams(location.search);
   const room = q.get('t') || '';
@@ -253,8 +186,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
   const day = (s: string) => new Date(String(s).replace(' ', 'T') + (String(s).length > 10 ? 'Z' : '')).toLocaleDateString(lang === 'ua' ? 'uk-UA' : lang === 'ru' ? 'ru-RU' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   const msg = (s: string) => { $('[data-msg]').textContent = s; };
   const post = (u: string, body: R = {}) => fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ room, lang, ...body }) });
-  const store = { get: (k: string) => { try { return localStorage.getItem(k); } catch { return 'x'; } }, set: (k: string, v: string) => { try { localStorage.setItem(k, v); } catch {} } };
-  let email = '', D: R = {}, timer = 0;
+  let email = '', D: R = {}, W: R = {}, timer = 0;
 
   /* ---------- Projects ---------- */
   const STEP_OF: R = { work: 1, qa: 1, review: 2, revisions: 3, delivered: 5 };
@@ -299,38 +231,39 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
   }
 
   /* ---------- Signed-in parts ---------- */
-  function facts(d: R) {
-    const prof = d.me?.profile || {}, eco = d.eco || {}, ps: R[] = d.projects || [];
-    const delivered = ps.filter((p) => p.stage === 'delivered');
-    return {
-      email: !!d.me?.verified,
-      profile: !!(prof.business && prof.niche && (prof.goal || '').length >= 10),
-      site: (eco.sites || 0) > 0,
-      lead: (eco.bizLeads || 0) > 0,
-      friend: (eco.friends || 0) > 0 || (d.invite?.invited || 0) > 0,
-      review: ps.some((p) => p.reviewed),
-      reviewOpen: delivered.find((p) => !p.reviewed),
-      project: ps.length > 0,
-    };
-  }
-
-  function renderHero(d: R, f: R) {
+  function renderTop(d: R) {
     const name = d.me?.name ? `, ${d.me.name.split(' ')[0]}` : '';
     $('[data-hello]').textContent = `${T.hi}${name}!`;
-    $('[data-hello-eye]').textContent = T.title;
     $('[data-mail]').textContent = d.me?.email || '';
-    const unlocked = ['project', 'profile', 'site', 'lead', 'review', 'friend'].filter((k) => f[k]).length;
-    const points = unlocked * 100 + (d.projects?.length || 0) * 25 + (f.email ? 50 : 0);
-    $('[data-points]').textContent = `★ ${points.toLocaleString('en-US')} ${T.points}`;
-    $('[data-paid]').textContent = T.paid.replace('{n}', money(d.paidUsd || 0));
-    const L: R[] = d.levels || [{ id: 'start', from: 0 }, { id: 'pro', from: 1000 }, { id: 'vip', from: 5000 }];
-    const i = Math.max(0, L.findIndex((x) => x.id === d.level)), nx = L[i + 1];
-    const pct = nx ? ((d.paidUsd - L[i].from) / (nx.from - L[i].from)) * 100 : 100;
-    $('[data-lvl-ring]').innerHTML = ring(pct, T.levels[d.level] || d.level, T.level);
-    $('[data-next]').textContent = nx ? T.toNext.replace('${n}', '$' + Math.max(0, Math.round(nx.from - d.paidUsd)).toLocaleString('en-US')).replace('{lvl}', T.levels[nx.id]) : T.vipPerks;
     $('[data-bonus]').textContent = money(d.bonus || 0);
     const hist: R[] = d.bonusHistory || [];
     $('[data-hist-list]').replaceChildren(...(hist.length ? hist.map((h) => el('li', {}, el('span', {}, `${day(h.at)} · ${T.kinds[h.kind] || h.kind}`), el('b', { class: h.amount_usd > 0 ? 'plus' : '' }, `${h.amount_usd > 0 ? '+' : ''}${money(h.amount_usd)}`))) : [el('li', { class: 'mut' }, T.histEmpty)]));
+    $('[data-mailbox]').hidden = !!d.me?.verified;
+  }
+
+  function renderPlan(d: R) {
+    const plan: string = d.allowance?.plan || 'start', trial = !!d.allowance?.trial, free = plan === 'start';
+    $('[data-plan-name]').textContent = free ? T.levels.start : plan[0].toUpperCase() + plan.slice(1);
+    $('[data-plan-st]').textContent = free ? T.planFree : trial ? T.planTrial : T.planOn;
+    const a = $<HTMLAnchorElement>('[data-plan-link]');
+    a.hidden = free && !d.payUrl;
+    a.href = d.payUrl || `${homePre}/#pricing`;
+    a.textContent = d.payUrl ? T.payBtn : T.chgBtn;
+    $('[data-plan-try]').hidden = !free || !!d.payUrl;
+  }
+
+  function renderMods(w: R) {
+    const m: R = w.modules || {}, go = (k: string) => `${homePre}/app/#deploy=${k}`;
+    const row = (name: string, state: string, href: string, label: string, on: boolean, extra?: Node | false) =>
+      el('article', { class: `cab-card mod${on ? ' on' : ''}` }, el('div', {}, el('b', {}, name), el('span', { class: 'mut small' }, state)), el('div', { class: 'mod-act' }, extra, el('a', { class: 'ghost sm', href }, label + ' →')));
+    const locked = !w.access, off = locked ? T.mLock : T.mOff;
+    $('[data-mods]').replaceChildren(
+      row(T.mCrm, m.crm ? T.mCrmOn.replace('{n}', m.crm.total) : off, go('crm'), m.crm ? T.mOpen : T.mDeploy, !!m.crm),
+      row(T.mSite, m.site ? T.mSiteOn.replace('{n}', m.requests ?? 0) : T.mOff, go('site'), m.site ? T.mOpen : T.mDeploy, !!m.site, !!m.site && el('a', { class: 'link', href: m.site.url, target: '_blank', rel: 'noopener' }, T.mSee + ' ↗')),
+      row(T.mPartner, m.partner ? T.mParOn.replace('{n}', m.partner.links.length) : off, go('partner'), m.partner ? T.mOpen : T.mDeploy, !!m.partner));
+    $('[data-biz]').hidden = !w.access;
+    const f = $<HTMLFormElement>('[data-mem]');
+    for (const k of ['niche', 'goals', 'project', 'limits']) { const t = f.elements.namedItem(k) as HTMLTextAreaElement; if (document.activeElement !== t) t.value = w.memory?.[k] || ''; }
   }
 
   function renderInvite(d: R) {
@@ -354,68 +287,6 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     if (v.friendBonus) got.textContent = T.invGot.replace('{n}', v.friendBonus.months);
   }
 
-  function setupSteps(f: R): R[] {
-    return [
-      { id: 'email', ic: 'mail', done: f.email, h: T.sEmail, p: T.sEmailP, act: T.sEmailDo, go: confirmEmail },
-      { id: 'profile', ic: 'store', done: f.profile, h: T.sProfile, p: T.sProfileP, reward: '+$5', act: T.sProfileDo, go: () => { const pf = $('[data-profile]'); pf.hidden = !pf.hidden; if (!pf.hidden) pf.querySelector('input')!.focus(); } },
-      { id: 'site', ic: 'globe', done: f.site, h: T.sSite, p: T.sSiteP, act: T.sSiteDo, go: () => { const b = document.getElementById('biz')!; b.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); setTimeout(() => b.querySelector<HTMLInputElement>('[data-biz-new] input')?.focus({ preventScroll: true }), 400); } },
-      { id: 'friend', ic: 'friend', done: f.friend, h: T.sFriend, p: T.sFriendP, reward: T.invReward, act: T.sFriendDo, go: () => document.getElementById('invite')!.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
-      { id: 'review', ic: 'star', done: f.review, h: T.sReview, p: f.reviewOpen || f.review ? T.sReviewP : T.sReviewWait, reward: '+$10', act: f.reviewOpen ? T.sReviewDo : '', go: () => { const b = root.querySelector<HTMLButtonElement>(`[data-rev="${f.reviewOpen?.id}"]`); b?.scrollIntoView({ block: 'center' }); b?.click(); } },
-    ];
-  }
-
-  function renderSetup(d: R, f: R) {
-    const steps = setupSteps(f);
-    const n = steps.length, done = steps.filter((s) => s.done).length;
-    $('[data-setup-ring]').innerHTML = ring((done / n) * 100, `${done}/${n}`, '', 76);
-    $('[data-setup-p]').textContent = done === n ? T.setupDone : T.setupP.replace('{d}', done).replace('{n}', n);
-    $('[data-setup]').classList.toggle('all', done === n);
-    $('[data-steps]').replaceChildren(...steps.map((s) => el('li', { class: s.done ? 'done' : '' },
-      el('span', { class: 'st-ic', html: svg(s.done ? 'check' : s.ic) }),
-      el('div', { class: 'st-txt' }, el('b', {}, s.h), el('span', { class: 'mut small' }, s.p)),
-      el('div', { class: 'st-act' },
-        s.reward && el('span', { class: 'reward' }, s.reward),
-        s.done ? el('span', { class: 'st-done' }, T.done)
-          : s.href ? el('a', { class: 'ghost sm', href: s.href }, s.act + ' →')
-          : s.act ? el('button', { type: 'button', class: 'ghost sm', onclick: s.go }, s.act) : null))));
-    const pf = $<HTMLFormElement>('[data-profile]');
-    for (const [k, v] of Object.entries({ ...(d.me?.profile || {}), name: d.me?.name || '' })) { const i = pf.elements.namedItem(k) as HTMLInputElement | null; if (i && !i.value) i.value = String(v || ''); }
-    $('[data-profile-btn]').textContent = f.profile ? T.save : T.saveBonus;
-  }
-
-  // The button on the "next step" card: the same action as in the setup list, plus the two steps that list does not have.
-  function mapAct(k: string, f: R) {
-    if (k === 'project') return el('a', { class: 'ghost sm', href: `${homePre}/app/` }, T.start + ' →');
-    if (k === 'lead') return el('a', { class: 'ghost sm', href: '#biz' }, T.mapLeadDo + ' →');
-    const s = setupSteps(f).find((x) => x.id === k);
-    return s?.act ? el('button', { type: 'button', class: 'ghost sm', onclick: s.go }, s.act) : '';
-  }
-
-  function renderMap(d: R, f: R) {
-    const goal = String(d.me?.profile?.goal || '').trim();
-    $('[data-map-root]').replaceChildren(el('b', {}, T.mapRoot), el('span', {}, goal || T.mapNoGoal));
-    const nextKey = pathNext(f as PathFacts);
-    $('[data-map-grid]').replaceChildren(...PATH_BRANCHES.map((keys, bi) => el('div', { class: 'br' }, el('h3', {}, T.mapBranches[bi]),
-      el('ul', {}, ...keys.map((k) => el('li', { class: f[k] ? 'on' : k === nextKey ? 'nx' : '' }, el('span', { class: 'dot' }, f[k] ? '✓' : k === nextKey ? '→' : '·'), el('b', {}, T.mapNodes[k][0])))))));
-    const nx = $('[data-map-next]');
-    nx.hidden = !nextKey;
-    if (nextKey) nx.replaceChildren(el('img', { src: '/mascot/vax-happy.webp', alt: 'Vax', width: '56', height: '56' }), el('div', {}, el('small', {}, T.mapNext), el('b', {}, T.mapNodes[nextKey][0]), el('span', { class: 'mut small' }, `${T.mapWhy} ${T.mapNodes[nextKey][1]}`)), mapAct(nextKey, f));
-  }
-
-  function renderTools(d: R) {
-    $('[data-tool-list]').replaceChildren(...((d.tools || []) as ToolSpec[]).map((t) => renderTool(t)));
-  }
-  $<HTMLFormElement>('[data-tool-form]').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const f = e.target as HTMLFormElement, m = $('[data-tool-msg]'), b = f.querySelector('button')!;
-    b.disabled = true; m.textContent = T.toolsWait;
-    const r = await post('/api/me/tool', { q: new FormData(f).get('q') }).catch(() => null);
-    const j: R = r ? await r.json().catch(() => ({})) : {};
-    b.disabled = false;
-    if (j.ok) { m.textContent = ''; f.reset(); $('[data-tool-list]').prepend(renderTool(j.tool)); }
-    else m.textContent = j.error === 'limit' ? T.toolsLimit : j.error === 'project' ? T.toolsNoProj : T.toolsNone;
-  });
-
   function renderAllow(d: R) {
     const a: R | null = d.allowance;
     $('[data-allow]').hidden = !a;
@@ -426,17 +297,6 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       return el('div', { class: 'al-row' }, el('b', {}, label), el('div', { class: 'al-bar' }, el('i', { style: `width:${Math.round(left * 100)}%` })), el('span', { class: left < 0.25 ? 'low' : '' }, word));
     };
     $('[data-allow-rows]').replaceChildren(row(T.allowDay, a.day), row(T.allowWeek, a.week));
-    $('[data-allow-trial]').hidden = !a.trial;
-    $('[data-allow-more]').hidden = !(a.day.used / a.day.cap >= 0.75 || a.week.used / a.week.cap >= 0.75);
-  }
-
-  function renderAch(f: R) {
-    const A: [string, string][] = [['project', 'rocket'], ['profile', 'store'], ['site', 'globe'], ['lead', 'inbox'], ['review', 'star'], ['friend', 'friend']];
-    $('[data-ach]').replaceChildren(...A.map(([k, ic], i) => el('li', { class: f[k] ? 'on' : '', style: `--i:${i}` },
-      el('span', { class: 'medal', html: svg(f[k] ? ic : 'lock', 26) }),
-      el('b', {}, T.ach[k][0]), el('span', { class: 'mut small' }, T.ach[k][1]),
-      el('span', { class: 'sr' }, f[k] ? T.unlocked : T.locked),
-      el('span', { class: 'xp', 'aria-hidden': 'true' }, f[k] ? '+100' : T.locked))));
   }
 
   async function confirmEmail() {
@@ -447,23 +307,23 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     else { $('[data-vcode-p]').textContent = d.error === 'mail_off' ? T.off : T.errNet; box.hidden = false; }
   }
 
-  /* ---------- Welcome (first run) ---------- */
-  const W_IMG = ['/mascot/vax-checklist.webp', '/mascot/vax-allinone.webp', '/mascot/vax-earn.webp'];
-  function welcome(key: string) {
-    const dlg = $<HTMLDialogElement>('[data-welcome]');
-    if (!dlg.showModal || store.get(key)) return;
-    let i = 0;
-    const show = () => {
-      $('[data-w-step]').textContent = T.wStep.replace('{n}', i + 1);
-      $('[data-w-h]').textContent = T.w[i].h; $('[data-w-p]').textContent = T.w[i].p;
-      $<HTMLImageElement>('[data-w-img]').src = W_IMG[i];
-      $$('.w-dots i').forEach((x, j) => x.classList.toggle('on', j <= i));
-      $('[data-w-next]').textContent = i < 2 ? T.wNext + ' →' : T.wGo;
-    };
-    $('[data-w-next]').onclick = () => { if (i < 2) { i++; show(); } else dlg.close(); };
-    dlg.addEventListener('close', () => store.set(key, '1'), { once: true });
-    show(); dlg.showModal(); $('[data-w-next]').focus();
+  /* ---------- Tabs ---------- */
+  const PANES = ['plan', 'modules', 'memory'];
+  function openTab(id: string) {
+    $$<HTMLButtonElement>('[data-go]').forEach((b) => { const on = b.dataset.go === id; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
+    $$('[data-pane]').forEach((p) => (p.hidden = p.dataset.pane !== id));
   }
+  // #plan, #modules, #memory open a tab; older links (#biz, #invite) open the tab that holds them now.
+  function fromHash() {
+    const h = location.hash.slice(1);
+    if (h === 'invite') $<HTMLDetailsElement>('[data-invite]').open = true;
+    return h === 'biz' ? 'modules' : h === 'invite' ? 'plan' : PANES.includes(h) ? h : 'plan';
+  }
+  $$<HTMLButtonElement>('[data-go]').forEach((b, i, all) => {
+    b.onclick = () => { openTab(b.dataset.go!); history.replaceState(null, '', `#${b.dataset.go}`); };
+    b.onkeydown = (e) => { const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (d) { const n = all[(i + d + all.length) % all.length]; n.focus(); n.click(); } };
+  });
+  window.addEventListener('hashchange', () => { if (root.classList.contains('is-in')) openTab(fromHash()); });
 
   /* ---------- Load ---------- */
   async function load() {
@@ -479,10 +339,11 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
     root.classList.toggle('is-guest', guest);
     root.classList.toggle('is-in', si);
     $('[data-auth]').hidden = si;
-    for (const s of ['[data-dash]', '[data-tools]', '[data-setup]', '[data-map]', '[data-allow]', '[data-ach-sec]', '[data-acct]', '[data-invite]']) $(s).hidden = !si;
-    $('[data-proj-sec]').hidden = !si && !guest;
+    $('[data-dash]').hidden = !si; $('[data-tabs]').hidden = !si;
+    $('[data-proj-sec]').hidden = ps.length === 0;
     $('[data-ph]').textContent = guest ? T.guestH : T.projects;
-    $('[data-none]').hidden = !si || ps.length > 0;
+    $('[data-mods]').hidden = guest;
+    if (guest) $$('[data-pane]').forEach((p) => (p.hidden = p.dataset.pane !== 'modules'));
     $('[data-projects]').replaceChildren(...ps.map((p) => project(p, si)));
     if (!si) {
       $('[data-auth-h]').textContent = guest ? T.saveH : T.loginH;
@@ -496,12 +357,11 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
       if (!d.ways?.email) $<HTMLDetailsElement>('[data-pw]').open = true;
       return;
     }
-    const f = facts(d);
-    renderHero(d, f); renderSetup(d, f); renderMap(d, f); renderAllow(d); renderTools(d); renderAch(f); renderInvite(d);
+    W = await fetch('/api/ws').then((x) => x.json()).catch(() => ({}));
+    renderTop(d); renderPlan(d); renderAllow(d); renderMods(W); renderInvite(d);
     $<HTMLInputElement>('[data-news]').checked = !!d.me?.marketing;
-    playRings();
+    if (!$$('[data-go]').some((b) => b.getAttribute('aria-selected') === 'true')) openTab(fromHash());
     window.dispatchEvent(new CustomEvent('vx:signed-in'));
-    welcome(`vx_me_welcome_${d.me?.email || 'x'}`);
   }
 
   /* ---------- Email → code ---------- */
@@ -607,10 +467,21 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
   };
 
   /* ---------- Signed-in actions ---------- */
-  $<HTMLFormElement>('[data-profile]').onsubmit = async (e) => {
+  $('[data-mail-go]').onclick = () => confirmEmail();
+  $('[data-plan-try]').onclick = async () => {
+    const b = $<HTMLButtonElement>('[data-plan-try]'), m = $('[data-plan-msg]');
+    b.disabled = true; m.textContent = '';
+    let ref = ''; try { ref = localStorage.getItem('vaxo_ref') || ''; } catch {}
+    const r = await post('/api/ws/trial', { ref }).catch(() => null);
+    const d: R = r ? await r.json().catch(() => ({})) : {};
+    b.disabled = false;
+    if (d.ok) { load(); return; }
+    m.textContent = d.error === 'verify' ? T.confirmFirst : d.error === 'used' ? T.trialUsed : T.errNet;
+  };
+  $<HTMLFormElement>('[data-mem]').onsubmit = async (e) => {
     e.preventDefault();
-    await post('/api/me/profile', Object.fromEntries(new FormData(e.target as HTMLFormElement)));
-    $('[data-profile]').hidden = true; load();
+    const r = await fetch('/api/ws/memory', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...Object.fromEntries(new FormData(e.target as HTMLFormElement)), mode: W.mode }) }).catch(() => null);
+    $('[data-mem-msg]').textContent = r?.ok ? T.memSaved : T.errNet;
   };
   $<HTMLFormElement>('[data-vcode]').onsubmit = async (e) => {
     e.preventDefault();
@@ -689,36 +560,10 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 .cab .tabs button { border: 0; background: none; padding: 8px 14px; border-radius: 999px; font: 600 14px var(--font); color: var(--mut); cursor: pointer; }
 .cab .tabs button[aria-selected='true'] { background: var(--ink); color: var(--bg); }
 .cab .stack { display: flex; flex-direction: column; gap: 8px; }
-.is-guest .cab-auth { order: 2; } .is-guest .cab-projects { order: 1; }
+.is-guest .cab-auth { order: 2; } .is-guest [data-pane='modules'] { order: 1; }
 .is-guest .cab-auth { border: 2px solid var(--acc); }
 
-/* ---------- hero + wallet ---------- */
-.cab-top { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 16px; }
-.hero { position: relative; isolation: isolate; overflow: hidden; background: var(--deep); color: var(--deepInk); border-radius: 28px; padding: clamp(22px, 3.5vw, 36px); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: center; min-height: 240px; }
-.hero::before { content: ''; position: absolute; width: 520px; height: 520px; right: -160px; top: -220px; background: radial-gradient(circle, color-mix(in srgb, var(--acc) 38%, transparent), transparent 62%); z-index: -1; }
-.hero::after { content: ''; position: absolute; inset: 0; z-index: -1; opacity: .5; background-image: radial-gradient(color-mix(in srgb, var(--deepInk) 12%, transparent) 1px, transparent 1px); background-size: 18px 18px; mask-image: linear-gradient(120deg, transparent 40%, #000); }
-.hero .eyebrow.on-deep { color: var(--accText); margin-bottom: 10px; }
-.hero-mail { margin: 8px 0 14px; color: var(--deepMut); word-break: break-all; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { display: inline-flex; align-items: center; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--deepLine); font-size: 13px; font-weight: 600; color: var(--deepInk); }
-.chip.gold { background: color-mix(in srgb, var(--acc) 18%, transparent); border-color: color-mix(in srgb, var(--acc) 45%, transparent); color: var(--accText); }
-.hero-note { margin: 10px 0 0; font-size: 12px; color: var(--deepMut); }
-.hero-lvl { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; max-width: 180px; position: relative; z-index: 1; }
-.lvl-next { margin: 0; font-size: 13px; color: var(--deepMut); }
-.hero-vax { position: absolute; width: 96px; height: auto; right: 10px; bottom: -14px; opacity: .9; z-index: 0; pointer-events: none; }
-.hero .hero-lvl { margin-bottom: 40px; }
-.ring-wrap { position: relative; display: grid; place-items: center; }
-.ring-wrap .ring { display: block; } .ring .tr { fill: none; stroke: color-mix(in srgb, currentColor 14%, transparent); stroke-width: 8; }
-.ring .arc { fill: none; stroke: var(--acc); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--acc) 50%, transparent)); }
-.ring-txt { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1.1; }
-.ring-txt b { font-size: 22px; letter-spacing: -0.02em; } .ring-txt small { font-size: 11px; opacity: .7; text-transform: uppercase; letter-spacing: .1em; }
-.ring-wrap.sm .ring-txt b { font-size: 17px; }
-.wallet { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); padding: clamp(20px, 3vw, 28px); box-shadow: var(--sh); display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden; }
-.wallet::after { content: ''; position: absolute; right: -60px; bottom: -60px; width: 200px; height: 200px; border-radius: 50%; border: 28px solid color-mix(in srgb, var(--acc) 10%, transparent); pointer-events: none; }
-.w-head { display: flex; align-items: center; gap: 10px; }
-.cab .ico-box { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: color-mix(in srgb, var(--acc) 16%, transparent); color: var(--accText); flex: none; }
 .w-sum { font-size: clamp(40px, 6vw, 56px); letter-spacing: -0.04em; line-height: 1; margin: 6px 0 2px; }
-.wallet p { margin: 0; }
 .invite { display: flex; flex-direction: column; gap: 10px; }
 .invite h2 { margin: 0; font-size: 1.15rem; }
 .invite p { margin: 0; }
@@ -730,23 +575,7 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 .w-hist li, .pays li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); } .w-hist li span, .pays li span { color: var(--mut); }
 .w-hist b.plus { color: var(--accText); }
 
-/* ---------- setup ---------- */
-.setup-head { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; } .setup-head p { margin: 4px 0 0; }
-.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.st-act { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
-.st-act:empty { display: none; }
-.steps li.done .st-txt .mut { display: none; }
-.steps li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 18px; border: 1px solid var(--line); background: var(--bg); transition: border-color .2s, transform .2s; }
-.steps li:hover { border-color: color-mix(in srgb, var(--acc) 50%, var(--line)); }
-.st-ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--surf); border: 1px solid var(--line); color: var(--accText); }
-.steps li.done .st-ic { background: var(--acc); color: var(--dark-ink); border-color: transparent; }
-.steps li.done .st-txt b { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--ink) 30%, transparent); }
-.st-txt { display: flex; flex-direction: column; gap: 2px; }
-.reward { font: 700 12px var(--font); color: var(--accText); background: color-mix(in srgb, var(--acc) 14%, transparent); border-radius: 999px; padding: 5px 10px; white-space: nowrap; }
-.st-done { font-size: 13px; font-weight: 700; color: var(--accText); }
-.setup.all .steps { display: none; }
-.cab .profile, .cab .vcode { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; padding: 16px; border-radius: 18px; background: var(--bg); border: 1px dashed color-mix(in srgb, var(--acc) 50%, var(--line)); }
-.cab .profile .cta { align-self: flex-start; }
+.cab .vcode { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; padding: 16px; border-radius: 18px; background: var(--bg); border: 1px dashed color-mix(in srgb, var(--acc) 50%, var(--line)); }
 .cab .two, .cab .row { display: flex; gap: 8px; flex-wrap: wrap; } .cab .two > *, .cab .row > input { flex: 1 1 200px; }
 .vcode p { margin: 0; }
 
@@ -780,52 +609,49 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 .reviewed { margin: 0; display: flex; gap: 8px; align-items: center; color: var(--accText); font-weight: 600; font-size: 14px; }
 .rev-btn { align-self: flex-start; }
 .cab .rev { display: flex; flex-direction: column; gap: 8px; } .cab .rev select { width: auto; }
-.cab .none { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; } .cab .none img { width: 90px; height: auto; } .cab .none p { margin: 0 0 10px; font-size: 17px; }
 
-/* ---------- achievements ---------- */
-.ach { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr)); gap: 12px; }
-.ach li { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 20px 14px 16px; border-radius: 22px; background: var(--surf); border: 1px solid var(--line); transition: transform .25s, box-shadow .25s; }
-.ach li b { font-size: 15px; }
-.medal { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; margin-bottom: 4px; background: var(--surf2); color: var(--mut); border: 2px dashed var(--line); }
-.ach li.on .medal { background: radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--acc) 55%, #fff), var(--acc) 55%, color-mix(in srgb, var(--acc) 70%, #000)); color: var(--dark-ink); border: 0; box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--acc) 90%, transparent), inset 0 -3px 0 rgba(0,0,0,.15); }
-.ach li:not(.on) { opacity: .78; } .ach li:not(.on) b { color: var(--mut); }
-.ach li.on:hover { transform: translateY(-3px); box-shadow: var(--sh); }
-.xp { margin-top: 2px; font: 700 11px var(--mono); color: var(--mut); } .ach li.on .xp { color: var(--accText); }
+/* ---------- three tabs ---------- */
+.me-top { display: flex; justify-content: space-between; align-items: center; gap: 12px 20px; flex-wrap: wrap; }
+.me-top h1 { font-size: clamp(26px, 3.6vw, 36px); } .me-top p { margin: 4px 0 0; word-break: break-all; }
+.me-tabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--line); scrollbar-width: none; }
+.me-tabs button { flex: none; border: 0; background: none; padding: 11px 14px; font: 600 15px var(--font); color: var(--mut); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.me-tabs button:hover { color: var(--ink); }
+.me-tabs button[aria-selected='true'] { color: var(--ink); border-bottom-color: var(--acc); }
+.me-tabs button:focus-visible { outline: 2px solid var(--acc); outline-offset: -2px; }
+.me-pane { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.plan { display: flex; flex-direction: column; gap: 16px; }
+.plan-head { display: flex; justify-content: space-between; align-items: center; gap: 14px 20px; flex-wrap: wrap; }
+.plan-head h2 { margin: 8px 0 4px; } .plan-head p.mut { margin: 0; }
+.plan-act { display: flex; gap: 8px; flex-wrap: wrap; }
+.allow h3 { font-size: 15px; }
+.wal { display: flex; flex-direction: column; gap: 6px; } .wal p { margin: 0; } .wal .w-sum { font-size: clamp(30px, 4vw, 40px); margin: 4px 0 0; }
+.more summary { cursor: pointer; font-weight: 650; } .more[open] summary { margin-bottom: 12px; } .more > * + * { margin-top: 10px; }
+.mods { display: grid; gap: 10px; }
+.mod { display: flex; justify-content: space-between; align-items: center; gap: 10px 16px; flex-wrap: wrap; padding: 16px 20px; }
+.mod > div:first-child { display: grid; gap: 2px; } .mod.on { border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); }
+.mod-act { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.cab-projects { margin-top: 10px; }
+.mem { display: flex; flex-direction: column; gap: 12px; } .mem p { margin: 0; }
+.mem label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.mem-go { display: flex; align-items: center; gap: 12px; }
 
 /* ---------- account ---------- */
-.acct { display: flex; flex-direction: column; gap: 12px; } .acct-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.acct-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .acct .btns { display: flex; gap: 8px; flex-wrap: wrap; }
-
-/* ---------- welcome dialog ---------- */
-.welcome { border: 0; padding: 0; border-radius: 28px; max-width: min(440px, calc(100vw - 32px)); width: 100%; background: var(--surf); color: var(--ink); box-shadow: 0 40px 80px -20px rgba(0,0,0,.5); }
-.welcome::backdrop { background: color-mix(in srgb, var(--deep) 60%, transparent); backdrop-filter: blur(6px); }
-.w-in { display: flex; flex-direction: column; gap: 10px; padding: 0 26px 24px; text-align: center; align-items: center; }
-.w-art { width: calc(100% + 52px); margin: 0 -26px 8px; background: var(--deep); display: grid; place-items: center; padding: 26px 0 0; background-image: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--acc) 40%, transparent), transparent 60%); }
-.w-art img { width: 150px; height: auto; display: block; }
-.w-in h2 { font-size: 26px; } .w-in p { margin: 0; }
-.w-dots { display: flex; gap: 6px; margin: 6px 0; } .w-dots i { width: 28px; height: 5px; border-radius: 3px; background: var(--surf2); transition: background .3s; } .w-dots i.on { background: var(--acc); }
-.w-btns { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 6px; }
 
 @media (prefers-reduced-motion: no-preference) {
   .cab-skel i { animation: cabShimmer 1.4s linear infinite; }
-  .is-in .cab-top, .is-in .setup, .is-in .cab-projects, .is-in .cab-ach, .cab-auth, .is-guest .cab-projects { animation: cabUp .6s cubic-bezier(.2,.8,.2,1) both; }
-  .is-in .setup { animation-delay: .08s; } .is-in .cab-projects { animation-delay: .14s; } .is-in .cab-ach { animation-delay: .2s; }
-  .ach li.on { animation: cabPop .5s cubic-bezier(.3,1.6,.5,1) both; animation-delay: calc(.3s + var(--i) * .06s); }
+  .cab-auth, .is-guest .cab-projects { animation: cabUp .6s cubic-bezier(.2,.8,.2,1) both; }
   .tl li.cur i { animation: cabPulse 2.2s ease-in-out infinite; }
   .otp.bad { animation: cabShake .4s; }
-  .welcome[open] { animation: cabUp .35s cubic-bezier(.2,.8,.2,1); }
-  .hero-vax { animation: cabBob 4s ease-in-out infinite; }
 }
-@media (prefers-reduced-motion: reduce) { .ring .arc { transition: none; } .cab .cta, .ach li { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .cab .cta { transition: none; } }
 @keyframes cabShimmer { to { background-position: -200% 0; } }
 @keyframes cabUp { from { opacity: 0; transform: translateY(14px); } }
-@keyframes cabPop { from { opacity: 0; transform: scale(.85); } }
 @keyframes cabPulse { 50% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--acc) 8%, transparent); } }
 @keyframes cabShake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-@keyframes cabBob { 50% { transform: translateY(-6px); } }
 
 @media (max-width: 860px) {
-  .cab-top { grid-template-columns: 1fr; }
   .cab-auth { grid-template-columns: 1fr; }
   .auth-side { flex-direction: row; align-items: center; padding: 20px; }
   .auth-side img { width: 90px; align-self: auto; }
@@ -833,12 +659,6 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 }
 @media (max-width: 560px) {
   .cab { padding-top: 92px; gap: 16px; }
-  .hero { grid-template-columns: 1fr; }
-  .hero-lvl { flex-direction: row; max-width: none; text-align: left; margin-bottom: 0 !important; gap: 14px; }
-  .hero-lvl .ring { width: 96px; height: 96px; }
-  .hero-vax { width: 70px; right: 6px; bottom: -10px; }
-  .steps li { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
-  .steps li .st-act { grid-column: 2; justify-content: flex-start; flex-wrap: wrap; }
   .tl li span { font-size: 10.5px; }
   .cab .otp input { height: 52px; font-size: 21px; }
   .otp { gap: 6px; }
@@ -853,29 +673,9 @@ const G = `<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><p
 .inv-why { margin-top: 4px; } .inv-why summary { cursor: pointer; font-weight: 650; color: var(--accText, var(--ink)); padding: 6px 0; }
 @media (prefers-reduced-motion: reduce) { .cab-card { transition: none; } .cab-card:hover { transform: none; } }
 
-  .vmap .map-root { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border-radius: 16px; background: color-mix(in srgb, var(--acc) 14%, var(--surf)); border: 1px solid var(--acc); margin: 12px 0; }
-  .vmap .map-root span { font-size: 17px; font-weight: 600; line-height: 1.35; }
-  .vmap .map-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-  .vmap .br { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: var(--surf); position: relative; }
-  .vmap .br h3 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--mut); }
-  .vmap .br ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .vmap .br li { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: var(--mut); }
-  .vmap .br li .dot { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); font-size: 12px; }
-  .vmap .br li.on { color: var(--ink); } .vmap .br li.on .dot { background: var(--acc); border-color: var(--acc); color: #17150F; }
-  .vmap .br li.nx { color: var(--ink); font-weight: 700; } .vmap .br li.nx .dot { border-color: var(--acc); color: var(--accText); }
-  .vmap .map-next { display: flex; gap: 12px; align-items: center; margin-top: 12px; padding: 12px 14px; border-radius: 16px; border: 1px dashed var(--acc); }
-  .vmap .map-next { flex-wrap: wrap; } .vmap .map-next div { flex: 1 1 200px; } .vmap .map-next .ghost { flex: none; margin-left: auto; }
-  .vmap .map-next img { width: 56px; height: 56px; object-fit: contain; flex: none; }
-  .vmap .map-next div { display: grid; gap: 2px; } .vmap .map-next small { text-transform: uppercase; letter-spacing: .06em; font-size: 11px; color: var(--mut); }
-  @media (max-width: 860px) { .vmap .map-grid { grid-template-columns: repeat(2, 1fr); } }
-
   .allow .al-row { display: grid; grid-template-columns: 110px 1fr 150px; gap: 12px; align-items: center; margin: 10px 0; font-size: 14px; }
   .allow .al-bar { height: 10px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 10%, transparent); overflow: hidden; }
   .allow .al-bar i { display: block; height: 100%; border-radius: 999px; background: var(--acc); }
   .allow .al-row span.low { color: #B4531A; font-weight: 700; }
   @media (max-width: 560px) { .allow .al-row { grid-template-columns: 1fr; gap: 4px; } }
-  .tools .tb { display: flex; gap: 8px; margin-top: 10px; }
-  .tools .tb input { flex: 1; min-width: 0; font: 16px var(--font); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
-  .tools .tb button { border: 0; border-radius: 10px; padding: 10px 16px; background: var(--ink); color: var(--bg); font: inherit; cursor: pointer; }
-  .tools .tgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
 </style>

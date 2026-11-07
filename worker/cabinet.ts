@@ -122,6 +122,13 @@ const CODE_MAIL: Record<string, [string, string]> = {
   ua: ['Посилання для входу у Vaxo', 'Увійти одним дотиком:\n{link}\n\nАбо введіть код: {code}\n\nОбидва працюють 15 хвилин. Якщо ви цього не запитували, просто проігноруйте лист.\n\n— Vax, Vaxo'],
 };
 
+/** The subscription invoice waiting to be paid, for the "pay" button in the cabinet. */
+async function openInvoice(db: DB, ids: number[]) {
+  if (!ids.length) return null;
+  const r = await db.prepare(`SELECT token FROM invoices WHERE lead_id IN (${ids.map(() => '?').join(',')}) AND status = 'open' AND description LIKE 'Vaxo %' ORDER BY id DESC LIMIT 1`).bind(...ids).first<{ token: string }>().catch(() => null);
+  return r ? `/invoice/?t=${r.token}` : null;
+}
+
 /** /api/me and /api/me/<action>. */
 async function myTools(db: DB, ids: number[]) {
   if (!ids.length) return [];
@@ -144,7 +151,7 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
       const ids = list.map((l) => l.id);
       const paid = await paidUsd(db, ids);
       const history = (await db.prepare(`SELECT at, kind, amount_usd FROM bonuses WHERE client_id = ? OR lead_id IN (${(ids.length ? ids : [0]).join(',')}) ORDER BY id DESC LIMIT 30`).bind(me.id).all()).results;
-      return json(200, { ok: true, signedIn: true, tools: await myTools(db, ids), ways, me: { email: me.email, name: me.name, profile: me.profile ? JSON.parse(me.profile) : null, marketing: !!me.marketing, verified: !!me.email_verified_at }, projects: list, paidUsd: paid, level: [...LEVELS].reverse().find((x) => paid >= x.from)!.id, bonus: await bonusBalance(db, me.id, ids), bonusHistory: history, rules: BONUS, levels: LEVELS, eco: await ecosystem(db, me), invite: await clientInvite(db, me.id), allowance: await allowance(db, ids).catch(() => null) });
+      return json(200, { ok: true, signedIn: true, tools: await myTools(db, ids), ways, me: { email: me.email, name: me.name, profile: me.profile ? JSON.parse(me.profile) : null, marketing: !!me.marketing, verified: !!me.email_verified_at }, projects: list, paidUsd: paid, level: [...LEVELS].reverse().find((x) => paid >= x.from)!.id, bonus: await bonusBalance(db, me.id, ids), bonusHistory: history, rules: BONUS, levels: LEVELS, eco: await ecosystem(db, me), invite: await clientInvite(db, me.id), allowance: await allowance(db, ids).catch(() => null), payUrl: await openInvoice(db, ids) });
     }
     if (ROOM_RE.test(room)) {
       const list = await projects(db, 'room = ?', room);

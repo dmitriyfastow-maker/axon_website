@@ -1,8 +1,10 @@
 // Modules (Decision 40): one click in the workspace deploys something real in the client's own account, built on the
 // owner app (worker/biz.ts). CRM: a public form at /s/<slug> feeding their request board. Partner links: a link per
 // partner, whose visits and requests count themselves through the source ref_<code>. Site: the same page as a one-page site.
+// The site is free for everyone and carries a "Made on Vaxo" line until the first payment; the rest is Care and above.
 // A page holds only escaped text and one fixed form, so nobody can publish scripts or their own forms on our domain.
 import { askAi, json as parse } from './autopilot.js';
+import { buyerRef } from './buyers.js';
 import type { AiBinding } from './chat.js';
 import type { DB } from './partner.js';
 
@@ -51,6 +53,27 @@ async function ensureBiz(db: DB, clientId: number, name: string, lang: string) {
   return b!;
 }
 
+/** CRM, partner links and the site's AI chat belong to Care and above, the free month included; the site itself stays free.
+ *  They lock when a subscription invoice goes past its due date, so a trial, a month and a paid year all end the same way. */
+export async function moduleAccess(db: DB, clientId: number): Promise<boolean> {
+  return !!(await db.prepare(`SELECT 1 FROM leads l WHERE l.client_id = ? AND l.plan IN ('care', 'growth', 'pro')
+    AND NOT EXISTS (SELECT 1 FROM invoices i WHERE i.lead_id = l.id AND i.status = 'open' AND i.description LIKE 'Vaxo %' AND i.due < date('now')) LIMIT 1`).bind(clientId).first());
+}
+
+/** The free Care month from inside the workspace: the same lead a plan button on the site makes, so billing sends the first invoice when it ends. */
+export async function startTrial(db: DB, me: { id: number; email: string | null; name: string | null }, lang: string, ref: string): Promise<boolean> {
+  if (await db.prepare(`SELECT 1 FROM leads WHERE client_id = ? AND plan IN ('care', 'growth', 'pro') LIMIT 1`).bind(me.id).first()) return false;
+  const link = ref ? await db.prepare('SELECT slug FROM links WHERE slug = ? AND active = 1').bind(ref).first<{ slug: string }>().catch(() => null) : null;
+  const contact = me.email ?? '';
+  const by = await buyerRef(db, contact, link?.slug ?? null).catch(() => link?.slug ?? null);
+  await db.prepare(`INSERT INTO leads (mode, name, contact, email_addr, interest, message, lang, ref, page, room, client_id, plan) VALUES ('request', ?, ?, ?, 'Care', '[PLAN care] Workspace', ?, ?, '/app/', ?, ?, 'care')`)
+    .bind(me.name || contact.split('@')[0] || 'Client', contact, me.email, lang in WORDS ? lang : 'en', by, hex(12), me.id).run();
+  // A site deployed before the trial gets its AI chat now: the chat answers from "about".
+  const p = await db.prepare('SELECT b.id, p.data FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(me.id).first<{ id: number; data: string }>();
+  if (p) { const s = JSON.parse(p.data) as Site; await db.prepare(`UPDATE biz SET about = COALESCE(NULLIF(about, ''), ?) WHERE id = ?`).bind([s.about, ...s.services].filter(Boolean).join('\n') || null, p.id).run(); }
+  return true;
+}
+
 export async function addRef(db: DB, clientId: number, name: string): Promise<boolean> {
   const b = await db.prepare('SELECT id FROM biz WHERE owner_id = ? ORDER BY id LIMIT 1').bind(clientId).first<{ id: number }>();
   if (!b || !name) return false;
@@ -60,7 +83,7 @@ export async function addRef(db: DB, clientId: number, name: string): Promise<bo
   return true;
 }
 
-export async function deployModule(db: DB, ai: AiBinding | undefined, clientId: number, kind: string, name: string, lang: string, memory: { niche: string; goals: string; project: string }) {
+export async function deployModule(db: DB, ai: AiBinding | undefined, clientId: number, kind: string, name: string, lang: string, memory: { niche: string; goals: string; project: string }, access: boolean) {
   const w = WORDS[lang] ?? WORDS.en;
   const biz = await ensureBiz(db, clientId, name || memory.project.slice(0, 60) || memory.niche.slice(0, 60), lang);
   if (kind === 'partner') {
@@ -74,7 +97,7 @@ Return ONLY JSON: {"title":"name or a short headline","sub":"one line: what the 
     const site = cleanSite({ title: biz.name, ...(parse<Record<string, unknown>>(t) ?? {}) }, lang);
     await db.prepare(`UPDATE biz_pages SET kind = 'site', data = ? WHERE biz_id = ?`).bind(JSON.stringify(site), biz.id).run();
     // The site's AI chat answers only from "about", so the page's own text switches it on.
-    await db.prepare(`UPDATE biz SET about = COALESCE(about, ?) WHERE id = ?`).bind([site.about, ...site.services].join('\n') || null, biz.id).run();
+    if (access) await db.prepare(`UPDATE biz SET about = COALESCE(about, ?) WHERE id = ?`).bind([site.about, ...site.services].join('\n') || null, biz.id).run();
   }
 }
 
@@ -85,7 +108,7 @@ export async function saveSite(db: DB, clientId: number, b: Record<string, unkno
   await db.prepare(`UPDATE biz_pages SET data = ? WHERE biz_id = ?`).bind(JSON.stringify(cleanSite({ ...old, ...b }, old.lang)), biz.id).run();
 }
 
-export async function modulesState(db: DB, clientId: number, origin: string) {
+export async function modulesState(db: DB, clientId: number, origin: string, access: boolean) {
   const biz = await db.prepare('SELECT b.id, b.name, p.slug, p.kind, p.data FROM biz b LEFT JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(clientId).first<{ id: number; name: string; slug: string | null; kind: string | null; data: string | null }>();
   if (!biz?.slug) return { crm: null, partner: null, site: null, biz: biz ? { id: biz.id, name: biz.name } : null };
   const url = `${origin}/s/${biz.slug}`;
@@ -97,8 +120,9 @@ export async function modulesState(db: DB, clientId: number, origin: string) {
     FROM biz_refs r WHERE r.biz_id = ? ORDER BY r.id`).bind(biz.id).all<{ name: string; code: string; visits: number; leads: number }>()).results;
   return {
     biz: { id: biz.id, name: biz.name },
-    crm: { url, total, leads },
-    partner: refs.length ? { links: refs.map((r) => ({ ...r, url: `${url}?utm_source=ref_${r.code}` })) } : null,
+    crm: access ? { url, total, leads } : null,
+    requests: total,
+    partner: access && refs.length ? { links: refs.map((r) => ({ ...r, url: `${url}?utm_source=ref_${r.code}` })) } : null,
     site: biz.kind === 'site' ? { url, ...(JSON.parse(biz.data || '{}') as Site) } : null,
   };
 }
@@ -114,7 +138,7 @@ function page(s: Site, kind: string, name: string, key: string, slug: string, in
 <header><h1>${esc(title)}</h1>${s.sub ? `<p class="sub">${esc(s.sub)}</p>` : ''}</header>
 ${site && s.about ? `<p>${esc(s.about)}</p>` : ''}${site && s.services.length ? `<ul>${s.services.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
 <form id="f"><h2>${esc(s.cta || w.fill)}</h2><input name="name" maxlength="80" placeholder="${esc(w.name)}" autocomplete="name"><input name="contact" maxlength="120" placeholder="${esc(w.contact)}" required><textarea name="message" rows="3" maxlength="1500" placeholder="${esc(w.msg)}"></textarea><button>${esc(w.send)}</button></form>
-</main><footer><a href="https://vaxogroup.com/">${esc(w.made)}</a></footer>
+</main>${index ? '' : `<footer><a href="https://vaxogroup.com/">${esc(w.made)}</a></footer>`}
 <script src="/w.js?k=${key}" async></script><script>document.getElementById('f').onsubmit=function(e){e.preventDefault();var p=document.createElement('p');p.className='ok';p.textContent=${JSON.stringify(w.done).replace(/</g, '\\u003c')};this.replaceChildren(p)}</script></body></html>`;
 }
 

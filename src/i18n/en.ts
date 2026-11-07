@@ -270,7 +270,7 @@ const en = {
     "result": "Result",
     "investment": "Creation, once",
     "mo": "",
-    "rangeNote": "Vax will name the exact price in a minute. Building is free with a yearly plan; connecting your existing site is $0.",
+    "rangeNote": "Vax will name the exact price in a minute. A one-page site is free on any plan; connecting your existing site is $0.",
     "details": "What is included",
     "strategicDetails": "What is included",
     "strategy": "What you get",
