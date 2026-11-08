@@ -7,7 +7,7 @@ import { askAi, json as parse } from './autopilot.js';
 import { buyerRef } from './buyers.js';
 import type { AiBinding } from './chat.js';
 import type { DB } from './partner.js';
-import { renderSite, styleOf } from './sitekit.js';
+import { editLayer, renderSite, styleOf } from './sitekit.js';
 
 const hex = (n: number) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => b.toString(16).padStart(2, '0')).join('');
 const cut = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
@@ -59,8 +59,14 @@ export function cleanSite(x: Record<string, unknown>, lang: string): Site {
   };
 }
 
-async function ensureBiz(db: DB, clientId: number, name: string, lang: string) {
-  let b = await db.prepare('SELECT id, name FROM biz WHERE owner_id = ? ORDER BY id LIMIT 1').bind(clientId).first<{ id: number; name: string }>();
+/** The business a call works on: the one asked for if it is theirs, otherwise their oldest. */
+export async function pickBiz(db: DB, clientId: number, bizId?: number | null) {
+  if (bizId) { const b = await db.prepare('SELECT id, name FROM biz WHERE id = ? AND owner_id = ?').bind(bizId, clientId).first<{ id: number; name: string }>(); if (b) return b; }
+  return db.prepare('SELECT id, name FROM biz WHERE owner_id = ? ORDER BY id LIMIT 1').bind(clientId).first<{ id: number; name: string }>();
+}
+
+async function ensureBiz(db: DB, clientId: number, name: string, lang: string, bizId?: number | null) {
+  let b = await pickBiz(db, clientId, bizId);
   if (!b) {
     const n = name || 'My business';
     b = await db.prepare('INSERT INTO biz (owner_id, name, key) VALUES (?, ?, ?) RETURNING id, name').bind(clientId, n, hex(12)).first<{ id: number; name: string }>();
@@ -86,13 +92,13 @@ export async function startTrial(db: DB, me: { id: number; email: string | null;
   await db.prepare(`INSERT INTO leads (mode, name, contact, email_addr, interest, message, lang, ref, page, room, client_id, plan) VALUES ('request', ?, ?, ?, 'Care', '[PLAN care] Workspace', ?, ?, '/app/', ?, ?, 'care')`)
     .bind(me.name || contact.split('@')[0] || 'Client', contact, me.email, lang in WORDS ? lang : 'en', by, hex(12), me.id).run();
   // A site deployed before the trial gets its AI chat now: the chat answers from "about".
-  const p = await db.prepare('SELECT b.id, p.data FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(me.id).first<{ id: number; data: string }>();
-  if (p) { const s = JSON.parse(p.data) as Site; await db.prepare(`UPDATE biz SET about = COALESCE(NULLIF(about, ''), ?) WHERE id = ?`).bind([s.about, ...s.services].filter(Boolean).join('\n') || null, p.id).run(); }
+  const all = (await db.prepare('SELECT b.id, p.data FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ?').bind(me.id).all<{ id: number; data: string }>()).results;
+  for (const p of all) { const s = JSON.parse(p.data) as Site; await db.prepare(`UPDATE biz SET about = COALESCE(NULLIF(about, ''), ?) WHERE id = ?`).bind([s.about, ...s.services].filter(Boolean).join('\n') || null, p.id).run(); }
   return true;
 }
 
-export async function addRef(db: DB, clientId: number, name: string): Promise<boolean> {
-  const b = await db.prepare('SELECT id FROM biz WHERE owner_id = ? ORDER BY id LIMIT 1').bind(clientId).first<{ id: number }>();
+export async function addRef(db: DB, clientId: number, name: string, bizId?: number | null): Promise<boolean> {
+  const b = await pickBiz(db, clientId, bizId);
   if (!b || !name) return false;
   const n = await db.prepare('SELECT COUNT(*) AS n FROM biz_refs WHERE biz_id = ?').bind(b.id).first<{ n: number }>();
   if ((n?.n ?? 0) >= 200) return false;
@@ -100,12 +106,12 @@ export async function addRef(db: DB, clientId: number, name: string): Promise<bo
   return true;
 }
 
-export async function deployModule(db: DB, ai: AiBinding | undefined, clientId: number, kind: string, name: string, lang: string, memory: { niche: string; goals: string; project: string }, access: boolean) {
+export async function deployModule(db: DB, ai: AiBinding | undefined, clientId: number, kind: string, name: string, lang: string, memory: { niche: string; goals: string; project: string }, access: boolean, bizId?: number | null) {
   const w = WORDS[lang] ?? WORDS.en;
-  const biz = await ensureBiz(db, clientId, name || memory.project.slice(0, 60) || memory.niche.slice(0, 60), lang);
+  const biz = await ensureBiz(db, clientId, name || memory.project.slice(0, 60) || memory.niche.slice(0, 60), lang, bizId);
   if (kind === 'partner') {
     const has = await db.prepare('SELECT 1 FROM biz_refs WHERE biz_id = ?').bind(biz.id).first();
-    if (!has) await addRef(db, clientId, w.first);
+    if (!has) await addRef(db, clientId, w.first, biz.id);
   }
   if (kind === 'site') {
     const site = await writeSite(ai, lang, `Name: ${biz.name}. Field: ${memory.niche || '?'}. Goals: ${memory.goals || '?'}. Project: ${memory.project || '?'}.`, biz.name);
@@ -144,20 +150,37 @@ export async function publishSite(db: DB, clientId: number, x: Record<string, un
 }
 
 /** The same page for the Canvas preview: no scripts, the form does nothing. */
-export const sitePreview = (s: Site) => page(s, 'site', s.title || 'Site', '', 'preview', false).replace(/<script[\s\S]*?<\/script>/g, '').replace(/<link rel="manifest"[^>]*>/, '');
+export const sitePreview = (s: Site, edit?: { ai: string; photo: string; hint: string }) => {
+  const html = renderSite({ ...s, style: styleOf(s.style || s.tone) }, { key: '', slug: 'preview', index: false, name: s.title || 'Site', edit: !!edit }).replace(/<script[\s\S]*?<\/script>/g, '').replace(/<link rel="manifest"[^>]*>/, '');
+  return edit ? html.replace('</body>', editLayer(edit) + '</body>') : html;
+};
 
 /** A site from the chat goes live at once. The first one becomes the account's main site (the one a domain attaches
  *  to); every next one is an extra page with its own address. All of them send requests to the same CRM. */
-export async function liveSite(db: DB, clientId: number, x: Record<string, unknown>, lang: string, access: boolean): Promise<string> {
-  const site = cleanSite(x, lang);
-  const main = await db.prepare('SELECT b.id, p.slug, p.kind FROM biz b LEFT JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(clientId).first<{ id: number; slug: string | null; kind: string | null }>();
-  if (!main?.slug || main.kind !== 'site') {
-    await publishSite(db, clientId, site, lang, access);
-    return (await db.prepare('SELECT p.slug FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(clientId).first<{ slug: string }>())!.slug;
+export async function liveSite(db: DB, clientId: number, x: Record<string, unknown>, lang: string, access: boolean, bizId?: number | null): Promise<{ slug: string; bizId: number }> {
+  const site = cleanSite(x, lang), w = WORDS[site.lang] ?? WORDS.en;
+  let biz = bizId ? await pickBiz(db, clientId, bizId) : null;
+  if (!biz || biz.id !== bizId) {
+    // A new business: its own key, page, CRM, partner link; the site chat switches on with the page's own text (Care).
+    biz = await db.prepare('INSERT INTO biz (owner_id, name, key) VALUES (?, ?, ?) RETURNING id, name').bind(clientId, site.title || 'My business', hex(12)).first<{ id: number; name: string }>();
+    const slug = slugOf(site.title || 'page');
+    await db.prepare(`INSERT INTO biz_pages (biz_id, slug, kind, data) VALUES (?, ?, 'site', ?)`).bind(biz!.id, slug, JSON.stringify(site)).run();
+    await addRef(db, clientId, w.first, biz!.id);
+    if (access) await db.prepare('UPDATE biz SET about = ? WHERE id = ?').bind([site.title, site.sub, site.about, ...site.services].filter(Boolean).join('\n') || null, biz!.id).run();
+    return { slug, bizId: biz!.id };
+  }
+  const main = await db.prepare('SELECT slug, kind FROM biz_pages WHERE biz_id = ?').bind(biz.id).first<{ slug: string; kind: string }>();
+  if (!main || main.kind !== 'site') {
+    // The business had only a form so far: this page becomes its main site, with an address from its own title.
+    const slug = slugOf(site.title || 'page');
+    if (main) await db.prepare(`UPDATE biz_pages SET kind = 'site', data = ?, slug = ? WHERE biz_id = ?`).bind(JSON.stringify(site), slug, biz.id).run();
+    else await db.prepare(`INSERT INTO biz_pages (biz_id, slug, kind, data) VALUES (?, ?, 'site', ?)`).bind(biz.id, slug, JSON.stringify(site)).run();
+    if (access) await db.prepare(`UPDATE biz SET about = COALESCE(NULLIF(about, ''), ?) WHERE id = ?`).bind([site.title, site.sub, site.about, ...site.services].filter(Boolean).join('\n') || null, biz.id).run();
+    return { slug, bizId: biz.id };
   }
   const slug = slugOf(site.title || 'page');
-  await db.prepare('INSERT INTO ws_sites (slug, client_id, biz_id, data) VALUES (?, ?, ?, ?)').bind(slug, clientId, main.id, JSON.stringify(site)).run();
-  return slug;
+  await db.prepare('INSERT INTO ws_sites (slug, client_id, biz_id, data) VALUES (?, ?, ?, ?)').bind(slug, clientId, biz.id, JSON.stringify(site)).run();
+  return { slug, bizId: biz.id };
 }
 
 /** Saves edits to one of the person's live pages, main or extra. False if the address is not theirs. */
@@ -180,15 +203,17 @@ export async function pageFacts(db: DB, bizId: number, path: string): Promise<{ 
   return { name: s.title, facts: [s.title, s.sub, s.about, s.services.length ? `Offer: ${s.services.join('; ')}` : ''].filter(Boolean).join('. ') };
 }
 
-export async function saveSite(db: DB, clientId: number, b: Record<string, unknown>) {
-  const biz = await db.prepare('SELECT b.id, p.data FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(clientId).first<{ id: number; data: string }>();
+export async function saveSite(db: DB, clientId: number, b: Record<string, unknown>, bizId?: number | null) {
+  const pk = await pickBiz(db, clientId, bizId);
+  const biz = pk ? await db.prepare('SELECT b.id, p.data FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.id = ?').bind(pk.id).first<{ id: number; data: string }>() : null;
   if (!biz) return;
   const old = JSON.parse(biz.data) as Site;
   await db.prepare(`UPDATE biz_pages SET data = ? WHERE biz_id = ?`).bind(JSON.stringify(cleanSite({ ...old, ...b }, old.lang)), biz.id).run();
 }
 
-export async function modulesState(db: DB, clientId: number, origin: string, access: boolean) {
-  const biz = await db.prepare('SELECT b.id, b.name, p.slug, p.kind, p.data FROM biz b LEFT JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(clientId).first<{ id: number; name: string; slug: string | null; kind: string | null; data: string | null }>();
+export async function modulesState(db: DB, clientId: number, origin: string, access: boolean, bizId?: number | null) {
+  const pk = await pickBiz(db, clientId, bizId);
+  const biz = pk ? await db.prepare('SELECT b.id, b.name, b.about, p.slug, p.kind, p.data FROM biz b LEFT JOIN biz_pages p ON p.biz_id = b.id WHERE b.id = ?').bind(pk.id).first<{ id: number; name: string; about: string | null; slug: string | null; kind: string | null; data: string | null }>() : null;
   if (!biz?.slug) return { crm: null, partner: null, site: null, biz: biz ? { id: biz.id, name: biz.name } : null };
   const url = `${origin}/s/${biz.slug}`;
   const leads = (await db.prepare('SELECT id, at, name, contact, message, source, path, status FROM biz_leads WHERE biz_id = ? ORDER BY id DESC LIMIT 30').bind(biz.id).all()).results;
@@ -197,10 +222,11 @@ export async function modulesState(db: DB, clientId: number, origin: string, acc
       (SELECT COUNT(DISTINCT sid) FROM biz_events e WHERE e.biz_id = r.biz_id AND e.type = 'pv' AND e.source = 'ref_' || r.code) AS visits,
       (SELECT COUNT(*) FROM biz_leads l WHERE l.biz_id = r.biz_id AND l.source = 'ref_' || r.code) AS leads
     FROM biz_refs r WHERE r.biz_id = ? ORDER BY r.id`).bind(biz.id).all<{ name: string; code: string; visits: number; leads: number }>()).results;
-  const extra = (await db.prepare('SELECT slug, data FROM ws_sites WHERE client_id = ? ORDER BY at DESC LIMIT 20').bind(clientId).all<{ slug: string; data: string }>().catch(() => ({ results: [] }))).results;
+  const extra = (await db.prepare('SELECT slug, data FROM ws_sites WHERE client_id = ? AND biz_id = ? ORDER BY at DESC LIMIT 20').bind(clientId, biz.id).all<{ slug: string; data: string }>().catch(() => ({ results: [] }))).results;
   const pages = [...extra.map((p) => ({ ...(JSON.parse(p.data) as Site), slug: p.slug, url: `${origin}/s/${p.slug}` })), ...(biz.kind === 'site' ? [{ ...(JSON.parse(biz.data || '{}') as Site), slug: biz.slug, url, main: true }] : [])];
   return {
     biz: { id: biz.id, name: biz.name },
+    bot: { on: !!(access && biz.about), about: biz.about || '' },
     pages,
     crm: access ? { url, total, leads } : null,
     requests: total,

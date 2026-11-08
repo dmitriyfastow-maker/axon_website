@@ -13,6 +13,9 @@ const CT = CAB_T[lang];
 
 const T = {
   en: {
+    showCv: 'Canvas', hideCv: 'Hide', full: 'Full screen', unfull: 'Normal view', domBuyH: 'No domain yet? How to buy one in 5 minutes', domBuy: ['Pick a short address like your business name, e.g. grain-coffee.com.', 'Buy it at a registrar: Cloudflare Registrar, Namecheap or Porkbun (a .com is usually about $10–12 a year). You need only a card and an email.', 'Come back here, type the address and add the one record Vaxo shows at your registrar. Vaxo checks the rest by itself.'], domAskVax: 'Ask Vax to walk me through it', domAskQ: 'Help me buy and connect my own domain to my site, step by step',
+    pubChanges: 'Publish changes', aiAsk: 'What should change in this block?', aiBusy: 'Vax is rewriting the block…', photoAsk: 'What should the photo show? (empty: Vax decides)', photoBusy: 'Drawing a new photo…', photoFail: 'Could not draw a photo now. Try later.',
+    hello3: 'Describe your business', sub3: 'One word is enough. Vax builds everything at once: a site with photos, requests in a CRM, a chat bot on the site and a partner programme.', eco: [['site', 'Site with photos'], ['doc', 'Requests in CRM'], ['reply', 'Chat bot 24/7'], ['link', 'Partner programme']], bizEx: ['Barbershop', 'Coffee shop', 'Dental clinic', 'Florist', 'Fitness studio', 'Cleaning'], exL2: 'Or any task, the result opens on the right:', ptabs: { site: 'Site', crm: 'Requests', bot: 'Chat bot', partner: 'Partners', domain: 'Domain' }, botOn: 'The chat bot works on your site', botP: 'It answers visitors 24/7 from the text of your site, and a contact left in the chat becomes a request in your CRM.', botKnows: 'What it knows', botTry: 'Try it on the site', botNoSite: 'Build the site first: describe the business in the chat.', fold: 'Fold', unfold: 'Unfold',
     map: 'Map of everything', newProj: 'New project', projName: 'Project name', noProj: 'No project', projEmpty: 'Empty. Start a chat here from ⋯', newChatIn: 'New chat in this project', mat: 'Materials', reply: 'Reply', pin: 'Pin', unpin: 'Unpin', fwd: 'Forward', copyMsg: 'Copy', fwdTo: 'Forward to a chat', fwdNew: 'New chat', fwdDone: 'Forwarded', fwdOpen: 'Open', pinned: 'Pinned', replyTo: 'Reply to', fwdFrom: 'Forwarded from', rename: 'Rename', moveTo: 'Move to project', chatMenu: 'Actions', delProjQ: 'Delete the project? Its chats stay, without a project.', matTabs: { site: 'Sites', tool: 'Tools', doc: 'Documents', image: 'Pictures', link: 'Links', file: 'Files', pin: 'Pinned' }, matNone: 'Nothing here yet.', mapEmpty: 'No chats yet. Everything Vax makes will appear here.', mapK: { site: 'live sites', crm: 'requests', tool: 'tools', doc: 'documents', image: 'pictures' },
     fK: 'Line above the headline', styles: { editorial: 'Premium dark', clinic: 'Clean', bold: 'Bold', soft: 'Warm', nature: 'Natural' },
     needSite: 'Where should requests from your site go? Enter your email: we send a code, and the site goes live at once on its own address.',
@@ -40,6 +43,9 @@ const T = {
     sH: 'Sign in to Vaxo', sP: 'Enter your email. We send a link: one tap and you are in. No password.', sEmail: 'Your email', sGo: 'Send the link', sSent: 'Check your email and tap the link. Or enter the code from the letter:', sCode: 'Six-digit code', sIn: 'Sign in', sBad: 'Check the email address.', sWrong: 'Wrong or expired code.', sWait: 'Wait a minute and try again.', sPw: 'Sign in with a password', sAgree: 'By continuing you accept the', terms: 'Terms', and: 'and', privacy: 'Privacy Policy',
   },
   ru: {
+    showCv: 'Холст', hideCv: 'Скрыть', full: 'На весь экран', unfull: 'Обычный вид', domBuyH: 'Нет домена? Как купить за 5 минут', domBuy: ['Придумайте короткий адрес, как название бизнеса, например zerno-coffee.com. Для Украины подойдёт и .com.ua.', 'Купите его у регистратора: Cloudflare Registrar, Namecheap или Porkbun (.com обычно около $10–12 в год), для .ua — imena.ua. Нужны только карта и почта.', 'Вернитесь сюда, впишите адрес и добавьте у регистратора одну запись, которую покажет Vaxo. Остальное Vaxo проверит сам.'], domAskVax: 'Попросить Vax провести по шагам', domAskQ: 'Помоги купить и подключить свой домен к моему сайту, по шагам',
+    pubChanges: 'Опубликовать изменения', aiAsk: 'Что изменить в этом блоке?', aiBusy: 'Vax переписывает блок…', photoAsk: 'Что показать на фото? (пусто — Vax решит сам)', photoBusy: 'Рисую новое фото…', photoFail: 'Сейчас не получилось нарисовать фото. Попробуйте позже.',
+    hello3: 'Опишите свой бизнес', sub3: 'Хватит одного слова. Vax соберёт всё сразу: сайт с фото, заявки в CRM, чат-бот на сайте и партнёрскую программу.', eco: [['site', 'Сайт с фото'], ['doc', 'Заявки в CRM'], ['reply', 'Чат-бот 24/7'], ['link', 'Партнёрская программа']], bizEx: ['Барбершоп', 'Кофейня', 'Стоматология', 'Цветочный магазин', 'Фитнес-студия', 'Клининг'], exL2: 'Или любая задача, результат откроется справа:', ptabs: { site: 'Сайт', crm: 'Заявки', bot: 'Чат-бот', partner: 'Партнёры', domain: 'Домен' }, botOn: 'Чат-бот работает на вашем сайте', botP: 'Отвечает посетителям 24/7 по тексту вашего сайта, а оставленный в чате контакт становится заявкой в CRM.', botKnows: 'Что он знает', botTry: 'Проверить на сайте', botNoSite: 'Сначала соберите сайт: опишите бизнес в чате.', fold: 'Свернуть', unfold: 'Развернуть',
     map: 'Карта всего', newProj: 'Новый проект', projName: 'Название проекта', noProj: 'Без проекта', projEmpty: 'Пусто. Новый разговор здесь — через ⋯', newChatIn: 'Новый разговор в проекте', mat: 'Материалы', reply: 'Ответить', pin: 'Закрепить', unpin: 'Открепить', fwd: 'Переслать', copyMsg: 'Копировать', fwdTo: 'Переслать в разговор', fwdNew: 'Новый разговор', fwdDone: 'Переслано', fwdOpen: 'Открыть', pinned: 'Закреплено', replyTo: 'Ответ на', fwdFrom: 'Переслано из', rename: 'Переименовать', moveTo: 'Перенести в проект', chatMenu: 'Действия', delProjQ: 'Удалить проект? Разговоры останутся, без проекта.', matTabs: { site: 'Сайты', tool: 'Инструменты', doc: 'Документы', image: 'Картинки', link: 'Ссылки', file: 'Файлы', pin: 'Закреплённые' }, matNone: 'Здесь пока пусто.', mapEmpty: 'Разговоров пока нет. Всё, что сделает Vax, появится здесь.', mapK: { site: 'живых сайтов', crm: 'заявок', tool: 'инструментов', doc: 'документов', image: 'картинок' },
     fK: 'Строка над заголовком', styles: { editorial: 'Премиум тёмный', clinic: 'Чистый', bold: 'Дерзкий', soft: 'Тёплый', nature: 'Природный' },
     needSite: 'Куда присылать заявки с сайта? Введите почту: пришлём код, и сайт сразу заработает по своей ссылке.',
@@ -67,6 +73,9 @@ const T = {
     sH: 'Вход в Vaxo', sP: 'Введите почту. Пришлём ссылку: одно нажатие, и вы внутри. Без пароля.', sEmail: 'Ваша почта', sGo: 'Прислать ссылку', sSent: 'Проверьте почту и нажмите ссылку. Или введите код из письма:', sCode: 'Код из шести цифр', sIn: 'Войти', sBad: 'Проверьте адрес почты.', sWrong: 'Код неверный или устарел.', sWait: 'Подождите минуту и попробуйте снова.', sPw: 'Войти с паролем', sAgree: 'Продолжая, вы принимаете', terms: 'Условия', and: 'и', privacy: 'Политику конфиденциальности',
   },
   ua: {
+    showCv: 'Полотно', hideCv: 'Сховати', full: 'На весь екран', unfull: 'Звичайний вигляд', domBuyH: 'Немає домену? Як купити за 5 хвилин', domBuy: ['Придумайте коротку адресу, як назва бізнесу, наприклад zerno-coffee.com. Для України підійде й .com.ua.', 'Купіть її в реєстратора: Cloudflare Registrar, Namecheap або Porkbun (.com зазвичай близько $10–12 на рік), для .ua — imena.ua. Потрібні лише картка й пошта.', 'Поверніться сюди, впишіть адресу й додайте в реєстратора один запис, який покаже Vaxo. Решту Vaxo перевірить сам.'], domAskVax: 'Попросити Vax провести по кроках', domAskQ: 'Допоможи купити й підключити свій домен до мого сайту, по кроках',
+    pubChanges: 'Опублікувати зміни', aiAsk: 'Що змінити в цьому блоці?', aiBusy: 'Vax переписує блок…', photoAsk: 'Що показати на фото? (порожньо — Vax вирішить сам)', photoBusy: 'Малюю нове фото…', photoFail: 'Зараз не вийшло намалювати фото. Спробуйте пізніше.',
+    hello3: 'Опишіть свій бізнес', sub3: 'Досить одного слова. Vax збере все одразу: сайт із фото, заявки в CRM, чат-бот на сайті й партнерську програму.', eco: [['site', 'Сайт із фото'], ['doc', 'Заявки в CRM'], ['reply', 'Чат-бот 24/7'], ['link', 'Партнерська програма']], bizEx: ['Барбершоп', 'Кавʼярня', 'Стоматологія', 'Квітковий магазин', 'Фітнес-студія', 'Клінінг'], exL2: 'Або будь-яке завдання, результат відкриється праворуч:', ptabs: { site: 'Сайт', crm: 'Заявки', bot: 'Чат-бот', partner: 'Партнери', domain: 'Домен' }, botOn: 'Чат-бот працює на вашому сайті', botP: 'Відповідає відвідувачам 24/7 за текстом вашого сайту, а залишений у чаті контакт стає заявкою в CRM.', botKnows: 'Що він знає', botTry: 'Перевірити на сайті', botNoSite: 'Спершу зберіть сайт: опишіть бізнес у чаті.', fold: 'Згорнути', unfold: 'Розгорнути',
     map: 'Карта всього', newProj: 'Новий проєкт', projName: 'Назва проєкту', noProj: 'Без проєкту', projEmpty: 'Порожньо. Нова розмова тут — через ⋯', newChatIn: 'Нова розмова в проєкті', mat: 'Матеріали', reply: 'Відповісти', pin: 'Закріпити', unpin: 'Відкріпити', fwd: 'Переслати', copyMsg: 'Копіювати', fwdTo: 'Переслати в розмову', fwdNew: 'Нова розмова', fwdDone: 'Переслано', fwdOpen: 'Відкрити', pinned: 'Закріплено', replyTo: 'Відповідь на', fwdFrom: 'Переслано з', rename: 'Перейменувати', moveTo: 'Перенести в проєкт', chatMenu: 'Дії', delProjQ: 'Видалити проєкт? Розмови залишаться, без проєкту.', matTabs: { site: 'Сайти', tool: 'Інструменти', doc: 'Документи', image: 'Картинки', link: 'Посилання', file: 'Файли', pin: 'Закріплені' }, matNone: 'Тут поки порожньо.', mapEmpty: 'Розмов поки немає. Усе, що зробить Vax, зʼявиться тут.', mapK: { site: 'живих сайтів', crm: 'заявок', tool: 'інструментів', doc: 'документів', image: 'картинок' },
     fK: 'Рядок над заголовком', styles: { editorial: 'Преміум темний', clinic: 'Чистий', bold: 'Зухвалий', soft: 'Теплий', nature: 'Природний' },
     needSite: 'Куди надсилати заявки з сайту? Введіть пошту: надішлемо код, і сайт одразу запрацює за своїм посиланням.',
@@ -112,10 +121,9 @@ const ico = {
       <button class="nav mapbtn" type="button" data-map><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.map}</button>
       <div class="lblrow"><p class="lbl">{T.chats}</p><button class="addp" type="button" data-newproj title={T.newProj} aria-label={T.newProj}>+</button></div>
       <nav class="chats" data-chats></nav>
-      <p class="lbl">{T.mods}</p>
-      {(['site', 'crm', 'partner'] as const).map((k) => <button class="nav" type="button" data-panel={k}><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d={ico[k]} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{k === 'partner' ? T.parCab : T[k]}<i data-dot={k} hidden></i></button>)}
       <p class="lbl">{T.you}</p>
       <button class="nav" type="button" data-prof="memory"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d={ico.memory} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.memory}</button>
+      <button class="nav" type="button" data-earn><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 3v18M17 7H9.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.earn}</button>
       <button class="nav" type="button" data-prof="plan"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d={ico.user} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.profile}</button>
       <div class="foot">
         <button class="usage" type="button" data-usage data-prof="plan" hidden></button>
@@ -136,9 +144,9 @@ const ico = {
           <button type="button" data-mode="short">{T.short}</button>
           <button type="button" data-mode="deep">{T.deep}</button>
         </div>
-        <button class="ic" type="button" data-del aria-label={T.del} title={T.del} hidden>🗑</button>
-        <button class="ic" type="button" data-mat aria-label={T.mat} title={T.mat} hidden><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg></button>
-        <button class="ic" type="button" data-cv aria-label={T.canvas} title={T.canvas}>▣</button>
+        <button class="ic" type="button" data-del aria-label={T.del} title={T.del} hidden style="display:none"></button>
+        <button class="tb" type="button" data-mat hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg><span>{T.mat}</span></button>
+        <button class="tb" type="button" data-cv><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 4h18v16H3zM14 4v16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg><span data-cv-label>{T.showCv}</span></button>
       </header>
       <button class="pins" type="button" data-pins hidden></button>
       <div class="log" data-log aria-live="polite"></div>
@@ -152,7 +160,7 @@ const ico = {
     </main>
 
     <aside class="cv" data-canvas hidden>
-      <header><b data-cv-title>{T.canvas}</b><button class="ic" type="button" data-cv-x aria-label={T.close}>×</button></header>
+      <header><b data-cv-title>{T.canvas}</b><div class="cvact"><button class="tb" type="button" data-cv-full><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg><span data-cv-full-label>{T.full}</span></button><button class="tb" type="button" data-cv-x><span>{T.hideCv}</span> ×</button></div></header>
       <div class="cvb" data-cv-body></div>
     </aside>
 
@@ -203,10 +211,10 @@ const ico = {
 
   type R = Record<string, any>;
   type Doc = { title: string; body: string };
-  type Site = { lang?: string; tone: string; style?: string; kicker?: string; details?: string[]; title: string; sub: string; about: string; services: string[]; cta: string; ask?: string; url?: string; slug?: string };
+  type Site = { lang?: string; tone: string; style?: string; kicker?: string; details?: string[]; steps?: string[]; faq?: { q: string; a: string }[]; imgs?: string[]; img?: string; promise?: string; title: string; sub: string; about: string; services: string[]; cta: string; ask?: string; url?: string; slug?: string };
   type Msg = { id?: number; role: 'user' | 'assistant'; content: string; tool?: ToolSpec; doc?: Doc; image?: string; deploy?: string; site?: Site; pub?: string; pinned?: boolean };
   type Chat = { id: number; title: string; msgs?: Msg[]; project?: number };
-  type Proj = { id: number; name: string };
+  type Proj = { id: number; name: string; biz?: number | null };
   type Mem = { niche: string; goals: string; project: string; limits: string };
 
   const root = document.querySelector<HTMLElement>('[data-ws]')!;
@@ -227,7 +235,7 @@ const ico = {
   const room = params.get('t') || '';
 
   const blank: Mem = { niche: '', goals: '', project: '', limits: '' };
-  const S = { signed: false, email: '', verified: false, chats: [] as Chat[], cur: 0, msgs: [] as Msg[], memory: { ...blank }, mode: 'short', mods: null as R | null, access: false, busy: false, plan: 'start', projects: [] as Proj[], objects: [] as any[], reply: null as null | { text: string }, pendingProject: 0, usage: null as null | { day: { pct: number; reset: string }; week: { pct: number; reset: string } } };
+  const S = { signed: false, email: '', verified: false, chats: [] as Chat[], cur: 0, msgs: [] as Msg[], memory: { ...blank }, mode: 'short', mods: null as R | null, access: false, busy: false, plan: 'start', projects: [] as Proj[], objects: [] as any[], reply: null as null | { text: string }, pendingProject: 0, proj: null as null | { id: number; name: string; biz: number | null }, usage: null as null | { day: { pct: number; reset: string }; week: { pct: number; reset: string } } };
   let ME: R = {};
 
   const log = $('[data-log]'), form = $<HTMLFormElement>('[data-form]'), input = form.querySelector('textarea')!;
@@ -269,7 +277,6 @@ const ico = {
     const w = $('[data-who]');
     if (S.signed) w.replaceChildren(el('small', '', S.email));
     else w.replaceChildren(btn('pri', T.signin, () => openSign()), el('small', '', T.guest));
-    for (const k of ['crm', 'partner', 'site']) $(`[data-dot=${k}]`).hidden = !S.mods?.[k];
     drawUsage();
   }
   function drawMode() { root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => b.classList.toggle('on', b.dataset.mode === S.mode)); }
@@ -318,8 +325,10 @@ const ico = {
       const sec = el('div', 'proj');
       if (g.p) {
         const p = g.p, open = !closed.has(p.id), head = el('div', 'phead');
-        const t = btn('ptitle', '', () => { if (open) closed.add(p.id); else closed.delete(p.id); keepClosed(); drawChats(); });
-        t.innerHTML = `<span class="car">${open ? '▾' : '▸'}</span>`; t.append(el('span', 'pn', p.name), el('i', 'cnt', String(g.chats.length)));
+        const car = btn('car2', open ? '▾' : '▸', () => { if (open) closed.add(p.id); else closed.delete(p.id); keepClosed(); drawChats(); }); car.setAttribute('aria-label', open ? T.fold : T.unfold);
+        const t = btn('ptitle' + (S.proj?.id === p.id ? ' on' : ''), '', () => { side(false); openProject(p.id, 'site'); });
+        t.append(el('span', 'pn', p.name), el('i', 'cnt', String(g.chats.length)));
+        head.append(car);
         const more = btn('dots', '⋯', () => projMenu(p, more));
         head.append(t, more); sec.append(head);
         if (open) for (const c of g.chats) sec.append(chatNode(c));
@@ -506,18 +515,15 @@ const ico = {
   const TILE_ICO: R = { site: 'M3 5h18v14H3zM3 9h18', crm: 'M4 5h16v3H4zm0 5.5h10v3H4zM4 16h7v3H4z', partner: 'M10 13a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7L12 6m2 5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7L12 18' };
   function drawEmpty() {
     const box = el('div', 'hi');
-    box.append(el('h1', '', T.hello2), el('p', '', T.sub2));
-    const g = el('div', 'tiles');
-    for (const k of ['site', 'crm', 'partner']) {
-      const b = btn('tile', '', () => panel(k));
-      b.innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="${TILE_ICO[k]}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-      b.append(el('b', '', T.tiles[k][0]), el('small', '', T.tiles[k][1]));
-      g.append(b);
-    }
+    box.append(el('h1', '', T.hello3), el('p', '', T.sub3));
+    const eco = el('div', 'eco');
+    for (const [k, t] of T.eco as [string, string][]) { const c = el('div', 'ecoi'); c.innerHTML = ico(k, 18); c.append(el('span', '', t)); eco.append(c); }
+    const biz = el('div', 'bizs');
+    for (const b of T.bizEx as string[]) biz.append(btn('bchip', b, () => ask(T.siteAsk + b)));
     const ex = el('div', 'ex');
-    ex.append(el('p', '', T.exL));
-    for (const q of T.ex as string[]) ex.append(btn('exb', q + ' →', () => ask(q)));
-    box.append(g, ex);
+    ex.append(el('p', '', T.exL2));
+    for (const q of (T.ex as string[]).slice(1)) ex.append(btn('exb', q + ' →', () => ask(q)));
+    box.append(eco, biz, ex);
     log.replaceChildren(box);
   }
   function acard(label: string, title: string, go: () => void) {
@@ -555,6 +561,7 @@ const ico = {
       const d = await (await fetch('/api/ws/chat/' + id)).json().catch(() => null);
       S.msgs = d?.msgs || [];
     } else S.msgs = c?.msgs || [];
+    await useProject(c?.project);
     drawChats(); drawAll();
     const last = [...S.msgs].reverse().find(hasArt);
     if (last && matchMedia('(min-width: 1100px)').matches) showArt(last); else if (matchMedia('(min-width: 1100px)').matches) studio(); else closeCv();
@@ -584,6 +591,13 @@ const ico = {
           if (S.pendingProject) post(`/api/ws/chat/${d.chat}/move`, { project: S.pendingProject });
           S.pendingProject = 0;
         }
+        if (d.project) {
+          let pj = S.projects.find((x) => x.id === d.project.id);
+          if (!pj) { pj = { id: d.project.id, name: d.project.name, biz: d.project.biz }; S.projects.push(pj); } else pj.biz = d.project.biz;
+          const ch = S.chats.find((c) => c.id === S.cur); if (ch) ch.project = pj.id;
+          closed.delete(pj.id); keepClosed();
+          await useProject(pj.id);
+        }
         if (S.signed && (d.tool || d.doc || d.site || d.image)) S.objects.unshift({ id: d.id, chat: d.chat, kind: d.site ? 'site' : d.tool ? 'tool' : d.doc ? 'doc' : 'image', title: d.site?.title || d.tool?.title || d.doc?.title || '', url: d.site?.url });
       }
     } catch { /* the message above says so */ }
@@ -601,8 +615,8 @@ const ico = {
   }
 
   /* ---------- Canvas ---------- */
-  function openCv(title: string, ...body: Node[]) { cvTitle.textContent = title; parkBiz(); cvBody.replaceChildren(...body); cv.hidden = false; root.classList.add('wide'); side(false); }
-  function closeCv() { parkBiz(); cv.hidden = true; root.classList.remove('wide'); }
+  function openCv(title: string, ...body: Node[]) { cvTitle.textContent = title; parkBiz(); cvBody.replaceChildren(...body); cv.hidden = false; root.classList.add('wide'); side(false); $('[data-cv-label]').textContent = T.hideCv; }
+  function closeCv() { parkBiz(); cv.hidden = true; root.classList.remove('wide', 'cvfull'); $('[data-cv-label]').textContent = T.showCv; $('[data-cv-full-label]').textContent = T.full; }
   function parkBiz() { if (bizbox.parentElement !== root) { bizbox.hidden = true; root.append(bizbox); } }
   const needSign = (kind?: string) => { if (kind) { try { sessionStorage.setItem(PEND, kind); } catch {} } openSign(T.needIn); };
 
@@ -661,7 +675,8 @@ const ico = {
   }
 
   function showArt(m: Msg) {
-    if (m.site) { siteView(m.site, m); return; }
+    // A site of the current business opens inside its project, with the project's tabs on top.
+    if (m.site) { if (S.proj?.biz && m.site.url) openProject(S.proj.id, 'site', () => siteView(m.site!, m)); else siteView(m.site, m); return; }
     const parts: Node[] = [];
     if (m.tool) parts.push(toolView(m.tool));
     if (m.doc) parts.push(docView(m));
@@ -675,15 +690,49 @@ const ico = {
     return l;
   };
   // A fresh frame that already holds the page before it goes on screen: filling a frame just inserted can lose its content.
-  function previewFrame(html: string, title: string) {
-    const f = el('iframe', 'prev'); f.setAttribute('sandbox', ''); f.title = title; f.srcdoc = html;
+  function previewFrame(html: string, title: string, edit = false) {
+    // Editable preview: scripts run inside, but the frame has no access to our page; it only sends messages.
+    const f = el('iframe', 'prev'); f.setAttribute('sandbox', edit ? 'allow-scripts' : ''); f.title = title; f.srcdoc = html;
     return f;
   }
+  let siteMsg: ((e: MessageEvent) => void) | null = null;
   function siteView(src: Site, m?: Msg, opts: { studio?: boolean } = {}) {
     const site: Site = { ...src, services: [...(src.services || [])] };
     const frame = el('div', 'prevbox');
     let timer = 0;
-    const paint = async () => { const { d } = await postJ('/api/ws/site/preview', { site, lang }); if (d.html) frame.replaceChildren(previewFrame(d.html, T.siteCard)); };
+    const paint = async () => { const { d } = await postJ('/api/ws/site/preview', { site, lang: site.lang || lang, edit: true, ui: lang }); if (d.html) frame.replaceChildren(previewFrame(d.html, T.siteCard, true)); };
+    // Editing in place: a text typed on the page, "change with Vax", "replace photo" — all arrive as messages from the frame.
+    const S2 = site as R;
+    const setField = (k: string, v: string) => {
+      const [f, i, sub] = k.split('.');
+      if (f === 'faq') { const a = [...(S2.faq || [])]; a[+i] = { ...(a[+i] || {}), [sub]: v }; S2.faq = a; }
+      else if (i !== undefined) { const a = [...(S2[f] || [])]; a[+i] = v; S2[f] = a; }
+      else S2[f] = v;
+      const field = (edits.querySelector(`[name="${f}"]`) as HTMLInputElement | null);
+      if (field && i === undefined) field.value = v;
+      if (field && (f === 'services' || f === 'details')) field.value = (S2.services || []).map((t: string, n: number) => (S2.details?.[n] ? `${t} — ${S2.details[n]}` : t)).join('\n');
+      dirty();
+    };
+    const dirty = () => { if (site.url) { save.textContent = T.pubChanges; save.classList.add('hot'); } };
+    if (siteMsg) removeEventListener('message', siteMsg);
+    siteMsg = async (e: MessageEvent) => {
+      const ifr = frame.querySelector('iframe'); if (!ifr || e.source !== ifr.contentWindow || !e.data?.vx) return;
+      const d = e.data as R;
+      if (d.t === 'edit') setField(String(d.k), String(d.v || ''));
+      if (d.t === 'ai') {
+        const wish = (prompt(T.aiAsk) || '').trim(); if (!wish) return;
+        toast(T.aiBusy);
+        const { d: r } = await postJ('/api/ws/site/edit', { site, k: d.k, v: d.v, wish, lang: site.lang || lang });
+        if (r.v) { setField(String(d.k), r.v); paint(); } else toast(T.depFail);
+      }
+      if (d.t === 'img') {
+        const wish = prompt(T.photoAsk, ''); if (wish === null) return;
+        toast(T.photoBusy);
+        const { d: r } = await postJ('/api/ws/site/photo', { site, wish, lang: site.lang || lang });
+        if (r.id) { const a = [...(S2.imgs || [])]; a[+d.i] = r.id; S2.imgs = a; S2.img = a[0]; paint(); dirty(); } else toast(T.photoFail);
+      }
+    };
+    addEventListener('message', siteMsg);
     const f = el('form', 'pf');
     const lines = site.services.map((t, i) => (site.details?.[i] ? `${t} — ${site.details[i]}` : t)).join('\n');
     f.append(field(T.fT, 'title', site.title), field(T.fK, 'kicker', site.kicker || ''), field(T.fS, 'sub', site.sub), field(T.fA, 'about', site.about, true), field(T.fL, 'services', lines, true), field(T.fC, 'cta', site.cta), field(T.fAsk, 'ask', site.ask || ''));
@@ -705,10 +754,10 @@ const ico = {
     };
     const save = btn('sec', T.saveSite, async () => {
       save.disabled = true; save.textContent = T.pubBusy;
-      const { d } = await postJ('/api/ws/site/publish', { site, lang, id: m?.id, slug: site.slug });
+      const { d } = await postJ('/api/ws/site/publish', { site, lang, id: m?.id, slug: site.slug, biz: S.proj?.biz });
       save.disabled = false;
       if (!d.ok) { save.textContent = T.saveSite; err.textContent = T.depFail; return; }
-      S.mods = d.modules; save.textContent = T.saved; setTimeout(() => (save.textContent = T.saveSite), 1500);
+      S.mods = d.modules; save.classList.remove('hot'); save.textContent = T.pubDone; setTimeout(() => (save.textContent = T.saveSite), 1800);
       if (m) m.site = { ...site };
     });
     const pub = btn('pri', T.pub, async () => {
@@ -716,11 +765,11 @@ const ico = {
       if (!S.signed) { try { localStorage.setItem(SITE_PEND, JSON.stringify({ site, at: Date.now() })); } catch {} openSign(T.needSite); return; }
       if (!S.verified) { err.textContent = T.needMail; return; }
       pub.disabled = true; pub.textContent = T.pubBusy; err.textContent = '';
-      const { d } = await postJ('/api/ws/site/publish', { site, lang, id: m?.id });
+      const { d } = await postJ('/api/ws/site/publish', { site, lang, id: m?.id, project: S.proj?.id });
       pub.disabled = false; pub.textContent = T.pub;
       if (!d.ok) { err.textContent = d.error === 'verify' ? T.needMail : T.depFail; return; }
       Object.assign(site, { url: d.url, slug: d.slug });
-      S.mods = d.modules; drawWho(); drawTop(); edits.open = false;
+      S.mods = d.modules; if (d.project) { if (!S.projects.some((x) => x.id === d.project.id)) S.projects.push(d.project); S.proj = d.project; drawChats(); } drawWho(); drawTop(); edits.open = false;
       if (m) { m.site = { ...site }; saveGuest(); }
     });
     f.oninput = () => {
@@ -749,6 +798,7 @@ const ico = {
     ua: { tone: 'warm', title: 'Кавʼярня «Зерно»', sub: 'Кава з собою без черги', about: 'Замовте заздалегідь і заберіть за дві хвилини.', services: ['Еспресо й капучино', 'Свіжа випічка', 'Зерно додому'], cta: 'Передзамовлення', ask: 'Що і на котру годину?' },
   };
   function studio() {
+    if (S.proj?.biz) { openProject(S.proj.id, 'site'); return; }
     const page = (S.mods?.pages || [])[0];
     if (page) { siteView(page, undefined, { studio: true }); return; }
     const frame = el('div', 'prevbox');
@@ -771,12 +821,15 @@ const ico = {
         if (!x.ready) { body.replaceChildren(el('p', 'hint', CT.domP), el('p', 'hint', CT.domSoon)); return; }
         const f = el('form', 'add'), i = el('input'); i.name = 'host'; i.required = true; i.maxLength = 253; i.placeholder = CT.domPh; i.setAttribute('aria-label', CT.domS1); i.autocomplete = 'off';
         const go = el('button', 'pri sm', CT.domGo); f.append(i, go);
-        f.onsubmit = async (e) => { e.preventDefault(); msg.textContent = ''; go.disabled = true; const { d: j } = await postJ('/api/ws/domain', { host: i.value }); go.disabled = false; if (j.ok) draw(j); else msg.textContent = ({ bad: CT.domBad, taken: CT.domTaken, plan: CT.domLock, soon: CT.domSoon } as R)[j.error] || CT.domFail; };
-        body.replaceChildren(el('p', 'hint', CT.domP), el('small', '', CT.domS1), f); return;
+        f.onsubmit = async (e) => { e.preventDefault(); msg.textContent = ''; go.disabled = true; const { d: j } = await postJ('/api/ws/domain', { host: i.value, biz: S.proj?.biz }); go.disabled = false; if (j.ok) draw(j); else msg.textContent = ({ bad: CT.domBad, taken: CT.domTaken, plan: CT.domLock, soon: CT.domSoon } as R)[j.error] || CT.domFail; };
+        const help = el('details', 'edits'); help.append(el('summary', '', T.domBuyH));
+        const ol = el('ol', 'dsteps'); for (const st of T.domBuy as string[]) ol.append(el('li', '', st)); help.append(ol);
+        help.append(btn('sec', T.domAskVax, () => { closeCv(); ask(T.domAskQ); }));
+        body.replaceChildren(el('p', 'hint', CT.domP), el('small', '', CT.domS1), f, help); return;
       }
       const on = d.status === 'active';
       const head = el('p', on ? 'ok' : 'hint', on ? '✓ ' + CT.domOn : CT.domWait);
-      const off = btn('lnk', CT.domOff, async () => { const { d: j } = await postJ('/api/ws/domain/delete', {}); if (j.ok) draw(j); });
+      const off = btn('lnk', CT.domOff, async () => { const { d: j } = await postJ('/api/ws/domain/delete', { biz: S.proj?.biz }); if (j.ok) draw(j); });
       if (on) { body.replaceChildren(head, linkRow(`https://${d.host}`), off); return; }
       const rec = d.record;
       const table = el('div', 'dns');
@@ -784,7 +837,7 @@ const ico = {
       body.replaceChildren(el('b', '', d.host), el('small', '', CT.domS2), table, el('p', 'hint', CT.domWhere), ...(d.apex ? [el('p', 'hint', CT.domApex)] : []), ...(d.error ? [el('p', 'hint', /CNAME/i.test(d.error) ? CT.domNoCname : CT.domErr + d.error)] : []), head, btn('sec', CT.domCheck, load), off);
       domTimer = window.setTimeout(() => { if (box.isConnected) load(); }, 30000);
     };
-    const load = async () => { const j = await fetch('/api/ws/domain').then((r) => r.json()).catch(() => null); if (j?.ok) draw(j); };
+    const load = async () => { const j = await fetch('/api/ws/domain' + (S.proj?.biz ? `?biz=${S.proj.biz}` : '')).then((r) => r.json()).catch(() => null); if (j?.ok) draw(j); };
     load();
     return box;
   }
@@ -816,7 +869,7 @@ const ico = {
     const b = btn('pri', T.dep, async () => {
       if (!S.signed) { needSign(kind); return; }
       b.disabled = true; b.textContent = T.depBusy;
-      const { d } = await postJ('/api/ws/module', { kind, name: name.value, lang });
+      const { d } = await postJ('/api/ws/module', { kind, name: name.value, lang, biz: S.proj?.biz });
       b.disabled = false; b.textContent = T.dep;
       if (d?.ok) { S.mods = d.modules; drawWho(); panel(kind); } else err.textContent = d?.error === 'verify' ? T.needMail : T.depFail;
     });
@@ -861,21 +914,8 @@ const ico = {
     const sec2 = el('section', 'blk');
     const go = el('a', 'pri sm', T.parGo) as HTMLAnchorElement; go.href = `${pre}/partners/`;
     sec2.append(el('p', 'hint', T.parVaxo), go);
-    // 3) Their own partners: a link per partner with visits and requests.
-    const sec3 = el('section', 'blk');
-    sec3.append(el('h3', '', T.parMine));
-    const p = S.mods?.partner;
-    if (!p) sec3.append(deployCard('partner', T.parP));
-    else {
-      for (const l of p.links) { const r = el('div', 'lead col'); r.append(el('b', '', l.name), linkRow(l.url), el('small', '', `${T.visits}: ${l.visits} · ${T.leads}: ${l.leads}`)); sec3.append(r); }
-      const f = el('form', 'add'), i = el('input'), b = el('button', 'sec', T.parAdd);
-      i.placeholder = T.parName; i.maxLength = 80; i.required = true; i.setAttribute('aria-label', T.parName);
-      f.append(i, b);
-      f.onsubmit = async (e) => { e.preventDefault(); const { d } = await postJ('/api/ws/module/ref', { name: i.value }); if (d?.modules) { S.mods = d.modules; partnerPanel(); } };
-      sec3.append(f);
-    }
-    box.append(sec1, sec2, sec3);
-    openCv(T.parCab, box);
+    box.append(sec1, sec2);
+    openCv(T.earn, box);
   }
 
   function sitePanel() {
@@ -886,13 +926,69 @@ const ico = {
     i.required = true; i.maxLength = 200; i.placeholder = T.siteNew; i.setAttribute('aria-label', T.siteNew);
     i.value = [S.memory.project, S.memory.niche].filter(Boolean).join(', ').slice(0, 200);
     box.append(el('p', '', T.siteP), i, el('button', 'pri', T.siteNewGo));
-    box.onsubmit = (e) => { e.preventDefault(); ask(T.siteAsk + i.value); };
+    box.onsubmit = (e) => { e.preventDefault(); if (S.proj && !S.msgs.length) S.pendingProject = S.proj.id; ask(T.siteAsk + i.value); };
     openCv(T.siteH, box);
   }
 
   function panel(k: string) {
     if (k === 'memory') { openProf('memory'); return; }
-    ({ crm: crmPanel, partner: partnerPanel, site: sitePanel } as Record<string, () => void>)[k]?.();
+    if (k === 'earn') { partnerPanel(); return; }
+    const pid = S.proj?.id || S.projects.find((p) => p.biz)?.id;
+    if (pid && PTABS.includes(k)) { openProject(pid, k); return; }
+    if (k === 'partner') { partnerPanel(); return; }
+    sitePanel();
+  }
+
+  /* ---------- A project is a business (Decision 46): its site, requests, site chat, partners, domain ---------- */
+  async function useProject(pid?: number | null) {
+    const p = pid ? S.projects.find((x) => x.id === pid) : undefined;
+    S.proj = p ? { id: p.id, name: p.name, biz: p.biz ?? null } : null;
+    S.mods = null;
+    if (p && S.signed) {
+      const d = await fetch(`/api/ws/project/${p.id}/state`).then((r) => r.json()).catch(() => null);
+      if (d?.ok) { S.mods = d.modules; S.access = !!d.access; if (d.project?.biz) { p.biz = d.project.biz; S.proj!.biz = d.project.biz; } }
+    }
+  }
+  const PTABS = ['site', 'crm', 'bot', 'partner', 'domain'];
+  let ptab = 'site';
+  async function openProject(pid: number, tab = ptab, show?: () => void) {
+    if (S.proj?.id !== pid || !S.mods) await useProject(pid);
+    ptab = tab;
+    if (show) show(); else ({ site: sitePanel, crm: crmPanel, bot: botPanel, partner: projPartners, domain: domainPanel } as Record<string, () => void>)[tab]?.();
+    // The same canvas, with the project's tabs on top and its name as the title.
+    const bar = el('div', 'ptabs2');
+    for (const k of PTABS) { const b = btn(k === tab ? 'on' : '', T.ptabs[k], () => openProject(pid, k)); b.prepend(Object.assign(el('span'), { innerHTML: ico(({ site: 'site', crm: 'doc', bot: 'reply', partner: 'link', domain: 'fwd' } as R)[k], 14) })); bar.append(b); }
+    cvBody.prepend(bar);
+    cvTitle.textContent = S.proj?.name || T.canvas;
+  }
+  function botPanel() {
+    const box = el('div', 'pf'), bot = S.mods?.bot, main = (S.mods?.pages || []).find((x: R) => x.main) || (S.mods?.pages || [])[0];
+    if (!S.mods?.biz) { box.append(el('p', 'hint', T.botNoSite)); openCv(T.ptabs.bot, box); return; }
+    if (!bot?.on) { openCv(T.ptabs.bot, trialCard('bot', T.botP)); return; }
+    box.append(el('p', 'ok', '● ' + T.botOn), el('p', 'hint', T.botP));
+    const k = el('details', 'edits'); k.append(el('summary', '', T.botKnows), el('p', 'hint', bot.about.slice(0, 1200)));
+    box.append(k);
+    if (main?.url) { const a = el('a', 'sec', T.botTry + ' ↗') as HTMLAnchorElement; a.href = main.url; a.target = '_blank'; a.rel = 'noopener'; box.append(a); }
+    openCv(T.ptabs.bot, box);
+  }
+  function projPartners() {
+    const box = el('div', 'pf'), p = S.mods?.partner;
+    box.append(el('p', 'hint', T.parP));
+    if (!S.mods?.biz) { box.append(el('p', 'hint', T.botNoSite)); openCv(T.parMine, box); return; }
+    if (!p) box.append(deployCard('partner', T.parP));
+    else {
+      for (const l of p.links) { const r = el('div', 'lead col'); r.append(el('b', '', l.name), linkRow(l.url), el('small', '', `${T.visits}: ${l.visits} · ${T.leads}: ${l.leads}`)); box.append(r); }
+      const f = el('form', 'add'), i = el('input'), b = el('button', 'sec', T.parAdd);
+      i.placeholder = T.parName; i.maxLength = 80; i.required = true; i.setAttribute('aria-label', T.parName);
+      f.append(i, b);
+      f.onsubmit = async (e) => { e.preventDefault(); const { d } = await postJ('/api/ws/module/ref', { name: i.value, biz: S.proj?.biz }); if (d?.modules) { S.mods = d.modules; openProject(S.proj!.id, 'partner'); } };
+      box.append(f);
+    }
+    openCv(T.parMine, box);
+  }
+  function domainPanel() {
+    if (!S.mods?.site) { const box = el('div', 'pf'); box.append(el('p', 'hint', CT.domNoSite)); openCv(T.domH, box); return; }
+    openCv(T.domH, domainBox());
   }
 
   /* ---------- Profile window: plan, memory, projects, account ---------- */
@@ -1007,10 +1103,12 @@ const ico = {
   $('[data-new]').onclick = () => { side(false); S.pendingProject = 0; fresh(); };
   $('[data-newproj]').onclick = () => newProject();
   $('[data-map]').onclick = () => { side(false); openMap(); };
+  $('[data-earn]').onclick = () => { side(false); partnerPanel(); };
   $('[data-mat]').onclick = () => materials();
   $('[data-menu]').onclick = () => side(true);
   $('[data-veil]').onclick = () => side(false);
   $('[data-cv-x]').onclick = closeCv;
+  $('[data-cv-full]').onclick = () => { const on = root.classList.toggle('cvfull'); $('[data-cv-full-label]').textContent = on ? T.unfull : T.full; };
   $('[data-cv]').onclick = () => { if (!cv.hidden) { closeCv(); return; } const last = [...S.msgs].reverse().find(hasArt); if (last) showArt(last); else studio(); };
   $('[data-del]').onclick = async () => {
     if (!confirm(T.delQ)) return;
@@ -1054,7 +1152,7 @@ const ico = {
     if (S.signed && draft && Date.now() - draft.at < 864e5) {
       try { localStorage.removeItem(SITE_PEND); } catch {}
       const { d: pd } = await postJ('/api/ws/site/publish', { site: draft.site, lang });
-      if (pd.ok) { S.mods = pd.modules; drawWho(); siteView({ ...draft.site, url: pd.url, slug: pd.slug }); return; }
+      if (pd.ok) { S.mods = pd.modules; if (pd.project) { S.projects.push(pd.project); S.proj = pd.project; drawChats(); } drawWho(); siteView({ ...draft.site, url: pd.url, slug: pd.slug }); return; }
       siteView(draft.site);
       return;
     }
@@ -1184,6 +1282,7 @@ const ico = {
   .wsp .hint { color: var(--mut); font-size: 13.5px; line-height: 1.45; margin: 0; }
   .wsp .prev { width: 100%; height: min(62vh, 560px); border: 1px solid var(--line); border-radius: 12px; background: #fff; }
   .wsp .livebar { display: grid; gap: 8px; }
+  .wsp .sec.hot { background: var(--accText); color: var(--bg); border-color: var(--accText); font-weight: 700; }
   .wsp .from { color: var(--accText) !important; }
   .wsp .livedot { color: #1f9d55; font-weight: 700; font-size: 13px; }
   .wsp .livedot.off { color: var(--mut); font-weight: 500; }
@@ -1320,6 +1419,25 @@ const ico = {
   .wsp .toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--bg); border-radius: 12px; padding: 10px 16px; font-size: 14px; display: flex; gap: 12px; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
   .wsp .toast .lnk { color: var(--bg); font-weight: 700; }
   @media (hover: none) { .wsp .mbar { opacity: 1; } .wsp .dots { opacity: .7; } }
+  .wsp .eco { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 14px; }
+  .wsp .ecoi { display: flex; align-items: center; gap: 9px; background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14px; font-weight: 600; }
+  .wsp .ecoi svg { color: var(--accText); flex: none; }
+  .wsp .bizs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .wsp .bchip { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 10px 16px; font-size: 15px; cursor: pointer; color: var(--ink); }
+  .wsp .bchip:hover { border-color: var(--accText); color: var(--accText); }
+  .wsp .ptabs2 { display: flex; gap: 4px; flex-wrap: wrap; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+  .wsp .ptabs2 button { display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; border-radius: 9px; padding: 8px 12px; font-size: 14px; cursor: pointer; color: var(--mut); }
+  .wsp .ptabs2 button.on { background: var(--ink); color: var(--bg); font-weight: 600; }
+  .wsp .car2 { flex: none; width: 22px; height: 30px; border: 0; background: none; color: var(--mut); cursor: pointer; font-size: 11px; }
+  .wsp .ptitle.on { background: var(--surf2, var(--bg)); }
+  .wsp .tb { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: none; border-radius: 9px; padding: 6px 10px; font-size: 13px; cursor: pointer; color: var(--ink); white-space: nowrap; flex: none; }
+  .wsp .tb:hover { border-color: var(--ink); }
+  .wsp .tb[hidden] { display: none; }
+  .wsp .cvact { display: flex; gap: 6px; }
+  .wsp.cvfull, .wsp.cvfull.wide { grid-template-columns: 264px 0 minmax(0, 1fr); }
+  .wsp.cvfull .mid { display: none; }
+  .wsp .dsteps { margin: 8px 0 10px; padding-left: 20px; display: grid; gap: 6px; color: var(--mut); font-size: 14px; line-height: 1.45; }
+  @media (max-width: 760px) { .wsp .tb span { display: none; } .wsp [data-cv-x] span { display: inline; } }
   .wsp .veil { display: none; }
   .wsp .wsign:not([open]) { display: none; }
   .wsp .wsign { margin: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surf); color: var(--ink); padding: 24px; width: min(420px, calc(100vw - 32px)); }

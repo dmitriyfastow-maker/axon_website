@@ -61,14 +61,15 @@ async function refresh(db: DB, cf: Cf, row: { id: number; host: string; cf_id: s
   return { ...row, status, error };
 }
 
-async function bizOf(db: DB, clientId: number) {
+async function bizOf(db: DB, clientId: number, bizId?: number | null) {
+  if (bizId) { const b = await db.prepare('SELECT b.id FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.id = ? AND b.owner_id = ?').bind(bizId, clientId).first<{ id: number }>(); if (b) return b; }
   return db.prepare('SELECT b.id FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(clientId).first<{ id: number }>();
 }
 
 /** GET/POST /api/ws/domain[/delete] for the signed-in client. */
-export async function handleDomain(db: DB, cf: Cf, clientId: number, method: string, sub: string, b: Record<string, unknown>, notify: Notify) {
+export async function handleDomain(db: DB, cf: Cf, clientId: number, method: string, sub: string, b: Record<string, unknown>, notify: Notify, bizId?: number | null) {
   const ready = !!cf.token;
-  const biz = await bizOf(db, clientId);
+  const biz = await bizOf(db, clientId, bizId ?? (Number(b.biz) || null));
   const row = biz ? await db.prepare('SELECT id, host, cf_id, status, error FROM biz_domains WHERE biz_id = ?').bind(biz.id).first<{ id: number; host: string; cf_id: string | null; status: string; error: string | null }>() : null;
   if (method === 'GET') {
     const cur = row && row.status !== 'active' ? await refresh(db, cf, row) : row;

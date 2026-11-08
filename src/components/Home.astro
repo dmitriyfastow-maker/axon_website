@@ -8,8 +8,20 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const P = (p: string) => (lang === 'en' ? p : `/${lang}${p}`);
 
+const WK: Record<string, string[]> = {
+  en: ['Coffee roastery & café', 'Perfume house with a shop', 'Skin clinic with booking', 'Tea shop with an AI picker', 'Personal brand', 'Client app', 'Career coach', 'Skincare brand', 'Restaurant', 'Dental clinic'],
+  ru: ['Обжарка кофе и кафе', 'Парфюмерный дом с магазином', 'Клиника с онлайн-записью', 'Чайный магазин с ИИ-подбором', 'Личный бренд', 'Приложение для клиентов', 'Карьерный коуч', 'Бренд косметики', 'Ресторан', 'Стоматология'],
+  ua: ['Обсмажування кави й кафе', 'Парфумерний дім із магазином', 'Клініка з онлайн-записом', 'Чайний магазин з ШІ-підбором', 'Особистий бренд', 'Застосунок для клієнтів', 'Карʼєрний коуч', 'Бренд косметики', 'Ресторан', 'Стоматологія'],
+};
+const L3 = lang === 'en' ? 'en' : lang;
+const WORKS: [string, string, string, string][] = ([
+  ['flagship', `flagship-${L3}.jpg`, 'Ember'], ['eco-shop', `eco-shop-${L3}.jpg`, 'Ostra'], ['eco-clinic', `eco-clinic-${L3}.jpg`, 'Aurelia'],
+  ['shop-2026', `shop-2026-${L3}.jpg`, 'Kettle & Leaf'], ['personal-brand', `personal-brand-${L3}.jpg`, 'Mila Hart'], ['client-app', `client-app-${L3}.jpg`, 'Pulse Studio'],
+  ['coach', 'coach.jpg', 'Maya Reed'], ['skincare', 'skincare.jpg', 'Lumen'], ['restaurant', 'restaurant.jpg', 'Ember & Salt'], ['dental', 'dental.jpg', 'Dental'],
+] as [string, string, string][]).map(([a, b, c], i) => [a, b, c, (WK[lang] ?? WK.en)[i]]);
 const T = {
   ru: {
+    wkH: 'Вот уровень, на котором собирает Vaxo', wkS: 'Сайты, магазины, запись и приложения для клиентов уровня топ-студий, всё в одной экосистеме. Откройте любой вживую.', wkGo: 'Собрать своё за минуту', wkAll: 'Все работы',
     pos: ['Уже платите за ChatGPT или Claude?', 'Они дают вам текст и код. Серверы, базы и платежи вы настраиваете сами.', 'В Vaxo эту работу берём на себя: сайт, CRM и приём оплат на вашем тарифе. Срок и цену называем заранее.'],
     chips: [['Автоматизировать клиентов', 'Чек-лист: как автоматизировать ответы клиентам'], ['Собрать сайт под ключ', 'Чек-лист: что нужно для сайта под ключ для моего дела'], ['План запуска за 14 дней', 'План запуска продукта за 14 дней: чек-лист'], ['Рассчитать БЖУ и тренировки', 'Сделай калькулятор калорий и БЖУ под мою цель'], ['Юнит-экономика проекта', 'Сделай калькулятор юнит-экономики: цена, срок клиента, стоимость привлечения']], live: 'Интерактивно',
     h1: ['Скажите, что нужно.', 'Vax берётся за дело.'],
@@ -44,6 +56,7 @@ const T = {
     dnote: 'Первый месяц бесплатно. Без карты. Счёт пришлём, только если останетесь.', demail: 'Ваша почта', dgo: 'Начать бесплатный месяц', dbad: 'Введите настоящую почту.', dfail: 'Что-то пошло не так — попробуйте ещё раз.',
   },
   en: {
+    wkH: 'This is the level Vaxo builds at', wkS: 'Sites, shops, booking and client apps of top-studio level, all in one ecosystem. Open any of them live.', wkGo: 'Build yours in a minute', wkAll: 'All works',
     pos: ['Already paying for ChatGPT or Claude?', 'They give you text and code. Servers, databases and payments are yours to set up.', 'At Vaxo we take that work on: the website, CRM and payments on your plan. We name the time and price up front.'],
     chips: [['Automate my clients', 'Checklist: how to automate replies to my clients'], ['A website, done for me', 'Checklist: what a done-for-me website for my business needs'], ['14-day launch plan', 'A 14-day product launch plan: checklist'], ['Macros and training', 'Make a calorie and macro calculator for my goal'], ['Project unit economics', 'Make a unit economics calculator: price, customer lifetime, acquisition cost']], live: 'Interactive',
     h1: ['Say what you need.', 'Vax gets on with it.'],
@@ -78,6 +91,7 @@ const T = {
     dnote: 'First month free. No card. We send an invoice only if you stay.', demail: 'Your email', dgo: 'Start free month', dbad: 'Enter a valid email.', dfail: 'Something went wrong — please try again.',
   },
   ua: {
+    wkH: 'Ось рівень, на якому збирає Vaxo', wkS: 'Сайти, магазини, запис і застосунки для клієнтів рівня топ-студій, усе в одній екосистемі. Відкрийте будь-який наживо.', wkGo: 'Зібрати своє за хвилину', wkAll: 'Усі роботи',
     pos: ['Вже платите за ChatGPT чи Claude?', 'Вони дають вам текст і код. Сервери, бази й платежі ви налаштовуєте самі.', 'У Vaxo цю роботу беремо на себе: сайт, CRM і прийом оплат на вашому тарифі. Строк і ціну називаємо заздалегідь.'],
     chips: [['Автоматизувати клієнтів', 'Чек-лист: як автоматизувати відповіді клієнтам'], ['Зібрати сайт під ключ', 'Чек-лист: що потрібно для сайту під ключ для моєї справи'], ['План запуску за 14 днів', 'План запуску продукту за 14 днів: чек-лист'], ['Порахувати БЖВ і тренування', 'Зроби калькулятор калорій і БЖВ під мою мету'], ['Юніт-економіка проєкту', 'Зроби калькулятор юніт-економіки: ціна, строк клієнта, вартість залучення']], live: 'Інтерактивно',
     h1: ['Скажіть, що потрібно.', 'Vax береться до справи.'],
@@ -217,6 +231,21 @@ const ava = '/mascot/vax-happy.webp';
         </a>
       </div>
     </div>
+  </section>
+
+  <section class="sec" id="works">
+    <div class="w">
+      <div class="wk-head"><h2>{T.wkH}</h2><p class="ps">{T.wkS}</p></div>
+    </div>
+    <div class="wk-rail" role="list">
+      {WORKS.map(([slug, img, name, kind]) => (
+        <a class="wk" role="listitem" href={`/examples/${slug}/?lang=${lang}`} target="_blank" rel="noopener">
+          <div class="wk-img"><img src={`/examples/thumbs/${img}`} alt={name} loading="lazy" width="640" height="400" /></div>
+          <div class="wk-t"><b>{name}</b><small>{kind}</small></div>
+        </a>
+      ))}
+    </div>
+    <div class="w wk-foot"><a class="wk-go" href={P('/app/')}>{T.wkGo} →</a><a class="wk-all" href={P('/examples/')}>{T.wkAll}</a></div>
   </section>
 
   <section class="sec alt" id="pricing">
@@ -541,4 +570,18 @@ const ava = '/mascot/vax-happy.webp';
     .par div { padding: 10px 12px; }
     .par b { font-size: 22px; }
   }
+
+  #works .wk-head { display: grid; gap: 10px; margin-bottom: 26px; }
+  .wk-rail { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 22px 18px; padding-left: max(22px, calc((100vw - 1180px) / 2 + 22px)); scroll-padding-left: max(22px, calc((100vw - 1180px) / 2 + 22px)); scrollbar-width: thin; }
+  .wk { flex: 0 0 min(78vw, 420px); scroll-snap-align: start; display: grid; gap: 12px; text-decoration: none; color: inherit; }
+  .wk-img { border-radius: 18px; overflow: hidden; aspect-ratio: 16/10; background: var(--surf); border: 1px solid var(--line); transition: transform .25s, box-shadow .25s; }
+  .wk-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transition: transform .6s; }
+  .wk:hover .wk-img { transform: translateY(-4px); box-shadow: 0 24px 50px rgba(0,0,0,.35); }
+  .wk:hover .wk-img img { transform: scale(1.04); }
+  .wk-t { display: grid; gap: 2px; padding: 0 4px; }
+  .wk-t b { font-size: 18px; }
+  .wk-t small { color: var(--mut); font-size: 14px; }
+  .wk-foot { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  .wk-go { display: inline-block; background: var(--acc, #e8b04a); color: #111; font-weight: 700; text-decoration: none; padding: 14px 22px; border-radius: 999px; }
+  .wk-all { color: var(--mut); }
 </style>

@@ -112,9 +112,10 @@ describe('a site built in the chat is live at once', () => {
     const { siteLiveText } = await import('../../worker/workspace');
     const t = siteLiveText('ru', 'https://vaxogroup.com/s/zerno-ab12', cleanSite({ title: 'Зерно', services: ['Эспрессо', 'Капучино'], cta: 'Предзаказ' }, 'ru'));
     expect(t).toContain('https://vaxogroup.com/s/zerno-ab12');
-    expect(t).toContain('«Предзаказ»');
     expect(t).toContain('CRM');
-    expect(t.split('\n').length).toBeLessThanOrEqual(4);
+    expect(t).toContain('Партнёрская программа');
+    expect(t).toContain('Чат-бот');
+    expect(t.split('\n').length).toBeLessThanOrEqual(6);
   });
 });
 

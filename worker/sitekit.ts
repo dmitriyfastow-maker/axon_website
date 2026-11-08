@@ -40,7 +40,9 @@ function headline(title: string, accent?: string) {
   return a && t.includes(a) ? t.replace(a, `<em>${a}</em>`) : t;
 }
 
-export function renderSite(s: Kit, o: { key: string; slug: string; index: boolean; name: string }): string {
+export function renderSite(s: Kit, o: { key: string; slug: string; index: boolean; name: string; edit?: boolean }): string {
+  // In the Canvas every text carries its field name (data-k) and every photo its number (data-img), for editing in place.
+  const E = o.edit, dk = (k: string) => (E ? ` data-k="${k}"` : ''), di = (i: number) => (E ? ` data-img="${i}"` : '');
   const w = T[s.lang] ?? T.en, st = STYLES[styleOf(s.style)], cap = st.caps;
   const title = s.title || o.name, cta = s.cta || w.s1;
   const [h1, h2, h3] = [pic(s.imgs?.[0]), pic(s.imgs?.[1]), pic(s.imgs?.[2])];
@@ -86,14 +88,33 @@ form .btn{padding:17px;font-size:15px}.ok{grid-column:1/-1;font:600 22px/1.35 ${
 footer{padding:40px 0 48px;color:var(--mut);font-size:14px;border-top:1px solid var(--line)}footer .w{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media(max-width:860px){.links{display:none}.intro,.book{grid-template-columns:1fr}.ph{aspect-ratio:4/3}form{grid-template-columns:1fr}.hero{min-height:${h1 ? '86vh' : '64vh'}}}</style></head><body>
 <header><div class="w nav"><a class="logo" href="#">${esc(title)}</a><nav class="links">${nav.map(([h, t]) => `<a href="${h}">${esc(t)}</a>`).join('')}</nav>${btn('#form', cta)}</div></header>
-<section class="hero">${h1 ? `<img src="${h1}" alt="">` : ''}<div class="w">${s.kicker ? `<p class="kicker">${esc(s.kicker)}</p>` : ''}<h1>${headline(title, s.accent)}</h1>${s.sub ? `<p class="sub">${esc(s.sub)}</p>` : ''}<div class="acts">${btn('#form', cta)}${offers.length ? btn('#offer', w.more, false) : ''}</div></div></section>
-${s.about ? `<section id="about"><div class="w intro"><div><p class="kicker">${esc(w.about)}</p><h2>${esc(s.kicker || title)}</h2><p class="lead">${esc(s.about)}</p></div>${h2 ? `<div class="ph"><img src="${h2}" alt=""></div>` : ''}</div></section>` : ''}
-${offers.length ? `<section id="offer" style="padding-top:0"><div class="w"><p class="kicker">${esc(w.offer)}</p><h2>${esc(s.sub && s.sub.length <= 60 ? s.sub : w.offer)}</h2><div class="grid">${offers.map((x, i) => `<div class="off"><i>${cap ? 'No. ' : ''}${String(i + 1).padStart(2, '0')}</i><b>${esc(x.t)}</b>${x.d ? `<p>${esc(x.d)}</p>` : ''}</div>`).join('')}</div></div></section>` : ''}
-${h3 ? `<section class="band"><img src="${h3}" alt=""><div class="w"><p>${esc(s.promise || w.reply)}</p></div></section>` : ''}
-<section><div class="w"><p class="kicker">${esc(w.how)}</p><h2>${esc(w.how)}</h2><ol class="steps">${steps.map((x, i) => `<li><span>0${i + 1}</span>${esc(x)}</li>`).join('')}</ol></div></section>
-${s.faq?.length ? `<section id="faq" style="padding-top:0"><div class="w" style="max-width:860px"><p class="kicker">${esc(w.faq)}</p><h2>${esc(w.faq)}</h2>${s.faq.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div></section>` : ''}
-<section id="form" style="padding-top:0"><div class="w book"><div><p class="kicker">${esc(cta)}</p><h2>${esc(cta)}</h2><p class="lead">${esc(s.ask || w.reply)}</p><p class="note">${esc(w.reply)}</p></div>
+<section class="hero">${h1 ? `<img src="${h1}" alt=""${di(0)}>` : ''}<div class="w">${s.kicker || E ? `<p class="kicker"${dk('kicker')}>${esc(s.kicker || '')}</p>` : ''}<h1${dk('title')}>${headline(title, s.accent)}</h1>${s.sub || E ? `<p class="sub"${dk('sub')}>${esc(s.sub)}</p>` : ''}<div class="acts">${btn('#form', cta)}${offers.length ? btn('#offer', w.more, false) : ''}</div></div></section>
+${s.about ? `<section id="about"><div class="w intro"><div><p class="kicker">${esc(w.about)}</p><h2>${esc(s.kicker || title)}</h2><p class="lead"${dk('about')}>${esc(s.about)}</p></div>${h2 ? `<div class="ph"><img src="${h2}" alt=""${di(1)}></div>` : ''}</div></section>` : ''}
+${offers.length ? `<section id="offer" style="padding-top:0"><div class="w"><p class="kicker">${esc(w.offer)}</p><h2>${esc(s.sub && s.sub.length <= 60 ? s.sub : w.offer)}</h2><div class="grid">${offers.map((x, i) => `<div class="off"><i>${cap ? 'No. ' : ''}${String(i + 1).padStart(2, '0')}</i><b${dk('services.' + i)}>${esc(x.t)}</b>${x.d || E ? `<p${dk('details.' + i)}>${esc(x.d)}</p>` : ''}</div>`).join('')}</div></div></section>` : ''}
+${h3 ? `<section class="band"><img src="${h3}" alt=""${di(2)}><div class="w"><p${dk('promise')}>${esc(s.promise || w.reply)}</p></div></section>` : ''}
+<section><div class="w"><p class="kicker">${esc(w.how)}</p><h2>${esc(w.how)}</h2><ol class="steps">${steps.map((x, i) => `<li><span>0${i + 1}</span><em${dk('steps.' + i)} style="font-style:normal">${esc(x)}</em></li>`).join('')}</ol></div></section>
+${s.faq?.length ? `<section id="faq" style="padding-top:0"><div class="w" style="max-width:860px"><p class="kicker">${esc(w.faq)}</p><h2>${esc(w.faq)}</h2>${s.faq.map((f, i) => `<details${E ? ' open' : ''}><summary${dk('faq.' + i + '.q')}>${esc(f.q)}</summary><p${dk('faq.' + i + '.a')}>${esc(f.a)}</p></details>`).join('')}</div></section>` : ''}
+<section id="form" style="padding-top:0"><div class="w book"><div><p class="kicker">${esc(cta)}</p><h2${dk('cta')}>${esc(cta)}</h2><p class="lead"${dk('ask')}>${esc(s.ask || w.reply)}</p><p class="note">${esc(w.reply)}</p></div>
 <form id="f"><input name="name" maxlength="80" placeholder="${esc(w.name)}" autocomplete="name"><input name="contact" maxlength="120" placeholder="${esc(w.contact)}" required><textarea class="full" name="message" rows="4" maxlength="1500" placeholder="${esc(s.ask || w.msg)}"></textarea><button class="btn solid full">${esc(w.send)}</button></form></div></section>
 <footer><div class="w"><span>© ${new Date().getFullYear()} ${esc(title)}</span>${o.index ? '' : `<a href="https://vaxogroup.com/">${esc(w.made)}</a>`}</div></footer>
 <script src="/w.js?k=${o.key}&p=${o.slug}" async></script><script>document.getElementById('f').onsubmit=function(e){e.preventDefault();var p=document.createElement('p');p.className='ok';p.textContent=${JSON.stringify(w.done).replace(/</g, '\\u003c')};this.replaceChildren(p)}</script></body></html>`;
+}
+
+/** The editing layer of the Canvas preview. The frame is sandboxed (scripts, no access to our page); it only sends
+ *  messages: a changed text, "change this with Vax", "replace this photo". Labels come from the workspace language. */
+export function editLayer(L: { ai: string; photo: string; hint: string }): string {
+  return `<style>[data-k]{outline:1.5px dashed transparent;outline-offset:4px;border-radius:4px;cursor:text;transition:outline-color .15s}[data-k]:hover{outline-color:rgba(232,176,74,.8)}[data-k][contenteditable=true]{outline:2px solid #e8b04a;background:rgba(232,176,74,.08)}[data-img]{cursor:pointer}[data-img]:hover{filter:brightness(.92)}#vxbar{position:fixed;z-index:99;display:none;gap:6px;background:#111;color:#fff;border-radius:999px;padding:5px;box-shadow:0 10px 30px rgba(0,0,0,.35);font:600 13px system-ui,sans-serif}#vxbar button{border:0;border-radius:999px;background:#e8b04a;color:#111;padding:8px 14px;font:inherit;cursor:pointer}#vxhint{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:99;background:#111;color:#fff;border-radius:999px;padding:8px 14px;font:500 13px system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:.92}</style>
+<div id="vxbar"></div><div id="vxhint">${L.hint.replace(/[<>&"]/g, '')}</div>
+<script>(function(){var bar=document.getElementById('vxbar'),cur=null,send=function(m){parent.postMessage(Object.assign({vx:1},m),'*')};
+function place(el){var r=el.getBoundingClientRect();bar.style.display='flex';bar.style.top=Math.max(8,r.top-46)+'px';bar.style.left=Math.max(8,Math.min(r.left,innerWidth-260))+'px'}
+function tool(label,fn){bar.innerHTML='';var b=document.createElement('button');b.textContent=label;b.onmousedown=function(e){e.preventDefault()};b.onclick=fn;bar.appendChild(b)}
+document.addEventListener('click',function(e){var a=e.target.closest('a,button:not(#vxbar button)');if(a&&!e.target.closest('#vxbar'))e.preventDefault();
+var im=e.target.closest('[data-img]');if(im){cur=null;tool(${JSON.stringify(L.photo)},function(){bar.style.display='none';send({t:'img',i:+im.dataset.img})});place(im);return}
+var el=e.target.closest('[data-k]');if(!el){if(!e.target.closest('#vxbar'))bar.style.display='none';return}
+if(cur!==el){if(cur)cur.removeAttribute('contenteditable');cur=el;el.setAttribute('contenteditable','true');el.focus();
+tool(${JSON.stringify(L.ai)},function(){send({t:'ai',k:el.dataset.k,v:el.innerText.trim()})});place(el)}},true);
+document.addEventListener('input',function(e){var el=e.target.closest&&e.target.closest('[data-k]');if(el)send({t:'edit',k:el.dataset.k,v:el.innerText.trim()})});
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey&&cur&&cur.dataset.k.indexOf('about')<0){e.preventDefault();cur.blur()}});
+document.addEventListener('submit',function(e){e.preventDefault()},true);addEventListener('scroll',function(){if(cur)place(cur)},{passive:true});
+setTimeout(function(){var h=document.getElementById('vxhint');if(h)h.remove()},6000)})();</script>`;
 }
