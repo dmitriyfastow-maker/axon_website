@@ -56,7 +56,7 @@ async function tellOwner(db: DB, bizId: number, lead: { name: string; contact: s
   const team = (await db.prepare("SELECT email FROM biz_members WHERE biz_id = ? AND role = 'manager'").bind(bizId).all<{ email: string }>()).results.map((x) => x.email);
   const ru = o.lang === 'ru', ua = o.lang === 'ua';
   const subj = `${ru ? 'Новая заявка' : ua ? 'Нова заявка' : 'New request'} — ${o.name}`;
-  const text = [`${ru ? 'Имя' : ua ? 'Імʼя' : 'Name'}: ${lead.name || '—'}`, `${ru || ua ? 'Контакт' : 'Contact'}: ${lead.contact || '—'}`, lead.message, `${ru ? 'Источник' : ua ? 'Джерело' : 'Source'}: ${lead.source || '—'}`, '', `${ru ? 'Все заявки' : ua ? 'Усі заявки' : 'All requests'}: https://vaxogroup.com/${ru ? 'ru/' : ua ? 'ua/' : ''}me/`].join('\n');
+  const text = [`${ru ? 'Имя' : ua ? 'Імʼя' : 'Name'}: ${lead.name || '—'}`, `${ru || ua ? 'Контакт' : 'Contact'}: ${lead.contact || '—'}`, lead.message, `${ru ? 'Источник' : ua ? 'Джерело' : 'Source'}: ${lead.source || '—'}`, '', `${ru ? 'Все заявки' : ua ? 'Усі заявки' : 'All requests'}: https://vaxogroup.com/${ru ? 'ru/' : ua ? 'ua/' : ''}app/#crm`].join('\n');
   for (const to of [o.email, ...team]) if (to) await sendMail(to, subj, text).catch(() => false);
 }
 
