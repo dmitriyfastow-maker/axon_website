@@ -9,18 +9,18 @@ const MODELS = ['@cf/google/gemma-4-26b-a4b-it', '@cf/meta/llama-3.1-8b-instruct
 const LANGS: Record<string, string> = { en: 'English', ru: 'Russian', ua: 'Ukrainian' };
 
 // Cheap filter so the second model call runs only when a tool can help. Matches the common wishes in EN/RU/UA/ES/DE.
-export const WANTS_TOOL = /track|monitor|следить|отслеж|стежити|відстеж|дневник|щоденник|calculat|checklist|budget|planner|\bplan\b|schedule|habit|routine|funnel|roadmap|compute|\bhow much\b|трекер|калькул|посчита|рассчита|розрах|порахуй|чек-?лист|бюджет|планер|планиров|планув|план[ауе]?\b|расписан|розклад|привыч|звичк|рутин|воронк|калори|кбжу|бжу|диет|дієт|питани|харчув|тренир|тренув|выучить|вивчити|учить|сколько|скільки|presupuesto|calcula|rutina|lista|horario|kalkul|budget|gewohnheit/i;
+export const WANTS_TOOL = /track|monitor|следить|отслеж|стежити|відстеж|дневник|щоденник|calculat|checklist|budget|planner|\bplan\b|schedule|habit|routine|funnel|roadmap|compute|\bhow much\b|трекер|калькул|посчита|рассчита|розрах|порахуй|чек-?лист|бюджет|планер|планиров|планув|план[ауеы]?(?![а-яёіїєґ])|\d+\s*-?\s*(дн|ден|day)|окупаем|окупн|payback|break-?even|бизнес-план|бізнес-план|business plan|финмодел|фінмодел|financial model|юнит-эконом|юніт-економ|unit economics|маржинальн|рентабельн|\broi\b|расписан|розклад|привыч|звичк|рутин|воронк|калори|кбжу|бжу|диет|дієт|питани|харчув|тренир|тренув|выучить|вивчити|учить|сколько|скільки|presupuesto|calcula|rutina|lista|horario|kalkul|budget|gewohnheit/i;
 
 const TRACK = /track|monitor|следить|отслеж|стежити|відстеж|вести\s+(учёт|дневник)/i;
 
 const PROMPT = (L: string) => `You turn a person's wish into ONE small working tool. Reply with JSON only, no markdown. All text in ${L} (or the language of the wish).
 Choose the kind that is most useful:
 1) calculator: {"kind":"calc","title":"...","fields":[{"id":"w","label":"Weight","unit":"kg","value":75}],"outputs":[{"label":"Water a day","unit":"l","f":"round(w*0.033,1)"}],"note":"..."}
-   Field ids are short latin names. Formulas may use + - * / ^ ( ) and min max abs sqrt floor ceil round(x,digits), and ONLY field ids. No text inside formulas. Give realistic default values. 2-6 fields, 1-4 outputs.
-2) checklist: {"kind":"list","title":"...","items":["concrete step","..."],"note":"..."} 4-12 short, concrete, ordered steps.
+   Field ids are short latin names. Formulas may use + - * / ^ ( ) and min max abs sqrt floor ceil round(x,digits), and ONLY field ids. No text inside formulas. Give realistic default values. 2-12 fields, 1-8 outputs. A financial model, unit economics or a budget is a calculator: every amount the person named becomes a field with that value (revenue, ad spend, team, other costs, tax %), and the outputs are the results (profit before tax, tax, net profit, margin %, payback or break-even).
+2) checklist: {"kind":"list","title":"...","items":["concrete step","..."],"note":"..."} 4-12 short, concrete, ordered steps. A program over a number of days (up to 31: a 30-day plan, a training or recovery protocol, a course) is a checklist with exactly one item per day: "Day 1: ...", "Day 2: ..." (in the language of the wish), each a concrete action for that day.
 3) tracker for something measured over time: {"kind":"tracker","title":"...","metric":"Weight","unit":"kg","target":70,"note":"..."} target may be null.
 Choosing: words like track, follow, log, monitor, keep an eye on (следить, вести, отслеживать, стежити) over time mean a tracker, never a checklist. A wish to count or compare means a calculator. Steps to do once mean a checklist.
-If no tool would help, reply {"kind":"none"}: small talk, a question with one factual answer (how long to boil an egg, what is the capital of France), a medical treatment question, a request for a website, app or anything big.
+If no tool would help, reply {"kind":"none"}: small talk, a question with one factual answer (how long to boil an egg, what is the capital of France), a medical treatment question, a request for a website, app or anything big. A day-by-day program is never "none": it is a checklist.
 Money: use $ unless the person named a currency; never rubles. A formula must be mathematically correct: compound growth of a monthly deposit p at yearly rate r over n months is p*((1+r/1200)^n-1)/(r/1200).
 Facts only: well-established formulas and evidence-based guidance; name the formula or rule in "note" in one short line. On health say it is a guide, not medical advice. Never invent statistics. Never promise results.`;
 
@@ -30,7 +30,7 @@ export async function buildTool(ai: AiBinding | undefined, wish: string, lang: s
     try {
       const r = (await ai.run(model, {
         messages: [{ role: 'system', content: PROMPT(LANGS[lang] ?? 'English') }, { role: 'user', content: wish.slice(0, 500) + (TRACK.test(wish) ? '\n(Make a tracker.)' : '') }],
-        max_tokens: 600, temperature: 0.2, chat_template_kwargs: { enable_thinking: false },
+        max_tokens: /(\d{2})\s*-?\s*(дн|ден|day)/i.test(wish) ? 2000 : 900, temperature: 0.2, chat_template_kwargs: { enable_thinking: false },
       })) as Record<string, any>;
       const t = (typeof r?.response === 'string' ? r.response : r?.choices?.[0]?.message?.content || '').trim();
       if (!t) continue;
@@ -50,7 +50,7 @@ const TAIL = /^\W*vax\s+(can|может|може|puede|kann)\b/i;
 // The same for "to calculate this I need your weight...": the tool under the answer already has those fields.
 const NEEDS = /^\W*(чтобы\s+я|чтобы\s+точно|для\s+точного|мне\s+нужн|щоб\s+я|щоб\s+точно|для\s+точного|мені\s+потрібн|to\s+(give|calculate|make|do)\b|i\s+need\b|please\s+(tell|share|give))/i;
 export function tidyReply(reply: string, hasTool: boolean): string {
-  return reply.replace(/\[+\s*TOOL\b[^\]]*\]+/gi, '').split(/\n+/).map((p) => p.trim()).filter((p) => p && !TAIL.test(p) && !(hasTool && (OFFER.test(p) || NEEDS.test(p)))).join('\n\n');
+  return reply.replace(/\[+\s*TOOL\b[^\]]*\]+/gi, '').replace(/\[+\s*(canvas|холст|полотно|tool|calculator|калькулятор|doc)[^\]\n]*\]*/gi, '').split(/\n+/).map((p) => p.trim()).filter((p) => p && !TAIL.test(p) && !(hasTool && (OFFER.test(p) || NEEDS.test(p)))).join('\n\n');
 }
 export const READY: Record<string, string> = { en: 'Ready: enter your numbers below.', ru: 'Готово: введите свои данные ниже.', ua: 'Готово: введіть свої дані нижче.' };
 
@@ -67,10 +67,22 @@ export function pullList(reply: string): { reply: string; tool: ToolSpec | null 
   return { reply: reply.replace(LIST_RE, '').replace(CONFIRM_RE, '$1').trim(), tool };
 }
 
+const CHECK_LINE = /^\s*(?:[-*•]\s*)?\[\s?[xх ]?\s?\]\s*(.+)$/i;
+/** A reply that wrote a checklist by hand ("- [ ] ...", or a made-up <canvas> tag) becomes a real checklist on the Canvas. */
+export function pullChecklist(reply: string, title: string): { reply: string; tool: ToolSpec | null } {
+  const lines = reply.split('\n');
+  const items = lines.map((l) => l.match(CHECK_LINE)?.[1]?.trim()).filter((x): x is string => !!x);
+  const head = reply.match(/<canvas[^>]*title=["']([^"']{2,70})["']/i)?.[1];
+  const clean = reply.replace(/<\/?canvas[^>]*>/gi, '');
+  if (items.length < 3) return { reply: clean, tool: null };
+  const tool = sanitizeTool({ kind: 'list', title: head || title, items });
+  return { reply: tool ? clean.split('\n').filter((l) => !CHECK_LINE.test(l)).join('\n').replace(/\n{3,}/g, '\n\n').trim() : clean, tool };
+}
+
 /** Plain text of a message for places without cards: Telegram, email and the model's own history. */
 export function plainText(text: string): string {
   return text
-    .replace(TOOL_RE, (_, j) => { try { return `(${JSON.parse(j).title} — vaxogroup.com/me/)`; } catch { return ''; } })
+    .replace(TOOL_RE, (_, j) => { try { return `(${JSON.parse(j).title} — vaxogroup.com/app/)`; } catch { return ''; } })
     .replace(LIST_RE, (_, t, items) => `${t.trim()}:\n${items.split(';').map((x: string) => '• ' + x.trim()).filter((x: string) => x.length > 2).join('\n')}`)
     .replace(CONFIRM_RE, '$1')
     .trim();

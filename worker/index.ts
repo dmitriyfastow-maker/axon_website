@@ -1,6 +1,7 @@
 // Cloudflare Worker: serves the static site from ./dist and handles the lead form.
 import { handleWorkspace } from './workspace.js';
 import { servePage } from './modules.js';
+import { serveDoc } from './workspace.js';
 import { checkDomains, serveOwnDomain, TARGET } from './domains.js';
 import { handleLead, type LeadEnv, type LeadInput } from '../src/lib/lead.js';
 import { handlePartnerApi, handleRedirect, type DB } from './partner.js';
@@ -55,7 +56,7 @@ export default {
     // go on as usual; a client's domain gets its page; anything else passes straight through to where it pointed before.
     const own = url.hostname === 'vaxogroup.com' || url.hostname === 'www.vaxogroup.com' || url.hostname === 'localhost' || url.hostname === '127.0.0.1' || url.hostname.endsWith('.workers.dev');
     if (!own) {
-      if (url.hostname === TARGET) return new Response('Vaxo sites. Point a CNAME here from your domain: https://vaxogroup.com/me/#modules\n', { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+      if (url.hostname === TARGET) return new Response('Vaxo sites. Point a CNAME here from your domain: https://vaxogroup.com/app/#site\n', { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
       const page = env.LEADS && !url.hostname.endsWith('.vaxogroup.com') ? await serveOwnDomain(env.LEADS, url) : null;
       if (page === null) return fetch(request);
       if (page !== 'pass') return page;
@@ -64,6 +65,9 @@ export default {
       url.hostname = 'vaxogroup.com';
       return Response.redirect(url.toString(), 301);
     }
+    // Decision 43: one place to work. The old cabinet address opens the workspace, keeping ?t= and the #part.
+    const cab = url.pathname.match(/^\/(ru\/|ua\/)?me\/?$/);
+    if (cab && request.method === 'GET') return Response.redirect(`${url.origin}/${cab[1] ?? ''}app/${url.search}`, 302);
     // Ukrainian language law (art. 27): visitors from Ukraine get the Ukrainian version by default, unless they picked a language.
     const country = (request as Request & { cf?: { country?: string } }).cf?.country;
     if (url.pathname === '/' && request.method === 'GET' && country === 'UA' && !/(?:^|;\s*)vaxo_lang=/.test(request.headers.get('Cookie') || '')) {
@@ -132,6 +136,8 @@ export default {
     if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     if (url.pathname === '/api/biz' || url.pathname.startsWith('/api/biz/')) return env.LEADS ? handleBiz(env.LEADS, request, url.pathname.slice('/api/biz'.length).replace(/^\//, ''), env.AI, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/ws' || url.pathname.startsWith('/api/ws/')) return env.LEADS ? handleWorkspace(env.LEADS, env.AI, request, url.pathname.slice('/api/ws'.length).replace(/^\//, ''), notify, waitUntil, { token: env.CF_SAAS_TOKEN }) : json(503, { ok: false });
+    const pub = url.pathname.match(/^\/p\/([0-9a-f]{12})\/?$/);
+    if (pub) return env.LEADS ? serveDoc(env.LEADS, pub[1]) : json(503, { ok: false });
     const hosted = url.pathname.match(/^\/s\/([a-z0-9-]{3,60})(\/manifest\.webmanifest)?\/?$/);
     if (hosted) return env.LEADS ? servePage(env.LEADS, hosted[1], !!hosted[2]) : json(503, { ok: false });
     if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify, env.AI) : json(503, { ok: false });
@@ -238,7 +244,7 @@ export default {
     // Only pages that exist count: scanners probing /wordpress/, /cms/ and the like got 404 and inflated the numbers (01.11).
     // Language by browser (Accept-Language) on a first visit to an unprefixed page; any other language gets clean EN.
     // Skipped when the person came from our own site (they chose a language) or when it is not a plain page request.
-    if (request.method === 'GET' && ['/', '/app/', '/me/', '/examples/', '/how/', '/partners/', '/shop/', '/start/', '/about/'].includes(url.pathname)) {
+    if (request.method === 'GET' && ['/', '/app/', '/examples/', '/how/', '/partners/', '/shop/', '/start/', '/about/'].includes(url.pathname)) {
       const al = (request.headers.get('Accept-Language') || '').toLowerCase();
       const first = al.split(',')[0].trim().slice(0, 2);
       const ours = (request.headers.get('Referer') || '').includes(url.host);

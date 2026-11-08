@@ -60,7 +60,7 @@ export function sanitizeTool(x: unknown): ToolSpec | null {
   const title = txt(o.title, 70), note = txt(o.note, 200) || undefined;
   if (!title) return null;
   if (o.kind === 'list') {
-    const items = (Array.isArray(o.items) ? o.items : []).map((s) => txt(s, 120)).filter(Boolean).slice(0, 20);
+    const items = (Array.isArray(o.items) ? o.items : []).map((s) => txt(s, 160)).filter(Boolean).slice(0, 31);
     return items.length >= 2 ? { kind: 'list', title, items, note } : null;
   }
   if (o.kind === 'tracker') {
@@ -71,7 +71,7 @@ export function sanitizeTool(x: unknown): ToolSpec | null {
   }
   if (o.kind === 'calc') {
     const fields: ToolField[] = [];
-    for (const f of (Array.isArray(o.fields) ? o.fields : []).slice(0, 8)) {
+    for (const f of (Array.isArray(o.fields) ? o.fields : []).slice(0, 12)) {
       const r = (f || {}) as Record<string, unknown>;
       const id = typeof r.id === 'string' && /^[a-zA-Z_]\w{0,19}$/.test(r.id) && !Object.hasOwn(FN, r.id) ? r.id : '';
       const label = txt(r.label, 50), value = num(r.value);
@@ -81,7 +81,7 @@ export function sanitizeTool(x: unknown): ToolSpec | null {
     if (!fields.length) return null;
     const vars = Object.fromEntries(fields.map((f) => [f.id, f.value]));
     const outputs: ToolOutput[] = [];
-    for (const f of (Array.isArray(o.outputs) ? o.outputs : []).slice(0, 6)) {
+    for (const f of (Array.isArray(o.outputs) ? o.outputs : []).slice(0, 8)) {
       const r = (f || {}) as Record<string, unknown>;
       const label = txt(r.label, 50), src = typeof r.f === 'string' ? r.f.slice(0, 200) : '';
       if (!label || !src || !Number.isFinite(evalFormula(src, vars))) return null;

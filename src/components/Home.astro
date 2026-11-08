@@ -18,7 +18,7 @@ const T = {
     go: 'Начать', askL: 'Напишите задачу',
     showT: 'Как это выглядит', showH: ['Не просто текст.', 'Готовая вещь.'], showP: 'Там, где нужен инструмент, Vax кладёт его прямо в разговор. Им можно пользоваться сразу, и он остаётся у вас в кабинете.',
     tabs: ['Считает', 'Раскладывает по шагам', 'Спрашивает перед важным'],
-    side: ['Разговор с Vax', 'Мои инструменты', 'Проекты', 'Оплаты'], allow: 'Запас на сегодня', box: 'Напишите сообщение…',
+    side: ['Разговор с Vax', 'Сайт', 'CRM', 'Партнёрский кабинет'], allow: 'Сообщений сегодня: 12 из 80', box: 'Напишите сообщение…',
     s1: { q: 'Посчитай юнит-экономику подписки: $39 в месяц, клиент остаётся 8 месяцев, привлечение стоит $60', a: 'Клиент приносит $312, на привлечение уходит $60. Окупаемость 5,2×: модель устойчивая.', t: 'Юнит-экономика подписки', f: [['Цена', '$39'], ['Срок клиента', '8 мес'], ['Привлечение', '$60']], o: [['Выручка с клиента', '$312'], ['LTV / CAC', '5,2×'], ['Остаётся с клиента', '$252']] },
     s2: { q: 'Разложи по шагам запуск онлайн-курса', a: 'Начните с аудитории, а не с видео. Вот весь путь.', t: 'Запуск онлайн-курса', n: '2/7', i: ['Анализ целевой аудитории и их болей', 'Программа и структура курса', 'Первая минимальная версия', 'Платформа для обучения', 'Контент: видео, тексты, задания', 'Воронка продаж и прогрев', 'Рекламная кампания'] },
     s3: { q: 'Удали мой проект и все данные', a: 'Это нельзя будет вернуть, поэтому сначала спрошу.', t: 'Проект и все данные будут удалены без восстановления.', n: 'Пока вы не нажмёте, ничего не произойдёт.', y: 'Применить', x: 'Отклонить' },
@@ -29,7 +29,7 @@ const T = {
     crm: ['CRM', 'Форма заявок и доска в вашем аккаунте. Заявки приходят сами.', 'Развернуть', ['Новые', 'В работе', 'Оплачено']],
     par: ['Партнёрские ссылки', 'Личная ссылка каждому партнёру. Переходы и заявки считаются сами.', 'Развернуть', [['1', 'ссылка на партнёра'], ['авто', 'учёт переходов'], ['авто', 'учёт заявок']]],
     exa: ['Сайт', 'Одна страница с формой заявок. Текст пишет Vax, работает сразу.', 'Развернуть'],
-    cab: ['Рабочее пространство', 'Чат, память, инструменты и холст на одном экране.', 'Открыть', ['Готовность проекта', 'Запас на сегодня', 'Мои инструменты', 'Счёт оплачен']],
+    cab: ['Рабочее пространство', 'Чат, память, инструменты и холст на одном экране.', 'Открыть', ['Готовность проекта', 'Сообщений сегодня', 'Мои инструменты', 'Счёт оплачен']],
     prH: 'Тарифы', prS: 'Начните бесплатно. Первый месяц любого платного тарифа тоже бесплатный, с меньшим запасом.',
     mo: '/мес', focus: 'Лучше всего начать здесь', trial: 'Месяц бесплатно', startB: 'Начать бесплатно', more: 'Ещё два варианта',
     start: ['Старт', 'Для вопросов и простых инструментов.', ['Ответы на вопросы', 'Калькуляторы, чек-листы, трекеры', 'План и цена вашей задачи', 'Сайт на одну страницу с заявками на почту', 'Без карты и регистрации']],
@@ -52,7 +52,7 @@ const T = {
     go: 'Start', askL: 'Write your task',
     showT: 'What it looks like', showH: ['More than text.', 'A finished thing.'], showP: 'When a tool is what you need, Vax puts it right into the conversation. You can use it at once, and it stays in your cabinet.',
     tabs: ['Counts', 'Breaks it into steps', 'Asks before anything big'],
-    side: ['Chat with Vax', 'My tools', 'Projects', 'Payments'], allow: 'Allowance today', box: 'Write a message…',
+    side: ['Chat with Vax', 'Site', 'CRM', 'Partner cabinet'], allow: '12 of 80 messages today', box: 'Write a message…',
     s1: { q: 'Work out the unit economics of a subscription: $39 a month, a customer stays 8 months, acquiring one costs $60', a: 'A customer brings in $312 and costs $60 to win. Payback is 5.2×, so the model holds up.', t: 'Subscription unit economics', f: [['Price', '$39'], ['Customer stays', '8 mo'], ['Acquisition', '$60']], o: [['Revenue per customer', '$312'], ['LTV / CAC', '5.2×'], ['Left per customer', '$252']] },
     s2: { q: 'Break an online course launch into steps', a: 'Start with the audience, not the videos. Here is the whole path.', t: 'Online course launch', n: '2/7', i: ['Research the audience and its problems', 'Course program and structure', 'First minimal version', 'Learning platform', 'Content: video, text, assignments', 'Sales funnel and warm-up', 'Ad campaign'] },
     s3: { q: 'Delete my project and all my data', a: 'This cannot be undone, so I will ask first.', t: 'The project and all its data will be deleted for good.', n: 'Nothing happens until you press.', y: 'Apply', x: 'Decline' },
@@ -63,7 +63,7 @@ const T = {
     crm: ['CRM', 'A request form and a board in your account. Requests arrive by themselves.', 'Deploy', ['New', 'In progress', 'Paid']],
     par: ['Partner links', 'A personal link for each partner. Visits and requests count themselves.', 'Deploy', [['1', 'link per partner'], ['auto', 'visit tracking'], ['auto', 'request tracking']]],
     exa: ['Site', 'One page with a request form. Vax writes the text, it works at once.', 'Deploy'],
-    cab: ['Workspace', 'Chat, memory, tools and Canvas on one screen.', 'Open', ['Project progress', 'Allowance today', 'My tools', 'Invoice paid']],
+    cab: ['Workspace', 'Chat, memory, tools and Canvas on one screen.', 'Open', ['Project progress', 'Messages today', 'My tools', 'Invoice paid']],
     prH: 'Plans', prS: 'Start free. The first month of any paid plan is free too, with a smaller allowance.',
     mo: '/mo', focus: 'The best place to start', trial: 'Try a month free', startB: 'Start free', more: 'Two more options',
     start: ['Start', 'For questions and simple tools.', ['Answers to your questions', 'Calculators, checklists, trackers', 'A plan and a price for your task', 'A one-page site, requests by email', 'No card, no sign-up']],
@@ -86,7 +86,7 @@ const T = {
     go: 'Почати', askL: 'Напишіть завдання',
     showT: 'Як це виглядає', showH: ['Не просто текст.', 'Готова річ.'], showP: 'Там, де потрібен інструмент, Vax кладе його просто в розмову. Ним можна користуватися одразу, і він залишається у вас у кабінеті.',
     tabs: ['Рахує', 'Розкладає на кроки', 'Питає перед важливим'],
-    side: ['Розмова з Vax', 'Мої інструменти', 'Проєкти', 'Оплати'], allow: 'Запас на сьогодні', box: 'Напишіть повідомлення…',
+    side: ['Розмова з Vax', 'Сайт', 'CRM', 'Партнерський кабінет'], allow: 'Повідомлень сьогодні: 12 з 80', box: 'Напишіть повідомлення…',
     s1: { q: 'Порахуй юніт-економіку підписки: $39 на місяць, клієнт залишається 8 місяців, залучення коштує $60', a: 'Клієнт приносить $312, на залучення йде $60. Окупність 5,2×: модель стійка.', t: 'Юніт-економіка підписки', f: [['Ціна', '$39'], ['Строк клієнта', '8 міс'], ['Залучення', '$60']], o: [['Виручка з клієнта', '$312'], ['LTV / CAC', '5,2×'], ['Залишається з клієнта', '$252']] },
     s2: { q: 'Розклади на кроки запуск онлайн-курсу', a: 'Почніть з аудиторії, а не з відео. Ось увесь шлях.', t: 'Запуск онлайн-курсу', n: '2/7', i: ['Аналіз цільової аудиторії та її болів', 'Програма і структура курсу', 'Перша мінімальна версія', 'Платформа для навчання', 'Контент: відео, тексти, завдання', 'Воронка продажів і прогрів', 'Рекламна кампанія'] },
     s3: { q: 'Видали мій проєкт і всі дані', a: 'Це не можна буде повернути, тому спершу запитаю.', t: 'Проєкт і всі дані буде видалено без відновлення.', n: 'Доки ви не натиснете, нічого не станеться.', y: 'Застосувати', x: 'Відхилити' },
@@ -97,7 +97,7 @@ const T = {
     crm: ['CRM', 'Форма заявок і дошка у вашому акаунті. Заявки приходять самі.', 'Розгорнути', ['Нові', 'В роботі', 'Оплачено']],
     par: ['Партнерські посилання', 'Особисте посилання кожному партнеру. Переходи й заявки рахуються самі.', 'Розгорнути', [['1', 'посилання на партнера'], ['авто', 'облік переходів'], ['авто', 'облік заявок']]],
     exa: ['Сайт', 'Одна сторінка з формою заявок. Текст пише Vax, працює одразу.', 'Розгорнути'],
-    cab: ['Робочий простір', 'Чат, памʼять, інструменти й полотно на одному екрані.', 'Відкрити', ['Готовність проєкту', 'Запас на сьогодні', 'Мої інструменти', 'Рахунок оплачено']],
+    cab: ['Робочий простір', 'Чат, памʼять, інструменти й полотно на одному екрані.', 'Відкрити', ['Готовність проєкту', 'Повідомлень сьогодні', 'Мої інструменти', 'Рахунок оплачено']],
     prH: 'Тарифи', prS: 'Почніть безкоштовно. Перший місяць будь-якого платного тарифу теж безкоштовний, з меншим запасом.',
     mo: '/міс', focus: 'Найкраще почати тут', trial: 'Місяць безкоштовно', startB: 'Почати безкоштовно', more: 'Ще два варіанти',
     start: ['Старт', 'Для питань і простих інструментів.', ['Відповіді на питання', 'Калькулятори, чек-листи, трекери', 'План і ціна вашого завдання', 'Сайт на одну сторінку із заявками на пошту', 'Без картки й реєстрації']],
@@ -137,7 +137,7 @@ const ava = '/mascot/vax-happy.webp';
         <aside class="side">
           <span class="lg">VAXO<i>.</i></span>
           {T.side.map((x, i) => <span class:list={['nv', { on: i === 0 }]}>{x}</span>)}
-          <div class="al">{T.allow}<i></i></div>
+          <div class="al">{T.allow}</div>
         </aside>
         <div class="talk">
           <div class="log">
@@ -210,7 +210,7 @@ const ava = '/mascot/vax-happy.webp';
           <em class="live">{T.live}</em>
           <div class="mock cab" aria-hidden="true">
             <div class="ln"><small>{T.cab[3][0]}</small><em>45%</em><u><i style="width:45%"></i></u></div>
-            <div class="ln"><small>{T.cab[3][1]}</small><u><i style="width:72%"></i></u></div>
+            <div class="ln"><small>{T.cab[3][1]}</small><em>12 / 80</em></div>
             <div class="rw"><span>{T.cab[3][2]}</span><span class="ok">✓ {T.cab[3][3]}</span></div>
           </div>
           <h3>{T.cab[0]}</h3><p>{T.cab[1]}</p><span>{T.cab[2]} →</span>

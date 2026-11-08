@@ -261,7 +261,7 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
   }
   // Google: /api/me/google?back=<room> → Google → /api/me/google/callback → /me/
   if (path === 'google' && request.method === 'GET') {
-    if (!env.GOOGLE_CLIENT_ID) return Response.redirect(new URL('/me/?err=google_off', url).toString(), 302);
+    if (!env.GOOGLE_CLIENT_ID) return Response.redirect(new URL('/app/?err=google_off#signin', url).toString(), 302);
     const state = hex(16) + '.' + (ROOM_RE.test(url.searchParams.get('back') || '') ? url.searchParams.get('back') : '');
     const go = new URL('https://accounts.google.com/o/oauth2/v2/auth');
     go.search = new URLSearchParams({ client_id: env.GOOGLE_CLIENT_ID, redirect_uri: `${url.origin}/api/me/google/callback`, response_type: 'code', scope: 'openid email profile', state, prompt: 'select_account' }).toString();
@@ -269,14 +269,14 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
   }
   if (path === 'google/callback' && request.method === 'GET') {
     const state = url.searchParams.get('state') || '';
-    if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !state || state !== cookie(request, 'vaxo_gst')) return Response.redirect(new URL('/me/?err=google', url).toString(), 302);
+    if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !state || state !== cookie(request, 'vaxo_gst')) return Response.redirect(new URL('/app/?err=google#signin', url).toString(), 302);
     const tok = (await (await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ code: url.searchParams.get('code') || '', client_id: env.GOOGLE_CLIENT_ID, client_secret: env.GOOGLE_CLIENT_SECRET, redirect_uri: `${url.origin}/api/me/google/callback`, grant_type: 'authorization_code' }),
     }).catch(() => null))?.json().catch(() => null)) as { id_token?: string } | null;
     // The id_token comes straight from Google over TLS, so its payload can be read without a signature check.
     const p = tok?.id_token ? JSON.parse(atob(tok.id_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))) : null;
-    if (!p?.sub || p.aud !== env.GOOGLE_CLIENT_ID || !/accounts\.google\.com$/.test(p.iss || '') || !p.email_verified) return Response.redirect(new URL('/me/?err=google', url).toString(), 302);
+    if (!p?.sub || p.aud !== env.GOOGLE_CLIENT_ID || !/accounts\.google\.com$/.test(p.iss || '') || !p.email_verified) return Response.redirect(new URL('/app/?err=google#signin', url).toString(), 302);
     const email = String(p.email).toLowerCase();
     let c = await db.prepare('SELECT id FROM clients WHERE google_sub = ? OR email = ?').bind(p.sub, email).first<{ id: number }>();
     if (!c) {

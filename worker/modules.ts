@@ -17,7 +17,7 @@ const TONES: Record<string, [string, string, string, string]> = { // page, text,
   warm: ['#fbf4ea', '#2d2118', '#ffffff', '#c2410c'],
 };
 
-export type Site = { lang: string; tone: string; title: string; sub: string; about: string; services: string[]; cta: string };
+export type Site = { lang: string; tone: string; title: string; sub: string; about: string; services: string[]; cta: string; ask?: string };
 
 const WORDS: Record<string, { name: string; contact: string; msg: string; send: string; done: string; made: string; fill: string; first: string }> = {
   en: { name: 'Your name', contact: 'Phone or email', msg: 'What do you need?', send: 'Send', done: 'Thank you! Your request has been sent.', made: 'Made on Vaxo', fill: 'Leave a request', first: 'Partner 1' },
@@ -39,6 +39,7 @@ export function cleanSite(x: Record<string, unknown>, lang: string): Site {
     title: cut(x.title, 80), sub: cut(x.sub, 160), about: cut(x.about, 800),
     services: list.map((s) => cut(s, 100)).filter(Boolean).slice(0, 6),
     cta: cut(x.cta, 40),
+    ask: cut(x.ask, 80) || undefined,
   };
 }
 
@@ -91,15 +92,33 @@ export async function deployModule(db: DB, ai: AiBinding | undefined, clientId: 
     if (!has) await addRef(db, clientId, w.first);
   }
   if (kind === 'site') {
-    const t = ai ? await askAi(ai, `Write the text of a one-page website in ${lang === 'ru' ? 'Russian' : lang === 'ua' ? 'Ukrainian' : 'English'}. Use only what is known below. Never invent prices, addresses, phones, reviews, years, awards or numbers. If little is known, keep the text general and short.
-Name: ${biz.name}. Field: ${memory.niche || '?'}. Goals: ${memory.goals || '?'}. Project: ${memory.project || '?'}.
-Return ONLY JSON: {"title":"name or a short headline","sub":"one line: what the visitor gets","about":"2-3 plain sentences","services":["3-5 short items"],"cta":"button text, 1-3 words"}`, 500) : '';
-    const site = cleanSite({ title: biz.name, ...(parse<Record<string, unknown>>(t) ?? {}) }, lang);
+    const site = await writeSite(ai, lang, `Name: ${biz.name}. Field: ${memory.niche || '?'}. Goals: ${memory.goals || '?'}. Project: ${memory.project || '?'}.`, biz.name);
     await db.prepare(`UPDATE biz_pages SET kind = 'site', data = ? WHERE biz_id = ?`).bind(JSON.stringify(site), biz.id).run();
     // The site's AI chat answers only from "about", so the page's own text switches it on.
     if (access) await db.prepare(`UPDATE biz SET about = COALESCE(about, ?) WHERE id = ?`).bind([site.about, ...site.services].join('\n') || null, biz.id).run();
   }
 }
+
+const LANG_NAME: Record<string, string> = { en: 'English', ru: 'Russian', ua: 'Ukrainian' };
+
+/** The text of a one-page site from what is known: a wish in the workspace, or the notes Vax keeps. Never invents facts. */
+export async function writeSite(ai: AiBinding | undefined, lang: string, known: string, name = ''): Promise<Site> {
+  const t = ai ? await askAi(ai, `Write the text of a one-page website in ${LANG_NAME[lang] ?? 'English'}. Use only what is known below. Never invent prices, addresses, phones, reviews, years, awards or numbers. If little is known, keep the text general and short. The page has one form; make its title and the hint in its message box fit the wish (an order, a booking, a pre-order, a question).
+${known}
+Return ONLY JSON: {"title":"name or a short headline","sub":"one line: what the visitor gets","about":"2-3 plain sentences","services":["3-6 short items"],"cta":"form title, 1-4 words","ask":"hint inside the message box, at most 8 words","tone":"clean, dark or warm"}`, 600).catch(() => '') : '';
+  return cleanSite({ title: name, ...(parse<Record<string, unknown>>(t) ?? {}) }, lang);
+}
+
+/** Publish from the Canvas: the site gets this text, created first if there is none yet. */
+export async function publishSite(db: DB, clientId: number, x: Record<string, unknown>, lang: string, access: boolean) {
+  const site = cleanSite(x, lang);
+  const biz = await ensureBiz(db, clientId, site.title.slice(0, 60), site.lang);
+  await db.prepare(`UPDATE biz_pages SET kind = 'site', data = ? WHERE biz_id = ?`).bind(JSON.stringify(site), biz.id).run();
+  if (access) await db.prepare(`UPDATE biz SET about = COALESCE(NULLIF(about, ''), ?) WHERE id = ?`).bind([site.about, ...site.services].join('\n') || null, biz.id).run();
+}
+
+/** The same page for the Canvas preview: no scripts, the form does nothing. */
+export const sitePreview = (s: Site) => page(s, 'site', s.title || 'Site', '', 'preview', false).replace(/<script[\s\S]*?<\/script>/g, '').replace(/<link rel="manifest"[^>]*>/, '');
 
 export async function saveSite(db: DB, clientId: number, b: Record<string, unknown>) {
   const biz = await db.prepare('SELECT b.id, p.data FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(clientId).first<{ id: number; data: string }>();
@@ -137,7 +156,7 @@ function page(s: Site, kind: string, name: string, key: string, slug: string, in
 <style>*{box-sizing:border-box}body{margin:0;background:${bg};color:${ink};font:17px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}main{max-width:680px;margin:0 auto;padding:56px 20px 32px;display:grid;gap:28px}h1{font-size:clamp(32px,7vw,48px);line-height:1.1;margin:0}.sub{font-size:20px;opacity:.8;margin:12px 0 0}p{margin:0}ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}li{background:${card};padding:14px 16px;border-radius:12px;border:1px solid color-mix(in srgb,${ink} 10%,transparent)}form{background:${card};padding:20px;border-radius:16px;border:1px solid color-mix(in srgb,${ink} 10%,transparent);display:grid;gap:10px}h2{font-size:20px;margin:0}input,textarea{font:16px inherit;width:100%;padding:12px 14px;border-radius:10px;border:1px solid color-mix(in srgb,${ink} 20%,transparent);background:transparent;color:inherit}button{font:600 16px inherit;padding:13px;border:0;border-radius:10px;background:${acc};color:#fff;cursor:pointer}.ok{font-weight:600}footer{text-align:center;font-size:13px;opacity:.6;padding:8px 0 28px}footer a{color:inherit}</style></head><body><main>
 <header><h1>${esc(title)}</h1>${s.sub ? `<p class="sub">${esc(s.sub)}</p>` : ''}</header>
 ${site && s.about ? `<p>${esc(s.about)}</p>` : ''}${site && s.services.length ? `<ul>${s.services.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
-<form id="f"><h2>${esc(s.cta || w.fill)}</h2><input name="name" maxlength="80" placeholder="${esc(w.name)}" autocomplete="name"><input name="contact" maxlength="120" placeholder="${esc(w.contact)}" required><textarea name="message" rows="3" maxlength="1500" placeholder="${esc(w.msg)}"></textarea><button>${esc(w.send)}</button></form>
+<form id="f"><h2>${esc(s.cta || w.fill)}</h2><input name="name" maxlength="80" placeholder="${esc(w.name)}" autocomplete="name"><input name="contact" maxlength="120" placeholder="${esc(w.contact)}" required><textarea name="message" rows="3" maxlength="1500" placeholder="${esc(s.ask || w.msg)}"></textarea><button>${esc(w.send)}</button></form>
 </main>${index ? '' : `<footer><a href="https://vaxogroup.com/">${esc(w.made)}</a></footer>`}
 <script src="/w.js?k=${key}" async></script><script>document.getElementById('f').onsubmit=function(e){e.preventDefault();var p=document.createElement('p');p.className='ok';p.textContent=${JSON.stringify(w.done).replace(/</g, '\\u003c')};this.replaceChildren(p)}</script></body></html>`;
 }

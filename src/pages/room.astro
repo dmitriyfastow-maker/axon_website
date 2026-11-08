@@ -26,7 +26,7 @@ const T = {
       <form data-form><button type="button" class="mic clip" data-clip aria-label="Attach files"></button><textarea name="t" rows="2" maxlength="4000"></textarea><button type="button" class="mic" data-mic aria-label="Voice input"></button><button type="submit" aria-label="Send">➤</button></form>
     </section>
     <p class="save"><span data-save></span> <button type="button" data-copy></button> <a class="tg" data-tg hidden target="_blank" rel="noopener"></a></p>
-    <p class="save"><a class="cab" data-cab href="/me/"></a></p>
+    <p class="save"><a class="cab" data-cab href="/app/"></a></p>
     <p class="save"><a href="/terms/" target="_blank" data-terms>Terms &amp; refunds</a> · <a href="/privacy/" target="_blank" data-privacy>Privacy</a></p>
   </main>
   <script type="application/json" id="room-t" set:html={JSON.stringify(T)} />
@@ -129,7 +129,7 @@ const T = {
       const add = (txt: string) => { const li = document.createElement('li'); li.textContent = txt; meta.append(li); };
       if (d.status === 'won' && d.revisions) add('✏️ ' + T.revs.replace('{u}', d.revisions.used).replace('{t}', d.revisions.total));
       if (d.briefConfirmedAt) add('✅ ' + T.briefOk.replace('{d}', new Date(d.briefConfirmedAt.replace(' ', 'T') + 'Z').toLocaleDateString()));
-      const cab = $<HTMLAnchorElement>('[data-cab]'); cab.textContent = T.cab; cab.href = `${d.lang === 'en' ? '' : '/' + d.lang}/me/?t=${token}`;
+      const cab = $<HTMLAnchorElement>('[data-cab]'); cab.textContent = T.cab; cab.href = `${d.lang === 'en' ? '' : '/' + d.lang}/app/?t=${token}`;
       const card = $('[data-mcard]');
       card.replaceChildren();
       const av = document.createElement('span');
