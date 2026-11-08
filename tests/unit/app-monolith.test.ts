@@ -122,8 +122,18 @@ describe('the site template', () => {
   it('has a hero picture, what you get, about, how it works and one form, and no outside picture addresses', () => {
     const html = sitePreview(cleanSite({ title: 'Кофейня', sub: 'Кофе без очереди', about: 'Варим каждый день.', services: ['Кофе', 'Выпечка', 'Десерты'], cta: 'Предзаказ', img: 'a'.repeat(24), tone: 'warm' }, 'ru'));
     expect(html).toContain(`/i/${'a'.repeat(24)}.jpg`);
-    for (const h of ['Что вы получите', 'О нас', 'Как это работает', 'Предзаказ']) expect(html).toContain(h);
+    for (const h of ['Что мы предлагаем', 'О нас', 'Как это работает', 'Предзаказ']) expect(html).toContain(h);
     expect((html.match(/<form/g) || []).length).toBe(1);
     expect(cleanSite({ img: 'https://evil.example/x.jpg' }, 'en').img).toBeUndefined();
+  });
+  it('reads "name — description" lines and keeps the style for the niche', () => {
+    const s = cleanSite({ style: 'editorial', services: 'Эспрессо — двойная обжарка\nВыпечка — каждое утро', faq: [{ q: 'Можно с собой?', a: 'Да, всё упакуем.' }] }, 'ru');
+    expect(s.services).toEqual(['Эспрессо', 'Выпечка']);
+    expect(s.details).toEqual(['двойная обжарка', 'каждое утро']);
+    expect(s.style).toBe('editorial');
+    expect(cleanSite({ tone: 'warm' }, 'ru').style).toBe('soft');
+    const html = sitePreview(s);
+    expect(html).toContain('Cormorant');
+    expect(html).toContain('Можно с собой?');
   });
 });

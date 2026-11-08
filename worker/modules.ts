@@ -7,6 +7,7 @@ import { askAi, json as parse } from './autopilot.js';
 import { buyerRef } from './buyers.js';
 import type { AiBinding } from './chat.js';
 import type { DB } from './partner.js';
+import { renderSite, styleOf } from './sitekit.js';
 
 const hex = (n: number) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => b.toString(16).padStart(2, '0')).join('');
 const cut = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
@@ -17,7 +18,8 @@ const TONES: Record<string, [string, string, string, string]> = { // page, text,
   warm: ['#fbf4ea', '#2d2118', '#ffffff', '#c2410c'],
 };
 
-export type Site = { lang: string; tone: string; title: string; sub: string; about: string; services: string[]; cta: string; ask?: string; img?: string };
+export type Site = { lang: string; tone: string; title: string; sub: string; about: string; services: string[]; cta: string; ask?: string; img?: string;
+  style?: string; kicker?: string; accent?: string; details?: string[]; steps?: string[]; faq?: { q: string; a: string }[]; imgs?: string[]; promise?: string };
 
 const WORDS: Record<string, { name: string; contact: string; msg: string; send: string; done: string; made: string; fill: string; first: string }> = {
   en: { name: 'Your name', contact: 'Phone or email', msg: 'What do you need?', send: 'Send', done: 'Thank you! Your request has been sent.', made: 'Made on Vaxo', fill: 'Leave a request', first: 'Partner 1' },
@@ -31,16 +33,29 @@ export function slugOf(name: string): string {
   return `${s || 'page'}-${hex(2)}`;
 }
 
+const ID = /^[a-f0-9]{24}$/;
 export function cleanSite(x: Record<string, unknown>, lang: string): Site {
-  const list = Array.isArray(x.services) ? x.services : String(x.services ?? '').split('\n');
+  const lines = (v: unknown) => (Array.isArray(v) ? v : String(v ?? '').split('\n'));
+  // Services may come as "Name — description" lines from the Canvas editor, or as two lists from the model.
+  const raw = lines(x.services).map((s) => (typeof s === 'object' && s ? `${(s as any).t ?? ''} — ${(s as any).d ?? ''}` : String(s)));
+  const split = raw.map((l) => l.split(/\s+[—–-]\s+/));
+  const services = split.map((p) => cut(p[0], 80)).filter(Boolean).slice(0, 6);
+  const given = lines(x.details).map((d) => cut(String(d), 200));
+  const details = split.filter((p) => cut(p[0], 80)).slice(0, 6).map((p, i) => cut(p.slice(1).join(' — '), 200) || given[i] || '');
+  const faq = (Array.isArray(x.faq) ? x.faq : lines(x.faq).map((l) => { const [q, ...a] = String(l).split(/\s+[—–-]\s+/); return { q, a: a.join(' — ') }; }))
+    .map((f: any) => ({ q: cut(f?.q, 140), a: cut(f?.a, 400) })).filter((f) => f.q && f.a).slice(0, 5);
+  const steps = lines(x.steps).map((s) => cut(String(s), 90)).filter(Boolean).slice(0, 3);
+  const imgs = (Array.isArray(x.imgs) ? x.imgs : [x.img]).map(String).filter((i) => ID.test(i)).slice(0, 3);
+  const style = styleOf(cut(x.style, 12) || cut(x.tone, 8));
   return {
     lang: lang in WORDS ? lang : 'en',
-    tone: cut(x.tone, 8) in TONES ? cut(x.tone, 8) : 'clean',
-    title: cut(x.title, 80), sub: cut(x.sub, 160), about: cut(x.about, 800),
-    services: list.map((s) => cut(s, 100)).filter(Boolean).slice(0, 6),
+    tone: cut(x.tone, 8) in TONES ? cut(x.tone, 8) : 'clean', style,
+    title: cut(x.title, 80), sub: cut(x.sub, 180), about: cut(x.about, 900),
+    kicker: cut(x.kicker, 60) || undefined, accent: cut(x.accent, 30) || undefined, promise: cut(x.promise, 120) || undefined,
+    services, details: details.some(Boolean) ? details : undefined, steps: steps.length === 3 ? steps : undefined, faq: faq.length ? faq : undefined,
     cta: cut(x.cta, 40),
     ask: cut(x.ask, 80) || undefined,
-    img: /^[a-f0-9]{24}$/.test(String(x.img ?? '')) ? String(x.img) : undefined,
+    img: imgs[0], imgs: imgs.length ? imgs : undefined,
   };
 }
 
@@ -103,11 +118,21 @@ export async function deployModule(db: DB, ai: AiBinding | undefined, clientId: 
 const LANG_NAME: Record<string, string> = { en: 'English', ru: 'Russian', ua: 'Ukrainian' };
 
 /** The text of a one-page site from what is known: a wish in the workspace, or the notes Vax keeps. Never invents facts. */
-export async function writeSite(ai: AiBinding | undefined, lang: string, known: string, name = ''): Promise<Site> {
-  const t = ai ? await askAi(ai, `Write the text of a one-page website in ${LANG_NAME[lang] ?? 'English'}. Use only what is known below. Never invent prices, addresses, phones, reviews, years, awards or numbers. If little is known, keep the text general and short. The page has one form; make its title and the hint in its message box fit the wish (an order, a booking, a pre-order, a question).
+/** The text of a site from what is known: a wish in the workspace, or the notes Vax keeps. Rich, but never invents facts.
+ *  Also chooses the style for the niche and writes three photo prompts (pictures are drawn by worker/images.ts). */
+export async function writeSite(ai: AiBinding | undefined, lang: string, known: string, name = ''): Promise<Site & { photos?: string[] }> {
+  const L = LANG_NAME[lang] ?? 'English';
+  const t = ai ? await askAi(ai, `You are a top web copywriter. Write the content of a premium one-page website in ${L}. Base it ONLY on what is known below.
+Rules: never invent prices, addresses, phone numbers, opening hours, years, awards, reviews, client names or statistics. Write confidently about what such a business does and why it is good to choose it, without numbers you do not know. Short sentences, no clichés like "high quality" or "individual approach".
+Choose "style" for the niche: editorial (restaurants, coffee, bars, beauty, premium services), clinic (medicine, dental, law, finance, consulting, education), bold (barbers, fitness, sports, tech, auto, events), soft (bakeries, florists, kids, family, crafts, pets), nature (gardening, landscaping, cleaning, eco, farms, wellness, yoga).
 ${known}
-Return ONLY JSON: {"title":"name or a short headline","sub":"one line: what the visitor gets","about":"2-3 plain sentences","services":["3-6 short items, at least 3: what the visitor can get or book here"],"cta":"form title, 1-4 words","ask":"hint inside the message box, at most 8 words","tone":"clean, dark or warm"}`, 600).catch(() => '') : '';
-  return cleanSite({ title: name, ...(parse<Record<string, unknown>>(t) ?? {}) }, lang);
+Return ONLY JSON:
+{"style":"...","title":"business name or a 2-5 word headline","accent":"one word from the title to highlight","kicker":"3-6 words above the title","sub":"one line: what the visitor gets, max 18 words","about":"3 sentences about the business and its approach","services":["4-6 offers, 1-4 words each"],"details":["one sentence describing each offer, same order"],"steps":["3 steps, 3-7 words each: 1 the visitor leaves a request, 2 what THE BUSINESS does next (we prepare / we call / we agree), 3 what the visitor gets"],"faq":[{"q":"a question a visitor would ask","a":"an honest answer without invented facts; if a fact is unknown, say it is agreed in the request"}],"promise":"one strong sentence for a photo banner, max 12 words","cta":"form title, 1-4 words, fits the wish (order, booking, pre-order...)","ask":"hint in the message box, max 8 words","photos":["3 English prompts for realistic photos for this site: 1 the place or product wide shot, 2 the process or people at work from behind or the side, 3 a beautiful detail close-up. No text, no logos, no faces looking at the camera"]}
+Give exactly 3 faq items. If the business involves sex, drugs, weapons, gambling or anything illegal, return {"block":true}.`, 1600).catch(() => '') : '';
+  const j = parse<Record<string, unknown>>(t) ?? {};
+  if (j.block) return cleanSite({ title: name }, lang);
+  const photos = (Array.isArray(j.photos) ? j.photos : []).map((p) => cut(String(p), 300)).filter(Boolean).slice(0, 3);
+  return { ...cleanSite({ title: name, ...j }, lang), photos };
 }
 
 /** Publish from the Canvas: the site gets this text, created first if there is none yet. */
@@ -142,6 +167,17 @@ export async function updateLiveSite(db: DB, clientId: number, slug: string, x: 
   if ((main as { meta?: { changes?: number } })?.meta?.changes) return true;
   const extra = await db.prepare('UPDATE ws_sites SET data = ? WHERE slug = ? AND client_id = ?').bind(site, slug, clientId).run();
   return !!(extra as { meta?: { changes?: number } })?.meta?.changes;
+}
+
+/** The page a visitor is on (/s/<slug>, main or extra): its own name and facts, so the site chat talks about this page only. */
+export async function pageFacts(db: DB, bizId: number, path: string): Promise<{ name: string; facts: string } | null> {
+  const slug = path.match(/^\/s\/([a-z0-9-]{3,60})/)?.[1];
+  if (!slug) return null;
+  const r = (await db.prepare('SELECT data FROM biz_pages WHERE slug = ? AND biz_id = ?').bind(slug, bizId).first<{ data: string }>().catch(() => null))
+    ?? (await db.prepare('SELECT data FROM ws_sites WHERE slug = ? AND biz_id = ?').bind(slug, bizId).first<{ data: string }>().catch(() => null));
+  if (!r) return null;
+  const s = JSON.parse(r.data) as Site;
+  return { name: s.title, facts: [s.title, s.sub, s.about, s.services.length ? `Offer: ${s.services.join('; ')}` : ''].filter(Boolean).join('. ') };
 }
 
 export async function saveSite(db: DB, clientId: number, b: Record<string, unknown>) {
@@ -180,40 +216,9 @@ const STEPS: Record<string, [string, string, string, string, string, string]> = 
 };
 const ICON = ['M5 12.5 9.5 17 19 7.5', 'M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.6 6.7 19.4l1.2-6L3.4 9.3l6-.7z', 'M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z', 'M4 12h16M12 4v16', 'M3 12h4l3 7 4-14 3 7h4', 'M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4'];
 
-/** The public page: a hero with the business's picture, what you get, about, how it works, one request form. Escaped text only. */
+/** The public page of a site or form: the site kit (worker/sitekit.ts). */
 function page(s: Site, kind: string, name: string, key: string, slug: string, index: boolean): string {
-  const w = WORDS[s.lang] ?? WORDS.en, st = STEPS[s.lang] ?? STEPS.en;
-  const [bg, ink, card, acc] = TONES[s.tone] ?? TONES.clean;
-  const title = s.title || name, site = kind === 'site', cta = s.cta || w.fill;
-  const img = s.img && /^[a-f0-9]{24}$/.test(s.img) ? `/i/${s.img}.jpg` : '';
-  const svg = (d: string) => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
-  const services = site && s.services.length ? `<section class="sec"><h2>${esc(st[0])}</h2><div class="grid">${s.services.map((x, i) => `<div class="card"><span class="ic">${svg(ICON[i % ICON.length])}</span><b>${esc(x)}</b></div>`).join('')}</div></section>` : '';
-  const about = site && s.about ? `<section class="sec about"><h2>${esc(st[1])}</h2><p>${esc(s.about)}</p></section>` : '';
-  const how = site ? `<section class="sec"><h2>${esc(st[2])}</h2><ol class="steps"><li><i>1</i>${esc(st[3])}</li><li><i>2</i>${esc(st[4])}</li><li><i>3</i>${esc(st[5])}</li></ol></section>` : '';
-  return `<!doctype html><html lang="${s.lang === 'ua' ? 'uk' : s.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${esc(title)}</title><meta name="description" content="${esc(s.sub || title)}">${index ? '' : '<meta name="robots" content="noindex">'}
-<meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(s.sub || title)}">${img ? `<meta property="og:image" content="https://vaxogroup.com${img}">` : ''}
-<link rel="manifest" href="/s/${slug}/manifest.webmanifest"><meta name="theme-color" content="${bg}">
-<style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:${bg};color:${ink};font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:inherit}.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;background:color-mix(in srgb,${bg} 82%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid color-mix(in srgb,${ink} 8%,transparent)}
-.bar b{font-size:16px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.btn{display:inline-block;background:${acc};color:#fff;text-decoration:none;font-weight:700;border-radius:999px;padding:11px 20px;font-size:15px;border:0;cursor:pointer;white-space:nowrap}
-.btn.ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
-.hero{position:relative;min-height:${img ? '78vh' : '56vh'};display:grid;align-items:end;padding:${img ? '120px' : '72px'} 20px 48px;${img ? `background:#111 url(${img}) center/cover no-repeat;color:#fff` : `background:radial-gradient(1200px 500px at 20% -10%,color-mix(in srgb,${acc} 22%,transparent),transparent)`}}
-${img ? '.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.35) 45%,rgba(0,0,0,.82) 100%)}' : ''}
-.hero>div{position:relative;max-width:760px;margin:0 auto;width:100%}h1{font-size:clamp(36px,8vw,64px);line-height:1.04;letter-spacing:-.03em;margin:0 0 14px}.sub{font-size:clamp(18px,3.4vw,22px);opacity:.88;margin:0 0 26px;max-width:600px}.acts{display:flex;gap:10px;flex-wrap:wrap}
-main{max-width:860px;margin:0 auto;padding:12px 20px 24px}.sec{padding:44px 0 8px}h2{font-size:clamp(26px,5vw,34px);letter-spacing:-.02em;line-height:1.15;margin:0 0 20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.card{background:${card};border-radius:18px;padding:20px;border:1px solid color-mix(in srgb,${ink} 9%,transparent);display:grid;gap:12px;align-content:start}.card b{font-size:17px;line-height:1.35}
-.ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,${acc} 14%,transparent);color:${acc}}.about p{font-size:19px;max-width:680px;margin:0;opacity:.9}
-.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.steps li{background:${card};border-radius:18px;padding:18px 20px;display:flex;gap:14px;align-items:center;font-weight:600;border:1px solid color-mix(in srgb,${ink} 9%,transparent)}.steps i{font-style:normal;flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:${acc};color:#fff;font-weight:800}
-#form{scroll-margin-top:70px}form{background:${card};padding:26px 22px;border-radius:22px;border:1px solid color-mix(in srgb,${ink} 10%,transparent);display:grid;gap:12px;box-shadow:0 24px 60px color-mix(in srgb,${ink} 10%,transparent)}form h2{margin:0 0 4px}
-input,textarea{font:16px inherit;width:100%;padding:14px 15px;border-radius:12px;border:1px solid color-mix(in srgb,${ink} 18%,transparent);background:${bg};color:inherit}input:focus,textarea:focus{outline:2px solid ${acc};outline-offset:1px}form .btn{padding:15px;font-size:16px;border-radius:12px}.ok{font-weight:700;font-size:19px;margin:0}
-footer{max-width:860px;margin:0 auto;padding:28px 20px 40px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;opacity:.6}</style></head><body>
-<div class="bar"><b>${esc(title)}</b><a class="btn" href="#form">${esc(cta)}</a></div>
-<header class="hero"><div><h1>${esc(title)}</h1>${s.sub ? `<p class="sub">${esc(s.sub)}</p>` : ''}<div class="acts"><a class="btn" href="#form">${esc(cta)}</a>${services ? `<a class="btn ghost" href="#more">${esc(st[0])}</a>` : ''}</div></div></header>
-<main id="more">${services}${about}${how}
-<section class="sec" id="form"><form id="f"><h2>${esc(cta)}</h2><input name="name" maxlength="80" placeholder="${esc(w.name)}" autocomplete="name"><input name="contact" maxlength="120" placeholder="${esc(w.contact)}" required><textarea name="message" rows="3" maxlength="1500" placeholder="${esc(s.ask || w.msg)}"></textarea><button class="btn">${esc(w.send)}</button></form></section>
-</main><footer><span>© ${new Date().getFullYear()} ${esc(title)}</span>${index ? '' : `<a href="https://vaxogroup.com/">${esc(w.made)}</a>`}</footer>
-<script src="/w.js?k=${key}" async></script><script>document.getElementById('f').onsubmit=function(e){e.preventDefault();var p=document.createElement('p');p.className='ok';p.textContent=${JSON.stringify(w.done).replace(/</g, '\\u003c')};this.replaceChildren(p)}</script></body></html>`;
+  return renderSite({ ...s, style: styleOf(s.style || s.tone), services: kind === 'site' ? s.services : [], about: kind === 'site' ? s.about : '' }, { key, slug, index, name });
 }
 
 /** /s/<slug> and its manifest: the public side of a deployed module. */
@@ -227,6 +232,6 @@ export async function servePage(db: DB, slug: string, manifest: boolean): Promis
   const paid = await db.prepare(`SELECT 1 FROM leads l JOIN invoices i ON i.lead_id = l.id WHERE l.client_id = ? AND i.status = 'paid' LIMIT 1`).bind(r.owner_id).first().catch(() => null);
   return new Response(page(s, r.kind, r.name, r.key, slug, !!paid), { headers: {
     'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY',
-    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: https://vaxogroup.com; connect-src 'self'; form-action 'none'; base-uri 'none'",
+    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://vaxogroup.com; font-src https://fonts.gstatic.com; connect-src 'self'; form-action 'none'; base-uri 'none'",
   } });
 }

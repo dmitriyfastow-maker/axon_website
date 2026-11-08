@@ -1,6 +1,6 @@
 // Cloudflare Worker: serves the static site from ./dist and handles the lead form.
 import { handleWorkspace } from './workspace.js';
-import { servePage } from './modules.js';
+import { pageFacts, servePage } from './modules.js';
 import { serveDoc } from './workspace.js';
 import { serveImage } from './images.js';
 import { checkDomains, serveOwnDomain, TARGET } from './domains.js';
@@ -130,7 +130,10 @@ export default {
       const k = url.searchParams.get('k') || '';
       if (!/^[a-f0-9]{24}$/.test(k)) return new Response('', { status: 400 });
       // The AI chat bubble is added only when the owner filled in "About the business" — it needs facts to answer.
-      const chatName = env.LEADS ? ((await env.LEADS.prepare("SELECT name FROM biz WHERE key = ? AND about IS NOT NULL AND about != ''").bind(k).first<{ name: string }>().catch(() => null))?.name ?? '') : '';
+      const on = env.LEADS ? await env.LEADS.prepare("SELECT id, name FROM biz WHERE key = ? AND about IS NOT NULL AND about != ''").bind(k).first<{ id: number; name: string }>().catch(() => null) : null;
+      // The chat bubble carries the name of the page it sits on, not the owner's first business.
+      const pg = on && env.LEADS ? await pageFacts(env.LEADS, on.id, '/s/' + (url.searchParams.get('p') || '')).catch(() => null) : null;
+      const chatName = on ? pg?.name || on.name : '';
       return new Response(snippet(k, url.origin, chatName), { headers: { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'public, max-age=600', 'Access-Control-Allow-Origin': '*' } });
     }
     if (url.pathname === '/api/factory-sync') return env.LEADS ? handleFactorySync(env.LEADS, request) : json(503, { ok: false });

@@ -6,7 +6,7 @@ import { allowance, spendWork, workOf, wsLimits } from './allowance.js';
 import { sessionClient } from './cabinet.js';
 import { FACTS, type AiBinding } from './chat.js';
 import { filesForAi } from './files.js';
-import { drawImage, heroImage, WANTS_IMAGE } from './images.js';
+import { drawImage, heroImage, sitePhotos, WANTS_IMAGE } from './images.js';
 import type { Notify } from './deals.js';
 import { addRef, cleanSite, deployModule, liveSite, moduleAccess, modulesState, saveSite, sitePreview, startTrial, updateLiveSite, writeSite, type Site } from './modules.js';
 import { handleDomain, type Cf } from './domains.js';
@@ -198,8 +198,10 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     const known = `THE WISH (this decides what the page is about): ${said.slice(0, 600)}${notes ? `\nNotes about the person, use them ONLY if they are about the same business as the wish, otherwise ignore them completely: ${notes}` : ''}`;
     // The page speaks the language the wish was written in, whatever the screen's language is.
     const sl = !/[а-яёіїєґ]/i.test(said) ? 'en' : /[іїєґ]/i.test(said) ? 'ua' : /[ыэъё]/i.test(said) ? 'ru' : lang;
-    const [site, img] = await Promise.all([writeSite(ai, sl, known), heroImage(ai, db, me ? 'c' + me.id : ip, said)]);
-    if (img) site.img = img;
+    const { photos, ...site } = await writeSite(ai, sl, known);
+    // Three photos for the page; if the writer gave no prompts, one picture from the wish itself.
+    const imgs = photos?.length ? await sitePhotos(ai, db, me ? 'c' + me.id : ip, photos) : [await heroImage(ai, db, me ? 'c' + me.id : ip, said)].filter((x): x is string => !!x);
+    if (imgs.length) Object.assign(site, { imgs, img: imgs[0] });
     if (site.title || site.services.length) {
       // Signed in with a confirmed email: the page is live right now, on its own address. Otherwise a draft until they sign in.
       if (me?.email_verified_at) {

@@ -69,3 +69,22 @@ export async function serveImage(db: DB, id: string): Promise<Response> {
   for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
   return new Response(buf, { headers: { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=31536000, immutable' } });
 }
+
+/** Three photos for a site at once (the prompts come from the site writer). Each counts toward the same daily limit. */
+export async function sitePhotos(ai: AiBinding | undefined, db: DB, who: string, prompts: string[]): Promise<string[]> {
+  if (!ai || !prompts.length) return [];
+  const key = await ipKey('hero:' + who);
+  const used = (await db.prepare(`SELECT COUNT(*) AS n FROM events WHERE kind = 'heroimg' AND path = ? AND at >= date('now')`).bind(key).first<{ n: number }>().catch(() => null))?.n ?? 0;
+  const room = Math.max(0, 30 - used);
+  const ids = await Promise.all(prompts.slice(0, Math.min(3, room)).map(async (p) => {
+    try {
+      const r = (await ai.run(IMAGE, { prompt: `${p}, photorealistic, editorial photography, natural light, high detail, no text, no logos`.slice(0, 500), steps: 6 })) as { image?: string };
+      if (!r?.image) return null;
+      const id = Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => b.toString(16).padStart(2, '0')).join('');
+      await db.prepare('INSERT INTO site_images (id, data, who) VALUES (?, ?, ?)').bind(id, r.image, key).run();
+      await db.prepare(`INSERT INTO events (kind, path) VALUES ('heroimg', ?)`).bind(key).run().catch(() => {});
+      return id;
+    } catch (e) { console.error('[photo]', e); return null; }
+  }));
+  return ids.filter((x): x is string => !!x);
+}

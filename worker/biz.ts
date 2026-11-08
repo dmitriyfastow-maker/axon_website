@@ -2,6 +2,7 @@
 // Public: GET /w.js?k=<key> — one line of code for any site; POST /api/w — visits, clicks and form requests from it.
 // Cabinet (/api/biz/…, signed-in client from /me/): businesses I own or work in, analytics, leads, team, AI assistant.
 // Roles: owner — everything; manager — analytics + leads (assigned to them or unassigned); viewer — analytics only.
+import { pageFacts } from './modules.js';
 import type { DB } from './partner.js';
 import type { Notify } from './deals.js';
 import type { AiBinding } from './chat.js';
@@ -107,7 +108,9 @@ export async function handleCollect(db: DB, request: Request, ai?: AiBinding, wa
         wait(tellOwner(db, biz.id, { name: '', contact, message: story, source: `chat · ${source}` }));
       }
     }
-    const prompt = `You are the online assistant of "${biz.name}" in the chat on their website. Facts about the business (the ONLY source of truth): ${biz.about.slice(0, 3000)}
+    // On a page Vax built, the chat speaks for that page (a coffee shop page never answers about the owner's other site).
+    const pg = await pageFacts(db, biz.id, path).catch(() => null);
+    const prompt = `You are the online assistant of "${pg?.name || biz.name}" in the chat on their website. Facts about the business (the ONLY source of truth): ${(pg?.facts || biz.about).slice(0, 3000)}
 Conversation so far:
 ${msgs.map((x) => `${x.r}: ${x.c}`).join('\n')}
 Reply as the Assistant in the visitor's language, 1–4 short friendly sentences. Use only the facts above; if the answer is not there (exact price, free time slot, something special), say the team will confirm and ask for a phone number or email${contact ? ' — the visitor already left a contact, so thank them and say the team will reach out soon' : ''}. Never invent prices, discounts, addresses or promises.`;
