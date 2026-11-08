@@ -57,7 +57,7 @@ export async function routeFor(db: DB, leadId: number, plan: string, trial: bool
 }
 
 /** One reply from Claude, or null, and then the caller uses the free models. */
-export async function claudeReply(db: DB, leadId: number, tier: Tier, system: string, messages: { role: string; content: string }[]): Promise<string | null> {
+export async function claudeReply(db: DB, leadId: number, tier: Tier, system: string, messages: { role: string; content: string }[], onCost?: (usd: number) => void): Promise<string | null> {
   try {
     const client = new Anthropic({ apiKey });
     const r = await client.beta.messages.create({
@@ -69,8 +69,10 @@ export async function claudeReply(db: DB, leadId: number, tier: Tier, system: st
       system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }],
       messages: messages.map((m) => ({ role: m.role === 'assistant' ? 'assistant' as const : 'user' as const, content: m.content })),
     } as never) as unknown as { stop_reason: string; usage: Usage; content: { type: string; text?: string }[] };
+    const usd = costUsd(tier.model, r.usage);
+    onCost?.(usd);
     await db.prepare(`INSERT INTO api_usage (lead_id, month, usd) VALUES (?, ?, ?) ON CONFLICT (lead_id, month) DO UPDATE SET usd = usd + excluded.usd`)
-      .bind(leadId, month(), costUsd(tier.model, r.usage)).run();
+      .bind(leadId, month(), usd).run();
     if (r.stop_reason === 'refusal') return null;
     return r.content.filter((b) => b.type === 'text').map((b) => b.text).join('').trim() || null;
   } catch (e) {

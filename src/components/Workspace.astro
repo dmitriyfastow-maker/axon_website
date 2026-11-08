@@ -16,7 +16,7 @@ const T = {
     hello2: 'Start here', sub2: 'Pick a module or give Vax a task. The result opens on the Canvas, ready to use.',
     tiles: { site: ['Build a site and form', 'A page with a request form, live in a minute'], crm: ['Open my CRM', 'Every request from your site on one board'], partner: ['Partner cabinet', 'Your links, invites and balance'] },
     exL: 'Or give a task. The ready result opens on the Canvas:', ex: ['A landing page for a coffee shop with a pre-order form', 'Financial model for an online school launch at $50k revenue: ads, team and taxes', 'A 30-day training and recovery protocol'],
-    usage: '{u} of {c} messages today', usageGuest: 'Guest: up to 40 messages a day',
+    lim: { h: 'Usage limits', day: 'Today', week: 'This week', used: '{p}% used', reset: 'Renews {t}', note: 'The limit follows the amount of work, not the number of messages: a short answer uses little, a big document, a site or a picture uses more.', today: 'today at {h}', tomorrow: 'tomorrow at {h}', on: '{d} at {h}', outDay: 'Today’s limit is used up. It renews {t}. Everything is saved.', outWeek: 'This week’s limit is used up. It renews {t}. Everything is saved.', more: 'Need more? Plans' }, usageGuest: 'Guest: a small daily limit. Sign in free for more.',
     pTabs: { plan: 'Plan', memory: 'Memory', projects: 'Projects', account: 'Account' },
     pub: 'Publish', pubBusy: 'Publishing…', pubDone: 'Published', pubAgain: 'Update the page', pubOff: 'Unpublish', replaceQ: 'Replace your current site with this page?', pubLink: 'Public link',
     siteCard: 'Page draft', siteNew: 'Describe your business in one line', siteNewGo: 'Build the page', siteAsk: 'Build a one-page site with a request form for: ', fAsk: 'Hint in the message box', live: 'Your site is live. Requests go to your email and CRM.', domH: 'Your own domain',
@@ -39,7 +39,7 @@ const T = {
     hello2: 'С чего начнём', sub2: 'Выберите модуль или дайте Vax задачу. Результат откроется на холсте, готовый к работе.',
     tiles: { site: ['Собрать сайт и форму', 'Страница с формой заявок, работает через минуту'], crm: ['Открыть мою CRM', 'Все заявки с сайта на одной доске'], partner: ['Партнёрский кабинет', 'Ваши ссылки, приглашения и баланс'] },
     exL: 'Или поставьте задачу. Готовый результат откроется на холсте:', ex: ['Посадочная страница для кофейни с формой предзаказа', 'Финмодель запуска онлайн-школы на $50k оборота: реклама, команда, налоги', '30-дневный протокол тренировок и восстановления'],
-    usage: 'Сообщений сегодня: {u} из {c}', usageGuest: 'Гость: до 40 сообщений в день',
+    lim: { h: 'Лимиты', day: 'Сегодня', week: 'Неделя', used: 'Использовано {p}%', reset: 'Обновится {t}', note: 'Лимит считается по объёму работы, а не по числу сообщений: короткий ответ тратит мало, большой документ, сайт или картинка больше.', today: 'сегодня в {h}', tomorrow: 'завтра в {h}', on: '{d} в {h}', outDay: 'Лимит на сегодня исчерпан. Обновится {t}. Всё сохранено.', outWeek: 'Лимит на неделю исчерпан. Обновится {t}. Всё сохранено.', more: 'Нужно больше? Тарифы' }, usageGuest: 'Гость: небольшой лимит на день. Войдите бесплатно, лимит больше.',
     pTabs: { plan: 'Тариф', memory: 'Память', projects: 'Проекты', account: 'Аккаунт' },
     pub: 'Опубликовать', pubBusy: 'Публикую…', pubDone: 'Опубликовано', pubAgain: 'Обновить страницу', pubOff: 'Снять с публикации', replaceQ: 'Заменить ваш текущий сайт этой страницей?', pubLink: 'Публичная ссылка',
     siteCard: 'Макет страницы', siteNew: 'Опишите бизнес одной строкой', siteNewGo: 'Собрать страницу', siteAsk: 'Собери одностраничный сайт с формой заявок для: ', fAsk: 'Подсказка в поле сообщения', live: 'Сайт работает. Заявки приходят на почту и в CRM.', domH: 'Свой домен',
@@ -62,7 +62,7 @@ const T = {
     hello2: 'З чого почнемо', sub2: 'Оберіть модуль або дайте Vax завдання. Результат відкриється на полотні, готовий до роботи.',
     tiles: { site: ['Зібрати сайт і форму', 'Сторінка з формою заявок, працює за хвилину'], crm: ['Відкрити мою CRM', 'Усі заявки з сайту на одній дошці'], partner: ['Партнерський кабінет', 'Ваші посилання, запрошення й баланс'] },
     exL: 'Або поставте завдання. Готовий результат відкриється на полотні:', ex: ['Посадкова сторінка для кавʼярні з формою передзамовлення', 'Фінмодель запуску онлайн-школи на $50k обороту: реклама, команда, податки', '30-денний протокол тренувань і відновлення'],
-    usage: 'Повідомлень сьогодні: {u} з {c}', usageGuest: 'Гість: до 40 повідомлень на день',
+    lim: { h: 'Ліміти', day: 'Сьогодні', week: 'Тиждень', used: 'Використано {p}%', reset: 'Оновиться {t}', note: 'Ліміт рахується за обсягом роботи, а не за кількістю повідомлень: коротка відповідь витрачає мало, великий документ, сайт або картинка більше.', today: 'сьогодні о {h}', tomorrow: 'завтра о {h}', on: '{d} о {h}', outDay: 'Ліміт на сьогодні вичерпано. Оновиться {t}. Усе збережено.', outWeek: 'Ліміт на тиждень вичерпано. Оновиться {t}. Усе збережено.', more: 'Потрібно більше? Тарифи' }, usageGuest: 'Гість: невеликий ліміт на день. Увійдіть безкоштовно, ліміт більший.',
     pTabs: { plan: 'Тариф', memory: 'Памʼять', projects: 'Проєкти', account: 'Акаунт' },
     pub: 'Опублікувати', pubBusy: 'Публікую…', pubDone: 'Опубліковано', pubAgain: 'Оновити сторінку', pubOff: 'Зняти з публікації', replaceQ: 'Замінити ваш поточний сайт цією сторінкою?', pubLink: 'Публічне посилання',
     siteCard: 'Макет сторінки', siteNew: 'Опишіть бізнес одним рядком', siteNewGo: 'Зібрати сторінку', siteAsk: 'Збери односторінковий сайт із формою заявок для: ', fAsk: 'Підказка в полі повідомлення', live: 'Сайт працює. Заявки приходять на пошту і в CRM.', domH: 'Свій домен',
@@ -201,7 +201,7 @@ const ico = {
   const room = params.get('t') || '';
 
   const blank: Mem = { niche: '', goals: '', project: '', limits: '' };
-  const S = { signed: false, email: '', verified: false, chats: [] as Chat[], cur: 0, msgs: [] as Msg[], memory: { ...blank }, mode: 'short', mods: null as R | null, access: false, busy: false, plan: 'start', usage: null as null | { used: number; cap: number } };
+  const S = { signed: false, email: '', verified: false, chats: [] as Chat[], cur: 0, msgs: [] as Msg[], memory: { ...blank }, mode: 'short', mods: null as R | null, access: false, busy: false, plan: 'start', usage: null as null | { day: { pct: number; reset: string }; week: { pct: number; reset: string } } };
   let ME: R = {};
 
   const log = $('[data-log]'), form = $<HTMLFormElement>('[data-form]'), input = form.querySelector('textarea')!;
@@ -221,13 +221,31 @@ const ico = {
     $('[data-del]').hidden = !S.cur;
   }
   const planName = () => (S.plan === 'start' ? CT.levels.start : S.plan[0].toUpperCase() + S.plan.slice(1));
+  // Like Claude: a bar of work used, and when it renews. Never message counts.
+  const when = (iso: string) => {
+    const d = new Date(iso), now = new Date(), loc = lang === 'ua' ? 'uk-UA' : lang === 'ru' ? 'ru-RU' : 'en-GB';
+    const h = d.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
+    const days = Math.round((new Date(d.toDateString()).getTime() - new Date(now.toDateString()).getTime()) / 864e5);
+    return days <= 0 ? T.lim.today.replace('{h}', h) : days === 1 ? T.lim.tomorrow.replace('{h}', h) : T.lim.on.replace('{d}', d.toLocaleDateString(loc, { weekday: 'short', day: 'numeric', month: 'short' })).replace('{h}', h);
+  };
+  function meter(label: string, x: { pct: number; reset: string }) {
+    const box = el('div', 'lim'), top = el('div', 'lim-top'), bar = el('div', 'lim-bar'), fill = el('i');
+    top.append(el('span', '', label), el('b', '', T.lim.used.replace('{p}', String(x.pct))));
+    fill.style.width = Math.max(x.pct, x.pct > 0 ? 2 : 0) + '%'; if (x.pct >= 90) fill.className = 'hot';
+    bar.setAttribute('role', 'progressbar'); bar.setAttribute('aria-valuenow', String(x.pct)); bar.setAttribute('aria-valuemin', '0'); bar.setAttribute('aria-valuemax', '100'); bar.setAttribute('aria-label', label);
+    bar.append(fill);
+    box.append(top, bar, el('small', '', T.lim.reset.replace('{t}', when(x.reset))));
+    return box;
+  }
   function drawUsage() {
     const u = $<HTMLButtonElement>('[data-usage]');
     u.hidden = false;
     if (!S.signed || !S.usage) { u.replaceChildren(el('small', '', T.usageGuest)); u.disabled = true; return; }
     u.disabled = false;
-    u.replaceChildren(el('b', '', planName()), el('small', '', T.usage.replace('{u}', String(S.usage.used)).replace('{c}', String(S.usage.cap))));
+    const worst = S.usage.week.pct > S.usage.day.pct ? meter(T.lim.week, S.usage.week) : meter(T.lim.day, S.usage.day);
+    u.replaceChildren(el('b', '', planName()), worst);
   }
+  const refreshUsage = async () => { if (!S.signed) return; const d = await fetch('/api/ws/limits').then((r) => r.json()).catch(() => null); if (d?.usage) { S.usage = d.usage; drawUsage(); } };
   function drawWho() {
     const w = $('[data-who]');
     if (S.signed) w.replaceChildren(el('small', '', S.email));
@@ -304,11 +322,10 @@ const ico = {
     try {
       const r = await post('/api/ws/ask', { q, lang, mode: S.mode, chat: S.signed ? S.cur : 0, ...(S.signed ? {} : { history, memory: S.memory }) });
       const d = await r.json();
-      if (r.status === 429) say.content = d.error === 'guest' ? T.guestLimit : T.limit;
+      if (r.status === 429) say.content = d.error === 'guest' ? T.guestLimit : d.reset ? (d.error === 'week' ? T.lim.outWeek : T.lim.outDay).replace('{t}', when(d.reset)) : T.limit;
       else if (d.ok) {
         say = { id: d.id ?? undefined, role: 'assistant', content: d.reply, tool: d.tool || undefined, doc: d.doc || undefined, image: d.image, deploy: d.deploy || undefined, site: d.site || undefined };
         if (S.signed && d.chat && d.chat !== S.cur) { S.cur = d.chat; S.chats.unshift({ id: d.chat, title: q.slice(0, 60) }); }
-        if (S.usage) { S.usage.used++; drawUsage(); }
       }
     } catch { /* the message above says so */ }
     wait.remove();
@@ -320,6 +337,7 @@ const ico = {
     }
     drawChats();
     if (hasArt(say)) showArt(say);
+    refreshUsage();
     S.busy = false;
   }
 
@@ -600,7 +618,12 @@ const ico = {
     }));
     else { const a = el('a', 'sec', CT.chgBtn) as HTMLAnchorElement; a.href = `${pre}/#pricing`; head.append(a); }
     box.append(head, msg);
-    if (S.usage) box.append(el('p', 'count', T.usage.replace('{u}', String(S.usage.used)).replace('{c}', String(S.usage.cap))));
+    if (S.usage) {
+      const lim = el('section', 'blk');
+      const more = el('a', 'lnk', T.lim.more + ' →') as HTMLAnchorElement; more.href = `${pre}/#pricing`;
+      lim.append(el('h3', '', T.lim.h), meter(T.lim.day, S.usage.day), meter(T.lim.week, S.usage.week), el('p', 'hint', T.lim.note), more);
+      box.append(lim);
+    }
     if (!ME.me?.verified) box.append(verifyBox());
     const bal = el('section', 'blk');
     bal.append(el('h3', '', `${CT.bonus}: ${money(ME.bonus || 0)}`), el('p', 'hint', CT.bonusRule));
@@ -836,7 +859,7 @@ const ico = {
   .wsp .ex { display: grid; gap: 6px; margin-top: 18px; }
   .wsp .ex p { font-size: 14px; }
   .wsp .exb { background: none; border: 0; border-bottom: 1px solid var(--line); padding: 9px 2px; text-align: left; font-size: 15px; cursor: pointer; color: var(--ink); }
-  .wsp .usage { display: grid; gap: 1px; text-align: left; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; cursor: pointer; }
+  .wsp .usage { display: grid; gap: 6px; text-align: left; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; cursor: pointer; }
   .wsp .usage[hidden] { display: none; }
   .wsp .usage:disabled { cursor: default; }
   .wsp .usage b { font-size: 13px; }
@@ -875,7 +898,14 @@ const ico = {
   .wsp .plan { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--bg); }
   .wsp .plan h2 { margin: 2px 0; font-size: 24px; }
   .wsp .plan small { color: var(--mut); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
-  .wsp .count { font-weight: 700; color: var(--ink) !important; }
+  .wsp .lim { display: grid; gap: 5px; }
+  .wsp .lim-top { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+  .wsp .lim-top b { font-weight: 600; }
+  .wsp .lim-bar { height: 6px; border-radius: 4px; background: var(--line); overflow: hidden; }
+  .wsp .lim-bar i { display: block; height: 100%; border-radius: 4px; background: var(--acc, #e8b04a); transition: width .3s; }
+  .wsp .lim-bar i.hot { background: var(--error, #e5484d); }
+  .wsp .lim small, .wsp .usage .lim small { color: var(--mut); font-size: 12px; }
+  .wsp .blk .lim + .lim { margin-top: 6px; }
   .wsp .meter { height: 6px; border-radius: 4px; background: var(--line); overflow: hidden; }
   .wsp .meter i { display: block; height: 100%; background: var(--accText); }
   .wsp .chk { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; }

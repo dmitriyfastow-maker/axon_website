@@ -1,9 +1,9 @@
 // Allowance (Decision 34): every plan has a daily and a weekly allowance of Vax replies in the client's private chat.
 // Trial month (no paid invoice yet) = one third. Counted from the messages table (sender 'ai'), so no new table is needed.
-// Caps are fair-use numbers, far below real cost; the client only ever sees words and bars, never numbers.
+// Caps are fair-use numbers, far below real cost; the client only ever sees bars and percentages, never units.
 import type { DB } from './partner.js';
 
-export const CAPS: Record<string, [number, number]> = { start: [20, 60], personal: [40, 160], care: [80, 400], growth: [200, 1000], pro: [500, 3000] };
+export const CAPS: Record<string, [number, number]> = { start: [50, 200], personal: [80, 320], care: [150, 700], growth: [400, 2000], pro: [1000, 5000] };
 const ORDER = ['start', 'personal', 'care', 'growth', 'pro'];
 
 export interface Allowance { plan: string; trial: boolean; day: { used: number; cap: number }; week: { used: number; cap: number }; blocked: 'day' | 'week' | null }
@@ -31,3 +31,35 @@ export function limitText(lang: string | null, a: Allowance): string {
   if (lang === 'ua') return `${w ? 'Тижневий' : 'Денний'} запас закінчився — він ${w ? 'оновиться протягом тижня' : 'оновиться завтра'}. Усе, що ми обговорили, збережено. Якщо потрібно продовжити зараз: можна перейти на вищий тариф у кабінеті або написати «докупити» — команда надішле рахунок на додатковий запас, тариф міняти не треба.`;
   return `Your ${w ? 'weekly' : 'daily'} allowance is used up — it ${w ? 'renews within the week' : 'renews tomorrow'}. Everything we discussed is saved. To continue right now you can move up a plan in your cabinet, or write “top up” — the team will send an invoice for extra allowance, no plan change needed.`;
 }
+
+/* Workspace limits (Decision 43b): like Claude, a share of a daily and a weekly budget of WORK, not a count of messages.
+   A short answer costs 1, a deep one 2, a tool +1, a site draft or a picture 3, a Claude answer what it really cost
+   (1 unit per cent). Kept in its own ledger, so deleting a chat does not give the work back. Calendar windows: the day
+   renews at 00:00 UTC, the week on Monday 00:00 UTC. The person sees percentages and the time it renews, never units. */
+export type Work = { short?: boolean; deep?: boolean; tool?: boolean; site?: boolean; image?: boolean; usd?: number };
+export function workOf(w: Work): number {
+  let n = w.site || w.image ? 3 : w.deep ? 2 : 1;
+  if (w.usd) n = Math.max(n, w.usd * 100);
+  if (w.tool) n += 1;
+  return Math.round(n * 10) / 10;
+}
+
+export function windows(now = new Date()) {
+  const day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const week = new Date(day); week.setUTCDate(day.getUTCDate() - ((day.getUTCDay() + 6) % 7));
+  const nextDay = new Date(day); nextDay.setUTCDate(day.getUTCDate() + 1);
+  const nextWeek = new Date(week); nextWeek.setUTCDate(week.getUTCDate() + 7);
+  const sql = (d: Date) => d.toISOString().slice(0, 19).replace('T', ' ');
+  return { day: sql(day), week: sql(week), dayReset: nextDay.toISOString(), weekReset: nextWeek.toISOString() };
+}
+
+export type Limits = { day: { pct: number; reset: string }; week: { pct: number; reset: string }; blocked: 'day' | 'week' | null };
+export async function wsLimits(db: DB, clientId: number, plan: string): Promise<Limits> {
+  const w = windows();
+  const [cd, cw] = CAPS[plan] ?? CAPS.start;
+  const sum = async (from: string) => (await db.prepare('SELECT COALESCE(SUM(work), 0) AS n FROM ws_work WHERE client_id = ? AND at >= ?').bind(clientId, from).first<{ n: number }>().catch(() => null))?.n ?? 0;
+  const [d, wk] = [await sum(w.day), await sum(w.week)];
+  const pct = (u: number, c: number) => Math.min(100, Math.round((u / c) * 100));
+  return { day: { pct: pct(d, cd), reset: w.dayReset }, week: { pct: pct(wk, cw), reset: w.weekReset }, blocked: d >= cd ? 'day' : wk >= cw ? 'week' : null };
+}
+export const spendWork = (db: DB, clientId: number, work: number) => db.prepare('INSERT INTO ws_work (client_id, work) VALUES (?, ?)').bind(clientId, work).run();

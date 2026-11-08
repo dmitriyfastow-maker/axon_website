@@ -87,3 +87,22 @@ describe('the tool filter in Russian', () => {
       expect(WANTS_TOOL.test(q), q).toBe(false);
   });
 });
+
+describe('workspace limits, like Claude', () => {
+  it('weighs work, not messages', async () => {
+    const { workOf } = await import('../../worker/allowance');
+    expect(workOf({})).toBe(1);
+    expect(workOf({ deep: true })).toBe(2);
+    expect(workOf({ site: true })).toBe(3);
+    expect(workOf({ tool: true })).toBe(2);
+    expect(workOf({ usd: 0.05 })).toBe(5);
+  });
+  it('renews the day at midnight UTC and the week on Monday', async () => {
+    const { windows } = await import('../../worker/allowance');
+    const w = windows(new Date('2026-11-08T14:30:00Z')); // a Sunday
+    expect(w.day).toBe('2026-11-08 00:00:00');
+    expect(w.dayReset).toBe('2026-11-09T00:00:00.000Z');
+    expect(w.week).toBe('2026-11-02 00:00:00');
+    expect(w.weekReset).toBe('2026-11-09T00:00:00.000Z');
+  });
+});

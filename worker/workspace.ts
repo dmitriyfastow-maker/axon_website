@@ -2,7 +2,7 @@
 // answer, and a Canvas for tools and documents. Signed-in people are kept in D1; guests keep the same things in the
 // browser and bring them along when they sign in. Paying clients get Claude here too (worker/router.ts).
 import { json as parse, askAi } from './autopilot.js';
-import { allowance, CAPS } from './allowance.js';
+import { allowance, spendWork, workOf, wsLimits } from './allowance.js';
 import { sessionClient } from './cabinet.js';
 import { FACTS, type AiBinding } from './chat.js';
 import { filesForAi } from './files.js';
@@ -155,8 +155,8 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     memory = await readMemory(db, me.id);
     leadIds = await clientLeads(db, me.id);
     const al = await allowance(db, leadIds).catch(() => null);
-    const used = await db.prepare(`SELECT COUNT(*) AS n FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user' AND m.at > datetime('now', '-1 day')`).bind(me.id).first<{ n: number }>();
-    if ((used?.n ?? 0) >= (CAPS[al?.plan ?? 'start'] ?? CAPS.start)[0]) return out(429, { ok: false, error: 'limit' });
+    const lim = await wsLimits(db, me.id, al?.plan ?? 'start');
+    if (lim.blocked) return out(429, { ok: false, error: lim.blocked, reset: lim[lim.blocked].reset });
     chat = Number(b.chat) || 0;
     if (chat && !(await db.prepare('SELECT 1 FROM ws_chats WHERE id = ? AND client_id = ?').bind(chat, me.id).first())) chat = 0;
     if (chat) {
@@ -177,8 +177,10 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     history = h.flatMap((m: any) => ((m?.role === 'user' || m?.role === 'assistant') && typeof m.content === 'string' ? [{ role: m.role as Turn['role'], content: m.content.slice(0, 1600) }] : []));
   }
 
+  let usd = 0;
   const save = async (reply: string, x: { tool?: ToolSpec | null; doc?: Doc | null; image?: string; deploy?: string | null; site?: Site | null }) => {
     if (!me) return null;
+    await spendWork(db, me.id, workOf({ deep: mode === 'deep', tool: !!x.tool, site: !!x.site, image: !!x.image, usd })).catch((e) => console.error('[ws work]', e));
     const r = await db.prepare(`INSERT INTO ws_msgs (chat_id, role, text, tool, doc, image, deploy, site) VALUES (?, 'assistant', ?, ?, ?, ?, ?, ?) RETURNING id`)
       .bind(chat, reply, x.tool ? JSON.stringify(x.tool) : null, x.doc ? JSON.stringify(x.doc) : null, x.image ?? null, x.deploy ?? null, x.site ? JSON.stringify(x.site) : null).first<{ id: number }>();
     return r?.id ?? null;
@@ -218,7 +220,7 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   if (me && leadIds.length) {
     const al = await allowance(db, leadIds).catch(() => null);
     const tier = al ? await routeFor(db, leadIds[0], al.plan, al.trial).catch(() => null) : null;
-    if (tier) { raw = await claudeReply(db, leadIds[0], tier, sys, turns); paid = !!raw; }
+    if (tier) { raw = await claudeReply(db, leadIds[0], tier, sys, turns, (c) => { usd = c; }); paid = !!raw; }
   }
   raw ??= await freeReply(ai, [{ role: 'system', content: sys }, ...turns], mode);
   if (!raw) return out(502, { ok: false });
@@ -275,11 +277,14 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       const chats = (await db.prepare('SELECT id, title FROM ws_chats WHERE client_id = ? ORDER BY updated_at DESC LIMIT 50').bind(me.id).all()).results;
       const { mode, ...memory } = await readMemory(db, me.id);
       const access = await moduleAccess(db, me.id);
-      const used = (await db.prepare(`SELECT COUNT(*) AS n FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user' AND m.at > datetime('now', '-1 day')`).bind(me.id).first<{ n: number }>())?.n ?? 0;
-      const usage = { used, cap: (CAPS[al?.plan ?? 'start'] ?? CAPS.start)[0] };
+      const usage = await wsLimits(db, me.id, al?.plan ?? 'start');
       return out(200, { ok: true, signedIn: true, usage, me: { email: me.email, name: me.name, verified: !!me.email_verified_at }, plan: al?.plan ?? 'start', trial: !!al?.trial, memory, mode, chats, access, modules: await modulesState(db, me.id, url.origin, access) });
     }
     if (!me) return out(401, { ok: false });
+    if (path === 'limits' && m === 'GET') {
+      const al = await allowance(db, await clientLeads(db, me.id)).catch(() => null);
+      return out(200, { ok: true, usage: await wsLimits(db, me.id, al?.plan ?? 'start') });
+    }
     if (path === 'memory' && m === 'POST') { await writeMemory(db, me.id, cleanMemory(b), b.mode === 'deep' ? 'deep' : 'short'); return out(200, { ok: true }); }
     if (path === 'import' && m === 'POST') { await importGuest(db, me.id, b); return out(200, { ok: true }); }
     const cm = path.match(/^chat\/(\d+)$/);
