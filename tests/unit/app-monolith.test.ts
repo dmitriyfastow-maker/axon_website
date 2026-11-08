@@ -117,3 +117,13 @@ describe('a site built in the chat is live at once', () => {
     expect(t.split('\n').length).toBeLessThanOrEqual(4);
   });
 });
+
+describe('the site template', () => {
+  it('has a hero picture, what you get, about, how it works and one form, and no outside picture addresses', () => {
+    const html = sitePreview(cleanSite({ title: 'Кофейня', sub: 'Кофе без очереди', about: 'Варим каждый день.', services: ['Кофе', 'Выпечка', 'Десерты'], cta: 'Предзаказ', img: 'a'.repeat(24), tone: 'warm' }, 'ru'));
+    expect(html).toContain(`/i/${'a'.repeat(24)}.jpg`);
+    for (const h of ['Что вы получите', 'О нас', 'Как это работает', 'Предзаказ']) expect(html).toContain(h);
+    expect((html.match(/<form/g) || []).length).toBe(1);
+    expect(cleanSite({ img: 'https://evil.example/x.jpg' }, 'en').img).toBeUndefined();
+  });
+});

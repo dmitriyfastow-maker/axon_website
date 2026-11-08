@@ -2,6 +2,7 @@
 import { handleWorkspace } from './workspace.js';
 import { servePage } from './modules.js';
 import { serveDoc } from './workspace.js';
+import { serveImage } from './images.js';
 import { checkDomains, serveOwnDomain, TARGET } from './domains.js';
 import { handleLead, type LeadEnv, type LeadInput } from '../src/lib/lead.js';
 import { handlePartnerApi, handleRedirect, type DB } from './partner.js';
@@ -136,6 +137,8 @@ export default {
     if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     if (url.pathname === '/api/biz' || url.pathname.startsWith('/api/biz/')) return env.LEADS ? handleBiz(env.LEADS, request, url.pathname.slice('/api/biz'.length).replace(/^\//, ''), env.AI, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/ws' || url.pathname.startsWith('/api/ws/')) return env.LEADS ? handleWorkspace(env.LEADS, env.AI, request, url.pathname.slice('/api/ws'.length).replace(/^\//, ''), notify, waitUntil, { token: env.CF_SAAS_TOKEN }) : json(503, { ok: false });
+    const pic = url.pathname.match(/^\/i\/([a-f0-9]{24})\.jpg$/);
+    if (pic) return env.LEADS ? serveImage(env.LEADS, pic[1]) : json(503, { ok: false });
     const pub = url.pathname.match(/^\/p\/([0-9a-f]{12})\/?$/);
     if (pub) return env.LEADS ? serveDoc(env.LEADS, pub[1]) : json(503, { ok: false });
     const hosted = url.pathname.match(/^\/s\/([a-z0-9-]{3,60})(\/manifest\.webmanifest)?\/?$/);

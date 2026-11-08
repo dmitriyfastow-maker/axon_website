@@ -134,7 +134,7 @@ export async function serveOwnDomain(db: DB, url: URL): Promise<Response | 'pass
   if (p === '/' || p === '/index.html') return servePage(db, r.slug, false);
   if (p === '/manifest.webmanifest' || p === `/s/${r.slug}/manifest.webmanifest`) return servePage(db, r.slug, true);
   if (p === '/robots.txt') return new Response('User-agent: *\nAllow: /\n', { headers: { 'Content-Type': 'text/plain' } });
-  if (p === '/w.js' || p === '/api/w' || p === '/icon-192.png' || p === '/favicon.ico') return 'pass';
+  if (p === '/w.js' || p === '/api/w' || /^\/i\/[a-f0-9]{24}\.jpg$/.test(p) || p === '/icon-192.png' || p === '/favicon.ico') return 'pass';
   if (p.startsWith('/s/')) return NOT_OURS.clone();
   return Response.redirect(`${url.origin}/`, 302);
 }

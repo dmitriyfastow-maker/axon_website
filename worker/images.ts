@@ -38,3 +38,34 @@ export async function drawImage(ai: AiBinding, db: DB | undefined, wish: string,
   await db.prepare(`INSERT INTO events (kind, path) VALUES ('img', ?)`).bind(who).run().catch(() => {});
   return { reply: ok, image: `data:image/jpeg;base64,${r.image}` };
 }
+
+/* Decision 43d: every site Vax builds gets its own hero picture. The model writes a photo prompt from the business
+   (and may refuse), Flux draws it, the picture is kept in D1 and served at /i/<id>.jpg. At most 20 a day per person. */
+const HERO_RULE = `Write ONE short English prompt for a realistic photograph used as the hero banner of this business's website. Show the place, the product or the work itself, in natural light, editorial style, wide shot. No text, no letters, no logos, no faces looking at the camera. Reply with the prompt only.
+If the business involves sex, drugs, weapons, gambling, hate or anything illegal, reply exactly: BLOCK`;
+
+export async function heroImage(ai: AiBinding | undefined, db: DB, who: string, about: string): Promise<string | null> {
+  if (!ai || !about.trim()) return null;
+  const key = await ipKey('hero:' + who);
+  const used = (await db.prepare(`SELECT COUNT(*) AS n FROM events WHERE kind = 'heroimg' AND path = ? AND at >= date('now')`).bind(key).first<{ n: number }>().catch(() => null))?.n ?? 0;
+  if (used >= 20) return null;
+  try {
+    const s = (await ai.run(SCREEN, { messages: [{ role: 'system', content: HERO_RULE }, { role: 'user', content: about.slice(0, 500) }], max_tokens: 120, temperature: 0.3, chat_template_kwargs: { enable_thinking: false } })) as Record<string, any>;
+    const prompt = String(typeof s?.response === 'string' ? s.response : s?.choices?.[0]?.message?.content || '').trim();
+    if (!prompt || /^BLOCK\b/i.test(prompt)) return null;
+    const r = (await ai.run(IMAGE, { prompt: (prompt + ', high detail, no text').slice(0, 500), steps: 6 })) as { image?: string };
+    if (!r?.image) return null;
+    const id = Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => b.toString(16).padStart(2, '0')).join('');
+    await db.prepare('INSERT INTO site_images (id, data, who) VALUES (?, ?, ?)').bind(id, r.image, key).run();
+    await db.prepare(`INSERT INTO events (kind, path) VALUES ('heroimg', ?)`).bind(key).run().catch(() => {});
+    return id;
+  } catch (e) { console.error('[hero]', e); return null; }
+}
+
+export async function serveImage(db: DB, id: string): Promise<Response> {
+  const r = await db.prepare('SELECT data FROM site_images WHERE id = ?').bind(id).first<{ data: string }>().catch(() => null);
+  if (!r) return new Response('Not found', { status: 404 });
+  const bin = atob(r.data), buf = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+  return new Response(buf, { headers: { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=31536000, immutable' } });
+}

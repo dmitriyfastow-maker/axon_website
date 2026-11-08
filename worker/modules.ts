@@ -17,7 +17,7 @@ const TONES: Record<string, [string, string, string, string]> = { // page, text,
   warm: ['#fbf4ea', '#2d2118', '#ffffff', '#c2410c'],
 };
 
-export type Site = { lang: string; tone: string; title: string; sub: string; about: string; services: string[]; cta: string; ask?: string };
+export type Site = { lang: string; tone: string; title: string; sub: string; about: string; services: string[]; cta: string; ask?: string; img?: string };
 
 const WORDS: Record<string, { name: string; contact: string; msg: string; send: string; done: string; made: string; fill: string; first: string }> = {
   en: { name: 'Your name', contact: 'Phone or email', msg: 'What do you need?', send: 'Send', done: 'Thank you! Your request has been sent.', made: 'Made on Vaxo', fill: 'Leave a request', first: 'Partner 1' },
@@ -40,6 +40,7 @@ export function cleanSite(x: Record<string, unknown>, lang: string): Site {
     services: list.map((s) => cut(s, 100)).filter(Boolean).slice(0, 6),
     cta: cut(x.cta, 40),
     ask: cut(x.ask, 80) || undefined,
+    img: /^[a-f0-9]{24}$/.test(String(x.img ?? '')) ? String(x.img) : undefined,
   };
 }
 
@@ -172,18 +173,46 @@ export async function modulesState(db: DB, clientId: number, origin: string, acc
   };
 }
 
+const STEPS: Record<string, [string, string, string, string, string, string]> = {
+  en: ['What you get', 'About us', 'How it works', 'Leave a request', 'We get back to you and agree the details', 'You get the result', ],
+  ru: ['Что вы получите', 'О нас', 'Как это работает', 'Оставьте заявку', 'Мы свяжемся и уточним детали', 'Вы получаете результат'],
+  ua: ['Що ви отримаєте', 'Про нас', 'Як це працює', 'Залиште заявку', 'Ми звʼяжемося й уточнимо деталі', 'Ви отримуєте результат'],
+};
+const ICON = ['M5 12.5 9.5 17 19 7.5', 'M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.6 6.7 19.4l1.2-6L3.4 9.3l6-.7z', 'M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z', 'M4 12h16M12 4v16', 'M3 12h4l3 7 4-14 3 7h4', 'M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4'];
+
+/** The public page: a hero with the business's picture, what you get, about, how it works, one request form. Escaped text only. */
 function page(s: Site, kind: string, name: string, key: string, slug: string, index: boolean): string {
-  const w = WORDS[s.lang] ?? WORDS.en;
+  const w = WORDS[s.lang] ?? WORDS.en, st = STEPS[s.lang] ?? STEPS.en;
   const [bg, ink, card, acc] = TONES[s.tone] ?? TONES.clean;
-  const title = s.title || name, site = kind === 'site';
+  const title = s.title || name, site = kind === 'site', cta = s.cta || w.fill;
+  const img = s.img && /^[a-f0-9]{24}$/.test(s.img) ? `/i/${s.img}.jpg` : '';
+  const svg = (d: string) => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+  const services = site && s.services.length ? `<section class="sec"><h2>${esc(st[0])}</h2><div class="grid">${s.services.map((x, i) => `<div class="card"><span class="ic">${svg(ICON[i % ICON.length])}</span><b>${esc(x)}</b></div>`).join('')}</div></section>` : '';
+  const about = site && s.about ? `<section class="sec about"><h2>${esc(st[1])}</h2><p>${esc(s.about)}</p></section>` : '';
+  const how = site ? `<section class="sec"><h2>${esc(st[2])}</h2><ol class="steps"><li><i>1</i>${esc(st[3])}</li><li><i>2</i>${esc(st[4])}</li><li><i>3</i>${esc(st[5])}</li></ol></section>` : '';
   return `<!doctype html><html lang="${s.lang === 'ua' ? 'uk' : s.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(s.sub || title)}">${index ? '' : '<meta name="robots" content="noindex">'}
+<meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(s.sub || title)}">${img ? `<meta property="og:image" content="https://vaxogroup.com${img}">` : ''}
 <link rel="manifest" href="/s/${slug}/manifest.webmanifest"><meta name="theme-color" content="${bg}">
-<style>*{box-sizing:border-box}body{margin:0;background:${bg};color:${ink};font:17px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}main{max-width:680px;margin:0 auto;padding:56px 20px 32px;display:grid;gap:28px}h1{font-size:clamp(32px,7vw,48px);line-height:1.1;margin:0}.sub{font-size:20px;opacity:.8;margin:12px 0 0}p{margin:0}ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}li{background:${card};padding:14px 16px;border-radius:12px;border:1px solid color-mix(in srgb,${ink} 10%,transparent)}form{background:${card};padding:20px;border-radius:16px;border:1px solid color-mix(in srgb,${ink} 10%,transparent);display:grid;gap:10px}h2{font-size:20px;margin:0}input,textarea{font:16px inherit;width:100%;padding:12px 14px;border-radius:10px;border:1px solid color-mix(in srgb,${ink} 20%,transparent);background:transparent;color:inherit}button{font:600 16px inherit;padding:13px;border:0;border-radius:10px;background:${acc};color:#fff;cursor:pointer}.ok{font-weight:600}footer{text-align:center;font-size:13px;opacity:.6;padding:8px 0 28px}footer a{color:inherit}</style></head><body><main>
-<header><h1>${esc(title)}</h1>${s.sub ? `<p class="sub">${esc(s.sub)}</p>` : ''}</header>
-${site && s.about ? `<p>${esc(s.about)}</p>` : ''}${site && s.services.length ? `<ul>${s.services.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
-<form id="f"><h2>${esc(s.cta || w.fill)}</h2><input name="name" maxlength="80" placeholder="${esc(w.name)}" autocomplete="name"><input name="contact" maxlength="120" placeholder="${esc(w.contact)}" required><textarea name="message" rows="3" maxlength="1500" placeholder="${esc(s.ask || w.msg)}"></textarea><button>${esc(w.send)}</button></form>
-</main>${index ? '' : `<footer><a href="https://vaxogroup.com/">${esc(w.made)}</a></footer>`}
+<style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:${bg};color:${ink};font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;background:color-mix(in srgb,${bg} 82%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid color-mix(in srgb,${ink} 8%,transparent)}
+.bar b{font-size:16px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.btn{display:inline-block;background:${acc};color:#fff;text-decoration:none;font-weight:700;border-radius:999px;padding:11px 20px;font-size:15px;border:0;cursor:pointer;white-space:nowrap}
+.btn.ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+.hero{position:relative;min-height:${img ? '78vh' : '56vh'};display:grid;align-items:end;padding:${img ? '120px' : '72px'} 20px 48px;${img ? `background:#111 url(${img}) center/cover no-repeat;color:#fff` : `background:radial-gradient(1200px 500px at 20% -10%,color-mix(in srgb,${acc} 22%,transparent),transparent)`}}
+${img ? '.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.35) 45%,rgba(0,0,0,.82) 100%)}' : ''}
+.hero>div{position:relative;max-width:760px;margin:0 auto;width:100%}h1{font-size:clamp(36px,8vw,64px);line-height:1.04;letter-spacing:-.03em;margin:0 0 14px}.sub{font-size:clamp(18px,3.4vw,22px);opacity:.88;margin:0 0 26px;max-width:600px}.acts{display:flex;gap:10px;flex-wrap:wrap}
+main{max-width:860px;margin:0 auto;padding:12px 20px 24px}.sec{padding:44px 0 8px}h2{font-size:clamp(26px,5vw,34px);letter-spacing:-.02em;line-height:1.15;margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.card{background:${card};border-radius:18px;padding:20px;border:1px solid color-mix(in srgb,${ink} 9%,transparent);display:grid;gap:12px;align-content:start}.card b{font-size:17px;line-height:1.35}
+.ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,${acc} 14%,transparent);color:${acc}}.about p{font-size:19px;max-width:680px;margin:0;opacity:.9}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.steps li{background:${card};border-radius:18px;padding:18px 20px;display:flex;gap:14px;align-items:center;font-weight:600;border:1px solid color-mix(in srgb,${ink} 9%,transparent)}.steps i{font-style:normal;flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:${acc};color:#fff;font-weight:800}
+#form{scroll-margin-top:70px}form{background:${card};padding:26px 22px;border-radius:22px;border:1px solid color-mix(in srgb,${ink} 10%,transparent);display:grid;gap:12px;box-shadow:0 24px 60px color-mix(in srgb,${ink} 10%,transparent)}form h2{margin:0 0 4px}
+input,textarea{font:16px inherit;width:100%;padding:14px 15px;border-radius:12px;border:1px solid color-mix(in srgb,${ink} 18%,transparent);background:${bg};color:inherit}input:focus,textarea:focus{outline:2px solid ${acc};outline-offset:1px}form .btn{padding:15px;font-size:16px;border-radius:12px}.ok{font-weight:700;font-size:19px;margin:0}
+footer{max-width:860px;margin:0 auto;padding:28px 20px 40px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;opacity:.6}</style></head><body>
+<div class="bar"><b>${esc(title)}</b><a class="btn" href="#form">${esc(cta)}</a></div>
+<header class="hero"><div><h1>${esc(title)}</h1>${s.sub ? `<p class="sub">${esc(s.sub)}</p>` : ''}<div class="acts"><a class="btn" href="#form">${esc(cta)}</a>${services ? `<a class="btn ghost" href="#more">${esc(st[0])}</a>` : ''}</div></div></header>
+<main id="more">${services}${about}${how}
+<section class="sec" id="form"><form id="f"><h2>${esc(cta)}</h2><input name="name" maxlength="80" placeholder="${esc(w.name)}" autocomplete="name"><input name="contact" maxlength="120" placeholder="${esc(w.contact)}" required><textarea name="message" rows="3" maxlength="1500" placeholder="${esc(s.ask || w.msg)}"></textarea><button class="btn">${esc(w.send)}</button></form></section>
+</main><footer><span>© ${new Date().getFullYear()} ${esc(title)}</span>${index ? '' : `<a href="https://vaxogroup.com/">${esc(w.made)}</a>`}</footer>
 <script src="/w.js?k=${key}" async></script><script>document.getElementById('f').onsubmit=function(e){e.preventDefault();var p=document.createElement('p');p.className='ok';p.textContent=${JSON.stringify(w.done).replace(/</g, '\\u003c')};this.replaceChildren(p)}</script></body></html>`;
 }
 
@@ -198,6 +227,6 @@ export async function servePage(db: DB, slug: string, manifest: boolean): Promis
   const paid = await db.prepare(`SELECT 1 FROM leads l JOIN invoices i ON i.lead_id = l.id WHERE l.client_id = ? AND i.status = 'paid' LIMIT 1`).bind(r.owner_id).first().catch(() => null);
   return new Response(page(s, r.kind, r.name, r.key, slug, !!paid), { headers: {
     'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY',
-    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'none'",
+    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: https://vaxogroup.com; connect-src 'self'; form-action 'none'; base-uri 'none'",
   } });
 }

@@ -13,6 +13,7 @@ const CT = CAB_T[lang];
 
 const T = {
   en: {
+    needSite: 'Where should requests from your site go? Enter your email: we send a code, and the site goes live at once on its own address.',
     studio: 'Result studio', studioP: 'Everything Vax builds appears here, working: a site at its own address, a table, a plan.', studioEx: 'Live example: this is what you get in a minute', openLive: 'Open the public link', liveNow: '● Live on the internet', tryPhone: 'Open it from your phone and send the form: the request appears in your CRM with the date and time.', saveSite: 'Save changes', editText: 'Edit the text', myPages: 'Your other pages',
     hello2: 'Start here', sub2: 'Pick a module or give Vax a task. The result opens on the Canvas, ready to use.',
     tiles: { site: ['Build a site and form', 'A page with a request form, live in a minute'], crm: ['Open my CRM', 'Every request from your site on one board'], partner: ['Partner cabinet', 'Your links, invites and balance'] },
@@ -37,6 +38,7 @@ const T = {
     sH: 'Sign in to Vaxo', sP: 'Enter your email. We send a link: one tap and you are in. No password.', sEmail: 'Your email', sGo: 'Send the link', sSent: 'Check your email and tap the link. Or enter the code from the letter:', sCode: 'Six-digit code', sIn: 'Sign in', sBad: 'Check the email address.', sWrong: 'Wrong or expired code.', sWait: 'Wait a minute and try again.', sPw: 'Sign in with a password', sAgree: 'By continuing you accept the', terms: 'Terms', and: 'and', privacy: 'Privacy Policy',
   },
   ru: {
+    needSite: 'Куда присылать заявки с сайта? Введите почту: пришлём код, и сайт сразу заработает по своей ссылке.',
     studio: 'Студия результата', studioP: 'Здесь появляется всё, что делает Vax, в рабочем виде: сайт по своей ссылке, таблица, план.', studioEx: 'Живой пример: так выглядит результат через минуту', openLive: 'Открыть публичную ссылку', liveNow: '● Работает в интернете', tryPhone: 'Откройте с телефона и отправьте форму: заявка появится в вашей CRM с датой и временем.', saveSite: 'Сохранить изменения', editText: 'Править текст', myPages: 'Другие ваши страницы',
     hello2: 'С чего начнём', sub2: 'Выберите модуль или дайте Vax задачу. Результат откроется на холсте, готовый к работе.',
     tiles: { site: ['Собрать сайт и форму', 'Страница с формой заявок, работает через минуту'], crm: ['Открыть мою CRM', 'Все заявки с сайта на одной доске'], partner: ['Партнёрский кабинет', 'Ваши ссылки, приглашения и баланс'] },
@@ -61,6 +63,7 @@ const T = {
     sH: 'Вход в Vaxo', sP: 'Введите почту. Пришлём ссылку: одно нажатие, и вы внутри. Без пароля.', sEmail: 'Ваша почта', sGo: 'Прислать ссылку', sSent: 'Проверьте почту и нажмите ссылку. Или введите код из письма:', sCode: 'Код из шести цифр', sIn: 'Войти', sBad: 'Проверьте адрес почты.', sWrong: 'Код неверный или устарел.', sWait: 'Подождите минуту и попробуйте снова.', sPw: 'Войти с паролем', sAgree: 'Продолжая, вы принимаете', terms: 'Условия', and: 'и', privacy: 'Политику конфиденциальности',
   },
   ua: {
+    needSite: 'Куди надсилати заявки з сайту? Введіть пошту: надішлемо код, і сайт одразу запрацює за своїм посиланням.',
     studio: 'Студія результату', studioP: 'Тут зʼявляється все, що робить Vax, у робочому вигляді: сайт за своїм посиланням, таблиця, план.', studioEx: 'Живий приклад: так виглядає результат за хвилину', openLive: 'Відкрити публічне посилання', liveNow: '● Працює в інтернеті', tryPhone: 'Відкрийте з телефона й надішліть форму: заявка зʼявиться у вашій CRM з датою і часом.', saveSite: 'Зберегти зміни', editText: 'Правити текст', myPages: 'Інші ваші сторінки',
     hello2: 'З чого почнемо', sub2: 'Оберіть модуль або дайте Vax завдання. Результат відкриється на полотні, готовий до роботи.',
     tiles: { site: ['Зібрати сайт і форму', 'Сторінка з формою заявок, працює за хвилину'], crm: ['Відкрити мою CRM', 'Усі заявки з сайту на одній дошці'], partner: ['Партнерський кабінет', 'Ваші посилання, запрошення й баланс'] },
@@ -193,7 +196,7 @@ const ico = {
   const $ = <E extends Element = HTMLElement>(s: string) => root.querySelector<E>(s)!;
   const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls = '', text?: string) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
   const btn = (cls: string, text: string, go: () => void) => { const b = el('button', cls, text); b.type = 'button'; b.onclick = go; return b; };
-  const KEY = 'vaxo_ws', PEND = 'vaxo_ws_open';
+  const KEY = 'vaxo_ws', PEND = 'vaxo_ws_open', SITE_PEND = 'vaxo_ws_site';
   const local = { get() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { return null; } }, set(v: unknown) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {} }, drop() { try { localStorage.removeItem(KEY); } catch {} } };
   const post = (p: string, b: unknown) => fetch(p, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
   const postJ = async (p: string, b: unknown) => { const r = await post(p, b).catch(() => null); return { r, d: (r ? await r.json().catch(() => ({})) : {}) as R }; };
@@ -455,7 +458,8 @@ const ico = {
       if (m) m.site = { ...site };
     });
     const pub = btn('pri', T.pub, async () => {
-      if (!S.signed) { needSign('site'); return; }
+      // A guest: the draft waits in this browser, and goes live by itself right after they sign in (even from the email link).
+      if (!S.signed) { try { localStorage.setItem(SITE_PEND, JSON.stringify({ site, at: Date.now() })); } catch {} openSign(T.needSite); return; }
       if (!S.verified) { err.textContent = T.needMail; return; }
       pub.disabled = true; pub.textContent = T.pubBusy; err.textContent = '';
       const { d } = await postJ('/api/ws/site/publish', { site, lang, id: m?.id });
@@ -788,6 +792,14 @@ const ico = {
     const go: R = { '#plan': () => openProf('plan'), '#profile': () => openProf('plan'), '#memory': () => openProf('memory'), '#account': () => openProf('account'), '#projects': () => openProf('projects'), '#modules': () => panel('site'), '#site': () => panel('site'), '#biz': () => panel('crm'), '#crm': () => panel('crm'), '#invite': () => panel('partner'), '#partner': () => panel('partner') };
     if (q || dep || go[h] || h === '#signin') history.replaceState(null, '', location.pathname + (room ? location.search : ''));
     let pend = ''; try { pend = sessionStorage.getItem(PEND) || ''; sessionStorage.removeItem(PEND); } catch {}
+    let draft: { site: Site; at: number } | null = null; try { draft = JSON.parse(localStorage.getItem(SITE_PEND) || 'null'); } catch {}
+    if (S.signed && draft && Date.now() - draft.at < 864e5) {
+      try { localStorage.removeItem(SITE_PEND); } catch {}
+      const { d: pd } = await postJ('/api/ws/site/publish', { site: draft.site, lang });
+      if (pd.ok) { S.mods = pd.modules; drawWho(); siteView({ ...draft.site, url: pd.url, slug: pd.slug }); return; }
+      siteView(draft.site);
+      return;
+    }
     const err = params.get('err');
     if (err && !S.signed) openSign(err === 'google_off' ? CT.off : CT.errGoogle);
     else if (room && !S.signed) openSign((ME.projects || []).length ? CT.saveP : T.sP);
