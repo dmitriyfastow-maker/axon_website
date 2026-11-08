@@ -35,7 +35,12 @@ describe('shapeReply', () => {
     expect(r.doc?.title).toBe('план');
   });
   it('leaves a short answer alone', () => {
-    expect(shapeReply('Да.', 'short', 'q', 'ru')).toEqual({ reply: 'Да.', doc: null, deploy: null });
+    expect(shapeReply('Да.', 'short', 'q', 'ru')).toEqual({ reply: 'Да.', doc: null, deploy: null, order: null });
+  });
+  it('takes a production order marker out of the text', () => {
+    const r = shapeReply('Сценарий готов. [[ORDER: Монтаж рилса для кофейни]]', 'short', 'q', 'ru');
+    expect(r.order).toBe('Монтаж рилса для кофейни');
+    expect(r.reply).toBe('Сценарий готов.');
   });
   it('ignores a module that does not exist', () => {
     expect(shapeReply('Ок [[DEPLOY:bank]]', 'short', 'q', 'ru').deploy).toBeNull();

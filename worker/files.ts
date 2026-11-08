@@ -74,7 +74,7 @@ export async function serveFile(kv: KV | undefined, id: string): Promise<Respons
 }
 
 /** One or two sentences about an image (a logo, a screenshot of a site, a photo of a shop), for Vax. */
-async function describeImage(ai: AiBinding, buf: ArrayBuffer, type: string): Promise<string | null> {
+export async function describeImage(ai: AiBinding, buf: ArrayBuffer, type: string): Promise<string | null> {
   const bytes = new Uint8Array(buf);
   let b64 = '';
   for (let i = 0; i < bytes.length; i += 0x8000) b64 += String.fromCharCode(...bytes.subarray(i, i + 0x8000));

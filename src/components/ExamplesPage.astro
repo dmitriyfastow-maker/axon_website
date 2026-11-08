@@ -151,19 +151,6 @@ const start = `${home}#contact`;
       <p class="note">{C.note}</p>
     </section>
 
-    <section id="real" class="in block">
-      <h2>{C.realH}</h2>
-      <p class="sub">{C.realSub}</p>
-      <div class="real">
-        {C.real.map(([tag, name, what], i) => (
-          <a class="rcard" href="#" data-vax-chat="">
-            <img src={realImg[i]} alt={name} loading="lazy" />
-            <div><small class="tag">{tag}</small><h3>{name}</h3><p>{what}</p><span class="go">{C.tryCta}</span></div>
-          </a>
-        ))}
-      </div>
-    </section>
-
     <section class="in block">
       <div class="custom">
         <div><h2>{C.customH}</h2><p>{C.customP}</p></div>

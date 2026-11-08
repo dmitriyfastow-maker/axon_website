@@ -1,6 +1,7 @@
 // Cloudflare Worker: serves the static site from ./dist and handles the lead form.
 import { handleWorkspace } from './workspace.js';
 import { pageFacts, servePage } from './modules.js';
+import { handleBookGet } from './booking.js';
 import { serveDoc } from './workspace.js';
 import { serveImage } from './images.js';
 import { checkDomains, serveOwnDomain, TARGET } from './domains.js';
@@ -137,6 +138,7 @@ export default {
       return new Response(snippet(k, url.origin, chatName), { headers: { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'public, max-age=600', 'Access-Control-Allow-Origin': '*' } });
     }
     if (url.pathname === '/api/factory-sync') return env.LEADS ? handleFactorySync(env.LEADS, request) : json(503, { ok: false });
+    if (url.pathname === '/api/book') return env.LEADS ? handleBookGet(env.LEADS, url) : json(503, { ok: false });
     if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
     if (url.pathname === '/api/biz' || url.pathname.startsWith('/api/biz/')) return env.LEADS ? handleBiz(env.LEADS, request, url.pathname.slice('/api/biz'.length).replace(/^\//, ''), env.AI, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/ws' || url.pathname.startsWith('/api/ws/')) return env.LEADS ? handleWorkspace(env.LEADS, env.AI, request, url.pathname.slice('/api/ws'.length).replace(/^\//, ''), notify, waitUntil, { token: env.CF_SAAS_TOKEN }) : json(503, { ok: false });

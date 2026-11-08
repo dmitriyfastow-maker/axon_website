@@ -114,8 +114,8 @@ describe('a site built in the chat is live at once', () => {
     expect(t).toContain('https://vaxogroup.com/s/zerno-ab12');
     expect(t).toContain('CRM');
     expect(t).toContain('Партнёрская программа');
-    expect(t).toContain('Чат-бот');
-    expect(t.split('\n').length).toBeLessThanOrEqual(6);
+    expect(t).toContain('ИИ-консультант');
+    expect(t.split('\n').length).toBeLessThanOrEqual(7);
   });
 });
 
@@ -136,5 +136,28 @@ describe('the site template', () => {
     const html = sitePreview(s);
     expect(html).toContain('Cormorant');
     expect(html).toContain('Можно с собой?');
+  });
+});
+
+import { cleanBook, freeDays, bookBlock } from '../../worker/booking';
+describe('online booking (Decision 47)', () => {
+  const b = cleanBook({ on: true, days: [1, 2, 3, 4, 5], from: '10:00', to: '13:00', step: 60, cap: 1, qs: [{ q: 'Длина?', o: ['короткие', 'длинные'] }, { q: 'bad', o: ['one'] }], tz: 'Europe/Kyiv' })!;
+  it('keeps only sane settings', () => {
+    expect(b.qs.length).toBe(1);
+    expect(cleanBook({ from: '25:00', to: 'x', step: 7, cap: 99 })).toMatchObject({ from: '10:00', to: '20:00', step: 60, cap: 20, days: [1, 2, 3, 4, 5, 6] });
+  });
+  it('shows working days only, hides taken and past times', () => {
+    const mon = new Date('2026-11-09T06:00:00Z'); // Monday 08:00 in Kyiv
+    const d = freeDays(b, [{ day: '2026-11-09', time: '11:00', n: 1 }], mon, 7);
+    expect(d.map((x) => x.w)).toEqual([1, 2, 3, 4, 5]);
+    expect(d[0].slots).toEqual(['10:00', '12:00']);
+    const late = freeDays(b, [], new Date('2026-11-09T09:45:00Z'), 1); // 11:45 Kyiv: 12:00 is too close
+    expect(late[0].slots).toEqual([]);
+  });
+  it('renders the booking block in place of the form', () => {
+    const h = bookBlock({ lang: 'ru', key: 'k', slug: 's', cta: 'Записаться', services: ['Стрижка'], book: { ...b, bonus: 'укладка в подарок' }, esc: (x) => x, dk: () => '' });
+    expect(h).toContain('Онлайн-запись');
+    expect(h).toContain('укладка в подарок');
+    expect(h).toContain('data-keep');
   });
 });

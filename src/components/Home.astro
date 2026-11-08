@@ -3,6 +3,7 @@
 // Then the product itself (real Vax answers, shortened), what is instant and what is real work, the four sections of
 // Vaxo with interface mock-ups, plans with one focus offer, questions. Only promises that work today.
 import type { Lang } from '../i18n';
+import EcoShow from './EcoShow.astro';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -194,59 +195,7 @@ const ava = '/mascot/vax-happy.webp';
     </div>
   </section>
 
-  <section class="sec" id="demos">
-    <div class="w">
-      <h2>{T.inH}</h2>
-      <div class="grid">
-        <a class="card" href={P('/app/') + '#deploy=crm'}>
-          <em class="live">{T.live}</em>
-          <div class="mock crm" aria-hidden="true">
-            {T.crm[3].map((col, c) => <div class="col"><b>{col}</b>{[...Array(3 - c)].map((_, r) => <div class="deal"><i></i><u style={`width:${[78, 58, 68][(r + c) % 3]}%`}></u></div>)}</div>)}
-          </div>
-          <h3>{T.crm[0]}</h3><p>{T.crm[1]}</p><span>{T.crm[2]} →</span>
-        </a>
-        <a class="card" href={P('/app/') + '#deploy=partner'}>
-          <em class="live">{T.live}</em>
-          <div class="mock par" aria-hidden="true">
-            {T.par[3].map(([n, k], i) => <div class:list={[{ hi: i === 0 }]}><b>{n}</b><small>{k}</small></div>)}
-          </div>
-          <h3>{T.par[0]}</h3><p>{T.par[1]}</p><span>{T.par[2]} →</span>
-        </a>
-        <a class="card" href={P('/app/') + '#deploy=site'}>
-          <em class="live">{T.live}</em>
-          <div class="mock brw" aria-hidden="true">
-            <div class="bar"><i></i><i></i><i></i></div>
-            <img src={`/examples/thumbs/flagship-${lang}.jpg`} alt="" loading="lazy" width="640" height="400" />
-          </div>
-          <h3>{T.exa[0]}</h3><p>{T.exa[1]}</p><span>{T.exa[2]} →</span>
-        </a>
-        <a class="card" href={P('/app/')}>
-          <em class="live">{T.live}</em>
-          <div class="mock cab" aria-hidden="true">
-            <div class="ln"><small>{T.cab[3][0]}</small><em>45%</em><u><i style="width:45%"></i></u></div>
-            <div class="ln"><small>{T.cab[3][1]}</small><em>28%</em><u><i style="width:28%"></i></u></div>
-            <div class="rw"><span>{T.cab[3][2]}</span><span class="ok">✓ {T.cab[3][3]}</span></div>
-          </div>
-          <h3>{T.cab[0]}</h3><p>{T.cab[1]}</p><span>{T.cab[2]} →</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec" id="works">
-    <div class="w">
-      <div class="wk-head"><h2>{T.wkH}</h2><p class="ps">{T.wkS}</p></div>
-    </div>
-    <div class="wk-rail" role="list">
-      {WORKS.map(([slug, img, name, kind]) => (
-        <a class="wk" role="listitem" href={`/examples/${slug}/?lang=${lang}`} target="_blank" rel="noopener">
-          <div class="wk-img"><img src={`/examples/thumbs/${img}`} alt={name} loading="lazy" width="640" height="400" /></div>
-          <div class="wk-t"><b>{name}</b><small>{kind}</small></div>
-        </a>
-      ))}
-    </div>
-    <div class="w wk-foot"><a class="wk-go" href={P('/app/')}>{T.wkGo} →</a><a class="wk-all" href={P('/examples/')}>{T.wkAll}</a></div>
-  </section>
+  <EcoShow lang={lang} />
 
   <section class="sec alt" id="pricing">
     <div class="w">

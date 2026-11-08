@@ -8,6 +8,7 @@ import { buyerRef } from './buyers.js';
 import type { AiBinding } from './chat.js';
 import type { DB } from './partner.js';
 import { editLayer, renderSite, styleOf } from './sitekit.js';
+import { cleanBook, type Book } from './booking.js';
 
 const hex = (n: number) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => b.toString(16).padStart(2, '0')).join('');
 const cut = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
@@ -19,7 +20,7 @@ const TONES: Record<string, [string, string, string, string]> = { // page, text,
 };
 
 export type Site = { lang: string; tone: string; title: string; sub: string; about: string; services: string[]; cta: string; ask?: string; img?: string;
-  style?: string; kicker?: string; accent?: string; details?: string[]; steps?: string[]; faq?: { q: string; a: string }[]; imgs?: string[]; promise?: string };
+  style?: string; kicker?: string; accent?: string; details?: string[]; steps?: string[]; faq?: { q: string; a: string }[]; imgs?: string[]; promise?: string; book?: Book };
 
 const WORDS: Record<string, { name: string; contact: string; msg: string; send: string; done: string; made: string; fill: string; first: string }> = {
   en: { name: 'Your name', contact: 'Phone or email', msg: 'What do you need?', send: 'Send', done: 'Thank you! Your request has been sent.', made: 'Made on Vaxo', fill: 'Leave a request', first: 'Partner 1' },
@@ -56,6 +57,7 @@ export function cleanSite(x: Record<string, unknown>, lang: string): Site {
     cta: cut(x.cta, 40),
     ask: cut(x.ask, 80) || undefined,
     img: imgs[0], imgs: imgs.length ? imgs : undefined,
+    book: cleanBook(x.book),
   };
 }
 
@@ -133,12 +135,19 @@ Rules: never invent prices, addresses, phone numbers, opening hours, years, awar
 Choose "style" for the niche: editorial (restaurants, coffee, bars, beauty, premium services), clinic (medicine, dental, law, finance, consulting, education), bold (barbers, fitness, sports, tech, auto, events), soft (bakeries, florists, kids, family, crafts, pets), nature (gardening, landscaping, cleaning, eco, farms, wellness, yoga).
 ${known}
 Return ONLY JSON:
-{"style":"...","title":"business name or a 2-5 word headline","accent":"one word from the title to highlight","kicker":"3-6 words above the title","sub":"one line: what the visitor gets, max 18 words","about":"3 sentences about the business and its approach","services":["4-6 offers, 1-4 words each"],"details":["one sentence describing each offer, same order"],"steps":["3 steps, 3-7 words each: 1 the visitor leaves a request, 2 what THE BUSINESS does next (we prepare / we call / we agree), 3 what the visitor gets"],"faq":[{"q":"a question a visitor would ask","a":"an honest answer without invented facts; if a fact is unknown, say it is agreed in the request"}],"promise":"one strong sentence for a photo banner, max 12 words","cta":"form title, 1-4 words, fits the wish (order, booking, pre-order...)","ask":"hint in the message box, max 8 words","photos":["3 English prompts for realistic photos for this site: 1 the place or product wide shot, 2 the process or people at work from behind or the side, 3 a beautiful detail close-up. No text, no logos, no faces looking at the camera"]}
+{"style":"...","title":"business name or a 2-5 word headline","accent":"one word from the title to highlight","kicker":"3-6 words above the title","sub":"one line: what the visitor gets, max 18 words","about":"3 sentences about the business and its approach","services":["4-6 offers, 1-4 words each"],"details":["one sentence describing each offer, same order"],"steps":["3 steps, 3-7 words each: 1 the visitor leaves a request, 2 what THE BUSINESS does next (we prepare / we call / we agree), 3 what the visitor gets"],"faq":[{"q":"a question a visitor would ask","a":"an honest answer without invented facts; if a fact is unknown, say it is agreed in the request"}],"promise":"one strong sentence for a photo banner, max 12 words","cta":"form title, 1-4 words, fits the wish (order, booking, pre-order...)","ask":"hint in the message box, max 8 words","photos":["3 English prompts for realistic photos for this site: 1 the place or product wide shot, 2 the process or people at work from behind or the side, 3 a beautiful detail close-up. No text, no logos, no faces looking at the camera"],"booking":false}
+BOOKING: set "booking":true when people come or meet at a set time (barbers, beauty, nails, massage, clinics, dental, fitness and yoga classes, tutors, coaches, consultations, lawyers, auto service, photo studios, car wash, pet grooming); then step 1 is "pick a free time online" and the cta is about booking. For shops, delivery, restaurants without tables, production and B2B set false.
+When booking is true also give "slot": usual minutes per visit (15,20,30,45,60,90,120), "qs": [{"q":"question","o":["option","option"]}] — 2 short questions a visitor answers with one tap that help the business prepare (each with 2-4 short options, never asking for contacts, health secrets or money), and "bonus_idea": one small welcome gift for a first visit that such a business often gives (the owner decides whether to use it).
 Give exactly 3 faq items. If the business involves sex, drugs, weapons, gambling or anything illegal, return {"block":true}.`, 1600).catch(() => '') : '';
   const j = parse<Record<string, unknown>>(t) ?? {};
   if (j.block) return cleanSite({ title: name }, lang);
   const photos = (Array.isArray(j.photos) ? j.photos : []).map((p) => cut(String(p), 300)).filter(Boolean).slice(0, 3);
-  return { ...cleanSite({ title: name, ...j }, lang), photos };
+  // Hours are never invented: the default week is Mon–Sat 10–20 and the owner sets theirs in the project's Booking tab.
+  // If the writer gave no usable questions, one that helps every business: where the client came from.
+  const QS: Record<string, { q: string; o: string[] }> = { ru: { q: 'Как вы о нас узнали?', o: ['Instagram', 'Google', 'Друзья', 'Другое'] }, ua: { q: 'Як ви про нас дізналися?', o: ['Instagram', 'Google', 'Друзі', 'Інше'] }, en: { q: 'How did you hear about us?', o: ['Instagram', 'Google', 'Friends', 'Other'] } };
+  const qs = cleanBook({ qs: j.qs })?.qs ?? [];
+  const book = j.booking === true ? { on: true, days: [1, 2, 3, 4, 5, 6], from: '10:00', to: '20:00', step: Number(j.slot) || 60, cap: 1, qs: qs.length ? qs : [QS[lang] ?? QS.en], idea: j.bonus_idea } : undefined;
+  return { ...cleanSite({ title: name, ...j, book }, lang), photos };
 }
 
 /** Publish from the Canvas: the site gets this text, created first if there is none yet. */
@@ -151,7 +160,7 @@ export async function publishSite(db: DB, clientId: number, x: Record<string, un
 
 /** The same page for the Canvas preview: no scripts, the form does nothing. */
 export const sitePreview = (s: Site, edit?: { ai: string; photo: string; hint: string }) => {
-  const html = renderSite({ ...s, style: styleOf(s.style || s.tone) }, { key: '', slug: 'preview', index: false, name: s.title || 'Site', edit: !!edit }).replace(/<script[\s\S]*?<\/script>/g, '').replace(/<link rel="manifest"[^>]*>/, '');
+  const html = renderSite({ ...s, style: styleOf(s.style || s.tone) }, { key: '', slug: 'preview', index: false, name: s.title || 'Site', edit: !!edit }).replace(/<script(?! data-keep)[\s\S]*?<\/script>/g, '').replace(/<link rel="manifest"[^>]*>/, '');
   return edit ? html.replace('</body>', editLayer(edit) + '</body>') : html;
 };
 
@@ -200,7 +209,8 @@ export async function pageFacts(db: DB, bizId: number, path: string): Promise<{ 
     ?? (await db.prepare('SELECT data FROM ws_sites WHERE slug = ? AND biz_id = ?').bind(slug, bizId).first<{ data: string }>().catch(() => null));
   if (!r) return null;
   const s = JSON.parse(r.data) as Site;
-  return { name: s.title, facts: [s.title, s.sub, s.about, s.services.length ? `Offer: ${s.services.join('; ')}` : ''].filter(Boolean).join('. ') };
+  const bk = s.book?.on ? `Online booking on this page: visitors pick a free time themselves (working days ${s.book.days.join(',')} where 1 is Monday, ${s.book.from}–${s.book.to})${s.book.bonus ? `; first visit gift: ${s.book.bonus}` : ''}` : '';
+  return { name: s.title, facts: [s.title, s.sub, s.about, s.services.length ? `Offer: ${s.services.join('; ')}` : '', s.details?.filter(Boolean).join(' '), ...(s.faq ?? []).map((f) => `${f.q} ${f.a}`), bk].filter(Boolean).join('. ') };
 }
 
 export async function saveSite(db: DB, clientId: number, b: Record<string, unknown>, bizId?: number | null) {
@@ -251,7 +261,11 @@ function page(s: Site, kind: string, name: string, key: string, slug: string, in
 export async function servePage(db: DB, slug: string, manifest: boolean): Promise<Response> {
   const r = (await db.prepare('SELECT b.id, b.name, b.key, b.owner_id, p.kind, p.data FROM biz_pages p JOIN biz b ON b.id = p.biz_id WHERE p.slug = ?').bind(slug).first<{ id: number; name: string; key: string; owner_id: number; kind: string; data: string }>().catch(() => null))
     ?? (await db.prepare(`SELECT b.id, b.name, b.key, b.owner_id, 'site' AS kind, s.data FROM ws_sites s JOIN biz b ON b.id = s.biz_id WHERE s.slug = ?`).bind(slug).first<{ id: number; name: string; key: string; owner_id: number; kind: string; data: string }>().catch(() => null));
-  if (!r) return new Response('Not found', { status: 404 });
+  if (!r) {
+    // A page renamed to its own title keeps working at its old address.
+    const al = await db.prepare('SELECT value FROM settings WHERE key = ?').bind('slug_alias_' + slug).first<{ value: string }>().catch(() => null);
+    return al ? Response.redirect(`https://vaxogroup.com/s/${al.value}${manifest ? '/manifest.webmanifest' : ''}`, 301) : new Response('Not found', { status: 404 });
+  }
   const s = JSON.parse(r.data) as Site;
   if (manifest) return new Response(JSON.stringify({ name: s.title || r.name, short_name: (s.title || r.name).slice(0, 12), start_url: `/s/${slug}`, display: 'standalone', background_color: (TONES[s.tone] ?? TONES.clean)[0], icons: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' }] }), { headers: { 'Content-Type': 'application/manifest+json' } });
   // Only paying clients' pages go into search: free pages stay out, so the domain does not fill up with empty ones.

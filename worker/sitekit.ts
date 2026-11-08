@@ -1,12 +1,14 @@
 // Site kit (Decision 45): the public page of a site Vax builds, at the level of the concept sites on /examples/.
 // Five styles matched to the niche, each with its own fonts and palette; up to three photos; rich but honest text
-// (no invented prices, reviews, addresses or numbers). Everything a model wrote is escaped; the page has one fixed form.
+// (no invented prices, reviews, addresses or numbers). Everything a model wrote is escaped; the page has one fixed form,
+// or, for businesses people visit at a time, the online booking block (worker/booking.ts).
+import { bookBlock, type Book } from './booking.js';
 
 export type Offer = { t: string; d: string };
 export type Faq = { q: string; a: string };
 export type Kit = {
   lang: string; style: string; title: string; accent?: string; kicker?: string; sub: string; about: string;
-  services: string[]; details?: string[]; steps?: string[]; faq?: Faq[]; cta: string; ask?: string; imgs?: string[]; promise?: string;
+  services: string[]; details?: string[]; steps?: string[]; faq?: Faq[]; cta: string; ask?: string; imgs?: string[]; promise?: string; book?: Book;
 };
 
 type Style = { bg: string; ink: string; mut: string; card: string; acc: string; accInk: string; line: string; head: string; body: string; fonts: string; caps: boolean; radius: number; dark: boolean };
@@ -102,10 +104,10 @@ ${offers.length ? `<section id="offer" style="padding-top:0"><div class="w"><p c
 ${h3 ? `<section class="band"><img src="${h3}"${alt(s.promise)}${lazy}${di(2)}><div class="w"><p${dk('promise')}>${esc(s.promise || w.reply)}</p></div></section>` : ''}
 <section><div class="w"><p class="kicker">${esc(w.how)}</p><h2>${esc(w.how)}</h2><ol class="steps">${steps.map((x, i) => `<li><span>0${i + 1}</span><em${dk('steps.' + i)} style="font-style:normal">${esc(x)}</em></li>`).join('')}</ol></div></section>
 ${s.faq?.length ? `<section id="faq" style="padding-top:0"><div class="w" style="max-width:860px"><p class="kicker">${esc(w.faq)}</p><h2>${esc(w.faq)}</h2>${s.faq.map((f, i) => `<details${E ? ' open' : ''}><summary${dk('faq.' + i + '.q')}>${esc(f.q)}</summary><p${dk('faq.' + i + '.a')}>${esc(f.a)}</p></details>`).join('')}</div></section>` : ''}
-<section id="form" style="padding-top:0"><div class="w book"><div><p class="kicker">${esc(cta)}</p><h2${dk('cta')}>${esc(cta)}</h2><p class="lead"${dk('ask')}>${esc(s.ask || w.reply)}</p><p class="note">${esc(w.reply)}</p></div>
-<form id="f"><input name="name" maxlength="80" aria-label="${esc(w.name)}" placeholder="${esc(w.name)}" autocomplete="name"><input name="contact" maxlength="120" aria-label="${esc(w.contact)}" placeholder="${esc(w.contact)}" required><textarea class="full" name="message" rows="4" maxlength="1500" aria-label="${esc(w.msg)}" placeholder="${esc(s.ask || w.msg)}"></textarea><button class="btn solid full">${esc(w.send)}</button></form></div></section>
+${s.book?.on ? bookBlock({ lang: s.lang, key: o.key, slug: o.slug, cta, services: s.services, book: s.book, edit: E, esc, dk }) : `<section id="form" style="padding-top:0"><div class="w book"><div><p class="kicker">${esc(cta)}</p><h2${dk('cta')}>${esc(cta)}</h2><p class="lead"${dk('ask')}>${esc(s.ask || w.reply)}</p><p class="note">${esc(w.reply)}</p></div>
+<form id="f"><input name="name" maxlength="80" aria-label="${esc(w.name)}" placeholder="${esc(w.name)}" autocomplete="name"><input name="contact" maxlength="120" aria-label="${esc(w.contact)}" placeholder="${esc(w.contact)}" required><textarea class="full" name="message" rows="4" maxlength="1500" aria-label="${esc(w.msg)}" placeholder="${esc(s.ask || w.msg)}"></textarea><button class="btn solid full">${esc(w.send)}</button></form></div></section>`}
 <footer><div class="w"><span>© ${new Date().getFullYear()} ${esc(title)}</span>${o.index ? '' : `<a href="https://vaxogroup.com/">${esc(w.made)}</a>`}</div></footer>
-<script src="/w.js?k=${o.key}&p=${o.slug}" async></script><script>document.getElementById('f').onsubmit=function(e){e.preventDefault();var p=document.createElement('p');p.className='ok';p.textContent=${JSON.stringify(w.done).replace(/</g, '\\u003c')};this.replaceChildren(p)}</script></body></html>`;
+<script src="/w.js?k=${o.key}&p=${o.slug}" async></script><script>var vf=document.getElementById('f');if(vf)vf.onsubmit=function(e){e.preventDefault();var p=document.createElement('p');p.className='ok';p.textContent=${JSON.stringify(w.done).replace(/</g, '\\u003c')};this.replaceChildren(p)}</script></body></html>`;
 }
 
 /** The editing layer of the Canvas preview. The frame is sandboxed (scripts, no access to our page); it only sends
