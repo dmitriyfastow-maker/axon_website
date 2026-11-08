@@ -106,3 +106,14 @@ describe('workspace limits, like Claude', () => {
     expect(w.weekReset).toBe('2026-11-09T00:00:00.000Z');
   });
 });
+
+describe('a site built in the chat is live at once', () => {
+  it('tells the address, what is on the page and where requests go', async () => {
+    const { siteLiveText } = await import('../../worker/workspace');
+    const t = siteLiveText('ru', 'https://vaxogroup.com/s/zerno-ab12', cleanSite({ title: 'Зерно', services: ['Эспрессо', 'Капучино'], cta: 'Предзаказ' }, 'ru'));
+    expect(t).toContain('https://vaxogroup.com/s/zerno-ab12');
+    expect(t).toContain('«Предзаказ»');
+    expect(t).toContain('CRM');
+    expect(t.split('\n').length).toBeLessThanOrEqual(4);
+  });
+});

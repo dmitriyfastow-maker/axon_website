@@ -105,7 +105,7 @@ const LANG_NAME: Record<string, string> = { en: 'English', ru: 'Russian', ua: 'U
 export async function writeSite(ai: AiBinding | undefined, lang: string, known: string, name = ''): Promise<Site> {
   const t = ai ? await askAi(ai, `Write the text of a one-page website in ${LANG_NAME[lang] ?? 'English'}. Use only what is known below. Never invent prices, addresses, phones, reviews, years, awards or numbers. If little is known, keep the text general and short. The page has one form; make its title and the hint in its message box fit the wish (an order, a booking, a pre-order, a question).
 ${known}
-Return ONLY JSON: {"title":"name or a short headline","sub":"one line: what the visitor gets","about":"2-3 plain sentences","services":["3-6 short items"],"cta":"form title, 1-4 words","ask":"hint inside the message box, at most 8 words","tone":"clean, dark or warm"}`, 600).catch(() => '') : '';
+Return ONLY JSON: {"title":"name or a short headline","sub":"one line: what the visitor gets","about":"2-3 plain sentences","services":["3-6 short items, at least 3: what the visitor can get or book here"],"cta":"form title, 1-4 words","ask":"hint inside the message box, at most 8 words","tone":"clean, dark or warm"}`, 600).catch(() => '') : '';
   return cleanSite({ title: name, ...(parse<Record<string, unknown>>(t) ?? {}) }, lang);
 }
 
@@ -120,6 +120,29 @@ export async function publishSite(db: DB, clientId: number, x: Record<string, un
 /** The same page for the Canvas preview: no scripts, the form does nothing. */
 export const sitePreview = (s: Site) => page(s, 'site', s.title || 'Site', '', 'preview', false).replace(/<script[\s\S]*?<\/script>/g, '').replace(/<link rel="manifest"[^>]*>/, '');
 
+/** A site from the chat goes live at once. The first one becomes the account's main site (the one a domain attaches
+ *  to); every next one is an extra page with its own address. All of them send requests to the same CRM. */
+export async function liveSite(db: DB, clientId: number, x: Record<string, unknown>, lang: string, access: boolean): Promise<string> {
+  const site = cleanSite(x, lang);
+  const main = await db.prepare('SELECT b.id, p.slug, p.kind FROM biz b LEFT JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(clientId).first<{ id: number; slug: string | null; kind: string | null }>();
+  if (!main?.slug || main.kind !== 'site') {
+    await publishSite(db, clientId, site, lang, access);
+    return (await db.prepare('SELECT p.slug FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(clientId).first<{ slug: string }>())!.slug;
+  }
+  const slug = slugOf(site.title || 'page');
+  await db.prepare('INSERT INTO ws_sites (slug, client_id, biz_id, data) VALUES (?, ?, ?, ?)').bind(slug, clientId, main.id, JSON.stringify(site)).run();
+  return slug;
+}
+
+/** Saves edits to one of the person's live pages, main or extra. False if the address is not theirs. */
+export async function updateLiveSite(db: DB, clientId: number, slug: string, x: Record<string, unknown>, lang: string): Promise<boolean> {
+  const site = JSON.stringify(cleanSite(x, lang));
+  const main = await db.prepare(`UPDATE biz_pages SET data = ?, kind = 'site' WHERE slug = ? AND biz_id IN (SELECT id FROM biz WHERE owner_id = ?)`).bind(site, slug, clientId).run();
+  if ((main as { meta?: { changes?: number } })?.meta?.changes) return true;
+  const extra = await db.prepare('UPDATE ws_sites SET data = ? WHERE slug = ? AND client_id = ?').bind(site, slug, clientId).run();
+  return !!(extra as { meta?: { changes?: number } })?.meta?.changes;
+}
+
 export async function saveSite(db: DB, clientId: number, b: Record<string, unknown>) {
   const biz = await db.prepare('SELECT b.id, p.data FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(clientId).first<{ id: number; data: string }>();
   if (!biz) return;
@@ -131,18 +154,21 @@ export async function modulesState(db: DB, clientId: number, origin: string, acc
   const biz = await db.prepare('SELECT b.id, b.name, p.slug, p.kind, p.data FROM biz b LEFT JOIN biz_pages p ON p.biz_id = b.id WHERE b.owner_id = ? ORDER BY b.id LIMIT 1').bind(clientId).first<{ id: number; name: string; slug: string | null; kind: string | null; data: string | null }>();
   if (!biz?.slug) return { crm: null, partner: null, site: null, biz: biz ? { id: biz.id, name: biz.name } : null };
   const url = `${origin}/s/${biz.slug}`;
-  const leads = (await db.prepare('SELECT id, at, name, contact, message, source, status FROM biz_leads WHERE biz_id = ? ORDER BY id DESC LIMIT 30').bind(biz.id).all()).results;
+  const leads = (await db.prepare('SELECT id, at, name, contact, message, source, path, status FROM biz_leads WHERE biz_id = ? ORDER BY id DESC LIMIT 30').bind(biz.id).all()).results;
   const total = (await db.prepare('SELECT COUNT(*) AS n FROM biz_leads WHERE biz_id = ?').bind(biz.id).first<{ n: number }>())?.n ?? 0;
   const refs = (await db.prepare(`SELECT r.name, r.code,
       (SELECT COUNT(DISTINCT sid) FROM biz_events e WHERE e.biz_id = r.biz_id AND e.type = 'pv' AND e.source = 'ref_' || r.code) AS visits,
       (SELECT COUNT(*) FROM biz_leads l WHERE l.biz_id = r.biz_id AND l.source = 'ref_' || r.code) AS leads
     FROM biz_refs r WHERE r.biz_id = ? ORDER BY r.id`).bind(biz.id).all<{ name: string; code: string; visits: number; leads: number }>()).results;
+  const extra = (await db.prepare('SELECT slug, data FROM ws_sites WHERE client_id = ? ORDER BY at DESC LIMIT 20').bind(clientId).all<{ slug: string; data: string }>().catch(() => ({ results: [] }))).results;
+  const pages = [...extra.map((p) => ({ ...(JSON.parse(p.data) as Site), slug: p.slug, url: `${origin}/s/${p.slug}` })), ...(biz.kind === 'site' ? [{ ...(JSON.parse(biz.data || '{}') as Site), slug: biz.slug, url, main: true }] : [])];
   return {
     biz: { id: biz.id, name: biz.name },
+    pages,
     crm: access ? { url, total, leads } : null,
     requests: total,
     partner: refs.length ? { links: refs.map((r) => ({ ...r, url: `${url}?utm_source=ref_${r.code}` })) } : null,
-    site: biz.kind === 'site' ? { url, ...(JSON.parse(biz.data || '{}') as Site) } : null,
+    site: biz.kind === 'site' ? { url, slug: biz.slug, ...(JSON.parse(biz.data || '{}') as Site) } : null,
   };
 }
 
@@ -163,7 +189,8 @@ ${site && s.about ? `<p>${esc(s.about)}</p>` : ''}${site && s.services.length ? 
 
 /** /s/<slug> and its manifest: the public side of a deployed module. */
 export async function servePage(db: DB, slug: string, manifest: boolean): Promise<Response> {
-  const r = await db.prepare('SELECT b.id, b.name, b.key, b.owner_id, p.kind, p.data FROM biz_pages p JOIN biz b ON b.id = p.biz_id WHERE p.slug = ?').bind(slug).first<{ id: number; name: string; key: string; owner_id: number; kind: string; data: string }>().catch(() => null);
+  const r = (await db.prepare('SELECT b.id, b.name, b.key, b.owner_id, p.kind, p.data FROM biz_pages p JOIN biz b ON b.id = p.biz_id WHERE p.slug = ?').bind(slug).first<{ id: number; name: string; key: string; owner_id: number; kind: string; data: string }>().catch(() => null))
+    ?? (await db.prepare(`SELECT b.id, b.name, b.key, b.owner_id, 'site' AS kind, s.data FROM ws_sites s JOIN biz b ON b.id = s.biz_id WHERE s.slug = ?`).bind(slug).first<{ id: number; name: string; key: string; owner_id: number; kind: string; data: string }>().catch(() => null));
   if (!r) return new Response('Not found', { status: 404 });
   const s = JSON.parse(r.data) as Site;
   if (manifest) return new Response(JSON.stringify({ name: s.title || r.name, short_name: (s.title || r.name).slice(0, 12), start_url: `/s/${slug}`, display: 'standalone', background_color: (TONES[s.tone] ?? TONES.clean)[0], icons: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' }] }), { headers: { 'Content-Type': 'application/manifest+json' } });

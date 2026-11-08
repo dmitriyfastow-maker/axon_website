@@ -13,6 +13,7 @@ const CT = CAB_T[lang];
 
 const T = {
   en: {
+    studio: 'Result studio', studioP: 'Everything Vax builds appears here, working: a site at its own address, a table, a plan.', studioEx: 'Live example: this is what you get in a minute', openLive: 'Open the public link', liveNow: '● Live on the internet', tryPhone: 'Open it from your phone and send the form: the request appears in your CRM with the date and time.', saveSite: 'Save changes', editText: 'Edit the text', myPages: 'Your other pages',
     hello2: 'Start here', sub2: 'Pick a module or give Vax a task. The result opens on the Canvas, ready to use.',
     tiles: { site: ['Build a site and form', 'A page with a request form, live in a minute'], crm: ['Open my CRM', 'Every request from your site on one board'], partner: ['Partner cabinet', 'Your links, invites and balance'] },
     exL: 'Or give a task. The ready result opens on the Canvas:', ex: ['A landing page for a coffee shop with a pre-order form', 'Financial model for an online school launch at $50k revenue: ads, team and taxes', 'A 30-day training and recovery protocol'],
@@ -36,6 +37,7 @@ const T = {
     sH: 'Sign in to Vaxo', sP: 'Enter your email. We send a link: one tap and you are in. No password.', sEmail: 'Your email', sGo: 'Send the link', sSent: 'Check your email and tap the link. Or enter the code from the letter:', sCode: 'Six-digit code', sIn: 'Sign in', sBad: 'Check the email address.', sWrong: 'Wrong or expired code.', sWait: 'Wait a minute and try again.', sPw: 'Sign in with a password', sAgree: 'By continuing you accept the', terms: 'Terms', and: 'and', privacy: 'Privacy Policy',
   },
   ru: {
+    studio: 'Студия результата', studioP: 'Здесь появляется всё, что делает Vax, в рабочем виде: сайт по своей ссылке, таблица, план.', studioEx: 'Живой пример: так выглядит результат через минуту', openLive: 'Открыть публичную ссылку', liveNow: '● Работает в интернете', tryPhone: 'Откройте с телефона и отправьте форму: заявка появится в вашей CRM с датой и временем.', saveSite: 'Сохранить изменения', editText: 'Править текст', myPages: 'Другие ваши страницы',
     hello2: 'С чего начнём', sub2: 'Выберите модуль или дайте Vax задачу. Результат откроется на холсте, готовый к работе.',
     tiles: { site: ['Собрать сайт и форму', 'Страница с формой заявок, работает через минуту'], crm: ['Открыть мою CRM', 'Все заявки с сайта на одной доске'], partner: ['Партнёрский кабинет', 'Ваши ссылки, приглашения и баланс'] },
     exL: 'Или поставьте задачу. Готовый результат откроется на холсте:', ex: ['Посадочная страница для кофейни с формой предзаказа', 'Финмодель запуска онлайн-школы на $50k оборота: реклама, команда, налоги', '30-дневный протокол тренировок и восстановления'],
@@ -59,6 +61,7 @@ const T = {
     sH: 'Вход в Vaxo', sP: 'Введите почту. Пришлём ссылку: одно нажатие, и вы внутри. Без пароля.', sEmail: 'Ваша почта', sGo: 'Прислать ссылку', sSent: 'Проверьте почту и нажмите ссылку. Или введите код из письма:', sCode: 'Код из шести цифр', sIn: 'Войти', sBad: 'Проверьте адрес почты.', sWrong: 'Код неверный или устарел.', sWait: 'Подождите минуту и попробуйте снова.', sPw: 'Войти с паролем', sAgree: 'Продолжая, вы принимаете', terms: 'Условия', and: 'и', privacy: 'Политику конфиденциальности',
   },
   ua: {
+    studio: 'Студія результату', studioP: 'Тут зʼявляється все, що робить Vax, у робочому вигляді: сайт за своїм посиланням, таблиця, план.', studioEx: 'Живий приклад: так виглядає результат за хвилину', openLive: 'Відкрити публічне посилання', liveNow: '● Працює в інтернеті', tryPhone: 'Відкрийте з телефона й надішліть форму: заявка зʼявиться у вашій CRM з датою і часом.', saveSite: 'Зберегти зміни', editText: 'Правити текст', myPages: 'Інші ваші сторінки',
     hello2: 'З чого почнемо', sub2: 'Оберіть модуль або дайте Vax завдання. Результат відкриється на полотні, готовий до роботи.',
     tiles: { site: ['Зібрати сайт і форму', 'Сторінка з формою заявок, працює за хвилину'], crm: ['Відкрити мою CRM', 'Усі заявки з сайту на одній дошці'], partner: ['Партнерський кабінет', 'Ваші посилання, запрошення й баланс'] },
     exL: 'Або поставте завдання. Готовий результат відкриється на полотні:', ex: ['Посадкова сторінка для кавʼярні з формою передзамовлення', 'Фінмодель запуску онлайн-школи на $50k обороту: реклама, команда, податки', '30-денний протокол тренувань і відновлення'],
@@ -178,7 +181,7 @@ const ico = {
 
   type R = Record<string, any>;
   type Doc = { title: string; body: string };
-  type Site = { lang?: string; tone: string; title: string; sub: string; about: string; services: string[]; cta: string; ask?: string };
+  type Site = { lang?: string; tone: string; title: string; sub: string; about: string; services: string[]; cta: string; ask?: string; url?: string; slug?: string };
   type Msg = { id?: number; role: 'user' | 'assistant'; content: string; tool?: ToolSpec; doc?: Doc; image?: string; deploy?: string; site?: Site; pub?: string };
   type Chat = { id: number; title: string; msgs?: Msg[] };
   type Mem = { niche: string; goals: string; project: string; limits: string };
@@ -305,9 +308,9 @@ const ico = {
     } else S.msgs = c?.msgs || [];
     drawChats(); drawAll();
     const last = [...S.msgs].reverse().find(hasArt);
-    if (last && matchMedia('(min-width: 1100px)').matches) showArt(last); else closeCv();
+    if (last && matchMedia('(min-width: 1100px)').matches) showArt(last); else if (matchMedia('(min-width: 1100px)').matches) studio(); else closeCv();
   }
-  function fresh() { S.cur = 0; S.msgs = []; drawChats(); drawEmpty(); closeCv(); input.focus(); }
+  function fresh() { S.cur = 0; S.msgs = []; drawChats(); drawEmpty(); if (matchMedia('(min-width: 1100px)').matches) studio(); else closeCv(); input.focus(); }
 
   async function ask(q: string) {
     q = q.trim();
@@ -415,46 +418,84 @@ const ico = {
     i.name = name; i.value = value; l.append(i);
     return l;
   };
-  function siteView(src: Site, m?: Msg) {
+  // A fresh frame that already holds the page before it goes on screen: filling a frame just inserted can lose its content.
+  function previewFrame(html: string, title: string) {
+    const f = el('iframe', 'prev'); f.setAttribute('sandbox', ''); f.title = title; f.srcdoc = html;
+    return f;
+  }
+  function siteView(src: Site, m?: Msg, opts: { studio?: boolean } = {}) {
     const site: Site = { ...src, services: [...(src.services || [])] };
-    const frame = el('iframe', 'prev'); frame.setAttribute('sandbox', ''); frame.title = T.siteCard;
+    const frame = el('div', 'prevbox');
     let timer = 0;
-    const paint = async () => { const { d } = await postJ('/api/ws/site/preview', { site, lang }); if (!d.html) return; frame.srcdoc = ''; requestAnimationFrame(() => requestAnimationFrame(() => { frame.srcdoc = d.html; })); };
+    const paint = async () => { const { d } = await postJ('/api/ws/site/preview', { site, lang }); if (d.html) frame.replaceChildren(previewFrame(d.html, T.siteCard)); };
     const f = el('form', 'pf');
     f.append(field(T.fT, 'title', site.title), field(T.fS, 'sub', site.sub), field(T.fA, 'about', site.about, true), field(T.fL, 'services', site.services.join('\n'), true), field(T.fC, 'cta', site.cta), field(T.fAsk, 'ask', site.ask || ''));
     const l = el('label', 'f', T.fTone), tone = el('select'); tone.name = 'tone';
     for (const k of ['clean', 'dark', 'warm']) { const o = el('option', '', T.tones[k]); o.value = k; o.selected = site.tone === k; tone.append(o); }
     l.append(tone); f.append(l);
+    const edits = el('details', 'edits'); edits.append(el('summary', '', T.editText), f);
+    edits.open = !site.url;
+    f.onsubmit = (e) => e.preventDefault();
+    const top = el('div', 'livebar'), err = el('small', 'bad');
+    // Live: the public address on top, open it from any phone, requests land in the CRM. Draft: one Publish.
+    const drawTop = () => {
+      if (site.url) {
+        const open = el('a', 'pri', T.openLive + ' ↗') as HTMLAnchorElement; open.href = site.url; open.target = '_blank'; open.rel = 'noopener';
+        const leads = btn('sec', `${T.crmTotal}: ${S.mods?.requests ?? 0} →`, () => panel('crm'));
+        const row = el('div', 'tbar'); row.append(open, save, leads);
+        top.replaceChildren(el('small', 'livedot', T.liveNow), linkRow(site.url), row, el('p', 'hint', T.tryPhone));
+      } else { const row = el('div', 'tbar'); row.append(pub); top.replaceChildren(row); }
+    };
+    const save = btn('sec', T.saveSite, async () => {
+      save.disabled = true; save.textContent = T.pubBusy;
+      const { d } = await postJ('/api/ws/site/publish', { site, lang, id: m?.id, slug: site.slug });
+      save.disabled = false;
+      if (!d.ok) { save.textContent = T.saveSite; err.textContent = T.depFail; return; }
+      S.mods = d.modules; save.textContent = T.saved; setTimeout(() => (save.textContent = T.saveSite), 1500);
+      if (m) m.site = { ...site };
+    });
+    const pub = btn('pri', T.pub, async () => {
+      if (!S.signed) { needSign('site'); return; }
+      if (!S.verified) { err.textContent = T.needMail; return; }
+      pub.disabled = true; pub.textContent = T.pubBusy; err.textContent = '';
+      const { d } = await postJ('/api/ws/site/publish', { site, lang, id: m?.id });
+      pub.disabled = false; pub.textContent = T.pub;
+      if (!d.ok) { err.textContent = d.error === 'verify' ? T.needMail : T.depFail; return; }
+      Object.assign(site, { url: d.url, slug: d.slug });
+      S.mods = d.modules; drawWho(); drawTop(); edits.open = false;
+      if (m) { m.site = { ...site }; saveGuest(); }
+    });
     f.oninput = () => {
       const x = Object.fromEntries(new FormData(f)) as R;
       Object.assign(site, { ...x, services: String(x.services || '').split('\n').map((s) => s.trim()).filter(Boolean) });
       clearTimeout(timer); timer = window.setTimeout(paint, 350);
-      pub.textContent = S.mods?.site ? T.pubAgain : T.pub;
     };
-    f.onsubmit = (e) => e.preventDefault();
-    const liveBox = el('div', 'live'), err = el('small', 'bad');
-    const drawLive = () => {
-      const s = S.mods?.site;
-      liveBox.replaceChildren(...(s ? [el('b', '', T.live), linkRow(s.url)] : []));
-      if (s && !S.access) liveBox.append(el('p', 'hint', T.siteFree.replace('{n}', String(S.mods?.requests ?? 0))));
-    };
-    const live = !m; // opened from the module: this is the live site itself
-    const pub = btn('pri', live ? T.pubAgain : T.pub, async () => {
-      if (!S.signed) { needSign('site'); return; }
-      if (!S.verified) { err.textContent = T.needMail; return; }
-      if (!live && S.mods?.site && !confirm(T.replaceQ)) return;
-      pub.disabled = true; pub.textContent = T.pubBusy; err.textContent = '';
-      const { d } = await postJ('/api/ws/site/publish', { site, lang, id: m?.id });
-      pub.disabled = false;
-      if (!d.ok) { pub.textContent = T.pub; err.textContent = d.error === 'verify' ? T.needMail : T.depFail; return; }
-      S.mods = d.modules; drawWho(); drawLive(); pub.textContent = T.pubDone;
-      if (m) { m.site = { ...site }; saveGuest(); }
-    });
-    const bar = el('div', 'tbar'); bar.append(pub);
-    const parts: Node[] = [bar, err, liveBox, frame, f];
-    if (live) parts.push(domainBox());
-    openCv(site.title || T.siteCard, ...parts);
-    drawLive(); paint();
+    const parts: Node[] = [top, err, frame, edits];
+    if (site.url && !S.access) parts.push(el('p', 'hint', T.siteFree.replace('{n}', String(S.mods?.requests ?? 0))));
+    const others = (S.mods?.pages || []).filter((p: R) => p.slug !== site.slug);
+    if (site.url && others.length) {
+      const list = el('section', 'blk'); list.append(el('h3', '', T.myPages));
+      for (const p of others) list.append(btn('exb', `${p.title || p.slug} →`, () => siteView(p)));
+      parts.push(list);
+    }
+    if (site.url && site.slug === S.mods?.site?.slug) parts.push(domainBox());
+    openCv(opts.studio ? T.studio : site.title || T.siteCard, ...parts);
+    drawTop(); paint();
+  }
+
+  // The right side is never an empty wall: the latest live site with its address and requests, or a live example.
+  const DEMO: Record<string, Site> = {
+    en: { tone: 'warm', title: 'Grain Coffee', sub: 'Coffee to go without the queue', about: 'Order ahead and pick it up in two minutes.', services: ['Espresso and cappuccino', 'Fresh pastries', 'Beans to take home'], cta: 'Pre-order', ask: 'What and for what time?' },
+    ru: { tone: 'warm', title: 'Кофейня «Зерно»', sub: 'Кофе с собой без очереди', about: 'Закажите заранее и заберите за две минуты.', services: ['Эспрессо и капучино', 'Свежая выпечка', 'Зерно домой'], cta: 'Предзаказ', ask: 'Что и к какому времени?' },
+    ua: { tone: 'warm', title: 'Кавʼярня «Зерно»', sub: 'Кава з собою без черги', about: 'Замовте заздалегідь і заберіть за дві хвилини.', services: ['Еспресо й капучино', 'Свіжа випічка', 'Зерно додому'], cta: 'Передзамовлення', ask: 'Що і на котру годину?' },
+  };
+  function studio() {
+    const page = (S.mods?.pages || [])[0];
+    if (page) { siteView(page, undefined, { studio: true }); return; }
+    const frame = el('div', 'prevbox');
+    postJ('/api/ws/site/preview', { site: DEMO[lang] || DEMO.en, lang }).then(({ d }) => { if (d.html) frame.replaceChildren(previewFrame(d.html, T.studioEx)); });
+    const go = btn('pri', T.tiles.site[0], () => sitePanel());
+    openCv(T.studio, el('p', 'hint', T.studioP), go, el('small', 'livedot off', T.studioEx), frame);
   }
 
   /* ---------- Own domain (Decision 42) ---------- */
@@ -535,7 +576,10 @@ const ico = {
       for (const k of ['new', 'work', 'won', 'lost']) { const o = el('option', '', T.st[k]); o.value = k; o.selected = l.status === k; s.append(o); }
       s.setAttribute('aria-label', 'Status');
       s.onchange = () => post(`/api/biz/${S.mods!.biz!.id}/leads/${l.id}`, { status: s.value });
-      const who = el('div'); who.append(el('b', '', l.name || l.contact || '—'), el('small', '', [l.contact, l.message].filter(Boolean).join(' · ').slice(0, 160)));
+      const at = l.at ? new Date(String(l.at).replace(' ', 'T') + 'Z').toLocaleString(lang === 'ua' ? 'uk-UA' : lang === 'ru' ? 'ru-RU' : 'en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+      const from = (S.mods?.pages || []).find((p: R) => l.path && String(l.path).endsWith('/s/' + p.slug));
+      const who = el('div'); who.append(el('b', '', l.name || l.contact || '—'), el('small', '', [at, l.contact, l.message].filter(Boolean).join(' · ').slice(0, 180)));
+      if (from) who.append(el('small', 'from', '↳ ' + (from.title || from.slug)));
       r.append(who, s); box.append(r);
     }
     const full = btn('sec', T.crmFullBtn + ' ↓', () => { full.remove(); bizbox.hidden = false; cvBody.append(bizbox); window.dispatchEvent(new CustomEvent('vx:signed-in')); bizbox.scrollIntoView({ behavior: 'smooth' }); });
@@ -705,7 +749,7 @@ const ico = {
   $('[data-menu]').onclick = () => side(true);
   $('[data-veil]').onclick = () => side(false);
   $('[data-cv-x]').onclick = closeCv;
-  $('[data-cv]').onclick = () => { if (!cv.hidden) { closeCv(); return; } const last = [...S.msgs].reverse().find(hasArt); if (last) showArt(last); else openCv(T.canvas, el('p', 'none', T.empty)); };
+  $('[data-cv]').onclick = () => { if (!cv.hidden) { closeCv(); return; } const last = [...S.msgs].reverse().find(hasArt); if (last) showArt(last); else studio(); };
   $('[data-del]').onclick = async () => {
     if (!confirm(T.delQ)) return;
     if (S.signed) await post('/api/ws/chat/' + S.cur, {});
@@ -753,7 +797,7 @@ const ico = {
     else if (go[h]) S.signed || !/^#(plan|profile|memory|account|projects)$/.test(h) ? go[h]() : openSign();
     else if (pend) panel(pend);
     else if (h === '#signin' && !S.signed) openSign();
-    else if (matchMedia('(min-width: 761px)').matches) input.focus();
+    else { if (matchMedia('(min-width: 1100px)').matches) studio(); if (matchMedia('(min-width: 761px)').matches) input.focus(); }
   })();
 </script>
 
@@ -869,6 +913,13 @@ const ico = {
   .wsp .art + .art { border-top: 1px solid var(--line); padding-top: 14px; }
   .wsp .hint { color: var(--mut); font-size: 13.5px; line-height: 1.45; margin: 0; }
   .wsp .prev { width: 100%; height: min(62vh, 560px); border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+  .wsp .livebar { display: grid; gap: 8px; }
+  .wsp .from { color: var(--accText) !important; }
+  .wsp .livedot { color: #1f9d55; font-weight: 700; font-size: 13px; }
+  .wsp .livedot.off { color: var(--mut); font-weight: 500; }
+  .wsp .edits { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: var(--bg); }
+  .wsp .edits summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+  .wsp .edits[open] summary { margin-bottom: 10px; }
   .wsp .live { display: grid; gap: 6px; }
   .wsp .live:empty { display: none; }
   .wsp .ok { color: #1f9d55; font-weight: 600; margin: 0; }

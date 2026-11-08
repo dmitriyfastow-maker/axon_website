@@ -8,7 +8,7 @@ import { FACTS, type AiBinding } from './chat.js';
 import { filesForAi } from './files.js';
 import { drawImage, WANTS_IMAGE } from './images.js';
 import type { Notify } from './deals.js';
-import { addRef, cleanSite, deployModule, moduleAccess, modulesState, publishSite, saveSite, sitePreview, startTrial, writeSite, type Site } from './modules.js';
+import { addRef, cleanSite, deployModule, liveSite, moduleAccess, modulesState, saveSite, sitePreview, startTrial, updateLiveSite, writeSite, type Site } from './modules.js';
 import { handleDomain, type Cf } from './domains.js';
 import type { DB } from './partner.js';
 import { claudeReply, routeFor } from './router.js';
@@ -67,11 +67,18 @@ const QUESTION = /^\s*(как|что|почему|зачем|сколько|ка
 /** "Build me a landing page for…", or just "A landing page for a coffee shop": the draft page goes to the Canvas. */
 export const wantsSite = (q: string) => !QUESTION.test(q) && (SITE_VERB.test(q) || (SITE_NOUN.test(q) && /(^|\s)(для|for|під)\s/i.test(q)));
 export const WANTS_SITE = { test: wantsSite };
-const SITE_READY: Record<string, string> = {
-  en: 'Done: the page with its form is on the Canvas. Change any line, then press Publish: it goes live at once, and requests land in your CRM and email.',
-  ru: 'Готово: страница с формой на холсте. Поправьте любую строку и нажмите «Опубликовать»: она сразу заработает, заявки придут в CRM и на почту.',
-  ua: 'Готово: сторінка з формою на полотні. Виправте будь-який рядок і натисніть «Опублікувати»: вона одразу запрацює, заявки прийдуть у CRM і на пошту.',
+const SITE_DRAFT: Record<string, string> = {
+  en: 'The page with its form is on the Canvas. Sign in with your email (one step) and it goes live at once on its own address, with requests landing in your CRM.',
+  ru: 'Страница с формой на холсте. Войдите по почте (один шаг), и она сразу заработает по своей ссылке, а заявки будут падать в вашу CRM.',
+  ua: 'Сторінка з формою на полотні. Увійдіть поштою (один крок), і вона одразу запрацює за своїм посиланням, а заявки падатимуть у вашу CRM.',
 };
+/** What the person reads in the chat when the site is already live: the address, what is on it, where requests go. */
+export function siteLiveText(lang: string, url: string, s: Site): string {
+  const n = s.services.length, cta = s.cta || (lang === 'en' ? 'Leave a request' : lang === 'ua' ? 'Залишити заявку' : 'Оставить заявку');
+  if (lang === 'en') return `Done, the site is live: ${url}\nInside: the headline «${s.title}», ${n} blocks, the form «${cta}».\nRequests from the form land in your CRM and email at once. Change any line on the Canvas and press Save.`;
+  if (lang === 'ua') return `Готово, сайт уже працює: ${url}\nВсередині: заголовок «${s.title}», блоків: ${n}, форма «${cta}».\nЗаявки з форми одразу падають у вашу CRM і на пошту. Виправте будь-який рядок на полотні й натисніть «Зберегти».`;
+  return `Готово, сайт уже работает: ${url}\nВнутри: заголовок «${s.title}», блоков: ${n}, форма «${cta}».\nЗаявки с формы сразу падают в вашу CRM и на почту. Поправьте любую строку на холсте и нажмите «Сохранить».`;
+}
 
 const DOC_RE = /\[\[DOC:\s*([^\]]{1,120})\]\]([\s\S]*?)(?:\[\[\/DOC\]\]|$)/i;
 const DEPLOY_RE = /\[\[DEPLOY:\s*(crm|partner|site)\s*\]\]/i;
@@ -187,12 +194,20 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   };
 
   if (WANTS_SITE.test(said)) {
-    const known = [`The wish: ${said.slice(0, 600)}`, memory.niche && `Field: ${memory.niche}`, memory.project && `Project: ${memory.project}`, memory.goals && `Goals: ${memory.goals}`].filter(Boolean).join('\n');
+    const notes = [memory.niche && `field: ${memory.niche}`, memory.project && `project: ${memory.project}`].filter(Boolean).join('; ');
+    const known = `THE WISH (this decides what the page is about): ${said.slice(0, 600)}${notes ? `\nNotes about the person, use them ONLY if they are about the same business as the wish, otherwise ignore them completely: ${notes}` : ''}`;
     // The page speaks the language the wish was written in, whatever the screen's language is.
     const sl = !/[а-яёіїєґ]/i.test(said) ? 'en' : /[іїєґ]/i.test(said) ? 'ua' : /[ыэъё]/i.test(said) ? 'ru' : lang;
     const site = await writeSite(ai, sl, known);
     if (site.title || site.services.length) {
-      const reply = SITE_READY[lang] ?? SITE_READY.en;
+      // Signed in with a confirmed email: the page is live right now, on its own address. Otherwise a draft until they sign in.
+      if (me?.email_verified_at) {
+        const url = `${new URL(request.url).origin}/s/${await liveSite(db, me.id, site, sl, await moduleAccess(db, me.id))}`;
+        const live = { ...site, url, slug: url.split('/s/')[1] };
+        const reply = siteLiveText(lang, url, site);
+        return out(200, { ok: true, chat, id: await save(reply, { site: live as Site }), reply, site: live });
+      }
+      const reply = SITE_DRAFT[lang] ?? SITE_DRAFT.en;
       return out(200, { ok: true, chat, id: await save(reply, { site }), reply, site });
     }
   }
@@ -329,11 +344,16 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       if (!me.email_verified_at) return out(403, { ok: false, error: 'verify' });
       const access = await moduleAccess(db, me.id);
       const had = (await modulesState(db, me.id, url.origin, access)).site;
-      await publishSite(db, me.id, (b.site ?? {}) as Record<string, unknown>, cut(b.lang, 2), access);
+      const x = (b.site ?? {}) as Record<string, unknown>, lg = cut(b.lang, 2);
+      // Saving an existing live page by its address, or making a draft live (a new address, or the main site).
+      let slug = cut(b.slug, 60);
+      if (slug && !(await updateLiveSite(db, me.id, slug, x, lg))) return out(404, { ok: false });
+      if (!slug) slug = await liveSite(db, me.id, x, lg, access);
+      const live = { ...cleanSite(x, lg), url: `${url.origin}/s/${slug}`, slug };
       const msg = Number(b.id) || 0;
-      if (msg) await db.prepare('UPDATE ws_msgs SET site = ? WHERE id = ? AND chat_id IN (SELECT id FROM ws_chats WHERE client_id = ?)').bind(JSON.stringify(cleanSite((b.site ?? {}) as Record<string, unknown>, cut(b.lang, 2))), msg, me.id).run();
+      if (msg) await db.prepare('UPDATE ws_msgs SET site = ? WHERE id = ? AND chat_id IN (SELECT id FROM ws_chats WHERE client_id = ?)').bind(JSON.stringify(live), msg, me.id).run();
       if (!had) await notify(`🌐 Сайт опубликован из холста: ${me.email || me.id}`);
-      return out(200, { ok: true, modules: await modulesState(db, me.id, url.origin, access) });
+      return out(200, { ok: true, url: live.url, slug, modules: await modulesState(db, me.id, url.origin, access) });
     }
     if (path === 'publish' && m === 'POST') {
       const id = Number(b.id);
