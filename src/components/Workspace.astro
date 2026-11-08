@@ -13,6 +13,7 @@ const CT = CAB_T[lang];
 
 const T = {
   en: {
+    map: 'Map of everything', newProj: 'New project', projName: 'Project name', noProj: 'No project', projEmpty: 'Empty. Start a chat here from ⋯', newChatIn: 'New chat in this project', mat: 'Materials', reply: 'Reply', pin: 'Pin', unpin: 'Unpin', fwd: 'Forward', copyMsg: 'Copy', fwdTo: 'Forward to a chat', fwdNew: 'New chat', fwdDone: 'Forwarded', fwdOpen: 'Open', pinned: 'Pinned', replyTo: 'Reply to', fwdFrom: 'Forwarded from', rename: 'Rename', moveTo: 'Move to project', chatMenu: 'Actions', delProjQ: 'Delete the project? Its chats stay, without a project.', matTabs: { site: 'Sites', tool: 'Tools', doc: 'Documents', image: 'Pictures', link: 'Links', file: 'Files', pin: 'Pinned' }, matNone: 'Nothing here yet.', mapEmpty: 'No chats yet. Everything Vax makes will appear here.', mapK: { site: 'live sites', crm: 'requests', tool: 'tools', doc: 'documents', image: 'pictures' },
     fK: 'Line above the headline', styles: { editorial: 'Premium dark', clinic: 'Clean', bold: 'Bold', soft: 'Warm', nature: 'Natural' },
     needSite: 'Where should requests from your site go? Enter your email: we send a code, and the site goes live at once on its own address.',
     studio: 'Result studio', studioP: 'Everything Vax builds appears here, working: a site at its own address, a table, a plan.', studioEx: 'Live example: this is what you get in a minute', openLive: 'Open the public link', liveNow: '● Live on the internet', tryPhone: 'Open it from your phone and send the form: the request appears in your CRM with the date and time.', saveSite: 'Save changes', editText: 'Edit the text', myPages: 'Your other pages',
@@ -25,7 +26,7 @@ const T = {
     siteCard: 'Page draft', siteNew: 'Describe your business in one line', siteNewGo: 'Build the page', siteAsk: 'Build a one-page site with a request form for: ', fAsk: 'Hint in the message box', live: 'Your site is live. Requests go to your email and CRM.', domH: 'Your own domain',
     crmFullBtn: 'Full CRM: analytics, team, AI assistant', parCab: 'Partner cabinet', parVaxo: 'Vaxo partner program: 50% of the first payment and 30% of every next one, in money. Free for anyone 18+.', parGo: 'Become a partner →', parMine: 'Links for your own partners', csv: 'Download CSV', copyT: 'Copy as table', toolMore: 'Change any number: everything recounts at once.',
     title: 'Vaxo Workspace', desc: 'Your workspace with Vax: chat, memory, tools and modules on one screen.',
-    new: 'New chat', chats: 'Projects', noChats: 'Your chats will appear here.', mods: 'Modules', crm: 'CRM', partner: 'Partner links', site: 'Site', you: 'You', memory: 'Memory', earn: 'Earn with Vaxo', profile: 'Profile and billing',
+    new: 'New chat', chats: 'Projects and chats', noChats: 'Your chats will appear here.', mods: 'Modules', crm: 'CRM', partner: 'Partner links', site: 'Site', you: 'You', memory: 'Memory', earn: 'Earn with Vaxo', profile: 'Profile and billing',
     signin: 'Sign in', out: 'Sign out', guest: 'Guest: saved in this browser', short: 'Short', deep: 'Deep project', canvas: 'Canvas', menu: 'Menu', close: 'Close',
     ph: 'Write your task…', send: 'Send', mic: 'Voice input', attach: 'Attach a file', think: 'Vax is working…', err: 'That did not go through. Try again in a moment.', limit: 'That is all for today on this plan. It renews tomorrow, and everything is saved.', guestLimit: 'That is all for a guest today. Sign in for free to keep going.',
     open: 'Open on Canvas', del: 'Delete chat', delQ: 'Delete this chat?', empty: 'Tools and documents from the chat open here.',
@@ -39,6 +40,7 @@ const T = {
     sH: 'Sign in to Vaxo', sP: 'Enter your email. We send a link: one tap and you are in. No password.', sEmail: 'Your email', sGo: 'Send the link', sSent: 'Check your email and tap the link. Or enter the code from the letter:', sCode: 'Six-digit code', sIn: 'Sign in', sBad: 'Check the email address.', sWrong: 'Wrong or expired code.', sWait: 'Wait a minute and try again.', sPw: 'Sign in with a password', sAgree: 'By continuing you accept the', terms: 'Terms', and: 'and', privacy: 'Privacy Policy',
   },
   ru: {
+    map: 'Карта всего', newProj: 'Новый проект', projName: 'Название проекта', noProj: 'Без проекта', projEmpty: 'Пусто. Новый разговор здесь — через ⋯', newChatIn: 'Новый разговор в проекте', mat: 'Материалы', reply: 'Ответить', pin: 'Закрепить', unpin: 'Открепить', fwd: 'Переслать', copyMsg: 'Копировать', fwdTo: 'Переслать в разговор', fwdNew: 'Новый разговор', fwdDone: 'Переслано', fwdOpen: 'Открыть', pinned: 'Закреплено', replyTo: 'Ответ на', fwdFrom: 'Переслано из', rename: 'Переименовать', moveTo: 'Перенести в проект', chatMenu: 'Действия', delProjQ: 'Удалить проект? Разговоры останутся, без проекта.', matTabs: { site: 'Сайты', tool: 'Инструменты', doc: 'Документы', image: 'Картинки', link: 'Ссылки', file: 'Файлы', pin: 'Закреплённые' }, matNone: 'Здесь пока пусто.', mapEmpty: 'Разговоров пока нет. Всё, что сделает Vax, появится здесь.', mapK: { site: 'живых сайтов', crm: 'заявок', tool: 'инструментов', doc: 'документов', image: 'картинок' },
     fK: 'Строка над заголовком', styles: { editorial: 'Премиум тёмный', clinic: 'Чистый', bold: 'Дерзкий', soft: 'Тёплый', nature: 'Природный' },
     needSite: 'Куда присылать заявки с сайта? Введите почту: пришлём код, и сайт сразу заработает по своей ссылке.',
     studio: 'Студия результата', studioP: 'Здесь появляется всё, что делает Vax, в рабочем виде: сайт по своей ссылке, таблица, план.', studioEx: 'Живой пример: так выглядит результат через минуту', openLive: 'Открыть публичную ссылку', liveNow: '● Работает в интернете', tryPhone: 'Откройте с телефона и отправьте форму: заявка появится в вашей CRM с датой и временем.', saveSite: 'Сохранить изменения', editText: 'Править текст', myPages: 'Другие ваши страницы',
@@ -51,7 +53,7 @@ const T = {
     siteCard: 'Макет страницы', siteNew: 'Опишите бизнес одной строкой', siteNewGo: 'Собрать страницу', siteAsk: 'Собери одностраничный сайт с формой заявок для: ', fAsk: 'Подсказка в поле сообщения', live: 'Сайт работает. Заявки приходят на почту и в CRM.', domH: 'Свой домен',
     crmFullBtn: 'Полная CRM: аналитика, команда, ИИ-помощник', parCab: 'Партнёрский кабинет', parVaxo: 'Партнёрская программа Vaxo: 50% первой оплаты и 30% каждой следующей, деньгами. Бесплатно для всех 18+.', parGo: 'Стать партнёром →', parMine: 'Ссылки для ваших партнёров', csv: 'Скачать CSV', copyT: 'Копировать таблицей', toolMore: 'Меняйте любое число: всё пересчитывается сразу.',
     title: 'Vaxo Workspace', desc: 'Ваше рабочее пространство с Vax: чат, память, инструменты и модули на одном экране.',
-    new: 'Новый разговор', chats: 'Проекты', noChats: 'Здесь появятся ваши разговоры.', mods: 'Модули', crm: 'CRM', partner: 'Партнёрские ссылки', site: 'Сайт', you: 'Вы', memory: 'Память', earn: 'Заработать с Vaxo', profile: 'Профиль и оплата',
+    new: 'Новый разговор', chats: 'Проекты и разговоры', noChats: 'Здесь появятся ваши разговоры.', mods: 'Модули', crm: 'CRM', partner: 'Партнёрские ссылки', site: 'Сайт', you: 'Вы', memory: 'Память', earn: 'Заработать с Vaxo', profile: 'Профиль и оплата',
     signin: 'Войти', out: 'Выйти', guest: 'Гость: сохраняется в этом браузере', short: 'Коротко в суть', deep: 'Развёрнутый проект', canvas: 'Холст', menu: 'Меню', close: 'Закрыть',
     ph: 'Напишите задачу…', send: 'Отправить', mic: 'Голосовой ввод', attach: 'Прикрепить файл', think: 'Vax работает…', err: 'Не получилось. Попробуйте ещё раз через мгновение.', limit: 'На сегодня по тарифу всё. Завтра запас обновится, всё сохранено.', guestLimit: 'Для гостя на сегодня всё. Войдите бесплатно, чтобы продолжить.',
     open: 'Открыть на холсте', del: 'Удалить разговор', delQ: 'Удалить этот разговор?', empty: 'Здесь открываются инструменты и документы из чата.',
@@ -65,6 +67,7 @@ const T = {
     sH: 'Вход в Vaxo', sP: 'Введите почту. Пришлём ссылку: одно нажатие, и вы внутри. Без пароля.', sEmail: 'Ваша почта', sGo: 'Прислать ссылку', sSent: 'Проверьте почту и нажмите ссылку. Или введите код из письма:', sCode: 'Код из шести цифр', sIn: 'Войти', sBad: 'Проверьте адрес почты.', sWrong: 'Код неверный или устарел.', sWait: 'Подождите минуту и попробуйте снова.', sPw: 'Войти с паролем', sAgree: 'Продолжая, вы принимаете', terms: 'Условия', and: 'и', privacy: 'Политику конфиденциальности',
   },
   ua: {
+    map: 'Карта всього', newProj: 'Новий проєкт', projName: 'Назва проєкту', noProj: 'Без проєкту', projEmpty: 'Порожньо. Нова розмова тут — через ⋯', newChatIn: 'Нова розмова в проєкті', mat: 'Матеріали', reply: 'Відповісти', pin: 'Закріпити', unpin: 'Відкріпити', fwd: 'Переслати', copyMsg: 'Копіювати', fwdTo: 'Переслати в розмову', fwdNew: 'Нова розмова', fwdDone: 'Переслано', fwdOpen: 'Відкрити', pinned: 'Закріплено', replyTo: 'Відповідь на', fwdFrom: 'Переслано з', rename: 'Перейменувати', moveTo: 'Перенести в проєкт', chatMenu: 'Дії', delProjQ: 'Видалити проєкт? Розмови залишаться, без проєкту.', matTabs: { site: 'Сайти', tool: 'Інструменти', doc: 'Документи', image: 'Картинки', link: 'Посилання', file: 'Файли', pin: 'Закріплені' }, matNone: 'Тут поки порожньо.', mapEmpty: 'Розмов поки немає. Усе, що зробить Vax, зʼявиться тут.', mapK: { site: 'живих сайтів', crm: 'заявок', tool: 'інструментів', doc: 'документів', image: 'картинок' },
     fK: 'Рядок над заголовком', styles: { editorial: 'Преміум темний', clinic: 'Чистий', bold: 'Зухвалий', soft: 'Теплий', nature: 'Природний' },
     needSite: 'Куди надсилати заявки з сайту? Введіть пошту: надішлемо код, і сайт одразу запрацює за своїм посиланням.',
     studio: 'Студія результату', studioP: 'Тут зʼявляється все, що робить Vax, у робочому вигляді: сайт за своїм посиланням, таблиця, план.', studioEx: 'Живий приклад: так виглядає результат за хвилину', openLive: 'Відкрити публічне посилання', liveNow: '● Працює в інтернеті', tryPhone: 'Відкрийте з телефона й надішліть форму: заявка зʼявиться у вашій CRM з датою і часом.', saveSite: 'Зберегти зміни', editText: 'Правити текст', myPages: 'Інші ваші сторінки',
@@ -77,7 +80,7 @@ const T = {
     siteCard: 'Макет сторінки', siteNew: 'Опишіть бізнес одним рядком', siteNewGo: 'Зібрати сторінку', siteAsk: 'Збери односторінковий сайт із формою заявок для: ', fAsk: 'Підказка в полі повідомлення', live: 'Сайт працює. Заявки приходять на пошту і в CRM.', domH: 'Свій домен',
     crmFullBtn: 'Повна CRM: аналітика, команда, ШІ-помічник', parCab: 'Партнерський кабінет', parVaxo: 'Партнерська програма Vaxo: 50% першої оплати і 30% кожної наступної, грошима. Безкоштовно для всіх 18+.', parGo: 'Стати партнером →', parMine: 'Посилання для ваших партнерів', csv: 'Завантажити CSV', copyT: 'Копіювати таблицею', toolMore: 'Змінюйте будь-яке число: усе перераховується одразу.',
     title: 'Vaxo Workspace', desc: 'Ваш робочий простір з Vax: чат, памʼять, інструменти й модулі на одному екрані.',
-    new: 'Нова розмова', chats: 'Проєкти', noChats: 'Тут зʼявляться ваші розмови.', mods: 'Модулі', crm: 'CRM', partner: 'Партнерські посилання', site: 'Сайт', you: 'Ви', memory: 'Памʼять', earn: 'Заробити з Vaxo', profile: 'Профіль і оплата',
+    new: 'Нова розмова', chats: 'Проєкти й розмови', noChats: 'Тут зʼявляться ваші розмови.', mods: 'Модулі', crm: 'CRM', partner: 'Партнерські посилання', site: 'Сайт', you: 'Ви', memory: 'Памʼять', earn: 'Заробити з Vaxo', profile: 'Профіль і оплата',
     signin: 'Увійти', out: 'Вийти', guest: 'Гість: зберігається в цьому браузері', short: 'Коротко в суть', deep: 'Розгорнутий проєкт', canvas: 'Полотно', menu: 'Меню', close: 'Закрити',
     ph: 'Напишіть завдання…', send: 'Надіслати', mic: 'Голосове введення', attach: 'Прикріпити файл', think: 'Vax працює…', err: 'Не вийшло. Спробуйте ще раз за мить.', limit: 'На сьогодні за тарифом усе. Завтра запас оновиться, усе збережено.', guestLimit: 'Для гостя на сьогодні все. Увійдіть безкоштовно, щоб продовжити.',
     open: 'Відкрити на полотні', del: 'Видалити розмову', delQ: 'Видалити цю розмову?', empty: 'Тут відкриваються інструменти й документи з чату.',
@@ -106,7 +109,8 @@ const ico = {
     <aside class="side" data-side>
       <a class="logo" href={`${pre}/`}>VAXO<span>.</span></a>
       <button class="newc" type="button" data-new>+ {T.new}</button>
-      <p class="lbl">{T.chats}</p>
+      <button class="nav mapbtn" type="button" data-map><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.map}</button>
+      <div class="lblrow"><p class="lbl">{T.chats}</p><button class="addp" type="button" data-newproj title={T.newProj} aria-label={T.newProj}>+</button></div>
       <nav class="chats" data-chats></nav>
       <p class="lbl">{T.mods}</p>
       {(['site', 'crm', 'partner'] as const).map((k) => <button class="nav" type="button" data-panel={k}><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d={ico[k]} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{k === 'partner' ? T.parCab : T[k]}<i data-dot={k} hidden></i></button>)}
@@ -133,9 +137,12 @@ const ico = {
           <button type="button" data-mode="deep">{T.deep}</button>
         </div>
         <button class="ic" type="button" data-del aria-label={T.del} title={T.del} hidden>🗑</button>
+        <button class="ic" type="button" data-mat aria-label={T.mat} title={T.mat} hidden><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg></button>
         <button class="ic" type="button" data-cv aria-label={T.canvas} title={T.canvas}>▣</button>
       </header>
+      <button class="pins" type="button" data-pins hidden></button>
       <div class="log" data-log aria-live="polite"></div>
+      <div class="replybar" data-replybar hidden><span></span><button type="button" class="ic" data-reply-x aria-label={T.close}>×</button></div>
       <form class="in" data-form>
         <button type="button" class="ib" data-clip aria-label={T.attach} title={T.attach}></button>
         <textarea name="q" rows="1" maxlength="4000" placeholder={T.ph} aria-label={T.ph}></textarea>
@@ -168,6 +175,15 @@ const ico = {
       <small>{T.sAgree} <a href={`${pre}/terms/`}>{T.terms}</a> {T.and} <a href={`${pre}/privacy/`}>{T.privacy}</a>.</small>
     </dialog>
 
+    <dialog class="wmap" data-mapdlg aria-labelledby="wmap-h">
+      <header><b id="wmap-h">{T.map}</b><button class="ic" type="button" data-map-x aria-label={T.close}>×</button></header>
+      <div class="mapb" data-mapbody></div>
+    </dialog>
+    <dialog class="wpick" data-pick>
+      <header><b data-pick-h></b><button class="ic" type="button" data-pick-x aria-label={T.close}>×</button></header>
+      <div class="pickb" data-pick-body></div>
+    </dialog>
+
     <dialog class="wprof" data-profile aria-labelledby="wprof-h">
       <header><b id="wprof-h">{T.profile}</b><button class="ic" type="button" data-prof-x aria-label={T.close}>×</button></header>
       <div class="ptabs" role="tablist" data-ptabs></div>
@@ -188,8 +204,9 @@ const ico = {
   type R = Record<string, any>;
   type Doc = { title: string; body: string };
   type Site = { lang?: string; tone: string; style?: string; kicker?: string; details?: string[]; title: string; sub: string; about: string; services: string[]; cta: string; ask?: string; url?: string; slug?: string };
-  type Msg = { id?: number; role: 'user' | 'assistant'; content: string; tool?: ToolSpec; doc?: Doc; image?: string; deploy?: string; site?: Site; pub?: string };
-  type Chat = { id: number; title: string; msgs?: Msg[] };
+  type Msg = { id?: number; role: 'user' | 'assistant'; content: string; tool?: ToolSpec; doc?: Doc; image?: string; deploy?: string; site?: Site; pub?: string; pinned?: boolean };
+  type Chat = { id: number; title: string; msgs?: Msg[]; project?: number };
+  type Proj = { id: number; name: string };
   type Mem = { niche: string; goals: string; project: string; limits: string };
 
   const root = document.querySelector<HTMLElement>('[data-ws]')!;
@@ -210,7 +227,7 @@ const ico = {
   const room = params.get('t') || '';
 
   const blank: Mem = { niche: '', goals: '', project: '', limits: '' };
-  const S = { signed: false, email: '', verified: false, chats: [] as Chat[], cur: 0, msgs: [] as Msg[], memory: { ...blank }, mode: 'short', mods: null as R | null, access: false, busy: false, plan: 'start', usage: null as null | { day: { pct: number; reset: string }; week: { pct: number; reset: string } } };
+  const S = { signed: false, email: '', verified: false, chats: [] as Chat[], cur: 0, msgs: [] as Msg[], memory: { ...blank }, mode: 'short', mods: null as R | null, access: false, busy: false, plan: 'start', projects: [] as Proj[], objects: [] as any[], reply: null as null | { text: string }, pendingProject: 0, usage: null as null | { day: { pct: number; reset: string }; week: { pct: number; reset: string } } };
   let ME: R = {};
 
   const log = $('[data-log]'), form = $<HTMLFormElement>('[data-form]'), input = form.querySelector('textarea')!;
@@ -218,17 +235,10 @@ const ico = {
   const sign = $<HTMLDialogElement>('[data-sign]'), prof = $<HTMLDialogElement>('[data-profile]');
   const bizbox = $('[data-bizbox]');
 
-  const saveGuest = () => { if (!S.signed) local.set({ chats: S.chats, memory: S.memory, mode: S.mode }); };
+  const saveGuest = () => { if (!S.signed) local.set({ chats: S.chats, memory: S.memory, mode: S.mode, projects: S.projects }); };
 
   /* ---------- Sidebar ---------- */
   function side(yes: boolean) { $('[data-side]').classList.toggle('open', yes); $('[data-veil]').hidden = !yes; }
-  function drawChats() {
-    const nav = $('[data-chats]');
-    nav.replaceChildren(...S.chats.map((c) => btn('chat' + (c.id === S.cur ? ' on' : ''), c.title, () => { side(false); openChat(c.id); })));
-    if (!S.chats.length) nav.append(el('small', '', T.noChats));
-    $('[data-title]').textContent = S.chats.find((c) => c.id === S.cur)?.title || '';
-    $('[data-del]').hidden = !S.cur;
-  }
   const planName = () => (S.plan === 'start' ? CT.levels.start : S.plan[0].toUpperCase() + S.plan.slice(1));
   // Like Claude: a bar of work used, and when it renews. Never message counts.
   const when = (iso: string) => {
@@ -264,6 +274,234 @@ const ico = {
   }
   function drawMode() { root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => b.classList.toggle('on', b.dataset.mode === S.mode)); }
 
+  /* ---------- The tree: projects → chats → what each chat made (Decision 45) ---------- */
+  type Obj = { id: number | string; chat: number; kind: string; title: string; url?: string; ref?: Msg };
+  const KIND: Record<string, string> = { site: 'M3 5h18v14H3zM3 9h18', tool: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', doc: 'M7 3h7l5 5v13H7zM14 3v5h5', image: 'M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6', link: 'M10 13a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7L12 6m2 5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7L12 18', file: 'M6 3h9l4 4v14H6zM15 3v4h4', pin: 'M12 17v5M8 3h8l-1 6 4 4H5l4-4z', reply: 'M9 14 4 9l5-5M4 9h10a6 6 0 0 1 6 6v3', fwd: 'M15 4l5 5-5 5M20 9H10a6 6 0 0 0-6 6v3', copy: 'M9 9h11v11H9zM5 15H4V4h11v1' };
+  const ico = (k: string, n = 14) => `<svg viewBox="0 0 24 24" width="${n}" height="${n}" aria-hidden="true"><path d="${KIND[k] || ''}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const icoBtn = (cls: string, k: string, label: string, go: (e: MouseEvent) => void) => { const b = el('button', cls); b.type = 'button'; b.innerHTML = ico(k, 15); b.title = label; b.setAttribute('aria-label', label); b.onclick = (e) => { e.stopPropagation(); go(e); }; return b; };
+  const artKind = (m: Msg) => (m.site ? 'site' : m.tool ? 'tool' : m.doc ? 'doc' : m.image ? 'image' : '');
+  const artTitle = (m: Msg) => m.site?.title || m.tool?.title || m.doc?.title || '';
+  function objectsOf(): Obj[] {
+    if (S.signed) return S.objects;
+    return S.chats.flatMap((c) => (c.msgs || []).flatMap((m, i) => (artKind(m) ? [{ id: `g${c.id}-${i}`, chat: c.id, kind: artKind(m), title: artTitle(m), url: m.site?.url, ref: m }] : [])));
+  }
+  let closed = new Set<number>(); try { closed = new Set(JSON.parse(localStorage.getItem('vaxo_ws_closed') || '[]')); } catch {}
+  const keepClosed = () => { try { localStorage.setItem('vaxo_ws_closed', JSON.stringify([...closed])); } catch {} };
+
+  // A small menu next to a button: a list of actions, closes on any outside click.
+  let menuEl: HTMLElement | null = null;
+  function menu(anchor: HTMLElement, items: [string, () => void][]) {
+    menuEl?.remove();
+    const m = el('div', 'pop'), r = anchor.getBoundingClientRect();
+    for (const [label, go] of items) m.append(btn('', label, () => { m.remove(); menuEl = null; go(); }));
+    m.style.top = Math.min(r.bottom + 4, innerHeight - 40 * items.length - 12) + 'px'; m.style.left = Math.max(8, Math.min(r.left, innerWidth - 220)) + 'px';
+    document.body.append(m); menuEl = m;
+    setTimeout(() => addEventListener('click', function off(e) { if (!m.contains(e.target as Node)) { m.remove(); if (menuEl === m) menuEl = null; removeEventListener('click', off); } }), 0);
+  }
+
+  function drawChats() {
+    const nav = $('[data-chats]'); nav.replaceChildren();
+    const objs = objectsOf();
+    const chatNode = (c: Chat) => {
+      const box = el('div', 'cnode'), row = el('div', 'crow');
+      const b = btn('chat' + (c.id === S.cur ? ' on' : ''), c.title, () => { side(false); openChat(c.id); });
+      const n = objs.filter((o) => o.chat === c.id).length; if (n) b.append(el('i', 'cnt', String(n)));
+      const more = btn('dots', '⋯', () => chatMenu(c, more)); more.title = T.chatMenu;
+      row.append(b, more); box.append(row);
+      if (c.id === S.cur) for (const o of objs.filter((x) => x.chat === c.id).slice(0, 10)) { const ob = btn('obj', '', () => openObject(o)); ob.innerHTML = ico(o.kind, 13); ob.append(el('span', '', o.title || T.matTabs[o.kind])); box.append(ob); }
+      return box;
+    };
+    const known = new Set(S.projects.map((p) => p.id));
+    const groups: { p: Proj | null; chats: Chat[] }[] = [...S.projects.map((p) => ({ p, chats: S.chats.filter((c) => c.project === p.id) })), { p: null, chats: S.chats.filter((c) => !c.project || !known.has(c.project)) }];
+    for (const g of groups) {
+      if (!g.p && !g.chats.length) continue;
+      const sec = el('div', 'proj');
+      if (g.p) {
+        const p = g.p, open = !closed.has(p.id), head = el('div', 'phead');
+        const t = btn('ptitle', '', () => { if (open) closed.add(p.id); else closed.delete(p.id); keepClosed(); drawChats(); });
+        t.innerHTML = `<span class="car">${open ? '▾' : '▸'}</span>`; t.append(el('span', 'pn', p.name), el('i', 'cnt', String(g.chats.length)));
+        const more = btn('dots', '⋯', () => projMenu(p, more));
+        head.append(t, more); sec.append(head);
+        if (open) for (const c of g.chats) sec.append(chatNode(c));
+        if (open && !g.chats.length) sec.append(el('small', 'pempty', T.projEmpty));
+      } else {
+        if (S.projects.length) sec.append(el('div', 'phead plain', T.noProj));
+        for (const c of g.chats) sec.append(chatNode(c));
+      }
+      nav.append(sec);
+    }
+    if (!S.chats.length && !S.projects.length) nav.append(el('small', '', T.noChats));
+    $('[data-title]').textContent = S.chats.find((c) => c.id === S.cur)?.title || '';
+    $('[data-del]').hidden = !S.cur;
+    $('[data-mat]').hidden = !S.cur;
+    drawPins();
+  }
+
+  async function newProject(name?: string) {
+    name = (name ?? prompt(T.projName) ?? '').trim().slice(0, 60);
+    if (!name) return null;
+    let p: Proj;
+    if (S.signed) { const { d } = await postJ('/api/ws/project', { name }); if (!d.ok) return null; p = { id: d.id, name }; } else { p = { id: Date.now(), name }; }
+    S.projects.push(p); saveGuest(); drawChats();
+    return p;
+  }
+  async function moveChat(c: Chat, proj: number | null) {
+    c.project = proj ?? undefined;
+    if (S.signed) await post(`/api/ws/chat/${c.id}/move`, { project: proj ?? 0 }); else saveGuest();
+    if (proj) { closed.delete(proj); keepClosed(); }
+    drawChats();
+  }
+  function chatMenu(c: Chat, at: HTMLElement) {
+    menu(at, [
+      [T.rename, async () => { const t = (prompt(T.rename, c.title) || '').trim().slice(0, 60); if (!t) return; c.title = t; if (S.signed) await post(`/api/ws/chat/${c.id}/rename`, { title: t }); else saveGuest(); drawChats(); }],
+      [T.moveTo + '…', () => menu(at, [...S.projects.filter((p) => p.id !== c.project).map((p) => [p.name, () => moveChat(c, p.id)] as [string, () => void]), ...(c.project ? [[T.noProj, () => moveChat(c, null)] as [string, () => void]] : []), [T.newProj, async () => { const p = await newProject(); if (p) moveChat(c, p.id); }]])],
+      [T.del, async () => { if (!confirm(T.delQ)) return; if (S.signed) await post('/api/ws/chat/' + c.id, {}); S.chats = S.chats.filter((x) => x.id !== c.id); S.objects = S.objects.filter((o) => o.chat !== c.id); saveGuest(); if (S.cur === c.id) fresh(); else drawChats(); }],
+    ]);
+  }
+  function projMenu(p: Proj, at: HTMLElement) {
+    menu(at, [
+      [T.newChatIn, () => { S.pendingProject = p.id; fresh(); }],
+      [T.rename, async () => { const n = (prompt(T.rename, p.name) || '').trim().slice(0, 60); if (!n) return; p.name = n; if (S.signed) await post(`/api/ws/project/${p.id}`, { name: n }); else saveGuest(); drawChats(); }],
+      [T.del, async () => { if (!confirm(T.delProjQ)) return; if (S.signed) await post(`/api/ws/project/${p.id}`, { delete: true }); S.projects = S.projects.filter((x) => x.id !== p.id); S.chats.forEach((c) => { if (c.project === p.id) c.project = undefined; }); saveGuest(); drawChats(); }],
+    ]);
+  }
+  async function openObject(o: Obj) {
+    if (o.chat !== S.cur) await openChat(o.chat);
+    const m = o.ref && S.msgs.includes(o.ref) ? o.ref : S.msgs.find((x) => x.id === o.id) || (o.ref ? S.msgs.find((x) => artTitle(x) === o.title && artKind(x) === o.kind) : undefined);
+    if (m) { if (m.image && !m.site && !m.tool && !m.doc) openCv(T.matTabs.image, Object.assign(el('img', 'pic'), { src: m.image, alt: '' })); else showArt(m); }
+  }
+
+  /* ---------- Message actions, like Telegram: reply, pin, forward, copy ---------- */
+  const nodes = new WeakMap<Msg, HTMLElement>();
+  const plain = (t: string) => t.replace(/\[\[(REPLY|FWD):[^\]]*\]\]/g, '').trim();
+  function startReply(m: Msg) {
+    S.reply = { text: plain(m.content).replace(/\s+/g, ' ').slice(0, 160) || artTitle(m) };
+    const bar = $('[data-replybar]'); bar.hidden = false;
+    bar.querySelector('span')!.textContent = `${T.replyTo}: ${S.reply.text}`;
+    input.focus();
+  }
+  $('[data-reply-x]').onclick = () => { S.reply = null; $('[data-replybar]').hidden = true; };
+  async function pinMsg(m: Msg, on: boolean) {
+    if (S.signed && !m.id) return;
+    m.pinned = on;
+    if (S.signed) await post(`/api/ws/msg/${m.id}/pin`, { on }); else saveGuest();
+    const d = nodes.get(m); if (d) { d.classList.toggle('pinned', on); d.querySelector('.mbar')?.replaceWith(msgBar(m)); }
+    drawPins();
+  }
+  let pinAt = 0;
+  function drawPins() {
+    const bar = $('[data-pins]'), list = S.msgs.filter((m) => m.pinned);
+    bar.hidden = !list.length;
+    if (!list.length) return;
+    pinAt %= list.length;
+    const m = list[list.length - 1 - pinAt];
+    bar.innerHTML = ico('pin', 14);
+    bar.append(el('b', '', `${T.pinned}${list.length > 1 ? ` ${pinAt + 1}/${list.length}` : ''}`), el('span', '', plain(m.content).replace(/\s+/g, ' ').slice(0, 90) || artTitle(m)));
+    bar.onclick = () => { nodes.get(m)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); nodes.get(m)?.classList.add('flash'); setTimeout(() => nodes.get(m)?.classList.remove('flash'), 1200); pinAt++; drawPins(); };
+  }
+  function openForward(m: Msg) {
+    const dlg = $<HTMLDialogElement>('[data-pick]'), body = $('[data-pick-body]');
+    $('[data-pick-h]').textContent = T.fwdTo;
+    body.replaceChildren();
+    const go = async (chat: number) => {
+      dlg.close();
+      const here = S.chats.find((c) => c.id === S.cur)?.title || '';
+      let to = chat;
+      if (S.signed) {
+        const { d } = await postJ('/api/ws/forward', { id: m.id, chat, title: artTitle(m) || here, project: S.chats.find((c) => c.id === S.cur)?.project || 0 });
+        if (!d.ok) return; to = d.chat;
+        if (!chat) S.chats.unshift({ id: to, title: (artTitle(m) || here).slice(0, 60), project: S.chats.find((c) => c.id === S.cur)?.project });
+        if (artKind(m)) S.objects.unshift({ id: d.id, chat: to, kind: artKind(m), title: artTitle(m), url: m.site?.url });
+      } else {
+        let c = S.chats.find((x) => x.id === chat);
+        if (!c) { c = { id: Date.now(), title: (artTitle(m) || here).slice(0, 60), msgs: [], project: S.chats.find((x) => x.id === S.cur)?.project }; S.chats.unshift(c); }
+        c.msgs = [...(c.msgs || []), { ...m, id: undefined, pinned: false, content: `[[FWD:${here.slice(0, 60)}]]${m.content}` }];
+        to = c.id; saveGuest();
+      }
+      drawChats();
+      toast(T.fwdDone, T.fwdOpen, () => openChat(to));
+    };
+    body.append(btn('pick new', '+ ' + T.fwdNew, () => go(0)));
+    const groups = [...S.projects.map((p) => [p.name, S.chats.filter((c) => c.project === p.id)] as [string, Chat[]]), [T.noProj, S.chats.filter((c) => !c.project || !S.projects.some((p) => p.id === c.project))] as [string, Chat[]]];
+    for (const [name, chats] of groups) {
+      const list = chats.filter((c) => c.id !== S.cur); if (!list.length) continue;
+      body.append(el('small', 'pickh', name));
+      for (const c of list) body.append(btn('pick', c.title, () => go(c.id)));
+    }
+    dlg.showModal();
+  }
+  $('[data-pick-x]').onclick = () => $<HTMLDialogElement>('[data-pick]').close();
+  function toast(text: string, act?: string, go?: () => void) {
+    const t = el('div', 'toast', text);
+    if (act && go) t.append(btn('lnk', act, () => { t.remove(); go(); }));
+    root.append(t); setTimeout(() => t.remove(), 4000);
+  }
+  function msgBar(m: Msg) {
+    const bar = el('div', 'mbar');
+    bar.append(
+      icoBtn('mb', 'reply', T.reply, () => startReply(m)),
+      ...(!S.signed || m.id ? [icoBtn('mb' + (m.pinned ? ' on' : ''), 'pin', m.pinned ? T.unpin : T.pin, () => pinMsg(m, !m.pinned)), icoBtn('mb', 'fwd', T.fwd, () => openForward(m))] : []),
+      icoBtn('mb', 'copy', T.copyMsg, async () => { await copyText(plain(m.content)); toast(T.copied); }),
+    );
+    return bar;
+  }
+
+  /* ---------- Materials of a chat, sorted like Telegram's shared media ---------- */
+  function materials(tab = 'site') {
+    const tabs = ['site', 'tool', 'doc', 'image', 'link', 'file', 'pin'];
+    const head = el('div', 'mtabs');
+    const count = (k: string) => items(k).length;
+    function items(k: string): [string, () => void, string?][] {
+      if (['site', 'tool', 'doc', 'image'].includes(k)) return S.msgs.filter((m) => artKind(m) === k || (k === 'image' && m.image)).map((m) => [artTitle(m) || T.matTabs[k], () => (k === 'image' ? openCv(T.matTabs.image, Object.assign(el('img', 'pic'), { src: m.image!, alt: '' })) : showArt(m)), m.site?.url]);
+      if (k === 'link') return [...new Set(S.msgs.flatMap((m) => plain(m.content).match(/https?:\/\/[^\s)<>"']+/g) || []))].map((u) => [u.replace(/^https?:\/\//, ''), () => open(u, '_blank', 'noopener'), u]);
+      if (k === 'file') return S.msgs.flatMap((m) => (m.content.match(/^📎 (\S+)/gmu) || []).map((f) => [f.slice(2).trim(), () => { nodes.get(m)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }] as [string, () => void]));
+      return S.msgs.filter((m) => m.pinned).map((m) => [plain(m.content).slice(0, 80) || artTitle(m), () => { nodes.get(m)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }]);
+    }
+    for (const k of tabs) { const n = count(k); const b = btn(k === tab ? 'on' : '', `${T.matTabs[k]}${n ? ' ' + n : ''}`, () => materials(k)); b.prepend(Object.assign(el('span'), { innerHTML: ico(k, 13) })); head.append(b); }
+    const list = el('div', 'mlist'), rows = items(tab);
+    if (!rows.length) list.append(el('p', 'none', T.matNone));
+    for (const [label, go, url] of rows) { const r = btn('mrow', '', go); r.innerHTML = ico(tab, 16); r.append(el('span', '', label)); if (url && tab === 'site') r.append(el('small', 'livedot', '●')); list.append(r); }
+    openCv(T.mat, head, list);
+  }
+
+  /* ---------- The map: everything at a glance ---------- */
+  function openMap() {
+    const dlg = $<HTMLDialogElement>('[data-mapdlg]'), body = $('[data-mapbody]');
+    const objs = objectsOf();
+    // A forwarded copy is the same thing: count sites by their address, the rest by title.
+    const n = (k: string) => new Set(objs.filter((o) => o.kind === k).map((o) => o.url || o.title || o.id)).size;
+    body.replaceChildren();
+    const stats = el('div', 'mstats');
+    for (const [k, v, go] of [['site', n('site'), () => { dlg.close(); panel('site'); }], ['crm', S.mods?.requests ?? 0, () => { dlg.close(); panel('crm'); }], ['tool', n('tool')], ['doc', n('doc')], ['image', n('image')]] as [string, number, (() => void)?][]) {
+      const c = btn('stat', '', go || (() => {})); c.append(el('b', '', String(v)), el('small', '', T.mapK[k])); stats.append(c);
+    }
+    body.append(stats);
+    if (!S.chats.length) { body.append(el('p', 'none', T.mapEmpty)); dlg.showModal(); return; }
+    const cols = el('div', 'mcols');
+    const known = new Set(S.projects.map((p) => p.id));
+    const groups = [...S.projects.map((p) => [p.name, S.chats.filter((c) => c.project === p.id)] as [string, Chat[]]), [T.noProj, S.chats.filter((c) => !c.project || !known.has(c.project))] as [string, Chat[]]];
+    for (const [name, chats] of groups) {
+      if (!chats.length && name === T.noProj) continue;
+      const col = el('div', 'mcol'); col.append(el('h3', '', name), el('small', '', `${chats.length} · ${objs.filter((o) => chats.some((c) => c.id === o.chat)).length}`));
+      for (const c of chats) {
+        const card = el('div', 'mcard');
+        card.append(btn('mct', c.title, () => { dlg.close(); openChat(c.id); }));
+        const chips = el('div', 'chips2');
+        for (const o of objs.filter((x) => x.chat === c.id).slice(0, 8)) {
+          const ch = btn('chip ' + o.kind, '', () => { dlg.close(); openObject(o); }); ch.innerHTML = ico(o.kind, 12); ch.append(el('span', '', o.title || T.matTabs[o.kind]));
+          chips.append(ch);
+          if (o.url) { const a = el('a', 'chip go', '↗') as HTMLAnchorElement; a.href = o.url; a.target = '_blank'; a.rel = 'noopener'; a.title = o.url; chips.append(a); }
+        }
+        if (chips.childElementCount) card.append(chips);
+        col.append(card);
+      }
+      cols.append(col);
+    }
+    body.append(cols);
+    dlg.showModal();
+  }
+  $('[data-map-x]').onclick = () => $<HTMLDialogElement>('[data-mapdlg]').close();
+
   /* ---------- Chat ---------- */
   const TILE_ICO: R = { site: 'M3 5h18v14H3zM3 9h18', crm: 'M4 5h16v3H4zm0 5.5h10v3H4zM4 16h7v3H4z', partner: 'M10 13a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7L12 6m2 5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7L12 18' };
   function drawEmpty() {
@@ -288,13 +526,18 @@ const ico = {
     return b;
   }
   function drawMsg(m: Msg) {
-    const d = el('div', 'm ' + (m.role === 'user' ? 'me' : 'vax'));
-    const t = el('div', 'tx'); t.innerHTML = linkify(m.content); d.append(t);
+    const d = el('div', 'm ' + (m.role === 'user' ? 'me' : 'vax') + (m.pinned ? ' pinned' : ''));
+    const fw = m.content.match(/^\[\[FWD:([^\]]*)\]\]/), rp = m.content.match(/\[\[REPLY:([^\]]*)\]\]/);
+    if (fw) d.append(el('small', 'fwd', `↗ ${T.fwdFrom} «${fw[1]}»`));
+    if (rp) d.append(el('div', 'quote', rp[1]));
+    const t = el('div', 'tx'); t.innerHTML = linkify(plain(m.content)); d.append(t);
+    nodes.set(m, d);
     if (m.site) d.append(acard(T.open, m.site.title || T.siteCard, () => showArt(m)));
     if (m.tool) d.append(acard(T.open, m.tool.title, () => showArt(m)));
     else if (m.doc) d.append(acard(T.open, m.doc.title, () => showArt(m)));
     if (m.image) { const i = el('img', 'pic'); i.src = m.image; i.alt = ''; d.append(i); }
     if (m.deploy) d.append(btn('pri sm', `${T.dep}: ${m.deploy === 'partner' ? T.parCab : T[m.deploy]}`, () => panel(m.deploy!)));
+    d.append(msgBar(m));
     log.append(d);
     log.scrollTop = log.scrollHeight;
     return d;
@@ -316,13 +559,14 @@ const ico = {
     const last = [...S.msgs].reverse().find(hasArt);
     if (last && matchMedia('(min-width: 1100px)').matches) showArt(last); else if (matchMedia('(min-width: 1100px)').matches) studio(); else closeCv();
   }
-  function fresh() { S.cur = 0; S.msgs = []; drawChats(); drawEmpty(); if (matchMedia('(min-width: 1100px)').matches) studio(); else closeCv(); input.focus(); }
+  function fresh() { S.cur = 0; S.msgs = []; S.reply = null; $('[data-replybar]').hidden = true; drawChats(); drawEmpty(); if (matchMedia('(min-width: 1100px)').matches) studio(); else closeCv(); input.focus(); }
 
   async function ask(q: string) {
     q = q.trim();
     if (!q || S.busy) return;
     S.busy = true;
     if (!S.msgs.length) log.replaceChildren();
+    if (S.reply) { q = `[[REPLY:${S.reply.text.replace(/[\[\]]/g, '')}]]${q}`; S.reply = null; $('[data-replybar]').hidden = true; }
     const mine: Msg = { role: 'user', content: q };
     S.msgs.push(mine); drawMsg(mine);
     const wait = el('div', 'm vax wait', T.think); log.append(wait); log.scrollTop = log.scrollHeight;
@@ -334,13 +578,19 @@ const ico = {
       if (r.status === 429) say.content = d.error === 'guest' ? T.guestLimit : d.reset ? (d.error === 'week' ? T.lim.outWeek : T.lim.outDay).replace('{t}', when(d.reset)) : T.limit;
       else if (d.ok) {
         say = { id: d.id ?? undefined, role: 'assistant', content: d.reply, tool: d.tool || undefined, doc: d.doc || undefined, image: d.image, deploy: d.deploy || undefined, site: d.site || undefined };
-        if (S.signed && d.chat && d.chat !== S.cur) { S.cur = d.chat; S.chats.unshift({ id: d.chat, title: q.slice(0, 60) }); }
+        if (d.uid) mine.id = d.uid;
+        if (S.signed && d.chat && d.chat !== S.cur) {
+          S.cur = d.chat; S.chats.unshift({ id: d.chat, title: plain(q).slice(0, 60), project: S.pendingProject || undefined });
+          if (S.pendingProject) post(`/api/ws/chat/${d.chat}/move`, { project: S.pendingProject });
+          S.pendingProject = 0;
+        }
+        if (S.signed && (d.tool || d.doc || d.site || d.image)) S.objects.unshift({ id: d.id, chat: d.chat, kind: d.site ? 'site' : d.tool ? 'tool' : d.doc ? 'doc' : 'image', title: d.site?.title || d.tool?.title || d.doc?.title || '', url: d.site?.url });
       }
     } catch { /* the message above says so */ }
     wait.remove();
     S.msgs.push(say); drawMsg(say);
     if (!S.signed) {
-      if (!S.cur) { S.cur = Date.now(); S.chats.unshift({ id: S.cur, title: q.slice(0, 60), msgs: S.msgs }); }
+      if (!S.cur) { S.cur = Date.now(); S.chats.unshift({ id: S.cur, title: plain(q).slice(0, 60), msgs: S.msgs, project: S.pendingProject || undefined }); S.pendingProject = 0; }
       const c = S.chats.find((x) => x.id === S.cur); if (c) c.msgs = S.msgs.map((m) => ({ ...m, image: undefined }));
       saveGuest();
     }
@@ -754,7 +1004,10 @@ const ico = {
   $('[data-sign-x]').onclick = () => sign.close();
 
   /* ---------- Wiring ---------- */
-  $('[data-new]').onclick = () => { side(false); fresh(); };
+  $('[data-new]').onclick = () => { side(false); S.pendingProject = 0; fresh(); };
+  $('[data-newproj]').onclick = () => newProject();
+  $('[data-map]').onclick = () => { side(false); openMap(); };
+  $('[data-mat]').onclick = () => materials();
   $('[data-menu]').onclick = () => side(true);
   $('[data-veil]').onclick = () => side(false);
   $('[data-cv-x]').onclick = closeCv;
@@ -785,10 +1038,10 @@ const ico = {
       // Signed in any way (link, Google, password): what the guest did in this browser joins the account.
       const g = local.get();
       if (g) { await post('/api/ws/import', g).catch(() => null); local.drop(); location.reload(); return; }
-      Object.assign(S, { signed: true, email: d.me.email || '', verified: !!d.me.verified, chats: d.chats, memory: d.memory, mode: d.mode, mods: d.modules, access: !!d.access, plan: d.plan || 'start', usage: d.usage || null });
+      Object.assign(S, { signed: true, email: d.me.email || '', verified: !!d.me.verified, chats: (d.chats || []).map((c: any) => ({ ...c, project: c.project || undefined })), projects: d.projects || [], objects: d.objects || [], memory: d.memory, mode: d.mode, mods: d.modules, access: !!d.access, plan: d.plan || 'start', usage: d.usage || null });
     } else {
       const g = local.get();
-      if (g) Object.assign(S, { chats: g.chats || [], memory: { ...blank, ...g.memory }, mode: g.mode === 'deep' ? 'deep' : 'short' });
+      if (g) Object.assign(S, { chats: g.chats || [], projects: g.projects || [], memory: { ...blank, ...g.memory }, mode: g.mode === 'deep' ? 'deep' : 'short' });
       const gb = $<HTMLAnchorElement>('[data-sign-g]'); gb.hidden = !ME.ways?.google; if (room) gb.href = `/api/me/google?back=${room}`;
     }
     drawWho(); drawMode(); drawChats(); drawEmpty();
@@ -979,6 +1232,94 @@ const ico = {
   .wsp .chk { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; }
   .wsp .chk input { width: auto !important; }
   @media (max-width: 760px) { .wsp .tiles { grid-template-columns: minmax(0, 1fr); } .wsp .tile { min-height: 0; } }
+  .wsp .chats { max-height: none; flex: 1 1 auto; min-height: 120px; }
+  .wsp .lblrow { display: flex; align-items: center; justify-content: space-between; margin: 14px 4px 4px 8px; }
+  .wsp .lblrow .lbl { margin: 0; }
+  .wsp .addp { border: 1px solid var(--line); background: none; width: 24px; height: 24px; border-radius: 7px; cursor: pointer; color: var(--mut); font-size: 15px; line-height: 1; }
+  .wsp .addp:hover { color: var(--ink); border-color: var(--ink); }
+  .wsp .mapbtn { margin-top: 6px; }
+  .wsp .proj { display: grid; gap: 1px; margin-bottom: 6px; }
+  .wsp .phead { display: flex; align-items: center; gap: 2px; }
+  .wsp .phead.plain { padding: 8px 8px 2px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--mut); }
+  .wsp .ptitle { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; background: none; border: 0; border-radius: 8px; padding: 7px 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; color: var(--ink); }
+  .wsp .ptitle:hover, .wsp .crow:hover { background: var(--surf2, var(--bg)); }
+  .wsp .ptitle .car { color: var(--mut); width: 10px; font-size: 11px; }
+  .wsp .ptitle .pn { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wsp .cnt { margin-left: auto; font-style: normal; font-size: 11px; color: var(--mut); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 0 6px; flex: none; }
+  .wsp .pempty { padding: 2px 8px 6px 26px; color: var(--mut); font-size: 12px; }
+  .wsp .cnode { display: grid; gap: 1px; }
+  .wsp .proj .phead + .cnode, .wsp .proj .phead ~ .cnode { padding-left: 14px; }
+  .wsp .crow { display: flex; align-items: center; border-radius: 8px; }
+  .wsp .crow .chat { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; }
+  .wsp .crow .chat .cnt { margin-left: auto; }
+  .wsp .dots { flex: none; width: 26px; height: 26px; border: 0; background: none; border-radius: 6px; cursor: pointer; color: var(--mut); opacity: 0; font-size: 15px; }
+  .wsp .crow:hover .dots, .wsp .phead:hover .dots, .wsp .dots:focus { opacity: 1; }
+  .wsp .obj { display: flex; align-items: center; gap: 7px; background: none; border: 0; border-radius: 7px; padding: 5px 8px 5px 22px; font-size: 12.5px; color: var(--mut); cursor: pointer; text-align: left; min-width: 0; }
+  .wsp .obj span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wsp .obj:hover { color: var(--ink); background: var(--surf2, var(--bg)); }
+  .pop { position: fixed; z-index: 100; min-width: 200px; max-width: 260px; background: var(--surf); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 5px; box-shadow: 0 16px 40px rgba(0,0,0,.28); display: grid; }
+  .pop button { background: none; border: 0; text-align: left; padding: 9px 11px; border-radius: 8px; font: 14px var(--font); color: inherit; cursor: pointer; }
+  .pop button:hover { background: var(--surf2, var(--bg)); }
+  .wsp .m { position: relative; }
+  .wsp .mbar { display: flex; gap: 2px; margin-top: 6px; opacity: 0; transition: opacity .15s; }
+  .wsp .m.me .mbar { justify-content: flex-end; }
+  .wsp .m:hover .mbar, .wsp .m:focus-within .mbar { opacity: 1; }
+  .wsp .mb { width: 30px; height: 28px; border: 0; background: none; border-radius: 7px; cursor: pointer; color: var(--mut); display: grid; place-items: center; }
+  .wsp .mb:hover { background: var(--surf2, var(--surf)); color: var(--ink); }
+  .wsp .mb.on { color: var(--accText); }
+  .wsp .m.pinned { box-shadow: inset 3px 0 0 var(--accText); padding-left: 12px; }
+  .wsp .m.me.pinned { box-shadow: inset -3px 0 0 var(--accText); }
+  .wsp .m.flash { animation: flash 1.2s; }
+  @keyframes flash { 0%, 60% { background: color-mix(in srgb, var(--accText) 18%, transparent); } }
+  .wsp .quote { border-left: 3px solid var(--accText); padding: 4px 10px; margin-bottom: 6px; font-size: 13.5px; color: var(--mut); background: color-mix(in srgb, var(--accText) 7%, transparent); border-radius: 0 8px 8px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .wsp .fwd { display: block; color: var(--accText); font-size: 12.5px; margin-bottom: 4px; }
+  .wsp .pins { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; border-bottom: 1px solid var(--line); background: var(--surf); padding: 8px 16px; cursor: pointer; text-align: left; color: var(--ink); font: 13.5px var(--font); }
+  .wsp .pins[hidden] { display: none; }
+  .wsp .pins svg { color: var(--accText); flex: none; }
+  .wsp .pins b { flex: none; color: var(--accText); font-weight: 600; }
+  .wsp .pins span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--mut); }
+  .wsp .replybar { display: flex; align-items: center; gap: 8px; margin: 0 max(16px, calc((100% - 760px) / 2)) 6px; padding: 6px 6px 6px 12px; border-left: 3px solid var(--accText); background: var(--surf); border-radius: 0 10px 10px 0; font-size: 13.5px; color: var(--mut); }
+  .wsp .replybar[hidden] { display: none; }
+  .wsp .replybar span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wsp .mtabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .wsp .mtabs button { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line); background: none; border-radius: 999px; padding: 6px 11px; font-size: 13px; cursor: pointer; color: var(--mut); }
+  .wsp .mtabs button.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .wsp .mlist { display: grid; gap: 4px; }
+  .wsp .mrow { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 10px 12px; cursor: pointer; text-align: left; font-size: 14px; color: var(--ink); min-width: 0; }
+  .wsp .mrow span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wsp .mrow svg { color: var(--accText); flex: none; }
+  .wsp .wmap:not([open]), .wsp .wpick:not([open]) { display: none; }
+  .wsp .wmap { margin: auto; border: 1px solid var(--line); border-radius: 18px; background: var(--bg); color: var(--ink); padding: 0; width: min(1240px, calc(100vw - 24px)); height: min(860px, calc(100dvh - 24px)); }
+  .wsp .wmap[open] { display: flex; flex-direction: column; }
+  .wsp .wmap::backdrop, .wsp .wpick::backdrop { background: rgba(0, 0, 0, .6); }
+  .wsp .wmap header, .wsp .wpick header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+  .wsp .wmap header b { font-size: 18px; }
+  .wsp .mapb { flex: 1; overflow: auto; padding: 18px; display: grid; gap: 18px; align-content: start; }
+  .wsp .mstats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .wsp .stat { display: grid; gap: 2px; text-align: left; background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; cursor: pointer; color: var(--ink); }
+  .wsp .stat b { font-size: 28px; letter-spacing: -.02em; }
+  .wsp .stat small { color: var(--mut); font-size: 13px; }
+  .wsp .mcols { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; align-items: flex-start; }
+  .wsp .mcol { flex: 0 0 280px; display: grid; gap: 8px; background: var(--surf); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+  .wsp .mcol h3 { margin: 0; font-size: 15px; }
+  .wsp .mcol > small { color: var(--mut); font-size: 12px; margin-top: -6px; }
+  .wsp .mcard { display: grid; gap: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+  .wsp .mct { background: none; border: 0; padding: 0; text-align: left; font: 600 14px var(--font); color: var(--ink); cursor: pointer; }
+  .wsp .chips2 { display: flex; flex-wrap: wrap; gap: 5px; }
+  .wsp .chip { display: inline-flex; align-items: center; gap: 5px; max-width: 100%; border: 1px solid var(--line); background: var(--surf); border-radius: 999px; padding: 4px 9px; font-size: 12px; color: var(--ink); cursor: pointer; text-decoration: none; }
+  .wsp .chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px; }
+  .wsp .chip.site { border-color: color-mix(in srgb, #2fbf71 50%, var(--line)); }
+  .wsp .chip.go { color: var(--accText); }
+  .wsp .wpick { margin: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surf); color: var(--ink); padding: 0; width: min(420px, calc(100vw - 24px)); max-height: min(70vh, 640px); }
+  .wsp .wpick[open] { display: flex; flex-direction: column; }
+  .wsp .pickb { padding: 10px; overflow: auto; display: grid; gap: 3px; }
+  .wsp .pick { background: none; border: 0; text-align: left; padding: 10px 12px; border-radius: 9px; font: 14px var(--font); color: var(--ink); cursor: pointer; }
+  .wsp .pick:hover { background: var(--bg); }
+  .wsp .pick.new { color: var(--accText); font-weight: 600; }
+  .wsp .pickh { padding: 10px 12px 2px; color: var(--mut); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+  .wsp .toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--bg); border-radius: 12px; padding: 10px 16px; font-size: 14px; display: flex; gap: 12px; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+  .wsp .toast .lnk { color: var(--bg); font-weight: 700; }
+  @media (hover: none) { .wsp .mbar { opacity: 1; } .wsp .dots { opacity: .7; } }
   .wsp .veil { display: none; }
   .wsp .wsign:not([open]) { display: none; }
   .wsp .wsign { margin: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surf); color: var(--ink); padding: 24px; width: min(420px, calc(100vw - 32px)); }

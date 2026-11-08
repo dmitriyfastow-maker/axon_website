@@ -133,7 +133,9 @@ async function writeMemory(db: DB, id: number, m: Memory, mode: string) {
 }
 
 /** What the person wrote, without our attached-file lines: those must not trigger a tool or name a chat. */
-export const ownWords = (q: string) => q.replace(/^📎 \S+ \S+$/gmu, '').trim();
+export const ownWords = (q: string) => q.replace(/\[\[(REPLY|FWD):[^\]]*\]\]/g, '').replace(/^📎 \S+ \S+$/gmu, '').trim();
+/** For the model: a reply quote and a forwarded mark become plain words it understands. */
+export const forModel = (t: string) => t.replace(/\[\[REPLY:([^\]]*)\]\]/g, '(Replying to this earlier message: "$1")\n').replace(/\[\[FWD:([^\]]*)\]\]/g, '(Forwarded from the chat "$1")\n');
 
 /** Every third message: what the person said about their work goes into the memory, where they can see and change it. */
 async function learn(db: DB, ai: AiBinding, id: number, said: string[]) {
@@ -156,7 +158,7 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   const said = ownWords(q);
   const me = await sessionClient(db, request);
   const ip = request.headers.get('CF-Connecting-IP') || 'local';
-  let memory = cleanMemory(b.memory), history: Turn[] = [], chat = 0, leadIds: number[] = [];
+  let memory = cleanMemory(b.memory), history: Turn[] = [], chat = 0, leadIds: number[] = [], uid = 0;
 
   if (me) {
     memory = await readMemory(db, me.id);
@@ -168,12 +170,12 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     if (chat && !(await db.prepare('SELECT 1 FROM ws_chats WHERE id = ? AND client_id = ?').bind(chat, me.id).first())) chat = 0;
     if (chat) {
       const rows = (await db.prepare('SELECT role, text FROM ws_msgs WHERE chat_id = ? ORDER BY id DESC LIMIT 14').bind(chat).all<{ role: 'user' | 'assistant'; text: string }>()).results.reverse();
-      history = rows.map((r) => ({ role: r.role, content: r.text.slice(0, 1600) }));
+      history = rows.map((r) => ({ role: r.role, content: forModel(r.text).slice(0, 1600) }));
     } else {
       const r = await db.prepare('INSERT INTO ws_chats (client_id, title) VALUES (?, ?) RETURNING id').bind(me.id, (said || q.match(/^📎 (\S+)/u)?.[1] || q).replace(/\s+/g, ' ').slice(0, 60)).first<{ id: number }>();
       chat = r!.id;
     }
-    await db.prepare(`INSERT INTO ws_msgs (chat_id, role, text) VALUES (?, 'user', ?)`).bind(chat, q).run();
+    uid = (await db.prepare(`INSERT INTO ws_msgs (chat_id, role, text) VALUES (?, 'user', ?) RETURNING id`).bind(chat, q).first<{ id: number }>())?.id ?? 0;
     await db.prepare(`UPDATE ws_chats SET updated_at = datetime('now') WHERE id = ?`).bind(chat).run();
   } else {
     const who = await ipKey(ip);
@@ -181,7 +183,7 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     if ((used?.n ?? 0) >= GUEST_DAY) return out(429, { ok: false, error: 'guest' });
     await db.prepare(`INSERT INTO events (kind, path) VALUES ('wsq', ?)`).bind(who).run().catch(() => {});
     const h = Array.isArray(b.history) ? b.history.slice(-14) : [];
-    history = h.flatMap((m: any) => ((m?.role === 'user' || m?.role === 'assistant') && typeof m.content === 'string' ? [{ role: m.role as Turn['role'], content: m.content.slice(0, 1600) }] : []));
+    history = h.flatMap((m: any) => ((m?.role === 'user' || m?.role === 'assistant') && typeof m.content === 'string' ? [{ role: m.role as Turn['role'], content: forModel(m.content).slice(0, 1600) }] : []));
   }
 
   let usd = 0;
@@ -208,23 +210,23 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
         const url = `${new URL(request.url).origin}/s/${await liveSite(db, me.id, site, sl, await moduleAccess(db, me.id))}`;
         const live = { ...site, url, slug: url.split('/s/')[1] };
         const reply = siteLiveText(lang, url, site);
-        return out(200, { ok: true, chat, id: await save(reply, { site: live as Site }), reply, site: live });
+        return out(200, { ok: true, chat, uid, id: await save(reply, { site: live as Site }), reply, site: live });
       }
       const reply = SITE_DRAFT[lang] ?? SITE_DRAFT.en;
-      return out(200, { ok: true, chat, id: await save(reply, { site }), reply, site });
+      return out(200, { ok: true, chat, uid, id: await save(reply, { site }), reply, site });
     }
   }
 
   if (WANTS_IMAGE.test(said)) {
     const pic = await drawImage(ai, db, said, lang, ip).catch((e) => { console.error('[ws image]', e); return null; });
-    if (pic) return out(200, { ok: true, chat, id: await save(pic.reply, { image: pic.image }), ...pic });
+    if (pic) return out(200, { ok: true, chat, uid, id: await save(pic.reply, { image: pic.image }), ...pic });
   }
 
   const building = WANTS_TOOL.test(said) ? buildTool(ai, said, lang).catch(() => null) : Promise.resolve(null);
   const sys = system(lang, memory, mode) + (WANTS_TOOL.test(said) ? '\nA ready tool appears on the Canvas to the right of the chat (never say "below"). Do not ask for numbers: answer in 1–3 sentences and say they can enter their own values on the Canvas. Never write markers like [canvas: ...].' : '');
   const turns: { role: string; content: string }[] = [];
   // Attached files reach the model as their name plus what is on an image or in a document; recent ones in full.
-  const all = [...history, { role: 'user' as const, content: q }];
+  const all = [...history, { role: 'user' as const, content: forModel(q) }];
   const seen = await Promise.all(all.map(async (m, i) => ({ ...m, content: await filesForAi(db, m.content, i >= all.length - RECENT_FILES ? FILE_CHARS : undefined).catch(() => m.content) })));
   for (const m of seen) {
     const prev = turns[turns.length - 1];
@@ -259,7 +261,19 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     const n = (await db.prepare(`SELECT COUNT(*) AS n FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user'`).bind(me.id).first<{ n: number }>())?.n ?? 0;
     if (n === 1 || n % 3 === 0) wait(learn(db, ai, me.id, recent).catch((e) => console.error('[ws learn]', e)));
   }
-  return out(200, { ok: true, chat, id, reply, tool, doc: shaped.doc, deploy, paid });
+  return out(200, { ok: true, chat, uid, id, reply, tool, doc: shaped.doc, deploy, paid });
+}
+
+/** What each chat has made, for the tree and the map: sites, tools, documents, pictures (titles only, never the picture data). */
+async function treeObjects(db: DB, clientId: number) {
+  const rows = (await db.prepare(`SELECT m.id, m.chat_id AS chat, m.tool, m.doc, m.site, (m.image IS NOT NULL) AS img FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id
+    WHERE c.client_id = ? AND (m.tool IS NOT NULL OR m.doc IS NOT NULL OR m.site IS NOT NULL OR m.image IS NOT NULL) ORDER BY m.id DESC LIMIT 300`).bind(clientId).all<Record<string, any>>()).results;
+  const title = (j: string | null) => { try { return j ? JSON.parse(j).title || '' : ''; } catch { return ''; } };
+  return rows.map((r) => {
+    const site = r.site ? (() => { try { return JSON.parse(r.site); } catch { return null; } })() : null;
+    const kind = site ? 'site' : r.tool ? 'tool' : r.doc ? 'doc' : 'image';
+    return { id: r.id, chat: r.chat, kind, title: site?.title || title(r.tool) || title(r.doc) || '', url: site?.url || undefined };
+  });
 }
 
 /** A guest signed in: their chats and notes from the browser become part of the account. */
@@ -292,11 +306,13 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       if (!me) return out(200, { ok: true, signedIn: false });
       const leadIds = await clientLeads(db, me.id);
       const al = await allowance(db, leadIds).catch(() => null);
-      const chats = (await db.prepare('SELECT id, title FROM ws_chats WHERE client_id = ? ORDER BY updated_at DESC LIMIT 50').bind(me.id).all()).results;
+      const chats = (await db.prepare('SELECT id, title, project_id AS project FROM ws_chats WHERE client_id = ? ORDER BY updated_at DESC LIMIT 100').bind(me.id).all()).results;
+      const projects = (await db.prepare('SELECT id, name FROM ws_projects WHERE client_id = ? ORDER BY id').bind(me.id).all().catch(() => ({ results: [] }))).results;
+      const objects = await treeObjects(db, me.id);
       const { mode, ...memory } = await readMemory(db, me.id);
       const access = await moduleAccess(db, me.id);
       const usage = await wsLimits(db, me.id, al?.plan ?? 'start');
-      return out(200, { ok: true, signedIn: true, usage, me: { email: me.email, name: me.name, verified: !!me.email_verified_at }, plan: al?.plan ?? 'start', trial: !!al?.trial, memory, mode, chats, access, modules: await modulesState(db, me.id, url.origin, access) });
+      return out(200, { ok: true, signedIn: true, usage, me: { email: me.email, name: me.name, verified: !!me.email_verified_at }, plan: al?.plan ?? 'start', trial: !!al?.trial, memory, mode, chats, projects, objects, access, modules: await modulesState(db, me.id, url.origin, access) });
     }
     if (!me) return out(401, { ok: false });
     if (path === 'limits' && m === 'GET') {
@@ -310,11 +326,57 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       const id = Number(cm[1]);
       if (!(await db.prepare('SELECT 1 FROM ws_chats WHERE id = ? AND client_id = ?').bind(id, me.id).first())) return out(404, { ok: false });
       if (m === 'GET') {
-        const rows = (await db.prepare('SELECT id, role, text, tool, doc, image, deploy, site FROM ws_msgs WHERE chat_id = ? ORDER BY id LIMIT 200').bind(id).all<Record<string, string | null>>()).results;
+        const rows = (await db.prepare('SELECT id, role, text, tool, doc, image, deploy, site, pinned FROM ws_msgs WHERE chat_id = ? ORDER BY id LIMIT 300').bind(id).all<Record<string, string | null>>()).results;
         const pubs = new Map(((await db.prepare('SELECT msg_id, slug FROM ws_pub WHERE client_id = ?').bind(me.id).all<{ msg_id: number; slug: string }>().catch(() => ({ results: [] }))).results).map((p) => [p.msg_id, p.slug]));
-        return out(200, { ok: true, msgs: rows.map((r) => ({ id: r.id, role: r.role, content: r.text, tool: r.tool ? JSON.parse(r.tool) : undefined, doc: r.doc ? JSON.parse(r.doc) : undefined, image: r.image || undefined, deploy: r.deploy || undefined, site: r.site ? JSON.parse(r.site) : undefined, pub: pubs.get(Number(r.id)) ? `${url.origin}/p/${pubs.get(Number(r.id))}` : undefined })) });
+        return out(200, { ok: true, msgs: rows.map((r) => ({ id: r.id, role: r.role, content: r.text, tool: r.tool ? JSON.parse(r.tool) : undefined, doc: r.doc ? JSON.parse(r.doc) : undefined, image: r.image || undefined, deploy: r.deploy || undefined, site: r.site ? JSON.parse(r.site) : undefined, pinned: !!Number(r.pinned), pub: pubs.get(Number(r.id)) ? `${url.origin}/p/${pubs.get(Number(r.id))}` : undefined })) });
       }
       if (m === 'POST') { await db.prepare('DELETE FROM ws_msgs WHERE chat_id = ?').bind(id).run(); await db.prepare('DELETE FROM ws_chats WHERE id = ?').bind(id).run(); return out(200, { ok: true }); }
+    }
+    // The tree: projects are folders of chats.
+    if (path === 'project' && m === 'POST') {
+      const name = cut(b.name, 60); if (!name) return out(400, { ok: false });
+      const n = (await db.prepare('SELECT COUNT(*) AS n FROM ws_projects WHERE client_id = ?').bind(me.id).first<{ n: number }>())?.n ?? 0;
+      if (n >= 50) return out(400, { ok: false });
+      const r = await db.prepare('INSERT INTO ws_projects (client_id, name) VALUES (?, ?) RETURNING id').bind(me.id, name).first<{ id: number }>();
+      return out(200, { ok: true, id: r?.id, name });
+    }
+    const pm = path.match(/^project\/(\d+)$/);
+    if (pm && m === 'POST') {
+      const id = Number(pm[1]);
+      if (b.delete === true) { await db.prepare('UPDATE ws_chats SET project_id = NULL WHERE project_id = ? AND client_id = ?').bind(id, me.id).run(); await db.prepare('DELETE FROM ws_projects WHERE id = ? AND client_id = ?').bind(id, me.id).run(); return out(200, { ok: true }); }
+      const name = cut(b.name, 60); if (!name) return out(400, { ok: false });
+      await db.prepare('UPDATE ws_projects SET name = ? WHERE id = ? AND client_id = ?').bind(name, id, me.id).run();
+      return out(200, { ok: true });
+    }
+    const mv = path.match(/^chat\/(\d+)\/(move|rename)$/);
+    if (mv && m === 'POST') {
+      const id = Number(mv[1]);
+      if (mv[2] === 'move') {
+        const proj = Number(b.project) || null;
+        if (proj && !(await db.prepare('SELECT 1 FROM ws_projects WHERE id = ? AND client_id = ?').bind(proj, me.id).first())) return out(404, { ok: false });
+        await db.prepare('UPDATE ws_chats SET project_id = ? WHERE id = ? AND client_id = ?').bind(proj, id, me.id).run();
+      } else {
+        const title = cut(b.title, 60); if (!title) return out(400, { ok: false });
+        await db.prepare('UPDATE ws_chats SET title = ? WHERE id = ? AND client_id = ?').bind(title, id, me.id).run();
+      }
+      return out(200, { ok: true });
+    }
+    // Telegram-like message actions: pin, forward to another chat.
+    const pin = path.match(/^msg\/(\d+)\/pin$/);
+    if (pin && m === 'POST') {
+      await db.prepare('UPDATE ws_msgs SET pinned = ? WHERE id = ? AND chat_id IN (SELECT id FROM ws_chats WHERE client_id = ?)').bind(b.on === false ? 0 : 1, Number(pin[1]), me.id).run();
+      return out(200, { ok: true });
+    }
+    if (path === 'forward' && m === 'POST') {
+      const src = await db.prepare('SELECT m.text, m.tool, m.doc, m.image, m.site, c.title FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE m.id = ? AND c.client_id = ?').bind(Number(b.id), me.id).first<Record<string, string | null>>();
+      let to = Number(b.chat) || 0;
+      if (!src) return out(404, { ok: false });
+      if (to && !(await db.prepare('SELECT 1 FROM ws_chats WHERE id = ? AND client_id = ?').bind(to, me.id).first())) return out(404, { ok: false });
+      if (!to) to = (await db.prepare('INSERT INTO ws_chats (client_id, title, project_id) VALUES (?, ?, ?) RETURNING id').bind(me.id, cut(b.title, 60) || cut(src.title, 60) || '…', Number(b.project) || null).first<{ id: number }>())!.id;
+      const text = `[[FWD:${(src.title || '').slice(0, 60)}]]${src.text || ''}`;
+      const r = await db.prepare(`INSERT INTO ws_msgs (chat_id, role, text, tool, doc, image, site) VALUES (?, 'assistant', ?, ?, ?, ?, ?) RETURNING id`).bind(to, text, src.tool, src.doc, src.image, src.site).first<{ id: number }>();
+      await db.prepare(`UPDATE ws_chats SET updated_at = datetime('now') WHERE id = ?`).bind(to).run();
+      return out(200, { ok: true, chat: to, id: r?.id });
     }
     if (path === 'doc' && m === 'POST') {
       const id = Number(b.id), doc = { title: cut(b.title, 120), body: cut(b.body, 20000) };
