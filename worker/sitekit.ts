@@ -40,7 +40,7 @@ function headline(title: string, accent?: string) {
   return a && t.includes(a) ? t.replace(a, `<em>${a}</em>`) : t;
 }
 
-export function renderSite(s: Kit, o: { key: string; slug: string; index: boolean; name: string; edit?: boolean }): string {
+export function renderSite(s: Kit, o: { key: string; slug: string; index: boolean; name: string; edit?: boolean; url?: string }): string {
   // In the Canvas every text carries its field name (data-k) and every photo its number (data-img), for editing in place.
   const E = o.edit, dk = (k: string) => (E ? ` data-k="${k}"` : ''), di = (i: number) => (E ? ` data-img="${i}"` : '');
   const w = T[s.lang] ?? T.en, st = STYLES[styleOf(s.style)], cap = st.caps;
@@ -51,9 +51,17 @@ export function renderSite(s: Kit, o: { key: string; slug: string; index: boolea
   const btn = (href: string, text: string, solid = true) => `<a class="btn${solid ? ' solid' : ''}" href="${href}">${esc(text)}</a>`;
   const nav = [offers.length && ['#offer', w.offer], s.about && ['#about', w.about], s.faq?.length && ['#faq', w.faq]].filter(Boolean) as [string, string][];
   const r = st.radius;
+  // SEO for every site: canonical address, link previews, photo descriptions and schema.org data built only from
+  // what the owner wrote (no invented address, hours, prices or ratings).
+  const url = o.url || `https://vaxogroup.com/s/${o.slug}`, desc = s.sub || title;
+  const alt = (x?: string) => ` alt="${esc((x || title).slice(0, 120))}"`, lazy = ' loading="lazy" decoding="async"';
+  const ld = JSON.stringify({ '@context': 'https://schema.org', '@type': 'LocalBusiness', name: title, description: desc, url, ...(h1 ? { image: 'https://vaxogroup.com' + h1 } : {}),
+    ...(offers.length ? { makesOffer: offers.map((x) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: x.t, ...(x.d ? { description: x.d } : {}) } })) } : {}) }).replace(/</g, '\\u003c');
+  const ldFaq = s.faq?.length ? JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: s.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }).replace(/</g, '\\u003c') : '';
   return `<!doctype html><html lang="${s.lang === 'ua' ? 'uk' : s.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(s.sub || title)}">${o.index ? '' : '<meta name="robots" content="noindex">'}
-<meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(s.sub || title)}">${h1 ? `<meta property="og:image" content="https://vaxogroup.com${h1}">` : ''}
+<meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:type" content="website"><meta name="twitter:card" content="${h1 ? 'summary_large_image' : 'summary'}">${h1 ? `<meta property="og:image" content="https://vaxogroup.com${h1}">` : ''}
+${E ? '' : `<link rel="canonical" href="${esc(url)}"><meta property="og:url" content="${esc(url)}"><link rel="icon" href="/icon-192.png"><script type="application/ld+json">${ld}</script>${ldFaq ? `<script type="application/ld+json">${ldFaq}</script>` : ''}`}
 <link rel="manifest" href="/s/${o.slug}/manifest.webmanifest"><meta name="theme-color" content="${st.bg}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=${st.fonts}&display=swap" rel="stylesheet">
 <style>:root{--bg:${st.bg};--ink:${st.ink};--mut:${st.mut};--card:${st.card};--acc:${st.acc};--accink:${st.accInk};--line:${st.line};--r:${r}px}
@@ -88,14 +96,14 @@ form .btn{padding:17px;font-size:15px}.ok{grid-column:1/-1;font:600 22px/1.35 ${
 footer{padding:40px 0 48px;color:var(--mut);font-size:14px;border-top:1px solid var(--line)}footer .w{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media(max-width:860px){.links{display:none}.intro,.book{grid-template-columns:1fr}.ph{aspect-ratio:4/3}form{grid-template-columns:1fr}.hero{min-height:${h1 ? '86vh' : '64vh'}}}</style></head><body>
 <header><div class="w nav"><a class="logo" href="#">${esc(title)}</a><nav class="links">${nav.map(([h, t]) => `<a href="${h}">${esc(t)}</a>`).join('')}</nav>${btn('#form', cta)}</div></header>
-<section class="hero">${h1 ? `<img src="${h1}" alt=""${di(0)}>` : ''}<div class="w">${s.kicker || E ? `<p class="kicker"${dk('kicker')}>${esc(s.kicker || '')}</p>` : ''}<h1${dk('title')}>${headline(title, s.accent)}</h1>${s.sub || E ? `<p class="sub"${dk('sub')}>${esc(s.sub)}</p>` : ''}<div class="acts">${btn('#form', cta)}${offers.length ? btn('#offer', w.more, false) : ''}</div></div></section>
-${s.about ? `<section id="about"><div class="w intro"><div><p class="kicker">${esc(w.about)}</p><h2>${esc(s.kicker || title)}</h2><p class="lead"${dk('about')}>${esc(s.about)}</p></div>${h2 ? `<div class="ph"><img src="${h2}" alt=""${di(1)}></div>` : ''}</div></section>` : ''}
+<section class="hero">${h1 ? `<img src="${h1}"${alt(s.kicker)} fetchpriority="high"${di(0)}>` : ''}<div class="w">${s.kicker || E ? `<p class="kicker"${dk('kicker')}>${esc(s.kicker || '')}</p>` : ''}<h1${dk('title')}>${headline(title, s.accent)}</h1>${s.sub || E ? `<p class="sub"${dk('sub')}>${esc(s.sub)}</p>` : ''}<div class="acts">${btn('#form', cta)}${offers.length ? btn('#offer', w.more, false) : ''}</div></div></section>
+${s.about ? `<section id="about"><div class="w intro"><div><p class="kicker">${esc(w.about)}</p><h2>${esc(s.kicker || title)}</h2><p class="lead"${dk('about')}>${esc(s.about)}</p></div>${h2 ? `<div class="ph"><img src="${h2}"${alt(title)}${lazy}${di(1)}></div>` : ''}</div></section>` : ''}
 ${offers.length ? `<section id="offer" style="padding-top:0"><div class="w"><p class="kicker">${esc(w.offer)}</p><h2>${esc(s.sub && s.sub.length <= 60 ? s.sub : w.offer)}</h2><div class="grid">${offers.map((x, i) => `<div class="off"><i>${cap ? 'No. ' : ''}${String(i + 1).padStart(2, '0')}</i><b${dk('services.' + i)}>${esc(x.t)}</b>${x.d || E ? `<p${dk('details.' + i)}>${esc(x.d)}</p>` : ''}</div>`).join('')}</div></div></section>` : ''}
-${h3 ? `<section class="band"><img src="${h3}" alt=""${di(2)}><div class="w"><p${dk('promise')}>${esc(s.promise || w.reply)}</p></div></section>` : ''}
+${h3 ? `<section class="band"><img src="${h3}"${alt(s.promise)}${lazy}${di(2)}><div class="w"><p${dk('promise')}>${esc(s.promise || w.reply)}</p></div></section>` : ''}
 <section><div class="w"><p class="kicker">${esc(w.how)}</p><h2>${esc(w.how)}</h2><ol class="steps">${steps.map((x, i) => `<li><span>0${i + 1}</span><em${dk('steps.' + i)} style="font-style:normal">${esc(x)}</em></li>`).join('')}</ol></div></section>
 ${s.faq?.length ? `<section id="faq" style="padding-top:0"><div class="w" style="max-width:860px"><p class="kicker">${esc(w.faq)}</p><h2>${esc(w.faq)}</h2>${s.faq.map((f, i) => `<details${E ? ' open' : ''}><summary${dk('faq.' + i + '.q')}>${esc(f.q)}</summary><p${dk('faq.' + i + '.a')}>${esc(f.a)}</p></details>`).join('')}</div></section>` : ''}
 <section id="form" style="padding-top:0"><div class="w book"><div><p class="kicker">${esc(cta)}</p><h2${dk('cta')}>${esc(cta)}</h2><p class="lead"${dk('ask')}>${esc(s.ask || w.reply)}</p><p class="note">${esc(w.reply)}</p></div>
-<form id="f"><input name="name" maxlength="80" placeholder="${esc(w.name)}" autocomplete="name"><input name="contact" maxlength="120" placeholder="${esc(w.contact)}" required><textarea class="full" name="message" rows="4" maxlength="1500" placeholder="${esc(s.ask || w.msg)}"></textarea><button class="btn solid full">${esc(w.send)}</button></form></div></section>
+<form id="f"><input name="name" maxlength="80" aria-label="${esc(w.name)}" placeholder="${esc(w.name)}" autocomplete="name"><input name="contact" maxlength="120" aria-label="${esc(w.contact)}" placeholder="${esc(w.contact)}" required><textarea class="full" name="message" rows="4" maxlength="1500" aria-label="${esc(w.msg)}" placeholder="${esc(s.ask || w.msg)}"></textarea><button class="btn solid full">${esc(w.send)}</button></form></div></section>
 <footer><div class="w"><span>© ${new Date().getFullYear()} ${esc(title)}</span>${o.index ? '' : `<a href="https://vaxogroup.com/">${esc(w.made)}</a>`}</div></footer>
 <script src="/w.js?k=${o.key}&p=${o.slug}" async></script><script>document.getElementById('f').onsubmit=function(e){e.preventDefault();var p=document.createElement('p');p.className='ok';p.textContent=${JSON.stringify(w.done).replace(/</g, '\\u003c')};this.replaceChildren(p)}</script></body></html>`;
 }

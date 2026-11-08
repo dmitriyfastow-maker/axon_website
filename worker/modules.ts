@@ -243,8 +243,8 @@ const STEPS: Record<string, [string, string, string, string, string, string]> = 
 const ICON = ['M5 12.5 9.5 17 19 7.5', 'M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.6 6.7 19.4l1.2-6L3.4 9.3l6-.7z', 'M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z', 'M4 12h16M12 4v16', 'M3 12h4l3 7 4-14 3 7h4', 'M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4'];
 
 /** The public page of a site or form: the site kit (worker/sitekit.ts). */
-function page(s: Site, kind: string, name: string, key: string, slug: string, index: boolean): string {
-  return renderSite({ ...s, style: styleOf(s.style || s.tone), services: kind === 'site' ? s.services : [], about: kind === 'site' ? s.about : '' }, { key, slug, index, name });
+function page(s: Site, kind: string, name: string, key: string, slug: string, index: boolean, url?: string): string {
+  return renderSite({ ...s, style: styleOf(s.style || s.tone), services: kind === 'site' ? s.services : [], about: kind === 'site' ? s.about : '' }, { key, slug, index, name, url });
 }
 
 /** /s/<slug> and its manifest: the public side of a deployed module. */
@@ -256,7 +256,9 @@ export async function servePage(db: DB, slug: string, manifest: boolean): Promis
   if (manifest) return new Response(JSON.stringify({ name: s.title || r.name, short_name: (s.title || r.name).slice(0, 12), start_url: `/s/${slug}`, display: 'standalone', background_color: (TONES[s.tone] ?? TONES.clean)[0], icons: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' }] }), { headers: { 'Content-Type': 'application/manifest+json' } });
   // Only paying clients' pages go into search: free pages stay out, so the domain does not fill up with empty ones.
   const paid = await db.prepare(`SELECT 1 FROM leads l JOIN invoices i ON i.lead_id = l.id WHERE l.client_id = ? AND i.status = 'paid' LIMIT 1`).bind(r.owner_id).first().catch(() => null);
-  return new Response(page(s, r.kind, r.name, r.key, slug, !!paid), { headers: {
+  // A working own domain is the page's real address (canonical), so search engines do not see two copies.
+  const dom = await db.prepare(`SELECT host FROM biz_domains WHERE biz_id = ? AND status = 'active' LIMIT 1`).bind(r.id).first<{ host: string }>().catch(() => null);
+  return new Response(page(s, r.kind, r.name, r.key, slug, !!paid, dom ? `https://${dom.host}/` : undefined), { headers: {
     'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY',
     'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://vaxogroup.com; font-src https://fonts.gstatic.com; connect-src 'self'; form-action 'none'; base-uri 'none'",
   } });
