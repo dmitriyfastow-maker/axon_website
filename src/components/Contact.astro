@@ -1,79 +1,61 @@
 ---
-
+// Final "tell us what you need" block on /start/ and /tools/ (Decision 40): no contacts, no old chat.
+// The request goes straight to Vax in Workspace (/app/#q=…), where the plan and the price appear on the canvas.
 import type { Dict, Lang } from '../i18n';
 import VaxSays from './VaxSays.astro';
-import PageChat from './PageChat.astro';
-import { TIER_NAMES } from '../data/tiers';
-import { LIMITS } from '../lib/validate';
+import { navHref } from '../i18n';
 
 interface Props { t: Dict; lang: Lang }
 const { t, lang } = Astro.props;
-const f = t.form;
-const starter = { en: 'First month free, then from $39/mo', ru: 'Первый месяц бесплатно, дальше от $39/мес', ua: 'Перший місяць безкоштовно, далі від $39/міс' }[lang as 'en' | 'ru' | 'ua'] || 'First month free, then from $39/mo';
-const interests = [{ v: 'Starter', label: starter }, ...TIER_NAMES.map((n, i) => ({ v: n, label: t.tiers[i]?.problem || n })), { v: 'single', label: f.single }, { v: 'any', label: f.any }];
-// Labels the script swaps when the form mode changes.
-const CHIPS = { en: ['I need more clients', 'A website or an app', 'Ads & social media', 'Automate my work with AI', 'Something else — I’ll describe it'], ru: ['Нужно больше клиентов', 'Сайт или приложение', 'Реклама и соцсети', 'Автоматизировать работу с ИИ', 'Другое — опишу сам'], ua: ['Потрібно більше клієнтів', 'Сайт або застосунок', 'Реклама і соцмережі', 'Автоматизувати роботу з ШІ', 'Інше — опишу сам'] }[lang];
-const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.sendQ, sending: f.sending };
+const L = lang as 'en' | 'ru' | 'ua';
+const C = {
+  en: { sub: 'Vax, our AI, makes the plan, the price and the first result in your Workspace. You only pay the subscription — the work is done by us and AI.', chips: ['More clients', 'A website or an app', 'Ads & social media', 'Automate work with AI', 'Something personal'], ph: 'In a few words: what should change?', go: 'Start with Vax →', hint: 'First month free, then from $39/mo. No sign-up forms and no phone number.' },
+  ru: { sub: 'Vax, наш ИИ, сделает план, цену и первый результат в вашем Workspace. Вы только платите подписку — работу делаем мы и ИИ.', chips: ['Больше клиентов', 'Сайт или приложение', 'Реклама и соцсети', 'Автоматизация с ИИ', 'Личная задача'], ph: 'В двух словах: что должно измениться?', go: 'Начать с Vax →', hint: 'Первый месяц бесплатно, дальше от $39/мес. Без анкет и номера телефона.' },
+  ua: { sub: 'Vax, наш ШІ, зробить план, ціну і перший результат у вашому Workspace. Ви лише платите підписку — роботу робимо ми і ШІ.', chips: ['Більше клієнтів', 'Сайт або застосунок', 'Реклама і соцмережі', 'Автоматизація з ШІ', 'Особиста задача'], ph: 'Двома словами: що має змінитися?', go: 'Почати з Vax →', hint: 'Перший місяць безкоштовно, далі від $39/міс. Без анкет і номера телефону.' },
+}[L] || null;
+const c = C || { sub: '', chips: [], ph: '', go: 'Start with Vax →', hint: '' };
 ---
 
 <section id="contact" class="contact">
   <div class="box">
     <div class="copy">
       <h2>{t.finalTitle}</h2>
-      <p>{t.sessSub}</p>
+      <p>{c.sub}</p>
       <div class="notes">
-        <span>◆ {t.sessNote}</span>
         <span>◆ {t.footerCities}</span>
       </div>
       <VaxSays text={t.vax.contact} pose="headset" big />
     </div>
-    <div class="card chatcard" data-chat-host>
-      <PageChat lang={lang} kind="request" chips={CHIPS} />
-      <div class="fallback" data-chat-fallback hidden>
-      <div class="success" data-form-success hidden>
-        <img class="vax-ok" src="/mascot/vax-happy.webp" alt="Vax" width="120" height="120" loading="lazy" data-vax-poke />
-        <p>{f.success}</p>
-        <p class="vax-line">{t.vax.success}</p>
-        <div class="room-link" data-room-box hidden><p>{f.room}</p><a href="#" class="room-btn" data-room-link>{f.roomBtn}</a></div>
-        <button type="button" class="again" data-form-again>{f.again}</button>
+    <form class="card ask" data-ws-ask data-app={navHref('/app/', lang)}>
+      <div class="chips">
+        {c.chips.map((x) => <button type="button" class="chip" data-chip aria-pressed="false">{x}</button>)}
       </div>
-      <form data-lead-form data-lang={lang} data-copy={JSON.stringify(copy)} novalidate>
-        <div class="modes" role="group">
-          <button type="button" class="pill mode" data-mode="request" aria-pressed="true">{t.submit}</button>
-          <button type="button" class="pill mode" data-mode="question" aria-pressed="false">{t.ask}</button>
-        </div>
-        <label class="field">
-          {f.name}
-          <input name="name" autocomplete="name" maxlength={LIMITS.name} aria-describedby="err-name" />
-          <span class="err" id="err-name" data-error="name" hidden>{f.required}</span>
-        </label>
-        <label class="field">
-          {f.contact}
-          <input name="contact" autocomplete="email" maxlength={LIMITS.contact} placeholder="@telegram / +971… / mail@…" aria-describedby="err-contact" />
-          <span class="err" id="err-contact" data-error="contact" hidden>{f.invalid}</span>
-        </label>
-        <div class="field" data-interest>
-          <span>{f.interest}</span>
-          <div class="chips">
-            {interests.map((o) => <button type="button" class="chip" data-interest-value={o.v} aria-pressed="false">{o.label}</button>)}
-          </div>
-        </div>
-        <label class="field">
-          <span data-message-label>{f.message}</span>
-          <textarea name="message" rows="4" maxlength={LIMITS.message}></textarea>
-        </label>
-        <label class="field promo">
-          <span>{lang === 'ru' ? 'Промокод (если есть)' : lang === 'ua' ? 'Промокод (якщо є)' : 'Promo code (if you have one)'}</span>
-          <input name="promo" maxlength="20" autocomplete="off" data-promo />
-        </label>
-        <input class="trap" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <p class="err form-err" data-form-error role="alert" hidden>{f.error}</p>
-        <button type="submit" class="submit"><span data-submit-label>{f.send}</span> <span data-submit-arrow>→</span></button>
-      </form>
-      </div>
-    </div>
+      <label class="field">
+        <span class="sr">{c.ph}</span>
+        <textarea name="q" rows="4" maxlength="1500" placeholder={c.ph}></textarea>
+      </label>
+      <button type="submit" class="submit">{c.go}</button>
+      <small class="hint">{c.hint}</small>
+    </form>
   </div>
 </section>
+
+<script>
+  // Chips mark the topic; submit opens Workspace with topics + own words (no contacts collected).
+  document.querySelectorAll<HTMLFormElement>('[data-ws-ask]').forEach((form) => {
+    const ta = form.querySelector('textarea')!;
+    form.querySelectorAll<HTMLButtonElement>('[data-chip]').forEach((b) => b.addEventListener('click', () => {
+      b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
+      ta.focus();
+    }));
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const picked = [...form.querySelectorAll('[data-chip][aria-pressed="true"]')].map((x) => x.textContent?.trim());
+      const q = [picked.join(', '), ta.value.trim()].filter(Boolean).join(': ');
+      location.href = form.dataset.app + (q ? '#q=' + encodeURIComponent(q) : '');
+    });
+  });
+</script>
 
 <style>
   .contact {
@@ -273,4 +255,8 @@ const copy = { message: f.message, question: f.question, send: f.send, sendQ: f.
   }
   .room-link p { margin: 8px 0; font-size: 14px; }
   .room-btn { display: inline-block; background: var(--acc); color: var(--dark-ink); font-weight: 700; padding: 10px 16px; border-radius: 999px; text-decoration: none; }
+  .ask { display: flex; flex-direction: column; gap: 16px; align-self: start; }
+  .ask textarea { font: 17px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 14px; width: 100%; box-sizing: border-box; resize: vertical; }
+  .hint { color: var(--mut); font-size: 14px; line-height: 1.5; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 </style>

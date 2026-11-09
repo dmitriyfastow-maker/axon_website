@@ -568,7 +568,7 @@ const en = {
     "faq": "Didn't find the answer? Ask me in the chat — or write to the humans on the team.",
     "why": "I tried running a business without a system. Zero stars, would not recommend.",
     "services": "One dish or the whole menu — your call. I usually order the whole menu.",
-    "contact": "Write to me right here — I answer in seconds. Our manager joins for calls and important decisions.",
+    "contact": "Write your task — I open your Workspace and start at once: the plan, the price, the first result.",
     "success": "Vax is already running to read your message.",
     "notFound": "Even raccoons get lost. Let’s go home.",
     "partners": "Every partner starts as a rookie raccoon. I started by telling my neighbour about Vaxo.",
