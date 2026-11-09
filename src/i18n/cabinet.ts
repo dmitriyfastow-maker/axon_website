@@ -9,7 +9,7 @@ const en = {
   logout: 'Log out',
   auth: {
     h1: 'Earn with Vaxo',
-    p: 'Recommend AI services and templates for small businesses. We do the work, you get the commission — every week.',
+    p: 'Recommend Vax plans and templates — for anyone, from personal tasks to companies. We do the work, you get the commission — every week.',
     ticks: [`${r.agencyOwn}% on services, ${r.products}% on templates — from the first sale`, 'Free academy and ready AI prompts — no experience needed', 'Clients stay yours for life, weekly payouts'],
     how: 'How the program works →',
     create: 'Create account',
@@ -25,7 +25,7 @@ const en = {
     privacy: 'Privacy Policy',
     privacyHref: '/privacy/',
   },
-  tabs: { home: 'Home', deals: 'Agency clients', links: 'Links', academy: 'Academy', prompts: 'AI prompts', team: 'Team', rules: 'Payouts & rules' },
+  tabs: { home: 'Home', deals: 'My clients', links: 'Links', academy: 'Academy', prompts: 'AI prompts', team: 'Team', rules: 'Payouts & rules' },
   home: {
     hi: 'Hi',
     today: 'Here is everything you need today.',
@@ -42,7 +42,7 @@ const en = {
     rates: 'Your rates',
     ratesSub: 'Full rates from your first sale. No levels, no waiting.',
     rateRows: [
-      [`${r.agencyOwn}%`, 'Agency services', `client you found · ${r.agencyGiven}% for a lead we give you`],
+      [`${r.agencyOwn}%`, 'Vaxo plans', `client you found · ${r.agencyGiven}% for a lead we give you`],
       [`+${r.agencyRenewal}%`, 'Every renewal', 'and monthly payment, for life'],
       [`${r.products}%`, 'Our templates', '$9 – $67 per sale'],
       [`${r.offers}%`, 'Partner offers', 'of the payout we receive (soon)'],
@@ -126,7 +126,7 @@ const en = {
     ],
   },
   cats: { mindset: '🧠 Mindset', video: '🎬 Videos', posts: '✍️ Posts & profile', outreach: '✉️ Personal messages', community: '💬 Communities', client: '🤝 Talking to clients', team: '👥 Team' } as Record<string, string>,
-  offers: { all: 'All of Vaxo — services, templates, offers (recommended)', start: 'Platform: first month free, then from $39/mo', shop: 'Templates for small business ($9–$67)', partners: 'Invite partners (your team)' } as Record<string, string>,
+  offers: { all: 'All of Vaxo — services, templates, offers (recommended)', start: 'Platform: first month free, then from $39/mo', shop: 'Templates ($9–$67)', partners: 'Invite partners (your team)' } as Record<string, string>,
   titles: {} as Record<string, string>,
   tools: [
     ['Ideas, scripts, messages', 'Claude (free plan), ChatGPT, Gemini', 'Claude Pro — remembers your offer in a Project, the strongest texts'],
@@ -144,7 +144,7 @@ const ua: CabinetText = {
   logout: 'Вийти',
   auth: {
     h1: 'Заробляйте з Vaxo',
-    p: 'Рекомендуйте ШІ-послуги та шаблони для малого бізнесу. Роботу робимо ми, комісію отримуєте ви — щотижня.',
+    p: 'Рекомендуйте підписки Vax і шаблони — для будь-кого, від особистих справ до компаній. Роботу робимо ми, комісію отримуєте ви — щотижня.',
     ticks: [`${r.agencyOwn}% з послуг, ${r.products}% з шаблонів — з першого продажу`, 'Безкоштовне навчання і готові ШІ-промпти — досвід не потрібен', 'Клієнти ваші назавжди, виплати щотижня'],
     how: 'Як працює програма →',
     create: 'Створити акаунт',
@@ -160,7 +160,7 @@ const ua: CabinetText = {
     privacy: 'Політику конфіденційності',
     privacyHref: '/ua/privacy/',
   },
-  tabs: { home: 'Головна', deals: 'Клієнти агенції', links: 'Посилання', academy: 'Навчання', prompts: 'ШІ-промпти', team: 'Команда', rules: 'Виплати і правила' },
+  tabs: { home: 'Головна', deals: 'Мої клієнти', links: 'Посилання', academy: 'Навчання', prompts: 'ШІ-промпти', team: 'Команда', rules: 'Виплати і правила' },
   home: {
     hi: 'Привіт',
     today: 'Тут усе, що потрібно сьогодні.',
@@ -177,7 +177,7 @@ const ua: CabinetText = {
     rates: 'Ваші ставки',
     ratesSub: 'Повні ставки з першого продажу. Без рівнів і очікування.',
     rateRows: [
-      [`${r.agencyOwn}%`, 'Послуги агенції', `клієнт, якого знайшли ви · ${r.agencyGiven}% за клієнта від нас`],
+      [`${r.agencyOwn}%`, 'Підписки Vaxo', `клієнт, якого знайшли ви · ${r.agencyGiven}% за клієнта від нас`],
       [`+${r.agencyRenewal}%`, 'Кожне продовження', 'і щомісячна оплата, назавжди'],
       [`${r.products}%`, 'Наші шаблони', '$9 – $67 за продаж'],
       [`${r.offers}%`, 'Офери партнерів', 'від виплати, яку отримуємо ми (скоро)'],
@@ -261,7 +261,7 @@ const ua: CabinetText = {
     ],
   },
   cats: { mindset: '🧠 Мислення', video: '🎬 Відео', posts: '✍️ Пости і профіль', outreach: '✉️ Особисті повідомлення', community: '💬 Спільноти', client: '🤝 Розмова з клієнтом', team: '👥 Команда' },
-  offers: { all: 'Уся екосистема Vaxo — послуги, шаблони, офери (рекомендуємо)', start: 'Платформа: перший місяць безкоштовно, далі від $39/міс', shop: 'Шаблони для бізнесу ($9–$67)', partners: 'Запросити партнерів (команда)' },
+  offers: { all: 'Уся екосистема Vaxo — послуги, шаблони, офери (рекомендуємо)', start: 'Платформа: перший місяць безкоштовно, далі від $39/міс', shop: 'Шаблони ($9–$67)', partners: 'Запросити партнерів (команда)' },
   titles: {
     opportunities: 'Знайти приховані можливості навколо мене',
     niche: 'Знайти свою золоту нішу',
@@ -295,7 +295,7 @@ const ru: CabinetText = {
   logout: 'Выйти',
   auth: {
     h1: 'Зарабатывайте с Vaxo',
-    p: 'Рекомендуйте ИИ-услуги и шаблоны для малого бизнеса. Работу делаем мы, комиссию получаете вы — каждую неделю.',
+    p: 'Рекомендуйте подписки Vax и шаблоны — для любого, от личных дел до компаний. Работу делаем мы, комиссию получаете вы — каждую неделю.',
     ticks: [`${r.agencyOwn}% с услуг, ${r.products}% с шаблонов — с первой продажи`, 'Бесплатное обучение и готовые ИИ-промпты — опыт не нужен', 'Клиенты ваши навсегда, выплаты каждую неделю'],
     how: 'Как работает программа →',
     create: 'Создать аккаунт',
@@ -311,7 +311,7 @@ const ru: CabinetText = {
     privacy: 'Политику конфиденциальности',
     privacyHref: '/ru/privacy/',
   },
-  tabs: { home: 'Главная', deals: 'Клиенты агентства', links: 'Ссылки', academy: 'Обучение', prompts: 'ИИ-промпты', team: 'Команда', rules: 'Выплаты и правила' },
+  tabs: { home: 'Главная', deals: 'Мои клиенты', links: 'Ссылки', academy: 'Обучение', prompts: 'ИИ-промпты', team: 'Команда', rules: 'Выплаты и правила' },
   home: {
     hi: 'Привет',
     today: 'Здесь всё, что нужно сегодня.',
@@ -328,7 +328,7 @@ const ru: CabinetText = {
     rates: 'Ваши ставки',
     ratesSub: 'Полные ставки с первой продажи. Без уровней и ожидания.',
     rateRows: [
-      [`${r.agencyOwn}%`, 'Услуги агентства', `клиент, которого нашли вы · ${r.agencyGiven}% за клиента от нас`],
+      [`${r.agencyOwn}%`, 'Подписки Vaxo', `клиент, которого нашли вы · ${r.agencyGiven}% за клиента от нас`],
       [`+${r.agencyRenewal}%`, 'Каждое продление', 'и ежемесячная оплата, навсегда'],
       [`${r.products}%`, 'Наши шаблоны', '$9 – $67 за продажу'],
       [`${r.offers}%`, 'Офферы партнёров', 'от выплаты, которую получаем мы (скоро)'],
@@ -412,7 +412,7 @@ const ru: CabinetText = {
     ],
   },
   cats: { mindset: '🧠 Мышление', video: '🎬 Видео', posts: '✍️ Посты и профиль', outreach: '✉️ Личные сообщения', community: '💬 Сообщества', client: '🤝 Разговор с клиентом', team: '👥 Команда' },
-  offers: { all: 'Вся экосистема Vaxo — услуги, шаблоны, офферы (рекомендуем)', start: 'Платформа: первый месяц бесплатно, дальше от $39/мес', shop: 'Шаблоны для бизнеса ($9–$67)', partners: 'Пригласить партнёров (команда)' },
+  offers: { all: 'Вся экосистема Vaxo — услуги, шаблоны, офферы (рекомендуем)', start: 'Платформа: первый месяц бесплатно, дальше от $39/мес', shop: 'Шаблоны ($9–$67)', partners: 'Пригласить партнёров (команда)' },
   titles: {
     opportunities: 'Найти скрытые возможности вокруг меня',
     niche: 'Найти свою золотую нишу',

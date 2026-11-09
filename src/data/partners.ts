@@ -78,7 +78,7 @@ const c = CALC;
 const en: Text = {
   meta: {
     title: 'Vaxo Partners — earn by recommending Vax',
-    description: `Promote AI automation, websites, chatbots and templates for small businesses. ${r.agencyOwn}% on services, ${r.products}% on templates from day one, free training and AI toolkit, weekly payouts.`,
+    description: `Recommend Vax — the platform that does the work for anyone: sites, apps, AI, ads, content and templates. ${r.agencyOwn}% on services, ${r.products}% on templates from day one, free training and AI toolkit, weekly payouts.`,
   },
   eyebrow: 'Partner program',
   h1: 'Recommend Vax, the personal doer for everyone — and earn 50%.',
@@ -87,7 +87,7 @@ const en: Text = {
   login: 'Log in',
   flow: ['Your link', 'A client request', 'We do the work', 'You get paid'],
   stats: [
-    [r.agencyOwn, '%', 'on agency services'],
+    [r.agencyOwn, '%', 'on Vaxo plans'],
     [r.products, '%', 'on our templates'],
     [r.agencyRenewal, '+%', 'every month the client pays'],
     [r.holdDays, ' days', 'from payment to payout'],
@@ -103,17 +103,17 @@ const en: Text = {
   promoteH: 'What you promote — and what you earn',
   directions: [
     {
-      name: 'Agency services',
+      name: 'Vaxo plans',
       rate: `${r.agencyOwn}%`,
       price: 'plans from $39/mo',
-      what: 'Automation, websites and AI chatbots for small businesses. Our team does all the work.',
+      what: 'Vax and our team do the work for anyone — from personal tasks to companies: sites, apps, AI, ads, content.',
       points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `Clients can join too and earn the same`],
     },
     {
       name: 'Our templates',
       rate: `${r.products}%`,
       price: '$9 – $67',
-      what: 'Ready-made templates and guides for small businesses. A cheap, easy first purchase — great for content.',
+      what: 'Ready-made templates and guides for everyday and work tasks. A cheap, easy first purchase — great for content.',
       points: ['Half of every sale is yours', 'Bundle of all templates — $67', 'Instant download, no support needed from you'],
     },
     {
@@ -187,7 +187,7 @@ const en: Text = {
 const ua: Text = {
   meta: {
     title: 'Партнерка Vaxo — заробляйте, рекомендуючи Vax',
-    description: `Рекомендуйте автоматизацію, сайти, чат-боти та шаблони для бізнесу. ${r.agencyOwn}% з послуг, ${r.products}% з шаблонів з першого дня, безкоштовне навчання і ШІ-набір, виплати щотижня.`,
+    description: `Рекомендуйте Vax — платформу, яка робить роботу за будь-кого: сайти, застосунки, ШІ, реклама, контент і шаблони. ${r.agencyOwn}% з послуг, ${r.products}% з шаблонів з першого дня, безкоштовне навчання і ШІ-набір, виплати щотижня.`,
   },
   eyebrow: 'Партнерська програма',
   h1: 'Рекомендуйте Vax, особистого виконавця для кожного, і заробляйте 50%.',
@@ -196,7 +196,7 @@ const ua: Text = {
   login: 'Увійти',
   flow: ['Ваше посилання', 'Заявка клієнта', 'Ми робимо роботу', 'Вам виплата'],
   stats: [
-    [r.agencyOwn, '%', 'з послуг агенції'],
+    [r.agencyOwn, '%', 'з підписок Vaxo'],
     [r.products, '%', 'з наших шаблонів'],
     [r.agencyRenewal, '+%', 'щомісяця, поки клієнт платить'],
     [r.holdDays, ' днів', 'від оплати до виплати'],
@@ -212,17 +212,17 @@ const ua: Text = {
   promoteH: 'Що рекомендуєте — і скільки заробляєте',
   directions: [
     {
-      name: 'Послуги агенції',
+      name: 'Підписки Vaxo',
       rate: `${r.agencyOwn}%`,
       price: 'підписка від $39/міс',
-      what: 'Автоматизація, сайти та ШІ-чат-боти для малого бізнесу. Усю роботу робить наша команда.',
+      what: 'Vax і наша команда роблять роботу для будь-кого — від особистих справ до компаній: сайти, застосунки, ШІ, реклама, контент.',
       points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `Клієнти теж можуть приєднатися й заробляти так само`],
     },
     {
       name: 'Наші шаблони',
       rate: `${r.products}%`,
       price: '$9 – $67',
-      what: 'Готові шаблони та посібники для малого бізнесу. Дешева і легка перша покупка — ідеально для контенту.',
+      what: 'Готові шаблони та посібники для побутових і робочих задач. Дешева і легка перша покупка — ідеально для контенту.',
       points: ['Половина кожного продажу — ваша', 'Набір усіх шаблонів — $67', 'Миттєве завантаження, підтримка від вас не потрібна'],
     },
     {
@@ -296,7 +296,7 @@ const ua: Text = {
 const ru: Text = {
   meta: {
     title: 'Партнёрка Vaxo — зарабатывайте, рекомендуя Vax',
-    description: `Рекомендуйте автоматизацию, сайты, чат-боты и шаблоны для бизнеса. ${r.agencyOwn}% с услуг, ${r.products}% с шаблонов с первого дня, бесплатное обучение и ИИ-набор, выплаты каждую неделю.`,
+    description: `Рекомендуйте Vax — платформу, которая делает работу за любого: сайты, приложения, ИИ, реклама, контент и шаблоны. ${r.agencyOwn}% с услуг, ${r.products}% с шаблонов с первого дня, бесплатное обучение и ИИ-набор, выплаты каждую неделю.`,
   },
   eyebrow: 'Партнёрская программа',
   h1: 'Рекомендуйте Vax, личного исполнителя для каждого, и зарабатывайте 50%.',
@@ -305,7 +305,7 @@ const ru: Text = {
   login: 'Войти',
   flow: ['Ваша ссылка', 'Заявка клиента', 'Мы делаем работу', 'Вам выплата'],
   stats: [
-    [r.agencyOwn, '%', 'с услуг агентства'],
+    [r.agencyOwn, '%', 'с подписок Vaxo'],
     [r.products, '%', 'с наших шаблонов'],
     [r.agencyRenewal, '+%', 'каждый месяц, пока клиент платит'],
     [r.holdDays, ' дней', 'от оплаты до выплаты'],
@@ -321,17 +321,17 @@ const ru: Text = {
   promoteH: 'Что рекомендуете — и сколько зарабатываете',
   directions: [
     {
-      name: 'Услуги агентства',
+      name: 'Подписки Vaxo',
       rate: `${r.agencyOwn}%`,
       price: 'подписка от $39/мес',
-      what: 'Автоматизация, сайты и ИИ-чат-боты для малого бизнеса. Всю работу делает наша команда.',
+      what: 'Vax и наша команда делают работу для любого — от личных дел до компаний: сайты, приложения, ИИ, реклама, контент.',
       points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `Клиенты тоже могут присоединиться и зарабатывать так же`],
     },
     {
       name: 'Наши шаблоны',
       rate: `${r.products}%`,
       price: '$9 – $67',
-      what: 'Готовые шаблоны и руководства для малого бизнеса. Дешёвая и лёгкая первая покупка — идеально для контента.',
+      what: 'Готовые шаблоны и руководства для бытовых и рабочих задач. Дешёвая и лёгкая первая покупка — идеально для контента.',
       points: ['Половина каждой продажи — ваша', 'Набор всех шаблонов — $67', 'Мгновенная загрузка, поддержка от вас не нужна'],
     },
     {
