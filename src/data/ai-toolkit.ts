@@ -6,22 +6,22 @@ export const OFFERS = [
   {
     id: 'all',
     target: '/',
-    text: 'Vaxo — everything a small business needs to get more customers with AI, in one place: done-for-you services (AI chat assistant that answers customers 24/7, websites, automations, Google reviews, content — one platform by subscription: Care $39 / Growth $129 / Pro $299 a month, first month free, anything custom for an extra fee), ready-made templates ($9–$67, instant download), free tools (lost-leads and pricing calculators) and partner offers. The Vaxo team does all the work.',
+    text: 'Vaxo — one AI platform for anyone, from personal tasks to companies: just say what you need and Vax takes it on — websites, an AI that answers customers 24/7, bookings, CRM, automations, Google reviews, content. One subscription: Care $39 / Growth $129 / Pro $299 a month, first month free, anything custom for an extra fee. Plus ready-made templates ($9–$67, instant download) and free tools (lost-leads and pricing calculators). You only pay the subscription — Vaxo and AI do the work.',
   },
   {
     id: 'start',
     target: '/start/',
-    text: 'Vaxo for small businesses: one platform — website or connection to theirs, an AI that answers customers 24/7, all leads in one app, analytics. The first month is free, then from $39 a month; the client only pays the subscription, Vaxo and AI do the work.',
+    text: 'Vaxo for any business, big or small: one platform — website or connection to theirs, an AI that answers customers 24/7, all leads in one app, analytics. The first month is free, then from $39 a month; the client only pays the subscription, Vaxo and AI do the work.',
   },
   {
     id: 'shop',
     target: '/shop/',
-    text: 'Vaxo ready-made templates for small businesses ($9–$67): AI prompt pack, client tracker, customer message templates, pricing calculator, review request kit, booking checklists and more. Instant download.',
+    text: 'Vaxo ready-made templates for any business ($9–$67): AI prompt pack, client tracker, customer message templates, pricing calculator, review request kit, booking checklists and more. Instant download.',
   },
   {
     id: 'partners',
     target: '/partners/',
-    text: 'The free Vaxo partner program for people 18+: recommend AI services and templates for small businesses, earn 30% on services and 50% on templates from the first sale, free training and AI tools, weekly payouts. No income is guaranteed — earnings depend only on real sales.',
+    text: 'The free Vaxo partner program for people 18+: recommend AI services and templates to people and businesses, earn 30% on services and 50% on templates from the first sale, free training and AI tools, weekly payouts. No income is guaranteed — earnings depend only on real sales.',
   },
 ];
 
