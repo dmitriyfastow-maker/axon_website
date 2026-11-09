@@ -13,18 +13,20 @@ const CT = CAB_T[lang];
 
 const T = {
   en: {
-    ordH: 'Send to Vaxo production', ordSteps: ['The brief Vax prepared is on the Canvas: fix anything there', 'Attach your materials to this chat: photos, videos, logo (big videos as a Drive or Dropbox link)', 'The team replies here and by email with the deadline and price; nothing starts without your yes'], ordNote: 'Anything to add: deadline, style, references (optional)', ordAttach: 'Attach files', ordGo: 'Send to production', ordDone: 'Sent. The team will reply here and by email with the deadline and price.',
+    tmH: 'Your team', tmP: 'Invite staff by email. They sign in at vaxogroup.com/app/ with that email and see this business in the sidebar under «Team work».', tmMail: 'Employee email', tmRole: { manager: 'Manager: requests and bookings', viewer: 'Viewer: numbers only' }, tmAdd: 'Invite', tmNone: 'Nobody yet. You are the owner and see everything.', tmDel: 'Remove', tmBad: 'Check the email.', tmMine: 'Team work', tmMineP: 'Businesses where you are on the team:',
+    rz: 'Drag to resize. Double-click: default width',
+    ordH: 'Start this task', ordSteps: ['Vax put the plan on the Canvas: change anything there or just say it in the chat', 'Have photos, videos or a logo? Attach them here. If not, or you need help with them, Vax will pick or make them', 'Vax works on it in the background: progress and the finished result appear right here. If it needs more than your plan includes, Vax says so before starting'], ordNote: 'Wishes: deadline, style, examples (optional)', ordAttach: 'Attach files', ordGo: 'Start', ordDone: 'Started. Vax is on it: progress and the result will appear in this chat.',
     bkOn: 'Online booking on the site', bkP: 'Visitors see the free times and book themselves: no calls and no back and forth. Each booking lands in Requests and the time is taken for others.', bkWhen: 'When you work', bkWd: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], bkFrom: 'Opens', bkTo: 'Closes', bkStep: 'One visit takes', bkMin: 'min', bkCap: 'People working at once', bkQH: 'Short questions before the visit', bkQP: 'Up to 3, answered with one tap. They help you prepare; nobody has to type.', bkQ: 'Question, e.g. Hair length now?', bkO: 'Answers with commas: short, medium, long', bkDel: 'Remove', bkAddQ: 'Add a question', bkGiftH: 'Gift for a first visit', bkGiftP: 'Optional. People like a small welcome gift and leave their details more willingly. Turn it on only if you really give it.', bkGift: 'Offer a first-visit gift', bkGiftPh: 'e.g. beard styling as a gift', bkSave: 'Save booking', bkSaved: 'Saved. The site already shows these times.', bkNoDays: 'Pick at least one working day.', bkList: 'Upcoming bookings', bkNone: 'No bookings yet. Open the site and try booking yourself.', bkCancel: 'Cancel', bkCancelQ: 'Cancel this booking? The time becomes free on the site.', knH: 'What the consultant knows', knP: 'Prices, hours, address, how to get there, rules, popular questions. Paste text or upload files: price list, menu, PDF, Word, Excel or a photo. The consultant and Vax use it; nothing here is shown on the site as is.', knPh: 'For example: Haircut — 500 UAH, 45 min. Beard — 300 UAH. Open Mon–Sat 10–20. Address: …', knUp: 'Upload a file', knSave: 'Save', knSaved: 'Saved. The consultant answers from it now.', knReading: 'Reading {f}…', knAdded: 'Added from {f}. Check and save.', knUnread: 'Could not read {f}. Paste the text instead.', knBig: '{f} is larger than 5 MB.',
     showCv: 'Canvas', hideCv: 'Hide', full: 'Full screen', unfull: 'Normal view', domBuyH: 'No domain yet? How to buy one in 5 minutes', domBuy: ['Pick a short address like your business name, e.g. grain-coffee.com.', 'Buy it at a registrar: Cloudflare Registrar, Namecheap or Porkbun (a .com is usually about $10–12 a year). You need only a card and an email.', 'Come back here, type the address and add the one record Vaxo shows at your registrar. Vaxo checks the rest by itself.'], domAskVax: 'Ask Vax to walk me through it', domAskQ: 'Help me buy and connect my own domain to my site, step by step',
     pubChanges: 'Publish changes', aiAsk: 'What should change in this block?', aiBusy: 'Vax is rewriting the block…', photoAsk: 'What should the photo show? (empty: Vax decides)', photoBusy: 'Drawing a new photo…', photoFail: 'Could not draw a photo now. Try later.',
-    hello3: 'Describe your business', sub3: 'One word is enough. Vax builds everything at once: a site with photos, requests in a CRM, a chat bot on the site and a partner programme.', eco: [['site', 'Site with photos'], ['doc', 'Requests in CRM'], ['reply', 'Chat bot 24/7'], ['link', 'Partner programme']], bizEx: ['Barbershop', 'Coffee shop', 'Dental clinic', 'Florist', 'Fitness studio', 'Cleaning'], exL2: 'Or any task, the result opens on the right:', ptabs: { site: 'Site', book: 'Booking', crm: 'Requests', bot: 'AI consultant', partner: 'Partners', domain: 'Domain' }, botOn: 'The chat bot works on your site', botP: 'It answers visitors 24/7 from the text of your site, and a contact left in the chat becomes a request in your CRM.', botKnows: 'What it knows', botTry: 'Try it on the site', botNoSite: 'Build the site first: describe the business in the chat.', fold: 'Fold', unfold: 'Unfold',
-    map: 'Map of everything', newProj: 'New project', projName: 'Project name', noProj: 'No project', projEmpty: 'Empty. Start a chat here from ⋯', newChatIn: 'New chat in this project', mat: 'Materials', reply: 'Reply', pin: 'Pin', unpin: 'Unpin', fwd: 'Forward', copyMsg: 'Copy', fwdTo: 'Forward to a chat', fwdNew: 'New chat', fwdDone: 'Forwarded', fwdOpen: 'Open', pinned: 'Pinned', replyTo: 'Reply to', fwdFrom: 'Forwarded from', rename: 'Rename', moveTo: 'Move to project', chatMenu: 'Actions', delProjQ: 'Delete the project? Its chats stay, without a project.', matTabs: { site: 'Sites', tool: 'Tools', doc: 'Documents', image: 'Pictures', link: 'Links', file: 'Files', pin: 'Pinned' }, matNone: 'Nothing here yet.', mapEmpty: 'No chats yet. Everything Vax makes will appear here.', mapK: { site: 'live sites', crm: 'requests', tool: 'tools', doc: 'documents', image: 'pictures' },
+    hello3: 'What shall we do?', sub3: 'Any task, from a letter or a trip plan to a whole business. For a business one word is enough: Vax builds the site, booking, CRM for your team, the AI consultant and partners at once.', eco: [['site', 'Site with photos'], ['doc', 'Requests in CRM'], ['reply', 'Chat bot 24/7'], ['link', 'Partner programme']], bizEx: ['Barbershop', 'Coffee shop', 'Dental clinic', 'Florist', 'Fitness studio', 'Cleaning'], exL2: 'Or any task, from everyday to company level:', ptabs: { site: 'Site', book: 'Booking', crm: 'Requests', team: 'Team', bot: 'AI consultant', partner: 'Partners', domain: 'Domain' }, botOn: 'The chat bot works on your site', botP: 'It answers visitors 24/7 from the text of your site, and a contact left in the chat becomes a request in your CRM.', botKnows: 'What it knows', botTry: 'Try it on the site', botNoSite: 'Build the site first: describe the business in the chat.', fold: 'Fold', unfold: 'Unfold',
+    map: 'All my results', newProj: 'New project', projName: 'Project name', noProj: 'No project', projEmpty: 'Empty. Drag a chat here or start one from ⋯', newChatIn: 'New chat in this project', mat: 'Materials', reply: 'Reply', pin: 'Pin', unpin: 'Unpin', fwd: 'Forward', copyMsg: 'Copy', fwdTo: 'Forward to a chat', fwdNew: 'New chat', fwdDone: 'Forwarded', fwdOpen: 'Open', pinned: 'Pinned', replyTo: 'Reply to', fwdFrom: 'Forwarded from', rename: 'Rename', moveTo: 'Move to project', chatMenu: 'Actions', delProjQ: 'Delete the project? Its chats stay, without a project.', matTabs: { site: 'Sites', tool: 'Tools', doc: 'Documents', image: 'Pictures', link: 'Links', file: 'Files', pin: 'Pinned' }, matNone: 'Nothing here yet.', mapEmpty: 'No chats yet. Everything Vax makes will appear here.', mapK: { site: 'live sites', crm: 'requests', tool: 'tools', doc: 'documents', image: 'pictures' },
     fK: 'Line above the headline', styles: { editorial: 'Premium dark', clinic: 'Clean', bold: 'Bold', soft: 'Warm', nature: 'Natural' },
     needSite: 'Where should requests from your site go? Enter your email: we send a code, and the site goes live at once on its own address.',
     studio: 'Result studio', studioP: 'Everything Vax builds appears here, working: a site at its own address, a table, a plan.', studioEx: 'Live example: this is what you get in a minute', openLive: 'Open the public link', liveNow: '● Live on the internet', tryPhone: 'Open it from your phone and send the form: the request appears in your CRM with the date and time.', saveSite: 'Save changes', editText: 'Edit the text', myPages: 'Your other pages',
     hello2: 'Start here', sub2: 'Pick a module or give Vax a task. The result opens on the Canvas, ready to use.',
     tiles: { site: ['Build a site and form', 'A page with a request form, live in a minute'], crm: ['Open my CRM', 'Every request from your site on one board'], partner: ['Partner cabinet', 'Your links, invites and balance'] },
-    exL: 'Or give a task. The ready result opens on the Canvas:', ex: ['A landing page for a coffee shop with a pre-order form', 'Financial model for an online school launch at $50k revenue: ads, team and taxes', 'A 30-day training and recovery protocol'],
+    exL: 'Or any task, from everyday to company level:', ex: ['Plan a 5-day trip to Italy: route, budget, what to book', 'Financial model for an online school launch at $50k revenue: ads, team and taxes', 'A 30-day training and recovery protocol'],
     lim: { h: 'Usage limits', day: 'Today', week: 'This week', used: '{p}% used', reset: 'Renews {t}', note: 'The limit follows the amount of work, not the number of messages: a short answer uses little, a big document, a site or a picture uses more.', today: 'today at {h}', tomorrow: 'tomorrow at {h}', on: '{d} at {h}', outDay: 'Today’s limit is used up. It renews {t}. Everything is saved.', outWeek: 'This week’s limit is used up. It renews {t}. Everything is saved.', more: 'Need more? Plans' }, usageGuest: 'Guest: a small daily limit. Sign in free for more.',
     pTabs: { plan: 'Plan', memory: 'Memory', projects: 'Projects', account: 'Account' },
     pub: 'Publish', pubBusy: 'Publishing…', pubDone: 'Published', pubAgain: 'Update the page', pubOff: 'Unpublish', replaceQ: 'Replace your current site with this page?', pubLink: 'Public link',
@@ -45,18 +47,20 @@ const T = {
     sH: 'Sign in to Vaxo', sP: 'Enter your email. We send a link: one tap and you are in. No password.', sEmail: 'Your email', sGo: 'Send the link', sSent: 'Check your email and tap the link. Or enter the code from the letter:', sCode: 'Six-digit code', sIn: 'Sign in', sBad: 'Check the email address.', sWrong: 'Wrong or expired code.', sWait: 'Wait a minute and try again.', sPw: 'Sign in with a password', sAgree: 'By continuing you accept the', terms: 'Terms', and: 'and', privacy: 'Privacy Policy',
   },
   ru: {
-    ordH: 'Передать в производство Vaxo', ordSteps: ['Бриф, который подготовил Vax, на холсте: поправьте там что угодно', 'Прикрепите материалы в этот чат: фото, видео, логотип (большие видео — ссылкой на Google Drive или Dropbox)', 'Команда ответит здесь и на почту со сроком и ценой; без вашего «да» ничего не начнётся'], ordNote: 'Что добавить: срок, стиль, примеры (необязательно)', ordAttach: 'Прикрепить файлы', ordGo: 'Отправить в производство', ordDone: 'Отправлено. Команда ответит здесь и на почту со сроком и ценой.',
+    tmH: 'Ваша команда', tmP: 'Пригласите сотрудников по почте. Они входят на vaxogroup.com/app/ с этой почтой и видят этот бизнес слева в разделе «Работа в команде».', tmMail: 'Почта сотрудника', tmRole: { manager: 'Менеджер: заявки и записи', viewer: 'Наблюдатель: только цифры' }, tmAdd: 'Пригласить', tmNone: 'Пока никого. Вы владелец и видите всё.', tmDel: 'Убрать', tmBad: 'Проверьте почту.', tmMine: 'Работа в команде', tmMineP: 'Бизнесы, где вы в команде:',
+    rz: 'Потяните, чтобы изменить ширину. Двойной клик — как было',
+    ordH: 'Запустить задачу', ordSteps: ['Vax разложил план на холсте: поправьте там что угодно или просто напишите в чат', 'Есть фото, видео или логотип — прикрепите сюда. Нет или нужна помощь с ними — Vax подберёт или сделает сам', 'Vax делает это в фоне: прогресс и готовый результат появятся прямо здесь. Если задаче нужно больше, чем входит в тариф, Vax скажет это до начала'], ordNote: 'Пожелания: срок, стиль, примеры (необязательно)', ordAttach: 'Прикрепить файлы', ordGo: 'Запустить', ordDone: 'Запущено. Vax работает над задачей: прогресс и результат появятся в этом чате.',
     bkOn: 'Онлайн-запись на сайте', bkP: 'Посетители видят свободные окна и записываются сами: без звонков и переписки. Каждая запись попадает в «Заявки», а время закрывается для других.', bkWhen: 'Когда вы работаете', bkWd: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], bkFrom: 'Открываетесь', bkTo: 'Закрываетесь', bkStep: 'Один визит длится', bkMin: 'мин', bkCap: 'Сколько мастеров одновременно', bkQH: 'Короткие вопросы перед визитом', bkQP: 'До 3 вопросов, ответ одним нажатием. Помогают подготовиться, писать ничего не нужно.', bkQ: 'Вопрос, например: Длина волос сейчас?', bkO: 'Ответы через запятую: короткие, средние, длинные', bkDel: 'Убрать', bkAddQ: 'Добавить вопрос', bkGiftH: 'Подарок за первый визит', bkGiftP: 'По желанию. Небольшой подарок новичку — и люди охотнее записываются и оставляют данные. Включайте, только если правда дарите.', bkGift: 'Дарить подарок за первый визит', bkGiftPh: 'например: укладка бороды в подарок', bkSave: 'Сохранить запись', bkSaved: 'Сохранено. На сайте уже эти окна.', bkNoDays: 'Выберите хотя бы один рабочий день.', bkList: 'Ближайшие записи', bkNone: 'Записей пока нет. Откройте сайт и запишитесь сами для проверки.', bkCancel: 'Отменить', bkCancelQ: 'Отменить запись? Время снова станет свободным на сайте.', knH: 'Что знает консультант', knP: 'Цены, часы работы, адрес, как добраться, правила, частые вопросы. Вставьте текст или загрузите файлы: прайс, меню, PDF, Word, Excel или фото. Консультант и Vax берут факты отсюда; на сайте это напрямую не показывается.', knPh: 'Например: Стрижка — 500 грн, 45 мин. Борода — 300 грн. Работаем Пн–Сб 10–20. Адрес: …', knUp: 'Загрузить файл', knSave: 'Сохранить', knSaved: 'Сохранено. Консультант уже отвечает по этим данным.', knReading: 'Читаю {f}…', knAdded: 'Добавлено из {f}. Проверьте и сохраните.', knUnread: 'Не получилось прочитать {f}. Вставьте текст вручную.', knBig: '{f} больше 5 МБ.',
     showCv: 'Холст', hideCv: 'Скрыть', full: 'На весь экран', unfull: 'Обычный вид', domBuyH: 'Нет домена? Как купить за 5 минут', domBuy: ['Придумайте короткий адрес, как название бизнеса, например zerno-coffee.com. Для Украины подойдёт и .com.ua.', 'Купите его у регистратора: Cloudflare Registrar, Namecheap или Porkbun (.com обычно около $10–12 в год), для .ua — imena.ua. Нужны только карта и почта.', 'Вернитесь сюда, впишите адрес и добавьте у регистратора одну запись, которую покажет Vaxo. Остальное Vaxo проверит сам.'], domAskVax: 'Попросить Vax провести по шагам', domAskQ: 'Помоги купить и подключить свой домен к моему сайту, по шагам',
     pubChanges: 'Опубликовать изменения', aiAsk: 'Что изменить в этом блоке?', aiBusy: 'Vax переписывает блок…', photoAsk: 'Что показать на фото? (пусто — Vax решит сам)', photoBusy: 'Рисую новое фото…', photoFail: 'Сейчас не получилось нарисовать фото. Попробуйте позже.',
-    hello3: 'Опишите свой бизнес', sub3: 'Хватит одного слова. Vax соберёт всё сразу: сайт с фото, заявки в CRM, чат-бот на сайте и партнёрскую программу.', eco: [['site', 'Сайт с фото'], ['doc', 'Заявки в CRM'], ['reply', 'Чат-бот 24/7'], ['link', 'Партнёрская программа']], bizEx: ['Барбершоп', 'Кофейня', 'Стоматология', 'Цветочный магазин', 'Фитнес-студия', 'Клининг'], exL2: 'Или любая задача, результат откроется справа:', ptabs: { site: 'Сайт', book: 'Запись', crm: 'Заявки', bot: 'ИИ-консультант', partner: 'Партнёры', domain: 'Домен' }, botOn: 'Чат-бот работает на вашем сайте', botP: 'Отвечает посетителям 24/7 по тексту вашего сайта, а оставленный в чате контакт становится заявкой в CRM.', botKnows: 'Что он знает', botTry: 'Проверить на сайте', botNoSite: 'Сначала соберите сайт: опишите бизнес в чате.', fold: 'Свернуть', unfold: 'Развернуть',
-    map: 'Карта всего', newProj: 'Новый проект', projName: 'Название проекта', noProj: 'Без проекта', projEmpty: 'Пусто. Новый разговор здесь — через ⋯', newChatIn: 'Новый разговор в проекте', mat: 'Материалы', reply: 'Ответить', pin: 'Закрепить', unpin: 'Открепить', fwd: 'Переслать', copyMsg: 'Копировать', fwdTo: 'Переслать в разговор', fwdNew: 'Новый разговор', fwdDone: 'Переслано', fwdOpen: 'Открыть', pinned: 'Закреплено', replyTo: 'Ответ на', fwdFrom: 'Переслано из', rename: 'Переименовать', moveTo: 'Перенести в проект', chatMenu: 'Действия', delProjQ: 'Удалить проект? Разговоры останутся, без проекта.', matTabs: { site: 'Сайты', tool: 'Инструменты', doc: 'Документы', image: 'Картинки', link: 'Ссылки', file: 'Файлы', pin: 'Закреплённые' }, matNone: 'Здесь пока пусто.', mapEmpty: 'Разговоров пока нет. Всё, что сделает Vax, появится здесь.', mapK: { site: 'живых сайтов', crm: 'заявок', tool: 'инструментов', doc: 'документов', image: 'картинок' },
+    hello3: 'Что сделаем?', sub3: 'Любая задача — от письма или плана отпуска до целого бизнеса. Для бизнеса хватит одного слова: Vax сразу соберёт сайт, запись, CRM для команды, ИИ-консультанта и партнёров.', eco: [['site', 'Сайт с фото'], ['doc', 'Заявки в CRM'], ['reply', 'Чат-бот 24/7'], ['link', 'Партнёрская программа']], bizEx: ['Барбершоп', 'Кофейня', 'Стоматология', 'Цветочный магазин', 'Фитнес-студия', 'Клининг'], exL2: 'Или любая задача — от бытовой до задачи компании:', ptabs: { site: 'Сайт', book: 'Запись', crm: 'Заявки', team: 'Команда', bot: 'ИИ-консультант', partner: 'Партнёры', domain: 'Домен' }, botOn: 'Чат-бот работает на вашем сайте', botP: 'Отвечает посетителям 24/7 по тексту вашего сайта, а оставленный в чате контакт становится заявкой в CRM.', botKnows: 'Что он знает', botTry: 'Проверить на сайте', botNoSite: 'Сначала соберите сайт: опишите бизнес в чате.', fold: 'Свернуть', unfold: 'Развернуть',
+    map: 'Все мои результаты', newProj: 'Новый проект', projName: 'Название проекта', noProj: 'Без проекта', projEmpty: 'Пусто. Перетащите сюда разговор или начните новый через ⋯', newChatIn: 'Новый разговор в проекте', mat: 'Материалы', reply: 'Ответить', pin: 'Закрепить', unpin: 'Открепить', fwd: 'Переслать', copyMsg: 'Копировать', fwdTo: 'Переслать в разговор', fwdNew: 'Новый разговор', fwdDone: 'Переслано', fwdOpen: 'Открыть', pinned: 'Закреплено', replyTo: 'Ответ на', fwdFrom: 'Переслано из', rename: 'Переименовать', moveTo: 'Перенести в проект', chatMenu: 'Действия', delProjQ: 'Удалить проект? Разговоры останутся, без проекта.', matTabs: { site: 'Сайты', tool: 'Инструменты', doc: 'Документы', image: 'Картинки', link: 'Ссылки', file: 'Файлы', pin: 'Закреплённые' }, matNone: 'Здесь пока пусто.', mapEmpty: 'Разговоров пока нет. Всё, что сделает Vax, появится здесь.', mapK: { site: 'живых сайтов', crm: 'заявок', tool: 'инструментов', doc: 'документов', image: 'картинок' },
     fK: 'Строка над заголовком', styles: { editorial: 'Премиум тёмный', clinic: 'Чистый', bold: 'Дерзкий', soft: 'Тёплый', nature: 'Природный' },
     needSite: 'Куда присылать заявки с сайта? Введите почту: пришлём код, и сайт сразу заработает по своей ссылке.',
     studio: 'Студия результата', studioP: 'Здесь появляется всё, что делает Vax, в рабочем виде: сайт по своей ссылке, таблица, план.', studioEx: 'Живой пример: так выглядит результат через минуту', openLive: 'Открыть публичную ссылку', liveNow: '● Работает в интернете', tryPhone: 'Откройте с телефона и отправьте форму: заявка появится в вашей CRM с датой и временем.', saveSite: 'Сохранить изменения', editText: 'Править текст', myPages: 'Другие ваши страницы',
     hello2: 'С чего начнём', sub2: 'Выберите модуль или дайте Vax задачу. Результат откроется на холсте, готовый к работе.',
     tiles: { site: ['Собрать сайт и форму', 'Страница с формой заявок, работает через минуту'], crm: ['Открыть мою CRM', 'Все заявки с сайта на одной доске'], partner: ['Партнёрский кабинет', 'Ваши ссылки, приглашения и баланс'] },
-    exL: 'Или поставьте задачу. Готовый результат откроется на холсте:', ex: ['Посадочная страница для кофейни с формой предзаказа', 'Финмодель запуска онлайн-школы на $50k оборота: реклама, команда, налоги', '30-дневный протокол тренировок и восстановления'],
+    exL: 'Или любая задача — от бытовой до задачи компании:', ex: ['Спланируй отпуск в Италии на 5 дней: маршрут, бюджет, что забронировать', 'Финмодель запуска онлайн-школы на $50k оборота: реклама, команда, налоги', '30-дневный протокол тренировок и восстановления'],
     lim: { h: 'Лимиты', day: 'Сегодня', week: 'Неделя', used: 'Использовано {p}%', reset: 'Обновится {t}', note: 'Лимит считается по объёму работы, а не по числу сообщений: короткий ответ тратит мало, большой документ, сайт или картинка больше.', today: 'сегодня в {h}', tomorrow: 'завтра в {h}', on: '{d} в {h}', outDay: 'Лимит на сегодня исчерпан. Обновится {t}. Всё сохранено.', outWeek: 'Лимит на неделю исчерпан. Обновится {t}. Всё сохранено.', more: 'Нужно больше? Тарифы' }, usageGuest: 'Гость: небольшой лимит на день. Войдите бесплатно, лимит больше.',
     pTabs: { plan: 'Тариф', memory: 'Память', projects: 'Проекты', account: 'Аккаунт' },
     pub: 'Опубликовать', pubBusy: 'Публикую…', pubDone: 'Опубликовано', pubAgain: 'Обновить страницу', pubOff: 'Снять с публикации', replaceQ: 'Заменить ваш текущий сайт этой страницей?', pubLink: 'Публичная ссылка',
@@ -77,18 +81,20 @@ const T = {
     sH: 'Вход в Vaxo', sP: 'Введите почту. Пришлём ссылку: одно нажатие, и вы внутри. Без пароля.', sEmail: 'Ваша почта', sGo: 'Прислать ссылку', sSent: 'Проверьте почту и нажмите ссылку. Или введите код из письма:', sCode: 'Код из шести цифр', sIn: 'Войти', sBad: 'Проверьте адрес почты.', sWrong: 'Код неверный или устарел.', sWait: 'Подождите минуту и попробуйте снова.', sPw: 'Войти с паролем', sAgree: 'Продолжая, вы принимаете', terms: 'Условия', and: 'и', privacy: 'Политику конфиденциальности',
   },
   ua: {
-    ordH: 'Передати у виробництво Vaxo', ordSteps: ['Бриф, який підготував Vax, на полотні: виправте там будь-що', 'Прикріпіть матеріали в цей чат: фото, відео, логотип (великі відео — посиланням на Google Drive чи Dropbox)', 'Команда відповість тут і на пошту зі строком і ціною; без вашого «так» нічого не почнеться'], ordNote: 'Що додати: строк, стиль, приклади (необовʼязково)', ordAttach: 'Прикріпити файли', ordGo: 'Надіслати у виробництво', ordDone: 'Надіслано. Команда відповість тут і на пошту зі строком і ціною.',
+    tmH: 'Ваша команда', tmP: 'Запросіть співробітників поштою. Вони входять на vaxogroup.com/app/ з цією поштою й бачать цей бізнес ліворуч у розділі «Робота в команді».', tmMail: 'Пошта співробітника', tmRole: { manager: 'Менеджер: заявки й записи', viewer: 'Спостерігач: лише цифри' }, tmAdd: 'Запросити', tmNone: 'Поки нікого. Ви власник і бачите все.', tmDel: 'Прибрати', tmBad: 'Перевірте пошту.', tmMine: 'Робота в команді', tmMineP: 'Бізнеси, де ви в команді:',
+    rz: 'Потягніть, щоб змінити ширину. Подвійний клік — як було',
+    ordH: 'Запустити задачу', ordSteps: ['Vax розклав план на полотні: виправте там будь-що або просто напишіть у чат', 'Є фото, відео чи логотип — прикріпіть сюди. Немає або потрібна допомога з ними — Vax підбере або зробить сам', 'Vax робить це у фоні: прогрес і готовий результат зʼявляться просто тут. Якщо задачі потрібно більше, ніж входить у тариф, Vax скаже це до початку'], ordNote: 'Побажання: строк, стиль, приклади (необовʼязково)', ordAttach: 'Прикріпити файли', ordGo: 'Запустити', ordDone: 'Запущено. Vax працює над задачею: прогрес і результат зʼявляться в цьому чаті.',
     bkOn: 'Онлайн-запис на сайті', bkP: 'Відвідувачі бачать вільні вікна й записуються самі: без дзвінків і листування. Кожен запис потрапляє в «Заявки», а час закривається для інших.', bkWhen: 'Коли ви працюєте', bkWd: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'], bkFrom: 'Відкриваєтеся', bkTo: 'Зачиняєтеся', bkStep: 'Один візит триває', bkMin: 'хв', bkCap: 'Скільки майстрів одночасно', bkQH: 'Короткі питання перед візитом', bkQP: 'До 3 питань, відповідь одним натисканням. Допомагають підготуватися, писати нічого не треба.', bkQ: 'Питання, наприклад: Довжина волосся зараз?', bkO: 'Відповіді через кому: коротке, середнє, довге', bkDel: 'Прибрати', bkAddQ: 'Додати питання', bkGiftH: 'Подарунок за перший візит', bkGiftP: 'За бажанням. Невеликий подарунок новачку — і люди охочіше записуються й лишають дані. Вмикайте, лише якщо справді даруєте.', bkGift: 'Дарувати подарунок за перший візит', bkGiftPh: 'наприклад: укладання бороди в подарунок', bkSave: 'Зберегти запис', bkSaved: 'Збережено. На сайті вже ці вікна.', bkNoDays: 'Оберіть хоча б один робочий день.', bkList: 'Найближчі записи', bkNone: 'Записів поки немає. Відкрийте сайт і запишіться самі для перевірки.', bkCancel: 'Скасувати', bkCancelQ: 'Скасувати запис? Час знову стане вільним на сайті.', knH: 'Що знає консультант', knP: 'Ціни, години роботи, адреса, як дістатися, правила, часті питання. Вставте текст або завантажте файли: прайс, меню, PDF, Word, Excel чи фото. Консультант і Vax беруть факти звідси; на сайті це напряму не показується.', knPh: 'Наприклад: Стрижка — 500 грн, 45 хв. Борода — 300 грн. Працюємо Пн–Сб 10–20. Адреса: …', knUp: 'Завантажити файл', knSave: 'Зберегти', knSaved: 'Збережено. Консультант уже відповідає за цими даними.', knReading: 'Читаю {f}…', knAdded: 'Додано з {f}. Перевірте й збережіть.', knUnread: 'Не вдалося прочитати {f}. Вставте текст вручну.', knBig: '{f} більше 5 МБ.',
     showCv: 'Полотно', hideCv: 'Сховати', full: 'На весь екран', unfull: 'Звичайний вигляд', domBuyH: 'Немає домену? Як купити за 5 хвилин', domBuy: ['Придумайте коротку адресу, як назва бізнесу, наприклад zerno-coffee.com. Для України підійде й .com.ua.', 'Купіть її в реєстратора: Cloudflare Registrar, Namecheap або Porkbun (.com зазвичай близько $10–12 на рік), для .ua — imena.ua. Потрібні лише картка й пошта.', 'Поверніться сюди, впишіть адресу й додайте в реєстратора один запис, який покаже Vaxo. Решту Vaxo перевірить сам.'], domAskVax: 'Попросити Vax провести по кроках', domAskQ: 'Допоможи купити й підключити свій домен до мого сайту, по кроках',
     pubChanges: 'Опублікувати зміни', aiAsk: 'Що змінити в цьому блоці?', aiBusy: 'Vax переписує блок…', photoAsk: 'Що показати на фото? (порожньо — Vax вирішить сам)', photoBusy: 'Малюю нове фото…', photoFail: 'Зараз не вийшло намалювати фото. Спробуйте пізніше.',
-    hello3: 'Опишіть свій бізнес', sub3: 'Досить одного слова. Vax збере все одразу: сайт із фото, заявки в CRM, чат-бот на сайті й партнерську програму.', eco: [['site', 'Сайт із фото'], ['doc', 'Заявки в CRM'], ['reply', 'Чат-бот 24/7'], ['link', 'Партнерська програма']], bizEx: ['Барбершоп', 'Кавʼярня', 'Стоматологія', 'Квітковий магазин', 'Фітнес-студія', 'Клінінг'], exL2: 'Або будь-яке завдання, результат відкриється праворуч:', ptabs: { site: 'Сайт', book: 'Запис', crm: 'Заявки', bot: 'ШІ-консультант', partner: 'Партнери', domain: 'Домен' }, botOn: 'Чат-бот працює на вашому сайті', botP: 'Відповідає відвідувачам 24/7 за текстом вашого сайту, а залишений у чаті контакт стає заявкою в CRM.', botKnows: 'Що він знає', botTry: 'Перевірити на сайті', botNoSite: 'Спершу зберіть сайт: опишіть бізнес у чаті.', fold: 'Згорнути', unfold: 'Розгорнути',
-    map: 'Карта всього', newProj: 'Новий проєкт', projName: 'Назва проєкту', noProj: 'Без проєкту', projEmpty: 'Порожньо. Нова розмова тут — через ⋯', newChatIn: 'Нова розмова в проєкті', mat: 'Матеріали', reply: 'Відповісти', pin: 'Закріпити', unpin: 'Відкріпити', fwd: 'Переслати', copyMsg: 'Копіювати', fwdTo: 'Переслати в розмову', fwdNew: 'Нова розмова', fwdDone: 'Переслано', fwdOpen: 'Відкрити', pinned: 'Закріплено', replyTo: 'Відповідь на', fwdFrom: 'Переслано з', rename: 'Перейменувати', moveTo: 'Перенести в проєкт', chatMenu: 'Дії', delProjQ: 'Видалити проєкт? Розмови залишаться, без проєкту.', matTabs: { site: 'Сайти', tool: 'Інструменти', doc: 'Документи', image: 'Картинки', link: 'Посилання', file: 'Файли', pin: 'Закріплені' }, matNone: 'Тут поки порожньо.', mapEmpty: 'Розмов поки немає. Усе, що зробить Vax, зʼявиться тут.', mapK: { site: 'живих сайтів', crm: 'заявок', tool: 'інструментів', doc: 'документів', image: 'картинок' },
+    hello3: 'Що зробимо?', sub3: 'Будь-яке завдання — від листа чи плану відпустки до цілого бізнесу. Для бізнесу досить одного слова: Vax одразу збере сайт, запис, CRM для команди, ШІ-консультанта й партнерів.', eco: [['site', 'Сайт із фото'], ['doc', 'Заявки в CRM'], ['reply', 'Чат-бот 24/7'], ['link', 'Партнерська програма']], bizEx: ['Барбершоп', 'Кавʼярня', 'Стоматологія', 'Квітковий магазин', 'Фітнес-студія', 'Клінінг'], exL2: 'Або будь-яке завдання — від побутового до завдання компанії:', ptabs: { site: 'Сайт', book: 'Запис', crm: 'Заявки', team: 'Команда', bot: 'ШІ-консультант', partner: 'Партнери', domain: 'Домен' }, botOn: 'Чат-бот працює на вашому сайті', botP: 'Відповідає відвідувачам 24/7 за текстом вашого сайту, а залишений у чаті контакт стає заявкою в CRM.', botKnows: 'Що він знає', botTry: 'Перевірити на сайті', botNoSite: 'Спершу зберіть сайт: опишіть бізнес у чаті.', fold: 'Згорнути', unfold: 'Розгорнути',
+    map: 'Усі мої результати', newProj: 'Новий проєкт', projName: 'Назва проєкту', noProj: 'Без проєкту', projEmpty: 'Порожньо. Перетягніть сюди розмову або почніть нову через ⋯', newChatIn: 'Нова розмова в проєкті', mat: 'Матеріали', reply: 'Відповісти', pin: 'Закріпити', unpin: 'Відкріпити', fwd: 'Переслати', copyMsg: 'Копіювати', fwdTo: 'Переслати в розмову', fwdNew: 'Нова розмова', fwdDone: 'Переслано', fwdOpen: 'Відкрити', pinned: 'Закріплено', replyTo: 'Відповідь на', fwdFrom: 'Переслано з', rename: 'Перейменувати', moveTo: 'Перенести в проєкт', chatMenu: 'Дії', delProjQ: 'Видалити проєкт? Розмови залишаться, без проєкту.', matTabs: { site: 'Сайти', tool: 'Інструменти', doc: 'Документи', image: 'Картинки', link: 'Посилання', file: 'Файли', pin: 'Закріплені' }, matNone: 'Тут поки порожньо.', mapEmpty: 'Розмов поки немає. Усе, що зробить Vax, зʼявиться тут.', mapK: { site: 'живих сайтів', crm: 'заявок', tool: 'інструментів', doc: 'документів', image: 'картинок' },
     fK: 'Рядок над заголовком', styles: { editorial: 'Преміум темний', clinic: 'Чистий', bold: 'Зухвалий', soft: 'Теплий', nature: 'Природний' },
     needSite: 'Куди надсилати заявки з сайту? Введіть пошту: надішлемо код, і сайт одразу запрацює за своїм посиланням.',
     studio: 'Студія результату', studioP: 'Тут зʼявляється все, що робить Vax, у робочому вигляді: сайт за своїм посиланням, таблиця, план.', studioEx: 'Живий приклад: так виглядає результат за хвилину', openLive: 'Відкрити публічне посилання', liveNow: '● Працює в інтернеті', tryPhone: 'Відкрийте з телефона й надішліть форму: заявка зʼявиться у вашій CRM з датою і часом.', saveSite: 'Зберегти зміни', editText: 'Правити текст', myPages: 'Інші ваші сторінки',
     hello2: 'З чого почнемо', sub2: 'Оберіть модуль або дайте Vax завдання. Результат відкриється на полотні, готовий до роботи.',
     tiles: { site: ['Зібрати сайт і форму', 'Сторінка з формою заявок, працює за хвилину'], crm: ['Відкрити мою CRM', 'Усі заявки з сайту на одній дошці'], partner: ['Партнерський кабінет', 'Ваші посилання, запрошення й баланс'] },
-    exL: 'Або поставте завдання. Готовий результат відкриється на полотні:', ex: ['Посадкова сторінка для кавʼярні з формою передзамовлення', 'Фінмодель запуску онлайн-школи на $50k обороту: реклама, команда, податки', '30-денний протокол тренувань і відновлення'],
+    exL: 'Або будь-яке завдання — від побутового до завдання компанії:', ex: ['Сплануй відпустку в Італії на 5 днів: маршрут, бюджет, що забронювати', 'Фінмодель запуску онлайн-школи на $50k обороту: реклама, команда, податки', '30-денний протокол тренувань і відновлення'],
     lim: { h: 'Ліміти', day: 'Сьогодні', week: 'Тиждень', used: 'Використано {p}%', reset: 'Оновиться {t}', note: 'Ліміт рахується за обсягом роботи, а не за кількістю повідомлень: коротка відповідь витрачає мало, великий документ, сайт або картинка більше.', today: 'сьогодні о {h}', tomorrow: 'завтра о {h}', on: '{d} о {h}', outDay: 'Ліміт на сьогодні вичерпано. Оновиться {t}. Усе збережено.', outWeek: 'Ліміт на тиждень вичерпано. Оновиться {t}. Усе збережено.', more: 'Потрібно більше? Тарифи' }, usageGuest: 'Гість: невеликий ліміт на день. Увійдіть безкоштовно, ліміт більший.',
     pTabs: { plan: 'Тариф', memory: 'Памʼять', projects: 'Проєкти', account: 'Акаунт' },
     pub: 'Опублікувати', pubBusy: 'Публікую…', pubDone: 'Опубліковано', pubAgain: 'Оновити сторінку', pubOff: 'Зняти з публікації', replaceQ: 'Замінити ваш поточний сайт цією сторінкою?', pubLink: 'Публічне посилання',
@@ -141,12 +147,14 @@ const ico = {
       </div>
     </aside>
     <div class="veil" data-veil hidden></div>
+    <div class="rz rz-s" data-rz="s" role="separator" aria-orientation="vertical" title={T.rz}></div>
+    <div class="rz rz-c" data-rz="c" role="separator" aria-orientation="vertical" title={T.rz}></div>
 
     <main class="mid">
       <header class="top">
         <button class="ic only-m" type="button" data-menu aria-label={T.menu}>☰</button>
         <b class="ttl" data-title></b>
-        <div class="modes" role="group" aria-label={T.modeL} title={T.modeTip}>
+        <div class="modes" hidden style="display:none" role="group" aria-label={T.modeL} title={T.modeTip}>
           <span class="mlab">{T.modeL}:</span>
           <button type="button" data-mode="short" title={T.modeTip}>{T.short}</button>
           <button type="button" data-mode="deep" title={T.modeTip}>{T.deep}</button>
@@ -290,7 +298,7 @@ const ico = {
 
   /* ---------- The tree: projects → chats → what each chat made (Decision 45) ---------- */
   type Obj = { id: number | string; chat: number; kind: string; title: string; url?: string; ref?: Msg };
-  const KIND: Record<string, string> = { cal: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5', know: 'M5 4h11l3 3v13H5zM9 9h6M9 13h6M9 17h4', site: 'M3 5h18v14H3zM3 9h18', tool: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', doc: 'M7 3h7l5 5v13H7zM14 3v5h5', image: 'M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6', link: 'M10 13a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7L12 6m2 5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7L12 18', file: 'M6 3h9l4 4v14H6zM15 3v4h4', pin: 'M12 17v5M8 3h8l-1 6 4 4H5l4-4z', reply: 'M9 14 4 9l5-5M4 9h10a6 6 0 0 1 6 6v3', fwd: 'M15 4l5 5-5 5M20 9H10a6 6 0 0 0-6 6v3', copy: 'M9 9h11v11H9zM5 15H4V4h11v1' };
+  const KIND: Record<string, string> = { user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0', cal: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5', know: 'M5 4h11l3 3v13H5zM9 9h6M9 13h6M9 17h4', site: 'M3 5h18v14H3zM3 9h18', tool: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', doc: 'M7 3h7l5 5v13H7zM14 3v5h5', image: 'M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6', link: 'M10 13a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7L12 6m2 5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7L12 18', file: 'M6 3h9l4 4v14H6zM15 3v4h4', pin: 'M12 17v5M8 3h8l-1 6 4 4H5l4-4z', reply: 'M9 14 4 9l5-5M4 9h10a6 6 0 0 1 6 6v3', fwd: 'M15 4l5 5-5 5M20 9H10a6 6 0 0 0-6 6v3', copy: 'M9 9h11v11H9zM5 15H4V4h11v1' };
   const ico = (k: string, n = 14) => `<svg viewBox="0 0 24 24" width="${n}" height="${n}" aria-hidden="true"><path d="${KIND[k] || ''}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const icoBtn = (cls: string, k: string, label: string, go: (e: MouseEvent) => void) => { const b = el('button', cls); b.type = 'button'; b.innerHTML = ico(k, 15); b.title = label; b.setAttribute('aria-label', label); b.onclick = (e) => { e.stopPropagation(); go(e); }; return b; };
   const artKind = (m: Msg) => (m.site ? 'site' : m.tool ? 'tool' : m.doc ? 'doc' : m.image ? 'image' : '');
@@ -322,6 +330,7 @@ const ico = {
       const n = objs.filter((o) => o.chat === c.id).length; if (n) b.append(el('i', 'cnt', String(n)));
       const more = btn('dots', '⋯', () => chatMenu(c, more)); more.title = T.chatMenu;
       row.append(b, more); box.append(row);
+      b.draggable = true; b.ondragstart = (e) => { e.dataTransfer?.setData('text/vx-chat', String(c.id)); nav.classList.add('dnd'); }; b.ondragend = () => nav.classList.remove('dnd');
       if (c.id === S.cur) for (const o of objs.filter((x) => x.chat === c.id).slice(0, 10)) { const ob = btn('obj', '', () => openObject(o)); ob.innerHTML = ico(o.kind, 13); ob.append(el('span', '', o.title || T.matTabs[o.kind])); box.append(ob); }
       return box;
     };
@@ -344,8 +353,14 @@ const ico = {
         if (S.projects.length) sec.append(el('div', 'phead plain', T.noProj));
         for (const c of g.chats) sec.append(chatNode(c));
       }
+      // Drop a chat on a project (or on «Without a project») to move it there.
+      const target = g.p ? g.p.id : null;
+      sec.ondragover = (e) => { if (e.dataTransfer?.types.includes('text/vx-chat')) { e.preventDefault(); sec.classList.add('drop'); } };
+      sec.ondragleave = () => sec.classList.remove('drop');
+      sec.ondrop = async (e) => { e.preventDefault(); sec.classList.remove('drop'); nav.classList.remove('dnd'); const c = S.chats.find((x) => String(x.id) === e.dataTransfer?.getData('text/vx-chat')); if (c && (c.project ?? null) !== target) { if (target) closed.delete(target); await moveChat(c, target); drawChats(); } };
       nav.append(sec);
     }
+    if (S.projects.length && !groups[groups.length - 1].chats.length) { const z = el('div', 'proj nodrop'); z.append(el('div', 'phead plain', T.noProj)); z.ondragover = (e) => { e.preventDefault(); z.classList.add('drop'); }; z.ondragleave = () => z.classList.remove('drop'); z.ondrop = async (e) => { e.preventDefault(); z.classList.remove('drop'); const c = S.chats.find((x) => String(x.id) === e.dataTransfer?.getData('text/vx-chat')); if (c?.project) { await moveChat(c, null); drawChats(); } }; nav.append(z); }
     if (!S.chats.length && !S.projects.length) nav.append(el('small', '', T.noChats));
     $('[data-title]').textContent = S.chats.find((c) => c.id === S.cur)?.title || '';
     $('[data-del]').hidden = !S.cur;
@@ -529,7 +544,7 @@ const ico = {
     for (const b of T.bizEx as string[]) biz.append(btn('bchip', b, () => ask(T.siteAsk + b)));
     const ex = el('div', 'ex');
     ex.append(el('p', '', T.exL2));
-    for (const q of (T.ex as string[]).slice(1)) ex.append(btn('exb', q + ' →', () => ask(q)));
+    for (const q of (T.ex as string[])) ex.append(btn('exb', q + ' →', () => ask(q)));
     box.append(eco, biz, ex);
     log.replaceChildren(box);
   }
@@ -977,15 +992,15 @@ const ico = {
       if (d?.ok) { S.mods = d.modules; S.access = !!d.access; if (d.project?.biz) { p.biz = d.project.biz; S.proj!.biz = d.project.biz; } }
     }
   }
-  const PTABS = ['site', 'book', 'crm', 'bot', 'partner', 'domain'];
+  const PTABS = ['site', 'book', 'crm', 'team', 'bot', 'partner', 'domain'];
   let ptab = 'site';
   async function openProject(pid: number, tab = ptab, show?: () => void) {
     if (S.proj?.id !== pid || !S.mods) await useProject(pid);
     ptab = tab;
-    if (show) show(); else ({ site: sitePanel, book: bookPanel, crm: crmPanel, bot: botPanel, partner: projPartners, domain: domainPanel } as Record<string, () => void>)[tab]?.();
+    if (show) show(); else ({ site: sitePanel, book: bookPanel, crm: crmPanel, team: teamPanel, bot: botPanel, partner: projPartners, domain: domainPanel } as Record<string, () => void>)[tab]?.();
     // The same canvas, with the project's tabs on top and its name as the title.
     const bar = el('div', 'ptabs2');
-    for (const k of PTABS) { const b = btn(k === tab ? 'on' : '', T.ptabs[k], () => openProject(pid, k)); b.prepend(Object.assign(el('span'), { innerHTML: ico(({ site: 'site', book: 'cal', crm: 'doc', bot: 'reply', partner: 'link', domain: 'fwd' } as R)[k], 14) })); bar.append(b); }
+    for (const k of PTABS) { const b = btn(k === tab ? 'on' : '', T.ptabs[k], () => openProject(pid, k)); b.prepend(Object.assign(el('span'), { innerHTML: ico(({ site: 'site', book: 'cal', crm: 'doc', team: 'user', bot: 'reply', partner: 'link', domain: 'fwd' } as R)[k], 14) })); bar.append(b); }
     cvBody.prepend(bar);
     cvTitle.textContent = S.proj?.name || T.canvas;
   }
@@ -1022,6 +1037,42 @@ const ico = {
     if (main?.url) { const a = el('a', 'sec', T.botTry + ' ↗') as HTMLAnchorElement; a.href = main.url; a.target = '_blank'; a.rel = 'noopener'; box.append(a); }
     openCv(T.ptabs.bot, box);
     fetch(`/api/ws/knowledge?biz=${S.proj?.biz || ''}`).then((r) => r.json()).then((d) => { if (d?.ok && !ta.value) ta.value = d.text; }).catch(() => {});
+  }
+  /* ---------- Team: staff of the business get their own sign-in with a role (manager / viewer) ---------- */
+  async function teamPanel() {
+    const box = el('div', 'pf'), id = S.mods?.biz?.id;
+    if (!id) { box.append(el('p', 'hint', T.botNoSite)); openCv(T.ptabs.team, box); return; }
+    const list = el('div', 'blk'), mail = el('input') as HTMLInputElement, role = el('select') as HTMLSelectElement, msg = el('small', 'hint');
+    mail.type = 'email'; mail.placeholder = T.tmMail; mail.setAttribute('aria-label', T.tmMail);
+    for (const k of ['manager', 'viewer']) { const o = el('option', '', T.tmRole[k]); o.value = k; role.append(o); }
+    role.setAttribute('aria-label', 'Role');
+    const draw = async () => {
+      const d = await fetch(`/api/biz/${id}`).then((r) => r.json()).catch(() => null);
+      const team = (d?.team || []) as R[];
+      list.replaceChildren(...(team.length ? team.map((m) => {
+        const row = el('div', 'lead'), who = el('div'); who.append(el('b', '', m.email), el('small', '', T.tmRole[m.role] || m.role));
+        row.append(who, btn('sec sm', T.tmDel, async () => { await fetch(`/api/biz/${id}/team`, { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: m.email }) }); draw(); }));
+        return row;
+      }) : [el('small', 'hint', T.tmNone)]));
+    };
+    const add = btn('pri', T.tmAdd, async () => {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail.value.trim())) { msg.textContent = T.tmBad; return; }
+      add.disabled = true; const { d } = await postJ(`/api/biz/${id}/team`, { email: mail.value.trim(), role: role.value }); add.disabled = false;
+      if (d.ok) { mail.value = ''; msg.textContent = ''; draw(); } else msg.textContent = T.depFail;
+    });
+    const row = el('div', 'tbar'); row.append(mail, role, add);
+    box.append(el('h3', '', T.tmH), el('p', 'hint', T.tmP), row, msg, list);
+    openCv(T.ptabs.team, box); draw();
+  }
+  /** Staff invited into someone else's business find it in the sidebar. */
+  async function teamWork() {
+    if (!S.signed) return;
+    const d = await fetch('/api/biz').then((r) => r.json()).catch(() => null);
+    const mine = ((d?.biz || d?.list || []) as R[]).filter((b) => b.role && b.role !== 'owner');
+    if (!mine.length || $('[data-teamwork]')) return;
+    const b = btn('nav', T.tmMine, () => { side(false); const box = el('div', 'pf'); box.append(el('p', 'hint', T.tmMineP + ' ' + mine.map((x) => x.name).join(', '))); openCv(T.tmMine, box); bizbox.hidden = false; cvBody.append(bizbox); window.dispatchEvent(new CustomEvent('vx:signed-in')); });
+    b.dataset.teamwork = '1'; b.prepend(Object.assign(el('span'), { innerHTML: ico('user', 17) }));
+    $('[data-earn]').before(b);
   }
   /* ---------- Online booking (Decision 47): free windows on the site instead of "we will call you back" ---------- */
   function bookPanel() {
@@ -1235,6 +1286,26 @@ const ico = {
   $('[data-mat]').onclick = () => materials();
   $('[data-menu]').onclick = () => side(true);
   $('[data-veil]').onclick = () => side(false);
+  // Drag the edge of the chat list or of the Canvas to resize them, like in Claude. Double-click returns the default.
+  (() => {
+    const lim = { s: [200, 440], c: [320, 0] };
+    const set = (k: string, px: number) => {
+      const max = k === 's' ? lim.s[1] : Math.max(360, innerWidth - (parseInt(getComputedStyle(root).getPropertyValue('--sw')) || 264) - 380);
+      const v = Math.round(Math.min(max, Math.max(lim[k as 's' | 'c'][0], px)));
+      root.style.setProperty(k === 's' ? '--sw' : '--cw', v + 'px');
+      try { localStorage.setItem('vx_rz_' + k, String(v)); } catch {}
+    };
+    try { for (const k of ['s', 'c']) { const v = Number(localStorage.getItem('vx_rz_' + k)); if (v) set(k, v); } } catch {}
+    for (const h of document.querySelectorAll<HTMLElement>('[data-rz]')) {
+      const k = h.dataset.rz!;
+      h.onpointerdown = (e) => {
+        e.preventDefault(); h.setPointerCapture(e.pointerId); h.classList.add('on'); root.classList.add('dragging');
+        h.onpointermove = (m) => set(k, k === 's' ? m.clientX : innerWidth - m.clientX);
+        h.onpointerup = () => { h.onpointermove = null; h.classList.remove('on'); root.classList.remove('dragging'); };
+      };
+      h.ondblclick = () => { root.style.removeProperty(k === 's' ? '--sw' : '--cw'); try { localStorage.removeItem('vx_rz_' + k); } catch {} };
+    }
+  })();
   $('[data-cv-x]').onclick = closeCv;
   $('[data-cv-full]').onclick = () => { const on = root.classList.toggle('cvfull'); $('[data-cv-full-label]').textContent = on ? T.unfull : T.full; };
   $('[data-cv]').onclick = () => { if (!cv.hidden) { closeCv(); return; } const last = [...S.msgs].reverse().find(hasArt); if (last) showArt(last); else studio(); };
@@ -1270,7 +1341,7 @@ const ico = {
       if (g) Object.assign(S, { chats: g.chats || [], projects: g.projects || [], memory: { ...blank, ...g.memory }, mode: g.mode === 'deep' ? 'deep' : 'short' });
       const gb = $<HTMLAnchorElement>('[data-sign-g]'); gb.hidden = !ME.ways?.google; if (room) gb.href = `/api/me/google?back=${room}`;
     }
-    drawWho(); drawMode(); drawChats(); drawEmpty();
+    drawWho(); drawMode(); drawChats(); drawEmpty(); teamWork();
     // Old cabinet addresses (/me/#plan, #invite…) land here: open the same thing in its new place.
     const q = h.match(/^#q=(.+)$/), dep = h.match(/^#deploy=(crm|partner|site)$/);
     const go: R = { '#plan': () => openProf('plan'), '#profile': () => openProf('plan'), '#memory': () => openProf('memory'), '#account': () => openProf('account'), '#projects': () => openProf('projects'), '#modules': () => panel('site'), '#site': () => panel('site'), '#biz': () => panel('crm'), '#crm': () => panel('crm'), '#invite': () => panel('partner'), '#partner': () => panel('partner') };
@@ -1300,8 +1371,16 @@ const ico = {
 <style is:global>
   html, body { height: 100%; }
   body:has(.wsp) { overflow: hidden; background: var(--bg); }
-  .wsp { display: grid; grid-template-columns: 264px minmax(0, 1fr); height: 100dvh; color: var(--ink); font-family: var(--font); }
-  .wsp.wide { grid-template-columns: 264px minmax(0, 1fr) minmax(360px, 44vw); }
+  .wsp { --sw: 264px; --cw: 44vw; position: relative; display: grid; grid-template-columns: var(--sw) minmax(0, 1fr); height: 100dvh; color: var(--ink); font-family: var(--font); }
+  .wsp.wide { grid-template-columns: var(--sw) minmax(0, 1fr) var(--cw); }
+  .wsp .rz { position: absolute; top: 0; bottom: 0; width: 9px; margin-left: -4px; cursor: col-resize; z-index: 6; touch-action: none; }
+  .wsp .rz::after { content: ''; position: absolute; top: 0; bottom: 0; left: 4px; width: 1px; background: transparent; transition: background .15s; }
+  .wsp .rz:hover::after, .wsp .rz.on::after { background: var(--accText); width: 2px; }
+  .wsp .rz-s { left: var(--sw); }
+  .wsp .rz-c { left: calc(100% - var(--cw)); display: none; }
+  .wsp.wide:not(.cvfull) .rz-c { display: block; }
+  .wsp.dragging { cursor: col-resize; user-select: none; }
+  .wsp.dragging iframe { pointer-events: none; }
   .wsp button { font-family: inherit; color: inherit; }
   .wsp .side { background: var(--surf); border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; padding: 16px 12px; overflow-y: auto; min-height: 0; }
   .wsp .logo { font-weight: 800; font-size: 20px; letter-spacing: .02em; padding: 2px 8px 12px; color: var(--ink); text-decoration: none; }
@@ -1562,7 +1641,7 @@ const ico = {
   .wsp .tb:hover { border-color: var(--ink); }
   .wsp .tb[hidden] { display: none; }
   .wsp .cvact { display: flex; gap: 6px; }
-  .wsp.cvfull, .wsp.cvfull.wide { grid-template-columns: 264px 0 minmax(0, 1fr); }
+  .wsp.cvfull, .wsp.cvfull.wide { grid-template-columns: var(--sw) 0 minmax(0, 1fr); }
   .wsp.cvfull .mid { display: none; }
   .wsp .dsteps { margin: 8px 0 10px; padding-left: 20px; display: grid; gap: 6px; color: var(--mut); font-size: 14px; line-height: 1.45; }
   @media (max-width: 760px) { .wsp .tb span { display: none; } .wsp [data-cv-x] span { display: inline; } }
@@ -1584,6 +1663,14 @@ const ico = {
   .wsp .modes .mlab { align-self: center; color: var(--mut); font-size: 12.5px; padding: 0 6px 0 4px; white-space: nowrap; }
   @media (max-width: 1100px) { .wsp .modes .mlab { display: none; } }
   .wsp.wide .modes .mlab { display: none; }
+  .wsp .chats { grid-template-columns: minmax(0, 1fr); }
+  .wsp .chats > *, .wsp .proj > *, .wsp .cnode > * { min-width: 0; }
+  .wsp .phead .ptitle { min-width: 0; overflow: hidden; }
+  .wsp .phead .ptitle .pn { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wsp .crow .chat { overflow: hidden; }
+  .wsp .chats .proj.drop { outline: 2px dashed var(--accText); outline-offset: 2px; border-radius: 10px; }
+  .wsp .chats .nodrop { display: none; }
+  .wsp .chats.dnd .nodrop { display: block; }
   .wsp .veil { display: none; }
   .wsp .wsign:not([open]) { display: none; }
   .wsp .wsign { margin: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surf); color: var(--ink); padding: 24px; width: min(420px, calc(100vw - 32px)); }
@@ -1598,11 +1685,13 @@ const ico = {
   .wsp .wsign a { color: inherit; }
   .wsp .wsign .x { position: absolute; top: 10px; right: 10px; }
   @media (max-width: 1100px) {
-    .wsp.wide { grid-template-columns: 264px minmax(0, 1fr); }
+    .wsp.wide { grid-template-columns: var(--sw) minmax(0, 1fr); }
+    .wsp .rz-c { display: none !important; }
     .wsp .cv { position: fixed; inset: 0 0 0 auto; width: min(560px, 100vw); z-index: 30; box-shadow: -10px 0 30px rgba(0, 0, 0, .25); }
   }
   @media (max-width: 760px) {
     .wsp, .wsp.wide { grid-template-columns: minmax(0, 1fr); }
+    .wsp .rz { display: none !important; }
     .wsp .only-m { display: block; }
     .wsp .side { position: fixed; inset: 0 auto 0 0; width: min(300px, 86vw); z-index: 40; transform: translateX(-102%); transition: transform .2s; }
     .wsp .side.open { transform: none; }
