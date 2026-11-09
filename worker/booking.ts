@@ -221,3 +221,55 @@ export async function morningBookings(db: DB, send: (to: string, subj: string, t
     for (const to of new Set([o.email, ...team])) if (to) await send(to, subj, text).catch(() => false);
   }
 }
+
+/** The owner's calendar subscription (Calendly/Fresha-style): one private link added once to Google Calendar or the
+ *  phone, and every booking from the site appears there by itself (cancelled ones disappear). The link is signed with
+ *  the server secret, so it cannot be guessed from the public business key. */
+async function feedSig(secret: string, bizId: number, ownerId: number) {
+  const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const s = await crypto.subtle.sign('HMAC', k, new TextEncoder().encode(`feed:${bizId}:${ownerId}`));
+  return Array.from(new Uint8Array(s).slice(0, 12), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+export async function feedUrl(secret: string | undefined, bizId: number, ownerId: number, origin = 'https://vaxogroup.com') {
+  return secret ? `${origin}/api/book/feed/${bizId}.${await feedSig(secret, bizId, ownerId)}.ics` : null;
+}
+
+const icsEsc = (s: string) => s.replace(/\\/g, '\\\\').replace(/[,;]/g, (c) => '\\' + c).replace(/\r?\n/g, '\\n');
+
+/** Text of the .ics feed: one event per booking of the last week and the coming weeks, in the business's own time zone. */
+export function feedIcs(biz: string, rows: { id: number; day: string; time: string; service: string | null; status: string; name: string | null; contact: string | null; message: string | null; tz: string; step: number }[], now = new Date()) {
+  const stamp = now.toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const out = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Vaxo//Bookings//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', `X-WR-CALNAME:${icsEsc(biz)}`, 'REFRESH-INTERVAL;VALUE=DURATION:PT1H', 'X-PUBLISHED-TTL:PT1H'];
+  for (const r of rows) {
+    const [h, m] = r.time.split(':').map(Number);
+    const end = h * 60 + m + (r.step || 60);
+    const d = r.day.replace(/-/g, ''), t0 = `${String(h).padStart(2, '0')}${String(m).padStart(2, '0')}00`;
+    const e = new Date(Date.UTC(+r.day.slice(0, 4), +r.day.slice(5, 7) - 1, +r.day.slice(8, 10), 0, end));
+    const d1 = e.toISOString().slice(0, 10).replace(/-/g, ''), t1 = e.toISOString().slice(11, 16).replace(':', '') + '00';
+    const title = [r.name || '—', r.service].filter(Boolean).join(' · ');
+    const desc = [r.contact, ...(r.message ? String(r.message).split('\n').slice(1) : [])].filter(Boolean).join('\n');
+    out.push('BEGIN:VEVENT', `UID:booking-${r.id}@vaxogroup.com`, `DTSTAMP:${stamp}`, `DTSTART;TZID=${r.tz}:${d}T${t0}`, `DTEND;TZID=${r.tz}:${d1}T${t1}`,
+      `SUMMARY:${icsEsc(title)}`, ...(desc ? [`DESCRIPTION:${icsEsc(desc)}`] : []), `STATUS:${r.status === 'booked' ? 'CONFIRMED' : 'CANCELLED'}`, 'END:VEVENT');
+  }
+  out.push('END:VCALENDAR');
+  return out.join('\r\n') + '\r\n';
+}
+
+export async function handleFeed(db: DB, secret: string | undefined, path: string): Promise<Response> {
+  const m = path.match(/^\/api\/book\/feed\/(\d{1,12})\.([a-f0-9]{24})\.ics$/);
+  if (!m || !secret) return new Response('Not found', { status: 404 });
+  const biz = await db.prepare('SELECT id, name, owner_id FROM biz WHERE id = ?').bind(Number(m[1])).first<{ id: number; name: string; owner_id: number }>().catch(() => null);
+  if (!biz || (await feedSig(secret, biz.id, biz.owner_id)) !== m[2]) return new Response('Not found', { status: 404 });
+  const list = (await db.prepare(`SELECT k.id, k.slug, k.day, k.time, k.service, k.status, l.name, l.contact, l.message FROM biz_bookings k LEFT JOIN biz_leads l ON l.id = k.lead_id
+    WHERE k.biz_id = ? AND k.day >= date('now', '-7 day') ORDER BY k.day, k.time LIMIT 500`).bind(biz.id).all<{ id: number; slug: string; day: string; time: string; service: string | null; status: string; name: string | null; contact: string | null; message: string | null }>().catch(() => ({ results: [] }))).results;
+  const conf = new Map<string, { tz: string; step: number }>();
+  for (const r of list) if (!conf.has(r.slug)) {
+    const p = (await db.prepare('SELECT data FROM biz_pages WHERE biz_id = ? AND slug = ?').bind(biz.id, r.slug).first<{ data: string }>().catch(() => null))
+      ?? (await db.prepare('SELECT data FROM ws_sites WHERE biz_id = ? AND slug = ?').bind(biz.id, r.slug).first<{ data: string }>().catch(() => null));
+    let b: Book | undefined; try { b = cleanBook(JSON.parse(p?.data || '{}').book); } catch { /* broken page data: defaults */ }
+    conf.set(r.slug, { tz: b?.tz || 'Europe/Kyiv', step: b?.step || 60 });
+  }
+  const body = feedIcs(biz.name, list.map((r) => ({ ...r, ...conf.get(r.slug)! })));
+  return new Response(body, { headers: { 'Content-Type': 'text/calendar; charset=utf-8', 'Cache-Control': 'private, max-age=900', 'X-Robots-Tag': 'noindex' } });
+}

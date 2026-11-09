@@ -6,7 +6,7 @@ import { allowance, spendWork, workOf, wsLimits } from './allowance.js';
 import { sessionClient } from './cabinet.js';
 import { FACTS, type AiBinding } from './chat.js';
 import { describeImage, filesForAi, readText } from './files.js';
-import { upcoming } from './booking.js';
+import { feedUrl, upcoming } from './booking.js';
 import { drawImage, heroImage, sitePhotos, WANTS_IMAGE } from './images.js';
 import type { Notify } from './deals.js';
 import { addRef, cleanSite, deployModule, liveSite, moduleAccess, modulesState, saveSite, sitePreview, slugOf, startTrial, updateLiveSite, writeSite, type Site } from './modules.js';
@@ -536,7 +536,7 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       const own = bz ? await db.prepare('SELECT id FROM biz WHERE id = ? AND owner_id = ?').bind(bz, me.id).first<{ id: number }>() : null;
       if (!own) return out(404, { ok: false });
       if (bk[1] && m === 'POST') await db.prepare(`UPDATE biz_bookings SET status = 'cancelled' WHERE id = ? AND biz_id = ?`).bind(Number(bk[1]), own.id).run();
-      return out(200, { ok: true, list: await upcoming(db, own.id) });
+      return out(200, { ok: true, list: await upcoming(db, own.id), feed: await feedUrl(cf.feed, own.id, me.id).catch(() => null) });
     }
     if (path === 'site/edit' && m === 'POST') {
       // "Change with Vax" on one block of the page: the model rewrites that text only, in the page's language, without new facts.

@@ -12,7 +12,7 @@ const ZONE = 'e451eef7e10ed566dff9ab41cfad817b'; // vaxogroup.com
 // Second-level public suffixes people here actually buy under, so the DNS "name" field is shown right.
 const SLD = new Set(['co.uk', 'org.uk', 'com.ua', 'org.ua', 'net.ua', 'in.ua', 'kiev.ua', 'kyiv.ua', 'od.ua', 'lviv.ua', 'com.pl', 'com.au', 'co.il', 'com.br', 'com.tr', 'co.nz', 'co.za', 'com.mx', 'co.jp']);
 
-export type Cf = { token?: string };
+export type Cf = { token?: string; feed?: string };
 export type DomainState = { host: string; status: 'pending' | 'active' | 'error'; error: string | null; record: { type: 'CNAME'; name: string; value: string }; apex: boolean };
 
 /** A typed-in address → a bare host name, or '' when it is not a domain we can connect. */
