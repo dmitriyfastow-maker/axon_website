@@ -153,3 +153,48 @@ function pick(){var f=days.find(function(d){return d.slots.length});if(!st.day||
 function load(){if(C.edit){days=C.demo;pick();return}fetch('/api/book?k='+C.k+'&p='+C.p).then(function(r){return r.json()}).then(function(d){days=d.days||[];pick()}).catch(function(){days=C.demo;pick()})}
 load()})();</script>`;
 }
+
+/** The morning letter's text: today's bookings in time order (pure, for tests). */
+export function morningText(lang: string, biz: string, rows: { time: string; service: string | null; name: string | null; contact: string | null }[]) {
+  const ru = lang === 'ru', ua = lang === 'ua';
+  const n = rows.length;
+  const subj = ru ? `Сегодня ${n} ${n % 10 === 1 && n % 100 !== 11 ? 'запись' : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100) ? 'записи' : 'записей'} — ${biz}`
+    : ua ? `Сьогодні ${n} ${n % 10 === 1 && n % 100 !== 11 ? 'запис' : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100) ? 'записи' : 'записів'} — ${biz}`
+    : `Today: ${n} booking${n === 1 ? '' : 's'} — ${biz}`;
+  const lines = [...rows].sort((a, b) => a.time.localeCompare(b.time)).map((r) => `${r.time} — ${r.name || '—'}${r.service ? ` · ${r.service}` : ''}${r.contact ? ` · ${r.contact}` : ''}`);
+  const tip = ru ? 'Напомнить клиенту в WhatsApp / Viber / SMS — одной кнопкой во вкладке «Запись»:' : ua ? 'Нагадати клієнту у WhatsApp / Viber / SMS — однією кнопкою у вкладці «Запис»:' : 'Remind a client by WhatsApp / Viber / SMS with one tap in the Booking tab:';
+  const text = [subj, '', ...lines, '', tip, `https://vaxogroup.com/${ru ? 'ru/' : ua ? 'ua/' : ''}app/`].join('\n');
+  return { subj, text };
+}
+
+/** Hourly cron: at 7 in the morning (the business's own time) the owner and managers get today's bookings by email.
+ *  The cron fires once an hour, so 7:00–7:59 happens once a day: no table needed. Days without bookings send nothing. */
+export async function morningBookings(db: DB, send: (to: string, subj: string, text: string) => Promise<unknown>, now = new Date()) {
+  const pages = (await db.prepare(`SELECT DISTINCT biz_id, slug FROM biz_bookings WHERE status = 'booked' AND day BETWEEN date('now', '-1 day') AND date('now', '+1 day')`)
+    .all<{ biz_id: number; slug: string }>().catch(() => ({ results: [] }))).results;
+  const byBiz = new Map<number, string[]>();
+  for (const p of pages) {
+    const r = (await db.prepare('SELECT data FROM biz_pages WHERE biz_id = ? AND slug = ?').bind(p.biz_id, p.slug).first<{ data: string }>().catch(() => null))
+      ?? (await db.prepare('SELECT data FROM ws_sites WHERE biz_id = ? AND slug = ?').bind(p.biz_id, p.slug).first<{ data: string }>().catch(() => null));
+    let tz = 'Europe/Kyiv';
+    try { tz = cleanBook(JSON.parse(r?.data || '{}').book)?.tz || tz; } catch { /* default zone */ }
+    const L = localNow(tz, now);
+    if (L.min < 7 * 60 || L.min >= 8 * 60) continue;
+    const day = `${L.y}-${String(L.m).padStart(2, '0')}-${String(L.d).padStart(2, '0')}`;
+    byBiz.set(p.biz_id, [...(byBiz.get(p.biz_id) ?? []), `${p.slug}\u0000${day}`]);
+  }
+  for (const [bizId, list] of byBiz) {
+    const rows: { time: string; service: string | null; name: string | null; contact: string | null }[] = [];
+    for (const x of list) {
+      const [slug, day] = x.split('\u0000');
+      rows.push(...(await db.prepare(`SELECT k.time, k.service, l.name, l.contact FROM biz_bookings k LEFT JOIN biz_leads l ON l.id = k.lead_id WHERE k.biz_id = ? AND k.slug = ? AND k.day = ? AND k.status = 'booked' LIMIT 100`)
+        .bind(bizId, slug, day).all<{ time: string; service: string | null; name: string | null; contact: string | null }>().catch(() => ({ results: [] }))).results);
+    }
+    if (!rows.length) continue;
+    const o = await db.prepare('SELECT b.name, c.email, c.lang FROM biz b JOIN clients c ON c.id = b.owner_id WHERE b.id = ?').bind(bizId).first<{ name: string; email: string | null; lang: string | null }>().catch(() => null);
+    if (!o) continue;
+    const team = (await db.prepare("SELECT email FROM biz_members WHERE biz_id = ? AND role = 'manager'").bind(bizId).all<{ email: string }>().catch(() => ({ results: [] }))).results.map((m) => m.email);
+    const { subj, text } = morningText(o.lang || 'en', o.name, rows);
+    for (const to of new Set([o.email, ...team])) if (to) await send(to, subj, text).catch(() => false);
+  }
+}

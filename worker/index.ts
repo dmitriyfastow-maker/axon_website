@@ -1,7 +1,7 @@
 // Cloudflare Worker: serves the static site from ./dist and handles the lead form.
 import { handleWorkspace } from './workspace.js';
 import { pageFacts, servePage } from './modules.js';
-import { handleBookGet } from './booking.js';
+import { handleBookGet, morningBookings } from './booking.js';
 import { serveDoc } from './workspace.js';
 import { serveImage } from './images.js';
 import { checkDomains, serveOwnDomain, TARGET } from './domains.js';
@@ -15,7 +15,7 @@ import { aiFollowups, aiReply, decideOffer, learnFromChats, rescueUnanswered } f
 import { configureTelegram, ensureWebhook, handleTelegram } from './telegram.js';
 import { handleCollab } from './collab.js';
 import { configureRouter } from './router.js';
-import { configureMail, handleEmail, type IncomingEmail } from './mail.js';
+import { configureMail, handleEmail, sendMail, type IncomingEmail } from './mail.js';
 import { handleStt } from './stt.js';
 import { handleFileUpload, servePreview, serveFile, type KV } from './files.js';
 import { handleCabinet, type CabinetEnv } from './cabinet.js';
@@ -281,7 +281,7 @@ export default {
       }).catch(() => {});
     };
     // The autopilot's hourly round: deadlines, AI grading, quality control, client summaries, the morning digest.
-    for (const job of [() => checkDomains(env.LEADS!, { token: env.CF_SAAS_TOKEN }, notify), () => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => labSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => matureReferrals(env.LEADS!, notify), () => rescueUnanswered(env.LEADS!, env.AI, notify), () => monthlyBilling(env.LEADS!, notify), () => pruneBots(env.LEADS!)]) {
+    for (const job of [() => checkDomains(env.LEADS!, { token: env.CF_SAAS_TOKEN }, notify), () => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => labSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => matureReferrals(env.LEADS!, notify), () => rescueUnanswered(env.LEADS!, env.AI, notify), () => monthlyBilling(env.LEADS!, notify), () => morningBookings(env.LEADS!, sendMail), () => pruneBots(env.LEADS!)]) {
       await job().catch((e) => console.error('[cron]', e));
     }
   },  // Letters to hello@vaxogroup.com (Cloudflare Email Routing → this worker) go into the client's project chat.

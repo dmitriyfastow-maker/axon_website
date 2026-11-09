@@ -161,3 +161,14 @@ describe('online booking (Decision 47)', () => {
     expect(h).toContain('data-keep');
   });
 });
+
+import { morningText } from '../../worker/booking';
+describe('morning bookings letter', () => {
+  it('counts in Russian and lists by time', () => {
+    const r = morningText('ru', 'Барбер', [{ time: '15:00', service: null, name: 'Ия', contact: null }, { time: '10:00', service: 'Стрижка', name: 'Олег', contact: '+380' }]);
+    expect(r.subj).toBe('Сегодня 2 записи — Барбер');
+    expect(r.text.indexOf('10:00 — Олег · Стрижка · +380')).toBeLessThan(r.text.indexOf('15:00 — Ия'));
+    expect(morningText('ua', 'X', Array(5).fill({ time: '09:00', service: null, name: null, contact: null })).subj).toBe('Сьогодні 5 записів — X');
+    expect(morningText('en', 'X', [{ time: '09:00', service: null, name: null, contact: null }]).subj).toBe('Today: 1 booking — X');
+  });
+});
