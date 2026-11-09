@@ -3,7 +3,7 @@
 // Cabinet (/api/biz/…, signed-in client from /me/): businesses I own or work in, analytics, leads, team, AI assistant.
 // Roles: owner — everything; manager — analytics + leads (assigned to them or unassigned); viewer — analytics only.
 import { pageFacts } from './modules.js';
-import { saveBooking, takeSlot } from './booking.js';
+import { cancelOwn, saveBooking, takeSlot } from './booking.js';
 import type { DB } from './partner.js';
 import type { Notify } from './deals.js';
 import type { AiBinding } from './chat.js';
@@ -126,9 +126,16 @@ export async function handleCollect(db: DB, request: Request, ai?: AiBinding, wa
     const r = await takeSlot(db, biz.id, key, b, path);
     if (!r.ok) return json(200, { ok: false, error: r.error }, CORS);
     const lead = await db.prepare('INSERT INTO biz_leads (biz_id, name, contact, message, source, path) VALUES (?, ?, ?, ?, ?, ?) RETURNING id').bind(biz.id, cut(b.name, 80) || null, contact, r.text, `booking · ${source}`, path).first<{ id: number }>();
-    await saveBooking(db, biz.id, r, cut(b.service, 80), lead?.id ?? null);
+    const bx = await saveBooking(db, biz.id, r, cut(b.service, 80), lead?.id ?? null);
     wait(tellOwner(db, biz.id, { name: cut(b.name, 80), contact, message: r.text, source: `booking · ${source}` }));
-    return json(200, { ok: true, booked: true }, CORS);
+    return json(200, { ok: true, booked: true, bx }, CORS);
+  } else if (t === 'unbook') {
+    // The client cancels their own booking by its secret link; the owner gets a note, the time is free again.
+    const k = await cancelOwn(db, biz.id, b.bx);
+    if (!k) return json(200, { ok: false }, CORS);
+    const l = k.lead_id ? await db.prepare('SELECT name, contact FROM biz_leads WHERE id = ?').bind(k.lead_id).first<{ name: string | null; contact: string | null }>() : null;
+    wait(tellOwner(db, biz.id, { name: l?.name || '', contact: l?.contact || '', message: `❌ ${k.day} ${k.time}${k.service ? ` · ${k.service}` : ''} — cancelled by the client / отменено клиентом`, source: 'booking' }));
+    return json(200, { ok: true }, CORS);
   } else if (t === 'chat') {
     // The site's AI chat answers only from the owner's "About the business"; a contact left in the chat becomes a request.
     const msgs = (Array.isArray(b.msgs) ? b.msgs : []).slice(-12).map((x: any) => ({ r: x?.r === 'u' ? 'Visitor' : 'Assistant', c: cut(x?.c, 500) })).filter((x) => x.c);
