@@ -76,6 +76,11 @@ export default {
       const to = /^pric|^plan/.test(habit[2]) ? `/${habit[1] ?? ''}${url.search}#pricing` : `/${habit[1] ?? ''}app/${url.search}`;
       return Response.redirect(url.origin + to, 301);
     }
+    // More habit addresses: /faq, /contact, /help open the matching part of the home page; /sitemap.xml and /manifest.json point to the real files.
+    const part = url.pathname.match(/^\/(ru\/|ua\/)?(faq|contact|contacts|help|support)\/?$/);
+    if (part && request.method === 'GET') return Response.redirect(`${url.origin}/${part[1] ?? ''}${url.search}#${part[2] === 'faq' ? 'faq' : 'contact'}`, 301);
+    if (url.pathname === '/sitemap.xml') return Response.redirect(`${url.origin}/sitemap-index.xml`, 301);
+    if (url.pathname === '/manifest.json' || url.pathname === '/site.webmanifest') return Response.redirect(`${url.origin}/manifest.webmanifest`, 301);
     // Ukrainian language law (art. 27): visitors from Ukraine get the Ukrainian version by default, unless they picked a language.
     const country = (request as Request & { cf?: { country?: string } }).cf?.country;
     if (url.pathname === '/' && request.method === 'GET' && country === 'UA' && !/(?:^|;\s*)vaxo_lang=/.test(request.headers.get('Cookie') || '')) {
