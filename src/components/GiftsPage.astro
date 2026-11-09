@@ -1,10 +1,9 @@
 ---
 // Cartoon gifts (/gifts/, Decision 15): personalised clips with Vax for birthdays, anniversaries, apologies.
-// Payments are not connected yet, so the form adds people to a waitlist (leads, mode 'gift', status 'waitlist').
+// Video orders are not open yet, so the form hands the idea to Vax in Workspace (no waitlist, no contacts).
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
-import PageChat from './PageChat.astro';
 import { getDict, langPath, navHref, type Lang } from '../i18n';
 
 interface Props { lang: Lang }
@@ -16,8 +15,8 @@ const alts = { en: '/gifts/', ua: '/ua/gifts/', ru: '/ru/gifts/' };
 const C = {
   en: {
     title: 'Vaxo Gifts — a cartoon with your names', desc: 'A personalised cartoon clip with Vax the raccoon for a birthday, an anniversary or just because. From $7.99.',
-    eyebrow: 'Cartoon gifts', h1: 'A cartoon gift with their name in it.', sub: 'A short animated clip with Vax for a birthday, an anniversary, an apology or “just because”. Made with AI by the Vaxo studio, delivered to your email or messenger.',
-    soon: 'Orders open very soon. Join the list — you get the launch price and a message the day we open.', cta: 'Join the list →',
+    eyebrow: 'Cartoon gifts', h1: 'A cartoon gift with their name in it.', sub: 'A short animated clip with Vax for a birthday, an anniversary, an apology or “just because”. Made with AI by Vaxo and sent to you as a link.',
+    soon: 'Video orders open very soon. Right now Vax writes the story and the wish with you for free, and the video is made from them.', cta: 'Describe the gift →',
     tiersH: 'Choose the gift', tiers: [
       ['card', 'Video card', '$7.99', '10 seconds: a ready Vax scene with your names and a short wish on screen. Ready in minutes.'],
       ['scene', 'Personal scene', '$19–39', '20–30 seconds made for your story: the place, the joke, the moment. 1–2 days.'],
@@ -26,13 +25,13 @@ const C = {
     ],
     occH: 'For any moment', occ: ['Birthday', 'Anniversary', 'Sorry', 'Miss you', 'Thank you', 'Congrats', 'Proposal', 'Just because'],
     howH: 'How it works', how: [['Tell us', 'Names, the occasion and one detail that makes them smile.'], ['We animate', 'Vax plays your story. You see a preview first.'], ['They smile', 'You get a link to send or post. Keep it forever.']],
-    formH: 'Join the waitlist', you: 'Your name', tier: 'Gift', occasion: 'Occasion', names: 'Names in the clip (e.g. Anna & Max)', contact: 'Email, phone or @telegram', note: 'Your idea (optional)', send: 'Join the list', ok: 'You are on the list! We will message you when orders open.', err: 'Not sent. Check the fields and try again.',
+    formH: 'Describe the gift', tier: 'Gift', occasion: 'Occasion', note: 'Your idea (optional)', idea: 'Names, the occasion and one detail that makes them smile', go: 'Write it with Vax →', hint: 'Free. Vax writes the story and the wish in your Workspace, no contacts needed.', ask: 'Help me plan a cartoon gift with Vax the raccoon. Gift: {t}. Occasion: {o}. Write a short story for the clip and a warm wish. My idea: ',
     fine: 'Personalised digital videos are made just for you, so they are not refundable after delivery; if we make a mistake, we fix it for free. Terms: ',
   },
   ru: {
     title: 'Подарки Vaxo — мультик с вашими именами', desc: 'Именной мультик с енотом Vax на день рождения, годовщину или просто так. От $7.99.',
-    eyebrow: 'Подарочные мультики', h1: 'Мультик в подарок — с их именем.', sub: 'Короткий мультик с Vax на день рождения, годовщину, «прости» или просто так. Делает студия Vaxo с помощью ИИ, присылаем на почту или в мессенджер.',
-    soon: 'Заказы откроются совсем скоро. Запишитесь — получите цену запуска и сообщение в день открытия.', cta: 'Записаться →',
+    eyebrow: 'Подарочные мультики', h1: 'Мультик в подарок — с их именем.', sub: 'Короткий мультик с Vax на день рождения, годовщину, «прости» или просто так. Делает Vaxo с помощью ИИ, вы получаете ссылку.',
+    soon: 'Заказ видео откроется совсем скоро. Уже сейчас Vax бесплатно напишет с вами историю и пожелание — по ним и сделаем мультик.', cta: 'Описать подарок →',
     tiersH: 'Выберите подарок', tiers: [
       ['card', 'Видеооткрытка', '$7.99', '10 секунд: готовая сцена с Vax, ваши имена и короткое пожелание на экране. Готово за минуты.'],
       ['scene', 'Именная сцена', '$19–39', '20–30 секунд по вашей истории: место, шутка, момент. 1–2 дня.'],
@@ -41,13 +40,13 @@ const C = {
     ],
     occH: 'Для любого повода', occ: ['День рождения', 'Годовщина', 'Прости', 'Скучаю', 'Спасибо', 'Поздравляю', 'Предложение', 'Просто так'],
     howH: 'Как это работает', how: [['Расскажите', 'Имена, повод и одну деталь, от которой человек улыбнётся.'], ['Мы оживляем', 'Vax разыгрывает вашу историю. Сначала вы видите превью.'], ['Улыбка', 'Вы получаете ссылку — отправить или выложить. Остаётся навсегда.']],
-    formH: 'Записаться в лист ожидания', you: 'Ваше имя', tier: 'Подарок', occasion: 'Повод', names: 'Имена в мультике (например, Аня и Макс)', contact: 'Почта, телефон или @telegram', note: 'Ваша идея (необязательно)', send: 'Записаться', ok: 'Вы в списке! Напишем, когда откроем заказы.', err: 'Не отправилось. Проверьте поля и попробуйте ещё раз.',
+    formH: 'Опишите подарок', tier: 'Подарок', occasion: 'Повод', note: 'Ваша идея (необязательно)', idea: 'Имена, повод и одна деталь, от которой человек улыбнётся', go: 'Написать с Vax →', hint: 'Бесплатно. Vax напишет историю и пожелание в вашем Workspace, контакты не нужны.', ask: 'Помоги придумать мультик-подарок с енотом Vax. Подарок: {t}. Повод: {o}. Напиши короткую историю для ролика и тёплое пожелание. Моя идея: ',
     fine: 'Именное видео делается только для вас, поэтому после сдачи не возвращается; если ошиблись мы — исправим бесплатно. Условия: ',
   },
   ua: {
     title: 'Подарунки Vaxo — мультик з вашими іменами', desc: 'Іменний мультик з єнотом Vax на день народження, річницю або просто так. Від $7.99.',
-    eyebrow: 'Подарункові мультики', h1: 'Мультик у подарунок — з їхнім імʼям.', sub: 'Короткий мультик з Vax на день народження, річницю, «пробач» або просто так. Робить студія Vaxo за допомогою ШІ, надсилаємо на пошту або в месенджер.',
-    soon: 'Замовлення відкриються зовсім скоро. Запишіться — отримаєте ціну запуску і повідомлення в день відкриття.', cta: 'Записатися →',
+    eyebrow: 'Подарункові мультики', h1: 'Мультик у подарунок — з їхнім імʼям.', sub: 'Короткий мультик з Vax на день народження, річницю, «пробач» або просто так. Робить Vaxo за допомогою ШІ, ви отримуєте посилання.',
+    soon: 'Замовлення відео відкриється зовсім скоро. Вже зараз Vax безкоштовно напише з вами історію і побажання — за ними й зробимо мультик.', cta: 'Описати подарунок →',
     tiersH: 'Оберіть подарунок', tiers: [
       ['card', 'Відеолистівка', '$7.99', '10 секунд: готова сцена з Vax, ваші імена і коротке побажання на екрані. Готово за хвилини.'],
       ['scene', 'Іменна сцена', '$19–39', '20–30 секунд за вашою історією: місце, жарт, момент. 1–2 дні.'],
@@ -56,7 +55,7 @@ const C = {
     ],
     occH: 'Для будь-якого приводу', occ: ['День народження', 'Річниця', 'Пробач', 'Сумую', 'Дякую', 'Вітаю', 'Пропозиція', 'Просто так'],
     howH: 'Як це працює', how: [['Розкажіть', 'Імена, привід і одну деталь, від якої людина усміхнеться.'], ['Ми оживлюємо', 'Vax розігрує вашу історію. Спершу ви бачите превʼю.'], ['Усмішка', 'Ви отримуєте посилання — надіслати або викласти. Залишається назавжди.']],
-    formH: 'Записатися в лист очікування', you: 'Ваше імʼя', tier: 'Подарунок', occasion: 'Привід', names: 'Імена в мультику (наприклад, Аня і Макс)', contact: 'Пошта, телефон або @telegram', note: 'Ваша ідея (необовʼязково)', send: 'Записатися', ok: 'Ви в списку! Напишемо, коли відкриємо замовлення.', err: 'Не надіслано. Перевірте поля й спробуйте ще раз.',
+    formH: 'Опишіть подарунок', tier: 'Подарунок', occasion: 'Привід', note: 'Ваша ідея (необовʼязково)', idea: 'Імена, привід і одна деталь, від якої людина усміхнеться', go: 'Написати з Vax →', hint: 'Безкоштовно. Vax напише історію і побажання у вашому Workspace, контакти не потрібні.', ask: 'Допоможи придумати мультик-подарунок з єнотом Vax. Подарунок: {t}. Привід: {o}. Напиши коротку історію для ролика і тепле побажання. Моя ідея: ',
     fine: 'Іменне відео робиться лише для вас, тому після здачі не повертається; якщо помилилися ми — виправимо безкоштовно. Умови: ',
   },
 }[lang];
@@ -92,24 +91,16 @@ const shots = ['/gifts/f13.jpg', '/gifts/f37.jpg', '/gifts/f1.jpg'];
       <ol class="how">{C.how.map(([a, b]) => <li><b>{a}</b><span>{b}</span></li>)}</ol>
     </section>
 
-    <section class="in" id="form" data-chat-host>
-      <PageChat lang={lang} kind="gift" chips={{ en: ['A birthday video card', 'A scene with our names', 'A gift for my team or clients'], ru: ['Видеооткрытка на день рождения', 'Сцена с нашими именами', 'Подарок для команды или клиентов'], ua: ['Відеолистівка на день народження', 'Сцена з нашими іменами', 'Подарунок для команди чи клієнтів'] }[lang]} />
-      <form class="card" data-gift data-chat-fallback hidden>
+    <section class="in" id="form">
+      <form class="card" data-gift>
         <h2>{C.formH}</h2>
         <div class="two">
           <label><span>{C.tier}</span><select name="tier">{C.tiers.map(([k, n, p]) => <option value={k}>{n} · {p}</option>)}</select></label>
           <label><span>{C.occasion}</span><select name="occasion">{C.occ.map((o) => <option>{o}</option>)}</select></label>
         </div>
-        <div class="two">
-          <label><span>{C.you}</span><input name="name" required maxlength="80" /></label>
-          <label><span>{C.contact}</span><input name="contact" required maxlength="100" /></label>
-        </div>
-        <label><span>{C.names}</span><input name="names" maxlength="80" /></label>
-        <label><span>{C.note}</span><textarea name="note" rows="3" maxlength="800"></textarea></label>
-        <input class="trap" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <button class="cta" type="submit">{C.send}</button>
-        <p class="ok" hidden>{C.ok}</p>
-        <p class="err" hidden>{C.err}</p>
+        <label><span>{C.note}</span><textarea name="note" rows="3" maxlength="800" placeholder={C.idea}></textarea></label>
+        <button class="cta" type="submit">{C.go}</button>
+        <small class="mut">{C.hint}</small>
         <small class="mut">{C.fine}<a href={navHref('/terms/', lang)}>vaxogroup.com/terms</a></small>
       </form>
     </section>
@@ -117,22 +108,14 @@ const shots = ['/gifts/f13.jpg', '/gifts/f37.jpg', '/gifts/f1.jpg'];
   <Footer t={t} home={home} lang={lang} />
 </Base>
 
-<script define:vars={{ lang }}>
+<script define:vars={{ app: navHref('/app/', lang), ask: C.ask }}>
+  // No waitlist and no contacts (Decision 40): the gift idea goes straight to Vax in Workspace.
   const form = document.querySelector('[data-gift]');
-  const started = Date.now();
   document.querySelectorAll('[data-pick]').forEach((a) => a.addEventListener('click', () => { form.tier.value = a.dataset.pick; }));
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const btn = form.querySelector('button');
-    btn.disabled = true;
-    const f = Object.fromEntries(new FormData(form).entries());
-    // Gift waitlist goes through the normal lead form: the person gets a private chat where Vax asks the details.
-    const message = [`Occasion: ${f.occasion}`, f.names && `Names: ${f.names}`, f.note].filter(Boolean).join('\n');
-    const r = await fetch('/api/lead', { method: 'POST', headers: { 'X-Vx-Src': window.vxSrc?.() || '', 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'request', interest: `gift-${f.tier}`, name: f.name, contact: f.contact, message, lang, website: f.website, startedAt: started }) }).catch(() => null);
-    const d = r && r.ok ? await r.json().catch(() => null) : null;
-    btn.disabled = false;
-    if (d && d.room) { form.querySelector('.ok').hidden = false; form.querySelector('.err').hidden = true; setTimeout(() => (location.href = `/room/?t=${d.room}`), 1200); }
-    else form.querySelector('.err').hidden = false;
+    const t = form.tier.options[form.tier.selectedIndex].text, o = form.occasion.value, n = form.note.value.trim();
+    location.href = app + '#q=' + encodeURIComponent(ask.replace('{t}', t).replace('{o}', o) + (n || '—'));
   });
 </script>
 
