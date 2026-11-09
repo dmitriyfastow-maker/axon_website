@@ -115,7 +115,7 @@ describe('a site built in the chat is live at once', () => {
     expect(t).toContain('CRM');
     expect(t).toContain('Партнёрская программа');
     expect(t).toContain('ИИ-консультант');
-    expect(t.split('\n').length).toBeLessThanOrEqual(8);
+    expect(t.split('\n').length).toBeLessThanOrEqual(10); // short lines: what works, payments, Google
   });
 });
 

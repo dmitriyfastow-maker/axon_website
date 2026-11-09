@@ -3,7 +3,7 @@
 import type { Lang } from '../i18n';
 import { RATES } from './partners';
 
-export type Doc = 'terms' | 'privacy' | 'partner';
+export type Doc = 'terms' | 'privacy' | 'partner' | 'refunds';
 type Section = [string, string[]];
 type Page = { title: string; desc: string; updated: string; note: string; sections: Section[] };
 
@@ -34,6 +34,7 @@ export const LEGAL: Record<Doc, Record<Lang, Page>> = {
       ]],
       ['5. Delivery, revisions and acceptance', ['We send a preview. 2 revision rounds are included (more if your order says so); the chat shows how many are left. A revision changes what is already in the brief; new requests are add-ons. When the rounds are used up, you can order a revision pack or monthly support. The work is accepted when you confirm it in the chat, or automatically 7 days after delivery if there are no specific remarks.']],
       ['6. Refunds', [
+        'Subscriptions bought through Paddle: see the Refund Policy at vaxogroup.com/refunds/ (14 days for the first payment). The rules below are for one-off projects. Seller: PE Kusainova Sofiia (sole proprietor, Ukraine), trading as Vaxo. Contact: hello@vaxogroup.com.',
         'Until work starts: full refund, minus payment-provider fees. Work starts as soon as the payment arrives — the "In progress" status appears in your project chat at that moment. If you want time to think, simply do not pay yet: the quote stays valid for 14 days.',
         'After work starts: the payment is not refundable. The only exception is our fault: if we miss the agreed date by more than 14 days for reasons on our side, you may cancel and get back the money for the part not yet delivered.',
         'After acceptance: no refunds.',
@@ -70,6 +71,7 @@ export const LEGAL: Record<Doc, Record<Lang, Page>> = {
       ]],
       ['5. Сдача, правки и приёмка', ['Мы присылаем превью. В заказ входят 2 круга правок (больше — если так указано в заказе); в чате видно, сколько осталось. Правка меняет то, что уже есть в брифе; новые пожелания — это дополнения. Когда круги закончились, можно заказать пакет правок или поддержку на месяц. Работа принята, когда вы подтвердили её в чате, или автоматически через 7 дней после сдачи, если не было конкретных замечаний.']],
       ['6. Возвраты', [
+        'Подписки через Paddle: см. Политику возвратов vaxogroup.com/ru/refunds/ (14 дней за первую оплату). Правила ниже — для разовых проектов. Продавец: ФОП Кусаїнова Софія Вікторівна (Украина), бренд Vaxo. Связь: hello@vaxogroup.com.',
         'Пока работа не началась: полный возврат за вычетом комиссии платёжной системы. Работа начинается сразу после поступления оплаты — в этот момент в чате проекта появляется статус «В работе». Хотите подумать — просто не оплачивайте: предложение действует 14 дней.',
         'После начала работ: оплата не возвращается. Единственное исключение — наша вина: если мы просрочили согласованный срок больше чем на 14 дней по своей причине, вы можете отказаться и получить деньги за ещё не сданную часть.',
         'После приёмки: возврата нет.',
@@ -106,6 +108,7 @@ export const LEGAL: Record<Doc, Record<Lang, Page>> = {
       ]],
       ['5. Здача, правки і приймання', ['Ми надсилаємо превʼю. У замовлення входять 2 кола правок (більше — якщо так указано в замовленні); у чаті видно, скільки залишилося. Правка змінює те, що вже є в брифі; нові побажання — це доповнення. Коли кола закінчилися, можна замовити пакет правок або підтримку на місяць. Роботу прийнято, коли ви підтвердили її в чаті, або автоматично через 7 днів після здачі, якщо не було конкретних зауважень.']],
       ['6. Повернення', [
+        'Підписки через Paddle: див. Політику повернень vaxogroup.com/ua/refunds/ (14 днів за першу оплату). Правила нижче — для разових проєктів. Продавець: ФОП Кусаїнова Софія Вікторівна (Україна), бренд Vaxo. Звʼязок: hello@vaxogroup.com.',
         'Поки робота не почалася: повне повернення за вирахуванням комісії платіжної системи. Робота починається одразу після надходження оплати — у цей момент у чаті проєкту зʼявляється статус «В роботі». Хочете подумати — просто не оплачуйте: пропозиція діє 14 днів.',
         'Після початку робіт: оплата не повертається. Єдиний виняток — наша вина: якщо ми прострочили погоджений строк більш ніж на 14 днів з власної причини, ви можете відмовитися й отримати гроші за ще не здану частину.',
         'Після приймання: повернення немає.',
@@ -200,6 +203,23 @@ export const LEGAL: Record<Doc, Record<Lang, Page>> = {
       ['Vax, ваш ШІ-помічник', ['Помічник у кабінеті відповідає до 20 питань на день щодо роботи з Vaxo і дає промпти для ваших власних ШІ.']],
       ['Клієнти теж запрошують', ['Клієнти Vaxo можуть запрошувати друзів своїм посиланням; вони отримують безкоштовні місяці нашого сервісу, а не гроші (Умови роботи, розділ 4.4). Новий клієнт, який прийшов за вашим посиланням, отримує 2 безкоштовні місяці замість 1. Кожен новий клієнт зараховується один раз — перемагає перше посилання: якщо він спершу прийшов за посиланням-запрошенням клієнта, партнерської комісії за нього немає.']],
       ['Зміни', ['Ми можемо змінювати ставки для майбутніх продажів, попередивши за 14 днів; уже зароблене залишається.']],
+    ] },
+  },
+  refunds: {
+    en: { title: 'Refund Policy', desc: 'How refunds work at Vaxo: 14 days for the first subscription payment, cancel any time, one-off projects.', updated: UPDATED.en, note: NOTE.en, sections: [
+      ['Subscriptions (Personal, Care, Growth, Pro)', ['Our order process for subscriptions is conducted by our online reseller Paddle.com. Paddle.com is the Merchant of Record for these orders and handles customer service inquiries and returns.', 'The first month of every paid plan is free, so you can try everything before you pay anything.', 'You may request a full refund within 14 days of your first subscription payment, for any reason. Write to hello@vaxogroup.com or contact Paddle at paddle.net.', 'You can cancel at any time in your cabinet; the subscription then stops before the next charge and you keep access until the end of the paid period.', 'Refunds are processed by Paddle under the Paddle Buyer Terms, which allow Paddle to decline a refund where there is evidence of fraud or refund abuse. A refunded account returns to the free plan; the free month is offered once per person.']],
+      ['One-off projects (paid by invoice or plata by mono)', ['Section 6 of the Terms of Service applies: a full refund until work starts, and the rules for work in progress are described there.']],
+      ['Seller', ['Seller: PE Kusainova Sofiia (sole proprietor, Ukraine), trading as Vaxo. Contact: hello@vaxogroup.com.']],
+    ] },
+    ru: { title: 'Политика возвратов', desc: 'Как в Vaxo устроены возвраты: 14 дней за первую оплату подписки, отмена в любой момент, разовые проекты.', updated: UPDATED.ru, note: NOTE.ru, sections: [
+      ['Подписки (Личный, Care, Growth, Pro)', ['Заказ подписок оформляет наш онлайн-реселлер Paddle.com. Paddle.com — продавец (Merchant of Record) по этим заказам и отвечает на вопросы покупателей и возвраты.', 'Первый месяц любого платного тарифа бесплатный: всё можно попробовать, ничего не платя.', 'Полный возврат можно запросить в течение 14 дней после первой оплаты подписки, по любой причине. Напишите на hello@vaxogroup.com или в Paddle через paddle.net.', 'Отменить можно в любой момент в кабинете: подписка останавливается до следующего списания, доступ сохраняется до конца оплаченного периода.', 'Возвраты проводит Paddle по своим условиям для покупателей (Paddle Buyer Terms): Paddle может отказать в возврате при признаках мошенничества или злоупотребления возвратами. После возврата аккаунт переходит на бесплатный тариф; бесплатный месяц даётся один раз на человека.']],
+      ['Разовые проекты (оплата по счёту или plata by mono)', ['Действует раздел 6 Условий работы: полный возврат до начала работ, правила для работы в процессе описаны там.']],
+      ['Продавец', ['Продавец: ФОП Кусаїнова Софія Вікторівна (Украина), бренд Vaxo. Связь: hello@vaxogroup.com.']],
+    ] },
+    ua: { title: 'Політика повернень', desc: 'Як у Vaxo влаштовані повернення: 14 днів за першу оплату підписки, скасування будь-коли, разові проєкти.', updated: UPDATED.ua, note: NOTE.ua, sections: [
+      ['Підписки (Особистий, Care, Growth, Pro)', ['Замовлення підписок оформлює наш онлайн-реселер Paddle.com. Paddle.com — продавець (Merchant of Record) за цими замовленнями й відповідає на питання покупців і повернення.', 'Перший місяць будь-якого платного тарифу безкоштовний: усе можна спробувати, нічого не платячи.', 'Повне повернення можна запросити протягом 14 днів після першої оплати підписки, з будь-якої причини. Напишіть на hello@vaxogroup.com або в Paddle через paddle.net.', 'Скасувати можна будь-коли в кабінеті: підписка зупиняється до наступного списання, доступ зберігається до кінця оплаченого періоду.', 'Повернення проводить Paddle за своїми умовами для покупців (Paddle Buyer Terms): Paddle може відмовити в поверненні за ознак шахрайства чи зловживання поверненнями. Після повернення акаунт переходить на безкоштовний тариф; безкоштовний місяць надається один раз на людину.']],
+      ['Разові проєкти (оплата за рахунком або plata by mono)', ['Діє розділ 6 Умов роботи: повне повернення до початку робіт, правила для роботи в процесі описано там.']],
+      ['Продавець', ['Продавець: ФОП Кусаїнова Софія Вікторівна (Україна), бренд Vaxo. Звʼязок: hello@vaxogroup.com.']],
     ] },
   },
 };

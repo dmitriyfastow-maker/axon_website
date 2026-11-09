@@ -10,7 +10,7 @@ interface Props { lang: Lang; doc: Doc }
 const { lang, doc } = Astro.props;
 const t = getDict(lang);
 const home = langPath(lang);
-const slug = { terms: 'terms', privacy: 'privacy', partner: 'partner-terms' }[doc];
+const slug = { terms: 'terms', privacy: 'privacy', partner: 'partner-terms', refunds: 'refunds' }[doc];
 const alts = { en: `/${slug}/`, ua: `/ua/${slug}/`, ru: `/ru/${slug}/` };
 const P = LEGAL[doc][lang];
 ---
