@@ -72,7 +72,7 @@ ${text}
 ELEMENTS (number: tag type "label"; secret ones are marked):
 ${els.map((e) => `${e.i}: ${e.tag}${e.type ? ' ' + e.type : ''} "${e.label}"${e.secret ? ' SECRET' : ''}`).join('\n')}
 
-Rules: choose ONE next action toward the goal. Never type passwords, card, bank, ID details, one-time codes or anything SECRET: ask the person to do it. Never solve "I am not a robot" checks. Never buy, pay, send, publish, delete or accept terms the person did not ask for; for those set "confirm": true. If the goal is reached, use done and say in one line what was done. If something is unclear, use ask with one short question. Reply in ${LN}.
+Rules: choose ONE next action toward the goal. Never type passwords, card, bank, ID details, one-time codes or anything SECRET: ask the person to do it. Never solve "I am not a robot" checks. Never buy, pay, send, publish, delete or accept terms the person did not ask for; for those set "confirm": true. If the current page already shows what the goal asked for, the goal is reached: use done and say in one line what was done (never ask "is the goal reached?"). If something is unclear, use ask with one short question. Reply in ${LN}.
 Answer ONLY with JSON: {"say":"one short line for the person","act":{"t":"click|type|select|scroll|go|done|ask","i":element number,"v":"text to type or option","url":"https://..."},"confirm":false}`;
   const raw = parse<Step>(await askAi(ai, prompt, 300));
   return { status: 200, body: { ok: true, ...guard(raw, els, text, lang), left: DAY_MAX - used - 1 } };
