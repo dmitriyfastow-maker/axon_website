@@ -70,6 +70,12 @@ export default {
     // Decision 43: one place to work. The old cabinet address opens the workspace, keeping ?t= and the #part.
     const cab = url.pathname.match(/^\/(ru\/|ua\/)?me\/?$/);
     if (cab && request.method === 'GET') return Response.redirect(`${url.origin}/${cab[1] ?? ''}app/${url.search}`, 302);
+    // Addresses people type by habit: /pricing opens the plans on the home page, /login and /cabinet open the workspace.
+    const habit = url.pathname.match(/^\/(ru\/|ua\/)?(pricing|prices|plans|price|login|signin|sign-in|signup|register|cabinet|account|dashboard)\/?$/);
+    if (habit && request.method === 'GET') {
+      const to = /^pric|^plan/.test(habit[2]) ? `/${habit[1] ?? ''}${url.search}#pricing` : `/${habit[1] ?? ''}app/${url.search}`;
+      return Response.redirect(url.origin + to, 301);
+    }
     // Ukrainian language law (art. 27): visitors from Ukraine get the Ukrainian version by default, unless they picked a language.
     const country = (request as Request & { cf?: { country?: string } }).cf?.country;
     if (url.pathname === '/' && request.method === 'GET' && country === 'UA' && !/(?:^|;\s*)vaxo_lang=/.test(request.headers.get('Cookie') || '')) {
