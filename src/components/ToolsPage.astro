@@ -75,7 +75,7 @@ const C = {
 const path = lang === 'en' ? '/tools/' : `/${lang}/tools/`;
 ---
 
-<Base lang={lang} title={`Vaxo — ${C.title}`} description={C.h1} path={path} alts={{ en: '/tools/', ua: '/ua/tools/', ru: '/ru/tools/' }}>
+<Base lang={lang} title={`Vaxo — ${C.title}`} description={({ en: 'Two free calculators: how much unanswered messages cost you and what price to charge for your service. One minute, no sign-up.', ru: 'Два бесплатных калькулятора: сколько стоят вам неотвеченные сообщения и какую цену ставить на свою услугу. Одна минута, без регистрации.', ua: 'Два безкоштовні калькулятори: скільки коштують вам повідомлення без відповіді і яку ціну ставити на свою послугу. Одна хвилина, без реєстрації.' } as Record<string,string>)[lang]} path={path} alts={{ en: '/tools/', ua: '/ua/tools/', ru: '/ru/tools/' }}>
   <Header lang={lang} t={t} home={home} alts={{ en: '/tools/', ua: '/ua/tools/', ru: '/ru/tools/' }} />
   <main>
     <section class="hero">

@@ -127,7 +127,7 @@ const C = {
 
 ---
 
-<Base lang={lang} title={C.title} description={lang === 'en' ? 'Ready-made templates for small businesses: AI prompts, client tracker, message templates, a 90-day marketing plan, an AI chatbot FAQ builder, a pricing calculator, a social media content calendar, a weekly KPI tracker, a review request kit and a client onboarding kit.' : C.h1} path={alts[lang]} alts={alts}>
+<Base lang={lang} title={C.title} description={({ en: 'Ready-made templates: AI prompts, client tracker, message scripts, a 90-day marketing plan, content calendar, KPI tracker. From $9, instant download.', ru: 'Готовые шаблоны: промпты для ИИ, таблица клиентов, скрипты сообщений, маркетинг-план на 90 дней, контент-календарь. От $9, скачивание сразу.', ua: 'Готові шаблони: промпти для ШІ, таблиця клієнтів, скрипти повідомлень, маркетинг-план на 90 днів, контент-календар. Від $9, завантаження одразу.' } as Record<string,string>)[lang]} path={alts[lang]} alts={alts}>
   <Header lang={lang} t={t} home={home} alts={alts} />
   <main>
     <section class="hero">
