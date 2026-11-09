@@ -78,7 +78,7 @@ export async function sitePhotos(ai: AiBinding | undefined, db: DB, who: string,
   const room = Math.max(0, 30 - used);
   const ids = await Promise.all(prompts.slice(0, Math.min(3, room)).map(async (p) => {
     try {
-      const r = (await ai.run(IMAGE, { prompt: `${p}, photorealistic, editorial photography, natural light, high detail, no text, no logos`.slice(0, 500), steps: 6 })) as { image?: string };
+      const r = (await ai.run(IMAGE, { prompt: `${p}, real candid photo shot on a 35mm camera, bright and airy, soft daylight, true-to-life colours, sharp focus, clean uncluttered scene, no text, no signs, no lettering, no logos`.slice(0, 500), steps: 8 })) as { image?: string };
       if (!r?.image) return null;
       const id = Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => b.toString(16).padStart(2, '0')).join('');
       await db.prepare('INSERT INTO site_images (id, data, who) VALUES (?, ?, ?)').bind(id, r.image, key).run();

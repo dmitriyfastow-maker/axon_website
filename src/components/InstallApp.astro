@@ -3,15 +3,16 @@
 interface Props { lang: 'en' | 'ru' | 'ua' }
 const { lang } = Astro.props;
 const T = {
-  en: { install: 'Install the app', ios: 'Tap Share, then “Add to Home Screen”', close: 'Close' },
-  ru: { install: 'Установить приложение', ios: 'Нажмите «Поделиться», затем «На экран Домой»', close: 'Закрыть' },
-  ua: { install: 'Встановити застосунок', ios: 'Натисніть «Поділитися», потім «На початковий екран»', close: 'Закрити' },
+  en: { install: 'Install the app', ios: 'Tap Share, then “Add to Home Screen”', hint: 'In the browser menu ⋮ choose “Install Vaxo” (or the ⊕ icon in the address bar)', mac: 'In Safari: File → Add to Dock', close: 'Close' },
+  ru: { install: 'Установить приложение', ios: 'Нажмите «Поделиться», затем «На экран Домой»', hint: 'В меню браузера ⋮ выберите «Установить Vaxo» (или значок ⊕ в адресной строке)', mac: 'В Safari: Файл → Добавить в Dock', close: 'Закрыть' },
+  ua: { install: 'Встановити застосунок', ios: 'Натисніть «Поділитися», потім «На початковий екран»', hint: 'У меню браузера ⋮ виберіть «Встановити Vaxo» (або значок ⊕ в адресному рядку)', mac: 'У Safari: Файл → Додати в Dock', close: 'Закрити' },
 }[lang];
 ---
 
 <div class="vx-install" data-install hidden>
   <button type="button" class="vx-i-btn" data-install-go>{T.install}</button>
   <span class="vx-i-ios" data-install-ios hidden>{T.ios}</span>
+  <span class="vx-i-ios" data-install-hint hidden data-mac={T.mac}>{T.hint}</span>
   <button type="button" class="vx-i-x" data-install-x aria-label={T.close}>×</button>
 </div>
 
@@ -27,10 +28,24 @@ const T = {
     const go = box.querySelector<HTMLButtonElement>('[data-install-go]')!;
     const ios = box.querySelector<HTMLElement>('[data-install-ios]')!;
     const show = () => { if (!off && !standalone) box.hidden = false; };
+    const hint = box.querySelector<HTMLElement>('[data-install-hint]')!;
+    // Chrome fires its install prompt only now and then (and not again soon after "Cancel"), so the chip does not
+    // depend on it: without the prompt a click shows where the browser keeps "Install". Safari on a Mac: Add to Dock.
+    const ua = navigator.userAgent;
+    const safariMac = /Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR|Firefox/.test(ua);
+    const chromish = /Chrome|Chromium|Edg/.test(ua) && !/Mobile/.test(ua);
+    if (safariMac) hint.textContent = hint.dataset.mac || hint.textContent;
+    if ((chromish || safariMac) && !/iphone|ipad|ipod|android/i.test(ua)) setTimeout(show, 8000);
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); ev = e; setTimeout(show, 8000); });
     window.addEventListener('appinstalled', () => { box.hidden = true; });
     if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !standalone) { go.hidden = true; ios.hidden = false; setTimeout(show, 12000); }
-    go.addEventListener('click', async () => { if (!ev) return; ev.prompt(); await ev.userChoice.catch(() => {}); ev = null; box.hidden = true; });
+    go.addEventListener('click', async () => {
+      if (!ev) { hint.hidden = !hint.hidden; return; }
+      ev.prompt();
+      const r = await ev.userChoice.catch(() => null);
+      ev = null;
+      if (r?.outcome === 'accepted') box.hidden = true; else hint.hidden = false;
+    });
     box.querySelector('[data-install-x]')!.addEventListener('click', () => { box.hidden = true; try { localStorage.setItem(key, '1'); } catch {} });
   }
 </script>

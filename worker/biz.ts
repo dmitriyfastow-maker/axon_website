@@ -10,6 +10,7 @@ import type { AiBinding } from './chat.js';
 import { askAi } from './autopilot.js';
 import { sessionClient } from './cabinet.js';
 import { sendMail } from './mail.js';
+import { checkout, loadCfg, newPayment, settle } from './sitepay.js';
 
 const json = (status: number, body: unknown, headers: Record<string, string> = {}) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...headers } });
@@ -77,7 +78,7 @@ if(document.body)chat();else addEventListener('DOMContentLoaded',chat);`;
 }
 
 /** Tell the owner and their managers about a new request, in the owner's language. */
-async function tellOwner(db: DB, bizId: number, lead: { name: string; contact: string; message: string; source: string }) {
+export async function tellOwner(db: DB, bizId: number, lead: { name: string; contact: string; message: string; source: string }) {
   const o = await db.prepare('SELECT b.name, c.email, c.lang FROM biz b JOIN clients c ON c.id = b.owner_id WHERE b.id = ?').bind(bizId).first<{ name: string; email: string | null; lang: string | null }>();
   if (!o) return;
   const team = (await db.prepare("SELECT email FROM biz_members WHERE biz_id = ? AND role = 'manager'").bind(bizId).all<{ email: string }>()).results.map((x) => x.email);
@@ -88,7 +89,7 @@ async function tellOwner(db: DB, bizId: number, lead: { name: string; contact: s
 }
 
 /** Public collector. Text/plain body keeps it a "simple" CORS request (no preflight). */
-export async function handleCollect(db: DB, request: Request, ai?: AiBinding, wait: (p: Promise<unknown>) => void = (p) => void p): Promise<Response> {
+export async function handleCollect(db: DB, request: Request, ai?: AiBinding, wait: (p: Promise<unknown>) => void = (p) => void p, secret?: string): Promise<Response> {
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
   if (request.method !== 'POST') return json(405, { ok: false }, CORS);
   const ua = request.headers.get('User-Agent') || '';
@@ -129,6 +130,23 @@ export async function handleCollect(db: DB, request: Request, ai?: AiBinding, wa
     const bx = await saveBooking(db, biz.id, r, cut(b.service, 80), lead?.id ?? null);
     wait(tellOwner(db, biz.id, { name: cut(b.name, 80), contact, message: r.text, source: `booking · ${source}` }));
     return json(200, { ok: true, booked: true, bx }, CORS);
+  } else if (t === 'pay') {
+    // A booking deposit straight to the owner's own payment account (Vaxo only opens the provider's page).
+    const c = await loadCfg(db, secret, biz.id);
+    if (!c || !c.dep) return json(200, { ok: false, error: 'off' }, CORS);
+    const back = cut(b.back, 400);
+    if (!/^https:\/\//.test(back)) return json(400, { ok: false }, CORS);
+    const desc = cut(b.desc, 160) || 'Booking deposit';
+    const ref = await newPayment(db, biz.id, c.prov, c.dep, c.cur || 'UAH', `${biz.name}: ${desc}`, cut(b.contact, 120));
+    const u = new URL(back); u.searchParams.set('sp', ref);
+    const url = await checkout(db, secret, ref, u.toString(), 'https://vaxogroup.com');
+    return json(200, url ? { ok: true, url } : { ok: false, error: 'provider' }, CORS);
+  } else if (t === 'paid') {
+    const ref = cut(b.ref, 40);
+    if (!ref.startsWith(biz.id + '_')) return json(400, { ok: false }, CORS);
+    const r = await settle(db, secret, ref);
+    if (r.fresh && r.rec) wait(tellOwner(db, biz.id, { name: '', contact: r.rec.who || '', message: `💳 ${r.rec.amt} ${r.rec.cur} — ${r.rec.desc}`, source: `payment · ${r.rec.prov}` }));
+    return json(200, { ok: true, paid: r.paid }, CORS);
   } else if (t === 'unbook') {
     // The client cancels their own booking by its secret link; the owner gets a note, the time is free again.
     const k = await cancelOwn(db, biz.id, b.bx);

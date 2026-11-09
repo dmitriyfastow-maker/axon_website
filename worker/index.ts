@@ -22,7 +22,8 @@ import { handleCabinet, type CabinetEnv } from './cabinet.js';
 import { handleInvoicePublic } from './invoices.js';
 import { handleStaffLogin } from './staff.js';
 import { handleLevel } from './level.js';
-import { handleBiz, handleCollect, snippet } from './biz.js';
+import { handleBiz, handleCollect, snippet, tellOwner } from './biz.js';
+import { checkout, refBiz, settle } from './sitepay.js';
 import { handleDemoAi } from './demoai.js';
 import { monoCheck, monoPay, monoReceiptSweep, monoWebhook } from './mono.js';
 import { handleFinancePublic } from './finance.js';
@@ -134,7 +135,7 @@ export default {
     const room = url.pathname.match(/^\/api\/room\/([a-f0-9]{24})$/);
     if (room) return env.LEADS ? handleRoomApi(env.LEADS, request, room[1], notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify).catch((e) => console.error('[ai reply]', e)))) : json(503, { ok: false });
     if (url.pathname === '/api/intake') return env.LEADS ? handleIntake(env.LEADS, request, notify, (id) => waitUntil(aiReply(env.LEADS!, env.AI, id, notify).catch((e) => console.error('[ai intake]', e)))) : json(503, { ok: false });
-    if (url.pathname === '/api/fin') return env.LEADS ? handleFinancePublic(env.LEADS, request, env.AI, notify) : json(503, { ok: false });
+    if (url.pathname === '/api/fin') return env.LEADS ? handleFinancePublic(env.LEADS, request, env.AI, notify, env.ADMIN_TOKEN) : json(503, { ok: false });
     if (url.pathname === '/api/demo/ai') return handleDemoAi(env.AI, request);
     if (url.pathname === '/api/staff/code' || url.pathname === '/api/staff/login') return env.LEADS ? handleStaffLogin(env.LEADS, request, url.pathname.slice('/api/staff/'.length), notify) : json(503, { ok: false });
     // Owner app (Decision 29): one line of code on the client's site + their business in /me/.
@@ -151,7 +152,22 @@ export default {
     if (url.pathname === '/api/factory-sync') return env.LEADS ? handleFactorySync(env.LEADS, request) : json(503, { ok: false });
     if (url.pathname.startsWith('/api/book/feed/')) return env.LEADS ? handleFeed(env.LEADS, env.ADMIN_TOKEN, url.pathname) : json(503, { ok: false });
     if (url.pathname === '/api/book') return env.LEADS ? handleBookGet(env.LEADS, url) : json(503, { ok: false });
-    if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request, env.AI, waitUntil) : json(503, { ok: false });
+    if (url.pathname === '/api/w') return env.LEADS ? handleCollect(env.LEADS, request, env.AI, waitUntil, env.ADMIN_TOKEN) : json(503, { ok: false });
+    const spm = url.pathname.match(/^\/api\/sitepay\/(hook|go)\/(\d+_[a-f0-9]{16})$/);
+    if (spm && env.LEADS) {
+      const db = env.LEADS, ref = spm[2];
+      if (spm[1] === 'go') {
+        // A payment link the owner sent: a fresh checkout at the owner's own provider every time it is opened.
+        const back = `${url.origin}/paid/?sp=${ref}`;
+        const to = await checkout(db, env.ADMIN_TOKEN, ref, back, url.origin);
+        return to ? Response.redirect(to, 302) : Response.redirect(back, 302);
+      }
+      // The provider says "something happened": we never trust the body, we ask the provider ourselves.
+      const r = await settle(db, env.ADMIN_TOKEN, ref);
+      if (r.fresh && r.rec) waitUntil(tellOwner(db, refBiz(ref), { name: '', contact: r.rec.who || '', message: `💳 ${r.rec.amt} ${r.rec.cur} — ${r.rec.desc}`, source: `payment · ${r.rec.prov}` }));
+      if (url.searchParams.has('check')) return json(200, { ok: true, paid: r.paid, amt: r.rec?.amt, cur: r.rec?.cur, desc: r.rec?.desc });
+      return json(200, { ok: true });
+    }
     if (url.pathname === '/api/biz' || url.pathname.startsWith('/api/biz/')) return env.LEADS ? handleBiz(env.LEADS, request, url.pathname.slice('/api/biz'.length).replace(/^\//, ''), env.AI, notify, url.origin) : json(503, { ok: false });
     if (url.pathname === '/api/ws' || url.pathname.startsWith('/api/ws/')) return env.LEADS ? handleWorkspace(env.LEADS, env.AI, request, url.pathname.slice('/api/ws'.length).replace(/^\//, ''), notify, waitUntil, { token: env.CF_SAAS_TOKEN, feed: env.ADMIN_TOKEN }) : json(503, { ok: false });
     const pic = url.pathname.match(/^\/i\/([a-f0-9]{24})\.jpg$/);

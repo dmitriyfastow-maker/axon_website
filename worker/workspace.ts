@@ -17,6 +17,7 @@ import { claudeReply, routeFor } from './router.js';
 import { sanitizeTool, type ToolSpec } from './toolcore.js';
 import { md } from '../src/scripts/md.js';
 import { buildTool, pullChecklist, pullList, READY, tidyReply, WANTS_TOOL } from './tools.js';
+import { checkKeys, cleanCfg, listPayments, loadCfg, newPayment, publicCfg, saveCfg } from './sitepay.js';
 
 const MODELS = ['@cf/google/gemma-4-26b-a4b-it', '@cf/meta/llama-3.1-8b-instruct-fp8-fast'];
 const LANGS: Record<string, string> = { en: 'English', ru: 'Russian', ua: 'Ukrainian' };
@@ -58,6 +59,7 @@ MODULES that really exist here: Site (a one-page site at vaxogroup.com/s/... wit
 A calculator, checklist or tracker appears on the Canvas by itself when the wish fits; never write one out by hand.
 OWN DOMAIN: if asked how to buy or connect a domain, walk them through: 1) pick a short name like the business; 2) buy it at a registrar (Cloudflare Registrar, Namecheap, Porkbun; a .com is usually about $10-12 a year; for .ua — imena.ua), only a card and an email are needed; 3) in Vaxo open the project, tab Domain, type the address and add the ONE record Vaxo shows (type CNAME, value domains.vaxogroup.com) at the registrar's DNS page; Vaxo checks by itself and emails when it works. Offer to go through their registrar's screens with them. The own domain comes with Care.
 BIG TASKS (editing a video from their footage, AI-generated videos or a reels series, motion design, voiceover, automating a process or connecting services, an app, a chat bot in Instagram/Telegram/WhatsApp, an ad campaign, anything that needs production work): do the part that works now as a full brief between [[DOC: title]] and [[/DOC]] even in short mode: the goal, who it is for, format and length, the script with timings and voiceover text, a shot list or storyboard, the materials that would help (photos, videos, logo, texts; big videos as a Google Drive or Dropbox link) and what you can make or pick yourself if they have none, the steps. In the chat say in 2 lines what is ready, then end with [[ORDER: short task title]]: a card appears where they start the task; Vax then makes it in the background and the progress and result appear in this chat. Never name a price or a deadline yourself, never say it is already being made before they press Start, and never talk like an agency (no "our team will contact you", no quotes).
+ONLINE PAYMENTS ON THEIR SITE: the business takes payments into ITS OWN account; Vaxo never holds the money. In the project's "Payments" tab they connect one service and paste its keys: plata by mono (Ukraine, hryvnia; needs monobank acquiring for their FOP), WayForPay or LiqPay (Ukraine, UAH/USD/EUR), Stripe (businesses in the EU, UK, USA and 40+ countries; not Ukraine). Then the site offers a booking deposit after a booking, and they can create a payment link for any amount to send in messengers. Help them choose by country and need (a Ukrainian FOP: mono if they already bank there, otherwise WayForPay or LiqPay); if they have no merchant account yet, give the exact steps to open one. Never ask them to paste keys into the chat: keys go only into the Payments tab. Never say Vaxo receives or forwards their money.
 PAID TOOLS AND OUTSIDE SERVICES (AI video or images, voice, music, stock, ad platforms, hosting, any service with its own subscription): first find out what fits this person; if it is not clear, ask one short question: do they already have an account or a subscription there, and what budget suits them. Then offer up to 3 honest ways and what each costs: 1) their own account and subscription, which is usually the best value for regular work, so recommend it; if they have none, say which service and which plan is enough for this exact task, tell them to check the current price on the service's site, and that Vax walks them through setup, and with the Vax extension for Chrome does the clicks for them while they only sign in and pay themselves; 2) the best free or cheap tool that still gives a strong result; 3) the maximum-quality option. If their current plan's limits are not enough for the task, say so plainly before starting and what to add. Using Vaxo credits from their plan is fine for a small piece, but say honestly that for regular work their own subscription costs less. Never invent a price of another service.
 AIM FOR NUMBER ONE: whatever the task, from an everyday errand to a company strategy, aim for the best result on the market, not the minimum asked. Think a few steps ahead and take the thinking off the person: they may not know what is possible, you do. For a business that means the whole system, not one piece: site, booking, requests in a CRM their staff can join with roles, the AI consultant, a partner program, then content. Respect their choice, but when their idea is weaker than another option, say so plainly in one line with the reason and offer the stronger one: an honest assessment and a real solution, never just nodding along.
 RESULT FIRST: Vaxo wins by a ready result, not by a long answer. Every reply ends in something the person can use now: numbers, a table, steps, a draft. Never say you cannot do something: when a task is bigger than this screen, give the part that works now and name the one next step.
@@ -537,6 +539,32 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       }
       await db.prepare('UPDATE biz SET knowledge = ? WHERE id = ?').bind(text.trim() || null, own.id).run();
       return out(200, { ok: true, text });
+    }
+    if (path === 'pay' || path === 'pay/link') {
+      // Payments on the owner's own site: their own provider account; Vaxo stores the keys encrypted and never holds money.
+      const own = bz ? await db.prepare('SELECT id, name FROM biz WHERE id = ? AND owner_id = ?').bind(bz, me.id).first<{ id: number; name: string }>() : null;
+      if (!own) return out(404, { ok: false });
+      if (!cf.feed) return out(503, { ok: false });
+      if (path === 'pay/link' && m === 'POST') {
+        const c = await loadCfg(db, cf.feed, own.id);
+        const amt = Math.round(Number(b.amt) * 100) / 100;
+        if (!c) return out(400, { ok: false, error: 'off' });
+        if (!(amt > 0 && amt <= 1_000_000)) return out(400, { ok: false, error: 'amt' });
+        const ref = await newPayment(db, own.id, c.prov, amt, c.cur || 'UAH', `${own.name}: ${cut(b.desc, 160) || 'Payment'}`, cut(b.who, 120));
+        return out(200, { ok: true, url: `https://vaxogroup.com/api/sitepay/go/${ref}`, list: await listPayments(db, own.id) });
+      }
+      if (m === 'DELETE') { await saveCfg(db, cf.feed, own.id, null); return out(200, { ok: true, cfg: null }); }
+      if (m === 'POST') {
+        const prev = await loadCfg(db, cf.feed, own.id);
+        // Changing only the deposit keeps the saved keys (the cabinet never receives them back).
+        const merged = !b.k1 && prev && (!b.prov || b.prov === prev.prov) ? { ...prev, dep: b.dep, cur: b.cur ?? prev.cur } : b;
+        const c = cleanCfg(merged as Record<string, unknown>);
+        if (typeof c === 'string') return out(400, { ok: false, error: c });
+        if (b.k1 && !(await checkKeys(c).catch(() => false))) return out(400, { ok: false, error: 'check' });
+        await saveCfg(db, cf.feed, own.id, c);
+        return out(200, { ok: true, cfg: publicCfg(c) });
+      }
+      return out(200, { ok: true, cfg: publicCfg(await loadCfg(db, cf.feed, own.id)), list: await listPayments(db, own.id) });
     }
     const bk = path.match(/^bookings(?:\/(\d+)\/cancel)?$/);
     if (bk) {

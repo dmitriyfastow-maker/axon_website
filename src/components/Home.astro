@@ -45,7 +45,7 @@ const T = {
     exa: ['Сайт', 'Одна страница с формой заявок. Текст пишет Vax, работает сразу.', 'Развернуть'],
     cab: ['Рабочее пространство', 'Чат, память, инструменты и холст на одном экране.', 'Открыть', ['Готовность проекта', 'Лимит на сегодня', 'Мои инструменты', 'Счёт оплачен']],
     prH: 'Тарифы', prS: 'Начните бесплатно. Первый месяц любого платного тарифа тоже бесплатный, с меньшим запасом.',
-    mo: '/мес', focus: 'Лучше всего начать здесь', trial: 'Месяц бесплатно', startB: 'Начать бесплатно', more: 'Ещё два варианта',
+    mo: '/мес', focus: 'Лучше всего начать здесь', trial: 'Месяц бесплатно', startB: 'Начать бесплатно', more: 'Ещё 2 тарифа: только для себя ($19) или магазин и реклама ($299)',
     start: ['Старт', 'Для вопросов и простых инструментов.', ['Ответы на вопросы', 'Калькуляторы, чек-листы, трекеры', 'Работа с файлами и картинки', 'Сайт на одну страницу с заявками на почту', 'Без карты и регистрации']],
     care: ['Care', 'Для вашего дела.', ['Сайт или приложение либо подключение к вашему', 'ИИ отвечает в чате сайта 24/7', 'Все заявки в одном приложении', 'Подключение собственного домена (скоро)', 'Отчёт каждый месяц']],
     grow: ['Growth', 'Когда дело растёт.', ['Всё из Care и намного больше запаса', 'Запись и оплаты', 'ИИ в Instagram, WhatsApp, Telegram, Facebook', '12 постов в месяц, команда до 5 человек']],
@@ -81,7 +81,7 @@ const T = {
     exa: ['Site', 'One page with a request form. Vax writes the text, it works at once.', 'Deploy'],
     cab: ['Workspace', 'Chat, memory, tools and Canvas on one screen.', 'Open', ['Project progress', 'Today’s limit', 'My tools', 'Invoice paid']],
     prH: 'Plans', prS: 'Start free. The first month of any paid plan is free too, with a smaller allowance.',
-    mo: '/mo', focus: 'The best place to start', trial: 'Try a month free', startB: 'Start free', more: 'Two more options',
+    mo: '/mo', focus: 'The best place to start', trial: 'Try a month free', startB: 'Start free', more: '2 more plans: just for yourself ($19) or a shop and ads ($299)',
     start: ['Start', 'For questions and simple tools.', ['Answers to your questions', 'Calculators, checklists, trackers', 'Work with files, and pictures', 'A one-page site, requests by email', 'No card, no sign-up']],
     care: ['Care', 'For your business.', ['A website or app, or a link to yours', 'AI answers in your site chat 24/7', 'All requests in one app', 'Your own domain (coming soon)', 'A report every month']],
     grow: ['Growth', 'When the business grows.', ['Everything in Care, far more allowance', 'Booking and payments', 'AI in Instagram, WhatsApp, Telegram, Facebook', '12 posts a month, a team of up to 5']],
@@ -117,7 +117,7 @@ const T = {
     exa: ['Сайт', 'Одна сторінка з формою заявок. Текст пише Vax, працює одразу.', 'Розгорнути'],
     cab: ['Робочий простір', 'Чат, памʼять, інструменти й полотно на одному екрані.', 'Відкрити', ['Готовність проєкту', 'Ліміт на сьогодні', 'Мої інструменти', 'Рахунок оплачено']],
     prH: 'Тарифи', prS: 'Почніть безкоштовно. Перший місяць будь-якого платного тарифу теж безкоштовний, з меншим запасом.',
-    mo: '/міс', focus: 'Найкраще почати тут', trial: 'Місяць безкоштовно', startB: 'Почати безкоштовно', more: 'Ще два варіанти',
+    mo: '/міс', focus: 'Найкраще почати тут', trial: 'Місяць безкоштовно', startB: 'Почати безкоштовно', more: 'Ще 2 тарифи: лише для себе ($19) або магазин і реклама ($299)',
     start: ['Старт', 'Для питань і простих інструментів.', ['Відповіді на питання', 'Калькулятори, чек-листи, трекери', 'Робота з файлами й картинки', 'Сайт на одну сторінку із заявками на пошту', 'Без картки й реєстрації']],
     care: ['Care', 'Для вашої справи.', ['Сайт або застосунок чи підключення до вашого', 'ШІ відповідає в чаті сайту 24/7', 'Усі заявки в одному застосунку', 'Підключення власного домену (скоро)', 'Звіт щомісяця']],
     grow: ['Growth', 'Коли справа росте.', ['Усе з Care і набагато більше запасу', 'Запис і оплати', 'ШІ в Instagram, WhatsApp, Telegram, Facebook', '12 постів на місяць, команда до 5 людей']],
@@ -226,11 +226,11 @@ const ava = '/mascot/vax-happy.webp';
           <ul>{T.grow[2].map((x) => <li>{x}</li>)}</ul>
         </article>
       </div>
-      <p class="mo">{T.more}</p>
+      <details class="mo2"><summary class="mo">{T.more}</summary>
       <div class="ex">
         <div><div><b>{T.pers[0]}</b><p>{T.pers[1]}</p></div><strong>$19<small>{T.mo}</small></strong><button type="button" class="pb" data-plan="personal" data-pn={T.pers[0]}>{T.trial}</button></div>
         <div><div><b>{T.pro[0]}</b><p>{T.pro[1]}</p></div><strong>$299<small>{T.mo}</small></strong><button type="button" class="pb" data-plan="pro" data-pn={T.pro[0]}>{T.trial}</button></div>
-      </div>
+      </div></details>
       <p class="pn">{T.prN}</p>
     </div>
   </section>
@@ -479,6 +479,10 @@ const ava = '/mascot/vax-happy.webp';
   .pl li { position: relative; padding-left: 22px; }
   .pl li::before { content: ''; position: absolute; left: 2px; top: 5px; width: 5px; height: 10px; border: solid var(--am); border-width: 0 1.6px 1.6px 0; transform: rotate(42deg); }
   .mo { margin-top: 32px; font-size: 14px; color: var(--dm); }
+  .mo2 summary { cursor: pointer; list-style: none; text-decoration: underline; text-underline-offset: 3px; }
+  .mo2 summary::-webkit-details-marker { display: none; }
+  .mo2 summary::after { content: ' ▾'; }
+  .mo2[open] summary::after { content: ' ▴'; }
   .ex { display: grid; gap: 10px; margin-top: 10px; }
   .ex > div { display: grid; grid-template-columns: 1fr auto 210px; gap: 20px; align-items: center; padding: 16px 20px; border: 1px solid var(--ln); border-radius: 14px; background: var(--s3); }
   .ex b { font-size: 17px; font-weight: 600; }

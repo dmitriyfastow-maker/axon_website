@@ -32,6 +32,12 @@ import Base from '../layouts/Base.astro';
           <button class="cta" aria-label="Отправить">➤</button>
         </form>
       </section>
+      <section class="pdl">
+        <b>Paddle (подписки иностранцев)</b>
+        <p class="mut" data-pdl-st>Вставьте сюда API-ключ из Paddle: Developer Tools → Authentication → New API key. Ключ никуда больше не отправляйте: здесь он хранится в зашифрованном виде.</p>
+        <form data-pdl><input type="password" name="key" placeholder="pdl_live_…" autocomplete="off" required /><button class="cta">Сохранить</button></form>
+        <small class="err" data-pdl-err hidden></small>
+      </section>
       <div class="bar"><label>Год <select data-year></select></label> <button type="button" class="ghost" data-csv>⬇️ Выгрузка для бухгалтера (CSV)</button></div>
       <div data-fin></div>
       <div data-orders></div>
@@ -49,12 +55,22 @@ import Base from '../layouts/Base.astro';
     try { code = (localStorage.getItem(KEY) || sessionStorage.getItem(KEY)) || ''; } catch {}
     const ys = $<HTMLSelectElement>('[data-year]');
     for (let y = new Date().getFullYear(); y >= 2026; y--) ys.append(new Option(String(y), String(y)));
+    $<HTMLFormElement>('[data-pdl]').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.currentTarget as HTMLFormElement, key = (f.elements.namedItem('key') as HTMLInputElement).value.trim(), err = $('[data-pdl-err]');
+      err.hidden = true;
+      const r = await fetch('/api/fin?paddle=1', { method: 'POST', headers: { 'X-Fin-Code': code, 'Content-Type': 'application/json' }, body: JSON.stringify({ key }) }).catch(() => null);
+      const d = r ? await r.json().catch(() => ({})) : {};
+      if (d.ok) { f.reset(); $('[data-pdl-st]').textContent = '✅ Ключ Paddle сохранён и проверен. Дальше всё делает Claude.'; return; }
+      err.hidden = false; err.textContent = d.error === 'format' ? 'Это не похоже на ключ Paddle: он начинается с pdl_live_ (или pdl_sdbx_ для теста).' : 'Paddle не принял ключ. Создайте новый и вставьте ещё раз.';
+    });
     async function load() {
       if (!code) return;
       const r = await fetch(`/api/fin?year=${ys.value}`, { headers: { 'X-Fin-Code': code } });
       if (r.status === 401) { $('[data-err]').hidden = false; code = ''; try { localStorage.removeItem(KEY); } catch {} return; }
       const d = await r.json();
       try { localStorage.setItem(KEY, code); } catch {}
+      fetch('/api/fin?paddle=1', { headers: { 'X-Fin-Code': code } }).then((x) => x.json()).then((p) => { if (p?.at) $('[data-pdl-st]').textContent = `✅ Ключ Paddle сохранён (${String(p.at).slice(0, 10)}${/sandbox/.test(p.at) ? ', тестовый' : ''}). Дальше всё делает Claude. Новый ключ можно вставить ниже.`; }).catch(() => {});
       $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-out]').hidden = false;
       renderFinance($('[data-fin]'), d, true);
       const openChat = async (id: number) => {
@@ -137,4 +153,7 @@ import Base from '../layouts/Base.astro';
   .finp .bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 8px 0; }
   .finp .table { overflow-x: auto; } .finp table { width: 100%; border-collapse: collapse; font-size: 14px; }
   .finp th, .finp td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); } .finp th { color: var(--mut); font-weight: 600; }
+  .pdl { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 16px 0; display: grid; gap: 8px; }
+  .pdl form { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pdl input { flex: 1; min-width: 220px; }
 </style>

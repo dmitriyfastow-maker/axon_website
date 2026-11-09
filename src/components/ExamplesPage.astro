@@ -33,7 +33,7 @@ const C = {
   en: {
     title: 'Vaxo — Examples: websites, stores and apps you can click through', desc: 'Working examples of what Vaxo builds: one-page sites, sites with online booking, online stores, business apps. Included in your plan; anything custom on request.',
     eyebrow: 'Examples', h1: 'This is what you get. Open it and try it.',
-    sub: 'Every example is a working build: click, book, chat with the AI. Yours is built around your business — and everything in your plan is already included.',
+    sub: 'Every example is a working build: click, book, chat with the AI. Yours is built around your business — and everything in your plan is already included.', how: 'How they are made: these are detailed builds by Vax from a full brief (the Pro level, one to three days). A site from one word in the chat is simpler and ready in a minute, and you can then improve it in words.',
     cta: 'I want one like this →', cta2: 'Describe your task',
     filters: { all: 'All', site: 'Websites', booking: 'Sites with booking', shop: 'Online stores', marketing: 'Marketing', app: 'Apps and CRM' },
     types: { site: 'Website', booking: 'Site with online booking', shop: 'Online store', marketing: 'Marketing', app: 'App' },
@@ -59,7 +59,7 @@ const C = {
   ru: {
     title: 'Vaxo — Примеры: сайты, магазины и приложения, которые можно открыть', desc: 'Рабочие примеры того, что делает Vaxo: одностраничные сайты, сайты с онлайн-записью, интернет-магазины, приложения для бизнеса. Входят в тариф, кастом — по запросу.',
     eyebrow: 'Примеры', h1: 'Вот что вы получите. Откройте и попробуйте.',
-    sub: 'Каждый пример — рабочий: нажимайте, записывайтесь, поговорите с ИИ. Ваш вариант соберём под ваш бизнес — и всё из тарифа уже включено.',
+    sub: 'Каждый пример — рабочий: нажимайте, записывайтесь, поговорите с ИИ. Ваш вариант соберём под ваш бизнес — и всё из тарифа уже включено.', how: 'Как они сделаны: это подробные сборки Vax по полному описанию (уровень Pro, от одного до трёх дней). Сайт по одному слову в чате проще и готов за минуту, дальше его можно улучшать словами.',
     cta: 'Хочу такой →', cta2: 'Описать задачу',
     filters: { all: 'Все', site: 'Сайты', booking: 'Сайты с записью', shop: 'Интернет-магазины', marketing: 'Маркетинг', app: 'Приложения и CRM' },
     types: { site: 'Сайт', booking: 'Сайт с онлайн-записью', shop: 'Интернет-магазин', marketing: 'Маркетинг', app: 'Приложение' },
@@ -85,7 +85,7 @@ const C = {
   ua: {
     title: 'Vaxo — Приклади: сайти, магазини й застосунки, які можна відкрити', desc: 'Робочі приклади того, що робить Vaxo: односторінкові сайти, сайти з онлайн-записом, інтернет-магазини, застосунки для бізнесу. Входять у тариф, кастом — на запит.',
     eyebrow: 'Приклади', h1: 'Ось що ви отримаєте. Відкрийте й спробуйте.',
-    sub: 'Кожен приклад — робочий: натискайте, записуйтеся, поговоріть із ШІ. Ваш варіант зберемо під ваш бізнес — і все з тарифу вже включено.',
+    sub: 'Кожен приклад — робочий: натискайте, записуйтеся, поговоріть із ШІ. Ваш варіант зберемо під ваш бізнес — і все з тарифу вже включено.', how: 'Як їх зроблено: це детальні збірки Vax за повним описом (рівень Pro, від одного до трьох днів). Сайт за одним словом у чаті простіший і готовий за хвилину, далі його можна покращувати словами.',
     cta: 'Хочу такий →', cta2: 'Описати завдання',
     filters: { all: 'Усі', site: 'Сайти', booking: 'Сайти із записом', shop: 'Інтернет-магазини', marketing: 'Маркетинг', app: 'Застосунки і CRM' },
     types: { site: 'Сайт', booking: 'Сайт з онлайн-записом', shop: 'Інтернет-магазин', marketing: 'Маркетинг', app: 'Застосунок' },
@@ -121,6 +121,7 @@ const start = `${home}#contact`;
         <p class="tagline">{C.eyebrow}</p>
         <h1>{C.h1}</h1>
         <p class="sub">{C.sub}</p>
+        <p class="sub how">{C.how}</p>
         <div class="acts"><a class="btn" href={start}>{C.cta}</a></div>
       </div>
     </section>
@@ -184,6 +185,7 @@ const start = `${home}#contact`;
   h2 { font-weight: 600; font-size: clamp(30px, 4.2vw, 54px); letter-spacing: -0.03em; margin: 0 0 12px; line-height: 1.05; }
   h3 { margin: 0 0 6px; font-weight: 600; font-size: 19px; line-height: 1.25; letter-spacing: -0.01em; }
   .sub { color: var(--mut); font-size: clamp(17px, 1.7vw, 21px); line-height: 1.45; max-width: 620px; margin: 0 0 30px; }
+  .sub.how { font-size: 14px; margin-top: -18px; }
   .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 24px; border-radius: 999px; background: var(--acc); color: var(--dark-ink); font-weight: 600; text-decoration: none; white-space: nowrap; }
   .btn:hover { filter: brightness(1.08); }
   .btn.sm { min-height: 40px; padding: 0 16px; font-size: 14px; }

@@ -3,6 +3,7 @@
 // partner, whose visits and requests count themselves through the source ref_<code>. Site: the same page as a one-page site.
 // The site is free for everyone and carries a "Made on Vaxo" line until the first payment; the rest is Care and above.
 // A page holds only escaped text and one fixed form, so nobody can publish scripts or their own forms on our domain.
+import { sitePay } from './sitepay.js';
 import { askAi, json as parse } from './autopilot.js';
 import { buyerRef } from './buyers.js';
 import type { AiBinding } from './chat.js';
@@ -267,6 +268,7 @@ export async function servePage(db: DB, slug: string, manifest: boolean): Promis
     return al ? Response.redirect(`https://vaxogroup.com/s/${al.value}${manifest ? '/manifest.webmanifest' : ''}`, 301) : new Response('Not found', { status: 404 });
   }
   const s = JSON.parse(r.data) as Site;
+  if (s.book?.on && !manifest) { const pay = await sitePay(db, r.id).catch(() => null); if (pay) s.book = { ...s.book, pay }; }
   if (manifest) return new Response(JSON.stringify({ name: s.title || r.name, short_name: (s.title || r.name).slice(0, 12), start_url: `/s/${slug}`, display: 'standalone', background_color: (TONES[s.tone] ?? TONES.clean)[0], icons: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' }] }), { headers: { 'Content-Type': 'application/manifest+json' } });
   // Only paying clients' pages go into search: free pages stay out, so the domain does not fill up with empty ones.
   const paid = await db.prepare(`SELECT 1 FROM leads l JOIN invoices i ON i.lead_id = l.id WHERE l.client_id = ? AND i.status = 'paid' LIMIT 1`).bind(r.owner_id).first().catch(() => null);

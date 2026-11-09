@@ -1,0 +1,37 @@
+---
+// /paid/?sp=<ref>: where a visitor lands after paying a business's payment link (the money went to that business's
+// own payment account; we only ask the provider whether it went through).
+import Base from '../layouts/Base.astro';
+---
+
+<Base lang="en" title="Payment" description="Payment status." noindex noChat>
+  <main class="pd">
+    <p class="ic" data-ic>…</p>
+    <h1 data-h></h1>
+    <p data-p></p>
+  </main>
+  <script>
+    const T: Record<string, string[]> = {
+      en: ['Checking the payment…', 'Payment received — thank you!', 'The payment is not confirmed yet', 'If you paid, it can take a minute: refresh this page. If not, open the payment link again.', 'The business has received your payment.'],
+      ru: ['Проверяем оплату…', 'Оплата получена — спасибо!', 'Оплата пока не подтверждена', 'Если вы оплатили, подождите минуту и обновите страницу. Если нет — откройте ссылку на оплату ещё раз.', 'Деньги пришли на счёт продавца.'],
+      ua: ['Перевіряємо оплату…', 'Оплату отримано — дякуємо!', 'Оплату ще не підтверджено', 'Якщо ви сплатили, зачекайте хвилину й оновіть сторінку. Якщо ні — відкрийте посилання на оплату ще раз.', 'Гроші надійшли на рахунок продавця.'],
+    };
+    const nl = (navigator.language || 'en').slice(0, 2).replace('uk', 'ua');
+    const W = T[nl] || T.en, $ = (s: string) => document.querySelector<HTMLElement>(s)!;
+    const ref = new URLSearchParams(location.search).get('sp') || '';
+    $('[data-h]').textContent = W[0];
+    const go = async (n: number) => {
+      const d = await fetch(`/api/sitepay/hook/${encodeURIComponent(ref)}?check=1`).then((r) => r.json()).catch(() => null);
+      if (d?.paid) { $('[data-ic]').textContent = '✓'; $('[data-h]').textContent = W[1]; $('[data-p]').textContent = `${d.amt} ${d.cur} · ${d.desc || ''}. ${W[4]}`; return; }
+      if (n < 5) { setTimeout(() => go(n + 1), 3000); return; }
+      $('[data-ic]').textContent = '⏳'; $('[data-h]').textContent = W[2]; $('[data-p]').textContent = W[3];
+    };
+    if (/^\d+_[a-f0-9]{16}$/.test(ref)) go(0); else { $('[data-h]').textContent = W[2]; $('[data-p]').textContent = W[3]; }
+  </script>
+  <style>
+    .pd { max-width: 520px; margin: 18vh auto 0; padding: 0 16px; text-align: center; }
+    .pd .ic { font-size: 54px; margin: 0; }
+    .pd h1 { font-size: 28px; margin: 10px 0; }
+    .pd p { color: var(--mut); }
+  </style>
+</Base>

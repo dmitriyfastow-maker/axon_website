@@ -1,5 +1,6 @@
 // Finance (Decision 16): the owner sees everything; the FOP holder (group 3) opens /fin/ with a personal code and
 // sees only money — payments by order number, outgoing amounts, taxes, the income limit. Read-only for her.
+import { seal } from './sitepay.js';
 import type { DB } from './partner.js';
 import { logEvent, type Notify } from './deals.js';
 import { settings } from './autopilot.js';
@@ -158,11 +159,29 @@ async function csv(db: DB, year: number, full: boolean): Promise<Response> {
 }
 
 /** FOP holder: GET /api/fin?year= with header X-Fin-Code. Read-only, no client names, no chats. */
-export async function handleFinancePublic(db: DB, request: Request, ai?: AiBinding, notify?: Notify): Promise<Response> {
+export async function handleFinancePublic(db: DB, request: Request, ai?: AiBinding, notify?: Notify, secret?: string): Promise<Response> {
   const st = await settings(db);
   const code = request.headers.get('X-Fin-Code') || '';
   if (!st.fin_code || !code || (await sha(code.trim())) !== st.fin_code) return json(401, { ok: false });
   const url = new URL(request.url);
+  // Paddle (international subscriptions): the FOP holder pastes the API key here once; we check it with Paddle and
+  // keep it encrypted. It is never shown back, only "connected".
+  if (url.searchParams.get('paddle')) {
+    if (request.method === 'POST') {
+      const b = (await request.json().catch(() => ({}))) as { key?: string };
+      const key = String(b.key || '').trim();
+      if (!/^pdl_(live|sdbx)_[A-Za-z0-9_]{20,}$/.test(key) || !secret) return json(400, { ok: false, error: 'format' });
+      const api = key.startsWith('pdl_sdbx_') ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com';
+      const r = await fetch(`${api}/event-types`, { headers: { Authorization: `Bearer ${key}` } }).catch(() => null);
+      if (!r?.ok) return json(400, { ok: false, error: 'check' });
+      await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind('paddle_key', await seal(secret, key)).run();
+      await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind('paddle_key_at', `${new Date().toISOString()} ${key.startsWith('pdl_sdbx_') ? 'sandbox' : 'live'}`).run();
+      if (notify) await notify(`💳 Paddle: Соня вставила ключ (${key.startsWith('pdl_sdbx_') ? 'тестовый' : 'боевой'}). Claude может настраивать подписки.`).catch(() => {});
+      return json(200, { ok: true, at: new Date().toISOString() });
+    }
+    const at = await db.prepare('SELECT value FROM settings WHERE key = ?').bind('paddle_key_at').first<{ value: string }>().catch(() => null);
+    return json(200, { ok: true, at: at?.value || null });
+  }
   // Her assistant: GET ?chat=1 reads the chat, POST asks.
   if (request.method === 'POST' || url.searchParams.get('chat')) return handleFopChat(db, ai, request, notify || (async () => {}));
   if (request.method !== 'GET') return json(405, { ok: false });
