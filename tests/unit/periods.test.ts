@@ -21,3 +21,11 @@ describe('autopay', () => {
     expect(saveCardExtra({ ...inv, description: 'Logo design' }, true)).toEqual({});
   });
 });
+import { firstShare } from '../../worker/payouts';
+describe('partner share on a multi-month payment', () => {
+  it('pays 50% of the first month and 30% of the rest', () => {
+    expect(firstShare(39, 1, 50, 'referral')).toBeCloseTo(19.5);
+    expect(firstShare(374, 12, 50, 'referral')).toBeCloseTo(374 / 12 * 0.5 + (374 - 374 / 12) * 0.3);
+    expect(firstShare(374, 12, 10, 'team')).toBeCloseTo(37.4);
+  });
+});

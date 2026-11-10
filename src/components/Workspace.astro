@@ -27,7 +27,8 @@ const T = {
     hello2: 'Start here', sub2: 'Pick a module or give Vax a task. The result opens on the Canvas, ready to use.',
     tiles: { site: ['Build a site and form', 'A page with a request form, live in a minute'], crm: ['Open my CRM', 'Every request from your site on one board'], partner: ['Partner cabinet', 'Your links, invites and balance'] },
     exL: 'Or any task, from everyday to company level:', ex: ['Plan a 5-day trip to Italy: route, budget, what to book', 'Financial model for an online school launch at $50k revenue: ads, team and taxes', 'A 30-day training and recovery protocol'],
-    lim: { h: 'Usage limits', day: 'Today', week: 'This week', used: '{p}% used', reset: 'Renews {t}', note: 'The limit follows the amount of work, not the number of messages: a short answer uses little, a big document, a site or a picture uses more.', today: 'today at {h}', tomorrow: 'tomorrow at {h}', on: '{d} at {h}', outDay: 'Today’s limit is used up. It renews {t}. Everything is saved.', outWeek: 'This week’s limit is used up. It renews {t}. Everything is saved.', more: 'Need more? Plans' }, usageGuest: 'Guest: a small daily limit. Sign in free for more.',
+    mdl: { label: 'Model', auto: ['Auto', 'Picks the right model for each task (recommended)'], fast: ['Fast', 'Quick answers and simple tasks (Claude Haiku)'], strong: ['Strong', 'Sites, texts, analysis, ads (Claude Sonnet)'], max: ['Maximum', 'The hardest tasks, top quality; uses the allowance about 2× faster (Claude Opus)'], paid: 'Strong and Maximum come with any paid plan.' },
+    lim: { h: 'Usage limits', month: 'This month', outMonth: 'This month\'s allowance is used up. It renews {t}; to continue now, move up a plan.', day: 'Today', week: 'This week', used: '{p}% used', reset: 'Renews {t}', note: 'The limit follows the amount of work, not the number of messages: a short answer uses little, a big document, a site or a picture uses more.', today: 'today at {h}', tomorrow: 'tomorrow at {h}', on: '{d} at {h}', outDay: 'Today’s limit is used up. It renews {t}. Everything is saved.', outWeek: 'This week’s limit is used up. It renews {t}. Everything is saved.', more: 'Need more? Plans' }, usageGuest: 'Guest: a small daily limit. Sign in free for more.',
     pTabs: { plan: 'Plan', memory: 'Memory', projects: 'Projects', account: 'Account' },
     pub: 'Publish', pubBusy: 'Publishing…', pubDone: 'Published', pubAgain: 'Update the page', pubOff: 'Unpublish', replaceQ: 'Replace your current site with this page?', pubLink: 'Public link',
     siteCard: 'Page draft', siteNew: 'Describe your business in one line', siteNewGo: 'Build the page', siteAsk: 'Build a site and everything a business needs for: ', fAsk: 'Hint in the message box', live: 'Your site is live. Requests go to your email and CRM.', domH: 'Your own domain',
@@ -61,7 +62,8 @@ const T = {
     hello2: 'С чего начнём', sub2: 'Выберите модуль или дайте Vax задачу. Результат откроется на холсте, готовый к работе.',
     tiles: { site: ['Собрать сайт и форму', 'Страница с формой заявок, работает через минуту'], crm: ['Открыть мою CRM', 'Все заявки с сайта на одной доске'], partner: ['Партнёрский кабинет', 'Ваши ссылки, приглашения и баланс'] },
     exL: 'Или любая задача — от бытовой до задачи компании:', ex: ['Спланируй отпуск в Италии на 5 дней: маршрут, бюджет, что забронировать', 'Финмодель запуска онлайн-школы на $50k оборота: реклама, команда, налоги', '30-дневный протокол тренировок и восстановления'],
-    lim: { h: 'Лимиты', day: 'Сегодня', week: 'Неделя', used: 'Использовано {p}%', reset: 'Обновится {t}', note: 'Лимит считается по объёму работы, а не по числу сообщений: короткий ответ тратит мало, большой документ, сайт или картинка больше.', today: 'сегодня в {h}', tomorrow: 'завтра в {h}', on: '{d} в {h}', outDay: 'Лимит на сегодня исчерпан. Обновится {t}. Всё сохранено.', outWeek: 'Лимит на неделю исчерпан. Обновится {t}. Всё сохранено.', more: 'Нужно больше? Тарифы' }, usageGuest: 'Гость: небольшой лимит на день. Войдите бесплатно, лимит больше.',
+    mdl: { label: 'Модель', auto: ['Авто', 'Сам выбирает лучшую модель под задачу (рекомендуем)'], fast: ['Быстрая', 'Быстрые ответы и простые задачи (Claude Haiku)'], strong: ['Сильная', 'Сайты, тексты, анализ, реклама (Claude Sonnet)'], max: ['Максимальная', 'Самые сложные задачи, наивысшее качество; тратит запас примерно в 2 раза быстрее (Claude Opus)'], paid: 'Сильная и Максимальная — на любом платном тарифе.' },
+    lim: { h: 'Лимиты', month: 'Этот месяц', outMonth: 'Запас этого месяца закончился. Обновится {t}; чтобы продолжить сейчас, перейдите на тариф выше.', day: 'Сегодня', week: 'Неделя', used: 'Использовано {p}%', reset: 'Обновится {t}', note: 'Лимит считается по объёму работы, а не по числу сообщений: короткий ответ тратит мало, большой документ, сайт или картинка больше.', today: 'сегодня в {h}', tomorrow: 'завтра в {h}', on: '{d} в {h}', outDay: 'Лимит на сегодня исчерпан. Обновится {t}. Всё сохранено.', outWeek: 'Лимит на неделю исчерпан. Обновится {t}. Всё сохранено.', more: 'Нужно больше? Тарифы' }, usageGuest: 'Гость: небольшой лимит на день. Войдите бесплатно, лимит больше.',
     pTabs: { plan: 'Тариф', memory: 'Память', projects: 'Проекты', account: 'Аккаунт' },
     pub: 'Опубликовать', pubBusy: 'Публикую…', pubDone: 'Опубликовано', pubAgain: 'Обновить страницу', pubOff: 'Снять с публикации', replaceQ: 'Заменить ваш текущий сайт этой страницей?', pubLink: 'Публичная ссылка',
     siteCard: 'Макет страницы', siteNew: 'Опишите бизнес одной строкой', siteNewGo: 'Собрать страницу', siteAsk: 'Собери сайт и всё для бизнеса: ', fAsk: 'Подсказка в поле сообщения', live: 'Сайт работает. Заявки приходят на почту и в CRM.', domH: 'Свой домен',
@@ -95,7 +97,8 @@ const T = {
     hello2: 'З чого почнемо', sub2: 'Оберіть модуль або дайте Vax завдання. Результат відкриється на полотні, готовий до роботи.',
     tiles: { site: ['Зібрати сайт і форму', 'Сторінка з формою заявок, працює за хвилину'], crm: ['Відкрити мою CRM', 'Усі заявки з сайту на одній дошці'], partner: ['Партнерський кабінет', 'Ваші посилання, запрошення й баланс'] },
     exL: 'Або будь-яке завдання — від побутового до завдання компанії:', ex: ['Сплануй відпустку в Італії на 5 днів: маршрут, бюджет, що забронювати', 'Фінмодель запуску онлайн-школи на $50k обороту: реклама, команда, податки', '30-денний протокол тренувань і відновлення'],
-    lim: { h: 'Ліміти', day: 'Сьогодні', week: 'Тиждень', used: 'Використано {p}%', reset: 'Оновиться {t}', note: 'Ліміт рахується за обсягом роботи, а не за кількістю повідомлень: коротка відповідь витрачає мало, великий документ, сайт або картинка більше.', today: 'сьогодні о {h}', tomorrow: 'завтра о {h}', on: '{d} о {h}', outDay: 'Ліміт на сьогодні вичерпано. Оновиться {t}. Усе збережено.', outWeek: 'Ліміт на тиждень вичерпано. Оновиться {t}. Усе збережено.', more: 'Потрібно більше? Тарифи' }, usageGuest: 'Гість: невеликий ліміт на день. Увійдіть безкоштовно, ліміт більший.',
+    mdl: { label: 'Модель', auto: ['Авто', 'Сам обирає найкращу модель під завдання (рекомендуємо)'], fast: ['Швидка', 'Швидкі відповіді й прості завдання (Claude Haiku)'], strong: ['Сильна', 'Сайти, тексти, аналіз, реклама (Claude Sonnet)'], max: ['Максимальна', 'Найскладніші завдання, найвища якість; витрачає запас приблизно вдвічі швидше (Claude Opus)'], paid: 'Сильна й Максимальна — на будь-якому платному тарифі.' },
+    lim: { h: 'Ліміти', month: 'Цей місяць', outMonth: 'Запас цього місяця закінчився. Оновиться {t}; щоб продовжити зараз, перейдіть на тариф вище.', day: 'Сьогодні', week: 'Тиждень', used: 'Використано {p}%', reset: 'Оновиться {t}', note: 'Ліміт рахується за обсягом роботи, а не за кількістю повідомлень: коротка відповідь витрачає мало, великий документ, сайт або картинка більше.', today: 'сьогодні о {h}', tomorrow: 'завтра о {h}', on: '{d} о {h}', outDay: 'Ліміт на сьогодні вичерпано. Оновиться {t}. Усе збережено.', outWeek: 'Ліміт на тиждень вичерпано. Оновиться {t}. Усе збережено.', more: 'Потрібно більше? Тарифи' }, usageGuest: 'Гість: невеликий ліміт на день. Увійдіть безкоштовно, ліміт більший.',
     pTabs: { plan: 'Тариф', memory: 'Памʼять', projects: 'Проєкти', account: 'Акаунт' },
     pub: 'Опублікувати', pubBusy: 'Публікую…', pubDone: 'Опубліковано', pubAgain: 'Оновити сторінку', pubOff: 'Зняти з публікації', replaceQ: 'Замінити ваш поточний сайт цією сторінкою?', pubLink: 'Публічне посилання',
     siteCard: 'Макет сторінки', siteNew: 'Опишіть бізнес одним рядком', siteNewGo: 'Зібрати сторінку', siteAsk: 'Збери сайт і все для бізнесу: ', fAsk: 'Підказка в полі повідомлення', live: 'Сайт працює. Заявки приходять на пошту і в CRM.', domH: 'Свій домен',
@@ -170,6 +173,8 @@ const ico = {
       <form class="in" data-form>
         <button type="button" class="ib" data-clip aria-label={T.attach} title={T.attach}></button>
         <textarea name="q" rows="1" maxlength="4000" placeholder={T.ph} aria-label={T.ph}></textarea>
+        <button type="button" class="mdl" data-mdl aria-haspopup="menu" aria-label={T.mdl.label}><span data-mdl-l>{T.mdl.auto[0]}</span> ▾</button>
+        <div class="mdlm" data-mdlm role="menu" hidden>{(['auto', 'fast', 'strong', 'max'] as const).map((k) => <button type="button" role="menuitemradio" data-mdl-k={k} aria-checked={k === 'auto' ? 'true' : 'false'}><b>{T.mdl[k][0]}</b><small>{T.mdl[k][1]}</small></button>)}<p class="mdlp" data-mdl-paid hidden>{T.mdl.paid}</p></div>
         <button type="button" class="ib" data-mic aria-label={T.mic}></button>
         <button type="submit" class="go" aria-label={T.send}>➤</button>
       </form>
@@ -286,7 +291,7 @@ const ico = {
     u.hidden = false;
     if (!S.signed || !S.usage) { u.replaceChildren(el('small', '', T.usageGuest)); u.disabled = true; return; }
     u.disabled = false;
-    const worst = S.usage.week.pct > S.usage.day.pct ? meter(T.lim.week, S.usage.week) : meter(T.lim.day, S.usage.day);
+    const worst = meter(T.lim.month, S.usage.month || S.usage.week);
     u.replaceChildren(el('b', '', planName()), worst);
   }
   const refreshUsage = async () => { if (!S.signed) return; const d = await fetch('/api/ws/limits').then((r) => r.json()).catch(() => null); if (d?.usage) { S.usage = d.usage; drawUsage(); } };
@@ -535,6 +540,17 @@ const ico = {
   }
   $('[data-map-x]').onclick = () => $<HTMLDialogElement>('[data-mapdlg]').close();
 
+
+  /* ---------- Model picker (Decision 50): Auto by default; paid plans may pick Strong or Maximum ---------- */
+  let MODEL: string = (() => { try { return localStorage.getItem('vx_model') || 'auto'; } catch { return 'auto'; } })();
+  {
+    const btnM = $<HTMLButtonElement>('[data-mdl]'), menu = $<HTMLElement>('[data-mdlm]'), lab = $<HTMLElement>('[data-mdl-l]');
+    const paintM = () => { lab.textContent = (T.mdl as R)[MODEL]?.[0] || T.mdl.auto[0]; menu.querySelectorAll<HTMLButtonElement>('[data-mdl-k]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.mdlK === MODEL))); };
+    btnM.onclick = (e) => { e.stopPropagation(); menu.hidden = !menu.hidden; ($('[data-mdl-paid]') as HTMLElement).hidden = !(!S.plan || S.plan === 'start'); };
+    menu.querySelectorAll<HTMLButtonElement>('[data-mdl-k]').forEach((b) => (b.onclick = () => { MODEL = b.dataset.mdlK || 'auto'; try { localStorage.setItem('vx_model', MODEL); } catch {} paintM(); menu.hidden = true; }));
+    document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target as Node)) menu.hidden = true; });
+    paintM();
+  }
   /* ---------- Chat ---------- */
   const TILE_ICO: R = { site: 'M3 5h18v14H3zM3 9h18', crm: 'M4 5h16v3H4zm0 5.5h10v3H4zM4 16h7v3H4z', partner: 'M10 13a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7L12 6m2 5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7L12 18' };
   function drawEmpty() {
@@ -608,9 +624,9 @@ const ico = {
     const history = S.msgs.slice(-15, -1).map(({ role, content }) => ({ role, content }));
     let say: Msg = { role: 'assistant', content: T.err };
     try {
-      const r = await post('/api/ws/ask', { q, lang, mode: S.mode, chat: S.signed ? S.cur : 0, ...(S.signed ? {} : { history, memory: S.memory }) });
+      const r = await post('/api/ws/ask', { q, lang, mode: S.mode, model: MODEL, chat: S.signed ? S.cur : 0, ...(S.signed ? {} : { history, memory: S.memory }) });
       const d = await r.json();
-      if (r.status === 429) say.content = d.error === 'guest' ? T.guestLimit : d.reset ? (d.error === 'week' ? T.lim.outWeek : T.lim.outDay).replace('{t}', when(d.reset)) : T.limit;
+      if (r.status === 429) say.content = d.error === 'guest' ? T.guestLimit : d.reset ? (d.error === 'month' ? T.lim.outMonth : d.error === 'week' ? T.lim.outWeek : T.lim.outDay).replace('{t}', when(d.reset)) : T.limit;
       else if (d.ok) {
         say = { id: d.id ?? undefined, role: 'assistant', content: d.reply, tool: d.tool || undefined, doc: d.doc || undefined, image: d.image, deploy: d.deploy || undefined, site: d.site || undefined };
         if (d.uid) mine.id = d.uid;
@@ -1311,7 +1327,7 @@ const ico = {
     if (S.usage) {
       const lim = el('section', 'blk');
       const more = el('a', 'lnk', T.lim.more + ' →') as HTMLAnchorElement; more.href = `${pre}/#pricing`;
-      lim.append(el('h3', '', T.lim.h), meter(T.lim.day, S.usage.day), meter(T.lim.week, S.usage.week), el('p', 'hint', T.lim.note), more);
+      lim.append(el('h3', '', T.lim.h), meter(T.lim.month, S.usage.month || S.usage.week), el('p', 'hint', T.lim.note), more);
       box.append(lim);
     }
     if (!ME.me?.verified) box.append(verifyBox());
@@ -1833,4 +1849,13 @@ const ico = {
     .wsp .cv { width: 100vw; box-shadow: none; }
     .wsp [data-cv-full] { display: none; }
   }
+  .wsp .in { position: relative; }
+  .wsp .mdl { border: 1px solid var(--line); background: none; color: var(--mut); border-radius: 999px; padding: 6px 10px; font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; align-self: center; }
+  .wsp .mdl:hover { color: var(--ink); }
+  .wsp .mdlm { position: absolute; right: 8px; bottom: calc(100% + 8px); z-index: 30; width: min(340px, calc(100vw - 32px)); background: var(--surf); border: 1px solid var(--line); border-radius: 14px; padding: 6px; box-shadow: 0 16px 40px -16px rgba(0,0,0,.45); display: grid; gap: 2px; }
+  .wsp .mdlm button { display: grid; gap: 2px; text-align: left; border: 0; background: none; color: var(--ink); padding: 9px 10px; border-radius: 10px; cursor: pointer; font: inherit; }
+  .wsp .mdlm button:hover { background: var(--bg); }
+  .wsp .mdlm button[aria-checked='true'] { background: color-mix(in srgb, var(--accText) 14%, transparent); }
+  .wsp .mdlm small { color: var(--mut); font-size: 12.5px; line-height: 1.35; }
+  .wsp .mdlp { margin: 4px 10px 6px; font-size: 12px; color: var(--mut); }
 </style>

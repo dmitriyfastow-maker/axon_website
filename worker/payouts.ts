@@ -7,16 +7,26 @@ import type { DB } from './partner.js';
 import { RATES } from '../src/data/partners.js';
 import { firstReferral } from './referrals.js';
 
+/** Decision 50: a payment for 3, 6 or 12 months at once pays the first-sale rate on the first month only and the renewal
+ *  rate on the rest, so a partner earns the same as when the client pays month by month, and Vaxo never pays 50% of a year. */
+export function firstShare(total: number, months: number, rate: number, kind: string): number {
+  if (months <= 1 || kind === 'team') return (total * rate) / 100;
+  const first = total / months;
+  return (first * rate) / 100 + ((total - first) * RATES.agencyRenewal) / 100;
+}
+
 export async function createPayouts(db: DB, leadId: number) {
   const l = await db
     .prepare(
       `SELECT d.value_usd, d.closer_id, r.partner_id AS referrer_id, rp.plan AS referrer_plan,
-              (lower(trim(d.contact)) = lower(trim(rp.email))) AS self_ref
+              (lower(trim(d.contact)) = lower(trim(rp.email))
+               OR EXISTS (SELECT 1 FROM clients c WHERE c.id = d.client_id AND lower(trim(c.email)) = lower(trim(rp.email)))) AS self_ref,
+              (SELECT value FROM settings WHERE key = 'period_' || d.id) AS period
        FROM leads d LEFT JOIN links r ON r.slug = d.ref LEFT JOIN partners rp ON rp.id = r.partner_id
        WHERE d.id = ? AND d.status = 'won' AND d.value_usd > 0`,
     )
     .bind(leadId)
-    .first<{ value_usd: number; closer_id: number | null; referrer_id: number | null; referrer_plan: string | null; self_ref: number | null }>();
+    .first<{ value_usd: number; closer_id: number | null; referrer_id: number | null; referrer_plan: string | null; self_ref: number | null; period: string | null }>();
   if (!l) return;
   // Lifetime attribution by e-mail (migration 0035): a buyer who already paid before is a renewal (30%), not a new sale.
   try {
@@ -45,7 +55,7 @@ export async function createPayouts(db: DB, leadId: number) {
          ON CONFLICT (lead_id, kind) DO UPDATE SET partner_id = excluded.partner_id, base_usd = excluded.base_usd, amount_usd = excluded.amount_usd
          WHERE payouts.status = 'due'`,
       )
-      .bind(pid, leadId, kind, rate, l.value_usd, Math.round(l.value_usd * rate) / 100)
+      .bind(pid, leadId, kind, rate, l.value_usd, Math.round(firstShare(l.value_usd, Number(l.period) || 1, rate, kind) * 100) / 100)
       .run();
   }
 }

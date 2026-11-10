@@ -41,7 +41,7 @@ type Row = { id: number; client_id: number | null; lang: string | null; plan?: s
 /** Gift days that were given for free (no payment) after the last real payment. */
 export async function freeDaysSince(db: DB, leadId: number, since: string): Promise<number> {
   try {
-    const n = (await db.prepare(`SELECT COUNT(*) AS n FROM lead_events WHERE lead_id = ? AND kind = 'gift' AND text LIKE 'free-month%' AND at > ?`).bind(leadId, since).first<{ n: number }>())?.n ?? 0;
+    const n = (await db.prepare(`SELECT COUNT(*) AS n FROM lead_events WHERE lead_id = ? AND kind = 'gift' AND text LIKE 'free-month%' AND at >= ?`).bind(leadId, since).first<{ n: number }>())?.n ?? 0;
     return n * MONTH_DAYS;
   } catch { return 0; }
 }
@@ -141,7 +141,7 @@ async function firstInvoices(db: DB, notify?: Notify): Promise<number> {
       AND NOT EXISTS (SELECT 1 FROM payments p WHERE p.lead_id = d.id AND p.status = 'ok')
       AND NOT EXISTS (SELECT 1 FROM invoices i WHERE i.lead_id = d.id AND i.description LIKE 'Vaxo %' AND i.status != 'cancelled')
       AND (d.client_id IS NOT NULL OR COALESCE(d.contact, '') LIKE '%@%')
-      AND ((d.created_at > '2026-11-10' AND d.ref IS NULL) OR d.created_at <= datetime('now', '-27 days'))
+      AND (d.created_at > '2026-11-10' OR d.created_at <= datetime('now', '-27 days'))
     LIMIT 10`).all<Row>()).results;
   let n = 0;
   for (const l of rows) {

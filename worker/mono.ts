@@ -9,7 +9,7 @@ import { nbuRate } from './finance.js';
 import { settleInvoice } from './admin.js';
 import { labOnPaid } from './lab.js';
 import { shopOnPaid } from './shop.js';
-import { rememberCard, saveCardExtra } from './autopay.js';
+import { partnerBonus, rememberCard, saveCardExtra } from './autopay.js';
 
 const API = 'https://api.monobank.ua/api/merchant';
 const json = (status: number, body: unknown) =>
@@ -68,6 +68,7 @@ async function check(db: DB, token: string, ai: AiBinding | undefined, notify: N
   if (st === 'success' && inv.status === 'open') {
     await settleInvoice(db, ai, notify, inv.id, 'card', base);
     await rememberCard(db, inv, d).catch((e) => console.error('[autopay card]', e));
+    await partnerBonus(db, inv).catch((e) => console.error('[partner bonus]', e));
     await labOnPaid(db, inv.id, d, notify).catch((e) => console.error('[lab paid]', e));
     await shopOnPaid(db, inv.id, notify).catch((e) => console.error('[shop paid]', e));
     await notify(`💳 Оплата картой: рахунок ${inv.number}, ${inv.amount} ${inv.currency} (mono)`);

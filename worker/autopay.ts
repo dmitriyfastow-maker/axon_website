@@ -26,6 +26,27 @@ export function saveCardExtra(inv: Inv, agreed: boolean): Record<string, unknown
   return agreed && inv.lead_id && isSubscription(inv.description) ? { saveCardData: { saveCard: true, walletId: `sub-${inv.lead_id}` } } : {};
 }
 
+/** Decision 50: a client who came by a partner's link and pays for 3, 6 or 12 months at once gets one more month as a
+ *  gift, once. Not for a partner's own link (same email or account), not for invites under review. The gift month is a
+ *  later renewal date (lead_events 'free-month', read by billing), never cash. */
+export async function partnerBonus(db: DB, inv: Inv) {
+  if (!inv.lead_id || !isSubscription(inv.description)) return;
+  const months = Number((await get(db, `period_${inv.lead_id}`)) || 1);
+  if (months < 3) return;
+  const ok = await db.prepare(`SELECT 1 AS x FROM leads d JOIN links r ON r.slug = d.ref JOIN partners p ON p.id = r.partner_id
+      LEFT JOIN referrals f ON f.lead_id = d.id
+      WHERE d.id = ? AND lower(trim(d.contact)) != lower(trim(p.email))
+        AND NOT EXISTS (SELECT 1 FROM clients c WHERE c.id = d.client_id AND lower(trim(c.email)) = lower(trim(p.email)))
+        AND COALESCE(f.status, 'attributed') = 'attributed'`).bind(inv.lead_id).first().catch(() => null);
+  if (!ok) return;
+  const done = await db.prepare(`SELECT 1 FROM lead_events WHERE lead_id = ? AND kind = 'gift' AND text LIKE 'free-month partner-bonus%'`).bind(inv.lead_id).first().catch(() => null);
+  if (done) return;
+  await db.prepare(`INSERT INTO lead_events (lead_id, actor, kind, text) VALUES (?, 'system', 'gift', ?)`).bind(inv.lead_id, `free-month partner-bonus (invoice ${inv.number})`).run();
+  const { addMessage } = await import('./rooms.js');
+  const t: Record<string, string> = { ru: '🎁 Вы пришли по ссылке партнёра и оплатили сразу несколько месяцев — дарим ещё один месяц. Он добавлен к вашему периоду.', ua: '🎁 Ви прийшли за посиланням партнера й оплатили одразу кілька місяців — даруємо ще один місяць. Його додано до вашого періоду.', en: '🎁 You came by a partner\'s link and paid for several months at once, so here is one more month as a gift. It is added to your period.' };
+  await addMessage(db, inv.lead_id, 'owner', 'text', t[inv.lang || 'en'] || t.en);
+}
+
 /** After a successful card payment: keep mono's card token for the next renewals. */
 export async function rememberCard(db: DB, inv: Inv, status: Record<string, any> | null) {
   const token = status?.walletData?.cardToken;

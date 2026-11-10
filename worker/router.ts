@@ -49,6 +49,20 @@ export function isHard(text: string, deep = false, files = false): boolean {
 }
 
 export type Spend = { lead: number; all: number; pool: number; user?: number; ip?: number; free?: number };
+export type Choice = 'auto' | 'fast' | 'strong' | 'max';
+const SONNET: Tier = { model: 'claude-sonnet-5-5', effort: 'high', price: 0 };
+const OPUS: Tier = { model: 'claude-opus-5-5', effort: 'high', price: 0 };
+/** Auto: easy → Haiku; hard → Sonnet on Plus and Pro, Opus on Max and Ultra. A paid client may pick any model; a pricier
+ *  one simply uses the monthly budget faster (the budget is counted in what the AI really costs). */
+export function pickModel(plan: string, trial: boolean, hard: boolean, choice: Choice, s: Spend, hasKey: boolean): Tier | null {
+  const base = pickTier(plan, trial, hard, s, hasKey);
+  if (!base || base === EASY && (!TIERS[plan] || trial)) return base; // free: Haiku or the free models, no choice
+  if (choice === 'fast') return EASY;
+  if (choice === 'strong') return SONNET;
+  if (choice === 'max') return OPUS;
+  if (!hard) return EASY;
+  return plan === 'growth' || plan === 'pro' ? OPUS : SONNET;
+}
 /** The whole decision, with no I/O: null means free Workers AI. */
 export function pickTier(plan: string, trial: boolean, hard: boolean, s: Spend, hasKey: boolean): Tier | null {
   if (!hasKey) return null;
@@ -58,11 +72,11 @@ export function pickTier(plan: string, trial: boolean, hard: boolean, s: Spend, 
     if ((s.user ?? 0) >= FREE_CAP.user || (s.ip ?? 0) >= FREE_CAP.ip || (s.free ?? 0) >= FREE_CAP.all) return null;
     return EASY;
   }
-  const share = t.price * POOL_SHARE;
-  // Within the client's fair share and the pool: easy → Haiku, hard → the plan's strong model.
-  if (s.lead < share && s.all < s.pool) return hard ? t : EASY;
-  // Past the share: Haiku for a little more (up to half the price in all), then the free models.
-  return s.lead < t.price * 0.5 ? EASY : null;
+  // The client's own monthly budget is enforced by the workspace limits; here only the safety net: the month's pool of all
+  // paying clients, and one client never past half their price in AI.
+  if (s.lead >= t.price * 0.5) return null;
+  if (s.all >= s.pool) return EASY;
+  return hard ? t : EASY;
 }
 
 let apiKey = '';
@@ -74,7 +88,7 @@ const ipLedger = (ipKey: string) => `freeip_${ipKey}_${month()}`;
 /** The ledger row a reply is charged to: the lead for paying clients, minus the client id for free accounts. */
 export type Route = { tier: Tier; ledger: number; ipKey?: string };
 
-export async function routeFor(db: DB, o: { leadId: number | null; clientId: number; plan: string; trial: boolean; hard: boolean; ipKey?: string }): Promise<Route | null> {
+export async function routeFor(db: DB, o: { leadId: number | null; clientId: number; plan: string; trial: boolean; hard: boolean; ipKey?: string; choice?: Choice }): Promise<Route | null> {
   if (!apiKey) return null;
   const m = month();
   const paid = !!TIERS[o.plan] && !o.trial && !!o.leadId;
@@ -90,7 +104,7 @@ export async function routeFor(db: DB, o: { leadId: number | null; clientId: num
     const ip = o.ipKey ? Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind(ipLedger(o.ipKey)).first<{ value: string }>().catch(() => null))?.value || 0) : 0;
     s = { lead: 0, all: 0, pool: 0, user: await one(ledger), ip, free: all.free };
   }
-  const tier = pickTier(o.plan, o.trial || !paid, o.hard, s, true);
+  const tier = pickModel(o.plan, o.trial || !paid, o.hard, o.choice || 'auto', s, true);
   return tier ? { tier, ledger, ipKey: paid ? undefined : o.ipKey } : null;
 }
 

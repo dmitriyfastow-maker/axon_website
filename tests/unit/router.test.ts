@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { costUsd, EASY, FREE_CAP, isHard, monthPool, pickTier, POOL_SHARE, TIERS } from '../../worker/router';
+import { costUsd, EASY, FREE_CAP, isHard, monthPool, pickModel, pickTier, POOL_SHARE, TIERS } from '../../worker/router';
 
 const POOL = 1000;
 const paid = (lead = 0, all = 0, pool = POOL) => ({ lead, all, pool });
@@ -17,9 +17,7 @@ describe('pickTier', () => {
     expect(pickTier('pro', false, true, paid(), true)?.model).toBe('claude-opus-5-5');
     expect(pickTier('personal', false, true, paid(), true)?.model).toBe('claude-sonnet-5-5');
   });
-  it('past the fair share: Haiku a little longer, then free models', () => {
-    const share = TIERS.care.price * POOL_SHARE;
-    expect(pickTier('care', false, true, paid(share), true)).toBe(EASY);
+  it('safety net: the pool falls back to Haiku, half the price stops Claude', () => {
     expect(pickTier('care', false, true, paid(TIERS.care.price * 0.5), true)).toBeNull();
     expect(pickTier('growth', false, true, paid(0, POOL), true)).toBe(EASY);
   });
@@ -43,5 +41,19 @@ describe('costUsd', () => {
     expect(costUsd('claude-sonnet-5-5', { input_tokens: 1e6, output_tokens: 1e6 })).toBe(12);
     expect(costUsd('claude-haiku-5-5', { input_tokens: 1e6, output_tokens: 1e6 })).toBeCloseTo(0.6);
     expect(costUsd('unknown', { input_tokens: 1e6 })).toBe(0);
+  });
+});
+
+describe('pickModel', () => {
+  const p = { lead: 0, all: 0, pool: 1000 };
+  it('auto: Sonnet for hard on Pro, Opus on Max and Ultra, Haiku for easy', () => {
+    expect(pickModel('care', false, true, 'auto', p, true)?.model).toBe('claude-sonnet-5-5');
+    expect(pickModel('growth', false, true, 'auto', p, true)?.model).toBe('claude-opus-5-5');
+    expect(pickModel('pro', false, false, 'auto', p, true)).toBe(EASY);
+  });
+  it('a paid client may choose; a free one gets Haiku whatever they pick', () => {
+    expect(pickModel('personal', false, false, 'max', p, true)?.model).toBe('claude-opus-5-5');
+    expect(pickModel('care', false, true, 'fast', p, true)).toBe(EASY);
+    expect(pickModel('start', false, true, 'max', { ...p, user: 0, ip: 0, free: 0 }, true)).toBe(EASY);
   });
 });

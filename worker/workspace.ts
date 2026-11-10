@@ -284,7 +284,7 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   if (me) {
     // Signed in: Claude (Haiku for easy messages, the plan's strong model for hard ones); guests: the free models.
     const al = leadIds.length ? await allowance(db, leadIds).catch(() => null) : null;
-    const route = await routeFor(db, { leadId: leadIds[0] ?? null, clientId: me.id, plan: al?.plan ?? 'start', trial: !!al?.trial, hard: isHard(q, mode === 'deep', /📎/u.test(q)), ipKey: await ipKey(ip) }).catch(() => null);
+    const route = await routeFor(db, { leadId: leadIds[0] ?? null, clientId: me.id, plan: al?.plan ?? 'start', trial: !!al?.trial, hard: isHard(q, mode === 'deep', /📎/u.test(q)), ipKey: await ipKey(ip), choice: (['fast', 'strong', 'max'].includes(String(b.model)) ? String(b.model) : 'auto') as 'auto' }).catch(() => null);
     if (route) { raw = await claudeReply(db, route, sys, turns, (c) => { usd = c; }); paid = !!raw && route.ledger > 0; }
   }
   raw ??= await freeReply(ai, [{ role: 'system', content: sys }, ...turns], mode);
