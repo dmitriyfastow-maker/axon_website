@@ -22,7 +22,7 @@ const { lang, title, description, path, noindex = false, alts, noChat = false } 
 const altLinks = LANGS.filter((l) => !alts || alts[l]).map((l) => ({ l, href: alts?.[l] ?? langPath(l) }));
 const site = Astro.site!;
 const abs = (p: string) => new URL(p, site).href;
-const ogImage = abs('/og-image.png');
+const ogImage = abs(`/og-${lang}.png`);
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',

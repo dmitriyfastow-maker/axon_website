@@ -50,7 +50,7 @@ test.fixme('SEO metadata on /ru/', async ({ page }) => {
   const alts = await page.locator('link[rel=alternate]').evaluateAll((ls) => ls.map((l) => `${l.getAttribute('hreflang')} ${l.getAttribute('href')}`));
   expect(alts).toEqual([`en ${site}/`, `uk ${site}/ua/`, `ru ${site}/ru/`, `x-default ${site}/`]);
   await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute('content', 'ru_RU');
-  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', `${site}/og-image.png`);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', `${site}/og-ru.png`);
   const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
   expect(ld['@type']).toBe('ProfessionalService');
 });

@@ -18,7 +18,7 @@ npm run dev        # http://localhost:4321
 | `npm test` | юнит-тесты (валидация, отправка заявок) |
 | `npm run e2e` | браузерные тесты (нужен `npm run build`) |
 | `npm run visual` | скриншоты «макет vs сайт» в `tests/visual/out/` (нужен запущенный `npm run preview`) |
-| `npm run og` | перегенерировать `public/og-image.png` |
+| `node scripts/make-og-lang.cjs` | превью ссылок `public/og-{en,ru,ua}.png` (текст внутри скрипта) |
 
 ## Где что лежит
 
