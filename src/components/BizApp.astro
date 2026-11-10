@@ -244,8 +244,8 @@ const T = {
     ans.textContent = r.ok ? (await r.json()).text : '…';
   };
   // The cabinet signs the client in without a reload — then the app boots too.
+  // Boots only when the Workspace opens the CRM (it fires this event): guests no longer hit /api/biz → 401 on every load.
   window.addEventListener('vx:signed-in', () => { if (root.hidden && !booting) boot(); });
-  boot();
 </script>
 
 <style is:global>
