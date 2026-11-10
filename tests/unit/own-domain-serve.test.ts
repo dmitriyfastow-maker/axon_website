@@ -6,7 +6,7 @@ function fakeDb(o: { known: boolean; access: boolean }) {
   const site = JSON.stringify({ lang: 'ru', tone: 'clean', title: 'Кейтеринг Одесса', sub: 'Еда на события', about: '', services: [], cta: '' });
   const answer = (sql: string) => {
     if (sql.includes('FROM biz_domains d JOIN biz_pages')) return o.known ? { status: 'active', slug: 'keytering-ab12', owner_id: 9 } : null;
-    if (sql.includes("l.plan IN ('care', 'growth', 'pro')")) return o.access ? { 1: 1 } : null;
+    if (sql.includes("l.plan IN ('personal', 'care', 'growth', 'pro')")) return o.access ? { 1: 1 } : null;
     if (sql.includes('FROM biz_pages p JOIN biz b')) return { id: 1, name: 'Кейтеринг', key: 'a'.repeat(24), owner_id: 9, kind: 'site', data: site };
     if (sql.includes("i.status = 'paid'")) return { 1: 1 };
     return null;

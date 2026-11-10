@@ -82,7 +82,7 @@ async function ensureBiz(db: DB, clientId: number, name: string, lang: string, b
 /** CRM, the site's AI chat and an own domain belong to Care and above, the free month included; the site itself stays free.
  *  They lock when a subscription invoice goes past its due date, so a trial, a month and a paid year all end the same way. */
 export async function moduleAccess(db: DB, clientId: number): Promise<boolean> {
-  return !!(await db.prepare(`SELECT 1 FROM leads l WHERE l.client_id = ? AND l.plan IN ('care', 'growth', 'pro')
+  return !!(await db.prepare(`SELECT 1 FROM leads l WHERE l.client_id = ? AND l.plan IN ('personal', 'care', 'growth', 'pro')
     AND NOT EXISTS (SELECT 1 FROM invoices i WHERE i.lead_id = l.id AND i.status = 'open' AND i.description LIKE 'Vaxo %' AND i.due < date('now')) LIMIT 1`).bind(clientId).first());
 }
 
