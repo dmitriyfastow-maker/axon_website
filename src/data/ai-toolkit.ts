@@ -11,7 +11,7 @@ export const OFFERS = [
   {
     id: 'start',
     target: '/start/',
-    text: 'Vaxo for any business, big or small: one platform — website or connection to theirs, an AI that answers customers 24/7, all leads in one app, analytics. The first month is free, then from $39 a month; the client only pays the subscription, Vaxo and AI do the work.',
+    text: 'Vaxo for any business, big or small: one platform — website or connection to theirs, an AI that answers customers 24/7, all leads in one app, analytics. There is a free plan to start, paid plans from $39 a month; the client only pays the subscription, Vaxo and AI do the work.',
   },
   {
     id: 'shop',

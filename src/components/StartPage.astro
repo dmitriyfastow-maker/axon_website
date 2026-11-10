@@ -1,5 +1,5 @@
 ---
-// Start free (Decision 29): the first month on any plan is free, then a subscription; anything extra priced upfront. EN / UA / RU.
+// Start free (Decision 50): the Free plan has all features, paid plans billed from day one with a 14-day refund; anything extra priced upfront. EN / UA / RU.
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Contact from './Contact.astro';
@@ -14,11 +14,11 @@ const alts = { en: '/start/', ua: '/ua/start/', ru: '/ru/start/' };
 
 const C = {
  "en": {
-  "title": "Vaxo — Start free: your first month on us",
-  "desc": "Try the whole Vaxo platform free: website, AI employee, CRM, analytics. Then from $39 a month.",
+  "title": "Vaxo — Start free: all features on the Free plan",
+  "desc": "Start Vaxo free with all features: website, AI employee, CRM, analytics. Paid plans from $39 a month.",
   "eyebrow": "Start free",
   "h1": "Try Vax free — it moves first.",
-  "sub": "No big project and no risk. Tell Vax your goal: it proposes the plan and the next step, sets up a website or a connection to yours, AI that answers your clients and every lead in one app — and explains why. You pay only if you stay. Start is free forever.",
+  "sub": "No big project and no risk. Tell Vax your goal: it proposes the plan and the next step, sets up a website or a connection to yours, AI that answers your clients and every lead in one app — and explains why. You pay only if you stay. The Free plan is free forever.",
   "cta": "Pick a plan →",
   "once": "/ month",
   "roadEyebrow": "How you grow",
@@ -58,9 +58,9 @@ const C = {
   "steps": [
    {
     "n": "01",
-    "title": "Free month",
+    "title": "Free plan",
     "price": "$0",
-    "text": "We set everything up and connect it. You see the result before you pay anything."
+    "text": "All features, no card needed. You see the result before you pay anything."
    },
    {
     "n": "02",
@@ -98,14 +98,14 @@ const C = {
      "Your website or a connection to yours, AI trained on your services and prices."
     ],
     [
-     "Free month, then the plan",
+     "Free plan, then a paid one when it pays off",
      "You see real requests and reports. Stay only if it pays off."
     ]
    ],
    "faqH": "Quick answers",
    "faq": [
     [
-     "What do I pay for the first month?",
+     "What do I pay to start?",
      "Nothing. You can start on the free plan. A yearly plan gives 2 more months free."
     ],
     [
@@ -137,11 +137,11 @@ const C = {
   }
  },
  "ru": {
-  "title": "Vaxo — Начните бесплатно: первый месяц за наш счёт",
-  "desc": "Попробуйте всю платформу Vaxo бесплатно месяц: сайт, ИИ-сотрудник, CRM, аналитика. Дальше — от $39 в месяц.",
+  "title": "Vaxo — Начните бесплатно: все функции на бесплатном тарифе",
+  "desc": "Начните с Vaxo бесплатно и со всеми функциями: сайт, ИИ-сотрудник, CRM, аналитика. Платные тарифы — от $39 в месяц.",
   "eyebrow": "Начните бесплатно",
-  "h1": "Месяц с Vax бесплатно — он действует первым.",
-  "sub": "Без большого проекта и без риска. Назовите Vax цель: он предложит план и следующий шаг, настроит сайт или подключение к вашему, ИИ для ответов клиентам и все заявки в одном приложении — и объяснит почему. Платите, только если остаётесь. «Старт» бесплатен навсегда.",
+  "h1": "Начните с Vax бесплатно — он действует первым.",
+  "sub": "Без большого проекта и без риска. Назовите Vax цель: он предложит план и следующий шаг, настроит сайт или подключение к вашему, ИИ для ответов клиентам и все заявки в одном приложении — и объяснит почему. Платите, только если остаётесь. Бесплатный тариф — навсегда.",
   "cta": "Выбрать тариф →",
   "once": "/ мес",
   "roadEyebrow": "Как вы растёте",
@@ -181,9 +181,9 @@ const C = {
   "steps": [
    {
     "n": "01",
-    "title": "Бесплатный месяц",
+    "title": "Бесплатный тариф",
     "price": "$0",
-    "text": "Мы всё настраиваем и подключаем. Вы видите результат до того, как что-то платите."
+    "text": "Все функции, карта не нужна. Вы видите результат до того, как что-то платите."
    },
    {
     "n": "02",
@@ -221,14 +221,14 @@ const C = {
      "Сайт или подключение к вашему, ИИ обучен на ваших услугах и ценах."
     ],
     [
-     "Бесплатный месяц, потом тариф",
+     "Бесплатный тариф, платный — когда окупается",
      "Вы видите реальные заявки и отчёты. Остаётесь, только если окупается."
     ]
    ],
    "faqH": "Коротко о главном",
    "faq": [
     [
-     "Сколько платить за первый месяц?",
+     "Сколько платить, чтобы начать?",
      "Ничего. Начать можно на бесплатном тарифе. При оплате года — ещё 2 месяца в подарок."
     ],
     [
@@ -260,11 +260,11 @@ const C = {
   }
  },
  "ua": {
-  "title": "Vaxo — Почніть безкоштовно: перший місяць за наш рахунок",
-  "desc": "Спробуйте всю платформу Vaxo безкоштовно місяць: сайт, ШІ-працівник, CRM, аналітика. Далі — від $39 на місяць.",
+  "title": "Vaxo — Почніть безкоштовно: усі функції на безкоштовному тарифі",
+  "desc": "Почніть з Vaxo безкоштовно і з усіма функціями: сайт, ШІ-працівник, CRM, аналітика. Платні тарифи — від $39 на місяць.",
   "eyebrow": "Почніть безкоштовно",
-  "h1": "Місяць із Vax безкоштовно — він діє першим.",
-  "sub": "Без великого проєкту і без ризику. Назвіть Vax мету: він запропонує план і наступний крок, налаштує сайт або підключення до вашого, ШІ для відповідей клієнтам і всі заявки в одному застосунку — і поясни чому. Платите, лише якщо лишаєтесь. «Старт» безкоштовний назавжди.",
+  "h1": "Почніть із Vax безкоштовно — він діє першим.",
+  "sub": "Без великого проєкту і без ризику. Назвіть Vax мету: він запропонує план і наступний крок, налаштує сайт або підключення до вашого, ШІ для відповідей клієнтам і всі заявки в одному застосунку — і пояснить чому. Платите, лише якщо лишаєтесь. Безкоштовний тариф — назавжди.",
   "cta": "Обрати тариф →",
   "once": "/ міс",
   "roadEyebrow": "Як ви ростете",
@@ -304,9 +304,9 @@ const C = {
   "steps": [
    {
     "n": "01",
-    "title": "Безкоштовний місяць",
+    "title": "Безкоштовний тариф",
     "price": "$0",
-    "text": "Ми все налаштовуємо і підключаємо. Ви бачите результат до того, як щось платите."
+    "text": "Усі функції, картка не потрібна. Ви бачите результат до того, як щось платите."
    },
    {
     "n": "02",
@@ -344,14 +344,14 @@ const C = {
      "Сайт або підключення до вашого, ШІ навчений на ваших послугах і цінах."
     ],
     [
-     "Безкоштовний місяць, потім тариф",
+     "Безкоштовний тариф, платний — коли окупається",
      "Ви бачите реальні заявки і звіти. Залишаєтеся, лише якщо окупається."
     ]
    ],
    "faqH": "Коротко про головне",
    "faq": [
     [
-     "Скільки платити за перший місяць?",
+     "Скільки платити, щоб почати?",
      "Нічого. Почати можна на безкоштовному тарифі. При оплаті року — ще 2 місяці в подарунок."
     ],
     [
@@ -393,7 +393,7 @@ const C = {
         <div class="eyebrow">{C.eyebrow}</div>
         <h1>{C.h1}</h1>
         <p class="sub">{C.sub}</p>
-        <p class="sub small">{{ en: 'Start is free forever; the trial month of a paid plan covers a part of the monthly tasks (one trial per person or company). Vax comes with the next step every week.', ru: '«Старт» бесплатен всегда; пробный месяц платного тарифа покрывает часть месячных задач (одна проба на человека или компанию). Vax сам приходит со следующим шагом каждую неделю.', ua: '«Старт» безкоштовний завжди; пробний місяць платного тарифу покриває частину місячних задач (одна проба на людину чи компанію). Vax сам приходить з наступним кроком щотижня.' }[lang]} <a href={`${lang === 'en' ? '' : '/' + lang}/how/`}>{{ en: 'How it works →', ru: 'Как это работает →', ua: 'Як це працює →' }[lang]}</a> · <a href={`${lang === 'en' ? '' : '/' + lang}/score/`}>Vaxo Score →</a></p>
+        <p class="sub small">{{ en: 'The Free plan is free forever and has all features; a paid plan is billed from the day you choose it, with a 14-day refund. Vax comes with the next step every week.', ru: 'Бесплатный тариф — навсегда и со всеми функциями; платный оплачивается с дня выбора, возврат в течение 14 дней. Vax сам приходит со следующим шагом каждую неделю.', ua: 'Безкоштовний тариф — назавжди й з усіма функціями; платний оплачується з дня вибору, повернення протягом 14 днів. Vax сам приходить з наступним кроком щотижня.' }[lang]} <a href={`${lang === 'en' ? '' : '/' + lang}/how/`}>{{ en: 'How it works →', ru: 'Как это работает →', ua: 'Як це працює →' }[lang]}</a> · <a href={`${lang === 'en' ? '' : '/' + lang}/score/`}>Vaxo Score →</a></p>
         <div class="acts"><a href="#packages" class="cta">{C.cta}</a><a href={`${home}#services`} class="cta ghost">{C.extra.cta2}</a></div>
       </div>
     </section>
