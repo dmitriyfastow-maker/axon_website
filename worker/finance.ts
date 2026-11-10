@@ -166,6 +166,23 @@ export async function handleFinancePublic(db: DB, request: Request, ai?: AiBindi
   const url = new URL(request.url);
   // Paddle (international subscriptions): the FOP holder pastes the API key here once; we check it with Paddle and
   // keep it encrypted. It is never shown back, only "connected".
+  if (url.searchParams.get('claude')) {
+    // The Claude API key for paying clients' answers (Decision 39): checked with Anthropic, kept encrypted, never shown back.
+    if (request.method === 'POST') {
+      const b = (await request.json().catch(() => ({}))) as { key?: string };
+      const key = String(b.key || '').trim();
+      if (!/^sk-ant-[A-Za-z0-9_-]{20,}$/.test(key) || !secret) return json(400, { ok: false, error: 'format' });
+      const r = await fetch('https://api.anthropic.com/v1/models', { headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' } }).catch(() => null);
+      if (!r?.ok) return json(400, { ok: false, error: 'check' });
+      const put = (k: string, v: string) => db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(k, v).run();
+      await put('anthropic_key', await seal(secret, key));
+      await put('anthropic_key_at', new Date().toISOString());
+      if (notify) await notify('🤖 Claude API: Соня вставила ключ. Платные клиенты получат ответы Claude.').catch(() => {});
+      return json(200, { ok: true });
+    }
+    const at = await db.prepare('SELECT value FROM settings WHERE key = ?').bind('anthropic_key_at').first<{ value: string }>().catch(() => null);
+    return json(200, { ok: true, at: at?.value || null });
+  }
   if (url.searchParams.get('paddle')) {
     if (request.method === 'POST') {
       const b = (await request.json().catch(() => ({}))) as { key?: string };

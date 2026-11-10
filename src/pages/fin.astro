@@ -33,6 +33,12 @@ import Base from '../layouts/Base.astro';
         </form>
       </section>
       <section class="pdl">
+        <b>Claude API (ответы ИИ для платных клиентов)</b>
+        <p class="mut" data-cl-st>Вставьте сюда ключ из console.anthropic.com → API Keys → Create Key. Ключ хранится в зашифрованном виде, никому его не пересылайте.</p>
+        <form data-cl><input type="password" name="key" placeholder="sk-ant-…" autocomplete="off" required /><button class="cta">Сохранить</button></form>
+        <small class="err" data-cl-err hidden></small>
+      </section>
+      <section class="pdl">
         <b>Paddle (подписки иностранцев)</b>
         <p class="mut" data-pdl-st>Вставьте сюда API-ключ из Paddle: Developer Tools → Authentication → New API key. Ключ никуда больше не отправляйте: здесь он хранится в зашифрованном виде.</p>
         <form data-pdl><input type="password" name="key" placeholder="pdl_live_…" autocomplete="off" required /><button class="cta">Сохранить</button></form>
@@ -55,6 +61,15 @@ import Base from '../layouts/Base.astro';
     try { code = (localStorage.getItem(KEY) || sessionStorage.getItem(KEY)) || ''; } catch {}
     const ys = $<HTMLSelectElement>('[data-year]');
     for (let y = new Date().getFullYear(); y >= 2026; y--) ys.append(new Option(String(y), String(y)));
+    $<HTMLFormElement>('[data-cl]').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.currentTarget as HTMLFormElement, key = (f.elements.namedItem('key') as HTMLInputElement).value.trim(), err = $('[data-cl-err]');
+      err.hidden = true;
+      const r = await fetch('/api/fin?claude=1', { method: 'POST', headers: { 'X-Fin-Code': code, 'Content-Type': 'application/json' }, body: JSON.stringify({ key }) }).catch(() => null);
+      const d = r ? await r.json().catch(() => ({})) : {};
+      if (d.ok) { f.reset(); $('[data-cl-st]').textContent = '✅ Ключ Claude сохранён и проверен. Дальше всё делает Claude.'; return; }
+      err.hidden = false; err.textContent = d.error === 'format' ? 'Это не похоже на ключ Claude: он начинается с sk-ant-.' : 'Anthropic не принял ключ. Создайте новый и вставьте ещё раз.';
+    });
     $<HTMLFormElement>('[data-pdl]').addEventListener('submit', async (e) => {
       e.preventDefault();
       const f = e.currentTarget as HTMLFormElement, key = (f.elements.namedItem('key') as HTMLInputElement).value.trim(), err = $('[data-pdl-err]');
@@ -70,6 +85,7 @@ import Base from '../layouts/Base.astro';
       if (r.status === 401) { $('[data-err]').hidden = false; code = ''; try { localStorage.removeItem(KEY); } catch {} return; }
       const d = await r.json();
       try { localStorage.setItem(KEY, code); } catch {}
+      fetch('/api/fin?claude=1', { headers: { 'X-Fin-Code': code } }).then((x) => x.json()).then((p) => { if (p?.at) $('[data-cl-st]').textContent = `✅ Ключ Claude сохранён (${String(p.at).slice(0, 10)}). Новый можно вставить ниже.`; }).catch(() => {});
       fetch('/api/fin?paddle=1', { headers: { 'X-Fin-Code': code } }).then((x) => x.json()).then((p) => { if (p?.at) $('[data-pdl-st]').textContent = `✅ Ключ Paddle сохранён (${String(p.at).slice(0, 10)}${/sandbox/.test(p.at) ? ', тестовый' : ''}). Дальше всё делает Claude. Новый ключ можно вставить ниже.`; }).catch(() => {});
       $('[data-login]').hidden = true; $('[data-app]').hidden = false; $('[data-out]').hidden = false;
       renderFinance($('[data-fin]'), d, true);

@@ -22,6 +22,10 @@ const WORKS: [string, string, string, string][] = ([
 ] as [string, string, string][]).map(([a, b, c], i) => [a, b, c, (WK[lang] ?? WK.en)[i]]);
 const T = {
   ru: {
+    p3: [["Делает", "Не советует, а сразу выдаёт готовое: сайт, ролик, пост, план."], ["Связывает", "Сайт, запись, оплата, CRM и ИИ-консультант работают вместе."], ["Работает без вас", "Заявки и оплаты приходят сами, клиентам отвечают 24/7."]],
+    outs: ["Сайты", "Ролики", "Посты и тексты", "Запись и оплата", "CRM", "ИИ-консультант", "Расчёты и планы"],
+    persL2: ["Личный", "Для себя", ["Больше запаса", "Длинные задачи и документы", "Картинки и голос"]],
+    pro2: ["Pro", "Магазин и реклама", ["Всё из Growth", "Магазин или приложение", "Соцсети, реклама, приоритет"]],
     kick: "Сайты и запись · Оплаты · CRM · ИИ-консультант · Тексты и планы",
     trust: ["Первый месяц бесплатно", "Без карты", "Возврат 14 дней", "Отмена в любой момент"],
     svcH: "Что делает Vax",
@@ -40,7 +44,7 @@ const T = {
     lad: [['Дома', 'План отпуска, бюджет семьи, письмо арендодателю'], ['Учёба', 'Разобрать тему, план на 3 месяца, проверка работы'], ['Работа', 'Презентация, разбор договора, отчёт из таблицы'], ['Своё дело', 'Сайт с записью, ИИ-консультант, CRM и партнёры'], ['Компания', 'Финмодель, стратегия выхода на рынок, автоматизация процессов']],
     chips: [['Отпуск на 5 дней', 'Спланируй отпуск в Италии на 5 дней: маршрут, бюджет, что забронировать'], ['Сайт с онлайн-записью', 'Барбершоп'], ['План запуска за 14 дней', 'План запуска продукта за 14 дней: чек-лист'], ['Рассчитать БЖУ и тренировки', 'Сделай калькулятор калорий и БЖУ под мою цель'], ['Юнит-экономика проекта', 'Сделай калькулятор юнит-экономики: цена, срок клиента, стоимость привлечения']], live: 'Интерактивно',
     h1: ["Скажите, что нужно.", "Vax берётся за дело."],
-    sub: "Vax — ИИ-исполнитель для жизни и бизнеса. Он не останавливается на ответе, а делает: сайт с онлайн-записью и оплатой, CRM, ИИ-консультанта для ваших клиентов, тексты, планы и расчёты. Начните бесплатно, без регистрации.",
+    sub: "Сайты, ролики, тексты, расчёты и всё для вашего бизнеса. Готовый результат за минуты, а не совет.",
     ph: ['Посчитай юнит-экономику моей подписки', 'Сделай сайт для моей кофейни', 'План: выучить испанский за 3 месяца', 'Напиши письмо арендодателю', 'Разложи запуск курса по шагам'],
     go: 'Начать', askL: 'Напишите задачу',
     showT: 'Как это выглядит', showH: ['Вы ставите задачу.', 'Vax доводит её до результата.'], showP: 'Посчитает, разложит по шагам, соберёт и запустит. Где нужен инструмент, он появится прямо в разговоре и останется у вас. Перед важным Vax спросит.',
@@ -57,20 +61,24 @@ const T = {
     par: ['Партнёрские ссылки', 'Личная ссылка каждому партнёру. Переходы и заявки считаются сами.', 'Развернуть', [['1', 'ссылка на партнёра'], ['авто', 'учёт переходов'], ['авто', 'учёт заявок']]],
     exa: ['Сайт', 'Одна страница с формой заявок. Текст пишет Vax, работает сразу.', 'Развернуть'],
     cab: ['Рабочее пространство', 'Чат, память, инструменты и холст на одном экране.', 'Открыть', ['Готовность проекта', 'Лимит на сегодня', 'Мои инструменты', 'Счёт оплачен']],
-    prH: 'Тарифы', prS: 'Начните бесплатно. Первый месяц любого платного тарифа тоже бесплатный, с меньшим запасом.',
+    prH: 'Тарифы', prS: 'Первый месяц любого платного тарифа бесплатно (с меньшим запасом). Без карты, отмена в любой момент.',
     mo: '/мес', focus: 'Лучше всего начать здесь', trial: 'Месяц бесплатно', startB: 'Начать бесплатно', more: '', audMe: 'Для себя', audBiz: 'Для бизнеса', focusMe: 'Для себя — лучший выбор', proD: 'Когда нужен магазин или приложение.', persL: ['Всё из Старта и намного больше запаса', 'Тексты, планы, расчёты, небольшие сборки', 'Файлы, картинки, голос'], proL: ['Всё из Growth', 'Магазин или приложение', 'Ваши соцсети и реклама', 'Приоритет'], audHint: 'Начать можно с бесплатного Старта, тариф меняется в любой момент.',
-    start: ['Старт', 'Для вопросов и простых инструментов.', ['Ответы на вопросы', 'Калькуляторы, чек-листы, трекеры', 'Работа с файлами и картинки', 'Сайт на одну страницу с заявками на почту', 'Без карты и регистрации']],
-    care: ['Care', 'Для вашего дела.', ['Сайт или приложение либо подключение к вашему', 'ИИ отвечает в чате сайта 24/7', 'Все заявки в одном приложении', 'Подключение собственного домена (скоро)', 'Отчёт каждый месяц']],
-    grow: ['Growth', 'Когда дело растёт.', ['Всё из Care и намного больше запаса', 'Запись и оплаты', 'ИИ в Instagram, WhatsApp, Telegram, Facebook', '12 постов в месяц, команда до 5 человек']],
+    start: ["Старт", "Попробовать", ["Ответы, тексты, планы", "Файлы и картинки", "Сайт на одну страницу"]],
+    care: ["Care", "Для вашего дела", ["Сайт с записью и заявками", "ИИ-консультант 24/7", "CRM и отчёт каждый месяц"]],
+    grow: ["Growth", "Когда дело растёт", ["Всё из Care, больше запаса", "Оплаты, ИИ в Instagram и WhatsApp", "12 постов в месяц, команда до 5"]],
     pers: ['Личный', 'Для одного человека: тексты, планы, небольшие сборки.'],
     pro: ['Pro', 'Магазин или приложение, ваши соцсети и реклама, приоритет.'],
     prN: 'Карту мы не храним: перед каждым месяцем приходит счёт, и вы платите, только если остаётесь. Не знаете, какой тариф нужен? Спросите Vax: он подберёт под вашу задачу.',
     faqH: 'Вопросы',
-    faq: [["Что именно делает Vax?", "Собирает сайты с записью и оплатой, ведёт заявки, отвечает вашим клиентам, пишет тексты, считает, планирует, разбирает документы и файлы. Результат сразу рабочий: сайт открывается по ссылке, расчёт готов, план расписан по шагам."], ["Я уже пользуюсь ИИ-чатом. Зачем мне Vax?", "Пользуйтесь дальше, одно другому не мешает. Vax нужен, когда нужен не текст, а работающая вещь: сайт, запись, оплата, CRM, консультант для клиентов. А ваши аккаунты и подписки Vax подключает, чтобы вы не платили дважды."], ["Я не разбираюсь в технике. Справлюсь?", "Да. Пишите, что хотите, как сообщение другу. Vax сам задаст пару вопросов, если что-то неясно, и всё соберёт."], ["Сколько ждать результат?", "Сайт, расчёт или план — около минуты. Для больших задач (ролик, магазин, приложение) Vax сразу называет срок и показывает прогресс."], ["Сайт будет мой? А свой домен?", "Да. Сайт работает по своей ссылке, а подключение своего домена откроем совсем скоро. Тексты и фото меняете сами прямо на странице или словами в чате."], ["Как мои клиенты будут платить?", "Вы подключаете свою платёжку (monobank, WayForPay, LiqPay или Stripe), и деньги идут сразу на ваш счёт. Vaxo их не касается."], ["А если результат не понравится?", "Скажите, что поправить, и Vax переделает. Первый месяц бесплатный, а за первую оплату подписки можно вернуть деньги в течение 14 дней."], ["Вы сами спишете деньги с карты?", "Нет. Мы не храним карту и сами с неё не списываем. Не оплатили счёт — тариф просто заканчивается."], ["Кто видит мои данные?", "Только вы и те, кого вы пригласили в команду. Данные мы не продаём, выгрузить их можно в любой момент."], ["Можно отменить?", "Да, в любой момент до следующей оплаты. Договоров на год нет."]],
+    faq: [["Что именно делает Vax?", "Собирает сайты с записью и оплатой, ведёт заявки, отвечает вашим клиентам, пишет тексты, считает, планирует, разбирает документы и файлы. Результат сразу рабочий: сайт открывается по ссылке, расчёт готов, план расписан по шагам."], ["Я уже пользуюсь ИИ-чатом. Зачем мне Vax?", "Пользуйтесь дальше, одно другому не мешает. Vax нужен, когда нужен не текст, а работающая вещь: сайт, запись, оплата, CRM, консультант для клиентов. А ваши аккаунты и подписки Vax подключает, чтобы вы не платили дважды."], ["Я не разбираюсь в технике. Справлюсь?", "Да. Пишите, что хотите, как сообщение другу. Vax сам задаст пару вопросов, если что-то неясно, и всё соберёт."], ["Сколько ждать результат?", "Сайт, расчёт или план — около минуты. Для больших задач (ролик, магазин, приложение) Vax сразу называет срок и показывает прогресс."], ["Сайт будет мой? А свой домен?", "Да. Сайт работает по своей ссылке, а подключение своего домена откроем совсем скоро. Тексты и фото меняете сами прямо на странице или словами в чате."], ["Как мои клиенты будут платить?", "Вы подключаете свою платёжку (monobank, WayForPay, LiqPay или Stripe), и деньги идут сразу на ваш счёт. Vaxo их не касается."]],
     endQ: 'Я мою еду. И ваш список дел.', endH: 'С чего начнём?',
     dnote: 'Первый месяц бесплатно. Без карты. Счёт пришлём, только если останетесь.', demail: 'Ваша почта', dgo: 'Начать бесплатный месяц', dbad: 'Введите настоящую почту.', dfail: 'Что-то пошло не так — попробуйте ещё раз.',
   },
   en: {
+    p3: [["Does it", "No advice to follow: you get the finished thing — a site, a video, a post, a plan."], ["Connects it", "Site, booking, payments, CRM and the AI consultant work together."], ["Runs without you", "Requests and payments come in by themselves; customers get answers 24/7."]],
+    outs: ["Sites", "Videos", "Posts & texts", "Booking & payments", "CRM", "AI consultant", "Calculations & plans"],
+    persL2: ["Personal", "For yourself", ["More room", "Long tasks and documents", "Pictures and voice"]],
+    pro2: ["Pro", "Shop and ads", ["Everything in Growth", "A shop or an app", "Social media, ads, priority"]],
     kick: "Sites & booking · Payments · CRM · AI consultant · Texts & plans",
     trust: ["First month free", "No card", "14-day refund", "Cancel any time"],
     svcH: "What Vax does",
@@ -89,7 +97,7 @@ const T = {
     lad: [['Home', 'A trip plan, a family budget, a letter to the landlord'], ['Study', 'Explain a topic, a 3-month plan, check your work'], ['Work', 'A presentation, a contract review, a report from a spreadsheet'], ['Your business', 'A site with booking, an AI consultant, CRM and partners'], ['Company', 'A financial model, a go-to-market strategy, process automation']],
     chips: [['A 5-day trip', 'Plan a 5-day trip to Italy: route, budget, what to book'], ['A site with booking', 'Barbershop'], ['14-day launch plan', 'A 14-day product launch plan: checklist'], ['Macros and training', 'Make a calorie and macro calculator for my goal'], ['Project unit economics', 'Make a unit economics calculator: price, customer lifetime, acquisition cost']], live: 'Interactive',
     h1: ["Say what you need.", "Vax gets on with it."],
-    sub: "Vax is an AI that does the work for your life and business. It does not stop at an answer: it builds a site with online booking and payments, a CRM, an AI consultant for your customers, texts, plans and calculations. Start free, no sign-up.",
+    sub: "Sites, videos, texts, calculations and everything your business needs. A finished result in minutes, not advice.",
     ph: ['Work out the unit economics of my subscription', 'Make a website for my coffee shop', 'A plan to learn Spanish in 3 months', 'Write a letter to my landlord', 'Break my course launch into steps'],
     go: 'Start', askL: 'Write your task',
     showT: 'What it looks like', showH: ['You set the task.', 'Vax takes it to a result.'], showP: 'It counts, breaks it into steps, builds and launches. When a tool helps, it appears right in the conversation and stays yours. Before anything important, Vax asks.',
@@ -106,20 +114,24 @@ const T = {
     par: ['Partner links', 'A personal link for each partner. Visits and requests count themselves.', 'Deploy', [['1', 'link per partner'], ['auto', 'visit tracking'], ['auto', 'request tracking']]],
     exa: ['Site', 'One page with a request form. Vax writes the text, it works at once.', 'Deploy'],
     cab: ['Workspace', 'Chat, memory, tools and Canvas on one screen.', 'Open', ['Project progress', 'Today’s limit', 'My tools', 'Invoice paid']],
-    prH: 'Plans', prS: 'Start free. The first month of any paid plan is free too, with a smaller allowance.',
+    prH: 'Plans', prS: 'The first month of any paid plan is free (with a smaller allowance). No card, cancel any time.',
     mo: '/mo', focus: 'The best place to start', trial: 'Try a month free', startB: 'Start free', more: '', audMe: 'For yourself', audBiz: 'For business', focusMe: 'Best for yourself', proD: 'When you need a shop or an app.', persL: ['Everything in Start, with much more room', 'Texts, plans, calculations, small builds', 'Files, pictures, voice'], proL: ['Everything in Growth', 'A shop or an app', 'Your social media and ads', 'Priority'], audHint: 'You can start on the free Start plan and switch at any time.',
-    start: ['Start', 'For questions and simple tools.', ['Answers to your questions', 'Calculators, checklists, trackers', 'Work with files, and pictures', 'A one-page site, requests by email', 'No card, no sign-up']],
-    care: ['Care', 'For your business.', ['A website or app, or a link to yours', 'AI answers in your site chat 24/7', 'All requests in one app', 'Your own domain (coming soon)', 'A report every month']],
-    grow: ['Growth', 'When the business grows.', ['Everything in Care, far more allowance', 'Booking and payments', 'AI in Instagram, WhatsApp, Telegram, Facebook', '12 posts a month, a team of up to 5']],
+    start: ["Start", "To try it", ["Answers, texts, plans", "Files and pictures", "A one-page site"]],
+    care: ["Care", "For your business", ["Site with booking and requests", "AI consultant 24/7", "CRM and a monthly report"]],
+    grow: ["Growth", "When it grows", ["Everything in Care, more room", "Payments, AI in Instagram and WhatsApp", "12 posts a month, team of 5"]],
     pers: ['Personal', 'For one person: texts, plans, small builds.'],
     pro: ['Pro', 'A shop or app, your social media and ads, priority.'],
     prN: 'We do not store your card: an invoice comes before each month, and you pay only if you stay. Not sure which plan you need? Ask Vax: it picks one for your task.',
     faqH: 'Questions',
-    faq: [["What exactly does Vax do?", "It builds sites with booking and payments, handles requests, answers your customers, writes texts, calculates, plans and reviews documents and files. The result works at once: the site opens at its address, the calculation is done, the plan is laid out step by step."], ["I already use an AI chat. Why Vax?", "Keep using it; the two do not get in each other's way. Vax is for when you need a working thing, not text: a site, booking, payments, a CRM, a consultant for your customers. Vax also connects your accounts and subscriptions so you do not pay twice."], ["I am not technical. Can I do this?", "Yes. Write what you want like a message to a friend. Vax asks a couple of questions if something is unclear and builds the rest."], ["How long does it take?", "A site, a calculation or a plan takes about a minute. For big tasks (a video, a shop, an app) Vax gives a date up front and shows progress."], ["Is the site mine? Can I use my own domain?", "Yes. The site works at its own address, and connecting your own domain opens very soon. You change texts and photos yourself, right on the page or in words in the chat."], ["How will my customers pay?", "You connect your own payment service (monobank, WayForPay, LiqPay or Stripe) and the money goes straight to your account. Vaxo never touches it."], ["What if I do not like the result?", "Say what to change and Vax redoes it. The first month is free, and you can get a refund within 14 days of your first subscription payment."], ["Will you charge my card?", "No. We do not store your card and never charge it ourselves. If you do not pay the invoice, the plan simply ends."], ["Who sees my data?", "Only you and the people you invite to your team. We never sell data, and you can export it at any time."], ["Can I cancel?", "Yes, any time before the next payment. No annual contracts."]],
+    faq: [["What exactly does Vax do?", "It builds sites with booking and payments, handles requests, answers your customers, writes texts, calculates, plans and reviews documents and files. The result works at once: the site opens at its address, the calculation is done, the plan is laid out step by step."], ["I already use an AI chat. Why Vax?", "Keep using it; the two do not get in each other's way. Vax is for when you need a working thing, not text: a site, booking, payments, a CRM, a consultant for your customers. Vax also connects your accounts and subscriptions so you do not pay twice."], ["I am not technical. Can I do this?", "Yes. Write what you want like a message to a friend. Vax asks a couple of questions if something is unclear and builds the rest."], ["How long does it take?", "A site, a calculation or a plan takes about a minute. For big tasks (a video, a shop, an app) Vax gives a date up front and shows progress."], ["Is the site mine? Can I use my own domain?", "Yes. The site works at its own address, and connecting your own domain opens very soon. You change texts and photos yourself, right on the page or in words in the chat."], ["How will my customers pay?", "You connect your own payment service (monobank, WayForPay, LiqPay or Stripe) and the money goes straight to your account. Vaxo never touches it."]],
     endQ: 'I wash my food. And your to-do list.', endH: 'Where do we start?',
     dnote: 'First month free. No card. We send an invoice only if you stay.', demail: 'Your email', dgo: 'Start free month', dbad: 'Enter a valid email.', dfail: 'Something went wrong — please try again.',
   },
   ua: {
+    p3: [["Робить", "Не радить, а одразу видає готове: сайт, ролик, пост, план."], ["Звʼязує", "Сайт, запис, оплата, CRM і ШІ-консультант працюють разом."], ["Працює без вас", "Заявки й оплати приходять самі, клієнтам відповідають 24/7."]],
+    outs: ["Сайти", "Ролики", "Пости й тексти", "Запис і оплата", "CRM", "ШІ-консультант", "Розрахунки й плани"],
+    persL2: ["Особистий", "Для себе", ["Більше запасу", "Довгі завдання й документи", "Картинки й голос"]],
+    pro2: ["Pro", "Магазин і реклама", ["Усе з Growth", "Магазин або застосунок", "Соцмережі, реклама, пріоритет"]],
     kick: "Сайти й запис · Оплати · CRM · ШІ-консультант · Тексти й плани",
     trust: ["Перший місяць безкоштовно", "Без картки", "Повернення 14 днів", "Скасування будь-коли"],
     svcH: "Що робить Vax",
@@ -138,7 +150,7 @@ const T = {
     lad: [['Вдома', 'План відпустки, сімейний бюджет, лист орендодавцю'], ['Навчання', 'Розібрати тему, план на 3 місяці, перевірка роботи'], ['Робота', 'Презентація, розбір договору, звіт із таблиці'], ['Своя справа', 'Сайт із записом, ШІ-консультант, CRM і партнери'], ['Компанія', 'Фінмодель, стратегія виходу на ринок, автоматизація процесів']],
     chips: [['Відпустка на 5 днів', 'Сплануй відпустку в Італії на 5 днів: маршрут, бюджет, що забронювати'], ['Сайт з онлайн-записом', 'Барбершоп'], ['План запуску за 14 днів', 'План запуску продукту за 14 днів: чек-лист'], ['Порахувати БЖВ і тренування', 'Зроби калькулятор калорій і БЖВ під мою мету'], ['Юніт-економіка проєкту', 'Зроби калькулятор юніт-економіки: ціна, строк клієнта, вартість залучення']], live: 'Інтерактивно',
     h1: ["Скажіть, що потрібно.", "Vax береться до справи."],
-    sub: "Vax — ШІ-виконавець для життя й бізнесу. Він не зупиняється на відповіді, а робить: сайт з онлайн-записом і оплатою, CRM, ШІ-консультанта для ваших клієнтів, тексти, плани й розрахунки. Почніть безкоштовно, без реєстрації.",
+    sub: "Сайти, ролики, тексти, розрахунки й усе для вашого бізнесу. Готовий результат за хвилини, а не порада.",
     ph: ['Порахуй юніт-економіку моєї підписки', 'Зроби сайт для моєї кав’ярні', 'План: вивчити іспанську за 3 місяці', 'Напиши листа орендодавцю', 'Розклади запуск курсу на кроки'],
     go: 'Почати', askL: 'Напишіть завдання',
     showT: 'Як це виглядає', showH: ['Ви ставите завдання.', 'Vax доводить його до результату.'], showP: 'Порахує, розкладе по кроках, збере й запустить. Де потрібен інструмент, він зʼявиться просто в розмові й залишиться у вас. Перед важливим Vax запитає.',
@@ -155,16 +167,16 @@ const T = {
     par: ['Партнерські посилання', 'Особисте посилання кожному партнеру. Переходи й заявки рахуються самі.', 'Розгорнути', [['1', 'посилання на партнера'], ['авто', 'облік переходів'], ['авто', 'облік заявок']]],
     exa: ['Сайт', 'Одна сторінка з формою заявок. Текст пише Vax, працює одразу.', 'Розгорнути'],
     cab: ['Робочий простір', 'Чат, памʼять, інструменти й полотно на одному екрані.', 'Відкрити', ['Готовність проєкту', 'Ліміт на сьогодні', 'Мої інструменти', 'Рахунок оплачено']],
-    prH: 'Тарифи', prS: 'Почніть безкоштовно. Перший місяць будь-якого платного тарифу теж безкоштовний, з меншим запасом.',
+    prH: 'Тарифи', prS: 'Перший місяць будь-якого платного тарифу безкоштовно (з меншим запасом). Без картки, скасування будь-коли.',
     mo: '/міс', focus: 'Найкраще почати тут', trial: 'Місяць безкоштовно', startB: 'Почати безкоштовно', more: '', audMe: 'Для себе', audBiz: 'Для бізнесу', focusMe: 'Для себе — найкращий вибір', proD: 'Коли потрібен магазин чи застосунок.', persL: ['Усе зі Старту й набагато більше запасу', 'Тексти, плани, розрахунки, невеликі збірки', 'Файли, картинки, голос'], proL: ['Усе з Growth', 'Магазин або застосунок', 'Ваші соцмережі й реклама', 'Пріоритет'], audHint: 'Почати можна з безкоштовного Старту, тариф змінюється будь-коли.',
-    start: ['Старт', 'Для питань і простих інструментів.', ['Відповіді на питання', 'Калькулятори, чек-листи, трекери', 'Робота з файлами й картинки', 'Сайт на одну сторінку із заявками на пошту', 'Без картки й реєстрації']],
-    care: ['Care', 'Для вашої справи.', ['Сайт або застосунок чи підключення до вашого', 'ШІ відповідає в чаті сайту 24/7', 'Усі заявки в одному застосунку', 'Підключення власного домену (скоро)', 'Звіт щомісяця']],
-    grow: ['Growth', 'Коли справа росте.', ['Усе з Care і набагато більше запасу', 'Запис і оплати', 'ШІ в Instagram, WhatsApp, Telegram, Facebook', '12 постів на місяць, команда до 5 людей']],
+    start: ["Старт", "Спробувати", ["Відповіді, тексти, плани", "Файли й картинки", "Сайт на одну сторінку"]],
+    care: ["Care", "Для вашої справи", ["Сайт із записом і заявками", "ШІ-консультант 24/7", "CRM і звіт щомісяця"]],
+    grow: ["Growth", "Коли справа росте", ["Усе з Care, більше запасу", "Оплати, ШІ в Instagram і WhatsApp", "12 постів на місяць, команда до 5"]],
     pers: ['Особистий', 'Для однієї людини: тексти, плани, невеликі збірки.'],
     pro: ['Pro', 'Магазин або застосунок, ваші соцмережі й реклама, пріоритет.'],
     prN: 'Картку ми не зберігаємо: перед кожним місяцем приходить рахунок, і ви платите, лише якщо залишаєтесь. Не знаєте, який тариф потрібен? Запитайте Vax: він підбере під ваше завдання.',
     faqH: 'Питання',
-    faq: [["Що саме робить Vax?", "Збирає сайти із записом і оплатою, веде заявки, відповідає вашим клієнтам, пише тексти, рахує, планує, розбирає документи й файли. Результат одразу робочий: сайт відкривається за посиланням, розрахунок готовий, план розписаний по кроках."], ["Я вже користуюся ШІ-чатом. Навіщо мені Vax?", "Користуйтеся далі, одне одному не заважає. Vax потрібен, коли потрібна не відповідь, а робоча річ: сайт, запис, оплата, CRM, консультант для клієнтів. А ваші акаунти й підписки Vax підключає, щоб ви не платили двічі."], ["Я не розуміюся на техніці. Впораюся?", "Так. Пишіть, що хочете, як повідомлення другові. Vax сам поставить пару питань, якщо щось неясно, і все збере."], ["Скільки чекати результат?", "Сайт, розрахунок чи план — близько хвилини. Для великих завдань (ролик, магазин, застосунок) Vax одразу називає строк і показує прогрес."], ["Сайт буде мій? Можна свій домен?", "Так. Сайт працює за своїм посиланням, а підключення свого домену відкриємо зовсім скоро. Тексти й фото змінюєте самі просто на сторінці або словами в чаті."], ["Як мої клієнти платитимуть?", "Ви підключаєте свою платіжку (monobank, WayForPay, LiqPay або Stripe), і гроші йдуть одразу на ваш рахунок. Vaxo їх не торкається."], ["А якщо результат не сподобається?", "Скажіть, що виправити, і Vax переробить. Перший місяць безкоштовний, а за першу оплату підписки можна повернути гроші протягом 14 днів."], ["Ви самі спишете гроші з картки?", "Ні. Ми не зберігаємо картку й самі з неї не списуємо. Не оплатили рахунок — тариф просто закінчується."], ["Хто бачить мої дані?", "Лише ви й ті, кого ви запросили в команду. Дані ми не продаємо, вивантажити їх можна будь-коли."], ["Можна скасувати?", "Так, будь-коли до наступної оплати. Річних договорів немає."]],
+    faq: [["Що саме робить Vax?", "Збирає сайти із записом і оплатою, веде заявки, відповідає вашим клієнтам, пише тексти, рахує, планує, розбирає документи й файли. Результат одразу робочий: сайт відкривається за посиланням, розрахунок готовий, план розписаний по кроках."], ["Я вже користуюся ШІ-чатом. Навіщо мені Vax?", "Користуйтеся далі, одне одному не заважає. Vax потрібен, коли потрібна не відповідь, а робоча річ: сайт, запис, оплата, CRM, консультант для клієнтів. А ваші акаунти й підписки Vax підключає, щоб ви не платили двічі."], ["Я не розуміюся на техніці. Впораюся?", "Так. Пишіть, що хочете, як повідомлення другові. Vax сам поставить пару питань, якщо щось неясно, і все збере."], ["Скільки чекати результат?", "Сайт, розрахунок чи план — близько хвилини. Для великих завдань (ролик, магазин, застосунок) Vax одразу називає строк і показує прогрес."], ["Сайт буде мій? Можна свій домен?", "Так. Сайт працює за своїм посиланням, а підключення свого домену відкриємо зовсім скоро. Тексти й фото змінюєте самі просто на сторінці або словами в чаті."], ["Як мої клієнти платитимуть?", "Ви підключаєте свою платіжку (monobank, WayForPay, LiqPay або Stripe), і гроші йдуть одразу на ваш рахунок. Vaxo їх не торкається."]],
     endQ: 'Я мию їжу. І ваш список справ.', endH: 'З чого почнемо?',
     dnote: 'Перший місяць безкоштовно. Без картки. Рахунок надішлемо, лише якщо залишитесь.', demail: 'Ваша пошта', dgo: 'Почати безкоштовний місяць', dbad: 'Введіть справжню пошту.', dfail: 'Щось пішло не так — спробуйте ще раз.',
   },
@@ -175,7 +187,6 @@ const ava = '/mascot/vax-happy.webp';
 <main class="hm" id="top">
   <section class="hero">
     <div class="w">
-      <p class="kick">{T.kick}</p>
       <h1>{T.h1[0]}<span>{T.h1[1]}</span></h1>
       <p class="lead">{T.sub}</p>
       <form class="ask" data-ask id="contact" data-ph={JSON.stringify(T.ph)}>
@@ -187,65 +198,10 @@ const ava = '/mascot/vax-happy.webp';
     </div>
   </section>
 
-  <section class="sec svc" id="what">
+  <section class="sec p3" id="get">
     <div class="w">
-      <h2>{T.svcH}</h2>
-      <p class="ps">{T.svcP}</p>
-      <div class="g3">{T.svc.map(([h, items, a]) => <div class="c"><h3>{h}</h3><ul>{items.map((x) => <li>{x}</li>)}</ul>{a && <a href="https://vaxogroup.com/s/muzhskoy-harakter-i-stil-7122" target="_blank" rel="noopener">{a}</a>}</div>)}</div>
-      <h2 class="h2b">{T.stepsH}</h2>
-      <ol class="steps">{T.steps.map(([h, x], i) => <li><span>{i + 1}</span><b>{h}</b><p>{x}</p></li>)}</ol>
-    </div>
-  </section>
-
-  <section class="sec" id="get">
-    <div class="w">
-      <p class="tag">{T.showT}</p>
-      <div class="top"><h2>{T.showH[0]}<br />{T.showH[1]}</h2><p>{T.showP}</p></div>
-      <div class="seg" role="tablist">{T.tabs.map((x, i) => <button type="button" role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-s={i}>{x}</button>)}</div>
-      <div class="app">
-        <aside class="side">
-          <span class="lg">VAXO<i>.</i></span>
-          {T.side.map((x, i) => <span class:list={['nv', { on: i === 0 }]}>{x}</span>)}
-          <div class="al">{T.allow}<i></i></div>
-        </aside>
-        <div class="talk">
-          <div class="log">
-            <div class="sc on">
-              <div class="me">{T.s1.q}</div>
-              <div class="vx"><img src={ava} alt="Vax" width="34" height="34" loading="lazy" /><div><p>{T.s1.a}</p>
-                <div class="tl"><h3>{T.s1.t}</h3>
-                  <div class="kv">{T.s1.f.map(([k, v]) => <div>{k}<b>{v}</b></div>)}</div>
-                  <div class="kv out">{T.s1.o.map(([k, v]) => <div>{k}<b>{v}</b></div>)}</div>
-                </div></div></div>
-            </div>
-            <div class="sc">
-              <div class="me">{T.s2.q}</div>
-              <div class="vx"><img src={ava} alt="Vax" width="34" height="34" loading="lazy" /><div><p>{T.s2.a}</p>
-                <div class="tl"><h3>{T.s2.t}<em>{T.s2.n}</em></h3>
-                  <ul class="chk">{T.s2.i.map((x, i) => <li class:list={{ d: i < 2 }}><s></s>{x}</li>)}</ul>
-                </div></div></div>
-            </div>
-            <div class="sc">
-              <div class="me">{T.s3.q}</div>
-              <div class="vx"><img src={ava} alt="Vax" width="34" height="34" loading="lazy" /><div><p>{T.s3.a}</p>
-                <div class="tl"><h3>{T.s3.t}</h3><small>{T.s3.n}</small><div class="yes"><span>{T.s3.y}</span><span>{T.s3.x}</span></div></div></div></div>
-            </div>
-          </div>
-          <div class="box">{T.box}</div>
-        </div>
-      </div>
-      <p class="cap">{T.cap}</p>
-    </div>
-  </section>
-
-  <section class="sec alt">
-    <div class="w">
-      <div class="one"><div><h2>{T.oneH}</h2><p>{T.oneP}</p></div><ul>{T.one.map((x) => <li>{x}</li>)}</ul></div>
-      <h2 class="h2b">{T.whoH}</h2>
-      <div class="who" role="table">
-        <div class="r h" role="row">{T.whoC.map((x) => <span role="columnheader">{x}</span>)}</div>
-        {T.who.map(([a, b, c]) => <div class="r" role="row"><b role="cell">{a}</b><span role="cell">{b}</span><span role="cell" class="res">{c}</span></div>)}
-      </div>
+      <div class="g3">{T.p3.map(([h, x], i) => <div class="c"><span>0{i + 1}</span><b>{h}</b><p>{x}</p></div>)}</div>
+      <ul class="outs">{T.outs.map((x) => <li>{x}</li>)}</ul>
     </div>
   </section>
 
@@ -259,33 +215,33 @@ const ava = '/mascot/vax-happy.webp';
         <article class="pl">
           <h3>{T.start[0]}</h3><p class="pd">{T.start[1]}</p>
           <div class="pr">$0</div>
-          <button type="button" class="pb" data-plan="start">{T.startB}</button>
           <ul>{T.start[2].map((x) => <li>{x}</li>)}</ul>
+          <button type="button" class="pb" data-plan="start">{T.startB}</button>
         </article>
         <article class="pl">
-          <h3>{T.pers[0]}</h3><p class="pd">{T.pers[1]}</p>
+          <h3>{T.persL2[0]}</h3><p class="pd">{T.persL2[1]}</p>
           <div class="pr">$19<small>{T.mo}</small></div>
-          <button type="button" class="pb" data-plan="personal" data-pn={T.pers[0]}>{T.trial}</button>
-          <ul>{T.persL.map((x) => <li>{x}</li>)}</ul>
+          <ul>{T.persL2[2].map((x) => <li>{x}</li>)}</ul>
+          <button type="button" class="pb" data-plan="personal" data-pn={T.persL2[0]}>{T.trial}</button>
         </article>
         <article class="pl focus">
           <p class="fl">{T.focus}</p>
           <h3>{T.care[0]}</h3><p class="pd">{T.care[1]}</p>
           <div class="pr">$39<small>{T.mo}</small></div>
-          <button type="button" class="pb main" data-plan="care" data-pn={T.care[0]}>{T.trial}</button>
           <ul>{T.care[2].map((x) => <li>{x}</li>)}</ul>
+          <button type="button" class="pb main" data-plan="care" data-pn={T.care[0]}>{T.trial}</button>
         </article>
         <article class="pl">
           <h3>{T.grow[0]}</h3><p class="pd">{T.grow[1]}</p>
           <div class="pr">$129<small>{T.mo}</small></div>
-          <button type="button" class="pb" data-plan="growth" data-pn={T.grow[0]}>{T.trial}</button>
           <ul>{T.grow[2].map((x) => <li>{x}</li>)}</ul>
+          <button type="button" class="pb" data-plan="growth" data-pn={T.grow[0]}>{T.trial}</button>
         </article>
         <article class="pl">
-          <h3>{T.pro[0]}</h3><p class="pd">{T.proD}</p>
+          <h3>{T.pro2[0]}</h3><p class="pd">{T.pro2[1]}</p>
           <div class="pr">$299<small>{T.mo}</small></div>
-          <button type="button" class="pb" data-plan="pro" data-pn={T.pro[0]}>{T.trial}</button>
-          <ul>{T.proL.map((x) => <li>{x}</li>)}</ul>
+          <ul>{T.pro2[2].map((x) => <li>{x}</li>)}</ul>
+          <button type="button" class="pb" data-plan="pro" data-pn={T.pro2[0]}>{T.trial}</button>
         </article>
       </div>
       <p class="pn">{T.prN}</p>
@@ -607,32 +563,7 @@ const ava = '/mascot/vax-happy.webp';
   .wk-foot { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
   .wk-go { display: inline-block; background: var(--acc, #e8b04a); color: #111; font-weight: 700; text-decoration: none; padding: 14px 22px; border-radius: 999px; }
   .wk-all { color: var(--mut); }
-  .hero .kick { color: var(--amT); font-weight: 700; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; margin: 0 0 18px; }
   .hero .trust { list-style: none; padding: 0; margin: 22px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; color: var(--dm); font-size: 14px; }
-  .svc .ps { max-width: 640px; }
-  .svc .g3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 28px; }
-  .svc .c { border: 1px solid var(--ln); border-radius: 18px; padding: 22px; display: flex; flex-direction: column; gap: 10px; }
-  .svc .c h3 { margin: 0; font-size: 19px; }
-  .svc .c ul { margin: 0; padding: 0; list-style: none; color: var(--dm); line-height: 1.5; display: grid; gap: 7px; }
-  .svc .c li::before { content: '✓ '; color: var(--amT); }
-  .svc .c a { color: var(--amT); font-weight: 600; text-decoration: none; margin-top: auto; }
-  .h2b { margin-top: clamp(48px, 7vw, 80px); }
-  .steps { list-style: none; padding: 0; margin: 24px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
-  .steps li { border-top: 2px solid var(--amT); padding-top: 16px; }
-  .steps span { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--am); color: #111; font-weight: 800; margin-bottom: 10px; }
-  .steps b { display: block; font-size: 18px; margin-bottom: 6px; }
-  .steps p { margin: 0; color: var(--dm); line-height: 1.55; }
-  .one { display: grid; grid-template-columns: 1.1fr 1fr; gap: 28px; align-items: start; }
-  .one h2 { font-size: clamp(30px, 4vw, 46px); margin: 0 0 14px; }
-  .one p { color: var(--dm); line-height: 1.6; margin: 0; }
-  .one ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
-  .one li { border: 1px solid var(--ln); border-radius: 12px; padding: 12px 14px; font-weight: 600; }
-  .one li::before { content: '✓ '; color: var(--amT); }
-  .who { margin-top: 22px; border: 1px solid var(--ln); border-radius: 16px; overflow: hidden; }
-  .who .r { display: grid; grid-template-columns: 1fr 1.6fr 1.2fr; gap: 16px; padding: 14px 18px; border-top: 1px solid var(--ln); }
-  .who .r.h { border-top: 0; color: var(--dm); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; }
-  .who .r span { color: var(--dm); }
-  .who .r .res { color: var(--tx); }
   .plans.p5 { grid-template-columns: repeat(5, 1fr); gap: 12px; }
   .plans.p5 .pl { padding: 22px 18px; }
   .plans.p5 .fl { white-space: nowrap; font-size: 11px; }
@@ -640,5 +571,19 @@ const ava = '/mascot/vax-happy.webp';
   .plans.p5 .pr { font-size: clamp(32px, 3vw, 44px); }
   .plans.p5 ul { font-size: 14px; }
   @media (max-width: 1100px) { .plans.p5 { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 760px) { .plans.p5 { grid-template-columns: 1fr; } .one { grid-template-columns: 1fr; } .who .r { grid-template-columns: 1fr; gap: 4px; } .who .r.h { display: none; } }
+  @media (max-width: 760px) { .plans.p5 { grid-template-columns: 1fr; } }
+  .p3 { padding-top: 8px; }
+  .p3 .g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .p3 .c { border: 1px solid var(--ln); border-radius: 18px; padding: 22px; }
+  .p3 .c span { color: var(--amT); font-weight: 800; font-size: 13px; letter-spacing: .1em; }
+  .p3 .c b { display: block; font-size: clamp(22px, 2.4vw, 30px); margin: 6px 0 6px; }
+  .p3 .c p { margin: 0; color: var(--dm); line-height: 1.5; }
+  .p3 .outs { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .p3 .outs li { border: 1px solid var(--ln); border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 600; }
+  .plans.p5 .pl { display: flex; flex-direction: column; gap: 10px; }
+  .plans.p5 .pl h3 { margin: 0; }
+  .plans.p5 .pd { min-height: 0; margin: 0; }
+  .plans.p5 ul { margin: 4px 0 0; flex: 1; }
+  .plans.p5 .pb { margin-top: 6px; }
+  @media (max-width: 760px) { .p3 .g3 { grid-template-columns: 1fr; } }
 </style>

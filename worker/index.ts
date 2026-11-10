@@ -15,6 +15,21 @@ import { aiFollowups, aiReply, decideOffer, learnFromChats, rescueUnanswered } f
 import { configureTelegram, ensureWebhook, handleTelegram } from './telegram.js';
 import { handleCollab } from './collab.js';
 import { configureRouter } from './router.js';
+import { open as openSealed } from './sitepay.js';
+// The Claude key: a Worker secret, or the one the FOP holder pasted in /fin/ (stored encrypted), read once per isolate.
+let pastedKey: string | null | undefined;
+async function routerKey(env: { ANTHROPIC_API_KEY?: string; ADMIN_TOKEN?: string; LEADS?: unknown }) {
+  if (env.ANTHROPIC_API_KEY) { configureRouter(env.ANTHROPIC_API_KEY); return; }
+  if (!pastedKey) {
+    pastedKey = null;
+    try {
+      const db = env.LEADS as { prepare: (q: string) => { bind: (...a: unknown[]) => { first: <T>() => Promise<T | null> } } } | undefined;
+      const v = db ? await db.prepare('SELECT value FROM settings WHERE key = ?').bind('anthropic_key').first<{ value: string }>() : null;
+      if (v?.value && env.ADMIN_TOKEN) pastedKey = await openSealed(env.ADMIN_TOKEN, v.value);
+    } catch { pastedKey = null; }
+  }
+  configureRouter(pastedKey || undefined);
+}
 import { configureMail, handleEmail, sendMail, type IncomingEmail } from './mail.js';
 import { handleStt } from './stt.js';
 import { handleFileUpload, servePreview, serveFile, type KV } from './files.js';
@@ -90,7 +105,7 @@ export default {
     const waitUntil = (p: Promise<unknown>) => (ctx ? ctx.waitUntil(p) : void p);
     configureTelegram(env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_CHAT_ID);
     configureMail(env.RESEND_API_KEY, env.LEAD_EMAIL_FROM);
-    configureRouter(env.ANTHROPIC_API_KEY);
+    await routerKey(env);
     if (env.LEADS && url.hostname === 'vaxogroup.com') waitUntil(ensureWebhook(env.LEADS, url.origin).catch(() => {}));
     const notify: Notify = async (text) => {
       const tok = env.TELEGRAM_BOT_TOKEN?.trim();
@@ -304,7 +319,7 @@ export default {
     const chat = env.TELEGRAM_CHAT_ID?.trim();
     configureTelegram(tok, chat);
     configureMail(env.RESEND_API_KEY, env.LEAD_EMAIL_FROM);
-    configureRouter(env.ANTHROPIC_API_KEY);
+    await routerKey(env);
     const notify: Notify = async (text) => {
       if (!tok || !chat) return;
       await fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
@@ -322,7 +337,7 @@ export default {
     const chat = env.TELEGRAM_CHAT_ID?.trim();
     configureTelegram(tok, chat);
     configureMail(env.RESEND_API_KEY, env.LEAD_EMAIL_FROM);
-    configureRouter(env.ANTHROPIC_API_KEY);
+    await routerKey(env);
     const notify: Notify = async (text) => {
       if (!tok || !chat) return;
       await fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
