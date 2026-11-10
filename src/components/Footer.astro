@@ -71,6 +71,11 @@ const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start
     font-size: 14px;
     color: var(--mut);
   }
+  /* Телефон: ссылки под палец (≥40 px), а не 18 px */
+  @media (max-width: 760px) {
+    nav { gap: 0 18px; }
+    nav a { display: inline-flex; align-items: center; min-height: 40px; }
+  }
   .copy {
     font-family: var(--mono);
     font-size: 11px;
