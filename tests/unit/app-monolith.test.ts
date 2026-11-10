@@ -7,9 +7,9 @@ import { WANTS_TOOL } from '../../worker/tools';
 // Decision 43: the three tasks the workspace must finish with a ready thing on the Canvas.
 describe('scenario A: a landing page with a pre-order form', () => {
   it('sees a site wish in any of our languages, and not a question about a site', () => {
-    for (const q of ['Собери мне посадочную страницу для кофейни с формой предзаказа', 'Сделай лендинг для барбершопа', 'Зроби сайт для пекарні', 'Build me a landing page for a coffee shop', 'I need a website for my bakery', 'Посадочная страница для кофейни с формой предзаказа', 'Лендинг для стоматологии', 'A landing page for a yoga studio'])
+    for (const q of ['Собери мне посадочную страницу для кофейни с формой предзаказа', 'Сделай лендинг для барбершопа', 'Зроби сайт для пекарні', 'Build me a landing page for a coffee shop', 'I need a website for my bakery', 'Посадочная страница для кофейни с формой предзаказа', 'Лендинг для стоматологии', 'A landing page for a yoga studio', 'Сделай сайт для пекарни, чтобы заявки с сайта шли в CRM'])
       expect(WANTS_SITE.test(q), q).toBe(true);
-    for (const q of ['Как поднять сайт в поиске?', 'What should my website say?', 'Посчитай юнит-экономику', 'Сайт для кофейни нужен ли вообще?', 'Сколько стоит сайт для кофейни'])
+    for (const q of ['Как поднять сайт в поиске?', 'What should my website say?', 'Посчитай юнит-экономику', 'Сайт для кофейни нужен ли вообще?', 'Сколько стоит сайт для кофейни', 'Подключи CRM для заявок с сайта', 'Нужен чат-бот на мой сайт для записи', 'Підключи CRM для заявок з сайту', 'I need a CRM for leads from my website'])
       expect(WANTS_SITE.test(q), q).toBe(false);
   });
   it('draws the draft with its form and the hint the wish asked for, but runs no script', () => {

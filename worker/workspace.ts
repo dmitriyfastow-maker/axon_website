@@ -75,7 +75,10 @@ const SITE_VERB = /(собер|сдела|созда|нуж[еа]н|напиш|�
 const SITE_NOUN = /(посадочн\S*\s+страниц|посадков\S*\s+сторінк|лендинг|landing\s*page|one-?pager|website|сайт|одностраничн|односторінков)/i;
 const QUESTION = /^\s*(как|что|почему|зачем|сколько|какой|где|how|what|why|which|where|чи|як|що|чому|навіщо|скільки)(?=[\s,.!?]|$)|\?\s*$/i;
 /** "Build me a landing page for…", or just "A landing page for a coffee shop": the draft page goes to the Canvas. */
-export const wantsSite = (q: string) => !QUESTION.test(q) && (SITE_VERB.test(q) || (SITE_NOUN.test(q) && /(^|\s)(для|for|під)\s/i.test(q)));
+/** "Requests from my site", "a chat on my website": the site already exists, the wish is about something else (CRM, chat, form). */
+const SITE_EXISTING = /(^|\s)(с|из|на|со|з|із)\s+(мо[её]го\s+|мой\s+|мій\s+|наш\S*\s+|мого\s+)?(сайт[аеуі]?|лендинг[ауе]?)|(from|on|to|into)\s+(my|our|the)\s+(web)?site/i;
+const SITE_BUILD_NEAR = /(собер|сдела|созда|напиш|сверста|зроби|створ|збер|build|make|create|design)\S*\s+(мне\s+|мені\s+|me\s+|a\s+|an\s+|new\s+|новый\s+|новий\s+){0,2}(сайт|лендинг|посадочн|website|landing|web ?page)/i;
+export const wantsSite = (q: string) => !QUESTION.test(q) && !(SITE_EXISTING.test(q) && !SITE_BUILD_NEAR.test(q)) && (SITE_VERB.test(q) || (SITE_NOUN.test(q) && /(^|\s)(для|for|під)\s/i.test(q)));
 export const WANTS_SITE = { test: wantsSite };
 const EDIT: Record<string, { ai: string; photo: string; hint: string }> = {"en": {"ai": "Change with Vax", "photo": "Replace photo", "hint": "Click any text to edit it, or a photo to replace it"}, "ru": {"ai": "Изменить с Vax", "photo": "Заменить фото", "hint": "Нажмите на текст, чтобы править, или на фото, чтобы заменить"}, "ua": {"ai": "Змінити з Vax", "photo": "Замінити фото", "hint": "Натисніть на текст, щоб правити, або на фото, щоб замінити"}};
 
