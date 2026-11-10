@@ -109,6 +109,9 @@ const ORDER_RE = /\[\[ORDER:\s*([^\]]{1,80})\]\]/i;
 /** Production work the screen cannot finish by itself: video, automation, an app, a messenger bot, ads. */
 export const BIG_TASK = /(монтаж|смонтир|ролик|видео|рилс|reels?|shorts|клип|анимац|моушн|озвуч|video|edit(ing)? (a|my|the)? ?(video|clip|footage)|автоматиз|интеграц|подключ\S* (crm|бот)|приложени|застосун|app\b|automat|integrat|бот(а)? (в|для) (instagram|инстаграм|telegram|телеграм|whatsapp)|рекламн\S* кампан|таргет)/i;
 const ON_CANVAS: Record<string, string> = { en: 'The full version is on the Canvas.', ru: 'Полная версия на холсте.', ua: 'Повна версія на полотні.' };
+/** Agency talk the free model sometimes slips into ("our production team", "a manager will contact you"): Vax does the work itself. */
+const AGENCY = /(команд\S* (продакшн|продакшен|монтаж|дизайн|разработ|специалист)|продакшн-команд|наш\S* (команд|специалист|менеджер|монтажер|монтажёр|дизайнер)|менеджер\S* (свяж|напиш)|production team|our (team|specialists?|editors?|designers?|manager)|a manager will|команд\S* (продакшн|монтаж|дизайн|розроб|фахівц)|наш\S* (фахівц|менеджер))/i;
+const BRIEF_READY: Record<string, string> = { en: 'The brief is ready on the Canvas: format, script with timings and shot list.', ru: 'Бриф готов на холсте: формат, сценарий по секундам и список кадров.', ua: 'Бриф готовий на полотні: формат, сценарій по секундах і список кадрів.' };
 
 /** Splits the model's text into the chat line, the Canvas document and the deploy button. */
 export function shapeReply(raw: string, mode: string, wish: string, lang: string): { reply: string; doc: Doc | null; deploy: string | null; order: string | null } {
@@ -120,6 +123,10 @@ export function shapeReply(raw: string, mode: string, wish: string, lang: string
   let doc: Doc | null = null;
   if (m && m[2].trim()) { doc = { title: m[1].trim(), body: m[2].trim() }; text = text.replace(m[0], ''); }
   text = text.replace(/\[\[\/?DOC[^\]]*\]\]/gi, '').replace(/\*\*/g, '').trim();
+  if (AGENCY.test(text)) {
+    text = text.split(/(?<=[.!?])\s+|\n+/).filter((x) => x.trim() && !AGENCY.test(x)).join(' ').trim();
+    if (!text && doc) text = BRIEF_READY[lang] ?? BRIEF_READY.en;
+  }
   // A long answer without the marker still must not become a wall of text in the chat.
   if (!doc && (mode === 'deep' ? text.length > 700 : text.length > 1400)) {
     doc = { title: wish.replace(/\s+/g, ' ').slice(0, 60), body: text };

@@ -37,6 +37,11 @@ describe('shapeReply', () => {
   it('leaves a short answer alone', () => {
     expect(shapeReply('Да.', 'short', 'q', 'ru')).toEqual({ reply: 'Да.', doc: null, deploy: null, order: null });
   });
+  it('drops agency talk: Vax does the work itself', () => {
+    const r = shapeReply('Я подготовлю подробный бриф для команды продакшена.\n[[DOC: Бриф]]## Цель[[/DOC]] [[ORDER: Рилс]]', 'short', 'q', 'ru');
+    expect(r.reply).toBe('Бриф готов на холсте: формат, сценарий по секундам и список кадров.');
+    expect(shapeReply('Сценарий готов. Our team will contact you.', 'short', 'q', 'en').reply).toBe('Сценарий готов.');
+  });
   it('takes a production order marker out of the text', () => {
     const r = shapeReply('Сценарий готов. [[ORDER: Монтаж рилса для кофейни]]', 'short', 'q', 'ru');
     expect(r.order).toBe('Монтаж рилса для кофейни');
