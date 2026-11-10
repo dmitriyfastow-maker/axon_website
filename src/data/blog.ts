@@ -14,6 +14,45 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'ai-workspace-describe-get-result',
+    date: '2026-11-10',
+    t: {
+      en: {
+        title: 'AI workspace: describe what you need and get a site, chat or CRM',
+        desc: 'How Vaxo Workspace turns a plain description into a working site, AI chat, booking or CRM — and what to write for the best result.',
+        body: [
+          ['What Workspace is', ['Workspace is one place where you talk to Vax, the Vaxo AI, in plain words. You say what you need — a website, an AI chat for your site, online booking, a CRM, a calculator or a text — and the result appears next to the chat on a canvas, ready to look at and change.']],
+          ['What to write for the best result', ['Three things are enough: what you do, who your clients are, and what you want them to do (call, book, buy, leave a request). For example: “Nail studio in Kyiv, women 20–45, I want online booking and prices on one page.” Details like colours or photos can come later.']],
+          ['How changes work', ['You do not need to know design or code. Write “make the button green”, “add a price list” or “shorter text on the first screen” — Vax changes the canvas right away, and you see the result at once.']],
+          ['From draft to working tool', ['When you like the result, it goes live: the site gets its address, requests and bookings land in your cabinet and calendar, and analytics show what people do. You do not move anything between services — it is all one platform.']],
+          ['What it costs', ['You can start for free: all functions work, with a small “Made with Vaxo” mark. Paid plans start at $19 a month and add more AI capacity and your own domain. Anything custom is quoted up front, before you pay.']],
+        ],
+      },
+      ru: {
+        title: 'ИИ-Workspace: опишите задачу — и получите сайт, чат или CRM',
+        desc: 'Как Vaxo Workspace превращает обычное описание в работающий сайт, ИИ-чат, запись или CRM — и что написать для лучшего результата.',
+        body: [
+          ['Что такое Workspace', ['Workspace — одно место, где вы говорите с Vax, ИИ Vaxo, обычными словами. Вы пишете, что нужно — сайт, ИИ-чат для сайта, онлайн-запись, CRM, калькулятор или текст, — и результат появляется рядом с чатом на холсте: его сразу видно и можно менять.']],
+          ['Что написать для лучшего результата', ['Хватит трёх вещей: чем вы занимаетесь, кто ваши клиенты и что они должны сделать (позвонить, записаться, купить, оставить заявку). Например: «Студия маникюра в Киеве, женщины 20–45, хочу онлайн-запись и цены на одной странице». Цвета и фото можно добавить потом.']],
+          ['Как вносить правки', ['Разбираться в дизайне и коде не нужно. Напишите «сделай кнопку зелёной», «добавь прайс» или «короче текст на первом экране» — Vax сразу изменит холст, и вы тут же увидите результат.']],
+          ['От черновика к рабочему инструменту', ['Когда результат нравится, он запускается: у сайта появляется адрес, заявки и записи приходят в ваш кабинет и календарь, а аналитика показывает, что делают люди. Ничего не нужно переносить между сервисами — всё на одной платформе.']],
+          ['Сколько стоит', ['Начать можно бесплатно: все функции работают, с небольшой пометкой «Сделано на Vaxo». Платные тарифы — от $19 в месяц: больше ИИ-запаса и свой домен. Всё нестандартное оцениваем заранее, до оплаты.']],
+        ],
+      },
+      ua: {
+        title: 'ШІ-Workspace: опишіть задачу — і отримайте сайт, чат або CRM',
+        desc: 'Як Vaxo Workspace перетворює звичайний опис на робочий сайт, ШІ-чат, запис або CRM — і що написати для найкращого результату.',
+        body: [
+          ['Що таке Workspace', ['Workspace — одне місце, де ви говорите з Vax, ШІ Vaxo, звичайними словами. Ви пишете, що потрібно — сайт, ШІ-чат для сайту, онлайн-запис, CRM, калькулятор чи текст, — і результат зʼявляється поруч із чатом на полотні: його одразу видно і можна змінювати.']],
+          ['Що написати для найкращого результату', ['Вистачить трьох речей: чим ви займаєтеся, хто ваші клієнти і що вони мають зробити (подзвонити, записатися, купити, залишити заявку). Наприклад: «Студія манікюру в Києві, жінки 20–45, хочу онлайн-запис і ціни на одній сторінці». Кольори й фото можна додати потім.']],
+          ['Як вносити правки', ['Розбиратися в дизайні й коді не потрібно. Напишіть «зроби кнопку зеленою», «додай прайс» або «коротше текст на першому екрані» — Vax одразу змінить полотно, і ви відразу побачите результат.']],
+          ['Від чернетки до робочого інструменту', ['Коли результат подобається, він запускається: у сайту зʼявляється адреса, заявки й записи надходять у ваш кабінет і календар, а аналітика показує, що роблять люди. Нічого не треба переносити між сервісами — усе на одній платформі.']],
+          ['Скільки коштує', ['Почати можна безкоштовно: усі функції працюють, з невеликою позначкою «Зроблено на Vaxo». Платні тарифи — від $19 на місяць: більше ШІ-запасу і свій домен. Усе нестандартне оцінюємо заздалегідь, до оплати.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'online-booking-no-shows',
     date: '2026-11-10',
     t: {
@@ -25,7 +64,7 @@ export const POSTS: Post[] = [
           ['What a good booking page has', ['Your services with prices and duration, real free slots, a short form (name, phone, time) and a clear confirmation. Nothing more: every extra field loses people.']],
           ['How to cut no-shows', ['Most no-shows are simply forgotten visits. Two things help: let the client add the visit to their own calendar right after booking, and send a short reminder the day before — in the messenger they actually use (WhatsApp, Viber or SMS).']],
           ['Keep your own day in order', ['Bookings should land in your calendar automatically, not in a notebook. A short morning summary — how many visits today and at what time — saves you from double bookings and surprises.']],
-          ['What it costs at Vaxo', ['Online booking is part of the Vaxo platform from $39 a month: a booking page on your site, calendar links for clients, reminder buttons, your bookings in Google or iPhone calendar and a morning email. Describe your business in Workspace and Vax sets it up with you.']],
+          ['What it costs at Vaxo', ['Online booking is part of the Vaxo platform — free to start, paid plans from $19 a month: a booking page on your site, calendar links for clients, reminder buttons, your bookings in Google or iPhone calendar and a morning email. Describe your business in Workspace and Vax sets it up with you.']],
         ],
       },
       ru: {
@@ -36,7 +75,7 @@ export const POSTS: Post[] = [
           ['Что должно быть на странице записи', ['Услуги с ценой и длительностью, реальные свободные окна, короткая форма (имя, телефон, время) и понятное подтверждение. Больше ничего: каждое лишнее поле теряет людей.']],
           ['Как снизить неявки', ['Чаще всего клиент не пришёл, потому что просто забыл. Помогают две вещи: дать ему сразу после записи добавить визит в свой календарь и накануне отправить короткое напоминание — в том мессенджере, которым он правда пользуется (WhatsApp, Viber или SMS).']],
           ['Порядок в вашем дне', ['Записи должны сами попадать в ваш календарь, а не в блокнот. Короткая сводка утром — сколько визитов сегодня и во сколько — спасает от двойных записей и сюрпризов.']],
-          ['Сколько стоит в Vaxo', ['Онлайн-запись входит в платформу Vaxo от $39 в месяц: страница записи на вашем сайте, ссылка «в календарь» для клиента, кнопки напоминаний, ваши записи в Google или iPhone календаре и письмо по утрам. Опишите свой бизнес в Workspace — Vax настроит всё вместе с вами.']],
+          ['Сколько стоит в Vaxo', ['Онлайн-запись входит в платформу Vaxo — бесплатно на старте, платные тарифы от $19 в месяц: страница записи на вашем сайте, ссылка «в календарь» для клиента, кнопки напоминаний, ваши записи в Google или iPhone календаре и письмо по утрам. Опишите свой бизнес в Workspace — Vax настроит всё вместе с вами.']],
         ],
       },
       ua: {
@@ -47,7 +86,7 @@ export const POSTS: Post[] = [
           ['Що має бути на сторінці запису', ['Послуги з ціною і тривалістю, реальні вільні вікна, коротка форма (імʼя, телефон, час) і зрозуміле підтвердження. Більше нічого: кожне зайве поле втрачає людей.']],
           ['Як зменшити неявки', ['Найчастіше клієнт не прийшов, бо просто забув. Допомагають дві речі: дати йому одразу після запису додати візит у свій календар і напередодні надіслати коротке нагадування — у тому месенджері, яким він справді користується (WhatsApp, Viber або SMS).']],
           ['Порядок у вашому дні', ['Записи мають самі потрапляти у ваш календар, а не в блокнот. Коротке зведення зранку — скільки візитів сьогодні й о котрій — рятує від подвійних записів і сюрпризів.']],
-          ['Скільки коштує у Vaxo', ['Онлайн-запис входить у платформу Vaxo від $39 на місяць: сторінка запису на вашому сайті, посилання «в календар» для клієнта, кнопки нагадувань, ваші записи в Google або iPhone календарі й лист щоранку. Опишіть свій бізнес у Workspace — Vax налаштує все разом з вами.']],
+          ['Скільки коштує у Vaxo', ['Онлайн-запис входить у платформу Vaxo — безкоштовно на старті, платні тарифи від $19 на місяць: сторінка запису на вашому сайті, посилання «в календар» для клієнта, кнопки нагадувань, ваші записи в Google або iPhone календарі й лист щоранку. Опишіть свій бізнес у Workspace — Vax налаштує все разом з вами.']],
         ],
       },
     },
@@ -60,10 +99,10 @@ export const POSTS: Post[] = [
         title: 'How much does a website cost in 2026? Honest price ranges',
         desc: 'Real price ranges for a one-page site, a landing page, a business website and an online store — and what changes the price.',
         body: [
-          ['The short answer', ['On the market, a templated freelancer page costs about $300–800, a custom freelancer page $500–2,000 and an agency landing page $2,000–10,000. At Vaxo, where AI does most of the work, the site is part of a monthly plan — Pro $39, Max $129 or Ultra $299 — with no big upfront bill. Anything custom is quoted up front, before you pay.']],
+          ['The short answer', ['On the market, a templated freelancer page costs about $300–800, a custom freelancer page $500–2,000 and an agency landing page $2,000–10,000. At Vaxo, where AI does most of the work, the site is part of a monthly plan — free to start, then Plus $19, Pro $39, Max $129 or Ultra $299 — with no big upfront bill. Anything custom is quoted up front, before you pay.']],
           ['What changes the price', ['Number of pages and unique designs.', 'Who writes the texts and makes the photos.', 'Features: booking, payments, accounts, integrations with your CRM.', 'Languages and markets.', 'Speed: a rushed deadline costs more.']],
           ['Costs people forget', ['Domain: about $10–15 a year.', 'Hosting: from free to $20+ a month depending on traffic.', 'Support and updates after launch.', 'Traffic: a site without ads, SEO or social media gets few visitors.']],
-          ['How to spend less without losing quality', ['Start with one page that does one job (calls, bookings or requests) and grow later. At Vaxo the website comes inside the plan (from $39 a month) together with the AI chat, CRM and analytics — you describe what you need, we and AI build it.']],
+          ['How to spend less without losing quality', ['Start with one page that does one job (calls, bookings or requests) and grow later. At Vaxo the website comes inside the plan (free to start, paid from $19 a month) together with the AI chat, CRM and analytics — you describe what you need, we and AI build it.']],
           ['Questions to ask any studio', ['Is the price fixed? How many revision rounds are included? Who owns the domain and the code? What happens if the deadline is missed? What are the refund rules? Good studios answer all five in writing before you pay.']],
         ],
       },
@@ -71,10 +110,10 @@ export const POSTS: Post[] = [
         title: 'Сколько стоит сайт в 2026 году? Честные цены',
         desc: 'Реальные цены на одностраничник, лендинг, сайт компании и интернет-магазин — и от чего зависит цена.',
         body: [
-          ['Коротко', ['На рынке страница у фрилансера по шаблону стоит около $300–800, индивидуальная у фрилансера — $500–2 000, лендинг в агентстве — $2 000–10 000. В Vaxo большую часть работы делает ИИ, поэтому сайт входит в подписку — Про $39, Макс $129 или Ультра $299 в месяц, без крупной суммы вперёд. Всё нестандартное оценивается заранее, до оплаты.']],
+          ['Коротко', ['На рынке страница у фрилансера по шаблону стоит около $300–800, индивидуальная у фрилансера — $500–2 000, лендинг в агентстве — $2 000–10 000. В Vaxo большую часть работы делает ИИ, поэтому сайт входит в подписку — бесплатно на старте, дальше Плюс $19, Про $39, Макс $129 или Ультра $299 в месяц, без крупной суммы вперёд. Всё нестандартное оценивается заранее, до оплаты.']],
           ['От чего зависит цена', ['Сколько страниц и уникальных макетов.', 'Кто пишет тексты и делает фото.', 'Функции: запись, оплата, кабинеты, связь с CRM.', 'Языки и рынки.', 'Срочность: «нужно вчера» стоит дороже.']],
           ['О чём забывают', ['Домен: около $10–15 в год.', 'Хостинг: от бесплатного до $20+ в месяц.', 'Поддержка и обновления после запуска.', 'Трафик: без рекламы, SEO и соцсетей на сайт мало кто зайдёт.']],
-          ['Как потратить меньше без потери качества', ['Начните с одной страницы, которая делает одно дело (звонки, записи или заявки), и растите дальше. В Vaxo сайт входит в подписку (от $39 в месяц) вместе с ИИ-чатом, CRM и аналитикой — вы описываете задачу, мы и ИИ делаем.']],
+          ['Как потратить меньше без потери качества', ['Начните с одной страницы, которая делает одно дело (звонки, записи или заявки), и растите дальше. В Vaxo сайт входит в подписку (бесплатно на старте, платно от $19 в месяц) вместе с ИИ-чатом, CRM и аналитикой — вы описываете задачу, мы и ИИ делаем.']],
           ['Что спросить у любой студии', ['Цена фиксированная? Сколько кругов правок входит? Чьи домен и код? Что будет при срыве срока? Какие правила возврата? Хорошая студия письменно отвечает на все пять вопросов до оплаты.']],
         ],
       },
@@ -82,10 +121,10 @@ export const POSTS: Post[] = [
         title: 'Скільки коштує сайт у 2026 році? Чесні ціни',
         desc: 'Реальні ціни на односторінковий сайт, лендинг, сайт компанії та інтернет-магазин — і від чого залежить ціна.',
         body: [
-          ['Коротко', ['На ринку сторінка у фрилансера за шаблоном коштує близько $300–800, індивідуальна у фрилансера — $500–2 000, лендинг в агенції — $2 000–10 000. У Vaxo більшу частину роботи робить ШІ, тому сайт входить у підписку — Про $39, Макс $129 або Ультра $299 на місяць, без великої суми наперед. Усе нестандартне оцінюється заздалегідь, до оплати.']],
+          ['Коротко', ['На ринку сторінка у фрилансера за шаблоном коштує близько $300–800, індивідуальна у фрилансера — $500–2 000, лендинг в агенції — $2 000–10 000. У Vaxo більшу частину роботи робить ШІ, тому сайт входить у підписку — безкоштовно на старті, далі Плюс $19, Про $39, Макс $129 або Ультра $299 на місяць, без великої суми наперед. Усе нестандартне оцінюється заздалегідь, до оплати.']],
           ['Від чого залежить ціна', ['Скільки сторінок і унікальних макетів.', 'Хто пише тексти й робить фото.', 'Функції: запис, оплата, кабінети, звʼязок з CRM.', 'Мови й ринки.', 'Терміновість: «треба вчора» коштує дорожче.']],
           ['Про що забувають', ['Домен: близько $10–15 на рік.', 'Хостинг: від безкоштовного до $20+ на місяць.', 'Підтримка й оновлення після запуску.', 'Трафік: без реклами, SEO і соцмереж на сайт мало хто зайде.']],
-          ['Як витратити менше без втрати якості', ['Почніть з однієї сторінки, яка робить одну справу (дзвінки, записи чи заявки), і ростіть далі. У Vaxo сайт входить у підписку (від $39 на місяць) разом із ШІ-чатом, CRM і аналітикою — ви описуєте задачу, ми й ШІ робимо.']],
+          ['Як витратити менше без втрати якості', ['Почніть з однієї сторінки, яка робить одну справу (дзвінки, записи чи заявки), і ростіть далі. У Vaxo сайт входить у підписку (безкоштовно на старті, платно від $19 на місяць) разом із ШІ-чатом, CRM і аналітикою — ви описуєте задачу, ми й ШІ робимо.']],
           ['Що запитати в будь-якої студії', ['Ціна фіксована? Скільки кіл правок входить? Чиї домен і код? Що буде при зриві строку? Які правила повернення? Хороша студія письмово відповідає на всі пʼять питань до оплати.']],
         ],
       },
@@ -144,7 +183,7 @@ export const POSTS: Post[] = [
           ['What it does', ['An AI chat on your website answers common questions 24/7 — prices, hours, services, booking — and collects the name and contact of people who are ready to buy. It replies in seconds, in the visitor’s language.']],
           ['Why it brings more clients', ['Visitors often leave when they cannot get a quick answer, especially at night or on weekends. A chat that answers at once and asks for a contact turns some of them into requests you can call back.']],
           ['What it should not do', ['Promise prices or results you do not offer, ask for card details, or pretend to be a human. A good assistant says it is an AI and hands over to you when the question is complex.']],
-          ['What it costs', ['At Vaxo an AI chat for your website is included in every plan from $39 a month, trained on your services, prices and FAQ, with new requests sent to your email or Telegram. Try ours first — Vax in our Workspace — before you decide.']],
+          ['What it costs', ['At Vaxo an AI chat for your website is included in every plan, the free one too (paid from $19 a month), trained on your services, prices and FAQ, with new requests sent to your email or Telegram. Try ours first — Vax in our Workspace — before you decide.']],
           ['How to get the most from it', ['Give it your real prices and answers to the 20 questions customers ask most. Read the conversations once a week and add what it did not know.']],
         ],
       },
@@ -155,7 +194,7 @@ export const POSTS: Post[] = [
           ['Что он делает', ['ИИ-чат на сайте отвечает на частые вопросы 24/7 — цены, часы работы, услуги, запись — и собирает имя и контакт тех, кто готов купить. Отвечает за секунды и на языке посетителя.']],
           ['Почему это приносит клиентов', ['Посетители часто уходят, если не получили быстрый ответ, особенно ночью и в выходные. Чат, который отвечает сразу и просит контакт, превращает часть из них в заявки, которым можно перезвонить.']],
           ['Чего он делать не должен', ['Обещать цены или результаты, которых нет, просить данные карты или притворяться человеком. Хороший ассистент честно говорит, что он ИИ, и передаёт сложный вопрос вам.']],
-          ['Сколько стоит', ['В Vaxo ИИ-чат для вашего сайта входит в любой тариф от $39 в месяц: обучен на ваших услугах, ценах и частых вопросах, новые заявки приходят на почту или в Telegram. Сначала попробуйте нашего — Vax в Workspace, — потом решайте.']],
+          ['Сколько стоит', ['В Vaxo ИИ-чат для вашего сайта входит в любой тариф, даже бесплатный (платные от $19 в месяц): обучен на ваших услугах, ценах и частых вопросах, новые заявки приходят на почту или в Telegram. Сначала попробуйте нашего — Vax в Workspace, — потом решайте.']],
           ['Как получить максимум', ['Дайте ему реальные цены и ответы на 20 самых частых вопросов. Раз в неделю читайте переписки и добавляйте то, чего он не знал.']],
         ],
       },
@@ -166,7 +205,7 @@ export const POSTS: Post[] = [
           ['Що він робить', ['ШІ-чат на сайті відповідає на часті питання 24/7 — ціни, години роботи, послуги, запис — і збирає імʼя та контакт тих, хто готовий купити. Відповідає за секунди і мовою відвідувача.']],
           ['Чому це приносить клієнтів', ['Відвідувачі часто йдуть, якщо не отримали швидку відповідь, особливо вночі й у вихідні. Чат, що відповідає одразу й просить контакт, перетворює частину з них на заявки, яким можна передзвонити.']],
           ['Чого він робити не повинен', ['Обіцяти ціни чи результати, яких немає, просити дані картки або вдавати людину. Хороший асистент чесно каже, що він ШІ, і передає складне питання вам.']],
-          ['Скільки коштує', ['У Vaxo ШІ-чат для вашого сайту входить у будь-який тариф від $39 на місяць: навчений на ваших послугах, цінах і частих питаннях, нові заявки надходять на пошту або в Telegram. Спершу спробуйте нашого — Vax у Workspace, — потім вирішуйте.']],
+          ['Скільки коштує', ['У Vaxo ШІ-чат для вашого сайту входить у будь-який тариф, навіть безкоштовний (платні від $19 на місяць): навчений на ваших послугах, цінах і частих питаннях, нові заявки надходять на пошту або в Telegram. Спершу спробуйте нашого — Vax у Workspace, — потім вирішуйте.']],
           ['Як отримати максимум', ['Дайте йому реальні ціни й відповіді на 20 найчастіших питань. Раз на тиждень читайте листування й додавайте те, чого він не знав.']],
         ],
       },
