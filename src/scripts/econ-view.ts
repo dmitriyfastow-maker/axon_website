@@ -3,7 +3,7 @@
 type R = Record<string, any>;
 type Api = (path: string, body?: unknown) => Promise<R>;
 
-const NAMES: R = { personal: 'Personal', care: 'Care', growth: 'Growth', pro: 'Pro' };
+const NAMES: R = { personal: 'Plus', care: 'Pro', growth: 'Max', pro: 'Ultra' };
 const PLANS = ['personal', 'care', 'growth', 'pro'];
 const usd = (n: number) => `${n < 0 ? '−' : ''}$${Math.abs(Number(n) || 0).toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
 const usd0 = (n: number) => `${n < 0 ? '−' : ''}$${Math.round(Math.abs(Number(n) || 0)).toLocaleString('en-US')}`;
@@ -120,7 +120,7 @@ export function renderEcon(box: HTMLElement, d: R, api: Api, reload: () => void)
   const fin = (name: string, value: number, label: string, step = '1') => el('label', {}, label, el('input', { type: 'number', name, value, step, min: '0' }));
   const fc = el('form', { class: 'card ec-set' },
     el('b', {}, 'Новых клиентов в месяц и откуда они'),
-    el('div', { class: 'ec-grid' }, fin('n_personal', 3, 'Personal'), fin('n_care', 5, 'Care'), fin('n_growth', 3, 'Growth'), fin('n_pro', 1, 'Pro'),
+    el('div', { class: 'ec-grid' }, fin('n_personal', 3, 'Plus'), fin('n_care', 5, 'Pro'), fin('n_growth', 3, 'Max'), fin('n_pro', 1, 'Ultra'),
       fin('viaPartner', 50, '% через партнёров'), fin('viaClient', 15, '% по приглашению клиентов'), fin('churn', d.churn ?? st.churn ?? 5, 'Отток, %/мес', '0.5'), fin('growth', 0, 'Рост новых, %/мес', '1')),
     el('small', { class: 'mut' }, `Остальные — пришли сами (1 месяц бесплатно). Через партнёра и клиента — ${d.friendMonths || 2} месяца бесплатно. У партнёров считаем наставника (10%) всегда — худший случай.`)) as HTMLFormElement;
   const out = el('div', {});

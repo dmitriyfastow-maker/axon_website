@@ -1,7 +1,7 @@
 // AI manager: Vax leads every client from the first message to the repeat order — answers in seconds, gathers the
 // brief, recommends one package, reports project status, follows up after silence and after delivery.
 // A human manager joins only when the client needs a live conversation (call, complaint, refund, special price).
-import { claudeReply, routeFor } from './router.js';
+import { claudeReply, isHard, routeFor } from './router.js';
 import { buildTool, plainText, tidyReply, toolMarker, WANTS_TOOL } from './tools.js';
 import { allowance, limitText } from './allowance.js';
 import { filesForAi } from './files.js';
@@ -53,7 +53,7 @@ You are an AI assistant and say so honestly if asked or in your first message. $
 Answer in ${LANG[l.lang || 'en'] ?? 'English'} unless the client writes in another language — then use theirs.
 Style: short (1–4 sentences), warm, concrete, no markdown headings. Adapt to the client's communication profile below (tone, formality, what matters to them, their concerns). Ethical persuasion only: real facts, real cases (AiPro Partners, TrichoTech), honest timelines; never pressure, fake urgency or invented discounts.
 Be the client's real partner, not a salesperson. Many people do not know exactly what they need — that is why they hesitate. Look wider than the request: ask about the goal behind it, then show the whole picture of what would really help (e.g. "a site for my café" → a site with the menu, online orders or bookings, an AI chat that answers 24/7, a Google Maps profile). Always explain WHY each part is worth it in one plain sentence (what it brings: more orders, less manual work, trust) and that any part can be dropped. Offer 2–3 options, named in the client's language: a minimum (solves the core task), an optimal one (what we recommend and why), a growth one (if they want to scale). Never push; if the minimum is enough, say so.
-Useful links you may give (real pages only): vaxogroup.com/examples/ (examples), vaxogroup.com/examples/ (live examples), vaxogroup.com/start/ (first month free on any plan), vaxogroup.com/tools/ (free calculators and business check-up), vaxogroup.com/blog/ (articles), vaxogroup.com/terms/ (payment and refunds). Never invent other links or files.
+Useful links you may give (real pages only): vaxogroup.com/examples/ (examples), vaxogroup.com/examples/ (live examples), vaxogroup.com/start/ (free plan to start), vaxogroup.com/tools/ (free calculators and business check-up), vaxogroup.com/blog/ (articles), vaxogroup.com/terms/ (payment and refunds). Never invent other links or files.
 The client never has to fill any form: you collect everything in this chat and place the order for them.
 Your job by stage:
 ${ownerPrice ? `- Before payment (PRICE MODE — right now the team sets every price personally): understand the business and goal (ask at most 2 questions at a time). Do NOT name prices or price ranges, even from the facts. When the task is clear, present the 2–3 options WITHOUT amounts (say which is lighter and which is bigger), then ask what budget they have in mind or what they are ready to pay. When the client names a price, set "offer" to {"price": "<amount as they said it>", "task": "<one line in English>"} and tell them the team will confirm it right here in this chat. Timelines only as a range with a safety margin: one-page site 1–3 days, landing page 3–7 days, multi-page site 1–3 weeks, app MVP 4–8 weeks; say it may well be faster.` : `- Before payment: understand the business and goal (ask at most 2 questions at a time: business and audience, goal, deadline, budget, examples they like). When you know enough, give the 2–3 options with price ranges from the facts, recommend one and say why, and say the prices on the site are preliminary — the exact price depends on their task. If their budget is below that range, first offer what honestly fits the price list (a starter package, a one-page site, a landing page, or a smaller first phase). Final prices are fixed by the team after the strategy session.`}
@@ -149,7 +149,7 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
     if (al?.blocked) { await addMessage(db, leadId, 'ai', 'text', limitText(l.lang, al)); return true; }
   }
   const convo = await Promise.all(msgs.filter((m) => m.sender !== 'system').map(async (m) => ({ role: m.sender === 'client' ? 'user' : 'assistant', content: (await filesForAi(db, m.text).catch(() => m.text)).slice(0, 2500) })));
-  if (opts.greet) convo.push({ role: 'user', content: `(The client just sent the request above via the site form and opened this chat. Greet them by name, say you are Vax, the AI manager, and ask the first 1–2 questions. Never re-ask what the request already says (the "Need" chips, the about text); build on it, mention the subscription entry point (first month free, then from $39/mo) in one short line, and ask only the next missing detail.)` });
+  if (opts.greet) convo.push({ role: 'user', content: `(The client just sent the request above via the site form and opened this chat. Greet them by name, say you are Vax, the AI manager, and ask the first 1–2 questions. Never re-ask what the request already says (the "Need" chips, the about text); build on it, mention the subscription entry point (free to start, plans from $39/mo) in one short line, and ask only the next missing detail.)` });
   if (opts.nudge) convo.push({ role: 'user', content: `(System, not the client: ${opts.nudge})` });
   // Models expect alternating turns starting with the user.
   const merged: { role: string; content: string }[] = [];
@@ -171,8 +171,10 @@ export async function aiReply(db: DB, ai: AiBinding | undefined, leadId: number,
   const lessons = l.mode === 'collab' ? '' : (st.vax_lessons || '').slice(0, 1500);
   const sys = system(l, '', ownerPrice, friend, lessons);
   const al2 = await allowance(db, [leadId]).catch(() => null);
-  const tier = al2 ? await routeFor(db, leadId, al2.plan, al2.trial).catch(() => null) : null;
-  let out = await run(ai, [{ role: 'system', content: sys }, ...merged], tier ? () => claudeReply(db, leadId, tier, sys, merged) : undefined);
+  // The project room: only paying clients get Claude here (no client account to cap a free one by).
+  const lastMsg = String(merged[merged.length - 1]?.content || '');
+  const route = al2 && !al2.trial && al2.plan !== 'start' ? await routeFor(db, { leadId, clientId: 0, plan: al2.plan, trial: al2.trial, hard: isHard(lastMsg) }).catch(() => null) : null;
+  let out = await run(ai, [{ role: 'system', content: sys }, ...merged], route ? () => claudeReply(db, route, sys, merged) : undefined);
   if (out && ownerPrice && PRICE_RE.test(out.reply)) {
     // Named a price anyway: rewrite once without any amounts.
     const again = await run(ai, [{ role: 'system', content: system(l, 'Your previous draft named a price. Rewrite it WITHOUT any prices or amounts; ask for their budget instead, or say the team confirms the price.', ownerPrice, friend, lessons) }, ...merged]);
@@ -277,7 +279,7 @@ async function priceDecision(db: DB, ai: AiBinding, l: Lead, offer: { price: str
   const chat = msgs.slice(-16).map((m) => `${m.sender === 'client' ? 'Client' : 'Vax'}: ${m.text.slice(0, 400)}`).join('\n');
   const usd = usdOf(offer.price);
   const t = await askAi(ai, `You advise the owner of Vaxo, a digital studio where AI (Claude) does most of the work, so our real cost is low (mostly hours of review). A client from the owner's friends offers a price. Prepare a decision card IN RUSSIAN for the OWNER. Be concrete and honest; never invent facts not in the chat — write "неизвестно" instead.
-Our public prices (Decision 29): platform subscription Care $39 / Growth $129 / Pro $299 a month, first month free; the website is included in every plan (Care one-page, Growth full site with booking/payments, Pro store or app); existing site connected for $0; only custom work (own app, bot, integration) is priced upfront; one-off tasks without a plan are priced as a task. Partners get 50% of the first payment + 30% for life if they brought the client.
+Our public prices (Decision 29): platform subscription Pro $39 / Max $129 / Ultra $299 a month (3, 6 or 12 months at once: 10%, 15% or 20% off; free plan to start); the website is included in every plan (Pro one-page, Max full site with booking/payments, Ultra store or app); existing site connected for $0; only custom work (own app, bot, integration) is priced upfront; one-off tasks without a plan are priced as a task. Partners get 50% of the first payment + 30% for life if they brought the client.
 Return ONLY JSON:
 {"client":"кто клиент, его бизнес, как с ним говорить — 1-2 строки","brief":["3-5 пунктов: что входит"],"rec_price":"сумма, которую советуешь предложить (USD)","why":"почему эта сумма: рынок, наши часы, доля партнёра — 1-2 строки","realistic":"почему сумма реальна именно для этого клиента — 1 строка","cut":{"price":"цена клиента или близко","scope":"что убираем, чтобы уложиться в его сумму — 1 строка"},"full_price":"цена полного варианта","risks":["1-3 риска: контент, доступы, размытая задача, сроки"],"timeline":"срок с запасом","later":"что предложить потом (поддержка, реклама) — 1 строка"}
 Task: ${offer.task}. Client's price: ${offer.price}.

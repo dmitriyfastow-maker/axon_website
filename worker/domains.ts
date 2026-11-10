@@ -2,7 +2,7 @@
 // registers the name as a custom hostname of our zone, issues the SSL certificate itself, and the request reaches this
 // worker, which shows that client's /s/ page. Comes with Care and above, like the CRM. Needs the secret CF_SAAS_TOKEN
 // (SSL and Certificates: Edit on the vaxogroup.com zone); without it the cabinet says the feature is coming.
-import { moduleAccess, servePage } from './modules.js';
+import { paidAccess, servePage } from './modules.js';
 import { sendMail } from './mail.js';
 import type { Notify } from './deals.js';
 import type { DB } from './partner.js';
@@ -81,7 +81,7 @@ export async function handleDomain(db: DB, cf: Cf, clientId: number, method: str
     if (row) await db.prepare('DELETE FROM biz_domains WHERE id = ?').bind(row.id).run();
     return { status: 200, body: { ok: true, ready, site: true, domain: null } };
   }
-  if (!(await moduleAccess(db, clientId))) return { status: 402, body: { ok: false, error: 'plan' } };
+  if (!(await paidAccess(db, clientId))) return { status: 402, body: { ok: false, error: 'plan' } };
   if (!ready) return { status: 503, body: { ok: false, error: 'soon' } };
   const host = cleanHost(b.host);
   if (!host) return { status: 400, body: { ok: false, error: 'bad' } };
@@ -130,7 +130,7 @@ const NOT_OURS = new Response(null, { status: 404 });
 export async function serveOwnDomain(db: DB, url: URL): Promise<Response | 'pass' | null> {
   const r = await db.prepare(`SELECT d.status, p.slug, b.owner_id FROM biz_domains d JOIN biz_pages p ON p.biz_id = d.biz_id JOIN biz b ON b.id = d.biz_id WHERE d.host = ?`).bind(url.hostname).first<{ status: string; slug: string; owner_id: number }>().catch(() => null);
   if (!r) return null;
-  if (!(await moduleAccess(db, r.owner_id))) return Response.redirect(`https://vaxogroup.com/s/${r.slug}`, 302);
+  if (!(await paidAccess(db, r.owner_id))) return Response.redirect(`https://vaxogroup.com/s/${r.slug}`, 302);
   const p = url.pathname;
   if (p === '/' || p === '/index.html') return servePage(db, r.slug, false);
   if (p === '/manifest.webmanifest' || p === `/s/${r.slug}/manifest.webmanifest`) return servePage(db, r.slug, true);

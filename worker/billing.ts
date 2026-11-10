@@ -8,12 +8,22 @@ import type { DB } from './partner.js';
 import type { Notify } from './deals.js';
 import { createInvoice } from './invoices.js';
 import { PLAN_PRICES, planOf } from './referrals.js';
+import { planCharge } from './autopay.js';
 
 const ORIGIN = 'https://vaxogroup.com';
 const LEAD_DAYS = 3;       // invoice goes out this many days before the paid month ends
 const MONTH_DAYS = 30;
 const MAX_PER_RUN = 20;
-const PLAN_NAME: Record<string, string> = { personal: 'Personal', care: 'Care', growth: 'Growth', pro: 'Pro' };
+/** Decision 50: pay for 1, 3, 6 or 12 months at once, the longer the cheaper. */
+export const PERIODS: Record<number, number> = { 1: 0, 3: 0.1, 6: 0.15, 12: 0.2 };
+export const periodPrice = (price: number, months: number) => Math.round(price * months * (1 - (PERIODS[months] ?? 0)));
+export async function periodOf(db: DB, leadId: number): Promise<number> {
+  const v = Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind(`period_${leadId}`).first<{ value: string }>().catch(() => null))?.value || 1);
+  return v in PERIODS ? v : 1;
+}
+const MONTHS_W: Record<string, [string, string, string]> = { ru: ['месяц', 'месяца', 'месяцев'], ua: ['місяць', 'місяці', 'місяців'], en: ['month', 'months', 'months'] };
+const periodWords = (lang: string, m: number) => { const w = MONTHS_W[lang] || MONTHS_W.en; return m === 1 ? w[0] : `${m} ${m === 3 ? w[1] : w[2]}`; };
+const PLAN_NAME: Record<string, string> = { personal: 'Plus', care: 'Pro', growth: 'Max', pro: 'Ultra' };
 
 const GIFT_FULL: Record<string, string> = {
   en: '🎁 Good news: next month of your {plan} plan is a gift for inviting a friend (or for joining by an invite). Nothing to pay — everything keeps working. Thank you!',
@@ -65,13 +75,15 @@ export async function monthlyBilling(db: DB, notify?: Notify) {
       if (!plan || !(PLAN_PRICES[plan] > 0)) continue;
       const last = await db.prepare(`SELECT at, amount, currency, amount_uah FROM payments WHERE lead_id = ? AND status = 'ok' ORDER BY at DESC LIMIT 1`).bind(l.id).first<{ at: string; amount: number; currency: string; amount_uah: number }>();
       if (!last) continue; // the first payment comes from the deal itself (after the free first month)
-      const price = PLAN_PRICES[plan];
+      const months = await periodOf(db, l.id);
       const usd = last.currency === 'USD' ? last.amount : (last.amount_uah || 0) / rate;
-      if (usd >= price * 9) continue; // paid for a year
+      // Old yearly deals without a stored period: 9+ months paid at once means a year.
+      const paidMonths = months > 1 ? months : usd >= PLAN_PRICES[plan] * 9 ? 12 : 1;
+      const price = periodPrice(PLAN_PRICES[plan], paidMonths);
       const free = await freeDaysSince(db, l.id, last.at);
       const end = new Date(`${last.at.slice(0, 10)}T00:00:00Z`);
-      end.setUTCDate(end.getUTCDate() + MONTH_DAYS + free);
-      const dueOn = new Date(end); dueOn.setUTCDate(dueOn.getUTCDate() - LEAD_DAYS);
+      end.setUTCDate(end.getUTCDate() + MONTH_DAYS * paidMonths + free);
+      const dueOn = new Date(end); dueOn.setUTCDate(dueOn.getUTCDate() - (paidMonths >= 12 ? 7 : LEAD_DAYS));
       if (dueOn.toISOString().slice(0, 10) > today) continue;
       // One invoice per cycle: an open one, or one from the last 20 days, means this month is already handled.
       const recent = await db.prepare(`SELECT 1 AS x FROM invoices WHERE lead_id = ? AND description LIKE 'Vaxo %' AND status != 'cancelled' AND at > datetime('now', '-20 days') LIMIT 1`).bind(l.id).first().catch(() => null);
@@ -92,7 +104,9 @@ export async function monthlyBilling(db: DB, notify?: Notify) {
         await notify?.(`🎁 Лид #${l.id}: месяц тарифа ${PLAN_NAME[plan]} закрыт подарком (${gift!.kind === 'friend' ? 'подарок другу' : 'награда за приглашение'}). Счёт не выставлялся.`);
       } else {
         const month = end.toISOString().slice(0, 7);
-        await createInvoice(db, { leadId: l.id, amount, currency: 'USD', description: `Vaxo ${PLAN_NAME[plan]} subscription, ${month}${off ? ` (gift −$${off})` : ''}`, part: 'other', lang, origin: ORIGIN });
+        const made = await createInvoice(db, { leadId: l.id, amount, currency: 'USD', description: `Vaxo ${PLAN_NAME[plan]} subscription, ${paidMonths > 1 ? `${paidMonths} months from ` : ''}${month}${off ? ` (gift −$${off})` : ''}`, part: 'other', lang, origin: ORIGIN });
+        const row = await db.prepare('SELECT id, number, token, amount, currency, description, status, lead_id, lang FROM invoices WHERE number = ?').bind(made.number).first<{ id: number; number: string; token: string; amount: number; currency: string; description: string; status: string; lead_id: number | null; lang: string | null }>().catch(() => null);
+        if (row) await planCharge(db, row, PLAN_NAME[plan], end.toISOString().slice(0, 10), lang).catch((e) => console.error('[autopay plan]', e));
         if (off) {
           const { addMessage } = await import('./rooms.js');
           await addMessage(db, l.id, 'owner', 'text', (GIFT_PART[lang] || GIFT_PART.en).replace('{plan}', PLAN_NAME[plan]).replace('{off}', String(off)));
@@ -106,6 +120,11 @@ export async function monthlyBilling(db: DB, notify?: Notify) {
   return made;
 }
 
+const FIRST_INVOICE: Record<string, string> = {
+  ru: 'Спасибо, что выбрали тариф {plan}! Счёт на {period} (${amount}) уже здесь: оплата картой, Apple Pay или Google Pay в пару касаний. Пока счёт не оплачен, работает бесплатный уровень. Не понравится — вернём деньги в течение 14 дней.',
+  ua: 'Дякуємо, що обрали тариф {plan}! Рахунок на {period} (${amount}) уже тут: оплата карткою, Apple Pay або Google Pay за пару дотиків. Поки рахунок не сплачено, працює безкоштовний рівень. Не сподобається — повернемо гроші протягом 14 днів.',
+  en: 'Thank you for choosing the {plan} plan! The invoice for {period} (${amount}) is here: pay by card, Apple Pay or Google Pay in a couple of taps. Until it is paid, the free level works. Not happy? We refund within 14 days.',
+};
 const TRIAL_END: Record<string, string> = {
   ru: 'Ваш бесплатный месяц с тарифом {plan} подходит к концу. Если хотите продолжить — счёт уже в кабинете, оплата картой в пару касаний. Если нет — ничего делать не нужно: тариф просто закончится, а всё сделанное останется у вас.',
   ua: 'Ваш безкоштовний місяць з тарифом {plan} добігає кінця. Якщо хочете продовжити — рахунок уже в кабінеті, оплата карткою за пару дотиків. Якщо ні — нічого робити не треба: тариф просто закінчиться, а все зроблене лишиться у вас.',
@@ -119,21 +138,22 @@ async function firstInvoices(db: DB, notify?: Notify): Promise<number> {
   const rows = (await db.prepare(`SELECT d.id, d.client_id, d.lang, d.service, d.interest, d.plan FROM leads d
     WHERE d.plan IS NOT NULL AND d.status NOT IN ('lost', 'archived', 'test', 'collab', 'gift') AND COALESCE(d.page, '') != 'test'
       AND COALESCE(d.contact, '') NOT LIKE 'test%' AND COALESCE(d.contact, '') NOT LIKE '%@vaxogroup.com'
-      AND d.created_at <= datetime('now', '-' || ? || ' days')
       AND NOT EXISTS (SELECT 1 FROM payments p WHERE p.lead_id = d.id AND p.status = 'ok')
       AND NOT EXISTS (SELECT 1 FROM invoices i WHERE i.lead_id = d.id AND i.description LIKE 'Vaxo %' AND i.status != 'cancelled')
-      AND (d.client_id IS NOT NULL OR (SELECT COUNT(*) FROM messages m WHERE m.lead_id = d.id AND m.sender = 'client') >= 2)
-    LIMIT 10`).bind(MONTH_DAYS - LEAD_DAYS).all<Row>()).results;
+      AND (d.client_id IS NOT NULL OR COALESCE(d.contact, '') LIKE '%@%')
+      AND ((d.created_at > '2026-11-10' AND d.ref IS NULL) OR d.created_at <= datetime('now', '-27 days'))
+    LIMIT 10`).all<Row>()).results;
   let n = 0;
   for (const l of rows) {
     const plan = planOf(l);
     if (!plan || !(PLAN_PRICES[plan] > 0)) continue;
     const lang = ['en', 'ru', 'ua'].includes(String(l.lang)) ? String(l.lang) : 'en';
     const month = new Date().toISOString().slice(0, 7);
-    await createInvoice(db, { leadId: l.id, amount: PLAN_PRICES[plan], currency: 'USD', description: `Vaxo ${PLAN_NAME[plan]} subscription, ${month}`, part: 'other', lang, origin: ORIGIN });
+    const months = await periodOf(db, l.id), amount = periodPrice(PLAN_PRICES[plan], months);
+    await createInvoice(db, { leadId: l.id, amount, currency: 'USD', description: `Vaxo ${PLAN_NAME[plan]} subscription, ${months > 1 ? `${months} months from ` : ''}${month}`, part: 'other', lang, origin: ORIGIN });
     const { addMessage } = await import('./rooms.js');
-    await addMessage(db, l.id, 'owner', 'text', (TRIAL_END[lang] || TRIAL_END.en).replace('{plan}', PLAN_NAME[plan]));
-    await notify?.(`🧾 Конец пробного месяца: лид #${l.id}, ${PLAN_NAME[plan]}, выставлен первый счёт $${PLAN_PRICES[plan]}.`);
+    await addMessage(db, l.id, 'owner', 'text', (FIRST_INVOICE[lang] || FIRST_INVOICE.en).replace('{plan}', PLAN_NAME[plan]).replace('{period}', periodWords(lang, months)).replace('{amount}', String(amount)));
+    await notify?.(`🧾 Новая подписка: лид #${l.id}, ${PLAN_NAME[plan]} на ${months} мес., счёт $${amount}.`);
     n++;
   }
   return n;

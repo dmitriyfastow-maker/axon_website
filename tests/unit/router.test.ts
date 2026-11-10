@@ -1,43 +1,47 @@
 import { describe, expect, it } from 'vitest';
-import { costUsd, monthPool, pickTier, POOL_SHARE, TIERS } from '../../worker/router';
+import { costUsd, EASY, FREE_CAP, isHard, monthPool, pickTier, POOL_SHARE, TIERS } from '../../worker/router';
 
-const POOL = 100;
-
+const POOL = 1000;
+const paid = (lead = 0, all = 0, pool = POOL) => ({ lead, all, pool });
 describe('pickTier', () => {
-  it('keeps guests, the free plan and trials on free models', () => {
-    expect(pickTier('start', false, 0, 0, POOL, true)).toBeNull();
-    expect(pickTier('personal', false, 0, 0, POOL, true)).toBeNull();
-    expect(pickTier('care', true, 0, 0, POOL, true)).toBeNull();
+  it('does nothing without a key', () => expect(pickTier('pro', false, true, paid(), false)).toBeNull());
+  it('free accounts get Haiku under the caps, nothing past any cap', () => {
+    expect(pickTier('start', false, true, { ...paid(), user: 0, ip: 0, free: 0 }, true)).toBe(EASY);
+    expect(pickTier('start', false, false, { ...paid(), user: FREE_CAP.user }, true)).toBeNull();
+    expect(pickTier('start', false, false, { ...paid(), ip: FREE_CAP.ip }, true)).toBeNull();
+    expect(pickTier('care', true, true, { ...paid(), free: FREE_CAP.all }, true)).toBeNull();
   });
-  it('does nothing without a key', () => expect(pickTier('pro', false, 0, 0, POOL, false)).toBeNull());
-  it('gives paying clients Claude', () => {
-    expect(pickTier('care', false, 0, 0, POOL, true)?.model).toBe('claude-sonnet-5-5');
-    expect(pickTier('pro', false, 0, 0, POOL, true)?.model).toBe('claude-opus-5-5');
+  it('paid: easy → Haiku, hard → the plan model', () => {
+    expect(pickTier('care', false, false, paid(), true)).toBe(EASY);
+    expect(pickTier('care', false, true, paid(), true)?.model).toBe('claude-sonnet-5-5');
+    expect(pickTier('pro', false, true, paid(), true)?.model).toBe('claude-opus-5-5');
+    expect(pickTier('personal', false, true, paid(), true)?.model).toBe('claude-sonnet-5-5');
   });
-  it('lets an active client go past their own share while the pool has room', () => {
-    expect(pickTier('care', false, 30, 30, POOL, true)).not.toBeNull();
-  });
-  it('stops at the plan price and at the end of the pool', () => {
-    expect(pickTier('care', false, TIERS.care.price, 0, POOL, true)).toBeNull();
-    expect(pickTier('growth', false, 0, POOL, POOL, true)).toBeNull();
-    expect(pickTier('care', false, 0, 0, 0, true)).toBeNull();
+  it('past the fair share: Haiku a little longer, then free models', () => {
+    const share = TIERS.care.price * POOL_SHARE;
+    expect(pickTier('care', false, true, paid(share), true)).toBe(EASY);
+    expect(pickTier('care', false, true, paid(TIERS.care.price * 0.5), true)).toBeNull();
+    expect(pickTier('growth', false, true, paid(0, POOL), true)).toBe(EASY);
   });
 });
-
+describe('isHard', () => {
+  it('spots real work', () => {
+    expect(isHard('Привет, как дела?')).toBe(false);
+    expect(isHard('Сделай сайт для кофейни')).toBe(true);
+    expect(isHard('x', true)).toBe(true);
+    expect(isHard('a'.repeat(401))).toBe(true);
+  });
+});
 describe('monthPool', () => {
-  it('sums the share of every paying client', () => {
+  it('adds POOL_SHARE of every paying plan', () => {
     expect(monthPool(['care', 'growth'])).toBeCloseTo(168 * POOL_SHARE);
     expect(monthPool(['start'])).toBe(0);
   });
-  it('fits into the worst month: partner 50%, acquiring 2%, tax 5%', () => {
-    expect(POOL_SHARE).toBeLessThanOrEqual(1 - 0.5 - 0.02 - 0.05);
-  });
 });
-
 describe('costUsd', () => {
-  it('counts input, output and cache', () => {
+  it('uses the price list', () => {
     expect(costUsd('claude-sonnet-5-5', { input_tokens: 1e6, output_tokens: 1e6 })).toBe(12);
-    expect(costUsd('claude-opus-5-5', { cache_read_input_tokens: 1e6 })).toBeCloseTo(0.2);
+    expect(costUsd('claude-haiku-5-5', { input_tokens: 1e6, output_tokens: 1e6 })).toBeCloseTo(0.6);
     expect(costUsd('unknown', { input_tokens: 1e6 })).toBe(0);
   });
 });

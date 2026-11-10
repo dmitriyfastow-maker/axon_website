@@ -6,7 +6,7 @@ export const OFFERS = [
   {
     id: 'all',
     target: '/',
-    text: 'Vaxo — one AI platform for anyone, from personal tasks to companies: just say what you need and Vax takes it on — websites, an AI that answers customers 24/7, bookings, CRM, automations, Google reviews, content. One subscription: Care $39 / Growth $129 / Pro $299 a month, first month free, anything custom for an extra fee. Plus ready-made templates ($9–$67, instant download) and free tools (lost-leads and pricing calculators). You only pay the subscription — Vaxo and AI do the work.',
+    text: 'Vaxo — one AI platform for anyone, from personal tasks to companies: just say what you need and Vax takes it on — websites, an AI that answers customers 24/7, bookings, CRM, automations, Google reviews, content. One subscription: Pro $39 / Max $129 / Ultra $299 a month, anything custom for an extra fee. Plus ready-made templates ($9–$67, instant download) and free tools (lost-leads and pricing calculators). You only pay the subscription — Vaxo and AI do the work.',
   },
   {
     id: 'start',

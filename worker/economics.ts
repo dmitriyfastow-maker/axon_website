@@ -119,7 +119,7 @@ export async function economics(db: DB) {
     const ltv = churn > 0 ? Math.round((u.margin / (churn / 100)) * 100) / 100 : null;
     return { plan: p, price: PLAN_PRICES[p], clients: byPlan[p].n, mrr: Math.round(byPlan[p].mrr * 100) / 100, cost: u.cost, fee: u.fee, margin: u.margin, marginPct: u.marginPct, ltv, ltvPartner: churn > 0 ? Math.round(((u.m2Partner / (churn / 100)) - (u.m2Partner - u.m1Partner)) * 100) / 100 : null };
   });
-  const NAMES: Record<string, string> = { personal: 'Personal', care: 'Care', growth: 'Growth', pro: 'Pro' };
+  const NAMES: Record<string, string> = { personal: 'Plus', care: 'Pro', growth: 'Max', pro: 'Ultra' };
   const alerts: { level: 'r' | 'y' | 'g'; text: string }[] = [];
   for (const p of plans) if (p.marginPct < 40) alerts.push({ level: 'r', text: `Маржа ${NAMES[p.plan]} ниже 40% (${p.marginPct}%): поднимите цену или снизьте себестоимость.` });
   for (const u of units) if (u.m1Partner < 0) alerts.push({ level: 'y', text: `${NAMES[u.plan]} через партнёра: первый платный месяц в минусе (${u.m1Partner} $) — окупается со второго месяца.` });
@@ -154,14 +154,14 @@ function buildAdvice(c: { st: { cost: Record<string, number>; fee: number }; uni
   });
   const trialLoss = Math.round(personal.cost / 3 * 100) / 100;
   out.push({
-    id: 'personal-19', level: personal.marginPct >= 60 ? 'g' : 'y', auto: true, title: `Личный $19: прибыльный только при лимите задач и пробном лимите (маржа ${personal.marginPct}%)`,
+    id: 'personal-19', level: personal.marginPct >= 60 ? 'g' : 'y', auto: true, title: `Плюс $19: прибыльный только при лимите задач и пробном лимите (маржа ${personal.marginPct}%)`,
     why: `ChatGPT и Claude стоят около $20 — по цене мы не дешевле, нас покупают за то, что мы делаем за человека. Цена $19, наш расход ~$${personal.cost} + комиссия ~$${personal.fee} = остаётся $${personal.margin}. Через партнёра 1-й платный месяц почти в ноль ($${personal.m1Partner}), со 2-го $${personal.m2Partner}. Пробный месяц — наш убыток: по лимиту в треть задач он стоит не больше ~$${trialLoss}, окупается при конверсии пробы в оплату от ~${Math.max(1, Math.round((trialLoss / Math.max(personal.margin, 1)) * 100))}% на месяц оплаты. Это расчёт, фактов пока нет.`,
     decision: 'Оставляем при трёх условиях: лимит задач в месяц, пробный месяц = треть лимита, одна проба на человека/компанию/сайт/телефон.',
     next: 'После первых 10 платящих сверяю реальный расход. Конверсия пробы ниже 3% или расход выше $8 — убираю пробный месяц у Личного (останется бесплатный «Старт») или поднимаю цену до $24.',
   });
   out.push({
     id: 'fair-use', level: 'g', auto: true, title: 'Бесплатное с границей: халявщики не прожгут бюджет',
-    why: 'Каждое бесплатное имеет потолок: «Старт» — один мини-результат на человека; пробный месяц — треть лимита задач и один на человека/компанию/сайт/телефон; подарки за приглашения — только из пришедших денег, до 12 в год. Худший случай одной пробы: Личный ~$1.3, Care ~$2, Growth ~$5, Pro ~$12.',
+    why: 'Каждое бесплатное имеет потолок: «Старт» — один мини-результат на человека; пробный месяц — треть лимита задач и один на человека/компанию/сайт/телефон; подарки за приглашения — только из пришедших денег, до 12 в год. Худший случай одной пробы: Личный ~$1.3, Про ~$2, Макс ~$5, Ультра ~$12.',
     decision: 'Чат Vax объясняет эти границы дружелюбно и без исключений. Ваши личные деньги нигде не закладываются: расходы на ИИ идут из выручки.',
     next: 'Если бесплатных проб на $20+ нет ни одной оплаты — ставлю подтверждение телефона перед пробой и сокращаю лимит.',
   });

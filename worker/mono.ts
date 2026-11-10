@@ -9,6 +9,7 @@ import { nbuRate } from './finance.js';
 import { settleInvoice } from './admin.js';
 import { labOnPaid } from './lab.js';
 import { shopOnPaid } from './shop.js';
+import { rememberCard, saveCardExtra } from './autopay.js';
 
 const API = 'https://api.monobank.ua/api/merchant';
 const json = (status: number, body: unknown) =>
@@ -29,7 +30,7 @@ export async function mono(token: string, path: string, body?: unknown) {
 }
 
 /** POST /api/invoice/<token>/pay → { url } of the mono payment page for this invoice (a new one each time). */
-export async function monoPay(db: DB, token: string | undefined, invToken: string, origin: string, extra: Record<string, unknown> = {}): Promise<Response> {
+export async function monoPay(db: DB, token: string | undefined, invToken: string, origin: string, extra: Record<string, unknown> = {}, autopay = false): Promise<Response> {
   if (!token) return json(503, { ok: false, error: 'card_off' });
   const inv = await db.prepare(`SELECT ${COLS} FROM invoices WHERE token = ?`).bind(invToken).first<Inv>();
   if (!inv || inv.status !== 'open') return json(400, { ok: false });
@@ -50,6 +51,7 @@ export async function monoPay(db: DB, token: string | undefined, invToken: strin
     redirectUrl: `${origin}/invoice/?t=${inv.token}&paid=1`,
     webHookUrl: `${origin}/api/mono/webhook`,
     validity: 24 * 3600,
+    ...saveCardExtra(inv, autopay),
     ...extra,
   });
   if (!d?.invoiceId || !d.pageUrl) return json(502, { ok: false, error: 'mono' });
@@ -65,6 +67,7 @@ async function check(db: DB, token: string, ai: AiBinding | undefined, notify: N
   await db.prepare('UPDATE invoices SET mono_status = ? WHERE id = ?').bind(st, inv.id).run();
   if (st === 'success' && inv.status === 'open') {
     await settleInvoice(db, ai, notify, inv.id, 'card', base);
+    await rememberCard(db, inv, d).catch((e) => console.error('[autopay card]', e));
     await labOnPaid(db, inv.id, d, notify).catch((e) => console.error('[lab paid]', e));
     await shopOnPaid(db, inv.id, notify).catch((e) => console.error('[shop paid]', e));
     await notify(`💳 Оплата картой: рахунок ${inv.number}, ${inv.amount} ${inv.currency} (mono)`);

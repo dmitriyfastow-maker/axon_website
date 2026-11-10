@@ -35,6 +35,8 @@ const setCookie = (name: string, value: string, maxAge: number) => `${name}=${va
 export const LEVELS = [{ id: 'start', from: 0 }, { id: 'pro', from: 1000 }, { id: 'vip', from: 5000 }];
 export const BONUS = { cashback: 0.05, profile: 5, review: 10, maxShare: 0.2, months: 12 };
 
+const DISPOSABLE = /^(mailinator\.com|guerrillamail\.(com|net|org|biz|de)|sharklasers\.com|grr\.la|10minutemail\.(com|net)|temp-mail\.(org|io)|tempmail\.(com|net|dev|plus)|tempmailo\.com|tmpmail\.(org|net)|yopmail\.(com|fr|net)|trashmail\.(com|de|net)|getnada\.com|nada\.email|dispostable\.com|maildrop\.cc|mohmal\.com|emailondeck\.com|fakeinbox\.com|throwawaymail\.com|mintemail\.com|mytemp\.email|tempr\.email|discard\.email|spamgourmet\.com|moakt\.com|burnermail\.io|mail\.tm|mail\.gw|1secmail\.(com|net|org)|emailfake\.com|inboxkitten\.com|tempinbox\.com|minuteinbox\.com|dropmail\.me|10mail\.org|byom\.de|crazymailing\.com|tempail\.com|luxusmail\.org|wegwerfmail\.de|spambox\.us)$/i;
+
 export async function sessionClient(db: DB, req: Request): Promise<{ id: number; email: string | null; name: string | null; profile: string | null; marketing: number; email_verified_at: string | null } | null> {
   const t = cookie(req, COOKIE);
   if (!/^[a-f0-9]{64}$/.test(t)) return null;
@@ -180,6 +182,8 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
   if (path === 'code' && request.method === 'POST') {
     const email = str('email', 254).toLowerCase();
     if (!EMAIL.test(email)) return json(400, { ok: false, error: 'email' });
+    // Decision 50: throwaway mailboxes are how one person makes many free accounts.
+    if (DISPOSABLE.test(email.split('@')[1] || '')) return json(400, { ok: false, error: 'email' });
     if (!mailReady()) return json(503, { ok: false, error: 'mail_off' });
     const last = await db.prepare(`SELECT sent_at > datetime('now', '-1 minute') AS recent FROM client_codes WHERE email = ?`).bind(email).first<{ recent: number }>();
     if (last?.recent) return json(429, { ok: false, error: 'wait' });

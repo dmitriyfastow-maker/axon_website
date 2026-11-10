@@ -7,17 +7,17 @@ const { lang, items } = Astro.props;
 const p = (path: string) => (lang === 'en' ? path : `/${lang}${path}`);
 const T = {
   en: {
-    done: ['No time to do it yourself?', 'We and AI do it for you on one platform: website, AI chat, CRM, posts. First month free, then from $39 a month.', 'Start free'],
+    done: ['No time to do it yourself?', 'We and AI do it for you on one platform: website, AI chat, CRM, posts. Free to start, plans from $39 a month.', 'Start free'],
     partner: ['Know a business that needs this?', 'Recommend Vaxo and earn 50% of the first payment + 30% of every later payment, for life.', 'Become a partner'],
     tools: ['Not sure where to start?', 'Count how much missed messages cost you — free, in one minute.', 'Open free tools'],
   },
   ru: {
-    done: ['Нет времени делать самому?', 'Сделаем за вас мы и ИИ на одной платформе: сайт, ИИ-чат, CRM, посты. Первый месяц бесплатно, дальше от $39 в месяц.', 'Начать бесплатно'],
+    done: ['Нет времени делать самому?', 'Сделаем за вас мы и ИИ на одной платформе: сайт, ИИ-чат, CRM, посты. Начать бесплатно, тарифы от $39 в месяц.', 'Начать бесплатно'],
     partner: ['Знаете бизнес, которому это нужно?', 'Рекомендуйте Vaxo и получайте 50% первой оплаты + 30% с каждой следующей, пожизненно.', 'Стать партнёром'],
     tools: ['Не знаете, с чего начать?', 'Посчитайте, сколько теряете на неотвеченных сообщениях — бесплатно, за минуту.', 'Бесплатные инструменты'],
   },
   ua: {
-    done: ['Немає часу робити самому?', 'Зробимо за вас ми і ШІ на одній платформі: сайт, ШІ-чат, CRM, пости. Перший місяць безкоштовно, далі від $39 на місяць.', 'Почати безкоштовно'],
+    done: ['Немає часу робити самому?', 'Зробимо за вас ми і ШІ на одній платформі: сайт, ШІ-чат, CRM, пости. Почати безкоштовно, тарифи від $39 на місяць.', 'Почати безкоштовно'],
     partner: ['Знаєте бізнес, якому це потрібно?', 'Рекомендуйте Vaxo і отримуйте 50% першої оплати + 30% з кожної наступної, довічно.', 'Стати партнером'],
     tools: ['Не знаєте, з чого почати?', 'Порахуйте, скільки втрачаєте на повідомленнях без відповіді — безкоштовно, за хвилину.', 'Безкоштовні інструменти'],
   },

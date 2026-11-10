@@ -504,7 +504,7 @@ const en = {
   "faq": [
     {
       "q": "How much does it cost?",
-      "a": "Just a monthly plan: Care $39, Growth $129 or Pro $299 — the first month is free. Your website, chat, CRM and the work itself are included, with no separate creation fee. Only fully custom projects (your own app or system) cost extra, and you see the price before we start."
+      "a": "Just a monthly plan: Pro $39, Max $129 or Ultra $299 — and a free plan to start. Your website, chat, CRM and the work itself are included, with no separate creation fee. Only fully custom projects (your own app or system) cost extra, and you see the price before we start."
     },
     {
       "q": "What do I actually get?",

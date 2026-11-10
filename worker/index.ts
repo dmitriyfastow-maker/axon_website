@@ -15,6 +15,7 @@ import { aiFollowups, aiReply, decideOffer, learnFromChats, rescueUnanswered } f
 import { configureTelegram, ensureWebhook, handleTelegram } from './telegram.js';
 import { handleCollab } from './collab.js';
 import { configureRouter } from './router.js';
+import { autopaySweep, autopayToggle } from './autopay.js';
 import { open as openSealed } from './sitepay.js';
 // The Claude key: a Worker secret, or the one the FOP holder pasted in /fin/ (stored encrypted), read once per isolate.
 let pastedKey: string | null | undefined;
@@ -194,9 +195,10 @@ export default {
     if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify, env.AI) : json(503, { ok: false });
     const invm = url.pathname.match(/^\/api\/invoice\/([a-f0-9]{32})$/);
     if (invm) return env.LEADS ? handleInvoicePublic(env.LEADS, invm[1], !!env.MONO_ACQ_TOKEN) : json(503, { ok: false });
-    const invp = url.pathname.match(/^\/api\/invoice\/([a-f0-9]{32})\/(pay|check)$/);
+    const invp = url.pathname.match(/^\/api\/invoice\/([a-f0-9]{32})\/(pay|check|autopay)$/);
     if (invp && env.LEADS) {
-      if (invp[2] === 'pay' && request.method === 'POST') return monoPay(env.LEADS, env.MONO_ACQ_TOKEN, invp[1], url.origin);
+      if (invp[2] === 'pay' && request.method === 'POST') { const pb = (await request.clone().json().catch(() => ({}))) as { auto?: boolean }; return monoPay(env.LEADS, env.MONO_ACQ_TOKEN, invp[1], url.origin, {}, pb.auto === true); }
+      if (invp[2] === 'autopay') return autopayToggle(env.LEADS, request, invp[1], notify);
       if (invp[2] === 'check') return monoCheck(env.LEADS, env.MONO_ACQ_TOKEN, env.AI, notify, invp[1], request.url);
     }
     if (url.pathname === '/api/shop/buy') return env.LEADS ? handleShopBuy(env.LEADS, request, env.MONO_ACQ_TOKEN, notify, url.origin) : json(503, { ok: false });
@@ -252,9 +254,10 @@ export default {
               .bind(l.mode, l.name, l.contact, l.interest, l.message, l.lang, l.ref ?? null, country, page, roomToken, l.promo ?? null)
               .run()) as { meta?: { last_row_id?: number } };
             const id = res?.meta?.last_row_id;
-            // A plan button on the site writes "[PLAN care] ...": remember the chosen plan (the free first month starts).
-            const pm = /^\[PLAN (personal|care|growth|pro)\]/.exec(l.message || '');
+            // A plan button on the site writes "[PLAN care 6] ...": the chosen plan and period (1, 3, 6 or 12 months); the invoice goes out at once.
+            const pm = /^\[PLAN (personal|care|growth|pro)(?: (1|3|6|12))?\]/.exec(l.message || '');
             if (id && pm) await db.prepare('UPDATE leads SET plan = ? WHERE id = ?').bind(pm[1], id).run().catch(() => {});
+            if (id && pm?.[2] && pm[2] !== '1') await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(`period_${id}`, pm[2]).run().catch(() => {});
             // Lifetime partner attribution by e-mail: a returning buyer keeps the partner they first came by.
             if (id) {
               const lr = await buyerRef(db, l.contact, l.ref ?? null);
@@ -327,7 +330,7 @@ export default {
       }).catch(() => {});
     };
     // The autopilot's hourly round: deadlines, AI grading, quality control, client summaries, the morning digest.
-    for (const job of [() => checkDomains(env.LEADS!, { token: env.CF_SAAS_TOKEN }, notify), () => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => labSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => matureReferrals(env.LEADS!, notify), () => rescueUnanswered(env.LEADS!, env.AI, notify), () => monthlyBilling(env.LEADS!, notify), () => morningBookings(env.LEADS!, sendMail), () => pruneBots(env.LEADS!)]) {
+    for (const job of [() => checkDomains(env.LEADS!, { token: env.CF_SAAS_TOKEN }, notify), () => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => labSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => matureReferrals(env.LEADS!, notify), () => rescueUnanswered(env.LEADS!, env.AI, notify), () => monthlyBilling(env.LEADS!, notify), () => autopaySweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => morningBookings(env.LEADS!, sendMail), () => pruneBots(env.LEADS!)]) {
       await job().catch((e) => console.error('[cron]', e));
     }
   },  // Letters to hello@vaxogroup.com (Cloudflare Email Routing → this worker) go into the client's project chat.
