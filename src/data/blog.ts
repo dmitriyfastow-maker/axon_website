@@ -14,6 +14,45 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'online-booking-no-shows',
+    date: '2026-11-10',
+    t: {
+      en: {
+        title: 'Online booking for your business: fewer missed calls and no-shows',
+        desc: 'How online booking works, why clients prefer it, how reminders cut no-shows, and what to set up first.',
+        body: [
+          ['Why clients want to book online', ['Many people decide in the evening or between tasks, when you cannot pick up the phone. If the only way to book is a call or a DM, some of them simply go to whoever lets them pick a time in one tap.']],
+          ['What a good booking page has', ['Your services with prices and duration, real free slots, a short form (name, phone, time) and a clear confirmation. Nothing more: every extra field loses people.']],
+          ['How to cut no-shows', ['Most no-shows are simply forgotten visits. Two things help: let the client add the visit to their own calendar right after booking, and send a short reminder the day before — in the messenger they actually use (WhatsApp, Viber or SMS).']],
+          ['Keep your own day in order', ['Bookings should land in your calendar automatically, not in a notebook. A short morning summary — how many visits today and at what time — saves you from double bookings and surprises.']],
+          ['What it costs at Vaxo', ['Online booking is part of the Vaxo platform from $39 a month (first month free): a booking page on your site, calendar links for clients, reminder buttons, your bookings in Google or iPhone calendar and a morning email. Describe your business in Workspace and Vax sets it up with you.']],
+        ],
+      },
+      ru: {
+        title: 'Онлайн-запись для бизнеса: меньше пропущенных звонков и неявок',
+        desc: 'Как работает онлайн-запись, почему клиенты её любят, как напоминания снижают неявки и что настроить первым.',
+        body: [
+          ['Почему клиенты хотят записываться сами', ['Многие решают вечером или между делами, когда вы не можете взять трубку. Если записаться можно только звонком или в директ, часть людей просто уходит к тем, у кого время выбирается в одно касание.']],
+          ['Что должно быть на странице записи', ['Услуги с ценой и длительностью, реальные свободные окна, короткая форма (имя, телефон, время) и понятное подтверждение. Больше ничего: каждое лишнее поле теряет людей.']],
+          ['Как снизить неявки', ['Чаще всего клиент не пришёл, потому что просто забыл. Помогают две вещи: дать ему сразу после записи добавить визит в свой календарь и накануне отправить короткое напоминание — в том мессенджере, которым он правда пользуется (WhatsApp, Viber или SMS).']],
+          ['Порядок в вашем дне', ['Записи должны сами попадать в ваш календарь, а не в блокнот. Короткая сводка утром — сколько визитов сегодня и во сколько — спасает от двойных записей и сюрпризов.']],
+          ['Сколько стоит в Vaxo', ['Онлайн-запись входит в платформу Vaxo от $39 в месяц (первый месяц бесплатно): страница записи на вашем сайте, ссылка «в календарь» для клиента, кнопки напоминаний, ваши записи в Google или iPhone календаре и письмо по утрам. Опишите свой бизнес в Workspace — Vax настроит всё вместе с вами.']],
+        ],
+      },
+      ua: {
+        title: 'Онлайн-запис для бізнесу: менше пропущених дзвінків і неявок',
+        desc: 'Як працює онлайн-запис, чому клієнти його люблять, як нагадування зменшують неявки і що налаштувати першим.',
+        body: [
+          ['Чому клієнти хочуть записуватися самі', ['Багато хто вирішує ввечері або між справами, коли ви не можете взяти слухавку. Якщо записатися можна лише дзвінком чи в директ, частина людей просто йде до тих, у кого час обирається одним дотиком.']],
+          ['Що має бути на сторінці запису', ['Послуги з ціною і тривалістю, реальні вільні вікна, коротка форма (імʼя, телефон, час) і зрозуміле підтвердження. Більше нічого: кожне зайве поле втрачає людей.']],
+          ['Як зменшити неявки', ['Найчастіше клієнт не прийшов, бо просто забув. Допомагають дві речі: дати йому одразу після запису додати візит у свій календар і напередодні надіслати коротке нагадування — у тому месенджері, яким він справді користується (WhatsApp, Viber або SMS).']],
+          ['Порядок у вашому дні', ['Записи мають самі потрапляти у ваш календар, а не в блокнот. Коротке зведення зранку — скільки візитів сьогодні й о котрій — рятує від подвійних записів і сюрпризів.']],
+          ['Скільки коштує у Vaxo', ['Онлайн-запис входить у платформу Vaxo від $39 на місяць (перший місяць безкоштовно): сторінка запису на вашому сайті, посилання «в календар» для клієнта, кнопки нагадувань, ваші записи в Google або iPhone календарі й лист щоранку. Опишіть свій бізнес у Workspace — Vax налаштує все разом з вами.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'website-cost-2026',
     date: '2026-10-20',
     t: {
