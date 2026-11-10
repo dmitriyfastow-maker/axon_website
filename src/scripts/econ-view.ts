@@ -122,7 +122,7 @@ export function renderEcon(box: HTMLElement, d: R, api: Api, reload: () => void)
     el('b', {}, 'Новых клиентов в месяц и откуда они'),
     el('div', { class: 'ec-grid' }, fin('n_personal', 3, 'Plus'), fin('n_care', 5, 'Pro'), fin('n_growth', 3, 'Max'), fin('n_pro', 1, 'Ultra'),
       fin('viaPartner', 50, '% через партнёров'), fin('viaClient', 15, '% по приглашению клиентов'), fin('churn', d.churn ?? st.churn ?? 5, 'Отток, %/мес', '0.5'), fin('growth', 0, 'Рост новых, %/мес', '1')),
-    el('small', { class: 'mut' }, `Остальные — пришли сами (1 месяц бесплатно). Через партнёра и клиента — ${d.friendMonths || 2} месяца бесплатно. У партнёров считаем наставника (10%) всегда — худший случай.`)) as HTMLFormElement;
+    el('small', { class: 'mut' }, `Остальные — пришли сами и платят с первого дня (пробного месяца нет). Через партнёра и клиента — ${d.friendMonths || 2} месяца бесплатно. У партнёров считаем наставника (10%) всегда — худший случай.`)) as HTMLFormElement;
   const out = el('div', {});
   const calc = () => {
     const v = Object.fromEntries(new FormData(fc)) as R;
@@ -139,7 +139,7 @@ export function renderEcon(box: HTMLElement, d: R, api: Api, reload: () => void)
 function forecastView(d: R, st: R, v: R): Node {
   const prices: R = d.prices || { personal: 19, care: 39, growth: 129, pro: 299 };
   const rates: R = d.rates || { agencyOwn: 50, agencyRenewal: 30, team: 10 };
-  const free = { own: 1, ref: d.friendMonths || 2 };
+  const free = { own: 0, ref: d.friendMonths || 2 }; // Decision 50: direct clients pay from day one
   const pP = Math.min(100, Number(v.viaPartner) || 0) / 100, pC = Math.min(1 - pP, (Number(v.viaClient) || 0) / 100), pO = Math.max(0, 1 - pP - pC);
   const churn = Math.min(100, Number(v.churn) || 0) / 100, grow = (Number(v.growth) || 0) / 100;
   const fee = (Number(st.fee) || 0) / 100;

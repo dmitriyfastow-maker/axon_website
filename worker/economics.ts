@@ -5,6 +5,7 @@ import type { DB } from './partner.js';
 import { RATES } from '../src/data/partners.js';
 import { PLAN_PRICES, planOf, referralAdmin, CLIENT_REF } from './referrals.js';
 import { freeDaysSince } from './billing.js';
+import { FREE_CAP } from './router.js';
 
 export const PAID_PLANS = ['personal', 'care', 'growth', 'pro'] as const;
 export const ECON_DEFAULT = { cost: { personal: 4, care: 6, growth: 15, pro: 35 } as Record<string, number>, fee: 4, churn: 5 };
@@ -38,7 +39,7 @@ export function unitTable(st: { cost: Record<string, number>; fee: number }) {
     const price = PLAN_PRICES[p], cost = st.cost[p] ?? 0, fee = (price * st.fee) / 100;
     const first = (price * RATES.agencyOwn) / 100, later = (price * RATES.agencyRenewal) / 100, team = (price * RATES.team) / 100;
     const credit = price; // worst case: the inviter's free month is worth this plan
-    const freeCost = cost; // only the usual free first month costs us before payment; the gift month comes after money
+    const freeCost = cost; // the referral free month costs us only the AI cost; direct clients pay from day one (Decision 50)
     const r = (n: number) => Math.round(n * 100) / 100;
     return {
       plan: p, price, cost, fee: r(fee), partnerFirst: r(first), partnerLater: r(later), team: r(team), credit, freeCost: r(freeCost),
@@ -147,23 +148,22 @@ function buildAdvice(c: { st: { cost: Record<string, number>; fee: number }; uni
   const u = (p: string) => c.units.find((x) => x.plan === p)!;
   const personal = u('personal');
   out.push({
-    id: 'start-free', level: 'g', auto: true, title: 'Тариф «Старт» $0 — вход, а не убыток',
-    why: 'Бесплатный человек получает пользу, которая почти ничего не стоит нам: ответ Vax, план и цену задачи, один мини-результат (черновик поста, короткий разбор), библиотеку готовых запросов. Платит нам только маленький расход на ИИ (центы), а доверие и заявки приходят до оплаты.',
-    decision: 'Оставляем $0. Один мини-результат на человека, дальше — платный тариф. Бонусов за приглашения Старт не даёт, пока друг не заплатил.',
-    next: 'Следим за долей «Старт → платный». Если она ниже 3% — усиливаю мини-результат или сокращаю лимит.',
+    id: 'start-free', level: 'g', auto: true, title: 'Бесплатный тариф $0 — вход, а не убыток',
+    why: `После Решения 50 пробного месяца нет. Бесплатный тариф даёт все функции, но ИИ на нём — Claude Haiku под жёсткими потолками: $${FREE_CAP.user} на аккаунт, $${FREE_CAP.ip} на сеть, $${FREE_CAP.all} на всех бесплатных в месяц. Худший случай — $${FREE_CAP.all}/мес из выручки, не больше. На сайте пометка «Сделано на Vaxo» и noindex — бесплатный тариф ещё и реклама.`,
+    decision: 'Оставляем $0 со всеми функциями. Свой домен, без пометки и сильные модели — только на платном.',
+    next: `Следим за долей «Бесплатный → платный». Ниже 3% за месяц или общий потолок $${FREE_CAP.all} выбран раньше 20-го — усиливаю первый результат и снижаю потолок на аккаунт.`,
   });
-  const trialLoss = Math.round(personal.cost / 3 * 100) / 100;
   out.push({
-    id: 'personal-19', level: personal.marginPct >= 60 ? 'g' : 'y', auto: true, title: `Плюс $19: прибыльный только при лимите задач и пробном лимите (маржа ${personal.marginPct}%)`,
-    why: `ChatGPT и Claude стоят около $20 — по цене мы не дешевле, нас покупают за то, что мы делаем за человека. Цена $19, наш расход ~$${personal.cost} + комиссия ~$${personal.fee} = остаётся $${personal.margin}. Через партнёра 1-й платный месяц почти в ноль ($${personal.m1Partner}), со 2-го $${personal.m2Partner}. Пробный месяц — наш убыток: по лимиту в треть задач он стоит не больше ~$${trialLoss}, окупается при конверсии пробы в оплату от ~${Math.max(1, Math.round((trialLoss / Math.max(personal.margin, 1)) * 100))}% на месяц оплаты. Это расчёт, фактов пока нет.`,
-    decision: 'Оставляем при трёх условиях: лимит задач в месяц, пробный месяц = треть лимита, одна проба на человека/компанию/сайт/телефон.',
-    next: 'После первых 10 платящих сверяю реальный расход. Конверсия пробы ниже 3% или расход выше $8 — убираю пробный месяц у Личного (останется бесплатный «Старт») или поднимаю цену до $24.',
+    id: 'personal-19', level: personal.marginPct >= 60 ? 'g' : 'y', auto: true, title: `Плюс $19: прибыльный при лимите задач (маржа ${personal.marginPct}%)`,
+    why: `ChatGPT и Claude стоят около $20 — по цене мы не дешевле, нас покупают за то, что мы делаем за человека. Цена $19, наш расход ~$${personal.cost} + комиссия ~$${personal.fee} = остаётся $${personal.margin}. Платят с первого дня (пробного месяца нет). Через партнёра первый месяц бесплатный, 1-й платный почти в ноль ($${personal.m1Partner}), со 2-го $${personal.m2Partner}. При годовой оплате (−20%) остаётся ~$${Math.round((personal.price * 0.8 - personal.cost - personal.fee) * 100) / 100}/мес. Это расчёт, фактов пока нет.`,
+    decision: 'Оставляем при лимите задач в месяц и одном возврате 14 дней на человека.',
+    next: 'После первых 10 платящих сверяю реальный расход. Расход выше $8 — предлагаю поднять цену до $24 или урезать лимит (через hq.sh ask).',
   });
   out.push({
     id: 'fair-use', level: 'g', auto: true, title: 'Бесплатное с границей: халявщики не прожгут бюджет',
-    why: 'Каждое бесплатное имеет потолок: «Старт» — один мини-результат на человека; пробный месяц — треть лимита задач и один на человека/компанию/сайт/телефон; подарки за приглашения — только из пришедших денег, до 12 в год. Худший случай одной пробы: Личный ~$1.3, Про ~$2, Макс ~$5, Ультра ~$12.',
-    decision: 'Чат Vax объясняет эти границы дружелюбно и без исключений. Ваши личные деньги нигде не закладываются: расходы на ИИ идут из выручки.',
-    next: 'Если бесплатных проб на $20+ нет ни одной оплаты — ставлю подтверждение телефона перед пробой и сокращаю лимит.',
+    why: `Каждое бесплатное имеет потолок: бесплатный тариф — ИИ до $${FREE_CAP.user} на аккаунт и $${FREE_CAP.ip} на сеть; одноразовые почты закрыты при входе; возврат 14 дней — один раз на человека; первый месяц бесплатно — только по партнёрской ссылке; подарки за приглашения — только из пришедших денег, до 12 в год.`,
+    decision: 'Vax объясняет эти границы дружелюбно и без исключений. Ваши личные деньги нигде не закладываются: расходы на ИИ идут из выручки.',
+    next: 'Если общий потолок бесплатных выбирается каждый месяц без оплат — ставлю подтверждение телефона и снижаю потолок на аккаунт.',
   });
   const gift = c.refs.credited_usd || 0, pend = c.refs.pending_usd || 0;
   out.push({
