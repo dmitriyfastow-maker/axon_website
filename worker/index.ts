@@ -289,7 +289,10 @@ export default {
         return Response.redirect(url.origin + target + url.pathname + url.search, 302);
     }
     const page = await env.ASSETS.fetch(request);
-    if (page.status === 200 && env.LEADS && request.method === 'GET' && !/^\/(admin|room|partner|ua\/partner|ru\/partner|demo)\b/.test(url.pathname) && (url.pathname.endsWith('/') || !url.pathname.includes('.'))) {
+    // Only real page opens count: the service worker precaches /offline and browsers prefetch links (10.11: 7 fake "/offline" views in 3 days).
+    const mode = request.headers.get('Sec-Fetch-Mode');
+    const prefetch = /prefetch|prerender/i.test(request.headers.get('Sec-Purpose') || request.headers.get('Purpose') || '');
+    if (page.status === 200 && env.LEADS && request.method === 'GET' && (!mode || mode === 'navigate') && !prefetch && url.pathname !== '/offline' && !/^\/(admin|room|partner|ua\/partner|ru\/partner|demo)\b/.test(url.pathname) && (url.pathname.endsWith('/') || !url.pathname.includes('.'))) {
       waitUntil(trackView(env.LEADS, request, url).catch(() => {}));
     }
     return page;
