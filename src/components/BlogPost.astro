@@ -13,6 +13,7 @@ const pre = lang === 'en' ? '' : `/${lang}`;
 const alts = { en: `/blog/${post.slug}/`, ru: `/ru/blog/${post.slug}/`, ua: `/ua/blog/${post.slug}/` };
 const U = BLOG_UI[lang];
 const P = post.t[lang];
+const ask = `${pre}/app/#q=${encodeURIComponent(U.ask.replace('{t}', P.title))}`;
 const ld = { '@context': 'https://schema.org', '@type': 'Article', headline: P.title, description: P.desc, inLanguage: lang === 'ua' ? 'uk' : lang, datePublished: post.date, author: { '@type': 'Organization', name: 'Vaxo', url: 'https://vaxogroup.com/' }, publisher: { '@type': 'Organization', name: 'Vaxo' } };
 ---
 
@@ -26,7 +27,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'Article', headline: P.t
     {P.body.map(([h, ps]) => (
       <section><h2>{h}</h2>{ps.length > 2 ? <ul>{ps.map((x) => <li>{x}</li>)}</ul> : ps.map((x) => <p>{x}</p>)}</section>
     ))}
-    <div class="cta-box"><b>{U.ctaH}</b><p>{U.ctaP}</p><a class="cta" href={`${home}#contact`}>{U.cta}</a> <a class="ghost" href={`${pre}/start/`}>{U.starter}</a></div>
+    <div class="cta-box"><b>{U.ctaH}</b><p>{U.ctaP}</p><a class="cta" href={ask}>{U.cta}</a> <a class="ghost" href={`${pre}/start/`}>{U.starter}</a></div>
   </main>
   <Footer t={t} home={home} lang={lang} />
 </Base>

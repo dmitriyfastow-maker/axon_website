@@ -6,10 +6,10 @@ type Body = [string, string[]][];
 type Text = { title: string; desc: string; body: Body };
 export type Post = { slug: string; date: string; t: Record<Lang, Text> };
 
-export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; back: string; ctaH: string; ctaP: string; cta: string; starter: string }> = {
-  en: { h: 'Websites, AI and growth — explained simply', title: 'Vaxo Blog — websites, AI and growth, explained simply', desc: 'Plain answers about website prices, domains, AI chat assistants and growing a business online.', back: '← Blog', ctaH: 'Have a question about your project?', ctaP: 'Vax, our AI manager, answers in seconds. Or try the whole platform free for a month.', cta: 'Get a quote →', starter: 'Start free' },
-  ru: { h: 'Сайты, ИИ и рост бизнеса — простыми словами', title: 'Блог Vaxo — сайты, ИИ и рост бизнеса простыми словами', desc: 'Простые ответы о ценах на сайты, доменах, ИИ-чатах и росте бизнеса в интернете.', back: '← Блог', ctaH: 'Есть вопрос по вашему проекту?', ctaP: 'Vax, наш ИИ-менеджер, ответит за секунды. Или попробуйте всю платформу бесплатно месяц.', cta: 'Узнать цену →', starter: 'Начать бесплатно' },
-  ua: { h: 'Сайти, ШІ і зростання бізнесу — простими словами', title: 'Блог Vaxo — сайти, ШІ і зростання бізнесу простими словами', desc: 'Прості відповіді про ціни на сайти, домени, ШІ-чати і зростання бізнесу в інтернеті.', back: '← Блог', ctaH: 'Є питання щодо вашого проєкту?', ctaP: 'Vax, наш ШІ-менеджер, відповість за секунди. Або спробуйте всю платформу безкоштовно місяць.', cta: 'Дізнатися ціну →', starter: 'Почати безкоштовно' },
+export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; back: string; ctaH: string; ctaP: string; cta: string; starter: string; ask: string }> = {
+  en: { h: 'Websites, AI and growth — explained simply', title: 'Vaxo Blog — websites, AI and growth, explained simply', desc: 'Plain answers about website prices, domains, AI chat assistants and growing a business online.', back: '← Blog', ctaH: 'Have a question about your project?', ctaP: 'Describe it in Workspace — Vax answers in seconds and starts the work right there. The first month of the platform is free.', cta: 'Ask Vax →', starter: 'Start free', ask: 'I read your article “{t}”. Help me apply it to my case — ask me what you need to know.' },
+  ru: { h: 'Сайты, ИИ и рост бизнеса — простыми словами', title: 'Блог Vaxo — сайты, ИИ и рост бизнеса простыми словами', desc: 'Простые ответы о ценах на сайты, доменах, ИИ-чатах и росте бизнеса в интернете.', back: '← Блог', ctaH: 'Есть вопрос по вашему проекту?', ctaP: 'Опишите её в Workspace — Vax ответит за секунды и сразу начнёт работу. Первый месяц платформы бесплатно.', cta: 'Спросить Vax →', starter: 'Начать бесплатно', ask: 'Прочитал вашу статью «{t}». Помогите применить это к моей задаче — спросите, что нужно знать.' },
+  ua: { h: 'Сайти, ШІ і зростання бізнесу — простими словами', title: 'Блог Vaxo — сайти, ШІ і зростання бізнесу простими словами', desc: 'Прості відповіді про ціни на сайти, домени, ШІ-чати і зростання бізнесу в інтернеті.', back: '← Блог', ctaH: 'Є питання щодо вашого проєкту?', ctaP: 'Опишіть її у Workspace — Vax відповість за секунди й одразу почне роботу. Перший місяць платформи безкоштовно.', cta: 'Запитати Vax →', starter: 'Почати безкоштовно', ask: 'Прочитав вашу статтю «{t}». Допоможіть застосувати це до моєї задачі — запитайте, що треба знати.' },
 };
 
 export const POSTS: Post[] = [
@@ -65,7 +65,7 @@ export const POSTS: Post[] = [
           ['How to choose a name', ['Short, easy to say and spell, no hyphens if possible. Check that the same name is free on Instagram and TikTok. A local ending (.de, .co.uk, .com.ua) can help if you only sell in one country.']],
           ['Keep it in your name', ['Always register the domain on your own account and email. A studio should get access to set it up, not own it.']],
           ['How to give access safely', ['Most registrars let you invite a team member or change the DNS records yourself while we tell you exactly what to paste. You never need to send your password.']],
-          ['Not sure? Ask', ['If this is your first website, our AI manager Vax explains each step in your chat, or we buy and set up the domain for you in your name.']],
+          ['Not sure? Ask', ['If this is your first website, our AI manager Vax explains each step in your chat, or we set up the domain for you — registered in your name.']],
         ],
       },
       ru: {
@@ -99,35 +99,35 @@ export const POSTS: Post[] = [
     date: '2026-10-20',
     t: {
       en: {
-        title: 'AI chat assistant for a small business: what it does and what it costs',
+        title: 'AI chat assistant for your website: what it does and what it costs',
         desc: 'What a website AI chat can and cannot do, how it gets you more requests, and what it costs.',
         body: [
           ['What it does', ['An AI chat on your website answers common questions 24/7 — prices, hours, services, booking — and collects the name and contact of people who are ready to buy. It replies in seconds, in the visitor’s language.']],
           ['Why it brings more clients', ['Visitors often leave when they cannot get a quick answer, especially at night or on weekends. A chat that answers at once and asks for a contact turns some of them into requests you can call back.']],
           ['What it should not do', ['Promise prices or results you do not offer, ask for card details, or pretend to be a human. A good assistant says it is an AI and hands over to you when the question is complex.']],
-          ['What it costs', ['At Vaxo an AI chat for your website is included in every plan from $39 a month (first month free), trained on your services, prices and FAQ, with new requests sent to your email or Telegram. Try ours — Vax, the raccoon on our site — before you decide.']],
+          ['What it costs', ['At Vaxo an AI chat for your website is included in every plan from $39 a month (first month free), trained on your services, prices and FAQ, with new requests sent to your email or Telegram. Try ours first — Vax in our Workspace — before you decide.']],
           ['How to get the most from it', ['Give it your real prices and answers to the 20 questions customers ask most. Read the conversations once a week and add what it did not know.']],
         ],
       },
       ru: {
-        title: 'ИИ-чат для малого бизнеса: что умеет и сколько стоит',
+        title: 'ИИ-чат для сайта: что умеет и сколько стоит',
         desc: 'Что может и чего не может ИИ-чат на сайте, как он приносит больше заявок и сколько стоит.',
         body: [
           ['Что он делает', ['ИИ-чат на сайте отвечает на частые вопросы 24/7 — цены, часы работы, услуги, запись — и собирает имя и контакт тех, кто готов купить. Отвечает за секунды и на языке посетителя.']],
           ['Почему это приносит клиентов', ['Посетители часто уходят, если не получили быстрый ответ, особенно ночью и в выходные. Чат, который отвечает сразу и просит контакт, превращает часть из них в заявки, которым можно перезвонить.']],
           ['Чего он делать не должен', ['Обещать цены или результаты, которых нет, просить данные карты или притворяться человеком. Хороший ассистент честно говорит, что он ИИ, и передаёт сложный вопрос вам.']],
-          ['Сколько стоит', ['В Vaxo ИИ-чат для вашего сайта входит в любой тариф от $39 в месяц (первый месяц бесплатно): обучен на ваших услугах, ценах и частых вопросах, новые заявки приходят на почту или в Telegram. Попробуйте нашего — енот Vax на сайте — прежде чем решать.']],
+          ['Сколько стоит', ['В Vaxo ИИ-чат для вашего сайта входит в любой тариф от $39 в месяц (первый месяц бесплатно): обучен на ваших услугах, ценах и частых вопросах, новые заявки приходят на почту или в Telegram. Сначала попробуйте нашего — Vax в Workspace, — потом решайте.']],
           ['Как получить максимум', ['Дайте ему реальные цены и ответы на 20 самых частых вопросов. Раз в неделю читайте переписки и добавляйте то, чего он не знал.']],
         ],
       },
       ua: {
-        title: 'ШІ-чат для малого бізнесу: що вміє і скільки коштує',
+        title: 'ШІ-чат для сайту: що вміє і скільки коштує',
         desc: 'Що може і чого не може ШІ-чат на сайті, як він приносить більше заявок і скільки коштує.',
         body: [
           ['Що він робить', ['ШІ-чат на сайті відповідає на часті питання 24/7 — ціни, години роботи, послуги, запис — і збирає імʼя та контакт тих, хто готовий купити. Відповідає за секунди і мовою відвідувача.']],
           ['Чому це приносить клієнтів', ['Відвідувачі часто йдуть, якщо не отримали швидку відповідь, особливо вночі й у вихідні. Чат, що відповідає одразу й просить контакт, перетворює частину з них на заявки, яким можна передзвонити.']],
           ['Чого він робити не повинен', ['Обіцяти ціни чи результати, яких немає, просити дані картки або вдавати людину. Хороший асистент чесно каже, що він ШІ, і передає складне питання вам.']],
-          ['Скільки коштує', ['У Vaxo ШІ-чат для вашого сайту входить у будь-який тариф від $39 на місяць (перший місяць безкоштовно): навчений на ваших послугах, цінах і частих питаннях, нові заявки надходять на пошту або в Telegram. Спробуйте нашого — єнот Vax на сайті — перш ніж вирішувати.']],
+          ['Скільки коштує', ['У Vaxo ШІ-чат для вашого сайту входить у будь-який тариф від $39 на місяць (перший місяць безкоштовно): навчений на ваших послугах, цінах і частих питаннях, нові заявки надходять на пошту або в Telegram. Спершу спробуйте нашого — Vax у Workspace, — потім вирішуйте.']],
           ['Як отримати максимум', ['Дайте йому реальні ціни й відповіді на 20 найчастіших питань. Раз на тиждень читайте листування й додавайте те, чого він не знав.']],
         ],
       },
