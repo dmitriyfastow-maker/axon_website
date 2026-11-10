@@ -25,7 +25,12 @@ describe('sanitizeTool', () => {
   });
   it('strips markup and marker brackets from text', () => {
     const t = sanitizeTool({ kind: 'list', title: '<b>Plan]]', items: ['one<script>', 'two'] });
-    expect(JSON.stringify(t)).not.toMatch(/[<>]|\]\]"/);
+    expect(JSON.stringify(t)).not.toMatch(/<[a-z\/]|\]\]"/i);
+  });
+  it('keeps comparison signs in text', () => {
+    const t = sanitizeTool({ kind: 'list', title: 'Health check', items: ['LTV/CAC > 3 is healthy', 'churn < 5%'], note: 'CAC <= LTV / 3' });
+    expect(t && t.kind === 'list' && t.items).toEqual(['LTV/CAC > 3 is healthy', 'churn < 5%']);
+    expect(t?.note).toBe('CAC <= LTV / 3');
   });
   it('rejects unknown kinds and empty lists', () => {
     expect(sanitizeTool({ kind: 'html', title: 'x' })).toBeNull();

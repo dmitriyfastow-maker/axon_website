@@ -50,7 +50,9 @@ export function evalFormula(src: string, vars: Record<string, number>): number {
   } catch { return NaN; }
 }
 
-const txt = (v: unknown, max: number) => (typeof v === 'string' ? v.replace(/[\[\]<>]/g, '').trim().slice(0, max) : '');
+// Text only ever reaches the page through textContent (src/scripts/tool.ts), so comparison signs stay ("LTV/CAC > 3" must read right);
+// anything shaped like a tag still goes, and square brackets go: they are the chat's own markers.
+const txt = (v: unknown, max: number) => (typeof v === 'string' ? v.replace(/<\/?[a-z!][^>]*>?/gi, '').replace(/[\[\]]/g, '').replace(/\s+/g, ' ').trim().slice(0, max) : '');
 const num = (v: unknown) => { if (v === null || v === undefined || v === '') return null; const n = Number(v); return Number.isFinite(n) ? n : null; };
 
 /** Turns anything into a valid tool, or null. Every formula is test-run on the default values. */
