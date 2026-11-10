@@ -154,6 +154,7 @@ const ico = {
       <header class="top">
         <button class="ic only-m" type="button" data-menu aria-label={T.menu}>☰</button>
         <b class="ttl" data-title></b>
+        <button class="ic only-m nm" type="button" data-new-m aria-label={T.new} title={T.new}>+</button>
         <div class="modes" hidden style="display:none" role="group" aria-label={T.modeL} title={T.modeTip}>
           <span class="mlab">{T.modeL}:</span>
           <button type="button" data-mode="short" title={T.modeTip}>{T.short}</button>
@@ -1391,6 +1392,7 @@ const ico = {
 
   /* ---------- Wiring ---------- */
   $('[data-new]').onclick = () => { side(false); S.pendingProject = 0; fresh(); };
+  $('[data-new-m]').onclick = () => { S.pendingProject = 0; fresh(); };
   $('[data-newproj]').onclick = () => newProject();
   $('[data-map]').onclick = () => { side(false); openMap(); };
   $('[data-earn]').onclick = () => { side(false); partnerPanel(); };
@@ -1770,7 +1772,7 @@ const ico = {
   .wsp.cvfull, .wsp.cvfull.wide { grid-template-columns: var(--sw) 0 minmax(0, 1fr); }
   .wsp.cvfull .mid { display: none; }
   .wsp .dsteps { margin: 8px 0 10px; padding-left: 20px; display: grid; gap: 6px; color: var(--mut); font-size: 14px; line-height: 1.45; }
-  @media (max-width: 760px) { .wsp .tb span { display: none; } .wsp [data-cv-x] span { display: inline; } }
+  @media (max-width: 340px) { .wsp .tb span { display: none; } .wsp [data-cv-x] span { display: inline; } }
   .wsp .chips { display: flex; gap: 6px; flex-wrap: wrap; }
   .wsp .chip { border: 1px solid var(--line); background: none; color: var(--ink); border-radius: 999px; padding: 7px 12px; font: 600 13px inherit; font-family: inherit; cursor: pointer; }
   .wsp .chip.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
@@ -1822,7 +1824,9 @@ const ico = {
     .wsp .side { position: fixed; inset: 0 auto 0 0; width: min(300px, 86vw); z-index: 40; transform: translateX(-102%); transition: transform .2s; }
     .wsp .side.open { transform: none; }
     .wsp .veil:not([hidden]) { display: block; position: fixed; inset: 0; z-index: 35; background: rgba(0, 0, 0, .5); }
-    .wsp .ttl { display: none; }
+    .wsp .ttl { font-size: 15px; }
+    .wsp .ttl:empty::before { content: 'VAXO'; font-weight: 800; letter-spacing: .04em; }
+    .wsp .nm { font-size: 22px; line-height: 1; }
     .wsp .modes { margin-right: auto; }
     .wsp .modes button { padding: 6px 8px; font-size: 12.5px; }
     .wsp .in { margin: 0 10px max(10px, env(safe-area-inset-bottom)); }
