@@ -14,6 +14,57 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'seo-basics-get-found-on-google',
+    date: '2026-11-11',
+    t: {
+      en: {
+        title: 'SEO in plain words: 7 things that help Google find your site',
+        desc: 'What SEO is, what really matters for a small site and what you can do yourself this week — without jargon and without promises of “top 1 in a month”.',
+        body: [
+          ['What SEO is', ['SEO is everything that helps people find your site in Google when they search for what you sell. It is not a trick and not a one-time setting: Google shows pages that answer the question best and that people trust.']],
+          ['1. One page — one question', ['Each page should answer one search: “nail studio in Lviv”, “price of roof repair”, “dentist open on Sunday”. A page about everything ranks for nothing. Write the words your clients actually type, not internal terms.']],
+          ['2. A clear title and description', ['The page title and the short description are what people see in search results. Put the service and the city in the title, and one honest reason to click in the description. Keep the title under about 60 characters.']],
+          ['3. Speed and phones', ['Most searches come from phones. If a page loads slowly or the text is tiny, people leave and Google notices. Check your site free at pagespeed.web.dev — it shows what slows the page down.']],
+          ['4. Real text, written for people', ['Prices, how you work, answers to common questions, photos of real work. Pages with useful detail do better than pages with slogans. Copied text from other sites does not help.']],
+          ['5. Google Business Profile', ['For a local business this is often more important than the site itself: the map card with address, hours, photos and reviews. It is free. Fill it in fully and ask happy clients for reviews.']],
+          ['6. Search Console', ['The free Google Search Console shows which searches bring people and which pages Google sees. Add your site, send the sitemap and look once a week — that is enough to start.']],
+          ['7. Patience and honesty', ['A new site usually needs weeks or months to show up, and nobody can honestly guarantee first place. Be careful with anyone who does. Steady useful pages and real reviews win over time.']],
+          ['How Vaxo helps', ['Describe your business in Workspace and Vax writes the pages, titles and descriptions in your clients’ words, and you can ask it to check any page: “what should I improve for Google?”. You can start for free; paid plans start at $19 a month.']],
+        ],
+      },
+      ru: {
+        title: 'SEO простыми словами: 7 вещей, которые помогают Google найти ваш сайт',
+        desc: 'Что такое SEO, что на самом деле важно для небольшого сайта и что можно сделать самому уже на этой неделе — без терминов и без обещаний «топ-1 за месяц».',
+        body: [
+          ['Что такое SEO', ['SEO — это всё, что помогает людям найти ваш сайт в Google, когда они ищут то, что вы продаёте. Это не хитрость и не разовая настройка: Google показывает страницы, которые лучше всех отвечают на вопрос и которым доверяют люди.']],
+          ['1. Одна страница — один вопрос', ['Каждая страница должна отвечать на один запрос: «студия маникюра во Львове», «цена ремонта крыши», «стоматолог в воскресенье». Страница обо всём не находится ни по чему. Пишите словами, которые набирают клиенты, а не внутренними терминами.']],
+          ['2. Понятный заголовок и описание', ['Заголовок страницы и короткое описание — это то, что человек видит в результатах поиска. В заголовок — услугу и город, в описание — одну честную причину нажать. Заголовок лучше держать примерно до 60 символов.']],
+          ['3. Скорость и телефон', ['Большинство ищет с телефона. Если страница грузится долго или текст мелкий, люди уходят, и Google это замечает. Проверьте сайт бесплатно на pagespeed.web.dev — он покажет, что тормозит страницу.']],
+          ['4. Настоящий текст для людей', ['Цены, как вы работаете, ответы на частые вопросы, фото реальных работ. Страницы с полезными подробностями работают лучше страниц с лозунгами. Текст, скопированный с чужих сайтов, не помогает.']],
+          ['5. Профиль компании в Google', ['Для местного бизнеса это часто важнее самого сайта: карточка на карте с адресом, часами работы, фото и отзывами. Это бесплатно. Заполните её полностью и просите довольных клиентов оставить отзыв.']],
+          ['6. Search Console', ['Бесплатная Google Search Console показывает, по каким запросам приходят люди и какие страницы видит Google. Добавьте сайт, отправьте карту сайта и заглядывайте раз в неделю — для начала этого хватит.']],
+          ['7. Терпение и честность', ['Новому сайту обычно нужны недели или месяцы, чтобы появиться в поиске, и честно гарантировать первое место не может никто. Осторожнее с теми, кто гарантирует. Со временем выигрывают полезные страницы и настоящие отзывы.']],
+          ['Чем помогает Vaxo', ['Опишите свой бизнес в Workspace — Vax напишет страницы, заголовки и описания словами ваших клиентов, а любую страницу можно попросить проверить: «что улучшить для Google?». Начать можно бесплатно; платные тарифы — от $19 в месяц.']],
+        ],
+      },
+      ua: {
+        title: 'SEO простими словами: 7 речей, які допомагають Google знайти ваш сайт',
+        desc: 'Що таке SEO, що насправді важливо для невеликого сайту і що можна зробити самому вже цього тижня — без термінів і без обіцянок «топ-1 за місяць».',
+        body: [
+          ['Що таке SEO', ['SEO — це все, що допомагає людям знайти ваш сайт у Google, коли вони шукають те, що ви продаєте. Це не хитрість і не разове налаштування: Google показує сторінки, які найкраще відповідають на питання і яким довіряють люди.']],
+          ['1. Одна сторінка — одне питання', ['Кожна сторінка має відповідати на один запит: «студія манікюру у Львові», «ціна ремонту даху», «стоматолог у неділю». Сторінка про все не знаходиться ні за чим. Пишіть словами, які набирають клієнти, а не внутрішніми термінами.']],
+          ['2. Зрозумілий заголовок і опис', ['Заголовок сторінки й короткий опис — це те, що людина бачить у результатах пошуку. У заголовок — послугу й місто, в опис — одну чесну причину натиснути. Заголовок краще тримати приблизно до 60 символів.']],
+          ['3. Швидкість і телефон', ['Більшість шукає з телефона. Якщо сторінка вантажиться довго або текст дрібний, люди йдуть, і Google це помічає. Перевірте сайт безкоштовно на pagespeed.web.dev — він покаже, що гальмує сторінку.']],
+          ['4. Справжній текст для людей', ['Ціни, як ви працюєте, відповіді на часті питання, фото реальних робіт. Сторінки з корисними подробицями працюють краще за сторінки з гаслами. Текст, скопійований з чужих сайтів, не допомагає.']],
+          ['5. Профіль компанії в Google', ['Для місцевого бізнесу це часто важливіше за сам сайт: картка на карті з адресою, годинами роботи, фото й відгуками. Це безкоштовно. Заповніть її повністю і просіть задоволених клієнтів залишити відгук.']],
+          ['6. Search Console', ['Безкоштовна Google Search Console показує, за якими запитами приходять люди і які сторінки бачить Google. Додайте сайт, надішліть карту сайту й заглядайте раз на тиждень — для початку цього вистачить.']],
+          ['7. Терпіння і чесність', ['Новому сайту зазвичай потрібні тижні або місяці, щоб зʼявитися в пошуку, і чесно гарантувати перше місце не може ніхто. Обережніше з тими, хто гарантує. З часом виграють корисні сторінки і справжні відгуки.']],
+          ['Чим допомагає Vaxo', ['Опишіть свій бізнес у Workspace — Vax напише сторінки, заголовки й описи словами ваших клієнтів, а будь-яку сторінку можна попросити перевірити: «що покращити для Google?». Почати можна безкоштовно; платні тарифи — від $19 на місяць.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'ai-workspace-describe-get-result',
     date: '2026-11-10',
     t: {

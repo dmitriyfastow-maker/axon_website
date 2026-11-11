@@ -7,14 +7,6 @@ import type { DB } from './partner.js';
 import { RATES } from '../src/data/partners.js';
 import { firstReferral } from './referrals.js';
 
-/** Decision 50: a payment for 3, 6 or 12 months at once pays the first-sale rate on the first month only and the renewal
- *  rate on the rest, so a partner earns the same as when the client pays month by month, and Vaxo never pays 50% of a year. */
-export function firstShare(total: number, months: number, rate: number, kind: string): number {
-  if (months <= 1 || kind === 'team') return (total * rate) / 100;
-  const first = total / months;
-  return (first * rate) / 100 + ((total - first) * RATES.agencyRenewal) / 100;
-}
-
 export async function createPayouts(db: DB, leadId: number) {
   const l = await db
     .prepare(
@@ -55,7 +47,7 @@ export async function createPayouts(db: DB, leadId: number) {
          ON CONFLICT (lead_id, kind) DO UPDATE SET partner_id = excluded.partner_id, base_usd = excluded.base_usd, amount_usd = excluded.amount_usd
          WHERE payouts.status = 'due'`,
       )
-      .bind(pid, leadId, kind, rate, l.value_usd, Math.round(firstShare(l.value_usd, Number(l.period) || 1, rate, kind) * 100) / 100)
+      .bind(pid, leadId, kind, rate, l.value_usd, Math.round(l.value_usd * rate) / 100)
       .run();
   }
 }

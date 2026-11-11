@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { costUsd, EASY, FREE_CAP, isHard, monthPool, pickModel, pickTier, POOL_SHARE, TIERS } from '../../worker/router';
+import { costUsd, EASY, FREE_CAP, isHard, monthPool, pickModel, pickTier, taskLevel, POOL_SHARE, TIERS } from '../../worker/router';
 
 const POOL = 1000;
 const paid = (lead = 0, all = 0, pool = POOL) => ({ lead, all, pool });
@@ -46,14 +46,23 @@ describe('costUsd', () => {
 
 describe('pickModel', () => {
   const p = { lead: 0, all: 0, pool: 1000 };
-  it('auto: Sonnet for hard on Pro, Opus on Max and Ultra, Haiku for easy', () => {
-    expect(pickModel('care', false, true, 'auto', p, true)?.model).toBe('claude-sonnet-5-5');
-    expect(pickModel('growth', false, true, 'auto', p, true)?.model).toBe('claude-opus-5-5');
-    expect(pickModel('pro', false, false, 'auto', p, true)).toBe(EASY);
+  it('auto on every paid plan: Haiku for easy, Sonnet for ordinary work, Opus for hard', () => {
+    for (const plan of ['personal', 'care', 'growth', 'pro']) {
+      expect(pickModel(plan, false, 0, 'auto', p, true)).toBe(EASY);
+      expect(pickModel(plan, false, 1, 'auto', p, true)?.model).toBe('claude-sonnet-5-5');
+      expect(pickModel(plan, false, 2, 'auto', p, true)?.model).toBe('claude-opus-5-5');
+    }
   });
-  it('a paid client may choose; a free one gets Haiku whatever they pick', () => {
-    expect(pickModel('personal', false, false, 'max', p, true)?.model).toBe('claude-opus-5-5');
-    expect(pickModel('care', false, true, 'fast', p, true)).toBe(EASY);
-    expect(pickModel('start', false, true, 'max', { ...p, user: 0, ip: 0, free: 0 }, true)).toBe(EASY);
+  it('a paid client may choose an exact model; a free one gets Haiku whatever they pick', () => {
+    expect(pickModel('personal', false, 0, 'opus-5-5', p, true)?.model).toBe('claude-opus-5-5');
+    expect(pickModel('care', false, 2, 'haiku-5-5', p, true)).toBe(EASY);
+    expect(pickModel('care', false, 2, 'sonnet-5', p, true)?.model).toBe('claude-sonnet-5');
+    expect(pickModel('care', false, 2, 'max', p, true)?.model).toBe('claude-opus-5-5');
+    expect(pickModel('start', false, 2, 'opus-5-5', { ...p, user: 0, ip: 0, free: 0 }, true)).toBe(EASY);
+  });
+  it('sorts tasks into three levels', () => {
+    expect(taskLevel('Привет')).toBe(0);
+    expect(taskLevel('Напиши письмо арендодателю')).toBe(1);
+    expect(taskLevel('Сделай сайт для кофейни')).toBe(2);
   });
 });

@@ -30,6 +30,8 @@ const PRICE: Record<string, [number, number, number, number]> = {
   'claude-haiku-5-5': [0.1, 0.5, 0.01, 0.125],
   'claude-sonnet-5-5': [2, 10, 0.2, 2.5],
   'claude-opus-5-5': [4, 20, 0.2, 5],
+  'claude-sonnet-5': [2, 10, 0.2, 2.5],
+  'claude-opus-5': [5, 25, 0.5, 6.25],
 };
 
 export type Usage = { input_tokens?: number | null; output_tokens?: number | null; cache_read_input_tokens?: number | null; cache_creation_input_tokens?: number | null };
@@ -49,19 +51,30 @@ export function isHard(text: string, deep = false, files = false): boolean {
 }
 
 export type Spend = { lead: number; all: number; pool: number; user?: number; ip?: number; free?: number };
-export type Choice = 'auto' | 'fast' | 'strong' | 'max';
-const SONNET: Tier = { model: 'claude-sonnet-5-5', effort: 'high', price: 0 };
-const OPUS: Tier = { model: 'claude-opus-5-5', effort: 'high', price: 0 };
-/** Auto: easy → Haiku; hard → Sonnet on Plus and Pro, Opus on Max and Ultra. A paid client may pick any model; a pricier
- *  one simply uses the monthly budget faster (the budget is counted in what the AI really costs). */
-export function pickModel(plan: string, trial: boolean, hard: boolean, choice: Choice, s: Spend, hasKey: boolean): Tier | null {
-  const base = pickTier(plan, trial, hard, s, hasKey);
-  if (!base || base === EASY && (!TIERS[plan] || trial)) return base; // free: Haiku or the free models, no choice
-  if (choice === 'fast') return EASY;
-  if (choice === 'strong') return SONNET;
-  if (choice === 'max') return OPUS;
-  if (!hard) return EASY;
-  return plan === 'growth' || plan === 'pro' ? OPUS : SONNET;
+/** The models a paid client may pick by hand. New versions go on top; older ones move to "Other models" in the cabinet. */
+export const CATALOG: Record<string, Tier> = {
+  'opus-5-5': { model: 'claude-opus-5-5', effort: 'high', price: 0 },
+  'sonnet-5-5': { model: 'claude-sonnet-5-5', effort: 'high', price: 0 },
+  'haiku-5-5': EASY,
+  'opus-5': { model: 'claude-opus-5', effort: 'high', price: 0 },
+  'sonnet-5': { model: 'claude-sonnet-5', effort: 'high', price: 0 },
+};
+const LEGACY: Record<string, string> = { fast: 'haiku-5-5', strong: 'sonnet-5-5', max: 'opus-5-5' };
+const MID = /напиш|текст|пост|письм|лист|план|перевед|переклад|резюме|объясн|поясн|сравн|порівн|посчитай|порахуй|идеи|ідеї|write|draft|post|letter|email|plan|translate|explain|compare|calculate|ideas|summar/i;
+/** 0 = easy (a short question), 1 = ordinary work (a text, a plan), 2 = hard (a site, a strategy, a contract, ads, files). */
+export function taskLevel(text: string, deep = false, files = false): 0 | 1 | 2 {
+  if (isHard(text, deep, files)) return 2;
+  return text.length > 140 || MID.test(text) ? 1 : 0;
+}
+/** Auto on every paid plan: easy → Haiku 5.5, ordinary work → Sonnet 5.5, hard → Opus 5.5 (the plans differ by volume,
+ *  not by quality). A paid client may pick a model by hand; a pricier one simply uses the monthly budget faster. */
+export function pickModel(plan: string, trial: boolean, level: number, choice: string, s: Spend, hasKey: boolean): Tier | null {
+  const base = pickTier(plan, trial, level > 0, s, hasKey);
+  if (!base || !TIERS[plan] || trial) return base; // free: Haiku or the free models, no choice
+  if (base === EASY && level > 0) return EASY; // the month's pool is used up: keep answering on the fast model
+  const picked = CATALOG[LEGACY[choice] || choice];
+  if (picked) return picked;
+  return level >= 2 ? CATALOG['opus-5-5'] : level === 1 ? CATALOG['sonnet-5-5'] : EASY;
 }
 /** The whole decision, with no I/O: null means free Workers AI. */
 export function pickTier(plan: string, trial: boolean, hard: boolean, s: Spend, hasKey: boolean): Tier | null {
@@ -88,7 +101,7 @@ const ipLedger = (ipKey: string) => `freeip_${ipKey}_${month()}`;
 /** The ledger row a reply is charged to: the lead for paying clients, minus the client id for free accounts. */
 export type Route = { tier: Tier; ledger: number; ipKey?: string };
 
-export async function routeFor(db: DB, o: { leadId: number | null; clientId: number; plan: string; trial: boolean; hard: boolean; ipKey?: string; choice?: Choice }): Promise<Route | null> {
+export async function routeFor(db: DB, o: { leadId: number | null; clientId: number; plan: string; trial: boolean; hard?: boolean; level?: number; ipKey?: string; choice?: string }): Promise<Route | null> {
   if (!apiKey) return null;
   const m = month();
   const paid = !!TIERS[o.plan] && !o.trial && !!o.leadId;
@@ -104,7 +117,7 @@ export async function routeFor(db: DB, o: { leadId: number | null; clientId: num
     const ip = o.ipKey ? Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind(ipLedger(o.ipKey)).first<{ value: string }>().catch(() => null))?.value || 0) : 0;
     s = { lead: 0, all: 0, pool: 0, user: await one(ledger), ip, free: all.free };
   }
-  const tier = pickModel(o.plan, o.trial || !paid, o.hard, o.choice || 'auto', s, true);
+  const tier = pickModel(o.plan, o.trial || !paid, o.level ?? (o.hard ? 2 : 0), o.choice || 'auto', s, true);
   return tier ? { tier, ledger, ipKey: paid ? undefined : o.ipKey } : null;
 }
 

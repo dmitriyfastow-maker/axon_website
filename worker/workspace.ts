@@ -13,7 +13,7 @@ import { addRef, cleanSite, deployModule, liveSite, moduleAccess, modulesState, 
 import { handleDomain, type Cf } from './domains.js';
 import { agentStep } from './agent.js';
 import type { DB } from './partner.js';
-import { claudeReply, isHard, routeFor } from './router.js';
+import { claudeReply, routeFor, taskLevel } from './router.js';
 import { sanitizeTool, type ToolSpec } from './toolcore.js';
 import { md } from '../src/scripts/md.js';
 import { buildTool, pullChecklist, pullList, READY, tidyReply, WANTS_TOOL } from './tools.js';
@@ -284,8 +284,12 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   if (me) {
     // Signed in: Claude (Haiku for easy messages, the plan's strong model for hard ones); guests: the free models.
     const al = leadIds.length ? await allowance(db, leadIds).catch(() => null) : null;
-    const route = await routeFor(db, { leadId: leadIds[0] ?? null, clientId: me.id, plan: al?.plan ?? 'start', trial: !!al?.trial, hard: isHard(q, mode === 'deep', /📎/u.test(q)), ipKey: await ipKey(ip), choice: (['fast', 'strong', 'max'].includes(String(b.model)) ? String(b.model) : 'auto') as 'auto' }).catch(() => null);
-    if (route) { raw = await claudeReply(db, route, sys, turns, (c) => { usd = c; }); paid = !!raw && route.ledger > 0; }
+    const want = { leadId: leadIds[0] ?? null, clientId: me.id, plan: al?.plan ?? 'start', trial: !!al?.trial, level: taskLevel(q, mode === 'deep', /📎/u.test(q)), ipKey: await ipKey(ip) };
+    const route = await routeFor(db, { ...want, choice: cut(b.model, 20) || 'auto' }).catch(() => null);
+    if (route) raw = await claudeReply(db, route, sys, turns, (c) => { usd = c; });
+    // A hand-picked model that failed: answer on Auto rather than drop to the free models.
+    if (route && !raw && b.model && b.model !== 'auto') { const r2 = await routeFor(db, want).catch(() => null); if (r2) raw = await claudeReply(db, r2, sys, turns, (c) => { usd = c; }); }
+    paid = !!raw && !!route && route.ledger > 0;
   }
   raw ??= await freeReply(ai, [{ role: 'system', content: sys }, ...turns], mode);
   if (!raw) return out(502, { ok: false });
