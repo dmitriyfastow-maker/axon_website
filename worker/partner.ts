@@ -32,7 +32,7 @@ function randomId(len: number): string {
 
 const hex = (buf: ArrayBuffer | Uint8Array) => Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('');
 
-async function hashPassword(password: string, saltHex: string): Promise<string> {
+export async function hashPassword(password: string, saltHex: string): Promise<string> {
   const key = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
   const salt = new Uint8Array(saltHex.match(/../g)!.map((h) => parseInt(h, 16)));
   const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: PBKDF2_ITERATIONS }, key, 256);

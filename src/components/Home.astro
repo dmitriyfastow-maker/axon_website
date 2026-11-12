@@ -200,6 +200,8 @@ const ava = '/mascot/vax-talk.webp';
       <p class="lead">{T.sub}</p>
       <form class="ask" data-ask id="contact" data-ph={JSON.stringify(T.ph)}>
         <input name="q" type="text" maxlength="400" autocomplete="off" placeholder={T.ph[0]} aria-label={T.askL} />
+        <a class="aic" data-aclip href={P("/app/") + "#attach"} aria-label="📎" title="📎"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M21 11.5 12.5 20a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <button type="button" class="aic" data-amic aria-label="🎤"></button>
         <button type="submit">{T.go}</button>
       </form>
       <div class="chips">{T.chips.map(([label, ask]) => <button type="button" data-chip={ask}>{label}</button>)}</div>
@@ -273,6 +275,8 @@ const ava = '/mascot/vax-talk.webp';
       <h2>{T.endH}</h2>
       <form class="ask" data-ask2>
         <input name="q" type="text" maxlength="400" autocomplete="off" placeholder={T.askL} aria-label={T.askL} />
+        <a class="aic" data-aclip href={P("/app/") + "#attach"} aria-label="📎" title="📎"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M21 11.5 12.5 20a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <button type="button" class="aic" data-amic aria-label="🎤"></button>
         <button type="submit">{T.go}</button>
       </form>
     </div>
@@ -292,7 +296,11 @@ const ava = '/mascot/vax-talk.webp';
 </main>
 
 <script>
+  import { attachMic, MIC_SVG } from '../scripts/voice';
+  document.querySelectorAll<HTMLButtonElement>('[data-amic]').forEach((b) => { b.innerHTML = MIC_SVG; });
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // A mic in both inputs: speak the task (Web Speech, or a recording turned into text).
+  document.querySelectorAll<HTMLButtonElement>('[data-amic]').forEach((b) => { const f = b.closest('form')?.querySelector('input'); if (f) attachMic(b, f, () => document.documentElement.lang === 'uk' ? 'ua' : document.documentElement.lang); });
   const hq = document.querySelector<HTMLFormElement>('[data-ask]');
   const input = hq?.querySelector('input');
   const askVax = (q: string) => { const a = document.createElement('a'); a.href = '#'; a.setAttribute('data-vax-chat', ''); a.dataset.vaxAsk = q; a.dataset.vaxFull = '1'; a.hidden = true; document.body.appendChild(a); a.click(); a.remove(); };
@@ -621,4 +629,8 @@ const ava = '/mascot/vax-talk.webp';
   .per button[aria-selected='true'] { background: var(--tx); color: var(--s1); }
   .per button[aria-selected='true'] i { color: inherit; opacity: .8; }
   .plans.p5 .pt { color: var(--dm); font-size: 12.5px; min-height: 1.2em; margin-top: -6px; }
+  .ask .aic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 50%; background: none; color: var(--mut); cursor: pointer; padding: 0; }
+  .ask .aic:hover { color: var(--tx); background: color-mix(in srgb, var(--tx) 8%, transparent); }
+  .ask .aic.rec { color: #e5484d; }
+  .ask .aic svg { width: 20px; height: 20px; }
 </style>

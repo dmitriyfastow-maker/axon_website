@@ -20,7 +20,7 @@ async function sha(s: string) {
   return Array.from(new Uint8Array(h), (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function pbkdf2(password: string, saltHex: string): Promise<string> {
+export async function pbkdf2(password: string, saltHex: string): Promise<string> {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
   const salt = new Uint8Array(saltHex.match(/../g)!.map((h) => parseInt(h, 16)));
   const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: 100000 }, key, 256);
@@ -338,6 +338,14 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
   }
 
   // Task: fill in the business profile (+$5 once).
+  if (path === 'password' && request.method === 'POST') {
+    const pass = typeof b.password === 'string' ? b.password : '';
+    if (pass.length < 8 || pass.length > 200) return json(400, { ok: false, error: 'password' });
+    const salt = hex(16);
+    await db.prepare('UPDATE clients SET pass_hash = ?, pass_salt = ? WHERE id = ?').bind(await pbkdf2(pass, salt), salt, me.id).run();
+    return json(200, { ok: true });
+  }
+
   if (path === 'profile' && request.method === 'POST') {
     const profile = { business: str('business', 120), site: str('site', 200), niche: str('niche', 120), city: str('city', 120), goal: str('goal', 600) };
     const name = str('name', 80);

@@ -176,6 +176,11 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
     await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value').bind('factory_cmd', v).run();
     return json(200, { ok: true });
   }
+  // Test accounts for every role (Dmitry, 12.11): HQ opens any of them in one click, and each has a real password, so the
+  // owner can also sign in to them from any browser without the HQ. Stored only here, shown only in the HQ.
+  if (path === 'test-accounts' && request.method === 'GET') {
+    return json(200, { ok: true, list: await ensureTestAccounts(db) });
+  }
   // "Sign in as a client" for testing: a test client with a sample business, opened by a one-time 10-minute link.
   if (path === 'test-client' && request.method === 'POST') {
     const email = 'test-client@vaxogroup.com';
@@ -188,6 +193,15 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
       await db.prepare("INSERT INTO biz (owner_id, name, domain, key, about) VALUES (?, 'Тестовая пекарня', 'example.com', ?, 'Пекарня: торты на заказ от $40, круассаны, кофе. Работаем 8:00–20:00, доставка по городу.')").bind(c.id, key).run().catch(() => {});
     }
     const b = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const roleWanted = String(b.kind || 'client');
+    if (['free', 'ultra', 'manager', 'viewer'].includes(roleWanted)) {
+      await ensureTestAccounts(db);
+      const t = TEST_ROLES.find((x) => x.role === roleWanted)!;
+      const cid = (await db.prepare('SELECT id FROM clients WHERE email = ?').bind(t.email).first<{ id: number }>())!.id;
+      const k2 = rnd(16);
+      await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)').bind('test_login_' + k2, JSON.stringify({ kind: 'client', id: cid, exp: Date.now() + 10 * 60e3, lang: ['ru', 'ua', 'en'].includes(String(b.lang)) ? b.lang : 'ru' })).run();
+      return json(200, { ok: true, url: `/api/me/as?k=${k2}` });
+    }
     const kind = b.kind === 'partner' ? 'partner' : 'client';
     const hasLead = await db.prepare('SELECT id FROM leads WHERE client_id = ?').bind(c.id).first();
     if (!hasLead) {
@@ -308,4 +322,55 @@ export async function handleFactorySync(db: DB, request: Request): Promise<Respo
     await put('factory_cmd', JSON.stringify(cmd));
   }
   return json(200, { ok: true, cmd });
+}
+
+const TEST_ROLES: { role: string; email: string; name: string; plan: string | null; kind: 'client' | 'partner' }[] = [
+  { role: 'free', email: 'test-free@vaxogroup.com', name: 'Тест: бесплатный', plan: null, kind: 'client' },
+  { role: 'client', email: 'test-client@vaxogroup.com', name: 'Тестовый клиент', plan: 'care', kind: 'client' },
+  { role: 'ultra', email: 'test-ultra@vaxogroup.com', name: 'Тест: Ультра', plan: 'pro', kind: 'client' },
+  { role: 'manager', email: 'test-manager@vaxogroup.com', name: 'Тест: менеджер', plan: null, kind: 'client' },
+  { role: 'viewer', email: 'test-viewer@vaxogroup.com', name: 'Тест: наблюдатель', plan: null, kind: 'client' },
+  { role: 'partner', email: 'test-partner@vaxogroup.com', name: 'Тестовый партнёр', plan: null, kind: 'partner' },
+];
+const rnd = (n: number) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (x) => x.toString(16).padStart(2, '0')).join('');
+const pass = () => 'Vx-' + Array.from(crypto.getRandomValues(new Uint8Array(10)), (b) => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('');
+
+/** Creates (once) a test account per role with a sample business, a paid plan where the role needs one, team seats for the
+ *  manager and the viewer, and a real password. Returns the logins for the HQ. */
+export async function ensureTestAccounts(db: DB) {
+  const saved = (await db.prepare("SELECT value FROM settings WHERE key = 'test_accounts'").first<{ value: string }>().catch(() => null))?.value;
+  const creds: Record<string, string> = saved ? JSON.parse(saved) : {};
+  const { pbkdf2 } = await import('./cabinet.js');
+  const { hashPassword } = await import('./partner.js');
+  let ownerBiz: number | null = null;
+  for (const t of TEST_ROLES) {
+    const pw = creds[t.email] || pass();
+    const salt = rnd(16);
+    if (t.kind === 'partner') {
+      await db.prepare("INSERT OR IGNORE INTO partners (email, name, pass_hash, salt, code) VALUES (?, ?, 'none', 'none', 'TESTPARTNER')").bind(t.email, t.name).run();
+      if (!creds[t.email]) await db.prepare('UPDATE partners SET pass_hash = ?, salt = ? WHERE email = ?').bind(await hashPassword(pw, salt), salt, t.email).run();
+    } else {
+      await db.prepare("INSERT OR IGNORE INTO clients (email, name, lang, consent_at, email_verified_at) VALUES (?, ?, 'ru', datetime('now'), datetime('now'))").bind(t.email, t.name).run();
+      const c = (await db.prepare('SELECT id FROM clients WHERE email = ?').bind(t.email).first<{ id: number }>())!;
+      if (!creds[t.email]) await db.prepare('UPDATE clients SET pass_hash = ?, pass_salt = ? WHERE id = ?').bind(await pbkdf2(pw, salt), salt, c.id).run();
+      if (t.plan) {
+        let lead = await db.prepare('SELECT id FROM leads WHERE client_id = ? ORDER BY id LIMIT 1').bind(c.id).first<{ id: number }>();
+        if (!lead) {
+          await db.prepare(`INSERT INTO leads (mode, name, contact, interest, message, lang, page, room, status, client_id, plan) VALUES ('request', ?, ?, 'any', 'Test account', 'ru', 'test', ?, 'won', ?, ?)`).bind(t.name, t.email, rnd(12), c.id, t.plan).run();
+          lead = await db.prepare('SELECT id FROM leads WHERE client_id = ? ORDER BY id LIMIT 1').bind(c.id).first<{ id: number }>();
+        }
+        await db.prepare("UPDATE leads SET plan = ?, page = 'test' WHERE id = ?").bind(t.plan, lead!.id).run();
+        const paid = await db.prepare("SELECT 1 FROM invoices WHERE lead_id = ? AND status = 'paid' AND description LIKE 'Vaxo %subscription%'").bind(lead!.id).first();
+        if (!paid) await db.prepare(`INSERT INTO invoices (number, token, lead_id, buyer, currency, amount, description, part, lang, due, status) VALUES (?, ?, ?, ?, 'USD', 0, 'Vaxo test subscription (no money)', 'other', 'ru', date('now'), 'paid')`).bind(`TEST-${c.id}-${rnd(3)}`, rnd(16), lead!.id, t.name).run();
+      }
+      if (t.role === 'client') ownerBiz = (await db.prepare('SELECT id FROM biz WHERE owner_id = ? ORDER BY id LIMIT 1').bind(c.id).first<{ id: number }>().catch(() => null))?.id ?? null;
+    }
+    creds[t.email] = pw;
+  }
+  // The manager and the viewer work in the test client's business.
+  if (ownerBiz) for (const [email, role] of [['test-manager@vaxogroup.com', 'manager'], ['test-viewer@vaxogroup.com', 'viewer']]) {
+    await db.prepare('INSERT OR IGNORE INTO biz_members (biz_id, email, role) VALUES (?, ?, ?)').bind(ownerBiz, email, role).run().catch(() => {});
+  }
+  await db.prepare("INSERT INTO settings (key, value) VALUES ('test_accounts', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(JSON.stringify(creds)).run();
+  return TEST_ROLES.map((t) => ({ role: t.role, name: t.name, email: t.email, password: creds[t.email], login: t.kind === 'partner' ? '/ru/partner/' : '/ru/app/' }));
 }

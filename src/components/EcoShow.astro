@@ -18,15 +18,15 @@ const TX = {
     parts: ['Сайт с фото', 'Онлайн-запись', 'Заявки в CRM', 'ИИ-консультант', 'Партнёры'],
     go: 'Собрать своё за минуту', all: 'Все работы',
     tabs: [
+      ['life', 'Личные задачи и файлы', 'Разобрать договор, спланировать отпуск, посчитать бюджет, написать письмо. Файлы и фото Vax читает сам.', 'Разбери мой документ и скажи, на что обратить внимание'],
       ['site', 'Сайт уровня студии', 'Дизайн под нишу, фото, тексты и SEO. Правите прямо на странице.', 'Собери сайт для моего бизнеса'],
       ['book', 'Онлайн-запись', 'Клиент сам видит свободные окна и записывается. Без звонков и переносов.', 'Собери сайт с онлайн-записью для барбершопа'],
       ['crm', 'Заявки и CRM', 'Каждая заявка и запись — сразу в доске и на почте. Приглашайте сотрудников с нужными правами.', 'Подключи CRM для заявок с сайта'],
       ['bot', 'ИИ-консультант 24/7', 'Отвечает посетителям по вашим ценам и правилам. Оставленный контакт — уже заявка.', 'Настрой ИИ-консультанта на моём сайте'],
       ['par', 'Партнёрская программа', 'Личная ссылка каждому партнёру. Переходы и заявки считаются сами.', 'Сделай партнёрскую программу для моего бизнеса'],
       ['vid', 'Контент и ролики', 'Контент-план, посты и сценарии — сразу. Монтаж и ИИ-ролики из ваших материалов Vax делает в фоне, результат приходит в чат.', 'Сделай контент-план и сценарии роликов на месяц для моего бизнеса'],
-      ['auto', 'Автоматизация процессов', 'Расчёты, таблицы и планы — за минуту. Связки сервисов и рутину Vax собирает под ваш процесс.', 'Помоги автоматизировать работу с клиентами в моём бизнесе'],
+      ['auto', 'Автоматизация рутины', 'Vax связывает сайт, CRM, мессенджеры и напоминания, и рутина делается сама — без вас и без ошибок.', 'Помоги автоматизировать работу с клиентами в моём бизнесе'],
       ['app', 'Приложение для клиентов', 'Своё приложение на телефоне клиента: запись, бонусы, напоминания.', 'Сделай приложение для клиентов моего бизнеса'],
-      ['life', 'Личные задачи и файлы', 'Разобрать договор, спланировать отпуск, посчитать бюджет, написать письмо. Файлы и фото Vax читает сам.', 'Разбери мой документ и скажи, на что обратить внимание'],
     ],
     try: 'Попробовать', live: 'Открыть живой пример',
     bk: { svc: ['Стрижка', 'Борода', 'Комплекс'], days: [['Пн', '10'], ['Вт', '11'], ['Ср', '12'], ['Чт', '13'], ['Пт', '14']], times: ['10:00', '11:00', '13:00', '15:00', '16:00', '18:00'], go: 'Записаться на 15:00', toast: 'Новая запись · Ср 12, 15:00 → CRM' },
@@ -35,7 +35,7 @@ const TX = {
     life: { q: 'Вот договор аренды. На что обратить внимание?', a: 'Три важных места: штраф за досрочный выезд (п. 4.2), рост цены раз в полгода (п. 3.5) и ремонт за ваш счёт (п. 6.1). Подготовить правки для арендодателя?', who: 'Vax · разбор файла' },
     par: { link: 'vaxogroup.com/s/…?ref=anna', rows: [['Анна', 'переходы', 'заявки'], ['Макс', 'переходы', 'заявки']] },
     vid: { plan: 'Контент-план · ноябрь', items: ['Пн · Рилс «до/после»', 'Ср · Карусель «5 стрижек сезона»', 'Пт · Сторис-опрос', 'Вс · Рилс за кадром'], badge: 'Монтаж — в фоне, в чат' },
-    auto: { flow: ['Заявка с сайта', 'CRM', 'Telegram владельцу', 'Напоминание клиенту'], note: 'Заявка, CRM, уведомление и напоминание связаны сами' },
+    auto: { flow: [["10:02", "Клиент оставил заявку на сайте"], ["10:02", "Заявка уже в CRM, менеджеру — задача"], ["10:02", "Вам сообщение в Telegram"], ["за 2 часа", "Клиенту напоминание о визите"], ["через день", "Просьба оставить отзыв"]], note: "Всё это происходит само. Вы только видите результат." },
   },
   ua: {
     tag: 'Що ви отримаєте', h: 'Одне слово — і у вас працює все', p: 'Напишіть, чим займаєтеся. Vax сам продумає, що потрібно, щоб стати першим у ніші, і за хвилину збере все разом: сайт, запис, CRM для вашої команди, ШІ-консультанта й партнерів.',
@@ -43,15 +43,15 @@ const TX = {
     parts: ['Сайт із фото', 'Онлайн-запис', 'Заявки в CRM', 'ШІ-консультант', 'Партнери'],
     go: 'Зібрати своє за хвилину', all: 'Усі роботи',
     tabs: [
+      ['life', 'Особисті завдання й файли', 'Розібрати договір, спланувати відпустку, порахувати бюджет, написати листа. Файли й фото Vax читає сам.', 'Розбери мій документ і скажи, на що звернути увагу'],
       ['site', 'Сайт рівня студії', 'Дизайн під нішу, фото, тексти й SEO. Правите прямо на сторінці.', 'Збери сайт для мого бізнесу'],
       ['book', 'Онлайн-запис', 'Клієнт сам бачить вільні вікна й записується. Без дзвінків і перенесень.', 'Збери сайт з онлайн-записом для барбершопу'],
       ['crm', 'Заявки і CRM', 'Кожна заявка й запис — одразу в дошці й на пошті. Запрошуйте співробітників з потрібними правами.', 'Підключи CRM для заявок із сайту'],
       ['bot', 'ШІ-консультант 24/7', 'Відповідає відвідувачам за вашими цінами й правилами. Залишений контакт — уже заявка.', 'Налаштуй ШІ-консультанта на моєму сайті'],
       ['par', 'Партнерська програма', 'Особисте посилання кожному партнеру. Переходи й заявки рахуються самі.', 'Зроби партнерську програму для мого бізнесу'],
       ['vid', 'Контент і ролики', 'Контент-план, пости й сценарії — одразу. Монтаж і ШІ-ролики з ваших матеріалів Vax робить у фоні, результат приходить у чат.', 'Зроби контент-план і сценарії роликів на місяць для мого бізнесу'],
-      ['auto', 'Автоматизація процесів', 'Розрахунки, таблиці й плани — за хвилину. Звʼязки сервісів і рутину Vax збирає під ваш процес.', 'Допоможи автоматизувати роботу з клієнтами в моєму бізнесі'],
+      ['auto', 'Автоматизація рутини', 'Vax звʼязує сайт, CRM, месенджери й нагадування, і рутина робиться сама — без вас і без помилок.', 'Допоможи автоматизувати роботу з клієнтами в моєму бізнесі'],
       ['app', 'Застосунок для клієнтів', 'Свій застосунок на телефоні клієнта: запис, бонуси, нагадування.', 'Зроби застосунок для клієнтів мого бізнесу'],
-      ['life', 'Особисті завдання й файли', 'Розібрати договір, спланувати відпустку, порахувати бюджет, написати листа. Файли й фото Vax читає сам.', 'Розбери мій документ і скажи, на що звернути увагу'],
     ],
     try: 'Спробувати', live: 'Відкрити живий приклад',
     bk: { svc: ['Стрижка', 'Борода', 'Комплекс'], days: [['Пн', '10'], ['Вт', '11'], ['Ср', '12'], ['Чт', '13'], ['Пт', '14']], times: ['10:00', '11:00', '13:00', '15:00', '16:00', '18:00'], go: 'Записатися на 15:00', toast: 'Новий запис · Ср 12, 15:00 → CRM' },
@@ -60,7 +60,7 @@ const TX = {
     life: { q: 'Ось договір оренди. На що звернути увагу?', a: 'Три важливі місця: штраф за дострокове виселення (п. 4.2), зростання ціни раз на пів року (п. 3.5) і ремонт вашим коштом (п. 6.1). Підготувати правки для орендодавця?', who: 'Vax · розбір файлу' },
     par: { link: 'vaxogroup.com/s/…?ref=anna', rows: [['Анна', 'переходи', 'заявки'], ['Макс', 'переходи', 'заявки']] },
     vid: { plan: 'Контент-план · листопад', items: ['Пн · Рілс «до/після»', 'Ср · Карусель «5 стрижок сезону»', 'Пт · Сторіс-опитування', 'Нд · Рілс за кадром'], badge: 'Монтаж — у фоні, в чат' },
-    auto: { flow: ['Заявка з сайту', 'CRM', 'Telegram власнику', 'Нагадування клієнту'], note: 'Заявка, CRM, сповіщення й нагадування повʼязані самі' },
+    auto: { flow: [["10:02", "Клієнт залишив заявку на сайті"], ["10:02", "Заявка вже в CRM, менеджеру — завдання"], ["10:02", "Вам повідомлення в Telegram"], ["за 2 години", "Клієнту нагадування про візит"], ["через день", "Прохання залишити відгук"]], note: "Усе це відбувається само. Ви лише бачите результат." },
   },
   en: {
     tag: 'What you get', h: 'One word, and everything works for you', p: 'Say what you do. Vax works out what it takes to lead your niche and puts it all together in a minute: the site, booking, a CRM for your team, an AI consultant and partners.',
@@ -68,15 +68,15 @@ const TX = {
     parts: ['Site with photos', 'Online booking', 'Requests in CRM', 'AI consultant', 'Partners'],
     go: 'Build yours in a minute', all: 'All works',
     tabs: [
+      ['life', 'Personal tasks and files', 'Review a contract, plan a trip, work out a budget, write a letter. Vax reads files and photos itself.', 'Review my document and tell me what to watch out for'],
       ['site', 'A studio-level site', 'Design for your niche, photos, copy and SEO. Edit right on the page.', 'Build a site for my business'],
       ['book', 'Online booking', 'Clients see the free times and book themselves. No calls, no rescheduling.', 'Build a site with online booking for a barbershop'],
       ['crm', 'Requests and CRM', 'Every request and booking lands on your board and in your email. Invite your staff with the right access.', 'Set up a CRM for requests from my site'],
       ['bot', 'AI consultant 24/7', 'Answers visitors from your prices and rules. A contact left in the chat is a request.', 'Set up an AI consultant on my site'],
       ['par', 'Partner programme', 'A personal link for every partner. Visits and requests count themselves.', 'Make a partner programme for my business'],
       ['vid', 'Content and videos', 'A content plan, posts and scripts at once. Editing and AI videos from your materials Vax makes in the background, and the result arrives in the chat.', 'Make a content plan and video scripts for a month for my business'],
-      ['auto', 'Process automation', 'Calculations, tables and plans in a minute. Vax links your services and routine around your process.', 'Help me automate work with clients in my business'],
+      ['auto', 'Routine on autopilot', 'Vax links your site, CRM, messengers and reminders, so the routine runs by itself, without you and without mistakes.', 'Help me automate work with clients in my business'],
       ['app', 'An app for your clients', 'Your own app on the client\'s phone: booking, bonuses, reminders.', 'Make an app for the clients of my business'],
-      ['life', 'Personal tasks and files', 'Review a contract, plan a trip, work out a budget, write a letter. Vax reads files and photos itself.', 'Review my document and tell me what to watch out for'],
     ],
     try: 'Try it', live: 'Open a live example',
     bk: { svc: ['Haircut', 'Beard', 'Full set'], days: [['Mon', '10'], ['Tue', '11'], ['Wed', '12'], ['Thu', '13'], ['Fri', '14']], times: ['10:00', '11:00', '13:00', '15:00', '16:00', '18:00'], go: 'Book for 15:00', toast: 'New booking · Wed 12, 15:00 → CRM' },
@@ -85,7 +85,7 @@ const TX = {
     life: { q: 'Here is my rental contract. What should I watch out for?', a: 'Three key points: the fee for leaving early (4.2), the price rising every six months (3.5) and repairs at your cost (6.1). Shall I draft changes for the landlord?', who: 'Vax · file review' },
     par: { link: 'vaxogroup.com/s/…?ref=anna', rows: [['Anna', 'visits', 'requests'], ['Max', 'visits', 'requests']] },
     vid: { plan: 'Content plan · November', items: ['Mon · Reel "before/after"', 'Wed · Carousel "5 cuts of the season"', 'Fri · Story poll', 'Sun · Behind the scenes reel'], badge: 'Editing: in the background' },
-    auto: { flow: ['Request from the site', 'CRM', 'Telegram to the owner', 'Reminder to the client'], note: 'Request, CRM, alert and reminder, linked by themselves' },
+    auto: { flow: [["10:02", "A client leaves a request on the site"], ["10:02", "It is in the CRM, with a task for the manager"], ["10:02", "You get a Telegram message"], ["2 h before", "The client gets a visit reminder"], ["next day", "A request to leave a review"]], note: "All of this happens by itself. You only see the result." },
   },
 }[lang];
 const T = TX!;
@@ -181,8 +181,8 @@ const ICO: Record<string, string> = {
                 </div>
               )}
               {k === 'auto' && (
-                <div class="flow">
-                  {T.auto.flow.map((x, j) => <><span class="nd" style={`--d:${j * 0.5}s`}>{x}</span>{j < T.auto.flow.length - 1 && <span class="ln"><i style={`--d:${j * 0.5 + 0.25}s`}></i></span>}</>)}
+                <div class="tl">
+                  {T.auto.flow.map(([t, x], j) => <div class="st" style={`--d:${j * 0.6}s`}><em>{t}</em><i>✓</i><span>{x}</span></div>)}
                   <small>{T.auto.note}</small>
                 </div>
               )}
@@ -389,4 +389,13 @@ const ICO: Record<string, string> = {
   .shot figure { position: absolute; inset: 0; margin: 0; border-radius: 14px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,.4); }
   .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
   .shot .parm.over { position: absolute; right: -10px; bottom: -14px; width: min(78%, 330px); background: var(--surf); border: 1px solid var(--line2); border-radius: 14px; padding: 10px; box-shadow: 0 20px 40px rgba(0,0,0,.45); }
+  .tl { display: grid; gap: 8px; width: min(100%, 460px); }
+  .tl .st { display: grid; grid-template-columns: 78px 26px 1fr; align-items: center; gap: 10px; background: var(--surf); border: 1px solid var(--line2); border-radius: 12px; padding: 10px 12px; opacity: 0; transform: translateY(6px); animation: tlIn .5s var(--d) forwards; }
+  .pane:not(.on) .tl .st { animation: none; }
+  .tl .st em { font-style: normal; font-size: 12px; color: var(--mut); text-align: right; }
+  .tl .st i { font-style: normal; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accText); color: var(--bg); font-size: 13px; font-weight: 800; }
+  .tl .st span { font-size: 14px; font-weight: 600; }
+  .tl small { text-align: center; color: var(--mut); margin-top: 4px; }
+  @keyframes tlIn { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .tl .st { animation: none; opacity: 1; transform: none; } }
 </style>

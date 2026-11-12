@@ -236,10 +236,15 @@ import Base from '../layouts/Base.astro';
           <div class="row tb">
             <button type="button" class="cta" data-testc="client">👤 Клиент: проект в работе + пульт бизнеса</button>
             <button type="button" class="ghost" data-testc="partner">🤝 Партнёр: кабинет, ссылки, выплаты</button>
+            <button type="button" class="ghost" data-testc="free">🆓 Бесплатный клиент</button>
+            <button type="button" class="ghost" data-testc="ultra">💎 Клиент Ультра</button>
+            <button type="button" class="ghost" data-testc="manager">🧑‍💼 Менеджер в команде клиента</button>
+            <button type="button" class="ghost" data-testc="viewer">👁 Наблюдатель в команде</button>
             <a class="ghost" href="/ru/#contact" target="_blank" rel="noopener">✨ Новый посетитель: главная → описать задачу</a>
             <a class="ghost" href="/ru/examples/" target="_blank" rel="noopener">🖼 Примеры работ</a>
           </div>
-          <small class="mut" data-testc-msg></small></div>
+          <small class="mut" data-testc-msg></small>
+          <details class="tacc"><summary>🔑 Логины и пароли тестовых аккаунтов (войти можно и без Штаба)</summary><div data-tacc>Загружаю…</div></details></div>
         <div class="linkgrid" data-links></div>
         <h2>Решения (документы с вариантами и галочками)</h2>
         <ul class="decisions" data-decisions></ul>
@@ -1123,6 +1128,13 @@ import Base from '../layouts/Base.astro';
     const r = await api('/test-client', { lang: 'ru', kind: b.dataset.testc }).catch(() => null);
     if (r?.ok && w) w.location.href = r.url; else { w?.close(); $('[data-testc-msg]').textContent = 'Не получилось — обновите страницу и попробуйте ещё раз.'; }
   }));
+  $('.tacc')?.addEventListener('toggle', async (e) => {
+    const box = $('[data-tacc]'); if (!(e.target as HTMLDetailsElement).open || box.dataset.done) return;
+    const r = await api('/test-accounts').catch(() => null);
+    if (!r?.ok) { box.textContent = 'Не получилось — обновите страницу.'; return; }
+    box.dataset.done = '1';
+    box.innerHTML = '<table class="tt"><tr><th>Роль</th><th>Почта</th><th>Пароль</th><th>Где входить</th></tr>' + (r.list as R[]).map((x) => `<tr><td>${x.name}</td><td><code>${x.email}</code></td><td><code>${x.password}</code></td><td><a href="${x.login}" target="_blank" rel="noopener">${x.login}</a></td></tr>`).join('') + '</table><small class="mut">В окне входа нажмите «Войти с паролем». Это тестовые аккаунты без реальных денег.</small>';
+  });
   async function loadFactory() {
     const r = await api('/factory').catch(() => null);
     const box = $('[data-fac]');
@@ -1455,4 +1467,5 @@ import Base from '../layouts/Base.astro';
   .adm .ocm { border-radius: 16px; }
   @media (prefers-reduced-motion: reduce) { .adm * { transition: none !important; } }
   @media (max-width: 640px) { .adm { padding: 16px 12px 80px; } .adm h1 { font-size: 22px; } .adm .proc strong, .adm .kpi b { font-size: 24px; } }
+  .tacc { margin-top: 12px; } .tacc summary { cursor: pointer; font-weight: 600; } .tt { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; } .tt td, .tt th { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; }
 </style>
