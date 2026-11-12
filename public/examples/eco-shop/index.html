@@ -318,6 +318,25 @@ header.top{background:color-mix(in srgb,#fff 86%,transparent);border-bottom:1px 
 footer{background:#0F0F10}
 footer h5{letter-spacing:.06em}
 @media(max-width:860px){.strip{grid-template-columns:1fr 1fr}.hero{border-radius:24px}}
+
+/* reference hero (12.11): sharp product art instead of one blurry photo */
+.hero.hx{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(20px,4vw,56px);align-items:center;padding:clamp(28px,5vw,64px);background:radial-gradient(700px 500px at 85% 20%,rgba(255,138,90,.28),transparent 60%),radial-gradient(600px 500px at 10% 100%,rgba(200,162,255,.22),transparent 60%),#1a120e;color:#F7F1E8;min-height:auto}
+.hero.hx::after{display:none}
+.hx-copy p{max-width:44ch}
+.hx-proof{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;margin-top:28px;font-size:13px;opacity:.85}
+.hx-proof b{font-size:18px}.hx-proof span{margin-right:12px}
+.hx-art{position:relative;aspect-ratio:1/1.02;max-width:560px;width:100%;justify-self:end}
+.hx-art figure{position:absolute;margin:0;border-radius:24px;overflow:hidden;box-shadow:0 30px 70px -30px rgba(0,0,0,.8);background:#000}
+.hx-art img{position:static;width:100%;height:100%;object-fit:cover;opacity:1;transform:none;animation:none}
+.hx-art figcaption{position:absolute;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;background:rgba(255,255,255,.92);color:#1a120e;border-radius:14px;padding:9px 12px;font-size:13.5px}
+.hx-a{left:0;top:0;width:58%;height:62%}.hx-b{right:0;top:12%;width:40%;height:44%}.hx-c{left:22%;bottom:0;width:46%;height:34%}
+.hx-ai{position:absolute;right:0;bottom:4%;width:min(260px,56%);background:#fff;color:#1a120e;border-radius:20px;padding:14px 16px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);animation:hxf 4s ease-in-out infinite}
+.hx-ai small{color:#C2410C;font-weight:700;font-size:12px}.hx-ai p{margin:6px 0 10px;font-size:15px;opacity:1;font-weight:500}
+.hx-m{display:flex;flex-direction:column;background:#FFF3EC;border-radius:12px;padding:8px 10px;font-size:13px}.hx-m span{color:#7a5a48;font-size:12px}
+.hx-ai button{margin-top:10px;border:0;background:#1a120e;color:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-weight:600;font-size:13px;cursor:pointer}
+@keyframes hxf{50%{transform:translateY(-8px)}}
+@media(max-width:860px){.hero.hx{grid-template-columns:1fr}.hx-art{justify-self:center;max-width:440px}}
+@media(prefers-reduced-motion:reduce){.hx-ai{animation:none}}
 </style>
 </head>
 <body>
@@ -359,9 +378,8 @@ footer h5{letter-spacing:.06em}
     <div class="hints" data-hints hidden></div>
   </div></div>
 
-  <div class="hero">
-    <img src="/examples/img/os-hero.webp" alt="" fetchpriority="high" />
-    <div class="wrap">
+  <div class="hero hx">
+    <div class="hx-copy">
       <span class="cap" data-t="heroK">Maison de parfum · since 2014</span>
       <h1 data-t-html="heroH">Scent for <i>slow</i> evenings</h1>
       <p data-t="heroP">Hand-poured candles, perfumes and home scents.</p>
@@ -369,6 +387,13 @@ footer h5{letter-spacing:.06em}
         <a href="#shop" class="btn light" data-t="heroB1">Shop the collection</a>
         <button class="btn" style="color:#F7F1E8" data-ai-focus data-t="heroB2">✦ Describe a scent</button>
       </div>
+      <div class="hx-proof"><b>4.9 ★</b><span data-t="hxRev">2 140 reviews</span><b>48 h</b><span data-t="hxShip">delivery</span><b>30</b><span data-t="hxRet">days to return</span></div>
+    </div>
+    <div class="hx-art">
+      <figure class="hx-a"><img src="/examples/img/os-p2.webp" alt="" fetchpriority="high" /><figcaption><b>Ambre Nº 3</b><span>$68</span></figcaption></figure>
+      <figure class="hx-b"><img src="/examples/img/os-c2.webp" alt="" /><figcaption><b>Cedar &amp; Fig</b><span>$34</span></figcaption></figure>
+      <figure class="hx-c"><img src="/examples/img/os-hands.webp" alt="" /></figure>
+      <div class="hx-ai"><small data-t="hxAiL">✦ AI perfumer</small><p data-t="hxAiQ">“Rain outside, a book and tea”</p><div class="hx-m"><b>Ambre Nº 3</b><span data-t="hxAiM">96% match · warm, woody</span></div><button data-ai-focus data-t="hxAiB">Try it →</button></div>
     </div>
   </div>
   <div class="strip">
@@ -551,7 +576,7 @@ footer h5{letter-spacing:.06em}
 <script>
 const I = {
 en:{demo:'Demo store — the brand is fictional',vStore:'Store',vCab:'Customer cabinet',vOwner:'Owner dashboard',vAff:'Affiliates',vOs:'✦ Owner command center',osH:'All chats, reviews, ads, team and roles — one screen',osP:'Every chat from Instagram, WhatsApp, Telegram and the site is answered by the AI manager; reviews get replies automatically, negatives come to you. You see everything, can step into any chat, give staff their own access — and everyone gets a personal AI assistant.',osGo:'Open the command center →',nShop:'Shop',nFinder:'Scent finder',nReviews:'Reviews',find:'Find',mPlain:'Search',mAi:'✦ Ask AI',phPlain:'Search candles, perfumes, notes…',phAi:'Describe it: “cozy smell for a small bedroom, not sweet, under $60”',
-heroK:'Maison de parfum · since 2014',heroH:'Scent for <i>slow</i> evenings',heroP:'Hand-poured candles, perfumes and home scents. Not sure what to choose? Describe the mood — our AI perfumer will pick it for you.',heroB1:'Shop the collection',heroB2:'✦ Describe a scent',
+heroK:'Maison de parfum · since 2014',heroH:'Scent for <i>slow</i> evenings',heroP:'Hand-poured candles, perfumes and home scents. Not sure what to choose? Describe the mood — our AI perfumer will pick it for you.',heroB1:'Shop the collection',heroB2:'✦ Describe a scent',hxRev:'2,140 reviews',hxShip:'delivery',hxRet:'days to return',hxAiL:'✦ AI perfumer',hxAiQ:'“Rain outside, a book and tea”',hxAiM:'96% match · warm, woody',hxAiB:'Try it →',
 s1:'Free shipping from $80',s1s:'2–4 days',s2:'Free samples',s2s:'2 with every order',s3:'Refill & save 15%',s3s:'Pause any time',s4:'Ostra Circle',s4s:'Points on every order',
 colK:'The collection',colH:'Candles, perfumes, home',filters:'Filters',clear:'Clear all',fCat:'Category',fFam:'Scent family',fMood:'Mood',fInt:'Intensity',fPrice:'Price up to',fRefill:'Refill available',fVegan:'Vegan wax / formula',showRes:'Show results',
 aiNote:'Picked by AI from the catalog — live, not a script.',sPop:'Most loved',sNew:'New',sLow:'Price: low to high',sHigh:'Price: high to low',found:n=>`${n} ${n===1?'product':'products'}`,none:'Nothing matches. Try fewer filters — or switch to ✦ Ask AI and describe it.',
@@ -571,7 +596,7 @@ gH:'What to try here',g1:'Switch “Search” to “✦ Ask AI” and type what 
 top3:'Top',heart:'Heart',base:'Base',burn:'Lasts',pairs:'✦ AI pairs it with',aiThinking:'AI is choosing from the catalog…',aiFail:'The AI is busy right now — try again or use filters.',
 cats:{candle:'Candles',perfume:'Perfumes',diffuser:'Diffusers',oil:'Body oils',incense:'Incense'},fams:{wood:'Woody',flower:'Floral',citrus:'Citrus',spice:'Spicy',fresh:'Fresh'},moods:{calm:'Calm',cozy:'Cozy',fresh:'Fresh',bold:'Bold'},ints:{1:'Soft',2:'Medium',3:'Strong'}},
 ru:{demo:'Демо-магазин — бренд вымышленный',vStore:'Магазин',vCab:'Кабинет покупателя',vOwner:'Панель владельца',vAff:'Партнёры',vOs:'✦ Пульт владельца',osH:'Все чаты, отзывы, реклама, команда и доступы — на одном экране',osP:'На каждый чат из Instagram, WhatsApp, Telegram и с сайта отвечает ИИ-менеджер, на отзывы — тоже сам, негатив сразу приходит вам. Вы видите всё, можете вмешаться в любой чат, раздать сотрудникам свои доступы — и у каждого есть личный ИИ-помощник.',osGo:'Открыть пульт →',nShop:'Каталог',nFinder:'Подбор аромата',nReviews:'Отзывы',find:'Найти',mPlain:'Поиск',mAi:'✦ Спросить ИИ',phPlain:'Свечи, духи, ноты…',phAi:'Опишите: «уютный запах для маленькой спальни, не сладкий, до $60»',
-heroK:'Парфюмерный дом · с 2014',heroH:'Аромат для <i>неспешных</i> вечеров',heroP:'Свечи ручной заливки, духи и ароматы для дома. Не знаете, что выбрать? Опишите настроение — ИИ-парфюмер подберёт.',heroB1:'Смотреть коллекцию',heroB2:'✦ Описать аромат',
+heroK:'Парфюмерный дом · с 2014',heroH:'Аромат для <i>неспешных</i> вечеров',heroP:'Свечи ручной заливки, духи и ароматы для дома. Не знаете, что выбрать? Опишите настроение — ИИ-парфюмер подберёт.',heroB1:'Смотреть коллекцию',heroB2:'✦ Описать аромат',hxRev:'2 140 отзывов',hxShip:'доставка',hxRet:'дней на возврат',hxAiL:'✦ ИИ-парфюмер',hxAiQ:'«За окном дождь, книга и чай»',hxAiM:'совпадение 96% · тёплый, древесный',hxAiB:'Попробовать →',
 s1:'Бесплатная доставка от $80',s1s:'2–4 дня',s2:'Пробники в подарок',s2s:'2 к каждому заказу',s3:'Подписка на рефилы −15%',s3s:'Пауза в любой момент',s4:'Клуб Ostra Circle',s4s:'Баллы за каждый заказ',
 colK:'Коллекция',colH:'Свечи, духи, дом',filters:'Фильтры',clear:'Сбросить',fCat:'Категория',fFam:'Семейство аромата',fMood:'Настроение',fInt:'Интенсивность',fPrice:'Цена до',fRefill:'Есть рефил',fVegan:'Веганский воск / состав',showRes:'Показать',
 aiNote:'Подобрано ИИ из каталога — вживую, не заготовка.',sPop:'Популярные',sNew:'Новинки',sLow:'Сначала дешевле',sHigh:'Сначала дороже',found:n=>`${n} ${n%10===1&&n%100!==11?'товар':(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20)?'товара':'товаров')}`,none:'Ничего не нашлось. Уберите часть фильтров — или включите ✦ Спросить ИИ и опишите словами.',
@@ -591,7 +616,7 @@ gH:'Что здесь попробовать',g1:'Переключите «По�
 top3:'Верх',heart:'Сердце',base:'База',burn:'Хватает на',pairs:'✦ ИИ советует к нему',aiThinking:'ИИ выбирает из каталога…',aiFail:'ИИ сейчас занят — попробуйте ещё раз или используйте фильтры.',
 cats:{candle:'Свечи',perfume:'Духи',diffuser:'Диффузоры',oil:'Масла для тела',incense:'Благовония'},fams:{wood:'Древесные',flower:'Цветочные',citrus:'Цитрусовые',spice:'Пряные',fresh:'Свежие'},moods:{calm:'Спокойное',cozy:'Уютное',fresh:'Свежее',bold:'Смелое'},ints:{1:'Мягкий',2:'Средний',3:'Сильный'}},
 ua:{demo:'Демо-магазин — бренд вигаданий',vStore:'Магазин',vCab:'Кабінет покупця',vOwner:'Панель власника',vAff:'Партнери',vOs:'✦ Пульт власника',osH:'Усі чати, відгуки, реклама, команда й доступи — на одному екрані',osP:'На кожен чат з Instagram, WhatsApp, Telegram і з сайту відповідає ШІ-менеджер, на відгуки — теж сам, негатив одразу приходить вам. Ви бачите все, можете втрутитися в будь-який чат, роздати працівникам свої доступи — і кожен має особистого ШІ-помічника.',osGo:'Відкрити пульт →',nShop:'Каталог',nFinder:'Підбір аромату',nReviews:'Відгуки',find:'Знайти',mPlain:'Пошук',mAi:'✦ Запитати ШІ',phPlain:'Свічки, парфуми, ноти…',phAi:'Опишіть: «затишний запах для маленької спальні, не солодкий, до $60»',
-heroK:'Парфумерний дім · з 2014',heroH:'Аромат для <i>неквапливих</i> вечорів',heroP:'Свічки ручного розливу, парфуми та аромати для дому. Не знаєте, що обрати? Опишіть настрій — ШІ-парфумер підбере.',heroB1:'Дивитися колекцію',heroB2:'✦ Описати аромат',
+heroK:'Парфумерний дім · з 2014',heroH:'Аромат для <i>неквапливих</i> вечорів',heroP:'Свічки ручного розливу, парфуми та аромати для дому. Не знаєте, що обрати? Опишіть настрій — ШІ-парфумер підбере.',heroB1:'Дивитися колекцію',heroB2:'✦ Описати аромат',hxRev:'2 140 відгуків',hxShip:'доставка',hxRet:'днів на повернення',hxAiL:'✦ ШІ-парфумер',hxAiQ:'«За вікном дощ, книжка й чай»',hxAiM:'збіг 96% · теплий, деревний',hxAiB:'Спробувати →',
 s1:'Безкоштовна доставка від $80',s1s:'2–4 дні',s2:'Пробники в подарунок',s2s:'2 до кожного замовлення',s3:'Підписка на рефіли −15%',s3s:'Пауза будь-коли',s4:'Клуб Ostra Circle',s4s:'Бали за кожне замовлення',
 colK:'Колекція',colH:'Свічки, парфуми, дім',filters:'Фільтри',clear:'Скинути',fCat:'Категорія',fFam:'Сімейство аромату',fMood:'Настрій',fInt:'Інтенсивність',fPrice:'Ціна до',fRefill:'Є рефіл',fVegan:'Веганський віск / склад',showRes:'Показати',
 aiNote:'Підібрано ШІ з каталогу — наживо, не заготовка.',sPop:'Популярні',sNew:'Новинки',sLow:'Спочатку дешевші',sHigh:'Спочатку дорожчі',found:n=>`${n} ${n%10===1&&n%100!==11?'товар':(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20)?'товари':'товарів')}`,none:'Нічого не знайшлося. Приберіть частину фільтрів — або увімкніть ✦ Запитати ШІ й опишіть словами.',

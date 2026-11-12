@@ -1,147 +1,259 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pulse Studio — Client app demo</title>
-<meta name="description" content="A demo client app by Vaxo: class booking, membership, chat with the coach and reminders — opens from a link, no app store.">
-<meta name="theme-color" content="#0f1115">
+<title>Aurora — Client app demo by Vaxo</title>
+<meta name="description" content="A demo client app made with Vaxo: booking in two taps, a bonus card, an AI assistant and reminders. Opens from a link, no app store.">
+<meta name="theme-color" content="#0e0c12">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f1115;--bg2:#161922;--card:#1b1f2a;--line:rgba(255,255,255,.1);--ink:#f4f1ea;--mute:#a7a9b4;--a:#ffcf5c;--b:#ff7a59;--r:22px;--pad:clamp(16px,4vw,48px);--serif:"Fraunces",Georgia,serif;--body:"Inter",system-ui,sans-serif}
+:root{--bg:#0e0c12;--ink:#f6f1ea;--mut:#a9a3b3;--line:rgba(255,255,255,.1);--a:#f2b8a0;--b:#c9a7ff;--g:#7ee0b5;--card:#1a1720;--app:#fbf8f4;--appInk:#1c1820;--appMut:#7d7584;--appLine:#ece5dd;--rose:#d9826b;--plum:#6d4ca8;--serif:"Fraunces",Georgia,serif;--body:"Inter",system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}html,body{overflow-x:clip}
-body{background:var(--bg);color:var(--ink);font:400 16px/1.65 var(--body);-webkit-font-smoothing:antialiased}
-a{color:inherit}button,input{font:inherit;color:inherit}button{cursor:pointer;border:0}
-:focus-visible{outline:2px solid var(--a);outline-offset:3px;border-radius:6px}
-.wrap{max-width:1120px;margin:0 auto;padding:0 var(--pad)}
-.vx{display:block;background:var(--ink);color:#15171c;font:600 12.5px/1.3 var(--body);text-align:center;padding:9px 16px;text-decoration:none}
-.vx span{text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
-.nav{position:sticky;top:0;z-index:20;background:rgba(15,17,21,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.nav .wrap{display:flex;align-items:center;gap:18px;height:62px}
-.logo{font:600 20px var(--serif);text-decoration:none}.logo i{color:var(--a)}
-.links{display:flex;gap:24px;margin-left:auto;font-size:14px;color:var(--mute)}
-.links a{text-decoration:none}.links a:hover{color:var(--ink)}
-.lang{display:flex;gap:2px;border:1px solid var(--line);border-radius:99px;padding:2px}
-.lang button{background:none;color:var(--mute);font-size:12px;font-weight:600;padding:4px 9px;border-radius:99px}
-.lang button.on{background:var(--ink);color:#15171c}
-.btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(100deg,var(--a),var(--b));color:#1a1206;font-weight:700;padding:14px 26px;border-radius:99px;text-decoration:none;transition:transform .2s,box-shadow .2s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(255,122,89,.6)}
-.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
-.hero{padding:0;display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:center}
-.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--a);font-weight:600}
-h1{font:600 clamp(38px,6.4vw,76px)/1.04 var(--serif);letter-spacing:-.02em;margin:16px 0 22px}
-h1 em{font-style:italic;font-weight:500;color:var(--a)}
-.lead{color:var(--mute);font-size:clamp(17px,2vw,20px);max-width:34em;margin-bottom:30px}
-.cta{display:flex;flex-wrap:wrap;gap:12px}
-.portrait{aspect-ratio:4/5;border-radius:var(--r);background:radial-gradient(circle at 30% 20%,#ffcf5c55,transparent 55%),radial-gradient(circle at 80% 90%,#ff7a5966,transparent 55%),var(--card);border:1px solid var(--line);position:relative;overflow:hidden;display:grid;place-items:center}
-.portrait svg{width:62%;opacity:.9}
-.badge{position:absolute;left:14px;bottom:14px;right:14px;background:rgba(15,17,21,.72);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:13px;color:var(--mute)}
-.badge b{color:var(--ink)}
-.logos{border-block:1px solid var(--line);padding:22px 0;color:var(--mute);font-size:13px}
-.logos .wrap{display:flex;flex-wrap:wrap;gap:12px 34px;justify-content:center;font:600 17px var(--serif);letter-spacing:.02em}
-.logos .wrap span{opacity:.7}
-section{padding:clamp(56px,8vw,100px) 0}
-h2{font:600 clamp(28px,4.2vw,46px)/1.1 var(--serif);letter-spacing:-.015em;margin:10px 0 14px}
-.sub{color:var(--mute);max-width:40em}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px}
-.stat b{display:block;font:600 40px var(--serif);color:var(--a)}
-.stat span{color:var(--mute);font-size:14px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px;transition:transform .25s,border-color .25s}
-.card:hover{transform:translateY(-4px);border-color:rgba(255,207,92,.5)}
-.card h3{font:600 22px var(--serif);margin:10px 0 8px}.card p{color:var(--mute);font-size:15px}
-.tag{font-size:12px;color:var(--a);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
-.price{margin-top:16px;font-weight:700}
-.quote{background:var(--bg2);border-block:1px solid var(--line)}
-.quote blockquote{font:500 italic clamp(24px,3.6vw,38px)/1.3 var(--serif);max-width:24em}
-.quote cite{display:block;margin-top:18px;font:500 14px var(--body);color:var(--mute);font-style:normal}
-.nl{background:linear-gradient(120deg,#ffcf5c22,#ff7a5922),var(--card);border:1px solid var(--line);border-radius:28px;padding:clamp(26px,5vw,56px);display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center}
-.nl form{display:flex;gap:8px;flex-wrap:wrap}
-.nl input{flex:1 1 200px;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:14px 20px}
-.nl .ok{display:none;color:var(--a);font-weight:600;margin-top:10px}
-.book{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:34px;align-items:start}
-.days,.slots{display:flex;flex-wrap:wrap;gap:8px}
-.chip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:600;transition:.2s}
-.chip:hover{border-color:var(--a)}.chip.on{background:var(--a);color:#1a1206;border-color:var(--a)}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px}
-.panel h4{font:600 18px var(--serif);margin-bottom:12px}
-.panel .btn{margin-top:16px;width:100%;justify-content:center}
-.done{display:none;margin-top:14px;padding:14px;border-radius:14px;background:#7fd6a022;color:#9be8b8;font-weight:600}
-footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mute);font-size:13px}
-footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
-.rv{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}.rv.in{opacity:1;transform:none}
-@media(max-width:860px){.hero,.nl,.book{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.links{display:none}.lang{margin-left:auto}.portrait{max-height:380px;aspect-ratio:auto;min-height:300px}}
-@media(max-width:600px){a.btn,button,.chip,.lang a,.lang button,nav a{min-height:44px}button,.btn{display:inline-flex;align-items:center;justify-content:center}}
-@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
-.hero1{padding:clamp(40px,7vw,90px) 0 30px;text-align:center}
-.hero1 .lead{margin:0 auto 26px}
-.ask{display:flex;gap:8px;max-width:620px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px}
-.ask input{flex:1;background:none;border:0;padding:12px 18px;outline:0;min-width:0}
-.ask .btn{padding:12px 22px}
-.aiout{max-width:620px;margin:14px auto 0;color:var(--mute);font-size:15px;min-height:24px}
-.aiout b{color:var(--a)}
-.filters{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 8px}
-.pg{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
-.pc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .25s,border-color .25s}
-.pc:hover{transform:translateY(-4px);border-color:rgba(255,207,92,.5)}
-.pc.hl{border-color:var(--a);box-shadow:0 0 0 2px #ffcf5c55}
-.pi{aspect-ratio:1;display:grid;place-items:center;font-size:64px}
-.pb{padding:16px}.pb h3{font:600 17px var(--serif)}.pb small{color:var(--mute);display:block;margin:2px 0 10px}
-.pr{display:flex;justify-content:space-between;align-items:center}.pr b{font-size:18px}
-.add{background:var(--ink);color:#15171c;font-weight:700;border-radius:99px;padding:8px 14px;font-size:13px}
-.cartbtn{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:600;font-size:14px}
-.drawer{position:fixed;top:0;right:0;height:100%;width:min(380px,100%);background:var(--bg2);border-left:1px solid var(--line);z-index:40;transform:translateX(100%);transition:transform .3s;padding:22px;display:flex;flex-direction:column;gap:12px}
-.drawer.open{transform:none}
-.drawer .ln{display:flex;justify-content:space-between;gap:10px;font-size:14px;border-bottom:1px solid var(--line);padding-bottom:8px}
-.drawer .tot{display:flex;justify-content:space-between;font:600 20px var(--serif);margin-top:auto}
-.drawer .btn{justify-content:center}
-.ship{height:8px;border-radius:9px;background:var(--card);overflow:hidden}.ship i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--b));width:0;transition:width .4s}
-.trk{display:flex;gap:0;margin-top:30px;flex-wrap:wrap}
-.trk div{flex:1 1 140px;padding:16px;background:var(--card);border:1px solid var(--line);font-size:14px;color:var(--mute)}
-.trk div.on{color:var(--ink);border-color:var(--a)}.trk b{display:block;color:var(--a)}
-@media(max-width:860px){.pg{grid-template-columns:1fr 1fr}}
-
-.hero2{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;padding:clamp(40px,7vw,90px) 0}
-.phone{width:min(340px,100%);margin:0 auto;border:10px solid #2a2f3d;border-radius:44px;background:var(--bg2);overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.7);display:flex;flex-direction:column;height:640px}
-.scr{flex:1;overflow:auto;padding:18px 16px;display:none}.scr.on{display:block}
-.tabs{display:flex;border-top:1px solid var(--line);background:var(--card)}
-.tabs button{flex:1;background:none;color:var(--mute);padding:12px 4px;font-size:13px;font-weight:600}.tabs button.on{color:var(--a)}
-.mc{background:linear-gradient(120deg,var(--a),var(--b));color:#1a1206;border-radius:20px;padding:18px;margin:10px 0 16px}.mc b{font:600 30px var(--serif);display:block}
-.cl{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;font-size:14px}
-.cl small{color:var(--mute);display:block}.cl .add.on{background:#7fd6a0;color:#0d2a17}
-.st3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.st3 div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;font-size:12px;color:var(--mute)}.st3 b{display:block;font:600 24px var(--serif);color:var(--a)}
-.bd{display:flex;gap:8px;flex-wrap:wrap}.bd span{background:var(--card);border:1px solid var(--a);border-radius:99px;padding:6px 12px;font-size:13px}
-.msg{max-width:82%;padding:10px 14px;border-radius:16px;margin-bottom:8px;font-size:14px;background:var(--card)}.msg.me{margin-left:auto;background:var(--a);color:#1a1206}
-.cf{display:flex;gap:6px;margin-top:10px}.cf input{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:10px 14px}
-.toast{font-size:12px;color:#9be8b8;margin:0 0 8px;min-height:16px}
-@media(max-width:860px){.hero2{grid-template-columns:1fr}}
-</style></head><body>
-<a class="vx" href="/?vax=demo-client-app"><b data-i="vx1">Demo by Vaxo</b> — <span data-i="vx2">x</span></a>
-<header class="nav"><div class="wrap"><a class="logo" href="#top">Pulse<i>.</i>Studio</a><div class="lang" role="group" aria-label="Language" style="margin-left:auto"><button data-l="en" class="on">EN</button><button data-l="ru">RU</button><button data-l="ua">UA</button></div></div></header>
-<main id="top"><div class="wrap">
-<div class="hero2"><div class="rv"><div class="eyebrow" data-i="eb">x</div><h1 data-i="h1">x</h1><p class="lead" data-i="lead">x</p></div>
-<div class="phone rv" aria-label="App">
-<div class="scr on" id="s1"><div class="mc"><span data-i="hi">Hi</span><b data-i="mem">x</b><span><b style="display:inline;font-size:inherit" id="lf">8</b> <span data-i="left">x</span></span></div><div class="toast" id="ts"></div><div id="cls"></div></div>
-<div class="scr" id="s2"><div class="mc"><span data-i="hi">Hi</span><b data-i="mem">x</b></div><div class="st3"><div><b>6</b><span data-i="streak">x</span></div><div><b id="vc">24</b><span data-i="visits">x</span></div><div><b>480</b><span data-i="pts">x</span></div></div><h4 style="font:600 18px var(--serif);margin-bottom:10px" data-i="ach">x</h4><div class="bd"><span>🏅 <i data-i="a1" style="font-style:normal">x</i></span><span>🔥 <i data-i="a2" style="font-style:normal">x</i></span><span>🌅 <i data-i="a3" style="font-style:normal">x</i></span></div></div>
-<div class="scr" id="s3"><div class="msg" data-i="c1">x</div><div class="msg me" data-i="c2">x</div><div id="mm"></div><p class="sub" style="font-size:12px;margin-top:10px" data-i="rep">x</p><form class="cf" id="cf"><input id="ci" data-ph="ph" aria-label="msg"><button class="add" data-i="send">x</button></form></div>
-<div class="tabs"><button class="on" data-t="s1" data-i="tab1">x</button><button data-t="s2" data-i="tab2">x</button><button data-t="s3" data-i="tab3">x</button></div></div></div>
-<section style="padding-top:0"><div class="grid3">
-<div class="card rv"><span class="tag">01</span><h3 data-i="f1">x</h3><p data-i="f1t">x</p></div>
-<div class="card rv"><span class="tag">02</span><h3 data-i="f2">x</h3><p data-i="f2t">x</p></div>
-<div class="card rv"><span class="tag">03</span><h3 data-i="f3">x</h3><p data-i="f3t">x</p></div></div></section>
-</div></main>
-<footer><div class="wrap"><span>© Pulse Studio</span><span data-i="ft">x</span></div></footer>
+html,body{overflow-x:clip}
+body{background:radial-gradient(900px 600px at 80% -10%,rgba(201,167,255,.18),transparent 60%),radial-gradient(700px 500px at -10% 110%,rgba(242,184,160,.16),transparent 60%),var(--bg);color:var(--ink);font:400 16px/1.6 var(--body);-webkit-font-smoothing:antialiased;min-height:100vh}
+button,input{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+a{color:inherit}
+.vx{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;align-items:center;background:var(--ink);color:#16131a;font:600 12.5px/1.3 var(--body);padding:9px 16px;text-align:center}
+.vx a{background:#16131a;color:var(--ink);padding:5px 12px;border-radius:999px;text-decoration:none}
+.vx .lg{display:flex;gap:4px}.vx .lg button{padding:3px 8px;border-radius:999px;font-weight:700;font-size:11px;color:#16131a}.vx .lg button.on{background:#16131a;color:var(--ink)}
+.page{max-width:1180px;margin:0 auto;padding:clamp(28px,5vw,64px) clamp(16px,4vw,40px);display:grid;grid-template-columns:1fr 400px;gap:clamp(28px,5vw,72px);align-items:center}
+.copy .tag{color:var(--a);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12px}
+.copy h1{font:600 clamp(34px,4.6vw,58px)/1.05 var(--serif);margin:14px 0 16px;letter-spacing:-.01em}
+.copy h1 em{font-style:normal;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.copy p.lead{color:var(--mut);font-size:18px;max-width:520px}
+.feats{display:grid;gap:10px;margin:26px 0;max-width:520px}
+.feat{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:14px 16px;text-align:left;width:100%;transition:border-color .2s,background .2s}
+.feat:hover,.feat.on{border-color:rgba(242,184,160,.6);background:rgba(242,184,160,.07)}
+.feat i{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--a),var(--b));font-style:normal;font-size:18px}
+.feat b{display:block;font-size:15.5px}.feat small{color:var(--mut);font-size:13.5px}
+.cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(90deg,var(--a),var(--b));color:#16131a;font-weight:700;padding:14px 22px;border-radius:999px;text-decoration:none}
+.note{color:var(--mut);font-size:13px;margin-top:12px}
+/* the phone */
+.phone{position:relative;width:390px;max-width:100%;aspect-ratio:390/800;margin:0 auto;border-radius:54px;background:#08070a;padding:12px;box-shadow:0 50px 120px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08) inset}
+.phone:before{content:'';position:absolute;top:22px;left:50%;transform:translateX(-50%);width:110px;height:30px;border-radius:20px;background:#08070a;z-index:5}
+.scr{position:relative;width:100%;height:100%;border-radius:43px;overflow:hidden;background:var(--app);color:var(--appInk);display:flex;flex-direction:column}
+.sb{display:flex;justify-content:space-between;padding:16px 28px 6px;font:600 13px var(--body)}
+.view{flex:1;overflow-y:auto;padding:8px 18px 18px;scrollbar-width:none}.view::-webkit-scrollbar{display:none}
+.v{display:none;animation:in .35s ease}.v.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hi{display:flex;justify-content:space-between;align-items:center;margin:6px 0 14px}
+.hi small{color:var(--appMut);font-size:12.5px}.hi h2{font:600 24px/1.15 var(--serif)}
+.ava{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--plum));color:#fff;display:grid;place-items:center;font-weight:700}
+.card{background:#fff;border:1px solid var(--appLine);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 8px 24px -18px rgba(60,30,40,.4)}
+.next{background:linear-gradient(135deg,#2a2033,#4b2f5f);color:#fff;border:0}
+.next small{opacity:.75}.next h3{font:600 20px/1.2 var(--serif);margin:4px 0 2px}
+.row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.pill{border-radius:999px;padding:8px 13px;font-size:13px;font-weight:600;background:rgba(255,255,255,.14);color:inherit}
+.pill.w{background:#fff;color:#2a2033}
+.offer{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#ffe7dc,#f3e8ff);border:0}
+.offer .big{font:600 28px var(--serif);color:var(--rose)}
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:4px 0 14px}
+.qa button{background:#fff;border:1px solid var(--appLine);border-radius:16px;padding:10px 4px;font-size:11.5px;font-weight:600;display:grid;gap:4px;justify-items:center;color:var(--appInk)}
+.qa button span{font-size:20px}
+h4{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--appMut);margin:14px 0 8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--appLine);background:#fff;border-radius:999px;padding:9px 14px;font-size:13.5px;font-weight:600;color:var(--appInk);transition:.15s}
+.chip.on{background:var(--appInk);color:#fff;border-color:var(--appInk)}
+.chip small{display:block;font-weight:500;font-size:11px;opacity:.7}
+.days{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.days .chip{border-radius:16px;min-width:56px;text-align:center}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.slots .chip{text-align:center;padding:9px 0}
+.slots .chip:disabled{opacity:.35;text-decoration:line-through;cursor:default}
+.masters{display:flex;gap:10px}
+.mst{display:grid;justify-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--appInk)}
+.mst i{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;color:#fff;border:3px solid transparent}
+.mst.on i{border-color:var(--appInk)}
+.go{width:100%;margin-top:16px;padding:15px;border-radius:16px;background:var(--appInk);color:#fff;font-weight:700}
+.go:disabled{opacity:.4}
+.ok{text-align:center;padding:30px 6px}
+.ok .ck{width:72px;height:72px;border-radius:50%;margin:0 auto 14px;background:var(--g);display:grid;place-items:center;font-size:34px;color:#0d3b2a;animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
+.ok h3{font:600 24px var(--serif)}.ok p{color:var(--appMut);margin:8px 0 18px}
+.bonus{background:linear-gradient(135deg,#2a2033,#6d4ca8);color:#fff;border:0;text-align:center;padding:20px}
+.bonus .pts{font:600 44px/1 var(--serif);margin:6px 0}
+.bar{height:8px;border-radius:9px;background:rgba(255,255,255,.2);overflow:hidden;margin:12px 0 6px}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--a),#fff);border-radius:9px;width:0;transition:width 1.2s ease}
+.stamps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:6px}
+.stamps span{aspect-ratio:1;border-radius:50%;border:2px dashed var(--appLine);display:grid;place-items:center;font-size:16px}
+.stamps span.on{border:0;background:linear-gradient(135deg,var(--rose),var(--plum));color:#fff}
+.qr{display:grid;grid-template-columns:repeat(21,1fr);width:150px;aspect-ratio:1;margin:8px auto;gap:0;background:#fff;padding:8px;border-radius:12px}
+.qr i{aspect-ratio:1}.qr i.k{background:#1c1820}
+.hist div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--appLine);font-size:13.5px}.hist b.p{color:#2f9e6f}
+.chat{display:flex;flex-direction:column;gap:8px;min-height:100%}
+.msg{max-width:85%;padding:10px 13px;border-radius:18px;font-size:14px;line-height:1.45;animation:in .3s ease}
+.msg.a{background:#fff;border:1px solid var(--appLine);border-bottom-left-radius:6px}
+.msg.u{align-self:flex-end;background:var(--appInk);color:#fff;border-bottom-right-radius:6px}
+.typing{display:flex;gap:4px;padding:14px}.typing i{width:6px;height:6px;border-radius:50%;background:var(--appMut);animation:dot 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,100%{opacity:.3}50%{opacity:1}}
+.sug{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.sug button{border:1px solid var(--appLine);background:#fff;border-radius:999px;padding:7px 11px;font-size:12.5px;font-weight:600;color:var(--appInk)}
+.cin{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--appLine);background:#fff}
+.cin input{flex:1;border:1px solid var(--appLine);border-radius:999px;padding:10px 14px;color:var(--appInk);outline:0}
+.cin[hidden]{display:none}
+.cin button{width:42px;height:42px;border-radius:50%;background:var(--appInk);color:#fff;font-size:16px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);padding:8px 10px 22px;border-top:1px solid var(--appLine);background:#fff}
+.tabs button{display:grid;justify-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--appMut);padding:6px 0;border-radius:12px}
+.tabs button span{font-size:20px;filter:grayscale(1);opacity:.6}
+.tabs button.on{color:var(--appInk)}.tabs button.on span{filter:none;opacity:1}
+.push{position:absolute;left:12px;right:12px;top:-120px;z-index:9;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-radius:20px;padding:12px 14px;box-shadow:0 18px 40px -16px rgba(0,0,0,.45);display:flex;gap:10px;align-items:center;transition:top .5s cubic-bezier(.2,.8,.2,1);color:var(--appInk)}
+.push.on{top:52px}.push i{width:36px;height:36px;border-radius:10px;flex:none;background:linear-gradient(135deg,var(--rose),var(--plum));display:grid;place-items:center;color:#fff;font-style:normal;font-weight:800}
+.push b{display:block;font-size:13px}.push small{font-size:12.5px;color:var(--appMut)}
+@media (max-width:900px){.page{grid-template-columns:1fr}.copy{order:2}.phone{width:min(390px,100%)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="vx"><span data-t="demo"></span><span class="lg"><button data-l="en">EN</button><button data-l="ru">RU</button><button data-l="ua">UA</button></span><a href="/app/" data-href-app data-t="want"></a></div>
+<main class="page">
+  <section class="copy">
+    <p class="tag" data-t="tag"></p>
+    <h1 data-h="h1"></h1>
+    <p class="lead" data-t="lead"></p>
+    <div class="feats" data-feats></div>
+    <a class="cta" href="/app/" data-href-app data-t="cta"></a>
+    <p class="note" data-t="note"></p>
+  </section>
+  <div class="phone" aria-label="App demo">
+    <div class="scr">
+      <div class="push" data-push><i>A</i><div><b data-t="pushH"></b><small data-t="pushP"></small></div></div>
+      <div class="sb"><span data-clock>9:41</span><span>●●● ᯤ ▮</span></div>
+      <div class="view" data-view>
+        <!-- home -->
+        <div class="v on" data-v="home">
+          <div class="hi"><div><small data-t="morning"></small><h2 data-t="name"></h2></div><span class="ava">A</span></div>
+          <div class="card next"><small data-t="nextL"></small><h3 data-next></h3><small data-nextp></small><div class="row"><button class="pill w" data-go="book" data-t="move"></button><button class="pill" data-cal data-t="cal"></button></div></div>
+          <div class="qa"><button data-go="book"><span>📅</span><b data-t="qBook"></b></button><button data-go="bonus"><span>🎁</span><b data-t="qBonus"></b></button><button data-go="chat"><span>💬</span><b data-t="qChat"></b></button><button data-push-try><span>🔔</span><b data-t="qPush"></b></button></div>
+          <div class="card offer"><div class="big">−20%</div><div><b data-t="offerH"></b><br><small data-t="offerP"></small></div></div>
+          <h4 data-t="forYou"></h4>
+          <div class="card"><b data-t="tipH"></b><p style="color:var(--appMut);font-size:13.5px;margin-top:4px" data-t="tipP"></p></div>
+        </div>
+        <!-- booking -->
+        <div class="v" data-v="book">
+          <div class="hi"><div><small data-t="bookS"></small><h2 data-t="bookH"></h2></div></div>
+          <h4 data-t="svcL"></h4><div class="chips" data-svc></div>
+          <h4 data-t="mstL"></h4><div class="masters" data-mst></div>
+          <h4 data-t="dayL"></h4><div class="days" data-days></div>
+          <h4 data-t="timeL"></h4><div class="slots" data-slots></div>
+          <button class="go" data-confirm disabled></button>
+        </div>
+        <div class="v" data-v="done"><div class="ok"><div class="ck">✓</div><h3 data-t="doneH"></h3><p data-done></p><button class="go" data-go="home" data-t="toHome"></button></div></div>
+        <!-- bonus -->
+        <div class="v" data-v="bonus">
+          <div class="hi"><div><small data-t="bonS"></small><h2 data-t="bonH"></h2></div></div>
+          <div class="card bonus"><small data-t="ptsL"></small><div class="pts" data-pts>0</div><div class="bar"><i data-bar></i></div><small data-t="ptsNext"></small></div>
+          <div class="card"><b data-t="stampH"></b><div class="stamps" data-stamps></div></div>
+          <div class="card" style="text-align:center"><b data-t="qrH"></b><div class="qr" data-qr></div><small style="color:var(--appMut)" data-t="qrP"></small></div>
+          <div class="card hist" data-hist></div>
+        </div>
+        <!-- chat -->
+        <div class="v" data-v="chat"><div class="chat" data-chat></div></div>
+      </div>
+      <form class="cin" data-cin hidden><input data-cinp maxlength="200"><button aria-label="Send">➤</button></form>
+      <nav class="tabs" data-tabs></nav>
+    </div>
+  </div>
+</main>
 <script>
-const T={"en": {"vx1": "Demo by Vaxo", "vx2": "the studio is fictional, the functions are real. Want an app like this? →", "eb": "Client app · works as an icon on the phone", "h1": "Your studio, <em>in your pocket</em>.", "lead": "Book a class in two taps, see your membership, chat with the coach, get reminders. No app store needed — opens from a link.", "hi": "Hi, Anna", "mem": "Membership · 12 classes", "left": "visits left", "tab1": "Classes", "tab2": "Me", "tab3": "Chat", "book": "Book", "booked": "Booked ✓", "cancel": "Cancel", "done": "Reminder will arrive 2 hours before", "streak": "Week streak", "visits": "Visits", "pts": "Points", "ach": "Achievements", "a1": "First class", "a2": "5 in a row", "a3": "Early bird", "ph": "Write to the coach…", "send": "Send", "c1": "Hi Anna! Tomorrow's yoga at 09:00 has 2 spots left 🙌", "c2": "Thanks! Booked.", "rep": "Coach replies within minutes. AI answers questions about prices and schedule at night.", "f1": "Booking & calendar", "f1t": "Live schedule, spots left, waitlist and reminders in the messenger.", "f2": "Membership & payments", "f2t": "Pay or renew in one tap, receipts, freeze a membership, referral bonus.", "f3": "Chat & push", "f3t": "Coach and AI in one thread. Push and Telegram reminders cut no-shows by half.", "ft": "Client app, booking, payments and reminders — built and run by Vaxo.", "cls": ["Morning yoga", "HIIT 45", "Stretch & relax", "Strength basics"], "spots": "spots"}, "ru": {"vx1": "Демо Vaxo", "vx2": "студия вымышленная, функции настоящие. Хотите такое приложение? →", "eb": "Приложение клиента · иконка на телефоне", "h1": "Ваша студия — <em>в кармане</em>.", "lead": "Запись на занятие в два касания, абонемент на виду, чат с тренером, напоминания. Магазин приложений не нужен — открывается по ссылке.", "hi": "Привет, Анна", "mem": "Абонемент · 12 занятий", "left": "визитов осталось", "tab1": "Занятия", "tab2": "Я", "tab3": "Чат", "book": "Записаться", "booked": "Вы записаны ✓", "cancel": "Отменить", "done": "Напоминание придёт за 2 часа", "streak": "Недель подряд", "visits": "Визитов", "pts": "Баллы", "ach": "Достижения", "a1": "Первое занятие", "a2": "5 подряд", "a3": "Жаворонок", "ph": "Напишите тренеру…", "send": "Отправить", "c1": "Привет, Анна! На завтрашнюю йогу в 09:00 осталось 2 места 🙌", "c2": "Спасибо! Записалась.", "rep": "Тренер отвечает за минуты. Ночью ИИ отвечает про цены и расписание.", "f1": "Запись и календарь", "f1t": "Живое расписание, остаток мест, лист ожидания и напоминания в мессенджере.", "f2": "Абонемент и оплата", "f2t": "Оплата и продление в одно касание, чеки, заморозка, бонус за друга.", "f3": "Чат и пуши", "f3t": "Тренер и ИИ в одной переписке. Пуши и Telegram вдвое сокращают неявки.", "ft": "Приложение клиента, запись, оплата и напоминания — построены и ведутся Vaxo.", "cls": ["Утренняя йога", "HIIT 45", "Растяжка и релакс", "Силовая база"], "spots": "мест"}, "ua": {"vx1": "Демо Vaxo", "vx2": "студія вигадана, функції справжні. Хочете такий застосунок? →", "eb": "Застосунок клієнта · іконка на телефоні", "h1": "Ваша студія — <em>в кишені</em>.", "lead": "Запис на заняття в два дотики, абонемент на виду, чат із тренером, нагадування. Магазин застосунків не потрібен — відкривається за посиланням.", "hi": "Привіт, Анно", "mem": "Абонемент · 12 занять", "left": "візитів залишилось", "tab1": "Заняття", "tab2": "Я", "tab3": "Чат", "book": "Записатись", "booked": "Ви записані ✓", "cancel": "Скасувати", "done": "Нагадування прийде за 2 години", "streak": "Тижнів поспіль", "visits": "Візитів", "pts": "Бали", "ach": "Досягнення", "a1": "Перше заняття", "a2": "5 поспіль", "a3": "Жайворонок", "ph": "Напишіть тренеру…", "send": "Надіслати", "c1": "Привіт, Анно! На завтрашню йогу о 09:00 залишилось 2 місця 🙌", "c2": "Дякую! Записалась.", "rep": "Тренер відповідає за хвилини. Вночі ШІ відповідає про ціни й розклад.", "f1": "Запис і календар", "f1t": "Живий розклад, залишок місць, лист очікування й нагадування в месенджері.", "f2": "Абонемент і оплата", "f2t": "Оплата й продовження в один дотик, чеки, заморозка, бонус за друга.", "f3": "Чат і пуші", "f3t": "Тренер і ШІ в одній переписці. Пуші й Telegram удвічі зменшують неявки.", "ft": "Застосунок клієнта, запис, оплата й нагадування — збудовані й ведуться Vaxo.", "cls": ["Ранкова йога", "HIIT 45", "Розтяжка й релакс", "Силова база"], "spots": "місць"}};
-const TIMES=["09:00 · 2","18:30 · 6","20:00 · 9","07:30 · 4"];
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-let L='en',bk={},left=8;
-function cls(){$('#cls').innerHTML=T[L].cls.map((n,i)=>{const [t,s]=TIMES[i].split(' · ');return '<div class="cl"><div><b>'+n+'</b><small>'+t+' · '+(+s-(bk[i]?0:0)-(bk[i]?1:0))+' '+T[L].spots+'</small></div><button class="add'+(bk[i]?' on':'')+'" data-b="'+i+'">'+(bk[i]?T[L].booked:T[L].book)+'</button></div>'}).join('')}
-function setLang(l){L=l;document.documentElement.lang=l==='ua'?'uk':l;$$('[data-i]').forEach(e=>{e.innerHTML=T[l][e.dataset.i]});$$('[data-ph]').forEach(e=>e.placeholder=T[l][e.dataset.ph]);$$('.lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));cls();try{localStorage.setItem('ps-l',l)}catch(e){}}
-$('#cls').onclick=e=>{const b=e.target.closest('[data-b]');if(!b)return;const i=b.dataset.b;bk[i]=!bk[i];left+=bk[i]?-1:1;$('#lf').textContent=left;$('#ts').textContent=bk[i]?T[L].done:'';cls()};
-$$('.tabs button').forEach(b=>b.onclick=()=>{$$('.scr').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));$$('.tabs button').forEach(x=>x.classList.toggle('on',x===b))});
-$('#cf').onsubmit=e=>{e.preventDefault();const v=$('#ci').value.trim();if(!v)return;const d=document.createElement('div');d.className='msg me';d.textContent=v;$('#mm').appendChild(d);$('#ci').value=''};
-$$('.lang button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
-const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.1});$$('.rv').forEach(e=>io.observe(e));
-setLang('en');try{const q=new URLSearchParams(location.search).get('lang')||localStorage.getItem('ps-l');if(q&&T[q]&&q!=='en')setLang(q)}catch(e){}
-</script></body></html>
+const W = {
+ en: { demo: 'Demo by Vaxo — the brand is invented, tap anything', want: 'I want this →', tag: 'Client app', h1: 'Your own app on every <em>client\'s phone</em>', lead: 'Booking in two taps, a bonus card, an AI assistant that answers 24/7, and reminders that bring clients back. It opens from a link: no app store, no install.', cta: 'Build mine with Vax →', note: 'Vax builds an app like this for your business in a few minutes, then you change anything in words.',
+  feats: [['📅', 'Booking in two taps', 'The client picks a service, a master and a free time. You see it in your CRM at once.', 'book'], ['🎁', 'Bonus card and stamps', 'Points for every visit and a QR at the till. Clients come back for the gift.', 'bonus'], ['💬', 'AI assistant 24/7', 'Answers about prices and times and books by itself, in your words.', 'chat'], ['🔔', 'Reminders and offers', 'A reminder before the visit and a personal offer at the right moment.', 'push']],
+  tabs: [['🏠', 'Home'], ['📅', 'Book'], ['🎁', 'Bonus'], ['💬', 'Chat']], morning: 'Good morning', name: 'Anna', nextL: 'Your next visit', move: 'Reschedule', cal: 'To calendar', calOk: 'Added ✓', qBook: 'Book', qBonus: 'Bonus', qChat: 'Ask', qPush: 'Remind me',
+  offerH: 'Colouring −20% until Friday', offerP: 'Only for Aurora club members', forYou: 'For you', tipH: 'Hair care after colouring', tipP: 'Your master Olga left you a short guide: three steps to keep the colour longer.',
+  bookS: 'Aurora · Kyiv', bookH: 'Book a visit', svcL: 'Service', mstL: 'Master', dayL: 'Day', timeL: 'Time', confirm: 'Book for {t}', doneH: 'You are booked!', doneP: '{s} with {m}, {d} at {t}. We will remind you 2 hours before.', toHome: 'Back home',
+  svc: [['Haircut', '$35'], ['Colouring', '$80'], ['Manicure', '$25'], ['Styling', '$20']], mst: ['Olga', 'Max', 'Ira'], wd: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  bonS: 'Aurora club', bonH: 'Your bonuses', ptsL: 'Points', ptsNext: '260 more to a free styling', stampH: '7 of 10 visits — the 10th is a gift', qrH: 'Show at the till', qrP: 'Points are added by themselves', hist: [['Haircut', '+120'], ['Manicure', '+80'], ['Friend invited', '+200']],
+  chatHi: 'Hi Anna! I am the Aurora assistant. I can book you, move a visit or tell you prices. What would you like?', sug: ['What does colouring cost?', 'Book me for tomorrow', 'Where are you?'],
+  ans: ['Colouring is from $80 and takes about 2 hours. With your club offer it is $64 until Friday. Shall I find a time?', 'Tomorrow Olga is free at 11:00, 14:00 and 17:30. Shall I book 14:00?', 'We are at 12 Khreshchatyk St., 2 minutes from the metro. Open every day 9:00–21:00.', 'Done: I passed it to the master, and you will get a message here soon.'],
+  ph: 'Write a message…', pushH: 'Aurora', pushP: 'Tomorrow at 15:00 — haircut with Olga. See you! 💇‍♀️', next: 'Haircut with Olga', nextP: 'Wed, 15:00 · 45 min' },
+ ru: { demo: 'Демо от Vaxo — бренд вымышленный, нажимайте что угодно', want: 'Хочу такое →', tag: 'Приложение для клиентов', h1: 'Своё приложение на <em>телефоне каждого клиента</em>', lead: 'Запись в два касания, бонусная карта, ИИ-помощник, который отвечает 24/7, и напоминания, которые возвращают клиентов. Открывается по ссылке: без App Store и установки.', cta: 'Собрать своё с Vax →', note: 'Такое приложение под ваш бизнес Vax собирает за несколько минут, а дальше вы меняете что угодно словами.',
+  feats: [['📅', 'Запись в два касания', 'Клиент выбирает услугу, мастера и свободное время. Вы сразу видите это в CRM.', 'book'], ['🎁', 'Бонусная карта и штампы', 'Баллы за каждый визит и QR на кассе. Клиенты возвращаются за подарком.', 'bonus'], ['💬', 'ИИ-помощник 24/7', 'Отвечает о ценах и времени и сам записывает — вашими словами.', 'chat'], ['🔔', 'Напоминания и акции', 'Напоминание перед визитом и личное предложение в нужный момент.', 'push']],
+  tabs: [['🏠', 'Главная'], ['📅', 'Запись'], ['🎁', 'Бонусы'], ['💬', 'Чат']], morning: 'Доброе утро', name: 'Анна', nextL: 'Ваш следующий визит', move: 'Перенести', cal: 'В календарь', calOk: 'Добавлено ✓', qBook: 'Запись', qBonus: 'Бонусы', qChat: 'Спросить', qPush: 'Напомнить',
+  offerH: 'Окрашивание −20% до пятницы', offerP: 'Только для клуба Aurora', forYou: 'Для вас', tipH: 'Уход после окрашивания', tipP: 'Ваш мастер Ольга оставила короткую памятку: три шага, чтобы цвет держался дольше.',
+  bookS: 'Aurora · Киев', bookH: 'Записаться', svcL: 'Услуга', mstL: 'Мастер', dayL: 'День', timeL: 'Время', confirm: 'Записаться на {t}', doneH: 'Вы записаны!', doneP: '{s}, мастер {m}, {d} в {t}. Напомним за 2 часа.', toHome: 'На главную',
+  svc: [['Стрижка', '1 200 ₴'], ['Окрашивание', '2 800 ₴'], ['Маникюр', '800 ₴'], ['Укладка', '600 ₴']], mst: ['Ольга', 'Макс', 'Ира'], wd: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+  bonS: 'Клуб Aurora', bonH: 'Ваши бонусы', ptsL: 'Баллы', ptsNext: 'Ещё 260 — и укладка в подарок', stampH: '7 из 10 визитов — 10-й в подарок', qrH: 'Покажите на кассе', qrP: 'Баллы начислятся сами', hist: [['Стрижка', '+120'], ['Маникюр', '+80'], ['Пригласила подругу', '+200']],
+  chatHi: 'Здравствуйте, Анна! Я помощник Aurora: запишу, перенесу визит или подскажу цены. Чем помочь?', sug: ['Сколько стоит окрашивание?', 'Запиши меня на завтра', 'Где вы находитесь?'],
+  ans: ['Окрашивание — от 2 800 ₴, около 2 часов. По акции клуба до пятницы — 2 240 ₴. Подобрать время?', 'Завтра Ольга свободна в 11:00, 14:00 и 17:30. Записать на 14:00?', 'Мы на Крещатике, 12, в 2 минутах от метро. Работаем каждый день 9:00–21:00.', 'Готово: передала мастеру, ответ придёт сюда совсем скоро.'],
+  ph: 'Напишите сообщение…', pushH: 'Aurora', pushP: 'Завтра в 15:00 — стрижка у Ольги. Ждём вас! 💇‍♀️', next: 'Стрижка у Ольги', nextP: 'Ср, 15:00 · 45 мин' },
+ ua: { demo: 'Демо від Vaxo — бренд вигаданий, натискайте що завгодно', want: 'Хочу таке →', tag: 'Застосунок для клієнтів', h1: 'Свій застосунок на <em>телефоні кожного клієнта</em>', lead: 'Запис у два дотики, бонусна картка, ШІ-помічник, що відповідає 24/7, і нагадування, які повертають клієнтів. Відкривається за посиланням: без App Store і встановлення.', cta: 'Зібрати свій з Vax →', note: 'Такий застосунок під ваш бізнес Vax збирає за кілька хвилин, а далі ви змінюєте що завгодно словами.',
+  feats: [['📅', 'Запис у два дотики', 'Клієнт обирає послугу, майстра й вільний час. Ви одразу бачите це в CRM.', 'book'], ['🎁', 'Бонусна картка й штампи', 'Бали за кожен візит і QR на касі. Клієнти повертаються по подарунок.', 'bonus'], ['💬', 'ШІ-помічник 24/7', 'Відповідає про ціни й час і сам записує — вашими словами.', 'chat'], ['🔔', 'Нагадування й акції', 'Нагадування перед візитом і особиста пропозиція в потрібний момент.', 'push']],
+  tabs: [['🏠', 'Головна'], ['📅', 'Запис'], ['🎁', 'Бонуси'], ['💬', 'Чат']], morning: 'Доброго ранку', name: 'Анна', nextL: 'Ваш наступний візит', move: 'Перенести', cal: 'У календар', calOk: 'Додано ✓', qBook: 'Запис', qBonus: 'Бонуси', qChat: 'Запитати', qPush: 'Нагадати',
+  offerH: 'Фарбування −20% до пʼятниці', offerP: 'Лише для клубу Aurora', forYou: 'Для вас', tipH: 'Догляд після фарбування', tipP: 'Ваша майстриня Ольга залишила коротку памʼятку: три кроки, щоб колір тримався довше.',
+  bookS: 'Aurora · Київ', bookH: 'Записатися', svcL: 'Послуга', mstL: 'Майстер', dayL: 'День', timeL: 'Час', confirm: 'Записатися на {t}', doneH: 'Ви записані!', doneP: '{s}, майстер {m}, {d} о {t}. Нагадаємо за 2 години.', toHome: 'На головну',
+  svc: [['Стрижка', '1 200 ₴'], ['Фарбування', '2 800 ₴'], ['Манікюр', '800 ₴'], ['Укладка', '600 ₴']], mst: ['Ольга', 'Макс', 'Іра'], wd: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'],
+  bonS: 'Клуб Aurora', bonH: 'Ваші бонуси', ptsL: 'Бали', ptsNext: 'Ще 260 — і укладка в подарунок', stampH: '7 з 10 візитів — 10-й у подарунок', qrH: 'Покажіть на касі', qrP: 'Бали нарахуються самі', hist: [['Стрижка', '+120'], ['Манікюр', '+80'], ['Запросила подругу', '+200']],
+  chatHi: 'Вітаю, Анно! Я помічник Aurora: запишу, перенесу візит або підкажу ціни. Чим допомогти?', sug: ['Скільки коштує фарбування?', 'Запиши мене на завтра', 'Де ви знаходитесь?'],
+  ans: ['Фарбування — від 2 800 ₴, близько 2 годин. За акцією клубу до пʼятниці — 2 240 ₴. Підібрати час?', 'Завтра Ольга вільна об 11:00, 14:00 і 17:30. Записати на 14:00?', 'Ми на Хрещатику, 12, за 2 хвилини від метро. Працюємо щодня 9:00–21:00.', 'Готово: передала майстрині, відповідь прийде сюди зовсім скоро.'],
+  ph: 'Напишіть повідомлення…', pushH: 'Aurora', pushP: 'Завтра о 15:00 — стрижка в Ольги. Чекаємо на вас! 💇‍♀️', next: 'Стрижка в Ольги', nextP: 'Ср, 15:00 · 45 хв' },
+};
+const qs = new URLSearchParams(location.search).get('lang');
+let L = ['en', 'ru', 'ua'].includes(qs) ? qs : (navigator.language || 'en').startsWith('uk') ? 'ua' : (navigator.language || 'en').startsWith('ru') ? 'ru' : 'en';
+const $ = (s) => document.querySelector(s), $$ = (s) => [...document.querySelectorAll(s)];
+const h = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+const st = { svc: 0, mst: 0, day: 2, time: '' };
+let T;
+function show(v) {
+  $$('[data-v]').forEach((x) => x.classList.toggle('on', x.dataset.v === v));
+  const tabIdx = { home: 0, book: 1, done: 1, bonus: 2, chat: 3 }[v];
+  $$('[data-tabs] button').forEach((b, i) => b.classList.toggle('on', i === tabIdx));
+  $('[data-cin]').hidden = v !== 'chat';
+  $$('.feat').forEach((f) => f.classList.toggle('on', f.dataset.k === v || (v === 'done' && f.dataset.k === 'book')));
+  $('[data-view]').scrollTop = 0;
+  if (v === 'bonus') countUp();
+  if (v === 'chat' && !$('[data-chat]').children.length) chatStart();
+}
+function push() { const p = $('[data-push]'); p.classList.add('on'); clearTimeout(push.t); push.t = setTimeout(() => p.classList.remove('on'), 3600); }
+function countUp() {
+  const el = $('[data-pts]'), end = 1240, t0 = performance.now();
+  const step = (t) => { const k = Math.min(1, (t - t0) / 900); el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3))).toLocaleString(); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+  setTimeout(() => { $('[data-bar]').style.width = '83%'; }, 50);
+}
+function days() {
+  const out = [], now = new Date();
+  for (let i = 0; i < 7; i++) { const d = new Date(now); d.setDate(now.getDate() + i); out.push([T.wd[(d.getDay() + 6) % 7], d.getDate()]); }
+  return out;
+}
+function drawBook() {
+  const svc = $('[data-svc]'); svc.replaceChildren(...T.svc.map(([n, p], i) => { const b = h('button', 'chip' + (i === st.svc ? ' on' : ''), n); b.append(h('small', '', p)); b.onclick = () => { st.svc = i; drawBook(); }; return b; }));
+  const cols = ['linear-gradient(135deg,#d9826b,#6d4ca8)', 'linear-gradient(135deg,#3b82f6,#7c3aed)', 'linear-gradient(135deg,#f59e0b,#ef4444)'];
+  $('[data-mst]').replaceChildren(...T.mst.map((n, i) => { const b = h('button', 'mst' + (i === st.mst ? ' on' : '')); const av = h('i', '', n[0]); av.style.background = cols[i]; b.append(av, h('span', '', n)); b.onclick = () => { st.mst = i; drawBook(); }; return b; }));
+  $('[data-days]').replaceChildren(...days().map(([w, d], i) => { const b = h('button', 'chip' + (i === st.day ? ' on' : ''), w); b.append(h('small', '', String(d))); b.onclick = () => { st.day = i; st.time = ''; drawBook(); }; return b; }));
+  const times = ['10:00', '11:00', '12:30', '14:00', '15:00', '16:30', '18:00', '19:30'], busy = [(st.day + st.mst) % 8, (st.day * 3 + 1) % 8];
+  $('[data-slots]').replaceChildren(...times.map((t, i) => { const b = h('button', 'chip' + (t === st.time ? ' on' : ''), t); b.disabled = busy.includes(i); b.onclick = () => { st.time = t; drawBook(); }; return b; }));
+  const c = $('[data-confirm]'); c.disabled = !st.time; c.textContent = st.time ? T.confirm.replace('{t}', st.time) : T.timeL + '…';
+}
+function chatStart() { say(T.chatHi, 'a'); sugg(); }
+function say(t, who) { const c = $('[data-chat]'); c.append(h('div', 'msg ' + who, t)); $('[data-view]').scrollTop = 1e6; }
+function sugg() { const box = h('div', 'sug'); T.sug.forEach((q, i) => { const b = h('button', '', q); b.onclick = () => { box.remove(); ask(q, i); }; box.append(b); }); $('[data-chat]').append(box); }
+function ask(q, i) {
+  say(q, 'u'); const ty = h('div', 'msg a typing'); ty.append(h('i'), h('i'), h('i')); $('[data-chat]').append(ty); $('[data-view]').scrollTop = 1e6;
+  setTimeout(() => { ty.remove(); say(T.ans[i ?? 3], 'a'); if (i === 1) { const b = h('div', 'sug'); const go = h('button', '', T.qBook + ' 14:00 ✓'); go.onclick = () => { st.time = '14:00'; st.day = 1; show('done'); doneText(); }; b.append(go); $('[data-chat]').append(b); } }, 1100);
+}
+function doneText() { const dd = days()[st.day]; $('[data-done]').textContent = T.doneP.replace('{s}', T.svc[st.svc][0]).replace('{m}', T.mst[st.mst]).replace('{d}', dd[0] + ' ' + dd[1]).replace('{t}', st.time); setTimeout(push, 1500); }
+function paint() {
+  T = W[L]; document.documentElement.lang = L === 'ua' ? 'uk' : L;
+  $$('[data-t]').forEach((e) => { const v = T[e.dataset.t]; if (typeof v === 'string') e.textContent = v; });
+  $('[data-h="h1"]').innerHTML = T.h1;
+  $$('.vx .lg button').forEach((b) => b.classList.toggle('on', b.dataset.l === L));
+  $$('[data-href-app]').forEach((a) => { a.href = (L === 'en' ? '' : '/' + L) + '/app/#q=' + encodeURIComponent(L === 'en' ? 'Make an app for the clients of my business' : L === 'ua' ? 'Зроби застосунок для клієнтів мого бізнесу' : 'Сделай приложение для клиентов моего бизнеса'); });
+  $('[data-feats]').replaceChildren(...T.feats.map(([i, b, s, k]) => { const f = h('button', 'feat'); f.dataset.k = k; const ic = h('i', '', i); const tx = h('span'); tx.append(h('b', '', b), h('small', '', s)); f.append(ic, tx); f.onclick = () => (k === 'push' ? (show('home'), push()) : show(k)); return f; }));
+  $('[data-tabs]').replaceChildren(...T.tabs.map(([i, n], j) => { const b = h('button'); b.append(h('span', '', i), h('b', '', n)); b.onclick = () => show(['home', 'book', 'bonus', 'chat'][j]); return b; }));
+  $('[data-next]').textContent = T.next; $('[data-nextp]').textContent = T.nextP;
+  $('[data-cinp]').placeholder = T.ph;
+  $('[data-stamps]').replaceChildren(...Array.from({ length: 10 }, (_, i) => h('span', i < 7 ? 'on' : '', i < 7 ? '✓' : i === 9 ? '🎁' : '')));
+  $('[data-hist]').replaceChildren(...T.hist.map(([a, b]) => { const r = h('div'); r.append(h('span', '', a), h('b', 'p', b)); return r; }));
+  $('[data-chat]').replaceChildren();
+  drawBook(); show($$('[data-v]').find((v) => v.classList.contains('on'))?.dataset.v || 'home');
+}
+// a QR-like pattern (decorative)
+(() => { const q = $('[data-qr]'); let seed = 7; const r = () => (seed = (seed * 9301 + 49297) % 233280) / 233280; for (let y = 0; y < 21; y++) for (let x = 0; x < 21; x++) { const f = (x < 7 && y < 7) || (x > 13 && y < 7) || (x < 7 && y > 13); const ring = f && ((x % 14 === 0 || x % 14 === 6 || y % 14 === 0 || y % 14 === 6) || ((x % 14 > 1 && x % 14 < 5) && (y % 14 > 1 && y % 14 < 5))); q.append(h('i', (f ? ring : r() > .5) ? 'k' : '')); } })();
+$('[data-confirm]').onclick = () => { show('done'); doneText(); };
+$$('[data-go]').forEach((b) => (b.onclick = () => show(b.dataset.go)));
+$('[data-push-try]').onclick = push;
+$('[data-cal]').onclick = (e) => { e.target.textContent = T.calOk; };
+$('[data-cin]').onsubmit = (e) => { e.preventDefault(); const v = $('[data-cinp]').value.trim(); if (!v) return; $('[data-cinp]').value = ''; const low = v.toLowerCase(); ask(v, /цен|стоим|price|cost|скільки|сколько/.test(low) ? 0 : /запис|book|завтра|tomorrow/.test(low) ? 1 : /где|де |where|адрес|address/.test(low) ? 2 : 3); };
+$$('.vx .lg button').forEach((b) => (b.onclick = () => { L = b.dataset.l; paint(); }));
+const tick = () => { const d = new Date(); $('[data-clock]').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); }; tick(); setInterval(tick, 30000);
+paint();
+setTimeout(push, 2200);
+</script>
+</body></html>

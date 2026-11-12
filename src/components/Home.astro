@@ -17,7 +17,7 @@ const WK: Record<string, string[]> = {
 const L3 = lang === 'en' ? 'en' : lang;
 const WORKS: [string, string, string, string][] = ([
   ['flagship', `flagship-${L3}.jpg`, 'Ember'], ['eco-shop', `eco-shop-${L3}.jpg`, 'Ostra'], ['eco-clinic', `eco-clinic-${L3}.jpg`, 'Aurelia'],
-  ['shop-2026', `shop-2026-${L3}.jpg`, 'Kettle & Leaf'], ['personal-brand', `personal-brand-${L3}.jpg`, 'Mila Hart'], ['client-app', `client-app-${L3}.jpg`, 'Pulse Studio'],
+  ['shop-2026', `shop-2026-${L3}.jpg`, 'Kettle & Leaf'], ['personal-brand', `personal-brand-${L3}.jpg`, 'Mila Hart'], ['client-app', `client-app-${L3}.jpg`, 'Aurora'],
   ['coach', 'coach.jpg', 'Maya Reed'], ['skincare', 'skincare.jpg', 'Lumen'], ['restaurant', 'restaurant.jpg', 'Ember & Salt'], ['dental', 'dental.jpg', 'Dental'],
 ] as [string, string, string][]).map(([a, b, c], i) => [a, b, c, (WK[lang] ?? WK.en)[i]]);
 const T = {
