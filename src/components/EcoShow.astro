@@ -128,7 +128,7 @@ const ICO: Record<string, string> = {
       <div class="stage">
         {T.tabs.map(([k, h, d, q], i) => (
           <div class:list={['pane', k, { on: i === 0 }]} data-pane={i} role="tabpanel">
-            <div class="vis" aria-hidden="true">
+            <a class="vis" href={LIVE[k] ? `/examples/${LIVE[k]}/?lang=${lang}` : app(q)} target={LIVE[k] ? '_blank' : undefined} rel={LIVE[k] ? 'noopener' : undefined} tabindex="-1" aria-hidden="true">
               {k === 'site' && (
                 <div class="gal">{WORKS.map(([, img, n], j) => <figure class:list={[{ on: j === 0 }]}><img src={`/examples/thumbs/${img}`} alt="" loading="lazy" width="640" height="400" /><figcaption>{n}</figcaption></figure>)}</div>
               )}
@@ -186,7 +186,7 @@ const ICO: Record<string, string> = {
                   <small>{T.auto.note}</small>
                 </div>
               )}
-            </div>
+            </a>
             <div class="foot">
               <div><b>{h}</b><p>{d}</p></div>
               <div class="acts"><a class="go" href={app(q)}>{T.try} →</a>{LIVE[k] && <a class="lv" href={`/examples/${LIVE[k]}/?lang=${lang}`} target="_blank" rel="noopener">{T.live} ↗</a>}</div>
@@ -279,7 +279,7 @@ const ICO: Record<string, string> = {
   .stage { position: relative; min-height: 520px; border: 1px solid var(--line2); border-radius: 24px; background: radial-gradient(800px 400px at 80% -10%, color-mix(in srgb, var(--accText) 14%, transparent), transparent), var(--surf); overflow: hidden; }
   .pane { position: absolute; inset: 0; display: grid; grid-template-rows: 1fr auto; opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity .45s, transform .45s, visibility .45s; }
   .pane.on { opacity: 1; visibility: visible; transform: none; }
-  .vis { position: relative; display: grid; place-items: center; padding: 26px; overflow: hidden; }
+  .vis { position: relative; display: grid; color: inherit; text-decoration: none; cursor: pointer; place-items: center; padding: 26px; overflow: hidden; }
   .foot { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 18px 22px; border-top: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 40%, transparent); flex-wrap: wrap; }
   .foot b { font-size: 17px; }
   .foot p { margin: 2px 0 0; color: var(--mut); font-size: 14px; max-width: 52ch; }
