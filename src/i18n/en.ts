@@ -538,7 +538,7 @@ const en = {
   "finalTitle": "Tell us what you need — get a plan and a price in a minute",
   "submit": "Submit request",
   "ask": "Ask a question",
-  "footer": "VAXO — FULL-CYCLE DIGITAL STUDIO. ONLINE, WORLDWIDE.",
+  "footer": "VAXO — ANYTHING DONE ONLINE, VAX DOES FOR YOU.",
   "footerCities": "Online worldwide: Ukraine · Europe · USA · UAE",
   "form": {
     "name": "Your name",

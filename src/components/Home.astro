@@ -190,7 +190,7 @@ const T = {
     dnote: 'Рахунок прийде в особистий чат одразу. Поки його не сплачено, працює безкоштовний рівень. Повернення 14 днів.', demail: 'Ваша пошта', dgo: 'Почати безкоштовний місяць', dbad: 'Введіть справжню пошту.', dfail: 'Щось пішло не так — спробуйте ще раз.',
   },
 }[lang];
-const ava = '/mascot/vax-happy.webp';
+const ava = '/mascot/vax-talk.webp';
 ---
 
 <main class="hm" id="top">
@@ -268,7 +268,7 @@ const ava = '/mascot/vax-happy.webp';
 
   <section class="sec end">
     <div class="w">
-      <img src={ava} alt="Vax" width="128" height="128" loading="lazy" />
+      <img src={ava} alt="Vax" width="150" height="171" loading="lazy" />
       <q>{T.endQ}</q>
       <h2>{T.endH}</h2>
       <form class="ask" data-ask2>
@@ -540,7 +540,7 @@ const ava = '/mascot/vax-happy.webp';
   details p { padding: 0 0 22px; max-width: 720px; color: var(--mt); }
 
   .end { text-align: center; background: var(--s2); }
-  .end img { display: block; width: 128px; height: 128px; object-fit: contain; margin: 0 auto 14px; }
+  .end img { display: block; width: 150px; height: auto; aspect-ratio: 455/520; object-fit: contain; margin: 0 auto 14px; }
   .end q { display: block; quotes: none; margin-bottom: 12px; color: var(--mt); }
 
   .pdlg { width: min(420px, calc(100vw - 32px)); padding: 28px; border: 1px solid var(--ln); border-radius: 20px; background: var(--s3); color: var(--tx); }
