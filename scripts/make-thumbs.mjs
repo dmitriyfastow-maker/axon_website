@@ -4,6 +4,7 @@ import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import sharp from 'sharp';
 
 const root = path.resolve('public');
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml', '.json': 'application/json' };
@@ -42,6 +43,8 @@ for (const slug of slugs) for (const lang of ['en', 'ru', 'ua']) {
   </div></body>`);
   await p.waitForTimeout(300);
   await p.screenshot({ path: `public/examples/thumbs/${slug}-${lang}.jpg`, type: 'jpeg', quality: 84 });
+  // the site shows the .webp (3x lighter); .jpg stays as a fallback for old links
+  await sharp(`public/examples/thumbs/${slug}-${lang}.jpg`).webp({ quality: 80, effort: 6 }).toFile(`public/examples/thumbs/${slug}-${lang}.webp`);
   await ctx.close();
   console.log('ok', slug, lang);
 }

@@ -55,7 +55,7 @@ const allHref = lang === 'en' ? '/examples/' : `/${lang}/examples/`;
     <div class="grid">
       {C.items.map(([kind, name, what], i) => (
         <a class:list={['card', { big: i === 0 }]} href={`/examples/${slugs[i]}/?lang=${lang}`} target="_blank" rel="noopener">
-          <span class="shot"><img src={`/examples/thumbs/${thumbs[i]}-${lang}.jpg`} alt={name} loading="lazy" width="1200" height="750" /></span>
+          <span class="shot"><img src={`/examples/thumbs/${thumbs[i]}-${lang}.webp`} alt={name} loading="lazy" width="1200" height="750" /></span>
           <span class="tx">
             <span class="kind">{kind} · <b>{name}</b></span>
             <span class="what">{what}</span>

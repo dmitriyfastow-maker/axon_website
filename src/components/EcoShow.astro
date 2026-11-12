@@ -90,9 +90,9 @@ const TX = {
 }[lang];
 const T = TX!;
 const WORKS: [string, string, string][] = [
-  ['flagship', `flagship-${L3}.jpg`, 'Ember'], ['eco-shop', `eco-shop-${L3}.jpg`, 'Ostra'], ['eco-clinic', `eco-clinic-${L3}.jpg`, 'Aurelia'],
-  ['shop-2026', `shop-2026-${L3}.jpg`, 'Kettle & Leaf'], ['personal-brand', `personal-brand-${L3}.jpg`, 'Mila Hart'], ['client-app', `client-app-${L3}.jpg`, 'Aurora'],
-  ['coach', 'coach.jpg', 'Maya Reed'], ['skincare', 'skincare.jpg', 'Lumen'], ['dental', 'dental.jpg', 'Dental'],
+  ['flagship', `flagship-${L3}.webp`, 'Ember'], ['eco-shop', `eco-shop-${L3}.webp`, 'Ostra'], ['eco-clinic', `eco-clinic-${L3}.webp`, 'Aurelia'],
+  ['shop-2026', `shop-2026-${L3}.webp`, 'Kettle & Leaf'], ['personal-brand', `personal-brand-${L3}.webp`, 'Mila Hart'], ['client-app', `client-app-${L3}.webp`, 'Aurora'],
+  ['coach', 'coach.webp', 'Maya Reed'], ['skincare', 'skincare.webp', 'Lumen'], ['dental', 'dental.webp', 'Dental'],
 ];
 const LIVE: Record<string, string> = { site: 'flagship', book: 'eco-clinic', crm: 'crm', bot: 'ai-assistant', par: 'eco-partners', vid: 'marketing', auto: 'eco-crm', app: 'client-app' };
 const ICO: Record<string, string> = {
@@ -156,7 +156,7 @@ const ICO: Record<string, string> = {
               )}
               {k === 'par' && (
                 <div class="shot">
-                  <figure><img src={`/examples/thumbs/eco-partners-${L3}.jpg`} alt="" loading="lazy" width="640" height="400" /></figure>
+                  <figure><img src={`/examples/thumbs/eco-partners-${L3}.webp`} alt="" loading="lazy" width="640" height="400" /></figure>
                   <div class="parm over">
                     <div class="lnk">{T.par.link}</div>
                     {T.par.rows.map(([n, v, l], j) => <div class="pr"><b>{n}</b><span><em data-count={j ? 61 : 148}>0</em> {v}</span><span><em data-count={j ? 7 : 19}>0</em> {l}</span></div>)}
@@ -164,7 +164,7 @@ const ICO: Record<string, string> = {
                 </div>
               )}
               {k === 'app' && (
-                <div class="shot"><figure><img src={`/examples/thumbs/client-app-${L3}.jpg`} alt="" loading="lazy" width="640" height="400" /></figure></div>
+                <div class="shot"><figure><img src={`/examples/thumbs/client-app-${L3}.webp`} alt="" loading="lazy" width="640" height="400" /></figure></div>
               )}
               {k === 'life' && (
                 <div class="chatm">

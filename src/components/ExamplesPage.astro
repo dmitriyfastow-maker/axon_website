@@ -6,8 +6,6 @@ import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
 import { getDict, langPath, type Lang } from '../i18n';
-import tricho from '../assets/images/tricho-hero.jpg';
-import aipro from '../assets/images/aipro-hero.jpg';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -17,16 +15,16 @@ const alts = { en: '/examples/', ua: '/ua/examples/', ru: '/ru/examples/' };
 
 // [type key, slug, thumb, plan]
 const ITEMS = [
-  ['site', 'flagship', `flagship-${lang}.jpg`, 'Pro · Max · Ultra'],
-  ['marketing', 'marketing', `marketing-${lang}.jpg`, 'Max · Ultra'],
-  ['app', 'ai-assistant', `ai-assistant-${lang}.jpg`, 'Pro · Max · Ultra'],
-  ['booking', 'eco-clinic', `eco-clinic-${lang}.jpg`, 'Max'],
-  ['shop', 'eco-shop', `eco-shop-${lang}.jpg`, 'Ultra'],
-  ['app', 'eco-crm', `eco-os-${lang}.jpg`, 'Pro · Max · Ultra'],
-  ['app', 'eco-partners', `eco-partners-${lang}.jpg`, 'Ultra'],
-  ['site', 'personal-brand', `personal-brand-${lang}.jpg`, 'Pro · Max · Ultra'],
-  ['shop', 'shop-2026', `shop-2026-${lang}.jpg`, 'Ultra'],
-  ['app', 'client-app', `client-app-${lang}.jpg`, 'Max · Ultra'],
+  ['site', 'flagship', `flagship-${lang}.webp`, 'Pro · Max · Ultra'],
+  ['marketing', 'marketing', `marketing-${lang}.webp`, 'Max · Ultra'],
+  ['app', 'ai-assistant', `ai-assistant-${lang}.webp`, 'Pro · Max · Ultra'],
+  ['booking', 'eco-clinic', `eco-clinic-${lang}.webp`, 'Max'],
+  ['shop', 'eco-shop', `eco-shop-${lang}.webp`, 'Ultra'],
+  ['app', 'eco-crm', `eco-os-${lang}.webp`, 'Pro · Max · Ultra'],
+  ['app', 'eco-partners', `eco-partners-${lang}.webp`, 'Ultra'],
+  ['site', 'personal-brand', `personal-brand-${lang}.webp`, 'Pro · Max · Ultra'],
+  ['shop', 'shop-2026', `shop-2026-${lang}.webp`, 'Ultra'],
+  ['app', 'client-app', `client-app-${lang}.webp`, 'Max · Ultra'],
 ] as const;
 
 const C = {
@@ -109,7 +107,6 @@ const C = {
     customH: 'Потрібно те, чого тут немає?', customP: 'Застосунок, бот, інтеграція, гра — для бізнесу чи особисте завдання. Vax заздалегідь називає точну ціну, прогрес ви бачите в кабінеті в реальному часі й можете запитати будь-що будь-коли.',
   },
 }[lang];
-const realImg = [tricho.src, aipro.src, `/examples/thumbs/vaxo.jpg`];
 const start = `${home}#contact`;
 ---
 
