@@ -84,6 +84,9 @@ export default {
       url.hostname = 'vaxogroup.com';
       return Response.redirect(url.toString(), 301);
     }
+    // Language codes people type by habit: /uk/… is the standard code for Ukrainian (ours is /ua/), /en/… is the English home at /.
+    const lang = url.pathname.match(/^\/(uk|en)(\/.*)?$/);
+    if (lang && request.method === 'GET') return Response.redirect(`${url.origin}${lang[1] === 'uk' ? '/ua' : ''}${lang[2] || '/'}${url.search}`, 301);
     // Decision 43: one place to work. The old cabinet address opens the workspace, keeping ?t= and the #part.
     const cab = url.pathname.match(/^\/(ru\/|ua\/)?me\/?$/);
     if (cab && request.method === 'GET') return Response.redirect(`${url.origin}/${cab[1] ?? ''}app/${url.search}`, 302);
