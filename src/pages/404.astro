@@ -12,10 +12,11 @@ const labels = { en: 'English', ua: 'Українська', ru: 'Русский'
     <a href="/" class="logo">VAXO<span>.</span></a>
     <div class="eyebrow">◆ 404</div>
     <h1 data-h>Page not found</h1>
-    <p data-p>The page you are looking for doesn’t exist. Choose a language to go to the homepage.</p>
+    <p data-p>This page doesn’t exist. Tell Vax what you were looking for, or go to the homepage.</p>
     <VaxSays text={t.vax.notFound} pose="lost" />
     <nav>
-      {LANGS.map((l) => <a href={langPath(l)} class="btn">{labels[l]}</a>)}
+      <a href="/app/" class="btn main" data-app>Open Workspace</a>
+      {LANGS.map((l) => <a href={langPath(l)} class="btn" data-l={l}>{labels[l]}</a>)}
     </nav>
   </main>
 </Base>
@@ -67,7 +68,7 @@ const labels = { en: 'English', ua: 'Українська', ru: 'Русский'
     font-size: 16px;
     font-weight: 600;
   }
-  .btn:first-child {
+  .btn.main {
     background: var(--acc);
     border-color: var(--acc);
     color: var(--dark-ink);
@@ -75,11 +76,22 @@ const labels = { en: 'English', ua: 'Українська', ru: 'Русский'
 </style>
 
 <script>
-  const D: Record<string, [string, string]> = {
-    ua: ['Сторінку не знайдено', 'Такої сторінки не існує. Оберіть мову, щоб перейти на головну.'],
-    ru: ['Страница не найдена', 'Такой страницы нет. Выберите язык, чтобы перейти на главную.'],
+  const D: Record<string, [string, string, string, string]> = {
+    ua: ['Сторінку не знайдено', 'Такої сторінки не існує. Опишіть, що шукали, — Vax допоможе, або перейдіть на головну.', 'Навіть єноти іноді губляться. Ходімо додому.', 'Відкрити Workspace'],
+    ru: ['Страница не найдена', 'Такой страницы нет. Опишите, что искали, — Vax поможет, или перейдите на главную.', 'Даже еноты иногда теряются. Пойдёмте домой.', 'Открыть Workspace'],
   };
   const l = (navigator.language || 'en').slice(0, 2).replace('uk', 'ua');
-  const d = D[location.pathname.startsWith('/ua/') ? 'ua' : location.pathname.startsWith('/ru/') ? 'ru' : l];
-  if (d) { document.querySelector('[data-h]')!.textContent = d[0]; document.querySelector('[data-p]')!.textContent = d[1]; document.title = 'Vaxo — ' + d[0]; }
+  const lang = location.pathname.startsWith('/ua/') ? 'ua' : location.pathname.startsWith('/ru/') ? 'ru' : D[l] ? l : 'en';
+  const d = D[lang];
+  if (d) {
+    document.documentElement.lang = lang === 'ua' ? 'uk' : lang;
+    document.querySelector('[data-h]')!.textContent = d[0];
+    document.querySelector('[data-p]')!.textContent = d[1];
+    const b = document.querySelector('.nf .vax-bubble'); if (b) b.textContent = d[2];
+    const a = document.querySelector<HTMLAnchorElement>('[data-app]')!; a.textContent = d[3]; a.href = '/' + lang + '/app/';
+    document.title = 'Vaxo — ' + d[0];
+  }
+  // Language of this visitor goes first among the homepage links.
+  const cur = document.querySelector('[data-l="' + lang + '"]');
+  if (cur) document.querySelector('[data-app]')!.after(cur);
 </script>
