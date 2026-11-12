@@ -64,6 +64,8 @@ export function startTracking(): void {
     sent = true;
     const body = JSON.stringify({ p: location.pathname, sess, src, evs: [...evs, { k: 'scroll', val: maxScroll || Math.round((innerHeight / docH()) * 100) }, { k: 'time', val: Math.round((Date.now() - t0) / 1000) }] });
     navigator.sendBeacon?.('/api/ux', new Blob([body], { type: 'application/json' }));
+    // Clicks go once; scroll/time are cumulative and the server keeps only the latest per visit.
+    evs.length = 0;
   };
   addEventListener('pagehide', flush);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); else sent = false; });

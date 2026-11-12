@@ -87,6 +87,9 @@ export async function trackUx(db: DB, request: Request) {
   const stmts = evs.filter((e) => ['click', 'dead', 'rage', 'scroll', 'time'].includes(String(e.k))).map((e) =>
     db.prepare('INSERT INTO ux (sess, path, kind, sel, x, y, val, src, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
       .bind(sess, path, String(e.k), str(e.sel, 90), num(e.x), num(e.y), num(e.val), src, country));
+  // A tab hidden and shown again sends scroll/time again — keep only the newest (cumulative) row per visit and page.
+  if (sess && evs.some((e) => e.k === 'scroll' || e.k === 'time'))
+    stmts.unshift(db.prepare(`DELETE FROM ux WHERE sess = ? AND path = ? AND kind IN ('scroll', 'time') AND at > datetime('now', '-1 day')`).bind(sess, path));
   if (stmts.length) await db.batch(stmts);
 }
 
