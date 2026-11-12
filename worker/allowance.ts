@@ -57,17 +57,27 @@ export function windows(now = new Date()) {
  *  1st of each month, also on 3/6/12-month plans, so prepaid months never run ahead of the money. Units are cents of AI
  *  spend for Claude answers (a free-model answer costs 1–3), so the budget is about 40% of the plan price: never a loss. */
 export const MONTH_CAPS: Record<string, number> = { start: 300, personal: 760, care: 1560, growth: 5160, pro: 11960 };
-export type Limits = { day: { pct: number; reset: string }; week: { pct: number; reset: string }; month: { pct: number; reset: string }; blocked: 'month' | null };
+/** Extra allowance (top-up): a one-off pack on top of this month's budget, at the same rate as the plans (40% of the
+ *  price goes to AI, so a pack is never a loss). Bought as an invoice whose description names the month, so it counts
+ *  only for that month even when it is paid a few days later. EMPTY = switched off until Dmitry's "yes" on the price
+ *  (hq ask 12.11, proposal [5, 10, 25]). The description must NOT start with "Vaxo ": monthly billing treats those as
+ *  subscription invoices. */
+export const TOPUP_PACKS: number[] = [];
+export const TOPUP_RATE = 40; // allowance units (AI cents) per $1
+export const TOPUP_DESC = 'Extra allowance for Vaxo Workspace';
+export const topupDesc = (usd: number, month: string) => `${TOPUP_DESC}, +$${usd} for ${month}`;
+export type Limits = { day: { pct: number; reset: string }; week: { pct: number; reset: string }; month: { pct: number; reset: string }; blocked: 'month' | null; packs: number[] };
 export async function wsLimits(db: DB, clientId: number, plan: string): Promise<Limits> {
   const now = new Date();
   const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)), next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
   // Loyalty bonus (Decision 50): from the 4th paid month the monthly budget is 20% larger. Renewals earn Vaxo more (a
   // partner gets 30% instead of 50%), and part of that goes back to the people who stay.
   const paidMonths = plan === 'start' ? 0 : (await db.prepare(`SELECT COUNT(*) AS n FROM invoices i JOIN leads l ON l.id = i.lead_id WHERE l.client_id = ? AND i.status = 'paid' AND i.description LIKE 'Vaxo %subscription%'`).bind(clientId).first<{ n: number }>().catch(() => null))?.n ?? 0;
-  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * (paidMonths >= 3 ? 1.2 : 1));
+  const extra = (await db.prepare(`SELECT COALESCE(SUM(i.amount), 0) AS n FROM invoices i JOIN leads l ON l.id = i.lead_id WHERE l.client_id = ? AND i.status = 'paid' AND i.currency = 'USD' AND i.description LIKE ?`).bind(clientId, `${TOPUP_DESC}, % for ${start.toISOString().slice(0, 7)}`).first<{ n: number }>().catch(() => null))?.n ?? 0;
+  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * (paidMonths >= 3 ? 1.2 : 1) + extra * TOPUP_RATE);
   const used = (await db.prepare('SELECT COALESCE(SUM(work), 0) AS n FROM ws_work WHERE client_id = ? AND at >= ?').bind(clientId, start.toISOString().slice(0, 19).replace('T', ' ')).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const m = { pct: Math.min(100, Math.round((used / cap) * 100)), reset: next.toISOString() };
-  return { day: m, week: m, month: m, blocked: used >= cap ? 'month' : null };
+  return { day: m, week: m, month: m, blocked: used >= cap ? 'month' : null, packs: plan === 'start' ? [] : TOPUP_PACKS };
 }
 export async function wsLimitsOld(db: DB, clientId: number, plan: string) {
   const w = windows();

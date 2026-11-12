@@ -25,11 +25,14 @@ const TX = {
       ['par', 'Партнёрская программа', 'Личная ссылка каждому партнёру. Переходы и заявки считаются сами.', 'Сделай партнёрскую программу для моего бизнеса'],
       ['vid', 'Контент и ролики', 'Контент-план, посты и сценарии — сразу. Монтаж и ИИ-ролики из ваших материалов Vax делает в фоне, результат приходит в чат.', 'Сделай контент-план и сценарии роликов на месяц для моего бизнеса'],
       ['auto', 'Автоматизация процессов', 'Расчёты, таблицы и планы — за минуту. Связки сервисов и рутину Vax собирает под ваш процесс.', 'Помоги автоматизировать работу с клиентами в моём бизнесе'],
+      ['app', 'Приложение для клиентов', 'Своё приложение на телефоне клиента: запись, бонусы, напоминания.', 'Сделай приложение для клиентов моего бизнеса'],
+      ['life', 'Личные задачи и файлы', 'Разобрать договор, спланировать отпуск, посчитать бюджет, написать письмо. Файлы и фото Vax читает сам.', 'Разбери мой документ и скажи, на что обратить внимание'],
     ],
     try: 'Попробовать', live: 'Открыть живой пример',
     bk: { svc: ['Стрижка', 'Борода', 'Комплекс'], days: [['Пн', '10'], ['Вт', '11'], ['Ср', '12'], ['Чт', '13'], ['Пт', '14']], times: ['10:00', '11:00', '13:00', '15:00', '16:00', '18:00'], go: 'Записаться на 15:00', toast: 'Новая запись · Ср 12, 15:00 → CRM' },
     crm: { cols: ['Новые', 'В работе', 'Оплачено'], cards: [['Ирина', 'Запись · Ср 15:00'], ['Олег', 'Чат-бот · цена'], ['Марта', 'Форма · сайт'], ['Денис', 'Партнёр · ref']], new: ['Анна', 'Instagram · запись'] },
     bot: { q: 'Сколько стоит стрижка с бородой?', a: 'Комплекс — 750 грн, 1 час 15 минут. Ближайшее окно сегодня в 18:00 — записать вас?', who: 'ИИ-консультант · онлайн' },
+    life: { q: 'Вот договор аренды. На что обратить внимание?', a: 'Три важных места: штраф за досрочный выезд (п. 4.2), рост цены раз в полгода (п. 3.5) и ремонт за ваш счёт (п. 6.1). Подготовить правки для арендодателя?', who: 'Vax · разбор файла' },
     par: { link: 'vaxogroup.com/s/…?ref=anna', rows: [['Анна', 'переходы', 'заявки'], ['Макс', 'переходы', 'заявки']] },
     vid: { plan: 'Контент-план · ноябрь', items: ['Пн · Рилс «до/после»', 'Ср · Карусель «5 стрижек сезона»', 'Пт · Сторис-опрос', 'Вс · Рилс за кадром'], badge: 'Монтаж — в фоне, в чат' },
     auto: { flow: ['Заявка с сайта', 'CRM', 'Telegram владельцу', 'Напоминание клиенту'], note: 'Заявка, CRM, уведомление и напоминание связаны сами' },
@@ -47,11 +50,14 @@ const TX = {
       ['par', 'Партнерська програма', 'Особисте посилання кожному партнеру. Переходи й заявки рахуються самі.', 'Зроби партнерську програму для мого бізнесу'],
       ['vid', 'Контент і ролики', 'Контент-план, пости й сценарії — одразу. Монтаж і ШІ-ролики з ваших матеріалів Vax робить у фоні, результат приходить у чат.', 'Зроби контент-план і сценарії роликів на місяць для мого бізнесу'],
       ['auto', 'Автоматизація процесів', 'Розрахунки, таблиці й плани — за хвилину. Звʼязки сервісів і рутину Vax збирає під ваш процес.', 'Допоможи автоматизувати роботу з клієнтами в моєму бізнесі'],
+      ['app', 'Застосунок для клієнтів', 'Свій застосунок на телефоні клієнта: запис, бонуси, нагадування.', 'Зроби застосунок для клієнтів мого бізнесу'],
+      ['life', 'Особисті завдання й файли', 'Розібрати договір, спланувати відпустку, порахувати бюджет, написати листа. Файли й фото Vax читає сам.', 'Розбери мій документ і скажи, на що звернути увагу'],
     ],
     try: 'Спробувати', live: 'Відкрити живий приклад',
     bk: { svc: ['Стрижка', 'Борода', 'Комплекс'], days: [['Пн', '10'], ['Вт', '11'], ['Ср', '12'], ['Чт', '13'], ['Пт', '14']], times: ['10:00', '11:00', '13:00', '15:00', '16:00', '18:00'], go: 'Записатися на 15:00', toast: 'Новий запис · Ср 12, 15:00 → CRM' },
     crm: { cols: ['Нові', 'В роботі', 'Оплачено'], cards: [['Ірина', 'Запис · Ср 15:00'], ['Олег', 'Чат-бот · ціна'], ['Марта', 'Форма · сайт'], ['Денис', 'Партнер · ref']], new: ['Анна', 'Instagram · запис'] },
     bot: { q: 'Скільки коштує стрижка з бородою?', a: 'Комплекс — 750 грн, 1 година 15 хвилин. Найближче вікно сьогодні о 18:00 — записати вас?', who: 'ШІ-консультант · онлайн' },
+    life: { q: 'Ось договір оренди. На що звернути увагу?', a: 'Три важливі місця: штраф за дострокове виселення (п. 4.2), зростання ціни раз на пів року (п. 3.5) і ремонт вашим коштом (п. 6.1). Підготувати правки для орендодавця?', who: 'Vax · розбір файлу' },
     par: { link: 'vaxogroup.com/s/…?ref=anna', rows: [['Анна', 'переходи', 'заявки'], ['Макс', 'переходи', 'заявки']] },
     vid: { plan: 'Контент-план · листопад', items: ['Пн · Рілс «до/після»', 'Ср · Карусель «5 стрижок сезону»', 'Пт · Сторіс-опитування', 'Нд · Рілс за кадром'], badge: 'Монтаж — у фоні, в чат' },
     auto: { flow: ['Заявка з сайту', 'CRM', 'Telegram власнику', 'Нагадування клієнту'], note: 'Заявка, CRM, сповіщення й нагадування повʼязані самі' },
@@ -69,11 +75,14 @@ const TX = {
       ['par', 'Partner programme', 'A personal link for every partner. Visits and requests count themselves.', 'Make a partner programme for my business'],
       ['vid', 'Content and videos', 'A content plan, posts and scripts at once. Editing and AI videos from your materials Vax makes in the background, and the result arrives in the chat.', 'Make a content plan and video scripts for a month for my business'],
       ['auto', 'Process automation', 'Calculations, tables and plans in a minute. Vax links your services and routine around your process.', 'Help me automate work with clients in my business'],
+      ['app', 'An app for your clients', 'Your own app on the client\'s phone: booking, bonuses, reminders.', 'Make an app for the clients of my business'],
+      ['life', 'Personal tasks and files', 'Review a contract, plan a trip, work out a budget, write a letter. Vax reads files and photos itself.', 'Review my document and tell me what to watch out for'],
     ],
     try: 'Try it', live: 'Open a live example',
     bk: { svc: ['Haircut', 'Beard', 'Full set'], days: [['Mon', '10'], ['Tue', '11'], ['Wed', '12'], ['Thu', '13'], ['Fri', '14']], times: ['10:00', '11:00', '13:00', '15:00', '16:00', '18:00'], go: 'Book for 15:00', toast: 'New booking · Wed 12, 15:00 → CRM' },
     crm: { cols: ['New', 'In work', 'Paid'], cards: [['Irina', 'Booking · Wed 15:00'], ['Oleg', 'Chat bot · price'], ['Marta', 'Form · site'], ['Denis', 'Partner · ref']], new: ['Anna', 'Instagram · booking'] },
     bot: { q: 'How much is a haircut with a beard trim?', a: 'The full set is $35, 1 hour 15 minutes. The next free time is today at 18:00 — shall I book you?', who: 'AI consultant · online' },
+    life: { q: 'Here is my rental contract. What should I watch out for?', a: 'Three key points: the fee for leaving early (4.2), the price rising every six months (3.5) and repairs at your cost (6.1). Shall I draft changes for the landlord?', who: 'Vax · file review' },
     par: { link: 'vaxogroup.com/s/…?ref=anna', rows: [['Anna', 'visits', 'requests'], ['Max', 'visits', 'requests']] },
     vid: { plan: 'Content plan · November', items: ['Mon · Reel "before/after"', 'Wed · Carousel "5 cuts of the season"', 'Fri · Story poll', 'Sun · Behind the scenes reel'], badge: 'Editing: in the background' },
     auto: { flow: ['Request from the site', 'CRM', 'Telegram to the owner', 'Reminder to the client'], note: 'Request, CRM, alert and reminder, linked by themselves' },
@@ -85,11 +94,12 @@ const WORKS: [string, string, string][] = [
   ['shop-2026', `shop-2026-${L3}.jpg`, 'Kettle & Leaf'], ['personal-brand', `personal-brand-${L3}.jpg`, 'Mila Hart'], ['client-app', `client-app-${L3}.jpg`, 'Pulse Studio'],
   ['coach', 'coach.jpg', 'Maya Reed'], ['skincare', 'skincare.jpg', 'Lumen'], ['dental', 'dental.jpg', 'Dental'],
 ];
-const LIVE: Record<string, string> = { site: 'flagship', book: 'eco-clinic', crm: 'crm', bot: 'ai-assistant', par: 'eco-partners', vid: 'marketing', auto: 'eco-crm' };
+const LIVE: Record<string, string> = { site: 'flagship', book: 'eco-clinic', crm: 'crm', bot: 'ai-assistant', par: 'eco-partners', vid: 'marketing', auto: 'eco-crm', app: 'client-app' };
 const ICO: Record<string, string> = {
   site: 'M3 5h18v14H3zM3 9h18', book: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5', crm: 'M4 4h5v16H4zM10 4h5v10h-5zM16 4h4v7h-4z',
   bot: 'M5 6h14v10H9l-4 4zM9 11h.01M15 11h.01', par: 'M10 13a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7L12 6m2 5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7L12 18',
   vid: 'M3 6h13v12H3zM16 10l5-3v10l-5-3', auto: 'M4 12h4l2-5 4 10 2-5h4',
+  app: 'M8 3h8v18H8zM11 18h2', life: 'M6 3h9l4 4v14H6zM15 3v4h4M9 12h6M9 16h4',
 };
 ---
 
@@ -145,9 +155,23 @@ const ICO: Record<string, string> = {
                 </div>
               )}
               {k === 'par' && (
-                <div class="parm">
-                  <div class="lnk">{T.par.link}</div>
-                  {T.par.rows.map(([n, v, l], j) => <div class="pr"><b>{n}</b><span><em data-count={j ? 61 : 148}>0</em> {v}</span><span><em data-count={j ? 7 : 19}>0</em> {l}</span></div>)}
+                <div class="shot">
+                  <figure><img src={`/examples/thumbs/eco-partners-${L3}.jpg`} alt="" loading="lazy" width="640" height="400" /></figure>
+                  <div class="parm over">
+                    <div class="lnk">{T.par.link}</div>
+                    {T.par.rows.map(([n, v, l], j) => <div class="pr"><b>{n}</b><span><em data-count={j ? 61 : 148}>0</em> {v}</span><span><em data-count={j ? 7 : 19}>0</em> {l}</span></div>)}
+                  </div>
+                </div>
+              )}
+              {k === 'app' && (
+                <div class="shot"><figure><img src={`/examples/thumbs/client-app-${L3}.jpg`} alt="" loading="lazy" width="640" height="400" /></figure></div>
+              )}
+              {k === 'life' && (
+                <div class="chatm">
+                  <div class="hd"><span class="av"></span><span><b>Vax</b><small>{T.life.who}</small></span></div>
+                  <p class="u">📎 {T.life.q}</p>
+                  <p class="dots"><i></i><i></i><i></i></p>
+                  <p class="a">{T.life.a}</p>
                 </div>
               )}
               {k === 'vid' && (
@@ -165,7 +189,7 @@ const ICO: Record<string, string> = {
             </div>
             <div class="foot">
               <div><b>{h}</b><p>{d}</p></div>
-              <div class="acts"><a class="go" href={app(q)}>{T.try} →</a><a class="lv" href={`/examples/${LIVE[k]}/?lang=${lang}`} target="_blank" rel="noopener">{T.live} ↗</a></div>
+              <div class="acts"><a class="go" href={app(q)}>{T.try} →</a>{LIVE[k] && <a class="lv" href={`/examples/${LIVE[k]}/?lang=${lang}`} target="_blank" rel="noopener">{T.live} ↗</a>}</div>
             </div>
           </div>
         ))}
@@ -361,4 +385,8 @@ const ICO: Record<string, string> = {
   @media (prefers-reduced-motion: reduce) {
     .kb .card.nw, .chatm .a, .vidm .plan span, .flow .nd, .bkm .cta { opacity: 1 !important; transform: none !important; animation: none !important; }
   }
+  .shot { position: relative; width: min(100%, 640px); aspect-ratio: 16/10; }
+  .shot figure { position: absolute; inset: 0; margin: 0; border-radius: 14px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,.4); }
+  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .shot .parm.over { position: absolute; right: -10px; bottom: -14px; width: min(78%, 330px); background: var(--surf); border: 1px solid var(--line2); border-radius: 14px; padding: 10px; box-shadow: 0 20px 40px rgba(0,0,0,.45); }
 </style>

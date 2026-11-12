@@ -13,29 +13,38 @@ const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start
 <footer class="footer">
   <div class="inner">
     <span class="logo">VAXO<span>.</span></span>
-    <nav aria-label="Footer">
-      {t.nav.map((label, i) => <a href={navHref(NAV_HREFS[i], lang, home)}>{label}</a>)}
-      <a href={navHref('/examples/', lang)}>{F.examples}</a>
-      <a href={navHref('/start/', lang)}>{F.start}</a>
-      <a href={navHref('/shop/', lang)}>{F.shop}</a>
-      <a href={navHref('/tools/', lang)}>{F.tools}</a>
-      <a href={navHref("/blog/", lang)}>{F.blog}</a>
-      <a href={navHref('/app/', lang)}>{F.me}</a>
-      <a href={navHref('/partner/', lang)}>{F.login}</a>
-      <a href={navHref('/how/', lang)}>{{ en: 'How it works', ru: 'Как это работает', ua: 'Як це працює' }[lang]}</a>
-      <a href={navHref('/score/', lang)}>Vaxo Score</a>
-      <a href={navHref('/about/', lang)}>{F.about}</a>
-      <a href={navHref('/gifts/', lang)}>{F.gifts}</a>
-      <a href={navHref('/collab/', lang)}>{F.collab}</a>
-    </nav>
+    <div class="cols">
+      <nav aria-label="Product">
+        <b>{{ en: 'Product', ru: 'Продукт', ua: 'Продукт' }[lang]}</b>
+        <a href={navHref('/app/', lang)}>{{ en: 'Open Vax', ru: 'Открыть Vax', ua: 'Відкрити Vax' }[lang]}</a>
+        <a href={navHref('/how/', lang)}>{{ en: 'How it works', ru: 'Как это работает', ua: 'Як це працює' }[lang]}</a>
+        <a href={navHref('/examples/', lang)}>{F.examples}</a>
+        <a href={navHref('#pricing', lang, home)}>{{ en: 'Plans', ru: 'Тарифы', ua: 'Тарифи' }[lang]}</a>
+      </nav>
+      <nav aria-label="Extras">
+        <b>{{ en: 'Useful', ru: 'Полезное', ua: 'Корисне' }[lang]}</b>
+        <a href={navHref('/tools/', lang)}>{F.tools}</a>
+        <a href={navHref('/shop/', lang)}>{F.shop}</a>
+        <a href={navHref("/blog/", lang)}>{F.blog}</a>
+        <a href={navHref('/gifts/', lang)}>{{ en: 'Cartoon as a gift', ru: 'Мультик в подарок', ua: 'Мультик у подарунок' }[lang]}</a>
+      </nav>
+      <nav aria-label="Partners">
+        <b>{{ en: 'Partners', ru: 'Партнёрам', ua: 'Партнерам' }[lang]}</b>
+        <a href={navHref('/partners/', lang)}>{{ en: 'Earn with Vaxo', ru: 'Заработать с Vaxo', ua: 'Заробити з Vaxo' }[lang]}</a>
+        <a href={navHref('/partner/', lang)}>{F.login}</a>
+        <a href={navHref('/collab/', lang)}>{F.collab}</a>
+      </nav>
+      <nav aria-label="Company">
+        <b>{{ en: 'Company', ru: 'Компания', ua: 'Компанія' }[lang]}</b>
+        <a href={navHref('/about/', lang)}>{F.about}</a>
+        <a href={navHref('/terms/', lang)}>{F.terms}</a>
+        <a href={navHref('/privacy/', lang)}>{F.privacy}</a>
+        <a href={navHref('/refunds/', lang)}>{F.refunds}</a>
+        <a href={navHref('/partner-terms/', lang)}>{F.pterms}</a>
+      </nav>
+    </div>
     <nav class="legal-links" aria-label="Niches">
       {NICHES.map((n) => <a href={navHref(`/for/${n.slug}/`, lang)}>{n.t[lang].name}</a>)}
-    </nav>
-    <nav class="legal-links" aria-label="Legal">
-      <a href={navHref('/terms/', lang)}>{F.terms}</a>
-      <a href={navHref('/privacy/', lang)}>{F.privacy}</a>
-      <a href={navHref('/refunds/', lang)}>{F.refunds}</a>
-      <a href={navHref('/partner-terms/', lang)}>{F.pterms}</a>
     </nav>
     <span class="copy">© 2026 {t.footer}</span>
   </div>
@@ -82,4 +91,8 @@ const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start
     letter-spacing: 0.12em;
     color: var(--mut);
   }
+  .cols { flex-basis: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+  .cols nav { display: grid; gap: 9px; align-content: start; }
+  .cols nav b { color: var(--ink); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 2px; }
+  @media (max-width: 760px) { .cols { grid-template-columns: 1fr 1fr; } }
 </style>

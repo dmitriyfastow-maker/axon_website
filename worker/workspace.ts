@@ -2,7 +2,8 @@
 // answer, and a Canvas for tools and documents. Signed-in people are kept in D1; guests keep the same things in the
 // browser and bring them along when they sign in. Paying clients get Claude here too (worker/router.ts).
 import { json as parse, askAi } from './autopilot.js';
-import { allowance, spendWork, workOf, wsLimits } from './allowance.js';
+import { allowance, spendWork, TOPUP_PACKS, topupDesc, workOf, wsLimits } from './allowance.js';
+import { createInvoice } from './invoices.js';
 import { sessionClient } from './cabinet.js';
 import { FACTS, type AiBinding } from './chat.js';
 import { describeImage, filesForAi, readText } from './files.js';
@@ -433,6 +434,16 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
     if (path === 'limits' && m === 'GET') {
       const al = await allowance(db, await clientLeads(db, me.id)).catch(() => null);
       return out(200, { ok: true, usage: await wsLimits(db, me.id, al?.plan ?? 'start') });
+    }
+    // Extra allowance: an invoice for one pack on this month (card payment on the invoice page). Off until the price is approved.
+    if (path === 'topup' && m === 'POST') {
+      const usd = Number(b.usd);
+      const leadIds = await clientLeads(db, me.id);
+      const al = await allowance(db, leadIds).catch(() => null);
+      if (!TOPUP_PACKS.includes(usd) || !al || al.plan === 'start' || !leadIds.length) return out(400, { ok: false, error: 'soon' });
+      const lang = ['ru', 'ua'].includes(String(b.lang)) ? String(b.lang) : 'en';
+      const made = await createInvoice(db, { leadId: leadIds[0], amount: usd, currency: 'USD', description: topupDesc(usd, new Date().toISOString().slice(0, 7)), part: 'other', lang, origin: url.origin, send: false });
+      return out(200, { ok: true, url: made.url });
     }
     if (path === 'memory' && m === 'POST') { await writeMemory(db, me.id, cleanMemory(b), b.mode === 'deep' ? 'deep' : 'short'); return out(200, { ok: true }); }
     if (path === 'import' && m === 'POST') { await importGuest(db, me.id, b); return out(200, { ok: true }); }

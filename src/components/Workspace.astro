@@ -29,7 +29,7 @@ const T = {
     tiles: { site: ['Build a site and form', 'A page with a request form, live in a minute'], crm: ['Open my CRM', 'Every request from your site on one board'], partner: ['Partner cabinet', 'Your links, invites and balance'] },
     exL: 'Or any task, from everyday to company level:', ex: ['Plan a 5-day trip to Italy: route, budget, what to book', 'Financial model for an online school launch at $50k revenue: ads, team and taxes', 'A 30-day training and recovery protocol'],
     mdl: { label: 'Model', auto: ['Auto', 'Picks the model for each task: a fast one for simple things, the strongest for hard ones (recommended)'], more: 'Other models', m: { 'opus-5-5': ['Opus 5.5', 'Maximum: the hardest tasks, top quality. Uses the allowance about 2× faster'], 'sonnet-5-5': ['Sonnet 5.5', 'Strong: texts, plans, analysis, everyday work'], 'haiku-5-5': ['Haiku 5.5', 'Fast: short answers and simple tasks, uses very little'], 'opus-5': ['Opus 5', 'The previous Opus'], 'sonnet-5': ['Sonnet 5', 'The previous Sonnet'] }, paid: 'Choosing a model by hand comes with any paid plan. On the free plan Vax answers with Haiku 5.5.' },
-    lim: { h: 'Usage limits', month: 'This month', outMonth: 'This month\'s allowance is used up. It renews {t}; to continue now, move up a plan.', day: 'Today', week: 'This week', used: '{p}% used', reset: 'Renews {t}', note: 'The limit follows the amount of work, not the number of messages: a short answer uses little, a big document, a site or a picture uses more.', today: 'today at {h}', tomorrow: 'tomorrow at {h}', on: '{d} at {h}', outDay: 'Today’s limit is used up. It renews {t}. Everything is saved.', outWeek: 'This week’s limit is used up. It renews {t}. Everything is saved.', more: 'Need more? Plans' }, usageGuest: 'Guest: a small daily limit. Sign in free for more.',
+    lim: { h: 'Usage limits', month: 'This month', outMonth: 'This month\'s allowance is used up. It renews {t}; to continue now, move up a plan.', day: 'Today', week: 'This week', used: '{p}% used', reset: 'Renews {t}', note: 'The limit follows the amount of work, not the number of messages: a short answer uses little, a big document, a site or a picture uses more.', today: 'today at {h}', tomorrow: 'tomorrow at {h}', on: '{d} at {h}', outDay: 'Today’s limit is used up. It renews {t}. Everything is saved.', outWeek: 'This week’s limit is used up. It renews {t}. Everything is saved.', more: 'Need more? Plans', top: 'Add allowance for this month:', topBtn: '+${u}', topErr: 'Could not create the invoice. Try again.' }, usageGuest: 'Guest: a small daily limit. Sign in free for more.',
     pTabs: { plan: 'Plan', memory: 'Memory', projects: 'Projects', account: 'Account' },
     pub: 'Publish', pubBusy: 'Publishing…', pubDone: 'Published', pubAgain: 'Update the page', pubOff: 'Unpublish', replaceQ: 'Replace your current site with this page?', pubLink: 'Public link',
     siteCard: 'Page draft', siteNew: 'Describe your business in one line', siteNewGo: 'Build the page', siteAsk: 'Build a site and everything a business needs for: ', fAsk: 'Hint in the message box', live: 'Your site is live. Requests go to your email and CRM.', domH: 'Your own domain',
@@ -65,7 +65,7 @@ const T = {
     tiles: { site: ['Собрать сайт и форму', 'Страница с формой заявок, работает через минуту'], crm: ['Открыть мою CRM', 'Все заявки с сайта на одной доске'], partner: ['Партнёрский кабинет', 'Ваши ссылки, приглашения и баланс'] },
     exL: 'Или любая задача — от бытовой до задачи компании:', ex: ['Спланируй отпуск в Италии на 5 дней: маршрут, бюджет, что забронировать', 'Финмодель запуска онлайн-школы на $50k оборота: реклама, команда, налоги', '30-дневный протокол тренировок и восстановления'],
     mdl: { label: 'Модель', auto: ['Авто', 'Сам выбирает модель под задачу: для простого — быструю, для сложного — самую сильную (рекомендуем)'], more: 'Другие модели', m: { 'opus-5-5': ['Opus 5.5', 'Максимальная: самые сложные задачи, наивысшее качество. Тратит запас примерно в 2 раза быстрее'], 'sonnet-5-5': ['Sonnet 5.5', 'Сильная: тексты, планы, анализ, повседневная работа'], 'haiku-5-5': ['Haiku 5.5', 'Быстрая: короткие ответы и простые задачи, почти не тратит запас'], 'opus-5': ['Opus 5', 'Прошлая версия Opus'], 'sonnet-5': ['Sonnet 5', 'Прошлая версия Sonnet'] }, paid: 'Выбор модели вручную — на любом платном тарифе. На бесплатном Vax отвечает моделью Haiku 5.5.' },
-    lim: { h: 'Лимиты', month: 'Этот месяц', outMonth: 'Запас этого месяца закончился. Обновится {t}; чтобы продолжить сейчас, перейдите на тариф выше.', day: 'Сегодня', week: 'Неделя', used: 'Использовано {p}%', reset: 'Обновится {t}', note: 'Лимит считается по объёму работы, а не по числу сообщений: короткий ответ тратит мало, большой документ, сайт или картинка больше.', today: 'сегодня в {h}', tomorrow: 'завтра в {h}', on: '{d} в {h}', outDay: 'Лимит на сегодня исчерпан. Обновится {t}. Всё сохранено.', outWeek: 'Лимит на неделю исчерпан. Обновится {t}. Всё сохранено.', more: 'Нужно больше? Тарифы' }, usageGuest: 'Гость: небольшой лимит на день. Войдите бесплатно, лимит больше.',
+    lim: { h: 'Лимиты', month: 'Этот месяц', outMonth: 'Запас этого месяца закончился. Обновится {t}; чтобы продолжить сейчас, перейдите на тариф выше.', day: 'Сегодня', week: 'Неделя', used: 'Использовано {p}%', reset: 'Обновится {t}', note: 'Лимит считается по объёму работы, а не по числу сообщений: короткий ответ тратит мало, большой документ, сайт или картинка больше.', today: 'сегодня в {h}', tomorrow: 'завтра в {h}', on: '{d} в {h}', outDay: 'Лимит на сегодня исчерпан. Обновится {t}. Всё сохранено.', outWeek: 'Лимит на неделю исчерпан. Обновится {t}. Всё сохранено.', more: 'Нужно больше? Тарифы', top: 'Докупить запас на этот месяц:', topBtn: '+${u}', topErr: 'Не получилось создать счёт. Попробуйте ещё раз.' }, usageGuest: 'Гость: небольшой лимит на день. Войдите бесплатно, лимит больше.',
     pTabs: { plan: 'Тариф', memory: 'Память', projects: 'Проекты', account: 'Аккаунт' },
     pub: 'Опубликовать', pubBusy: 'Публикую…', pubDone: 'Опубликовано', pubAgain: 'Обновить страницу', pubOff: 'Снять с публикации', replaceQ: 'Заменить ваш текущий сайт этой страницей?', pubLink: 'Публичная ссылка',
     siteCard: 'Макет страницы', siteNew: 'Опишите бизнес одной строкой', siteNewGo: 'Собрать страницу', siteAsk: 'Собери сайт и всё для бизнеса: ', fAsk: 'Подсказка в поле сообщения', live: 'Сайт работает. Заявки приходят на почту и в CRM.', domH: 'Свой домен',
@@ -101,7 +101,7 @@ const T = {
     tiles: { site: ['Зібрати сайт і форму', 'Сторінка з формою заявок, працює за хвилину'], crm: ['Відкрити мою CRM', 'Усі заявки з сайту на одній дошці'], partner: ['Партнерський кабінет', 'Ваші посилання, запрошення й баланс'] },
     exL: 'Або будь-яке завдання — від побутового до завдання компанії:', ex: ['Сплануй відпустку в Італії на 5 днів: маршрут, бюджет, що забронювати', 'Фінмодель запуску онлайн-школи на $50k обороту: реклама, команда, податки', '30-денний протокол тренувань і відновлення'],
     mdl: { label: 'Модель', auto: ['Авто', 'Сам обирає модель під завдання: для простого — швидку, для складного — найсильнішу (рекомендуємо)'], more: 'Інші моделі', m: { 'opus-5-5': ['Opus 5.5', 'Максимальна: найскладніші завдання, найвища якість. Витрачає запас приблизно вдвічі швидше'], 'sonnet-5-5': ['Sonnet 5.5', 'Сильна: тексти, плани, аналіз, щоденна робота'], 'haiku-5-5': ['Haiku 5.5', 'Швидка: короткі відповіді й прості завдання, майже не витрачає запас'], 'opus-5': ['Opus 5', 'Попередня версія Opus'], 'sonnet-5': ['Sonnet 5', 'Попередня версія Sonnet'] }, paid: 'Вибір моделі вручну — на будь-якому платному тарифі. На безкоштовному Vax відповідає моделлю Haiku 5.5.' },
-    lim: { h: 'Ліміти', month: 'Цей місяць', outMonth: 'Запас цього місяця закінчився. Оновиться {t}; щоб продовжити зараз, перейдіть на тариф вище.', day: 'Сьогодні', week: 'Тиждень', used: 'Використано {p}%', reset: 'Оновиться {t}', note: 'Ліміт рахується за обсягом роботи, а не за кількістю повідомлень: коротка відповідь витрачає мало, великий документ, сайт або картинка більше.', today: 'сьогодні о {h}', tomorrow: 'завтра о {h}', on: '{d} о {h}', outDay: 'Ліміт на сьогодні вичерпано. Оновиться {t}. Усе збережено.', outWeek: 'Ліміт на тиждень вичерпано. Оновиться {t}. Усе збережено.', more: 'Потрібно більше? Тарифи' }, usageGuest: 'Гість: невеликий ліміт на день. Увійдіть безкоштовно, ліміт більший.',
+    lim: { h: 'Ліміти', month: 'Цей місяць', outMonth: 'Запас цього місяця закінчився. Оновиться {t}; щоб продовжити зараз, перейдіть на тариф вище.', day: 'Сьогодні', week: 'Тиждень', used: 'Використано {p}%', reset: 'Оновиться {t}', note: 'Ліміт рахується за обсягом роботи, а не за кількістю повідомлень: коротка відповідь витрачає мало, великий документ, сайт або картинка більше.', today: 'сьогодні о {h}', tomorrow: 'завтра о {h}', on: '{d} о {h}', outDay: 'Ліміт на сьогодні вичерпано. Оновиться {t}. Усе збережено.', outWeek: 'Ліміт на тиждень вичерпано. Оновиться {t}. Усе збережено.', more: 'Потрібно більше? Тарифи', top: 'Докупити запас на цей місяць:', topBtn: '+${u}', topErr: 'Не вдалося створити рахунок. Спробуйте ще раз.' }, usageGuest: 'Гість: невеликий ліміт на день. Увійдіть безкоштовно, ліміт більший.',
     pTabs: { plan: 'Тариф', memory: 'Памʼять', projects: 'Проєкти', account: 'Акаунт' },
     pub: 'Опублікувати', pubBusy: 'Публікую…', pubDone: 'Опубліковано', pubAgain: 'Оновити сторінку', pubOff: 'Зняти з публікації', replaceQ: 'Замінити ваш поточний сайт цією сторінкою?', pubLink: 'Публічне посилання',
     siteCard: 'Макет сторінки', siteNew: 'Опишіть бізнес одним рядком', siteNewGo: 'Зібрати сторінку', siteAsk: 'Збери сайт і все для бізнесу: ', fAsk: 'Підказка в полі повідомлення', live: 'Сайт працює. Заявки приходять на пошту і в CRM.', domH: 'Свій домен',
@@ -264,7 +264,7 @@ const ico = {
   const room = params.get('t') || '';
 
   const blank: Mem = { niche: '', goals: '', project: '', limits: '' };
-  const S = { signed: false, email: '', verified: false, chats: [] as Chat[], cur: 0, msgs: [] as Msg[], memory: { ...blank }, mode: 'short', mods: null as R | null, access: false, busy: false, plan: 'start', projects: [] as Proj[], objects: [] as any[], reply: null as null | { text: string }, pendingProject: 0, proj: null as null | { id: number; name: string; biz: number | null }, usage: null as null | { day: { pct: number; reset: string }; week: { pct: number; reset: string } } };
+  const S = { signed: false, email: '', verified: false, chats: [] as Chat[], cur: 0, msgs: [] as Msg[], memory: { ...blank }, mode: 'short', mods: null as R | null, access: false, busy: false, plan: 'start', projects: [] as Proj[], objects: [] as any[], reply: null as null | { text: string }, pendingProject: 0, proj: null as null | { id: number; name: string; biz: number | null }, usage: null as null | { day: { pct: number; reset: string }; week: { pct: number; reset: string }; month?: { pct: number; reset: string }; packs?: number[] } };
   let ME: R = {};
 
   const log = $('[data-log]'), form = $<HTMLFormElement>('[data-form]'), input = form.querySelector('textarea')!;
@@ -293,6 +293,22 @@ const ico = {
     bar.append(fill);
     box.append(top, bar, el('small', '', T.lim.reset.replace('{t}', when(x.reset))));
     return box;
+  }
+  // Extra allowance packs (shown only when switched on server-side): one tap makes an invoice and opens it for card payment.
+  function topups(): HTMLElement | null {
+    const packs = S.usage?.packs || [];
+    if (!packs.length) return null;
+    const row = el('p', 'tops', T.lim.top + ' ');
+    for (const u of packs) {
+      const b = el('button', 'sec', T.lim.topBtn.replace('{u}', String(u))) as HTMLButtonElement; b.type = 'button';
+      b.addEventListener('click', async () => {
+        b.disabled = true;
+        const { d } = await postJ('/api/ws/topup', { usd: u, lang });
+        if (d.ok && d.url) location.href = d.url; else { b.disabled = false; row.append(el('small', '', ' ' + T.lim.topErr)); }
+      });
+      row.append(b, ' ');
+    }
+    return row;
   }
   function drawUsage() {
     const u = $<HTMLButtonElement>('[data-usage]');
@@ -1358,6 +1374,7 @@ const ico = {
       const lim = el('section', 'blk');
       const more = el('a', 'lnk', T.lim.more + ' →') as HTMLAnchorElement; more.href = `${pre}/#pricing`;
       lim.append(el('h3', '', T.lim.h), meter(T.lim.month, S.usage.month || S.usage.week), el('p', 'hint', T.lim.note), more);
+      const tp = topups(); if (tp) lim.append(tp);
       box.append(lim);
     }
     if (!ME.me?.verified) box.append(verifyBox());
