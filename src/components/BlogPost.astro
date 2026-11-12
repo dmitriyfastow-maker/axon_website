@@ -14,11 +14,21 @@ const alts = { en: `/blog/${post.slug}/`, ru: `/ru/blog/${post.slug}/`, ua: `/ua
 const U = BLOG_UI[lang];
 const P = post.t[lang];
 const ask = `${pre}/app/#q=${encodeURIComponent(U.ask.replace('{t}', P.title))}`;
-const ld = { '@context': 'https://schema.org', '@type': 'Article', headline: P.title, description: P.desc, inLanguage: lang === 'ua' ? 'uk' : lang, datePublished: post.date, author: { '@type': 'Organization', name: 'Vaxo', url: 'https://vaxogroup.com/' }, publisher: { '@type': 'Organization', name: 'Vaxo' } };
+const S = 'https://vaxogroup.com';
+const url = `${S}${alts[lang]}`;
+const org = { '@type': 'Organization', name: 'Vaxo', url: `${S}/`, logo: { '@type': 'ImageObject', url: `${S}/icon-512.png` } };
+const ld = [
+  { '@context': 'https://schema.org', '@type': 'Article', headline: P.title, description: P.desc, inLanguage: lang === 'ua' ? 'uk' : lang, url, mainEntityOfPage: { '@type': 'WebPage', '@id': url }, image: [`${S}/og-${lang}.png`], datePublished: post.date, dateModified: post.date, author: org, publisher: org },
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Vaxo', item: `${S}${home}` },
+    { '@type': 'ListItem', position: 2, name: U.back.replace(/^←\s*/, ''), item: `${S}${pre}/blog/` },
+    { '@type': 'ListItem', position: 3, name: P.title, item: url },
+  ] },
+];
 ---
 
 <Base lang={lang} title={P.title.length > 58 ? P.title : `${P.title} — Vaxo`} description={P.desc} path={alts[lang]} alts={alts}>
-  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  {ld.map((x) => <script type="application/ld+json" set:html={JSON.stringify(x)} />)}
   <Header lang={lang} t={t} home={home} alts={alts} />
   <main class="article">
     <a href={`${pre}/blog/`} class="back">{U.back}</a>
