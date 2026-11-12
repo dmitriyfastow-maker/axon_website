@@ -78,7 +78,7 @@ const c = CALC;
 const en: Text = {
   meta: {
     title: 'Vaxo Partners — earn by recommending Vax',
-    description: `Recommend Vax — the platform that does the work for anyone: sites, apps, AI, ads, content and templates. ${r.agencyOwn}% on services, ${r.products}% on templates from day one, free training and AI toolkit, weekly payouts.`,
+    description: `Recommend Vax — the platform that does the work: sites, apps, AI, ads and content. ${r.agencyOwn}% on services, ${r.products}% on templates, free training.`,
   },
   eyebrow: 'Partner program',
   h1: 'Recommend Vax, the personal doer for everyone — and earn 50%.',
@@ -187,7 +187,7 @@ const en: Text = {
 const ua: Text = {
   meta: {
     title: 'Партнерка Vaxo — заробляйте, рекомендуючи Vax',
-    description: `Рекомендуйте Vax — платформу, яка робить роботу за будь-кого: сайти, застосунки, ШІ, реклама, контент і шаблони. ${r.agencyOwn}% з послуг, ${r.products}% з шаблонів з першого дня, безкоштовне навчання і ШІ-набір, виплати щотижня.`,
+    description: `Рекомендуйте Vax — платформу, яка робить роботу: сайти, застосунки, ШІ, реклама, контент. ${r.agencyOwn}% з послуг, ${r.products}% з шаблонів, навчання безкоштовно.`,
   },
   eyebrow: 'Партнерська програма',
   h1: 'Рекомендуйте Vax, особистого виконавця для кожного, і заробляйте 50%.',
@@ -296,7 +296,7 @@ const ua: Text = {
 const ru: Text = {
   meta: {
     title: 'Партнёрка Vaxo — зарабатывайте, рекомендуя Vax',
-    description: `Рекомендуйте Vax — платформу, которая делает работу за любого: сайты, приложения, ИИ, реклама, контент и шаблоны. ${r.agencyOwn}% с услуг, ${r.products}% с шаблонов с первого дня, бесплатное обучение и ИИ-набор, выплаты каждую неделю.`,
+    description: `Рекомендуйте Vax — платформу, которая делает работу: сайты, приложения, ИИ, реклама, контент. ${r.agencyOwn}% с услуг, ${r.products}% с шаблонов, обучение бесплатно.`,
   },
   eyebrow: 'Партнёрская программа',
   h1: 'Рекомендуйте Vax, личного исполнителя для каждого, и зарабатывайте 50%.',
