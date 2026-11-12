@@ -8,8 +8,8 @@ export type Post = { slug: string; date: string; t: Record<Lang, Text> };
 
 export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; back: string; ctaH: string; ctaP: string; cta: string; starter: string; ask: string }> = {
   en: { h: 'Websites, AI and growth — explained simply', title: 'Vaxo Blog — websites, AI and growth, explained simply', desc: 'Plain answers about website prices, domains, AI chat assistants and growing a business online.', back: '← Blog', ctaH: 'Have a question about your project?', ctaP: 'Describe it in Workspace — Vax answers in seconds and starts the work right there. There is a free plan with all features.', cta: 'Ask Vax →', starter: 'Start free', ask: 'I read your article “{t}”. Help me apply it to my case — ask me what you need to know.' },
-  ru: { h: 'Сайты, ИИ и рост бизнеса — простыми словами', title: 'Блог Vaxo — сайты, ИИ и рост бизнеса простыми словами', desc: 'Простые ответы о ценах на сайты, доменах, ИИ-чатах и росте бизнеса в интернете.', back: '← Блог', ctaH: 'Есть вопрос по вашему проекту?', ctaP: 'Опишите её в Workspace — Vax ответит за секунды и сразу начнёт работу. Есть бесплатный тариф со всеми функциями.', cta: 'Спросить Vax →', starter: 'Начать бесплатно', ask: 'Прочитал вашу статью «{t}». Помогите применить это к моей задаче — спросите, что нужно знать.' },
-  ua: { h: 'Сайти, ШІ і зростання бізнесу — простими словами', title: 'Блог Vaxo — сайти, ШІ і зростання бізнесу простими словами', desc: 'Прості відповіді про ціни на сайти, домени, ШІ-чати і зростання бізнесу в інтернеті.', back: '← Блог', ctaH: 'Є питання щодо вашого проєкту?', ctaP: 'Опишіть її у Workspace — Vax відповість за секунди й одразу почне роботу. Є безкоштовний тариф з усіма функціями.', cta: 'Запитати Vax →', starter: 'Почати безкоштовно', ask: 'Прочитав вашу статтю «{t}». Допоможіть застосувати це до моєї задачі — запитайте, що треба знати.' },
+  ru: { h: 'Сайты, ИИ и рост бизнеса — простыми словами', title: 'Блог Vaxo — сайты, ИИ и рост бизнеса простыми словами', desc: 'Простые ответы о ценах на сайты, доменах, ИИ-чатах и росте бизнеса в интернете.', back: '← Блог', ctaH: 'Есть вопрос по вашему проекту?', ctaP: 'Опишите его в Workspace — Vax ответит за секунды и сразу начнёт работу. Есть бесплатный тариф со всеми функциями.', cta: 'Спросить Vax →', starter: 'Начать бесплатно', ask: 'Прочитал вашу статью «{t}». Помогите применить это к моей задаче — спросите, что нужно знать.' },
+  ua: { h: 'Сайти, ШІ і зростання бізнесу — простими словами', title: 'Блог Vaxo — сайти, ШІ і зростання бізнесу простими словами', desc: 'Прості відповіді про ціни на сайти, домени, ШІ-чати і зростання бізнесу в інтернеті.', back: '← Блог', ctaH: 'Є питання щодо вашого проєкту?', ctaP: 'Опишіть його у Workspace — Vax відповість за секунди й одразу почне роботу. Є безкоштовний тариф з усіма функціями.', cta: 'Запитати Vax →', starter: 'Почати безкоштовно', ask: 'Прочитав вашу статтю «{t}». Допоможіть застосувати це до моєї задачі — запитайте, що треба знати.' },
 };
 
 export const POSTS: Post[] = [
@@ -33,7 +33,7 @@ export const POSTS: Post[] = [
         ],
       },
       ru: {
-        title: 'SEO простыми словами: 7 вещей, которые помогают Google найти ваш сайт',
+        title: 'SEO простыми словами: 7 вещей, чтобы Google нашёл ваш сайт',
         desc: 'Что такое SEO, что на самом деле важно для небольшого сайта и что можно сделать самому уже на этой неделе — без терминов и без обещаний «топ-1 за месяц».',
         body: [
           ['Что такое SEO', ['SEO — это всё, что помогает людям найти ваш сайт в Google, когда они ищут то, что вы продаёте. Это не хитрость и не разовая настройка: Google показывает страницы, которые лучше всех отвечают на вопрос и которым доверяют люди.']],
@@ -48,7 +48,7 @@ export const POSTS: Post[] = [
         ],
       },
       ua: {
-        title: 'SEO простими словами: 7 речей, які допомагають Google знайти ваш сайт',
+        title: 'SEO простими словами: 7 речей, щоб Google знайшов ваш сайт',
         desc: 'Що таке SEO, що насправді важливо для невеликого сайту і що можна зробити самому вже цього тижня — без термінів і без обіцянок «топ-1 за місяць».',
         body: [
           ['Що таке SEO', ['SEO — це все, що допомагає людям знайти ваш сайт у Google, коли вони шукають те, що ви продаєте. Це не хитрість і не разове налаштування: Google показує сторінки, які найкраще відповідають на питання і яким довіряють люди.']],
@@ -186,7 +186,7 @@ export const POSTS: Post[] = [
     date: '2026-10-20',
     t: {
       en: {
-        title: 'What is a domain name and how do you get one? A plain-English guide',
+        title: 'What is a domain name and how to get one: a plain guide',
         desc: 'What a domain is, where to buy it, how much it costs and how to give a web studio access without giving away your account.',
         body: [
           ['A domain is your address', ['A domain is the name people type to find your site, like yourbusiness.com. You rent it by the year from a registrar. Without a domain your website has no address of its own.']],
@@ -228,7 +228,7 @@ export const POSTS: Post[] = [
     date: '2026-10-20',
     t: {
       en: {
-        title: 'AI chat assistant for your website: what it does and what it costs',
+        title: 'AI chat assistant for your website: what it does, what it costs',
         desc: 'What a website AI chat can and cannot do, how it gets you more requests, and what it costs.',
         body: [
           ['What it does', ['An AI chat on your website answers common questions 24/7 — prices, hours, services, booking — and collects the name and contact of people who are ready to buy. It replies in seconds, in the visitor’s language.']],
