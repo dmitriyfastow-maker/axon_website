@@ -476,7 +476,7 @@ const ico = {
 
   /* ---------- Message actions, like Telegram: reply, pin, forward, copy ---------- */
   const nodes = new WeakMap<Msg, HTMLElement>();
-  const plain = (t: string) => t.replace(/\[\[(REPLY|FWD):[^\]]*\]\]/g, '').trim();
+  const plain = (t: string) => t.replace(/\[\[(REPLY|FWD|CHOICE):[^\]]*\]\]/g, '').trim();
   let quotes: string[] = [];
   function drawQuotes() {
     const bar = $('[data-replybar]'), span = bar.querySelector('span')!;
@@ -700,6 +700,9 @@ const ico = {
     if (fw) d.append(el('small', 'fwd', `↗ ${T.fwdFrom} «${fw[1]}»`));
     for (const q of m.content.matchAll(/\[\[REPLY:([^\]]*)\]\]/g)) d.append(el('div', 'quote', q[1]));
     const t = el('div', 'tx'); t.innerHTML = linkify(plain(m.content)); d.append(t);
+    // Vax offers a choice before a big build: answer questions first, or build now. One tap answers.
+    const ch = m.role === 'assistant' ? m.content.match(/\[\[CHOICE:([^\]|]+)\|([^\]]+)\]\]/) : null;
+    if (ch && m === S.msgs[S.msgs.length - 1]) { const row = el('div', 'choice'); row.append(btn('pri sm', ch[1].trim(), () => { row.remove(); input.focus(); input.placeholder = ch[1].trim() + '…'; }), btn('sec sm', ch[2].trim(), () => { row.remove(); ask(ch[2].trim()); })); d.append(row); }
     nodes.set(m, d);
     if (m.site) d.append(acard(T.open, m.site.title || T.siteCard, () => showArt(m)));
     if (m.tool) d.append(acard(T.open, m.tool.title, () => showArt(m)));
@@ -2129,4 +2132,5 @@ const ico = {
   .wsp .memacts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
   .wsp .memacts button { text-align: left; }
   @media (max-width: 520px) { .wsp .memacts { grid-template-columns: 1fr; } }
+  .wsp .choice { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 </style>

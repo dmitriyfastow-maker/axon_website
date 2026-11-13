@@ -7,7 +7,7 @@ import { bookBlock, type Book } from './booking.js';
 export type Offer = { t: string; d: string };
 export type Faq = { q: string; a: string };
 export type Kit = {
-  lang: string; style: string; title: string; accent?: string; kicker?: string; sub: string; about: string;
+  lang: string; style: string; color?: string; hero?: string; title: string; accent?: string; kicker?: string; sub: string; about: string;
   services: string[]; details?: string[]; steps?: string[]; faq?: Faq[]; cta: string; ask?: string; imgs?: string[]; promise?: string; book?: Book;
 };
 
@@ -52,7 +52,14 @@ export function renderSite(s: Kit, o: { key: string; slug: string; index: boolea
   const steps = s.steps?.length === 3 ? s.steps : [w.s1, w.s2, w.s3];
   const btn = (href: string, text: string, solid = true) => `<a class="btn${solid ? ' solid' : ''}" href="${href}">${esc(text)}</a>`;
   const nav = [offers.length && ['#offer', w.offer], s.about && ['#about', w.about], s.faq?.length && ['#faq', w.faq]].filter(Boolean) as [string, string][];
-  const r = st.radius;
+  // Every site its own (Dmitry, 12.11): the brand colour, the corner radius and the first-screen layout come from this
+  // business (the AI's choice, else a stable pick from its name), so two sites of one niche never look the same.
+  let hv = 0; for (const ch of (o.slug || title)) hv = (hv * 31 + ch.charCodeAt(0)) >>> 0;
+  const r = [st.radius, 4, 14, 26][hv % 4];
+  const brand = s.color && /^#[0-9a-f]{6}$/i.test(s.color) ? s.color : '';
+  const lum = brand ? ((n: number) => 0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255))(parseInt(brand.slice(1), 16)) : 0;
+  const acc = brand || st.acc, accInk = brand ? (lum > 150 ? '#111111' : '#ffffff') : st.accInk;
+  const heroV = ['full', 'split', 'center'].includes(s.hero || '') ? s.hero : (['full', 'split', 'center'] as const)[(hv >> 3) % 3];
   // SEO for every site: canonical address, link previews, photo descriptions and schema.org data built only from
   // what the owner wrote (no invented address, hours, prices or ratings).
   const url = o.url || `https://vaxogroup.com/s/${o.slug}`, desc = s.sub || title;
@@ -66,7 +73,7 @@ export function renderSite(s: Kit, o: { key: string; slug: string; index: boolea
 ${E ? '' : `<link rel="canonical" href="${esc(url)}"><meta property="og:url" content="${esc(url)}"><link rel="icon" href="/icon-192.png"><script type="application/ld+json">${ld}</script>${ldFaq ? `<script type="application/ld+json">${ldFaq}</script>` : ''}`}
 <link rel="manifest" href="/s/${o.slug}/manifest.webmanifest"><meta name="theme-color" content="${st.bg}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=${st.fonts}&display=swap" rel="stylesheet">
-<style>:root{--bg:${st.bg};--ink:${st.ink};--mut:${st.mut};--card:${st.card};--acc:${st.acc};--accink:${st.accInk};--line:${st.line};--r:${r}px}
+<style>:root{--bg:${st.bg};--ink:${st.ink};--mut:${st.mut};--card:${st.card};--acc:${acc};--accink:${accInk};--line:${st.line};--r:${r}px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 ${st.body};-webkit-font-smoothing:antialiased}img{display:block;max-width:100%}a{color:inherit}
 .w{max-width:1180px;margin:0 auto;padding:0 22px}
 header{position:absolute;left:0;right:0;top:0;z-index:5}.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;height:82px}
@@ -79,6 +86,8 @@ header{position:absolute;left:0;right:0;top:0;z-index:5}.nav{display:flex;align-
 .hero:after{content:'';position:absolute;inset:0;${h1 ? `background:linear-gradient(180deg,rgba(0,0,0,.38) 0%,rgba(0,0,0,.04) 34%,rgba(0,0,0,.66) 100%)` : `background:radial-gradient(900px 480px at 15% 0%,color-mix(in srgb,var(--acc) 20%,transparent),transparent)`}}
 .hero .w{position:relative;z-index:2;width:100%}${h1 ? '.hero .w{text-shadow:0 2px 24px rgba(0,0,0,.45)}.hero .kicker{color:#fff;opacity:.92}.hero h1 em{color:color-mix(in srgb,var(--acc) 62%,#fff)}' : ''}.kicker{color:var(--acc);font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-size:12.5px;margin:0}
 h1{font:${cap ? 500 : 700} clamp(44px,8.4vw,${cap ? 116 : 92}px)/.98 ${st.head};letter-spacing:${cap ? '0' : '-.035em'};margin:18px 0 22px;max-width:13ch}h1 em{font-style:${cap ? 'italic' : 'normal'};color:var(--acc)}
+.hero.hv-center{align-items:center;text-align:center}.hero.hv-center h1,.hero.hv-center p.sub{margin-left:auto;margin-right:auto}.hero.hv-center .acts{justify-content:center}
+${h1 ? `.hero.hv-split{color:var(--ink);background:var(--bg);align-items:center}.hero.hv-split:after{display:none}.hero.hv-split>img{left:auto;right:clamp(16px,4vw,48px);top:110px;bottom:56px;width:46%;height:auto;border-radius:var(--r)}.hero.hv-split .w{text-shadow:none}.hero.hv-split .w>*{max-width:50%}.hero.hv-split .kicker{color:var(--acc);opacity:1}.hero.hv-split h1 em{color:var(--acc)}@media(max-width:860px){.hero.hv-split{flex-direction:column;align-items:stretch;padding-top:96px}.hero.hv-split>img{position:relative;inset:auto;width:100%;aspect-ratio:4/3;order:2;margin-top:24px}.hero.hv-split .w>*{max-width:none}}` : ''}
 .hero p.sub{max-width:540px;font-size:clamp(18px,2.4vw,21px);opacity:.88;margin:0 0 32px}.acts{display:flex;gap:12px;flex-wrap:wrap}.hero .btn:not(.solid){border-color:currentColor}
 section{padding:clamp(64px,9vw,104px) 0}h2{font:${cap ? 500 : 700} clamp(34px,4.8vw,${cap ? 62 : 50}px)/1.06 ${st.head};letter-spacing:${cap ? '0' : '-.025em'};margin:12px 0 20px}
 .lead{color:var(--mut);font-size:clamp(17px,2vw,19px);max-width:560px;margin:0}
@@ -98,7 +107,7 @@ form .btn{padding:17px;font-size:15px}.ok{grid-column:1/-1;font:600 22px/1.35 ${
 footer{padding:40px 0 48px;color:var(--mut);font-size:14px;border-top:1px solid var(--line)}footer .w{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media(max-width:860px){.links{display:none}.intro,.book{grid-template-columns:1fr}.ph{aspect-ratio:4/3}form{grid-template-columns:1fr}.hero{min-height:${h1 ? '86vh' : '64vh'}}}</style></head><body>
 <header><div class="w nav"><a class="logo" href="#">${esc(title)}</a><nav class="links">${nav.map(([h, t]) => `<a href="${h}">${esc(t)}</a>`).join('')}</nav>${btn('#form', cta)}</div></header>
-<section class="hero">${h1 ? `<img src="${h1}"${alt(s.kicker)} fetchpriority="high"${di(0)}>` : ''}<div class="w">${s.kicker || E ? `<p class="kicker"${dk('kicker')}>${esc(s.kicker || '')}</p>` : ''}<h1${dk('title')}>${headline(title, s.accent)}</h1>${s.sub || E ? `<p class="sub"${dk('sub')}>${esc(s.sub)}</p>` : ''}<div class="acts">${btn('#form', cta)}${offers.length ? btn('#offer', w.more, false) : ''}</div></div><a class="down" href="#next" aria-label="${esc(w.more)}"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></section><span id="next"></span>
+<section class="hero hv-${heroV}">${h1 ? `<img src="${h1}"${alt(s.kicker)} fetchpriority="high"${di(0)}>` : ''}<div class="w">${s.kicker || E ? `<p class="kicker"${dk('kicker')}>${esc(s.kicker || '')}</p>` : ''}<h1${dk('title')}>${headline(title, s.accent)}</h1>${s.sub || E ? `<p class="sub"${dk('sub')}>${esc(s.sub)}</p>` : ''}<div class="acts">${btn('#form', cta)}${offers.length ? btn('#offer', w.more, false) : ''}</div></div><a class="down" href="#next" aria-label="${esc(w.more)}"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></section><span id="next"></span>
 ${s.about ? `<section id="about"><div class="w intro"><div><p class="kicker">${esc(w.about)}</p><h2>${esc(s.kicker || title)}</h2><p class="lead"${dk('about')}>${esc(s.about)}</p></div>${h2 ? `<div class="ph"><img src="${h2}"${alt(title)}${lazy}${di(1)}></div>` : ''}</div></section>` : ''}
 ${offers.length ? `<section id="offer" style="padding-top:0"><div class="w"><p class="kicker">${esc(w.offer)}</p><h2>${esc(s.sub && s.sub.length <= 60 ? s.sub : w.offer)}</h2><div class="grid">${offers.map((x, i) => `<div class="off"><i>${cap ? 'No. ' : ''}${String(i + 1).padStart(2, '0')}</i><b${dk('services.' + i)}>${esc(x.t)}</b>${x.d || E ? `<p${dk('details.' + i)}>${esc(x.d)}</p>` : ''}</div>`).join('')}</div></div></section>` : ''}
 ${h3 ? `<section class="band"><img src="${h3}"${alt(s.promise)}${lazy}${di(2)}><div class="w"><p${dk('promise')}>${esc(s.promise || w.reply)}</p></div></section>` : ''}
