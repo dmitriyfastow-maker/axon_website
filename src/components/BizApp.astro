@@ -52,10 +52,15 @@ const T = {
     roleName: { owner: 'Власник', manager: 'Менеджер', viewer: 'Спостерігач' }, more: 'Потрібно більше — запис, оплата, застосунок? Напишіть Vax у чаті проєкту.',
   },
 }[lang];
+const X = {
+  en: { all: 'All', find: 'Search by name, contact or text', note: 'Note: what was agreed, next step', noteSave: 'Save note', call: 'Call', mail: 'Email', wa: 'WhatsApp', tg: 'Telegram', csv: 'Download CSV', conv: 'Became clients', noMatch: 'Nothing found for this filter.', stale: 'waiting over a day' },
+  ru: { all: 'Все', find: 'Поиск по имени, контакту или тексту', note: 'Заметка: о чём договорились, следующий шаг', noteSave: 'Сохранить заметку', call: 'Позвонить', mail: 'Письмо', wa: 'WhatsApp', tg: 'Telegram', csv: 'Скачать CSV', conv: 'Стали клиентами', noMatch: 'По этому фильтру ничего нет.', stale: 'ждёт больше суток' },
+  ua: { all: 'Усі', find: 'Пошук за імʼям, контактом або текстом', note: 'Нотатка: про що домовились, наступний крок', noteSave: 'Зберегти нотатку', call: 'Подзвонити', mail: 'Лист', wa: 'WhatsApp', tg: 'Telegram', csv: 'Завантажити CSV', conv: 'Стали клієнтами', noMatch: 'За цим фільтром нічого немає.', stale: 'чекає понад добу' },
+}[lang];
 ---
 
 <section class="biz" data-biz hidden>
-  <script type="application/json" data-biz-t set:html={JSON.stringify({ ...T, lang })} />
+  <script type="application/json" data-biz-t set:html={JSON.stringify({ ...T, ...X, lang })} />
   <div class="head">
     <div class="head-txt"><span class="biz-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><rect x="5" y="11" width="3" height="6" rx="1"/><rect x="10.5" y="7" width="3" height="10" rx="1"/><rect x="16" y="4" width="3" height="13" rx="1"/></svg></span><div><p class="eyebrow">Vaxo App</p><h2>{T.h}</h2><p class="mut">{T.sub}</p></div></div>
     <div class="ctl">
@@ -82,7 +87,9 @@ const T = {
     <div class="grid4" data-lists></div>
 
     <div class="card" data-leads-box>
-      <h3>{T.leads}</h3>
+      <div class="lh"><h3>{T.leads}</h3><button type="button" class="ghost" data-csv>{X.csv}</button></div>
+      <div class="funnel" data-funnel></div>
+      <input class="lfind" type="search" maxlength="80" data-lfind placeholder={X.find} />
       <div data-leads></div>
       <details><summary>{T.addLead}</summary>
         <form class="row" data-lead-add><input name="name" maxlength="80" placeholder={T.lName} /><input name="contact" maxlength="120" placeholder={T.lContact} /><input name="message" maxlength="500" placeholder={T.lMsg} /><button class="cta">{T.add}</button></form>
@@ -125,6 +132,41 @@ const T = {
   let cur = 0, days = 7, team: R[] = [];
   const ki = (d: string) => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
   const KI = [ki('<circle cx="12" cy="12" r="3"/><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>'), ki('<path d="M3 13h5l1.5 3h5l1.5-3h5"/><path d="M5.5 5h13L21 13v6H3v-6z"/>'), ki('<path d="M4 19 19 4M7 7h.01M17 17h.01"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>'), ki('<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>')];
+
+  let leads: R[] = [], isOwner = false, stage = '', term = '';
+  // A contact becomes one tap: phone → call and WhatsApp, email → letter, @nick → Telegram.
+  const reach = (c: string) => {
+    const v = String(c || '').trim(), out: string[] = [];
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) out.push(`<a href="mailto:${esc(v)}">${esc(T.mail)}</a>`);
+    const digits = v.replace(/[^\d+]/g, '');
+    if (!v.includes('@') && digits.replace('+', '').length >= 7) out.push(`<a href="tel:${esc(digits)}">${esc(T.call)}</a>`, `<a href="https://wa.me/${esc(digits.replace('+', ''))}" target="_blank" rel="noopener">${esc(T.wa)}</a>`);
+    if (/^@[\w.]{3,}$/.test(v)) out.push(`<a href="https://t.me/${esc(v.slice(1))}" target="_blank" rel="noopener">${esc(T.tg)}</a>`);
+    return out.length ? `<span class="reach">${out.join('')}</span>` : '';
+  };
+  function renderLeads() {
+    const n = (k: string) => leads.filter((l) => l.status === k).length;
+    const won = n('won'), done = won + n('lost');
+    q('[data-funnel]').innerHTML = [['', T.all, leads.length], ...Object.entries(T.st).map(([k, v]) => [k, v, n(k)])]
+      .map(([k, v, c]) => `<button type="button" data-stage="${k}" aria-pressed="${k === stage}"><b>${c}</b><span>${esc(v)}</span></button>`).join('')
+      + (done ? `<span class="conv mut small">${esc(T.conv)}: ${Math.round((won / done) * 100)}%</span>` : '');
+    q('[data-funnel]').hidden = q('[data-lfind]').hidden = q('[data-csv]').hidden = !leads.length;
+    const t = term.toLowerCase();
+    const list = leads.filter((l) => (!stage || l.status === stage) && (!t || `${l.name} ${l.contact} ${l.message} ${l.note || ''}`.toLowerCase().includes(t)));
+    const opts = (sel: string) => `<option value="">${esc(T.nobody)}</option>` + team.map((m) => `<option ${m.email === sel ? 'selected' : ''}>${esc(m.email)}</option>`).join('');
+    const old = (l: R) => l.status === 'new' && Date.now() - Date.parse(String(l.at).replace(' ', 'T') + 'Z') > 864e5;
+    q('[data-leads]').innerHTML = !leads.length ? `<p class="mut">${esc(T.noLeads)}</p>` : !list.length ? `<p class="mut">${esc(T.noMatch)}</p>`
+      : `<div class="tw"><table><tbody>${list.map((l) => `<tr data-id="${l.id}"><td class="mut small">${esc(String(l.at).slice(5, 16))}<br>${esc(l.source || '')}${old(l) ? `<br><span class="late">${esc(T.stale)}</span>` : ''}</td><td><b>${esc(l.name || '—')}</b><br>${esc(l.contact || '')}${reach(l.contact)}</td><td>${esc(l.message || '')}<details class="lnote"${l.note ? ' open' : ''}><summary>${esc(T.note)}</summary><textarea maxlength="1000" rows="2" data-note>${esc(l.note || '')}</textarea><button type="button" class="ghost" data-note-save>${esc(T.noteSave)}</button></details></td><td><select data-st>${Object.entries(T.st).map(([k, v]) => `<option value="${k}" ${k === l.status ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select>${isOwner && team.length ? `<select data-as title="${esc(T.assign)}">${opts(l.assignee)}</select>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
+    root.querySelectorAll<HTMLSelectElement>('[data-st],[data-as]').forEach((el) => (el.onchange = () => {
+      const id = Number(el.closest('tr')!.dataset.id), l = leads.find((x) => x.id === id), st = el.matches('[data-st]');
+      send(`/api/biz/${cur}/leads/${id}`, st ? { status: el.value } : { assignee: el.value });
+      if (l) { if (st) l.status = el.value; else l.assignee = el.value; }
+      if (st) renderLeads();
+    }));
+    root.querySelectorAll<HTMLButtonElement>('[data-note-save]').forEach((b) => (b.onclick = async () => {
+      const tr = b.closest('tr')!, id = Number(tr.dataset.id), note = tr.querySelector<HTMLTextAreaElement>('[data-note]')!.value;
+      if ((await send(`/api/biz/${cur}/leads/${id}`, { note })).ok) { const l = leads.find((x) => x.id === id); if (l) l.note = note; b.textContent = T.saved; setTimeout(() => (b.textContent = T.noteSave), 1500); }
+    }));
+  }
 
   let booting = false;
   async function boot() {
@@ -171,14 +213,8 @@ const T = {
 
     const owner = b.role === 'owner';
     q('[data-leads-box]').hidden = b.role === 'viewer';
-    const opts = (sel: string) => `<option value="">${esc(T.nobody)}</option>` + team.map((m) => `<option ${m.email === sel ? 'selected' : ''}>${esc(m.email)}</option>`).join('');
-    q('[data-leads]').innerHTML = (d.leads as R[]).length
-      ? `<div class="tw"><table><tbody>${(d.leads as R[]).map((l) => `<tr data-id="${l.id}"><td class="mut small">${esc(l.at.slice(5, 16))}<br>${esc(l.source || '')}</td><td><b>${esc(l.name || '—')}</b><br>${esc(l.contact || '')}</td><td>${esc(l.message || '')}</td><td><select data-st>${Object.entries(T.st).map(([k, v]) => `<option value="${k}" ${k === l.status ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select>${owner && team.length ? `<select data-as title="${esc(T.assign)}">${opts(l.assignee)}</select>` : ''}</td></tr>`).join('')}</tbody></table></div>`
-      : `<p class="mut">${esc(T.noLeads)}</p>`;
-    root.querySelectorAll<HTMLSelectElement>('[data-st],[data-as]').forEach((el) => (el.onchange = () => {
-      const id = el.closest('tr')!.dataset.id;
-      send(`/api/biz/${cur}/leads/${id}`, el.matches('[data-st]') ? { status: el.value } : { assignee: el.value });
-    }));
+    leads = d.leads as R[]; isOwner = owner;
+    renderLeads();
 
     root.querySelectorAll<HTMLElement>('[data-owner]').forEach((el) => (el.hidden = !owner));
     if (owner) {
@@ -208,6 +244,18 @@ const T = {
     q('[data-brief-t]').textContent = text;
   }
 
+  q('[data-funnel]').onclick = (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-stage]');
+    if (b) { stage = b.dataset.stage || ''; renderLeads(); }
+  };
+  q<HTMLInputElement>('[data-lfind]').oninput = (e) => { term = (e.target as HTMLInputElement).value.trim(); renderLeads(); };
+  q('[data-csv]').onclick = () => {
+    const cell = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const rows = [['date', 'name', 'contact', 'message', 'source', 'status', 'assignee', 'note'], ...leads.map((l) => [l.at, l.name, l.contact, l.message, l.source, T.st[l.status] || l.status, l.assignee, l.note])];
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\ufeff' + rows.map((r) => r.map(cell).join(',')).join('\n')], { type: 'text/csv' }));
+    a.download = 'requests.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
   q('[data-days]').onclick = (e) => {
     const t = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-d]');
     if (!t) return;
@@ -291,6 +339,19 @@ const T = {
   .biz .lst li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .biz .lst li i { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--acc) 16%, transparent); border-radius: 8px; z-index: -1; }
   .biz .tw { overflow-x: auto; }
+  .biz .lh { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .biz .funnel { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0 10px; }
+  .biz .funnel button { display: flex; flex-direction: column; align-items: flex-start; min-width: 84px; padding: 6px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: inherit; cursor: pointer; font: inherit; }
+  .biz .funnel button b { font-size: 18px; }
+  .biz .funnel button span { font-size: 12px; opacity: .75; }
+  .biz .funnel button[aria-pressed="true"] { border-color: var(--acc); box-shadow: inset 0 0 0 1px var(--acc); }
+  .biz .funnel .conv { margin-left: auto; }
+  .biz .lfind { width: 100%; box-sizing: border-box; margin-bottom: 10px; padding: 10px 13px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); color: inherit; font: 16px var(--font); }
+  .biz .reach { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; font-size: 13px; }
+  .biz .late { color: #c2410c; font-weight: 600; }
+  .biz .lnote { margin-top: 6px; font-size: 13px; }
+  .biz .lnote summary { cursor: pointer; opacity: .7; }
+  .biz .lnote textarea { width: 100%; box-sizing: border-box; margin: 4px 0; padding: 8px 10px; font-size: 14px; }
   .biz table { width: 100%; border-collapse: collapse; min-width: 560px; }
   .biz td { padding: 12px 8px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 14px; }
   .biz td select { display: block; margin-bottom: 4px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: inherit; }
