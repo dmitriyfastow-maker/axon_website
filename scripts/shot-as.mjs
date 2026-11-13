@@ -1,0 +1,12 @@
+import { chromium } from 'playwright';
+const [k, out, js] = process.argv.slice(2);
+const b = await chromium.launch({ channel: 'chrome' });
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+p.on('pageerror', (e) => console.log('ERR', e.message));
+await p.goto(`https://vaxogroup.com/api/me/as?k=${k}`, { waitUntil: 'networkidle' });
+await p.goto('https://vaxogroup.com/ru/app/', { waitUntil: 'networkidle' });
+await p.waitForTimeout(2000);
+if (js) console.log(await p.evaluate(`(async()=>{${js}})()`));
+await p.waitForTimeout(800);
+await p.screenshot({ path: out });
+await b.close();

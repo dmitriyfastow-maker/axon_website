@@ -423,6 +423,27 @@ export async function readShareLink(raw: string): Promise<{ ok: boolean; text?: 
   return { ok: true, text: text.slice(0, 30000), title };
 }
 
+/** Experience only for results (Decision 51): never for the number of messages, so nobody «farms» it with AI. */
+export const XP_STEPS: { key: string; xp: number }[] = [
+  { key: 'result', xp: 50 }, { key: 'memory', xp: 30 }, { key: 'site', xp: 100 }, { key: 'request', xp: 100 }, { key: 'partner', xp: 50 }, { key: 'team', xp: 50 },
+];
+export const LEVELS = [0, 100, 250, 500, 800, 1200, 1700, 2300, 3000, 4000];
+export function levelOf(xp: number) {
+  let lv = 1; for (let i = 0; i < LEVELS.length; i++) if (xp >= LEVELS[i]) lv = i + 1;
+  return { level: lv, from: LEVELS[lv - 1], to: LEVELS[lv] ?? null };
+}
+async function progress(db: DB, clientId: number, k: { objects: number; memory: boolean; modules: Record<string, any> }) {
+  const bizId = k.modules?.biz?.id ?? 0;
+  const team = bizId ? ((await db.prepare('SELECT COUNT(*) AS n FROM biz_members WHERE biz_id = ?').bind(bizId).first<{ n: number }>().catch(() => null))?.n ?? 0) : 0;
+  const weeks = (await db.prepare(`SELECT COUNT(DISTINCT strftime('%Y-%W', m.at)) AS n FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user'`).bind(clientId).first<{ n: number }>().catch(() => null))?.n ?? 0;
+  const done: Record<string, boolean> = {
+    result: k.objects > 0, memory: k.memory, site: !!k.modules?.site || (k.modules?.pages?.length ?? 0) > 0, request: (k.modules?.requests ?? 0) > 0,
+    partner: (k.modules?.partner?.refs?.length ?? k.modules?.partner?.links?.length ?? 0) > 0, team: team > 0,
+  };
+  const xp = XP_STEPS.reduce((s, x) => s + (done[x.key] ? x.xp : 0), 0) + Math.min(weeks, 40) * 30;
+  return { xp, weeks, done, ...levelOf(xp) };
+}
+
 let shareReady = false;
 async function shareTable(db: DB) {
   if (shareReady) return;
@@ -465,7 +486,9 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       const { mode, ...memory } = await readMemory(db, me.id);
       const access = await moduleAccess(db, me.id);
       const usage = await wsLimits(db, me.id, al?.plan ?? 'start');
-      return out(200, { ok: true, signedIn: true, usage, me: { email: me.email, name: me.name, verified: !!me.email_verified_at }, plan: al?.plan ?? 'start', trial: !!al?.trial, memory, mode, chats, projects, objects, access, modules: await modulesState(db, me.id, url.origin, access) });
+      const modules = await modulesState(db, me.id, url.origin, access);
+      const game = await progress(db, me.id, { objects: objects.length, memory: Object.values(memory).some((v) => String(v || '').trim()), modules: modules as Record<string, any> }).catch(() => null);
+      return out(200, { ok: true, signedIn: true, usage, me: { email: me.email, name: me.name, verified: !!me.email_verified_at }, plan: al?.plan ?? 'start', trial: !!al?.trial, memory, mode, chats, projects, objects, access, modules, game });
     }
     if (!me) return out(401, { ok: false });
     const bz = Number(b.biz) || Number(url.searchParams.get('biz')) || null;
