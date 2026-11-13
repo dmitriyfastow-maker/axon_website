@@ -1,21 +1,26 @@
 # Vaxo
 
-> Vaxo (vaxogroup.com) is a full-cycle digital studio run with AI: websites and online stores, mobile apps and SaaS, AI chat assistants and automation, paid ads (Meta, Google, TikTok), SMM, SEO, design, short-form video and AI-animated brand characters. Clients worldwide; English, Ukrainian and Russian.
+> Vaxo (vaxogroup.com) is an app where you write what you need in your own words and the AI assistant Vax sees it through to a working result: a website with booking and payments, a CRM, an AI consultant for your customers, posts, ads, documents, presentations and calculations. For everyone — from a personal task to a company. English, Ukrainian and Russian. Free to start, no sign-up needed to try.
 
 ## Key facts
-- AI manager "Vax" answers clients 24/7 on the site, in Telegram and by email; a human manager joins for calls.
-- One platform by subscription: Care $39/mo, Growth $129/mo, Pro $299/mo. You describe what you need; Vax (AI) and the team do the work. Website, AI chat, CRM, leads, socials are included in the plan; a website costs $0 extra. First month free.
-- Custom work not covered by a plan (own app, custom CRM, special integrations): the price is named before work starts and the client agrees with a checkbox.
-- Payment: subscription monthly; custom projects sized and agreed upfront. Refund rules: https://vaxogroup.com/terms/
-- Partner program (18+): 30% of the first order + 10% of later payments for life; 40% if the partner also closes the deal. https://vaxogroup.com/partners/
+- Start in the Workspace (https://vaxogroup.com/app/): chat with Vax, memory, tools and modules on one screen. Works on phone, computer and browser; installs as an app in two taps.
+- Five plans: Free $0 (all features to try, a one-page site, marked "Made with Vaxo"), Plus $19/mo (your own tasks done for you), Pro $39/mo (a one-page site or a connection to yours, AI in your site chat, every request in one app), Max $129/mo (a full site with booking and payments, AI in all messengers, posts, team with roles), Ultra $299/mo (a store or an app, social media and ads run for you).
+- Everything in a plan is included, the website too. Only fully custom work (your own app, system or special integration) costs extra, and the price is fixed before work starts.
+- Paying for 3, 6 or 12 months at once: 10%, 15% or 20% off. Monthly AI allowance is shown as a percentage with its refresh date.
+- No trial month: the Free plan has all features. A paid plan comes with a 14-day refund, once per person. Rules: https://vaxogroup.com/refunds/
+- Your accounts, site and data stay in your name; you can export your data any time.
+- Partner program (18+): 50% of the client's first payment (for a month or a year) and 30% of every later payment while the client pays; money is credited 14 days after the payment. https://vaxogroup.com/partners/
 - Real cases: AiPro Partners, TrichoTech.
 
 ## Pages
-- [Plans and prices](https://vaxogroup.com/#pricing)
-- [Starter packages](https://vaxogroup.com/start/)
+- [Workspace — start free](https://vaxogroup.com/app/)
+- [How it works and plans](https://vaxogroup.com/how/)
+- [Live examples](https://vaxogroup.com/examples/)
+- [Free tools](https://vaxogroup.com/tools/)
 - [About](https://vaxogroup.com/about/)
 - [Partner program](https://vaxogroup.com/partners/)
 - [Collaborate (creators, UGC, agencies, brands)](https://vaxogroup.com/collab/)
 - [Blog](https://vaxogroup.com/blog/)
-- [Terms and refunds](https://vaxogroup.com/terms/)
-- [Contact](https://vaxogroup.com/#contact)
+- [Terms](https://vaxogroup.com/terms/)
+- [Refunds](https://vaxogroup.com/refunds/)
+- [Privacy](https://vaxogroup.com/privacy/)
