@@ -120,6 +120,8 @@ export default {
         body: JSON.stringify({ chat_id: chat, text, disable_web_page_preview: true }),
       }).catch(() => {});
     };
+    const pref = url.pathname.match(/^\/rp\/([0-9a-f]{8})\/?$/);
+    if (pref) return env.LEADS ? servePartner(env.LEADS, pref[1], url.origin) : json(503, { ok: false });
     const r = url.pathname.match(/^\/r\/([^/]+)\/?$/);
     if (r && env.LEADS && SLUG_C.test(r[1].toLowerCase())) return clientRedirect(env.LEADS, request, r[1].toLowerCase());
     if (r) return env.LEADS ? handleRedirect(env.LEADS, request, r[1].toLowerCase()) : Response.redirect(new URL('/', url).toString(), 302);
@@ -193,8 +195,6 @@ export default {
     if (pic) return env.LEADS ? serveImage(env.LEADS, pic[1]) : json(503, { ok: false });
     const pub = url.pathname.match(/^\/p\/([0-9a-f]{12})\/?$/);
     if (pub) return env.LEADS ? serveDoc(env.LEADS, pub[1]) : json(503, { ok: false });
-    const pref = url.pathname.match(/^\/r\/([0-9a-f]{8})\/?$/);
-    if (pref) return env.LEADS ? servePartner(env.LEADS, pref[1], url.origin) : json(503, { ok: false });
     const hosted = url.pathname.match(/^\/s\/([a-z0-9-]{3,60})(\/manifest\.webmanifest)?\/?$/);
     if (hosted) return env.LEADS ? servePage(env.LEADS, hosted[1], !!hosted[2]) : json(503, { ok: false });
     if (url.pathname === '/api/me' || url.pathname.startsWith('/api/me/')) return env.LEADS ? handleCabinet(env.LEADS, env, request, url.pathname.slice('/api/me'.length).replace(/^\//, ''), notify, env.AI) : json(503, { ok: false });

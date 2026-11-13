@@ -248,7 +248,7 @@ export async function modulesState(db: DB, clientId: number, origin: string, acc
     pages,
     crm: access ? { url, total, leads } : null,
     requests: total,
-    partner: refs.length ? { links: refs.map((r) => ({ ...r, url: `${url}?utm_source=ref_${r.code}`, page: `${origin}/r/${r.code}` })) } : null,
+    partner: refs.length ? { links: refs.map((r) => ({ ...r, url: `${url}?utm_source=ref_${r.code}`, page: `${origin}/rp/${r.code}` })) } : null,
     site: biz.kind === 'site' ? { url, slug: biz.slug, ...(JSON.parse(biz.data || '{}') as Site) } : null,
   };
 }
