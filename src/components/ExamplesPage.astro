@@ -15,16 +15,22 @@ const alts = { en: '/examples/', ua: '/ua/examples/', ru: '/ru/examples/' };
 
 // [type key, slug, thumb, plan]
 const ITEMS = [
-  ['site', 'flagship', `flagship-${lang}.webp`, 'Pro · Max · Ultra'],
-  ['marketing', 'marketing', `marketing-${lang}.webp`, 'Max · Ultra'],
-  ['app', 'ai-assistant', `ai-assistant-${lang}.webp`, 'Pro · Max · Ultra'],
-  ['booking', 'eco-clinic', `eco-clinic-${lang}.webp`, 'Max'],
-  ['shop', 'eco-shop', `eco-shop-${lang}.webp`, 'Ultra'],
-  ['app', 'eco-crm', `eco-os-${lang}.webp`, 'Pro · Max · Ultra'],
-  ['app', 'eco-partners', `eco-partners-${lang}.webp`, 'Ultra'],
-  ['site', 'personal-brand', `personal-brand-${lang}.webp`, 'Pro · Max · Ultra'],
-  ['shop', 'shop-2026', `shop-2026-${lang}.webp`, 'Ultra'],
-  ['app', 'client-app', `client-app-${lang}.webp`, 'Max · Ultra'],
+  ['site bot', 'flagship', `flagship-${lang}.webp`],
+  ['vid', 'marketing', `marketing-${lang}.webp`],
+  ['bot auto', 'ai-assistant', `ai-assistant-${lang}.webp`],
+  ['book site app', 'eco-clinic', `eco-clinic-${lang}.webp`],
+  ['shop bot', 'eco-shop', `eco-shop-${lang}.webp`],
+  ['crm auto', 'eco-crm', `eco-os-${lang}.webp`],
+  ['par', 'eco-partners', `eco-partners-${lang}.webp`],
+  ['site book', 'personal-brand', `personal-brand-${lang}.webp`],
+  ['shop bot', 'shop-2026', `shop-2026-${lang}.webp`],
+  ['app book', 'client-app', `client-app-${lang}.webp`],
+  ['crm auto', 'crm', `crm-${lang}.webp`],
+  ['site', 'coach', 'coach.webp'],
+  ['site', 'skincare', 'skincare.webp'],
+  ['site book', 'restaurant', 'restaurant.webp'],
+  ['site book', 'dental', 'dental.webp'],
+  ['site', 'cleaning', 'cleaning.webp'],
 ] as const;
 
 const C = {
@@ -33,8 +39,8 @@ const C = {
     eyebrow: 'Examples', h1: 'This is what you get. Open it and try it.',
     sub: 'Every example is a working build: click, book, chat with the AI. Yours is built around your business — and everything in your plan is already included.', how: 'How they are made: these are detailed builds by Vax from a full brief (the Ultra level, one to three days). A site from one word in the chat is simpler and ready in a minute, and you can then improve it in words.',
     cta: 'I want one like this →', cta2: 'Describe your task',
-    filters: { all: 'All', site: 'Websites', booking: 'Sites with booking', shop: 'Online stores', marketing: 'Marketing', app: 'Apps and CRM' },
-    types: { site: 'Website', booking: 'Site with online booking', shop: 'Online store', marketing: 'Marketing', app: 'App' },
+    filters: { all: 'All', site: 'Websites', book: 'Online booking', shop: 'Stores', crm: 'CRM and requests', bot: 'AI consultant', par: 'Partner programs', vid: 'Marketing and videos', auto: 'Automation', app: 'Apps' },
+    types: { site: 'Website', book: 'Online booking', shop: 'Store', crm: 'CRM', bot: 'AI consultant', par: 'Partners', vid: 'Marketing', auto: 'Automation', app: 'App' },
     items: [
       ['Flagship site', 'Motion, bold type, online orders and an AI barista. The level every site gets now.'],
       ['Marketing on autopilot', 'Ad creatives, AI posts, a content calendar and a requests report — every month.'],
@@ -46,8 +52,15 @@ const C = {
       ['Personal brand', 'A site for an expert or a speaker: results, programs, newsletter and a booking calendar. In three languages.'],
       ['Shop 2026', 'An AI picks products from a sentence, one-click checkout, a free-shipping meter and order status in Telegram.'],
       ['Client app', 'Class booking, membership, chat with the coach and reminders. Opens from a link, no app store.'],
+      ['Business CRM', 'Requests from every channel, deals, tasks, team roles and AI reports for the owner.'],
+      ['Career coach', 'A calm, trustworthy site for a coach: programs, results and a booking button.'],
+      ['Skincare brand', 'A clean product site with ingredients, routines and an order form.'],
+      ['Restaurant', 'Menu, atmosphere, table booking and events on one page.'],
+      ['Family dentist', 'Services, prices, doctors and booking for a local clinic.'],
+      ['Cleaning service', 'Price calculator, service areas and a request form that lands in the CRM.'],
     ],
-    plan: 'In plan', open: 'Open', want: 'I want one',
+    plan: 'Made for you', open: 'Open', want: 'I want one like this',
+    only: 'These are only examples. Every Vaxo client gets their own design, features, texts and workflow — built around their tasks, the way they want it. Any feature you can describe can be added.',
     note: 'The brands are made up — the functions are real. Your design, texts and functions follow your business.',
     realH: 'Already working for real clients', realSub: 'Built by our team and running today.',
     real: [['MedTech · AI platform', 'TrichoTech', 'AI image analysis, treatment plans and patient records for dermatologists.'], ['Partner platform', 'AiPro Partners', 'Partners, referral links, analytics and a promo store in one platform.'], ['Our own system', 'Vaxo + Vax AI', 'This site: an AI manager 24/7, client cabinets, project chats, invoices and a CRM.']],
@@ -59,8 +72,8 @@ const C = {
     eyebrow: 'Примеры', h1: 'Вот что вы получите. Откройте и попробуйте.',
     sub: 'Каждый пример — рабочий: нажимайте, записывайтесь, поговорите с ИИ. Ваш вариант соберём под ваш бизнес — и всё из тарифа уже включено.', how: 'Как они сделаны: это подробные сборки Vax по полному описанию (уровень Ультра, от одного до трёх дней). Сайт по одному слову в чате проще и готов за минуту, дальше его можно улучшать словами.',
     cta: 'Хочу такой →', cta2: 'Описать задачу',
-    filters: { all: 'Все', site: 'Сайты', booking: 'Сайты с записью', shop: 'Интернет-магазины', marketing: 'Маркетинг', app: 'Приложения и CRM' },
-    types: { site: 'Сайт', booking: 'Сайт с онлайн-записью', shop: 'Интернет-магазин', marketing: 'Маркетинг', app: 'Приложение' },
+    filters: { all: 'Все', site: 'Сайты', book: 'Онлайн-запись', shop: 'Магазины', crm: 'CRM и заявки', bot: 'ИИ-консультант', par: 'Партнёрские программы', vid: 'Маркетинг и ролики', auto: 'Автоматизация', app: 'Приложения' },
+    types: { site: 'Сайт', book: 'Онлайн-запись', shop: 'Магазин', crm: 'CRM', bot: 'ИИ-консультант', par: 'Партнёры', vid: 'Маркетинг', auto: 'Автоматизация', app: 'Приложение' },
     items: [
       ['Сайт-эталон', 'Движение, крупная типографика, заказ онлайн и ИИ-бариста. Такой уровень теперь получает каждый сайт.'],
       ['Маркетинг на автопилоте', 'Креативы, посты от ИИ, контент-план и отчёт по заявкам — каждый месяц.'],
@@ -72,8 +85,15 @@ const C = {
       ['Личный бренд', 'Сайт эксперта или спикера: результаты, программы, рассылка и календарь записи. На трёх языках.'],
       ['Магазин 2026', 'ИИ подбирает товары по фразе, оплата в один клик, шкала бесплатной доставки и статус заказа в Telegram.'],
       ['Приложение клиента', 'Запись на занятия, абонемент, чат с тренером и напоминания. Открывается по ссылке, без магазина приложений.'],
+      ['CRM для бизнеса', 'Заявки из всех каналов, сделки, задачи, роли команды и ИИ-отчёты владельцу.'],
+      ['Карьерный коуч', 'Спокойный сайт, которому доверяют: программы, результаты и кнопка записи.'],
+      ['Бренд косметики', 'Чистый сайт продукта: состав, уходовые ритуалы и заказ.'],
+      ['Ресторан', 'Меню, атмосфера, бронь стола и события на одной странице.'],
+      ['Семейная стоматология', 'Услуги, цены, врачи и запись для клиники у дома.'],
+      ['Клининг', 'Калькулятор цены, районы работы и заявка, которая сразу попадает в CRM.'],
     ],
-    plan: 'Тариф', open: 'Открыть', want: 'Хочу такой',
+    plan: 'Под вас', open: 'Открыть', want: 'Хочу такое же',
+    only: 'Это лишь примеры. У каждого клиента Vaxo всё своё: дизайн, функции, тексты и порядок работы делаются под его задачи — так, как он захочет. Любую функцию, которую вы можете описать, можно добавить.',
     note: 'Бренды придуманы — функции настоящие. Дизайн, тексты и функции подстроим под ваш бизнес.',
     realH: 'Уже работают у реальных клиентов', realSub: 'Сделаны нашей командой и работают сегодня.',
     real: [['Медтех · ИИ-платформа', 'TrichoTech', 'ИИ-анализ снимков, планы лечения и карты пациентов для дерматологов.'], ['Партнёрская платформа', 'AiPro Partners', 'Партнёры, реферальные ссылки, аналитика и промо-магазин в одной платформе.'], ['Наша собственная система', 'Vaxo + ИИ-менеджер Vax', 'Этот сайт: ИИ-менеджер 24/7, кабинеты клиентов, чаты проектов, счета и CRM.']],
@@ -85,8 +105,8 @@ const C = {
     eyebrow: 'Приклади', h1: 'Ось що ви отримаєте. Відкрийте й спробуйте.',
     sub: 'Кожен приклад — робочий: натискайте, записуйтеся, поговоріть із ШІ. Ваш варіант зберемо під ваш бізнес — і все з тарифу вже включено.', how: 'Як їх зроблено: це детальні збірки Vax за повним описом (рівень Ультра, від одного до трьох днів). Сайт за одним словом у чаті простіший і готовий за хвилину, далі його можна покращувати словами.',
     cta: 'Хочу такий →', cta2: 'Описати завдання',
-    filters: { all: 'Усі', site: 'Сайти', booking: 'Сайти із записом', shop: 'Інтернет-магазини', marketing: 'Маркетинг', app: 'Застосунки і CRM' },
-    types: { site: 'Сайт', booking: 'Сайт з онлайн-записом', shop: 'Інтернет-магазин', marketing: 'Маркетинг', app: 'Застосунок' },
+    filters: { all: 'Усі', site: 'Сайти', book: 'Онлайн-запис', shop: 'Магазини', crm: 'CRM і заявки', bot: 'ШІ-консультант', par: 'Партнерські програми', vid: 'Маркетинг і ролики', auto: 'Автоматизація', app: 'Застосунки' },
+    types: { site: 'Сайт', book: 'Онлайн-запис', shop: 'Магазин', crm: 'CRM', bot: 'ШІ-консультант', par: 'Партнери', vid: 'Маркетинг', auto: 'Автоматизація', app: 'Застосунок' },
     items: [
       ['Сайт-еталон', 'Рух, велика типографіка, замовлення онлайн і ШІ-бариста. Такий рівень тепер отримує кожен сайт.'],
       ['Маркетинг на автопілоті', 'Креативи, пости від ШІ, контент-план і звіт по заявках — щомісяця.'],
@@ -98,8 +118,15 @@ const C = {
       ['Особистий бренд', 'Сайт експерта чи спікера: результати, програми, розсилка і календар запису. Трьома мовами.'],
       ['Магазин 2026', 'ШІ добирає товари за фразою, оплата в один клік, шкала безкоштовної доставки й статус замовлення в Telegram.'],
       ['Застосунок клієнта', 'Запис на заняття, абонемент, чат із тренером і нагадування. Відкривається за посиланням, без магазину застосунків.'],
+      ['CRM для бізнесу', 'Заявки з усіх каналів, угоди, задачі, ролі команди й ШІ-звіти власнику.'],
+      ['Карʼєрна коучка', 'Спокійний сайт, якому довіряють: програми, результати й кнопка запису.'],
+      ['Бренд косметики', 'Чистий сайт продукту: склад, ритуали догляду й замовлення.'],
+      ['Ресторан', 'Меню, атмосфера, бронювання столу й події на одній сторінці.'],
+      ['Сімейна стоматологія', 'Послуги, ціни, лікарі й запис для клініки біля дому.'],
+      ['Клінінг', 'Калькулятор ціни, райони роботи й заявка, що одразу потрапляє в CRM.'],
     ],
-    plan: 'Тариф', open: 'Відкрити', want: 'Хочу такий',
+    plan: 'Під вас', open: 'Відкрити', want: 'Хочу таке саме',
+    only: 'Це лише приклади. У кожного клієнта Vaxo все своє: дизайн, функції, тексти й порядок роботи робляться під його завдання — так, як він захоче. Будь-яку функцію, яку ви можете описати, можна додати.',
     note: 'Бренди вигадані — функції справжні. Дизайн, тексти й функції підлаштуємо під ваш бізнес.',
     realH: 'Уже працюють у реальних клієнтів', realSub: 'Зроблені нашою командою і працюють сьогодні.',
     real: [['Медтех · ШІ-платформа', 'TrichoTech', 'ШІ-аналіз знімків, плани лікування й карти пацієнтів для дерматологів.'], ['Партнерська платформа', 'AiPro Partners', 'Партнери, реферальні посилання, аналітика і промо-магазин в одній платформі.'], ['Наша власна система', 'Vaxo + ШІ-менеджер Vax', 'Цей сайт: ШІ-менеджер 24/7, кабінети клієнтів, чати проєктів, рахунки і CRM.']],
@@ -127,20 +154,21 @@ const start = `${home}#contact`;
       <div class="filters" role="group" data-filters>
         {Object.entries(C.filters).map(([k, v], i) => <button type="button" data-f={k} aria-pressed={i === 0 ? 'true' : 'false'}>{v}</button>)}
       </div>
+      <p class="only">ⓘ {C.only}</p>
       <div class="grid">
-        {ITEMS.map(([type, slug, img, plan], i) => (
-          <article class="card" data-type={type}>
+        {ITEMS.map(([type, slug, img], i) => (
+          <article class="card" data-type={type} data-slug={slug} id={`ex-${slug}`}>
             <a class="thumb" href={`/examples/${slug}/?lang=${lang}`} target="_blank" rel="noopener">
               <img src={`/examples/thumbs/${img}`} alt={C.items[i][0]} loading="lazy" width="480" height="300" />
-              <span class="type">{(C.types as Record<string, string>)[type]}</span>
+              <span class="type">{(C.types as Record<string, string>)[type.split(' ')[0]]}</span>
             </a>
             <div class="body">
               <h3>{C.items[i][0]}</h3>
               <p>{C.items[i][1]}</p>
-              <small class="plan">{C.plan}: <b>{plan}</b></small>
+
               <div class="row">
                 <a class="btn sm" href={`/examples/${slug}/?lang=${lang}`} target="_blank" rel="noopener">{C.open}</a>
-                <a class="btn sm ghost" href={start}>{C.want}</a>
+                <a class="btn sm ghost" href={`${home === '/' ? '' : home.replace(/\/$/, '')}/app/#q=${encodeURIComponent(C.want + ': ' + C.items[i][0])}`}>{C.want}</a>
               </div>
             </div>
           </article>
@@ -167,8 +195,19 @@ const start = `${home}#contact`;
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-f]');
     if (!b) return;
     box.querySelectorAll('[data-f]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    document.querySelectorAll<HTMLElement>('[data-type]').forEach((c) => (c.hidden = b.dataset.f !== 'all' && c.dataset.type !== b.dataset.f));
+    pick(b.dataset.f || 'all');
   });
+  function pick(f: string) {
+    box?.querySelectorAll('[data-f]').forEach((x) => x.setAttribute('aria-pressed', String((x as HTMLElement).dataset.f === f)));
+    document.querySelectorAll<HTMLElement>('.card[data-type]').forEach((c) => (c.hidden = f !== 'all' && !c.dataset.type!.split(' ').includes(f)));
+  }
+  // From the home page: ?cat=<tab>&ex=<example> opens this category with that example first and highlighted.
+  {
+    const q = new URLSearchParams(location.search), cat = q.get('cat') || '', ex = q.get('ex') || '';
+    if (cat && box?.querySelector(`[data-f="${CSS.escape(cat)}"]`)) pick(cat);
+    const card = ex ? document.getElementById('ex-' + ex) : null;
+    if (card) { card.parentElement!.prepend(card); card.classList.add('hit'); setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200); }
+  }
 </script>
 
 <style>
@@ -219,4 +258,6 @@ const start = `${home}#contact`;
   .custom p { margin: 0; max-width: 62ch; color: var(--mut); font-size: 17px; line-height: 1.5; }
   @media (max-width: 960px) { .grid, .real { grid-template-columns: repeat(2, minmax(0, 1fr)); } .custom { flex-direction: column; align-items: flex-start; } }
   @media (max-width: 560px) { .grid, .real { grid-template-columns: minmax(0, 1fr); } .custom .btn { width: 100%; white-space: normal; } }
+  .only { margin: 0 auto 22px; max-width: 860px; padding: 14px 18px; border-radius: 16px; background: color-mix(in srgb, var(--acc) 10%, var(--surf)); border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); text-align: center; font-size: 15.5px; line-height: 1.5; }
+  .card.hit { border-color: var(--acc); box-shadow: 0 0 0 3px color-mix(in srgb, var(--acc) 35%, transparent); }
 </style>

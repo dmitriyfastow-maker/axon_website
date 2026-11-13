@@ -29,6 +29,13 @@ const TX = {
       ['app', 'Приложение для клиентов', 'Своё приложение на телефоне клиента: запись, бонусы, напоминания.', 'Сделай приложение для клиентов моего бизнеса'],
     ],
     try: 'Попробовать', live: 'Открыть живой пример',
+    only: 'Это лишь примеры. У каждого клиента всё своё: Vax делает дизайн, функции, тексты и порядок работы под ваши задачи — так, как захотите вы.',
+    lifeMore: [
+      { q: 'Спланируй отпуск в Италии на 5 дней, бюджет 1000 €', a: 'Рим 2 дня → Флоренция 2 дня → Пиза. Билеты, жильё и музеи — 940 €. Маршрут по дням и ссылки уже в таблице. Забронировать напомню за неделю.', who: 'Vax · план и таблица' },
+      { q: '📷 Чек из магазина. Сколько я трачу на еду в месяц?', a: 'По 14 чекам — 11 200 грн в месяц, треть уходит на готовую еду. Если готовить дома 3 раза в неделю, сэкономите ~2 800 грн. Сделать список покупок на неделю?', who: 'Vax · разбор фото' },
+    ],
+    store: { name: 'Aurora — запись и бонусы', sub: 'Салон красоты · Киев', rate: '4,9 ★ · 1 240 оценок', note: 'Приложение можно выложить в App Store и Google Play — на аккаунт вашей компании. Vax готовит всё для публикации.', get: 'Загрузить' },
+    ag: { src: ['Сайт', 'Instagram', 'Telegram', 'Звонок'], out: ['Карточка в CRM', 'Задача менеджеру', 'Счёт и оплата', 'Напоминание клиенту', 'Просьба об отзыве', 'Отчёт вам'], log: ['10:02 · Заявка с сайта → карточка «Анна», задача Олегу', '10:05 · Анна оплатила 750 грн → чек, статус «Оплачено»', '18:00 · Напоминание Анне о визите завтра'], saved: 'Сегодня само: 128 действий · сэкономлено 5 ч 40 мин' },
     bk: { svc: ['Стрижка', 'Борода', 'Комплекс'], days: [['Пн', '10'], ['Вт', '11'], ['Ср', '12'], ['Чт', '13'], ['Пт', '14']], times: ['10:00', '11:00', '13:00', '15:00', '16:00', '18:00'], go: 'Записаться на 15:00', toast: 'Новая запись · Ср 12, 15:00 → CRM' },
     crm: { cols: ['Новые', 'В работе', 'Оплачено'], cards: [['Ирина', 'Запись · Ср 15:00'], ['Олег', 'Чат-бот · цена'], ['Марта', 'Форма · сайт'], ['Денис', 'Партнёр · ref']], new: ['Анна', 'Instagram · запись'] },
     bot: { q: 'Сколько стоит стрижка с бородой?', a: 'Комплекс — 750 грн, 1 час 15 минут. Ближайшее окно сегодня в 18:00 — записать вас?', who: 'ИИ-консультант · онлайн' },
@@ -54,6 +61,13 @@ const TX = {
       ['app', 'Застосунок для клієнтів', 'Свій застосунок на телефоні клієнта: запис, бонуси, нагадування.', 'Зроби застосунок для клієнтів мого бізнесу'],
     ],
     try: 'Спробувати', live: 'Відкрити живий приклад',
+    only: 'Це лише приклади. У кожного клієнта все своє: Vax робить дизайн, функції, тексти й порядок роботи під ваші завдання — так, як захочете ви.',
+    lifeMore: [
+      { q: 'Сплануй відпустку в Італії на 5 днів, бюджет 1000 €', a: 'Рим 2 дні → Флоренція 2 дні → Піза. Квитки, житло й музеї — 940 €. Маршрут по днях і посилання вже в таблиці. Про бронювання нагадаю за тиждень.', who: 'Vax · план і таблиця' },
+      { q: '📷 Чек із магазину. Скільки я витрачаю на їжу на місяць?', a: 'За 14 чеками — 11 200 грн на місяць, третина йде на готову їжу. Якщо готувати вдома 3 рази на тиждень, заощадите ~2 800 грн. Зробити список покупок на тиждень?', who: 'Vax · розбір фото' },
+    ],
+    store: { name: 'Aurora — запис і бонуси', sub: 'Салон краси · Київ', rate: '4,9 ★ · 1 240 оцінок', note: 'Застосунок можна викласти в App Store і Google Play — на акаунт вашої компанії. Vax готує все для публікації.', get: 'Завантажити' },
+    ag: { src: ['Сайт', 'Instagram', 'Telegram', 'Дзвінок'], out: ['Картка в CRM', 'Задача менеджеру', 'Рахунок і оплата', 'Нагадування клієнту', 'Прохання про відгук', 'Звіт вам'], log: ['10:02 · Заявка із сайту → картка «Анна», задача Олегу', '10:05 · Анна оплатила 750 грн → чек, статус «Оплачено»', '18:00 · Нагадування Анні про візит завтра'], saved: 'Сьогодні саме: 128 дій · заощаджено 5 год 40 хв' },
     bk: { svc: ['Стрижка', 'Борода', 'Комплекс'], days: [['Пн', '10'], ['Вт', '11'], ['Ср', '12'], ['Чт', '13'], ['Пт', '14']], times: ['10:00', '11:00', '13:00', '15:00', '16:00', '18:00'], go: 'Записатися на 15:00', toast: 'Новий запис · Ср 12, 15:00 → CRM' },
     crm: { cols: ['Нові', 'В роботі', 'Оплачено'], cards: [['Ірина', 'Запис · Ср 15:00'], ['Олег', 'Чат-бот · ціна'], ['Марта', 'Форма · сайт'], ['Денис', 'Партнер · ref']], new: ['Анна', 'Instagram · запис'] },
     bot: { q: 'Скільки коштує стрижка з бородою?', a: 'Комплекс — 750 грн, 1 година 15 хвилин. Найближче вікно сьогодні о 18:00 — записати вас?', who: 'ШІ-консультант · онлайн' },
@@ -79,6 +93,13 @@ const TX = {
       ['app', 'An app for your clients', 'Your own app on the client\'s phone: booking, bonuses, reminders.', 'Make an app for the clients of my business'],
     ],
     try: 'Try it', live: 'Open a live example',
+    only: 'These are only examples. Every client gets their own: Vax shapes the design, features, texts and workflow around your tasks — the way you want them.',
+    lifeMore: [
+      { q: 'Plan 5 days in Italy, budget €1,000', a: 'Rome 2 days → Florence 2 days → Pisa. Tickets, stays and museums come to €940. The day-by-day route and links are in the table. I will remind you to book a week ahead.', who: 'Vax · plan and table' },
+      { q: '📷 A grocery receipt. How much do I spend on food a month?', a: 'From 14 receipts: $420 a month, a third on ready meals. Cooking at home 3 times a week saves about $110. Shall I make a shopping list for the week?', who: 'Vax · photo review' },
+    ],
+    store: { name: 'Aurora — booking & bonuses', sub: 'Beauty salon · Kyiv', rate: '4.9 ★ · 1,240 ratings', note: 'The app can go to the App Store and Google Play, on your company\'s developer account. Vax prepares everything for publishing.', get: 'Get' },
+    ag: { src: ['Website', 'Instagram', 'Telegram', 'Call'], out: ['CRM card', 'Task for a manager', 'Invoice & payment', 'Client reminder', 'Review request', 'Report to you'], log: ['10:02 · Site request → card «Anna», task for Oleg', '10:05 · Anna paid $35 → receipt, status «Paid»', '18:00 · Reminder to Anna about tomorrow'], saved: 'Done by itself today: 128 actions · 5 h 40 min saved' },
     bk: { svc: ['Haircut', 'Beard', 'Full set'], days: [['Mon', '10'], ['Tue', '11'], ['Wed', '12'], ['Thu', '13'], ['Fri', '14']], times: ['10:00', '11:00', '13:00', '15:00', '16:00', '18:00'], go: 'Book for 15:00', toast: 'New booking · Wed 12, 15:00 → CRM' },
     crm: { cols: ['New', 'In work', 'Paid'], cards: [['Irina', 'Booking · Wed 15:00'], ['Oleg', 'Chat bot · price'], ['Marta', 'Form · site'], ['Denis', 'Partner · ref']], new: ['Anna', 'Instagram · booking'] },
     bot: { q: 'How much is a haircut with a beard trim?', a: 'The full set is $35, 1 hour 15 minutes. The next free time is today at 18:00 — shall I book you?', who: 'AI consultant · online' },
@@ -94,6 +115,15 @@ const WORKS: [string, string, string][] = [
   ['shop-2026', `shop-2026-${L3}.webp`, 'Kettle & Leaf'], ['personal-brand', `personal-brand-${L3}.webp`, 'Mila Hart'], ['client-app', `client-app-${L3}.webp`, 'Aurora'],
   ['coach', 'coach.webp', 'Maya Reed'], ['skincare', 'skincare.webp', 'Lumen'], ['dental', 'dental.webp', 'Dental'],
 ];
+const MORE: Record<string, [string, string, string][]> = {
+  book: [['eco-clinic', `eco-clinic-${L3}.webp`, 'Aurelia Skin Clinic'], ['client-app', `client-app-${L3}.webp`, 'Aurora']],
+  crm: [['crm', `crm-${L3}.webp`, 'Aurelia HQ'], ['eco-crm', `eco-os-${L3}.webp`, 'Owner\'s panel']],
+  bot: [['ai-assistant', `ai-assistant-${L3}.webp`, 'Lumo AI'], ['shop-2026', `shop-2026-${L3}.webp`, 'Kettle & Leaf']],
+  par: [['eco-partners', `eco-partners-${L3}.webp`, 'Orbit Partners']],
+  vid: [['marketing', `marketing-${L3}.webp`, 'Lumen Skin']],
+  auto: [['eco-crm', `eco-os-${L3}.webp`, 'Owner\'s panel'], ['crm', `crm-${L3}.webp`, 'Aurelia HQ']],
+  app: [['client-app', `client-app-${L3}.webp`, 'Aurora']],
+};
 const LIVE: Record<string, string> = { site: 'flagship', book: 'eco-clinic', crm: 'crm', bot: 'ai-assistant', par: 'eco-partners', vid: 'marketing', auto: 'eco-crm', app: 'client-app' };
 const ICO: Record<string, string> = {
   site: 'M3 5h18v14H3zM3 9h18', book: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5', crm: 'M4 4h5v16H4zM10 4h5v10h-5zM16 4h4v7h-4z',
@@ -128,7 +158,8 @@ const ICO: Record<string, string> = {
       <div class="stage">
         {T.tabs.map(([k, h, d, q], i) => (
           <div class:list={['pane', k, { on: i === 0 }]} data-pane={i} role="tabpanel">
-            <a class="vis" href={LIVE[k] ? `/examples/${LIVE[k]}/?lang=${lang}` : app(q)} target={LIVE[k] ? '_blank' : undefined} rel={LIVE[k] ? 'noopener' : undefined} tabindex="-1" aria-hidden="true">
+            <div class="vis" data-vis>
+            <a class="sl on" data-slug={LIVE[k] || ''} href={LIVE[k] ? `/examples/${LIVE[k]}/?lang=${lang}` : app(q)} target={LIVE[k] ? '_blank' : undefined} rel={LIVE[k] ? 'noopener' : undefined} tabindex="-1" aria-hidden="true">
               {k === 'site' && (
                 <div class="gal">{WORKS.map(([, img, n], j) => <figure class:list={[{ on: j === 0 }]}><img src={`/examples/thumbs/${img}`} alt="" loading="lazy" width="640" height="400" /><figcaption>{n}</figcaption></figure>)}</div>
               )}
@@ -155,16 +186,18 @@ const ICO: Record<string, string> = {
                 </div>
               )}
               {k === 'par' && (
-                <div class="shot">
-                  <figure><img src={`/examples/thumbs/eco-partners-${L3}.webp`} alt="" loading="lazy" width="640" height="400" /></figure>
-                  <div class="parm over">
-                    <div class="lnk">{T.par.link}</div>
-                    {T.par.rows.map(([n, v, l], j) => <div class="pr"><b>{n}</b><span><em data-count={j ? 61 : 148}>0</em> {v}</span><span><em data-count={j ? 7 : 19}>0</em> {l}</span></div>)}
-                  </div>
+                <div class="parm">
+                  <div class="lnk">{T.par.link}</div>
+                  {T.par.rows.map(([n, v, l], j) => <div class="pr"><b>{n}</b><span><em data-count={j ? 61 : 148}>0</em> {v}</span><span><em data-count={j ? 7 : 19}>0</em> {l}</span></div>)}
                 </div>
               )}
               {k === 'app' && (
-                <div class="shot"><figure><img src={`/examples/thumbs/client-app-${L3}.webp`} alt="" loading="lazy" width="640" height="400" /></figure></div>
+                <div class="store">
+                  <div class="top"><span class="ico">A</span><span><b>{T.store.name}</b><small>{T.store.sub}</small><em>{T.store.rate}</em></span><span class="get">{T.store.get}</span></div>
+                  <div class="scr">{[1, 2, 3].map((j) => <img src={`/examples/thumbs/app-scr${j}-${L3}.webp`} alt="" loading="lazy" width="260" height="533" />)}</div>
+                  <div class="badges"><span> App Store</span><span>▶ Google Play</span></div>
+                  <small>{T.store.note}</small>
+                </div>
               )}
               {k === 'life' && (
                 <div class="chatm">
@@ -181,20 +214,48 @@ const ICO: Record<string, string> = {
                 </div>
               )}
               {k === 'auto' && (
-                <div class="tl">
-                  {T.auto.flow.map(([t, x], j) => <div class="st" style={`--d:${j * 0.6}s`}><em>{t}</em><i>✓</i><span>{x}</span></div>)}
-                  <small>{T.auto.note}</small>
+                <div class="ag">
+                  <svg viewBox="0 0 700 400" role="img" aria-label={T.tabs.find((x) => x[0] === 'auto')![1]}>
+                    {T.ag.src.map((_, j) => <path id={`agi${j}`} class="ln" d={`M130 ${70 + j * 87} C 230 ${70 + j * 87}, 250 200, 300 200`} />)}
+                    {T.ag.out.map((_, j) => <path id={`ago${j}`} class="ln" d={`M380 200 C 430 200, 440 ${40 + j * 64}, 520 ${40 + j * 64}`} />)}
+                    {T.ag.src.map((_, j) => <circle class="dot" r="5"><animateMotion dur="2.4s" begin={`${j * 0.6}s`} repeatCount="indefinite"><mpath href={`#agi${j}`} /></animateMotion></circle>)}
+                    {T.ag.out.map((_, j) => <circle class="dot o" r="5"><animateMotion dur="2.4s" begin={`${1.2 + j * 0.4}s`} repeatCount="indefinite"><mpath href={`#ago${j}`} /></animateMotion></circle>)}
+                    {T.ag.src.map((x, j) => <g><rect class="nd" x="10" y={48 + j * 87} width="120" height="44" rx="12" /><text x="70" y={76 + j * 87}>{x}</text></g>)}
+                    <circle class="hub" cx="340" cy="200" r="44" /><text class="hubt" x="340" y="207">Vax</text>
+                    {T.ag.out.map((x, j) => <g><rect class="nd o" x="520" y={20 + j * 64} width="178" height="40" rx="12" /><text class="ot" x="534" y={45 + j * 64}>✓ {x}</text></g>)}
+                  </svg>
+                  <div class="log">{T.ag.log.map((x, j) => <span style={`--d:${0.8 + j * 0.9}s`}>{x}</span>)}<b>{T.ag.saved}</b></div>
                 </div>
               )}
             </a>
+            {k === 'life' && T.lifeMore.map((c) => (
+              <div class="sl"><div class="chatm">
+                <div class="hd"><span class="av"></span><span><b>Vax</b><small>{c.who}</small></span></div>
+                <p class="u">{c.q}</p><p class="a show">{c.a}</p>
+              </div></div>
+            ))}
+            {k === 'auto' && (
+              <div class="sl"><div class="tl">
+                {T.auto.flow.map(([t, x], j) => <div class="st" style={`--d:${j * 0.3}s`}><em>{t}</em><i>✓</i><span>{x}</span></div>)}
+                <small>{T.auto.note}</small>
+              </div></div>
+            )}
+            {(MORE[k] || []).map(([slug, img, n]) => (
+              <a class="sl" data-slug={slug} href={`/examples/${slug}/?lang=${lang}`} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+                <div class="shot"><figure><img src={`/examples/thumbs/${img}`} alt="" loading="lazy" width="640" height="400" /><figcaption>{n} ↗</figcaption></figure></div>
+              </a>
+            ))}
+            <div class="sdots" data-sdots></div>
+            </div>
             <div class="foot">
               <div><b>{h}</b><p>{d}</p></div>
-              <div class="acts"><a class="go" href={app(q)}>{T.try} →</a>{LIVE[k] && <a class="lv" href={`/examples/${LIVE[k]}/?lang=${lang}`} target="_blank" rel="noopener">{T.live} ↗</a>}</div>
+              <div class="acts"><a class="go" href={app(q)}>{T.try} →</a>{LIVE[k] && <a class="lv" data-lv data-base={P('/examples/')} data-k={k} href={`${P('/examples/')}?cat=${k}&ex=${LIVE[k]}`}>{T.live} ↗</a>}</div>
             </div>
           </div>
         ))}
       </div>
     </div>
+    <p class="only">ⓘ {T.only}</p>
     <div class="end"><a class="big" href={P('/app/')}>{T.go} →</a><a class="all" href={P('/examples/')}>{T.all}</a></div>
   </div>
 </section>
@@ -219,11 +280,26 @@ const ICO: Record<string, string> = {
     // 2) Tabs with a live stage; they move on by themselves until the visitor takes over.
     const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')], panes = [...root.querySelectorAll<HTMLElement>('[data-pane]')];
     let at = 0, auto = !calm, hold = false, t0 = performance.now();
-    const DUR = 6500;
+    const SLIDE = 3600;
+    const decks = panes.map((p) => {
+      const sl = [...p.querySelectorAll<HTMLElement>('.sl')], dots = p.querySelector<HTMLElement>('[data-sdots]')!, lv = p.querySelector<HTMLAnchorElement>('[data-lv]');
+      const d = { sl, i: 0, t: 0, go: (n: number) => {
+        d.i = (n + sl.length) % sl.length; d.t = performance.now();
+        sl.forEach((x, j) => x.classList.toggle('on', j === d.i));
+        [...dots.children].forEach((x, j) => x.classList.toggle('on', j === d.i));
+        const slug = sl[d.i].dataset.slug;
+        if (lv && slug) lv.href = `${lv.dataset.base}?cat=${lv.dataset.k}&ex=${slug}`;
+      } };
+      if (sl.length > 1) sl.forEach((_, j) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', String(j + 1)); b.onclick = () => { auto = false; d.go(j); }; dots.append(b); });
+      d.go(0);
+      return d;
+    });
+    const durOf = (i: number) => Math.max(6500, decks[i].sl.length * SLIDE);
     const show = (i: number) => {
       at = i; t0 = performance.now();
       tabs.forEach((b, j) => { b.classList.toggle('on', j === i); b.setAttribute('aria-selected', String(j === i)); b.style.setProperty('--p', '0'); });
       panes.forEach((p, j) => { p.classList.toggle('on', j === i); if (j === i) { p.classList.remove('run'); void p.offsetWidth; p.classList.add('run'); } });
+      decks[i].go(0);
       panes[i].querySelectorAll<HTMLElement>('[data-count]').forEach((e) => { const end = +e.dataset.count!; let n = 0; const st = setInterval(() => { n = Math.min(end, n + Math.ceil(end / 24)); e.textContent = String(n); if (n >= end) clearInterval(st); }, 40); });
     };
     tabs.forEach((b, i) => (b.onclick = () => { auto = false; show(i); }));
@@ -234,10 +310,13 @@ const ICO: Record<string, string> = {
     setInterval(() => { if (!panes[0].classList.contains('on') || calm) return; figs[fi].classList.remove('on'); fi = (fi + 1) % figs.length; figs[fi].classList.add('on'); }, 1600);
     const tick = (now: number) => {
       if (auto && !hold) {
-        const p = Math.min(1, (now - t0) / DUR);
+        const p = Math.min(1, (now - t0) / durOf(at));
         tabs[at].style.setProperty('--p', String(p));
         if (p >= 1) show((at + 1) % tabs.length);
       }
+      // the slides of the open tab move on by themselves (also after the visitor picked a tab), and pause on hover
+      const d = decks[at];
+      if (!calm && !hold && d.sl.length > 1 && now - d.t > SLIDE) d.go(d.i + 1);
       requestAnimationFrame(tick);
     };
     show(0); requestAnimationFrame(tick);
@@ -276,7 +355,7 @@ const ICO: Record<string, string> = {
   .tabs button.on u { background: var(--line); }
   .tabs u i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--accText); }
 
-  .stage { position: relative; min-height: 520px; border: 1px solid var(--line2); border-radius: 24px; background: radial-gradient(800px 400px at 80% -10%, color-mix(in srgb, var(--accText) 14%, transparent), transparent), var(--surf); overflow: hidden; }
+  .stage { position: relative; min-height: 610px; border: 1px solid var(--line2); border-radius: 24px; background: radial-gradient(800px 400px at 80% -10%, color-mix(in srgb, var(--accText) 14%, transparent), transparent), var(--surf); overflow: hidden; }
   .pane { position: absolute; inset: 0; display: grid; grid-template-rows: 1fr auto; opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity .45s, transform .45s, visibility .45s; }
   .pane.on { opacity: 1; visibility: visible; transform: none; }
   .vis { position: relative; display: grid; color: inherit; text-decoration: none; cursor: pointer; place-items: center; padding: 26px; overflow: hidden; }
@@ -398,4 +477,46 @@ const ICO: Record<string, string> = {
   .tl small { text-align: center; color: var(--mut); margin-top: 4px; }
   @keyframes tlIn { to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .tl .st { animation: none; opacity: 1; transform: none; } }
+
+  /* slides inside a tab (13.11): several examples per tab, dots, auto-advance */
+  .vis { display: block; padding: 0; cursor: default; }
+  .sl { position: absolute; inset: 0; display: grid; place-items: center; padding: 26px 26px 42px; color: inherit; text-decoration: none; opacity: 0; visibility: hidden; transform: scale(.985); transition: opacity .5s, transform .5s, visibility .5s; }
+  .sl.on { opacity: 1; visibility: visible; transform: none; }
+  a.sl { cursor: pointer; }
+  .sdots { position: absolute; left: 0; right: 0; bottom: 14px; display: flex; justify-content: center; gap: 7px; z-index: 3; }
+  .sdots :global(button) { width: 8px; height: 8px; padding: 0; border-radius: 99px; border: 0; background: var(--line2); cursor: pointer; transition: width .3s, background .3s; }
+  .sdots :global(button.on) { width: 22px; background: var(--accText); }
+  .shot figcaption { position: absolute; left: 12px; bottom: 12px; background: rgba(0,0,0,.7); color: #fff; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+  .chatm .a.show { opacity: 1; animation: none; }
+  .eco .only { margin: 18px 0 0; padding: 14px 18px; border-radius: 16px; background: color-mix(in srgb, var(--accText) 9%, var(--surf)); border: 1px solid color-mix(in srgb, var(--accText) 30%, transparent); color: var(--ink); font-size: 15px; }
+  /* app store listing */
+  .store { width: min(100%, 470px); display: grid; gap: 14px; padding: 20px; border-radius: 20px; background: var(--bg); border: 1px solid var(--line2); box-shadow: 0 30px 60px rgba(0,0,0,.35); }
+  .store .top { display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center; }
+  .store .ico { width: 64px; height: 64px; border-radius: 16px; display: grid; place-items: center; font: 800 28px/1 system-ui; color: #fff; background: linear-gradient(135deg, #d9826b, #6d4ca8); }
+  .store .top b { display: block; font-size: 16px; } .store .top small { display: block; color: var(--mut); font-size: 13px; } .store .top em { font-style: normal; font-size: 12.5px; color: var(--accText); font-weight: 700; }
+  .store .get { background: var(--accText); color: var(--bg); font-weight: 800; font-size: 13px; padding: 8px 16px; border-radius: 999px; }
+  .store .scr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .store .scr img { width: 100%; height: auto; max-height: 260px; object-fit: cover; object-position: top; border-radius: 14px; border: 1px solid var(--line2); display: block; }
+  .store .badges { display: flex; gap: 8px; } .store .badges span { flex: 1; text-align: center; background: #111; color: #fff; border-radius: 10px; padding: 9px; font-weight: 700; font-size: 13.5px; }
+  .store > small { color: var(--mut); font-size: 13px; line-height: 1.45; }
+  /* automation graph */
+  .ag { width: 100%; max-width: 720px; display: grid; gap: 10px; }
+  .ag svg { width: 100%; height: auto; max-height: 340px; overflow: visible; }
+  .ag .ln { fill: none; stroke: var(--line2); stroke-width: 2; }
+  .ag .dot { fill: var(--accText); filter: drop-shadow(0 0 6px var(--accText)); }
+  .ag .dot.o { fill: #22c55e; filter: drop-shadow(0 0 6px #22c55e); }
+  .ag .nd { fill: var(--bg); stroke: var(--line2); }
+  .ag .nd.o { stroke: color-mix(in srgb, #22c55e 55%, var(--line2)); }
+  .ag text { fill: var(--ink); font: 600 15px/1 inherit; text-anchor: middle; }
+  .ag text.ot { text-anchor: start; font-size: 13.5px; }
+  .ag .hub { fill: var(--accText); filter: drop-shadow(0 0 22px color-mix(in srgb, var(--accText) 70%, transparent)); animation: hub 2.4s ease-in-out infinite; transform-origin: 340px 200px; }
+  .ag .hubt { fill: var(--bg); font-size: 22px; font-weight: 800; }
+  @keyframes hub { 50% { transform: scale(1.06); } }
+  .ag .log { display: grid; gap: 5px; font-size: 13px; }
+  .ag .log span:nth-child(3) { display: none; }
+  .ag .log span { padding: 7px 12px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); opacity: 0; }
+  .pane.run .ag .log span { animation: lit .4s var(--d) forwards; }
+  .ag .log b { color: var(--accText); font-size: 13.5px; margin-top: 2px; }
+  @media (max-width: 900px) { .ag .log span:nth-child(n+3) { display: none; } .store .scr img:nth-child(3) { display: none; } .store .scr { grid-template-columns: 1fr 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .ag .log span { opacity: 1; animation: none; } .ag .dot { display: none; } }
 </style>
