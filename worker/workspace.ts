@@ -397,12 +397,53 @@ async function importGuest(db: DB, clientId: number, b: Record<string, unknown>)
   }
 }
 
+/** A public «share» link of a chat in another AI → its text. Only these hosts (no fetching of arbitrary addresses).
+ *  Some of them draw the page with scripts and give no text to a server; then the person pastes the text instead. */
+const SHARE_HOSTS = ['chatgpt.com', 'chat.openai.com', 'claude.ai', 'gemini.google.com', 'g.co', 'grok.com', 'x.com', 'copilot.microsoft.com', 'perplexity.ai', 'www.perplexity.ai', 'chat.deepseek.com', 'chat.mistral.ai', 'poe.com'];
+export async function readShareLink(raw: string): Promise<{ ok: boolean; text?: string; title?: string; error?: string }> {
+  let u: URL;
+  try { u = new URL(raw.trim()); } catch { return { ok: false, error: 'url' }; }
+  if (u.protocol !== 'https:' || !SHARE_HOSTS.includes(u.hostname)) return { ok: false, error: 'host' };
+  const r = await fetch(u.toString(), { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; VaxoImport/1.0)', Accept: 'text/html' }, redirect: 'follow' }).catch(() => null);
+  if (!r || !r.ok) return { ok: false, error: 'closed' };
+  const after = new URL(r.url);
+  if (!SHARE_HOSTS.includes(after.hostname)) return { ok: false, error: 'host' };
+  const html = (await r.text()).slice(0, 2_000_000);
+  const title = (html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1] || '').trim().slice(0, 120);
+  // Text the page carries: the visible text, plus the strings of its embedded data (chat apps keep messages there).
+  const visible = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ').replace(/<(?:[^>"']|"[^"]*"|'[^']*')*>/g, ' ');
+  const data = [...html.matchAll(/"(?:text|content|parts|message)"\s*:\s*\[?\s*"((?:[^"\\]|\\.){20,})"/g)].map((x) => { try { return JSON.parse('"' + x[1] + '"'); } catch { return ''; } }).join('\n\n');
+  const clean = (t: string) => t.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/[ \t]+/g, ' ').replace(/\n\s*\n+/g, '\n\n').trim();
+  const text = clean(data.length > 300 ? data : visible);
+  // A page that is only a shell (scripts draw the chat later) leaves code-like words, not sentences.
+  const words = text.split(/\s+/), junk = words.filter((x) => /[\[\]{}=<>_\\]|^-|:\w|\d(px|em|rem)\b/.test(x)).length;
+  if (text.length < 300 || words.length < 60 || junk / words.length > 0.04) return { ok: false, error: 'empty', title };
+  return { ok: true, text: text.slice(0, 30000), title };
+}
+
+let shareReady = false;
+async function shareTable(db: DB) {
+  if (shareReady) return;
+  await db.prepare("CREATE TABLE IF NOT EXISTS ws_share (token TEXT PRIMARY KEY, chat_id INTEGER NOT NULL, client_id INTEGER NOT NULL, revoked INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')))").run();
+  shareReady = true;
+}
+
 export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request: Request, path: string, notify: Notify, wait: (p: Promise<unknown>) => void, cf: Cf = {}): Promise<Response> {
   const url = new URL(request.url), m = request.method;
   const b = m === 'POST' ? ((await request.json().catch(() => ({}))) as Record<string, unknown>) : {};
   try {
     if (path === 'ask' && m === 'POST') return ai ? await ask(db, ai, request, b, wait) : out(503, { ok: false });
     if (path === 'site/preview' && m === 'POST') return out(200, { ok: true, html: sitePreview(cleanSite((b.site ?? {}) as Record<string, unknown>, cut(b.lang, 2)), b.edit ? (EDIT[cut(b.ui, 2)] ?? EDIT.en) : undefined) });
+    // A chat shared to view (Dmitry, 12.11): anyone with the link reads it, no account needed. Nothing here costs AI.
+    const sh = path.match(/^shared\/([a-f0-9]{24})$/);
+    if (sh && m === 'GET') {
+      await shareTable(db);
+      const row = await db.prepare('SELECT s.chat_id, c.title FROM ws_share s JOIN ws_chats c ON c.id = s.chat_id WHERE s.token = ? AND s.revoked = 0').bind(sh[1]).first<{ chat_id: number; title: string }>();
+      if (!row) return out(404, { ok: false });
+      const rows = (await db.prepare('SELECT role, text, tool, doc, image, site FROM ws_msgs WHERE chat_id = ? ORDER BY id LIMIT 300').bind(row.chat_id).all<Record<string, string | null>>()).results;
+      return out(200, { ok: true, title: row.title, msgs: rows.map((r) => ({ role: r.role, content: r.text, tool: r.tool ? JSON.parse(r.tool) : undefined, doc: r.doc ? JSON.parse(r.doc) : undefined, image: r.image || undefined, site: r.site ? JSON.parse(r.site) : undefined })) });
+    }
+    if (path === 'import/link' && m === 'POST') { const r = await readShareLink(String(b.url || '')); return out(r.ok ? 200 : 400, r); }
     const me = await sessionClient(db, request);
     if (path === 'agent' && m === 'POST') {
       // Vax for Chrome: one next step on the person's tab (worker/agent.ts).
@@ -494,6 +535,27 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
     if (pin && m === 'POST') {
       await db.prepare('UPDATE ws_msgs SET pinned = ? WHERE id = ? AND chat_id IN (SELECT id FROM ws_chats WHERE client_id = ?)').bind(b.on === false ? 0 : 1, Number(pin[1]), me.id).run();
       return out(200, { ok: true });
+    }
+    // Share: the owner turns a view link on or off. Working on it goes through «Copy to my account», so the person who
+    // continues the chat spends their own plan, not the owner's (no way to share one paid plan with many people).
+    const shm = path.match(/^chat\/(\d+)\/share$/);
+    if (shm && m === 'POST') {
+      await shareTable(db);
+      const id = Number(shm[1]);
+      if (!(await db.prepare('SELECT 1 FROM ws_chats WHERE id = ? AND client_id = ?').bind(id, me.id).first())) return out(404, { ok: false });
+      if (b.off) { await db.prepare('UPDATE ws_share SET revoked = 1 WHERE chat_id = ?').bind(id).run(); return out(200, { ok: true }); }
+      let tok = (await db.prepare('SELECT token FROM ws_share WHERE chat_id = ? AND revoked = 0').bind(id).first<{ token: string }>())?.token;
+      if (!tok) { tok = [...crypto.getRandomValues(new Uint8Array(12))].map((x) => x.toString(16).padStart(2, '0')).join(''); await db.prepare('INSERT INTO ws_share (token, chat_id, client_id) VALUES (?, ?, ?)').bind(tok, id, me.id).run(); }
+      return out(200, { ok: true, token: tok });
+    }
+    const shc = path.match(/^shared\/([a-f0-9]{24})\/copy$/);
+    if (shc && m === 'POST') {
+      await shareTable(db);
+      const row = await db.prepare('SELECT s.chat_id, c.title FROM ws_share s JOIN ws_chats c ON c.id = s.chat_id WHERE s.token = ? AND s.revoked = 0').bind(shc[1]).first<{ chat_id: number; title: string }>();
+      if (!row) return out(404, { ok: false });
+      const to = (await db.prepare('INSERT INTO ws_chats (client_id, title) VALUES (?, ?) RETURNING id').bind(me.id, cut(row.title, 60) || '…').first<{ id: number }>())!.id;
+      await db.prepare('INSERT INTO ws_msgs (chat_id, role, text, tool, doc, image, site) SELECT ?, role, text, tool, doc, image, site FROM ws_msgs WHERE chat_id = ? ORDER BY id LIMIT 300').bind(to, row.chat_id).run();
+      return out(200, { ok: true, chat: to, title: row.title });
     }
     if (path === 'forward' && m === 'POST') {
       const src = await db.prepare('SELECT m.text, m.tool, m.doc, m.image, m.site, c.title FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE m.id = ? AND c.client_id = ?').bind(Number(b.id), me.id).first<Record<string, string | null>>();
