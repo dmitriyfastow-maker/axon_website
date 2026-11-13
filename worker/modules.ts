@@ -248,7 +248,7 @@ export async function modulesState(db: DB, clientId: number, origin: string, acc
     pages,
     crm: access ? { url, total, leads } : null,
     requests: total,
-    partner: refs.length ? { links: refs.map((r) => ({ ...r, url: `${url}?utm_source=ref_${r.code}` })) } : null,
+    partner: refs.length ? { links: refs.map((r) => ({ ...r, url: `${url}?utm_source=ref_${r.code}`, page: `${origin}/r/${r.code}` })) } : null,
     site: biz.kind === 'site' ? { url, slug: biz.slug, ...(JSON.parse(biz.data || '{}') as Site) } : null,
   };
 }
@@ -285,4 +285,42 @@ export async function servePage(db: DB, slug: string, manifest: boolean): Promis
     'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY',
     'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://vaxogroup.com; font-src https://fonts.gstatic.com; connect-src 'self'; form-action 'none'; base-uri 'none'",
   } });
+}
+
+// A client's partner sees their own results by a private link: no login, no names or contacts of leads — only counts and dates.
+const PW: Record<string, Record<string, string>> = {
+  en: { h: 'Your partner page', for: 'Partner of', link: 'Your personal link', copy: 'Copy', copied: 'Copied', v: 'Visits', l: 'Requests', w: 'Deals', lv: 'Level', lvs: 'Start|Silver|Gold', next: 'To the next level', recent: 'Latest requests from your link', none: 'No requests yet. Share your link with friends and clients — every request is counted for you.', st: 'New|In progress|Deal|Closed', how: 'Rewards are agreed with the owner of the business. This page updates by itself.', by: 'Runs on Vaxo' },
+  ru: { h: 'Ваша страница партнёра', for: 'Партнёр', link: 'Ваша личная ссылка', copy: 'Скопировать', copied: 'Скопировано', v: 'Переходы', l: 'Заявки', w: 'Сделки', lv: 'Уровень', lvs: 'Старт|Серебро|Золото', next: 'До следующего уровня', recent: 'Последние заявки по вашей ссылке', none: 'Заявок пока нет. Делитесь ссылкой с друзьями и клиентами — каждая заявка засчитывается вам.', st: 'Новая|В работе|Сделка|Закрыта', how: 'Награду вы обсуждаете с владельцем бизнеса. Страница обновляется сама.', by: 'Работает на Vaxo' },
+  ua: { h: 'Ваша сторінка партнера', for: 'Партнер', link: 'Ваше особисте посилання', copy: 'Скопіювати', copied: 'Скопійовано', v: 'Переходи', l: 'Заявки', w: 'Угоди', lv: 'Рівень', lvs: 'Старт|Срібло|Золото', next: 'До наступного рівня', recent: 'Останні заявки за вашим посиланням', none: 'Заявок поки немає. Діліться посиланням з друзями та клієнтами — кожна заявка зараховується вам.', st: 'Нова|В роботі|Угода|Закрита', how: 'Винагороду ви обговорюєте з власником бізнесу. Сторінка оновлюється сама.', by: 'Працює на Vaxo' },
+};
+export async function servePartner(db: DB, code: string, origin: string): Promise<Response> {
+  const r = await db.prepare(`SELECT r.name, r.code, b.id, b.name AS biz, p.slug, p.data FROM biz_refs r JOIN biz b ON b.id = r.biz_id LEFT JOIN biz_pages p ON p.biz_id = b.id WHERE r.code = ?`).bind(code).first<{ name: string; code: string; id: number; biz: string; slug: string | null; data: string | null }>().catch(() => null);
+  if (!r?.slug) return new Response('Not found', { status: 404 });
+  let lang = 'en'; try { lang = (JSON.parse(r.data || '{}') as Site).lang || 'en'; } catch {}
+  const t = PW[lang] ?? PW.en, src = 'ref_' + r.code;
+  const c = await db.prepare(`SELECT
+      (SELECT COUNT(DISTINCT sid) FROM biz_events WHERE biz_id = ?1 AND type = 'pv' AND source = ?2) AS v,
+      (SELECT COUNT(*) FROM biz_leads WHERE biz_id = ?1 AND source = ?2) AS l,
+      (SELECT COUNT(*) FROM biz_leads WHERE biz_id = ?1 AND source = ?2 AND status = 'won') AS w`).bind(r.id, src).first<{ v: number; l: number; w: number }>().catch(() => null) ?? { v: 0, l: 0, w: 0 };
+  const rows = (await db.prepare('SELECT at, status FROM biz_leads WHERE biz_id = ? AND source = ? ORDER BY id DESC LIMIT 10').bind(r.id, src).all<{ at: string; status: string | null }>().catch(() => ({ results: [] }))).results;
+  const lv = c.w >= 10 ? 2 : c.w >= 3 ? 1 : 0, need = lv === 0 ? 3 - c.w : lv === 1 ? 10 - c.w : 0, lvs = t.lvs.split('|'), sts = t.st.split('|');
+  const stOf = (s: string | null) => sts[s === 'won' ? 2 : s === 'work' || s === 'contacted' ? 1 : s === 'lost' || s === 'closed' ? 3 : 0];
+  const url = `${origin}/s/${r.slug}?utm_source=${src}`;
+  const html = `<!doctype html><html lang="${lang === 'ua' ? 'uk' : lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>${esc(t.h)} · ${esc(r.biz)}</title>
+<style>:root{--bg:#f7f6f3;--card:#fff;--ink:#16161a;--mut:#6b6b76;--line:#e6e4df;--acc:#2f6bff}@media(prefers-color-scheme:dark){:root{--bg:#121214;--card:#1c1c20;--ink:#f1f1f3;--mut:#a0a0ab;--line:#2c2c33;--acc:#7aa2ff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:640px;margin:0 auto;padding:28px 16px 48px}
+h1{font-size:26px;margin:0 0 4px}.mut{color:var(--mut)}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:16px}
+.row{display:flex;gap:8px}.row input{flex:1;min-width:0;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+button{min-height:44px;padding:0 16px;border:0;border-radius:10px;background:var(--acc);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}.stats b{display:block;font-size:28px}.bar{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:var(--acc)}
+ul{list-style:none;margin:0;padding:0}li{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line)}li:first-child{border-top:0}small{font-size:13px}a{color:var(--acc)}</style></head><body><main>
+<p class="mut">${esc(t.for)} · <b>${esc(r.biz)}</b></p><h1>${esc(t.h)}</h1><p class="mut">${esc(r.name)}</p>
+<div class="card"><p style="margin:0 0 8px"><b>${esc(t.link)}</b></p><div class="row"><input readonly value="${esc(url)}" aria-label="${esc(t.link)}"><button id="cp">${esc(t.copy)}</button></div></div>
+<div class="card stats"><div><b>${c.v}</b><small class="mut">${esc(t.v)}</small></div><div><b>${c.l}</b><small class="mut">${esc(t.l)}</small></div><div><b>${c.w}</b><small class="mut">${esc(t.w)}</small></div></div>
+<div class="card"><b>${esc(t.lv)}: ${esc(lvs[lv])}</b>${need ? `<p class="mut" style="margin:4px 0 0">${esc(t.next)}: ${need} · ${esc(t.w).toLowerCase()}</p><div class="bar"><i style="width:${Math.round((c.w / (lv === 0 ? 3 : 10)) * 100)}%"></i></div>` : ''}</div>
+<div class="card"><p style="margin:0 0 8px"><b>${esc(t.recent)}</b></p>${rows.length ? `<ul>${rows.map((x) => `<li><span>${esc(String(x.at).slice(0, 10))}</span><span class="mut">${esc(stOf(x.status))}</span></li>`).join('')}</ul>` : `<p class="mut" style="margin:0">${esc(t.none)}</p>`}</div>
+<p class="mut" style="margin-top:16px"><small>${esc(t.how)}</small></p><p class="mut"><small><a href="${origin}/">${esc(t.by)}</a></small></p>
+<script>document.getElementById('cp').onclick=async function(){var i=document.querySelector('input');try{await navigator.clipboard.writeText(i.value)}catch(e){i.select();document.execCommand('copy')}this.textContent=${JSON.stringify(t.copied)};var b=this;setTimeout(function(){b.textContent=${JSON.stringify(t.copy)}},1500)}</script>
+</main></body></html>`;
+  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer' } });
 }
