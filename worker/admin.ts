@@ -115,7 +115,7 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
     const p = (await pulse(db)) as Record<string, Record<string, any>>;
     const b = request.method === 'POST' ? ((await request.json().catch(() => ({}))) as Record<string, unknown>) : {};
     const q = typeof b.q === 'string' ? b.q.trim() : '';
-    return json(200, { ok: true, tips: tipsFor(p, me), text: q ? await assistAnswer(ai, p, me, q) : '' });
+    return json(200, { ok: true, tips: tipsFor(p, me), text: q ? await assistAnswer(ai, p, me, q, { view: typeof b.view === 'string' ? b.view : '', screen: typeof b.screen === 'string' ? b.screen : '' }) : '' });
   }
   if (path === 'staff' || path.startsWith('staff/')) return handleStaffAdmin(db, request, path.slice('staff'.length).replace(/^\//, ''), me, new URL(request.url).origin);
   if (path === '' && request.method === 'GET') return json(200, { ok: true, ...(await ownerOverview(db, notify)), payouts: await allPayouts(db), hq: HQ });

@@ -305,6 +305,13 @@ import Base from '../layouts/Base.astro';
         <div data-detail></div>
       </div>
     </div>
+    <button type="button" class="fab" data-fab hidden aria-label="ИИ-помощник">✦ Помощник</button>
+    <aside class="hlp" data-hlp hidden role="dialog" aria-label="ИИ-помощник">
+      <div class="hlp-h"><b>✦ Помощник</b> <small class="mut" data-hlp-where></small><button type="button" class="x" data-hlp-x aria-label="Закрыть">×</button></div>
+      <div class="hlp-log" data-hlp-log></div>
+      <div class="hlp-q" data-hlp-quick></div>
+      <form class="hlp-f" data-hlp-f><textarea name="q" rows="2" placeholder="Спросите про этот раздел — я вижу, что на экране"></textarea><button class="cta">Спросить</button></form>
+    </aside>
   </main>
 </Base>
 
@@ -1166,6 +1173,45 @@ import Base from '../layouts/Base.astro';
     $$<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.view));
     if (b.dataset.view === 'video') loadFactory();
   }));
+  // ✦ Помощник на каждом разделе: знает, какой раздел открыт, и видит его текст (только этот раздел, до 2500 знаков).
+  const QUICK: Record<string, string[]> = {
+    stats: ['Где люди уходят с сайта?', 'Какой источник лучше всего работает?'],
+    plan: ['Что из плана сделать первым?', 'Насколько реален прогноз?'],
+    chats: ['Кому ответить первым?', 'Какой клиент ближе всего к оплате?'],
+    leads: ['Какие заявки горячие?', 'Почему заявки не становятся клиентами?'],
+    outbox: ['Что здесь важно одобрить сегодня?', 'Есть ли тут рискованные сообщения?'],
+    claude: ['На какой вопрос ответить первым?', 'Объясни простыми словами последний вопрос'],
+    video: ['Что сейчас делает завод?', 'Почему завод может стоять?'],
+    social: ['Что публиковать дальше?', 'Какой пост сработал лучше?'],
+    fin: ['Сколько заработали и сколько налогов?', 'Какие счета не оплачены?'],
+    econ: ['Окупаемся ли мы?', 'Где самые большие расходы?'],
+    pay: ['Кому и сколько выплатить?', 'Нет ли ошибок в выплатах?'],
+    team: ['Кто из партнёров лучше работает?', 'Кого стоит поддержать?'],
+  };
+  const DEF_Q = ['Объясни этот раздел простыми словами', 'Что тут сделать сегодня?'];
+  const curView = () => $<HTMLButtonElement>('[data-view][aria-pressed="true"]');
+  const syncFab = () => {
+    const v = curView()?.dataset.view || 'today';
+    $('[data-fab]').hidden = v === 'today' || $('[data-app]').hidden;
+    if (v === 'today') $('[data-hlp]').hidden = true;
+    $('[data-hlp-where]').textContent = '· ' + (curView()?.textContent || '').replace(/\s*\d+\s*$/, '').trim();
+    $('[data-hlp-quick]').replaceChildren(...(QUICK[v] || DEF_Q).map((q) => el('button', { type: 'button', class: 'ghost', onclick: () => askHlp(q) }, q)));
+  };
+  async function askHlp(q: string) {
+    const log = $('[data-hlp-log]');
+    const v = curView();
+    log.append(el('p', { class: 'me' }, q));
+    const a = el('p', { class: 'ai' }, 'Думаю…'); log.append(a); log.scrollTop = log.scrollHeight;
+    const panel = $(`[data-panel="${v?.dataset.view}"]`);
+    const r = await api('/assist', { q, view: (v?.textContent || '').trim(), screen: (panel?.innerText || '').slice(0, 2500) }).catch(() => null);
+    a.textContent = r?.text || 'ИИ сейчас занят — попробуйте через минуту.'; log.scrollTop = log.scrollHeight;
+  }
+  $('[data-fab]').addEventListener('click', () => { $('[data-hlp]').hidden = false; syncFab(); ($('[data-hlp-f] textarea') as HTMLTextAreaElement).focus(); });
+  $('[data-hlp-x]').addEventListener('click', () => ($('[data-hlp]').hidden = true));
+  $<HTMLFormElement>('[data-hlp-f]').addEventListener('submit', (e) => { e.preventDefault(); const t = (e.target as HTMLFormElement).q as HTMLTextAreaElement; const q = t.value.trim(); if (!q) return; t.value = ''; askHlp(q); });
+  ($('[data-hlp-f] textarea') as HTMLTextAreaElement).addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ($('[data-hlp-f]') as HTMLFormElement).requestSubmit(); } });
+  $$<HTMLButtonElement>('[data-view]').forEach((b) => b.addEventListener('click', syncFab));
+  new MutationObserver(syncFab).observe($('[data-app]'), { attributes: true, attributeFilter: ['hidden'] });
   $('[data-search]').addEventListener('input', renderLeads);
   $('[data-close]').addEventListener('click', () => ($('[data-drawer]').hidden = true));
   $('[data-drawer]').addEventListener('click', (e) => { if (e.target === e.currentTarget) $('[data-drawer]').hidden = true; });
@@ -1417,6 +1463,21 @@ import Base from '../layouts/Base.astro';
   .vb span { width: 70%; background: #E0A84F; border-radius: 6px 6px 0 0; min-height: 2px; }
   .adm .offer { background: var(--bg); border: 2px solid var(--acc); border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
   .adm .codes { margin-top: 12px; display: grid; gap: 8px; }
+  .fab { position: fixed; right: 18px; bottom: 18px; z-index: 40; border: 0; border-radius: 999px; padding: 12px 18px; font-family: inherit; font-weight: 600; font-size: 15px; color: #fff; background: linear-gradient(135deg, #3b4fd6, #6b5cff); box-shadow: 0 8px 24px rgba(59,79,214,.35); cursor: pointer; }
+  .hlp { position: fixed; right: 18px; bottom: 18px; z-index: 41; width: min(380px, calc(100vw - 32px)); max-height: min(560px, calc(100vh - 36px)); display: flex; flex-direction: column; gap: 8px; background: linear-gradient(160deg, #1c2150, #2e3aa8); color: #fff; border-radius: 20px; padding: 14px; box-shadow: 0 16px 40px rgba(0,0,0,.35); }
+  .hlp[hidden], .fab[hidden] { display: none; }
+  .hlp .mut { color: #c9cff5; }
+  .hlp-h { display: flex; align-items: center; gap: 6px; }
+  .hlp-h .x { margin-left: auto; background: none; border: 0; color: #fff; font-size: 22px; cursor: pointer; }
+  .hlp-log { overflow-y: auto; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+  .hlp-log p { margin: 0; padding: 8px 12px; border-radius: 14px; white-space: pre-wrap; font-size: 14px; }
+  .hlp-log .me { align-self: flex-end; background: rgba(255,255,255,.2); }
+  .hlp-log .ai { background: rgba(0,0,0,.25); }
+  .hlp-q { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hlp-q button { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.22); color: #fff; border-radius: 999px; padding: 6px 10px; font-family: inherit; font-size: 13px; cursor: pointer; }
+  .hlp-f { display: flex; gap: 8px; }
+  .hlp-f textarea { flex: 1; background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.25); border-radius: 12px; padding: 8px; font: inherit; resize: none; }
+  .hlp-f textarea::placeholder { color: #d4d8f7; }
   .assist { background: linear-gradient(135deg, #1c2150, #3b4fd6 70%, #6b5cff); color: #fff; border-radius: 20px; padding: 18px; margin: 18px 0; }
   .assist h2 { color: #fff; margin-top: 0; }
   .assist .mut { color: #c9cff5; }
