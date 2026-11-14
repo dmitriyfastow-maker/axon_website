@@ -14,6 +14,57 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'how-to-ask-ai-get-finished-result',
+    date: '2026-11-14',
+    t: {
+      en: {
+        title: 'How to ask AI and get a finished result: 6 simple rules',
+        desc: 'Why AI often gives vague answers and how to ask so you get a ready plan, text or table on the first try — with examples for home, work and business.',
+        body: [
+          ['Why answers come out vague', ['AI does not know your situation. When the request is short, it fills the gaps with averages and gives general advice. The fix is not magic words — it is a few facts that only you know.']],
+          ['1. Say what you want to get in the end', ['Not “help with a trip”, but “a day-by-day plan for 5 days in Rome for two, with prices and a total”. Name the form of the result: a table, a list, a ready message, a page text.']],
+          ['2. Give the facts: who, where, when, how much', ['Budget, dates, city, how many people, who it is for. “Menu for a week for a family of four, $80 budget, no fish” gives a usable answer; “healthy menu” does not.']],
+          ['3. Add limits and what you do not want', ['“No more than 1 hour of cooking a day”, “without loans”, “formal tone”, “short — up to 5 lines”. Limits make the answer fit your life instead of an ideal one.']],
+          ['4. Show an example', ['If you like a style, paste a sample: a message you once wrote, a site you like, a format from work. One example says more than a paragraph of explanations.']],
+          ['5. Ask for the result first, questions after', ['Write “do it now with reasonable assumptions, and list them in one line”. You get a draft right away and correct it, instead of answering ten questions first.']],
+          ['6. Improve in small steps', ['“Make it cheaper”, “shorter”, “add a day in Florence”, “rewrite for a client who is angry”. Each short follow-up keeps everything that was already good.']],
+          ['Ready examples you can copy', ['Home: “Plan a move from Kyiv to Lviv in 3 weeks: a checklist by days, a budget table, who to call first.”', 'Work: “Write a polite reminder to a client who has not paid for 10 days. Two versions: soft and firm. Up to 6 lines.”', 'Business: “I run a small bakery. Make a page text for the site: what we bake, prices from my list, how to order, 5 common questions.”']],
+          ['How Vaxo helps', ['In Workspace you just describe the task in your own words — Vax asks only what is truly missing, gives a finished result right on the canvas and keeps improving it with you. You can start for free; paid plans start at $19 a month.']],
+        ],
+      },
+      ru: {
+        title: 'Как попросить ИИ и получить готовый результат: 6 простых правил',
+        desc: 'Почему ИИ часто отвечает общими словами и как просить, чтобы с первого раза получить готовый план, текст или таблицу — с примерами для дома, работы и бизнеса.',
+        body: [
+          ['Почему ответы выходят общими', ['ИИ не знает вашей ситуации. Когда запрос короткий, он заполняет пробелы средним и даёт общие советы. Помогают не «волшебные слова», а несколько фактов, которые знаете только вы.']],
+          ['1. Скажите, что хотите получить в конце', ['Не «помоги с поездкой», а «план по дням на 5 дней в Риме на двоих, с ценами и итогом». Назовите форму результата: таблица, список, готовое сообщение, текст страницы.']],
+          ['2. Дайте факты: кто, где, когда, сколько', ['Бюджет, даты, город, сколько людей, для кого. «Меню на неделю для семьи из четырёх, бюджет $80, без рыбы» даёт рабочий ответ; «здоровое меню» — нет.']],
+          ['3. Добавьте ограничения и чего не нужно', ['«Готовить не больше часа в день», «без кредитов», «официальный тон», «коротко — до 5 строк». Ограничения подгоняют ответ под вашу жизнь, а не под идеальную.']],
+          ['4. Покажите пример', ['Если нравится какой-то стиль — вставьте образец: сообщение, которое вы когда-то писали, сайт, который нравится, формат с работы. Один пример говорит больше абзаца объяснений.']],
+          ['5. Сначала результат, вопросы потом', ['Напишите «сделай сразу с разумными допущениями и перечисли их одной строкой». Вы сразу получаете черновик и правите его, а не отвечаете сначала на десять вопросов.']],
+          ['6. Улучшайте маленькими шагами', ['«Сделай дешевле», «короче», «добавь день во Флоренции», «перепиши для клиента, который злится». Каждая короткая просьба сохраняет всё, что уже было хорошо.']],
+          ['Готовые примеры, можно копировать', ['Дом: «Спланируй переезд из Киева во Львов за 3 недели: чек-лист по дням, таблица бюджета, кому звонить первым».', 'Работа: «Напиши вежливое напоминание клиенту, который не платит 10 дней. Два варианта: мягкий и твёрдый. До 6 строк».', 'Бизнес: «У меня маленькая пекарня. Сделай текст страницы для сайта: что печём, цены из моего списка, как заказать, 5 частых вопросов».']],
+          ['Чем помогает Vaxo', ['В Workspace вы просто описываете задачу своими словами — Vax спрашивает только то, чего правда не хватает, даёт готовый результат прямо на холсте и дальше улучшает его вместе с вами. Начать можно бесплатно; платные тарифы — от $19 в месяц.']],
+        ],
+      },
+      ua: {
+        title: 'Як попросити ШІ й отримати готовий результат: 6 простих правил',
+        desc: 'Чому ШІ часто відповідає загальними словами і як просити, щоб з першого разу отримати готовий план, текст чи таблицю — з прикладами для дому, роботи й бізнесу.',
+        body: [
+          ['Чому відповіді виходять загальними', ['ШІ не знає вашої ситуації. Коли запит короткий, він заповнює прогалини середнім і дає загальні поради. Допомагають не «чарівні слова», а кілька фактів, які знаєте тільки ви.']],
+          ['1. Скажіть, що хочете отримати в кінці', ['Не «допоможи з поїздкою», а «план по днях на 5 днів у Римі на двох, з цінами й підсумком». Назвіть форму результату: таблиця, список, готове повідомлення, текст сторінки.']],
+          ['2. Дайте факти: хто, де, коли, скільки', ['Бюджет, дати, місто, скільки людей, для кого. «Меню на тиждень для родини з чотирьох, бюджет $80, без риби» дає робочу відповідь; «здорове меню» — ні.']],
+          ['3. Додайте обмеження і чого не треба', ['«Готувати не більше години на день», «без кредитів», «офіційний тон», «коротко — до 5 рядків». Обмеження підганяють відповідь під ваше життя, а не під ідеальне.']],
+          ['4. Покажіть приклад', ['Якщо подобається якийсь стиль — вставте зразок: повідомлення, яке ви колись писали, сайт, який подобається, формат з роботи. Один приклад каже більше за абзац пояснень.']],
+          ['5. Спершу результат, питання потім', ['Напишіть «зроби одразу з розумними припущеннями й перелічи їх одним рядком». Ви одразу отримуєте чернетку й правите її, а не відповідаєте спершу на десять питань.']],
+          ['6. Покращуйте маленькими кроками', ['«Зроби дешевше», «коротше», «додай день у Флоренції», «перепиши для клієнта, який злиться». Кожне коротке прохання зберігає все, що вже було добре.']],
+          ['Готові приклади, можна копіювати', ['Дім: «Сплануй переїзд з Києва до Львова за 3 тижні: чек-лист по днях, таблиця бюджету, кому дзвонити першим».', 'Робота: «Напиши ввічливе нагадування клієнту, який не платить 10 днів. Два варіанти: м’який і твердий. До 6 рядків».', 'Бізнес: «У мене маленька пекарня. Зроби текст сторінки для сайту: що печемо, ціни з мого списку, як замовити, 5 частих питань».']],
+          ['Чим допомагає Vaxo', ['У Workspace ви просто описуєте задачу своїми словами — Vax питає лише те, чого справді бракує, дає готовий результат прямо на полотні й далі покращує його разом з вами. Почати можна безкоштовно; платні тарифи — від $19 на місяць.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'seo-basics-get-found-on-google',
     date: '2026-11-11',
     t: {
