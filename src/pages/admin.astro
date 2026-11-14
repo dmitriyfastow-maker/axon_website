@@ -75,7 +75,7 @@ import Base from '../layouts/Base.astro';
         <section class="assist">
           <h2>✦ Ваш ИИ-помощник <small class="mut" data-assist-who></small></h2>
           <div class="tips" data-tips></div>
-          <form class="say" data-ask><textarea name="q" rows="1" placeholder="Спросите помощника — например: «что сделать сегодня, чтобы быстрее получить первую оплату?»"></textarea><button class="cta">Спросить</button></form>
+          <form class="say" data-ask><textarea name="q" rows="1" placeholder="Спросите помощника — например: «что сделать сегодня, чтобы быстрее получить первую оплату?»"></textarea><button class="cta">Спросить</button><button type="button" class="ghost" data-hlp-do title="Отправить как задачу: я поменяю этот раздел и отчитаюсь в «🧠 Claude»">✏️ Поручить изменить</button></form>
           <div class="assist-a" data-ask-a hidden></div>
         </section>
         <h2>💰 Путь клиента: от заявки до денег</h2>
@@ -173,6 +173,14 @@ import Base from '../layouts/Base.astro';
       <section data-panel="video" hidden>
         <p class="hint">Оба видеозавода в одном месте: ваш личный (рилсы @dmitriy_fastow, TikTok, YouTube) и соцсети Vaxo. Зелёный — работает, жёлтый — ждёт, красный — нужен вы (написано, что сделать). Кнопки срабатывают в течение 2–3 минут — под кнопкой видно «выполнено».</p>
         <div class="fac" data-fac></div>
+        <h2>✏️ Правка роликов</h2>
+        <form class="say vedit" data-vedit>
+          <div class="row"><label><input type="radio" name="t" value="личный завод @dmitriy_fastow" checked /> Личный завод</label><label><input type="radio" name="t" value="соцсети Vaxo" /> Соцсети Vaxo</label></div>
+          <div class="row" data-vedit-chips></div>
+          <textarea name="text" rows="2" placeholder="Какой ролик и что изменить — например: «вчерашний про кофе: короче на 5 секунд и другая музыка» или «больше не делай ролики про…»"></textarea>
+          <button class="cta">Отправить Claude</button>
+        </form>
+        <small class="mut" data-vedit-msg></small>
       </section>
       <section data-panel="social" hidden>
         <p class="hint">Все соцсети в одном месте: что я выложил, кому ответил, кто ждёт вас. Любую карточку можно прокомментировать (придёт мне задачей), а поручение — написать прямо здесь.</p>
@@ -1210,6 +1218,25 @@ import Base from '../layouts/Base.astro';
   $('[data-hlp-x]').addEventListener('click', () => ($('[data-hlp]').hidden = true));
   $<HTMLFormElement>('[data-hlp-f]').addEventListener('submit', (e) => { e.preventDefault(); const t = (e.target as HTMLFormElement).q as HTMLTextAreaElement; const q = t.value.trim(); if (!q) return; t.value = ''; askHlp(q); });
   ($('[data-hlp-f] textarea') as HTMLTextAreaElement).addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ($('[data-hlp-f]') as HTMLFormElement).requestSubmit(); } });
+  // «Поручить изменить»: правка структуры Штаба прямо отсюда — текст уходит задачей с пометкой раздела.
+  $('[data-hlp-do]').addEventListener('click', async () => {
+    const t = $<HTMLTextAreaElement>('[data-hlp-f] textarea'); const q = t.value.trim(); const log = $('[data-hlp-log]');
+    if (!q) { t.placeholder = 'Напишите, что поменять в этом разделе (добавить, убрать, переставить) — и снова нажмите «✏️»'; t.focus(); return; }
+    const where = (curView()?.textContent || '').replace(/\s*\d+\s*$/, '').trim();
+    const r = await api('/claude', { text: `[Штаб · ${where}] ${q}`, task: true }).catch(() => null);
+    t.value = ''; log.append(el('p', { class: 'me' }, '✏️ ' + q), el('p', { class: 'ai' }, r?.ok === false ? 'Не отправилось — попробуйте ещё раз.' : 'Принято задачей — сделаю в ближайший запуск, результат придёт в «🧠 Claude».')); log.scrollTop = log.scrollHeight;
+  });
+  // ✏️ Правка роликов: быстрые варианты + свой текст → задача Claude с пометкой завода.
+  {
+    const f = $<HTMLFormElement>('[data-vedit]'); const ta = f.querySelector('textarea')!;
+    $('[data-vedit-chips]').replaceChildren(...['Короче', 'Другая музыка', 'Другой текст на экране', 'Другая подпись', 'Переснять', 'Не выкладывать', 'Больше таких'].map((c) => el('button', { type: 'button', class: 'ghost', onclick: () => { ta.value = (ta.value.trim() ? ta.value.trim() + '; ' : '') + c.toLowerCase(); ta.focus(); } }, c)));
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault(); const text = ta.value.trim(); if (!text) { ta.focus(); return; }
+      const t = (new FormData(f).get('t') as string) || 'видео';
+      const r = await api('/claude', { text: `[Видео · ${t}] ${text}`, task: true }).catch(() => null);
+      ta.value = ''; $('[data-vedit-msg]').textContent = r?.ok === false ? 'Не отправилось — попробуйте ещё раз.' : 'Принято — поправлю в ближайший запуск, результат придёт в «🧠 Claude».';
+    });
+  }
   $$<HTMLButtonElement>('[data-view]').forEach((b) => b.addEventListener('click', syncFab));
   new MutationObserver(syncFab).observe($('[data-app]'), { attributes: true, attributeFilter: ['hidden'] });
   $('[data-search]').addEventListener('input', renderLeads);
@@ -1475,7 +1502,11 @@ import Base from '../layouts/Base.astro';
   .hlp-log .ai { background: rgba(0,0,0,.25); }
   .hlp-q { display: flex; flex-wrap: wrap; gap: 6px; }
   .hlp-q button { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.22); color: #fff; border-radius: 999px; padding: 6px 10px; font-family: inherit; font-size: 13px; cursor: pointer; }
-  .hlp-f { display: flex; gap: 8px; }
+  .hlp-f { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hlp-f textarea { flex-basis: 100%; }
+  .hlp-f .ghost { color: #fff; border-color: rgba(255,255,255,.35); }
+  .adm .vedit { flex-direction: column; align-items: stretch; }
+  .adm .vedit .row { display: flex; gap: 6px 14px; flex-wrap: wrap; }
   .hlp-f textarea { flex: 1; background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.25); border-radius: 12px; padding: 8px; font: inherit; resize: none; }
   .hlp-f textarea::placeholder { color: #d4d8f7; }
   .assist { background: linear-gradient(135deg, #1c2150, #3b4fd6 70%, #6b5cff); color: #fff; border-radius: 20px; padding: 18px; margin: 18px 0; }
