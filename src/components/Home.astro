@@ -20,8 +20,10 @@ const WORKS: [string, string, string, string][] = ([
   ['shop-2026', `shop-2026-${L3}.jpg`, 'Kettle & Leaf'], ['personal-brand', `personal-brand-${L3}.jpg`, 'Mila Hart'], ['client-app', `client-app-${L3}.jpg`, 'Aurora'],
   ['coach', 'coach.jpg', 'Maya Reed'], ['skincare', 'skincare.jpg', 'Lumen'], ['restaurant', 'restaurant.jpg', 'Ember & Salt'], ['dental', 'dental.jpg', 'Dental'],
 ] as [string, string, string][]).map(([a, b, c], i) => [a, b, c, (WK[lang] ?? WK.en)[i]]);
+const TQ = /\d.*(задач|завдан|task)/i;
 const T = {
   ru: {
+    tq: "Задача — одно дело для Vax: ответ, правка, расчёт. Короткий ответ — 1, подробный — 2, сайт или картинка — около 3. Сколько осталось и когда обновится, видно в кабинете в процентах.",
     per: [["1", "Месяц", ""], ["3", "3 месяца", "−10%"], ["6", "6 месяцев", "−15%"], ["12", "Год", "−20%"]],
     perNote: "${t} за {n} мес.",
     allIn: "Возможности на всех тарифах одинаковые — сайты, CRM, ролики, документы, команда, всё. Тарифы отличаются только тем, сколько работы Vax сделает за месяц. Задача — это один ответ или одна правка; большой сайт или документ считается как несколько задач. На платных тарифах сложное делает самая сильная модель ИИ, простое — быстрая, поэтому объёма хватает надолго.",
@@ -78,6 +80,7 @@ const T = {
     dnote: 'Счёт придёт в личный чат сразу. Пока он не оплачен, работает бесплатный уровень. Возврат 14 дней.', demail: 'Ваша почта', dgo: 'Начать бесплатный месяц', dbad: 'Введите настоящую почту.', dfail: 'Что-то пошло не так — попробуйте ещё раз.',
   },
   en: {
+    tq: "A task is one job for Vax: an answer, an edit, a calculation. A short answer is 1, a detailed one 2, a site or a picture about 3. What is left and when it renews shows in your cabinet as a percentage.",
     per: [["1", "Monthly", ""], ["3", "3 months", "−10%"], ["6", "6 months", "−15%"], ["12", "Yearly", "−20%"]],
     perNote: "${t} for {n} months",
     allIn: "Every plan can do the same things: sites, CRM, videos, documents, a team, everything. Plans differ only in how much work Vax does for you each month. A task is one answer or one edit; a big site or document counts as several. On paid plans the hardest work goes to the strongest AI model and easy work to a fast one, so the volume lasts.",
@@ -134,6 +137,7 @@ const T = {
     dnote: 'The invoice comes to your private chat right away. Until it is paid, the free level works. 14-day refund.', demail: 'Your email', dgo: 'Start free month', dbad: 'Enter a valid email.', dfail: 'Something went wrong — please try again.',
   },
   ua: {
+    tq: "Завдання — одна справа для Vax: відповідь, правка, розрахунок. Коротка відповідь — 1, докладна — 2, сайт чи картинка — близько 3. Скільки лишилося і коли оновиться, видно в кабінеті у відсотках.",
     per: [["1", "Місяць", ""], ["3", "3 місяці", "−10%"], ["6", "6 місяців", "−15%"], ["12", "Рік", "−20%"]],
     perNote: "${t} за {n} міс.",
     allIn: "Можливості на всіх тарифах однакові — сайти, CRM, ролики, документи, команда, усе. Тарифи відрізняються лише тим, скільки роботи Vax зробить за місяць. Завдання — це одна відповідь або одна правка; великий сайт чи документ рахується як кілька завдань. На платних тарифах складне робить найсильніша модель ШІ, просте — швидка, тому обсягу вистачає надовго.",
@@ -227,32 +231,32 @@ const ava = '/mascot/vax-talk.webp';
         <article class="pl">
           <h3>{T.start[0]}</h3><p class="pd">{T.start[1]}</p>
           <div class="pr">$0</div>
-          <ul>{T.start[2].map((x) => <li>{x}</li>)}</ul>
+          <ul>{T.start[2].map((x) => (TQ.test(x) ? <li class="tql"><button type="button" class="tq" data-tq aria-expanded="false">{x}<i aria-hidden="true">?</i></button><span class="tqt" hidden>{T.tq}</span></li> : <li>{x}</li>))}</ul>
           <button type="button" class="pb" data-plan="start">{T.startB}</button>
         </article>
         <article class="pl">
           <h3>{T.persL2[0]}</h3><p class="pd">{T.persL2[1]}</p>
           <div class="pr" data-base="19">$19<small>{T.mo}</small></div><small class="pt" data-pt data-note={T.perNote}></small>
-          <ul>{T.persL2[2].map((x) => <li>{x}</li>)}</ul>
+          <ul>{T.persL2[2].map((x) => (TQ.test(x) ? <li class="tql"><button type="button" class="tq" data-tq aria-expanded="false">{x}<i aria-hidden="true">?</i></button><span class="tqt" hidden>{T.tq}</span></li> : <li>{x}</li>))}</ul>
           <button type="button" class="pb" data-plan="personal" data-pn={T.persL2[0]}>{T.trial}</button>
         </article>
         <article class="pl focus">
           <p class="fl">{T.focus}</p>
           <h3>{T.care[0]}</h3><p class="pd">{T.care[1]}</p>
           <div class="pr" data-base="39">$39<small>{T.mo}</small></div><small class="pt" data-pt data-note={T.perNote}></small>
-          <ul>{T.care[2].map((x) => <li>{x}</li>)}</ul>
+          <ul>{T.care[2].map((x) => (TQ.test(x) ? <li class="tql"><button type="button" class="tq" data-tq aria-expanded="false">{x}<i aria-hidden="true">?</i></button><span class="tqt" hidden>{T.tq}</span></li> : <li>{x}</li>))}</ul>
           <button type="button" class="pb main" data-plan="care" data-pn={T.care[0]}>{T.trial}</button>
         </article>
         <article class="pl">
           <h3>{T.grow[0]}</h3><p class="pd">{T.grow[1]}</p>
           <div class="pr" data-base="129">$129<small>{T.mo}</small></div><small class="pt" data-pt data-note={T.perNote}></small>
-          <ul>{T.grow[2].map((x) => <li>{x}</li>)}</ul>
+          <ul>{T.grow[2].map((x) => (TQ.test(x) ? <li class="tql"><button type="button" class="tq" data-tq aria-expanded="false">{x}<i aria-hidden="true">?</i></button><span class="tqt" hidden>{T.tq}</span></li> : <li>{x}</li>))}</ul>
           <button type="button" class="pb" data-plan="growth" data-pn={T.grow[0]}>{T.trial}</button>
         </article>
         <article class="pl">
           <h3>{T.pro2[0]}</h3><p class="pd">{T.pro2[1]}</p>
           <div class="pr" data-base="299">$299<small>{T.mo}</small></div><small class="pt" data-pt data-note={T.perNote}></small>
-          <ul>{T.pro2[2].map((x) => <li>{x}</li>)}</ul>
+          <ul>{T.pro2[2].map((x) => (TQ.test(x) ? <li class="tql"><button type="button" class="tq" data-tq aria-expanded="false">{x}<i aria-hidden="true">?</i></button><span class="tqt" hidden>{T.tq}</span></li> : <li>{x}</li>))}</ul>
           <button type="button" class="pb" data-plan="pro" data-pn={T.pro2[0]}>{T.trial}</button>
         </article>
       </div>
@@ -354,6 +358,10 @@ const ava = '/mascot/vax-talk.webp';
   const dlg = document.querySelector<HTMLDialogElement>('[data-pdlg]');
   const pf = document.querySelector<HTMLFormElement>('[data-pform]');
   let planSlug = '', planName = '';
+  document.querySelectorAll<HTMLButtonElement>('[data-tq]').forEach((b) => (b.onclick = () => {
+    const t = b.nextElementSibling as HTMLElement;
+    t.hidden = !t.hidden; b.setAttribute('aria-expanded', String(!t.hidden));
+  }));
   document.querySelectorAll<HTMLButtonElement>('[data-plan]').forEach((b) => (b.onclick = () => {
     if (b.dataset.plan === 'start') { toTop(); return; }
     planSlug = b.dataset.plan || ''; planName = b.dataset.pn || '';
@@ -526,6 +534,10 @@ const ava = '/mascot/vax-talk.webp';
   .pb.main:hover { filter: brightness(1.08); }
   .pl ul { display: grid; gap: 10px; margin-top: 22px; font-size: 15px; color: var(--ink); }
   .pl li { position: relative; padding-left: 22px; }
+  .pl .tq { all: unset; cursor: pointer; border-bottom: 1px dashed currentColor; }
+  .pl .tq i { display: inline-grid; place-items: center; width: 16px; height: 16px; margin-left: 6px; border-radius: 50%; border: 1px solid var(--am); color: var(--am); font: 600 11px/1 inherit; font-style: normal; vertical-align: 1px; }
+  .pl .tq:focus-visible { outline: 2px solid var(--am); outline-offset: 2px; }
+  .pl .tqt { display: block; margin-top: 6px; font-size: 13px; line-height: 1.45; color: var(--mut, inherit); opacity: .85; }
   .pl li::before { content: ''; position: absolute; left: 2px; top: 5px; width: 5px; height: 10px; border: solid var(--am); border-width: 0 1.6px 1.6px 0; transform: rotate(42deg); }
   .mo { margin-top: 32px; font-size: 14px; color: var(--dm); }
   .mo2 summary { cursor: pointer; list-style: none; text-decoration: underline; text-underline-offset: 3px; }
