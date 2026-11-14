@@ -24,6 +24,11 @@ const PF = {
   ru: { h: 'Данные для выплат', p: 'Заполните один раз — без этого выплата не уходит. Платим через Payoneer, Wise или банковским переводом. Партнёрам из Украины — только как ФОП. Криптой пока не платим.', status: 'Ваш статус', st: [['fop', 'ФОП / самозанятый'], ['person', 'Физическое лицо'], ['company', 'Компания']], country: 'Страна проживания', residency: 'Налоговое резидентство (страна)', legal: 'Полное имя по документам (или название компании)', tax: 'Налоговый номер (необязательно)', method: 'Как вам платить', account: 'Email Payoneer / Wise или IBAN', adult: 'Мне 18 лет или больше', offer: 'Я принимаю условия партнёрской программы', save: 'Сохранить', ok: 'Сохранено. Выплаты можно отправлять.', err: 'Заполните все поля.', ua: 'Партнёрам из Украины платим только как ФОП — сначала оформите ФОП.', filled: 'Заполнено', soon: 'Форма заработает в ближайшие дни — загляните чуть позже.' },
   ua: { h: 'Дані для виплат', p: 'Заповніть один раз — без цього виплата не йде. Платимо через Payoneer, Wise або банківським переказом. Партнерам з України — лише як ФОП. Криптою поки не платимо.', status: 'Ваш статус', st: [['fop', 'ФОП / самозайнятий'], ['person', 'Фізична особа'], ['company', 'Компанія']], country: 'Країна проживання', residency: 'Податкове резидентство (країна)', legal: 'Повне імʼя за документами (або назва компанії)', tax: 'Податковий номер (необовʼязково)', method: 'Як вам платити', account: 'Email Payoneer / Wise або IBAN', adult: 'Мені 18 років або більше', offer: 'Я приймаю умови партнерської програми', save: 'Зберегти', ok: 'Збережено. Виплати можна надсилати.', err: 'Заповніть усі поля.', ua: 'Партнерам з України платимо лише як ФОП — спершу оформіть ФОП.', filled: 'Заповнено', soon: 'Форма запрацює найближчими днями — загляньте трохи пізніше.' },
 }[lang];
+const FH = {
+  en: { name: 'Enter your name.', email: 'Enter an email like name@gmail.com.', password: 'Password needs at least 8 characters.', adult: 'Tick “I am 18 or older”.', rules: 'Tick that you accept the partner rules.' },
+  ru: { name: 'Введите имя.', email: 'Введите почту, например name@gmail.com.', password: 'В пароле нужно минимум 8 символов.', adult: 'Отметьте «Мне 18 лет или больше».', rules: 'Отметьте, что принимаете правила партнёров.' },
+  ua: { name: 'Введіть імʼя.', email: 'Введіть пошту, наприклад name@gmail.com.', password: 'У паролі потрібно щонайменше 8 символів.', adult: 'Позначте «Мені 18 років або більше».', rules: 'Позначте, що приймаєте правила партнерів.' },
+}[lang];
 const base = lang === 'en' ? '/partner/' : `/${lang}/partner/`;
 const landing = lang === 'en' ? '/partners/' : `/${lang}/partners/`;
 const byId = (id: string) => PROMPTS.find((p) => p.id === id)!;
@@ -32,7 +37,7 @@ const title = (id: string) => c.titles[id] ?? byId(id).title;
 const ptext = (id: string) => (lang === 'en' ? byId(id).text : PROMPT_TEXT[lang][id] ?? byId(id).text);
 const offersLocal = OFFERS.map((o) => ({ ...o, text: lang === 'en' ? o.text : OFFER_TEXT[lang][o.id] ?? o.text }));
 const labels = c.card;
-const PT = {"en": {"bal": "To withdraw", "balNote": "Commission for paid clients. Sent weekly, 14 days after the client pays.", "balGo": "Payout details", "more": "How much you get and for what", "h": "Ready posts", "p": "Your link is already inside: copy and publish.", "copy": "Copy", "idea": "Give me 3 post ideas", "wait": "Vax is thinking…", "fail": "No ideas right now. Try again a bit later.", "ask": "Give me 3 short post ideas for my social media that recommend Vaxo honestly. No promises of income. Each idea: a hook and one line of text. Language: English.", "posts": [["Short post", "I found a thing that helps with the boring part of work: you write what you need and Vax answers and builds a working calculator or checklist right in the chat. Free to start, no sign-up: {link}"], ["For a small business owner", "If you have a small business and no time for a website and client replies, take a look at Vaxo. The first month of a plan is free: {link}"], ["Story or reel caption", "Tried writing one line to an AI and getting a ready tool back? Try it: {link}"]]}, "ru": {"bal": "К выводу", "balNote": "Комиссия за оплативших клиентов. Выплата раз в неделю, через 14 дней после оплаты клиента.", "balGo": "Данные для выплат", "more": "Сколько вы получаете и за что", "h": "Готовые посты", "p": "Ваша ссылка уже внутри: скопируйте и публикуйте.", "copy": "Скопировать", "idea": "Дай 3 идеи постов", "wait": "Vax думает…", "fail": "Сейчас идей нет. Попробуйте чуть позже.", "ask": "Дай 3 короткие идеи постов для моих соцсетей, которые честно рекомендуют Vaxo. Без обещаний дохода. В каждой идее: зацепка и одна строка текста. Язык: русский.", "posts": [["Короткий пост", "Нашёл штуку, которая снимает скучную часть работы: пишешь, что нужно, а Vax отвечает и собирает рабочий калькулятор или чек-лист прямо в чате. Бесплатно и без регистрации: {link}"], ["Для владельца малого бизнеса", "Если у вас небольшое дело и нет времени на сайт и ответы клиентам, посмотрите Vaxo. Первый месяц тарифа бесплатный: {link}"], ["Подпись к сторис или ролику", "Пробовали написать ИИ одну строку и получить готовый инструмент? Попробуйте: {link}"]]}, "ua": {"bal": "До виведення", "balNote": "Комісія за клієнтів, які оплатили. Виплата раз на тиждень, через 14 днів після оплати клієнта.", "balGo": "Дані для виплат", "more": "Скільки ви отримуєте і за що", "h": "Готові пости", "p": "Ваше посилання вже всередині: скопіюйте й публікуйте.", "copy": "Скопіювати", "idea": "Дай 3 ідеї постів", "wait": "Vax думає…", "fail": "Зараз ідей немає. Спробуйте трохи пізніше.", "ask": "Дай 3 короткі ідеї постів для моїх соцмереж, які чесно рекомендують Vaxo. Без обіцянок доходу. У кожній ідеї: зачіпка й один рядок тексту. Мова: українська.", "posts": [["Короткий пост", "Знайшов штуку, що знімає нудну частину роботи: пишеш, що потрібно, а Vax відповідає і збирає робочий калькулятор чи чек-лист просто в чаті. Безкоштовно й без реєстрації: {link}"], ["Для власника малого бізнесу", "Якщо у вас невелика справа й немає часу на сайт і відповіді клієнтам, подивіться Vaxo. Перший місяць тарифу безкоштовний: {link}"], ["Підпис до сторіс чи ролика", "Пробували написати ШІ один рядок і отримати готовий інструмент? Спробуйте: {link}"]]}}[lang];
+const PT = {"en": {"bal": "To withdraw", "balNote": "Commission for paid clients. Sent weekly, 14 days after the client pays.", "balGo": "Payout details", "more": "How much you get and for what", "h": "Ready posts", "p": "Your link is already inside: copy and publish.", "copy": "Copy", "idea": "Give me 3 post ideas", "wait": "Vax is thinking…", "fail": "No ideas right now. Try again a bit later.", "ask": "Give me 3 short post ideas for my social media that recommend Vaxo honestly. No promises of income. Each idea: a hook and one line of text. Language: English.", "posts": [["Short post", "I found a thing that helps with the boring part of work: you write what you need and Vax answers and builds a working calculator or checklist right in the chat. Free to start, no sign-up: {link}"], ["For a small business owner", "If you have a small business and no time for a website and client replies, take a look at Vaxo. You can start free, no card needed: {link}"], ["Story or reel caption", "Tried writing one line to an AI and getting a ready tool back? Try it: {link}"]]}, "ru": {"bal": "К выводу", "balNote": "Комиссия за оплативших клиентов. Выплата раз в неделю, через 14 дней после оплаты клиента.", "balGo": "Данные для выплат", "more": "Сколько вы получаете и за что", "h": "Готовые посты", "p": "Ваша ссылка уже внутри: скопируйте и публикуйте.", "copy": "Скопировать", "idea": "Дай 3 идеи постов", "wait": "Vax думает…", "fail": "Сейчас идей нет. Попробуйте чуть позже.", "ask": "Дай 3 короткие идеи постов для моих соцсетей, которые честно рекомендуют Vaxo. Без обещаний дохода. В каждой идее: зацепка и одна строка текста. Язык: русский.", "posts": [["Короткий пост", "Нашёл штуку, которая снимает скучную часть работы: пишешь, что нужно, а Vax отвечает и собирает рабочий калькулятор или чек-лист прямо в чате. Бесплатно и без регистрации: {link}"], ["Для владельца малого бизнеса", "Если у вас небольшое дело и нет времени на сайт и ответы клиентам, посмотрите Vaxo. Начать можно бесплатно, без карты: {link}"], ["Подпись к сторис или ролику", "Пробовали написать ИИ одну строку и получить готовый инструмент? Попробуйте: {link}"]]}, "ua": {"bal": "До виведення", "balNote": "Комісія за клієнтів, які оплатили. Виплата раз на тиждень, через 14 днів після оплати клієнта.", "balGo": "Дані для виплат", "more": "Скільки ви отримуєте і за що", "h": "Готові пости", "p": "Ваше посилання вже всередині: скопіюйте й публікуйте.", "copy": "Скопіювати", "idea": "Дай 3 ідеї постів", "wait": "Vax думає…", "fail": "Зараз ідей немає. Спробуйте трохи пізніше.", "ask": "Дай 3 короткі ідеї постів для моїх соцмереж, які чесно рекомендують Vaxo. Без обіцянок доходу. У кожній ідеї: зачіпка й один рядок тексту. Мова: українська.", "posts": [["Короткий пост", "Знайшов штуку, що знімає нудну частину роботи: пишеш, що потрібно, а Vax відповідає і збирає робочий калькулятор чи чек-лист просто в чаті. Безкоштовно й без реєстрації: {link}"], ["Для власника малого бізнесу", "Якщо у вас невелика справа й немає часу на сайт і відповіді клієнтам, подивіться Vaxo. Почати можна безкоштовно, без картки: {link}"], ["Підпис до сторіс чи ролика", "Пробували написати ШІ один рядок і отримати готовий інструмент? Спробуйте: {link}"]]}}[lang];
 const tabs: [string, string][] = [['home', '🏠'], ['deals', '🤝'], ['links', '🔗'], ['academy', '🎓'], ['prompts', '🤖'], ['team', '👥'], ['rules', '💸']];
 const offerSelect = OFFERS.map((o) => ({ id: o.id, name: c.offers[o.id] }));
 // Vax's road: 6 levels × 4 missions (data/roadmap.ts). Levels are just for fun — rates are the same for everyone.
@@ -79,7 +84,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
             <button type="button" data-tab="register" aria-pressed="true">{c.auth.create}</button>
             <button type="button" data-tab="login" aria-pressed="false">{c.auth.login}</button>
           </div>
-          <form data-form="register" class="card">
+          <form data-form="register" class="card" novalidate data-hints={JSON.stringify(FH)}>
             <label>{c.auth.name}<input name="name" required maxlength="80" autocomplete="name" /></label>
             <label>{c.auth.email}<input name="email" type="email" required autocomplete="email" /></label>
             <label>{c.auth.pass}<input name="password" type="password" required minlength="8" autocomplete="new-password" /></label>
@@ -648,7 +653,28 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
       const body: Record<string, unknown> = Object.fromEntries(fd.entries());
       if (kind === 'register') Object.assign(body, { adult: fd.has('adult'), rules: fd.has('rules'), invite, code: (() => { try { return localStorage.getItem('vaxo_code') || ''; } catch { return ''; } })() });
       const err = form.querySelector<HTMLElement>('[data-err]')!;
-      const res = await api(kind, body);
+      if (kind === 'register') {
+        // Clear, visible hints instead of easy-to-miss browser tooltips (people pressed the button 5–15 times).
+        const H = JSON.parse(form.dataset.hints || '{}') as Record<string, string>;
+        const bad: string[] = [];
+        const v = (n: string) => String(fd.get(n) ?? '').trim();
+        if (!v('name')) bad.push('name');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('email'))) bad.push('email');
+        if (String(fd.get('password') ?? '').length < 8) bad.push('password');
+        if (!fd.has('adult')) bad.push('adult');
+        if (!fd.has('rules')) bad.push('rules');
+        form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+        if (bad.length) {
+          bad.forEach((n) => form.querySelector(`[name="${n}"]`)?.setAttribute('aria-invalid', 'true'));
+          err.textContent = bad.map((n) => H[n]).join(' ');
+          err.hidden = false;
+          form.querySelector<HTMLElement>(`[name="${bad[0]}"]`)?.focus();
+          return;
+        }
+      }
+      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (btn) btn.disabled = true;
+      const res = await api(kind, body).finally(() => { if (btn) btn.disabled = false; });
       if (res.ok) return load();
       const out = (await res.json().catch(() => ({}))) as { reason?: string };
       err.textContent =
@@ -701,6 +727,8 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
   .row.tight { margin: 0; }
   .err { color: var(--error); margin: 0; }
+  form [aria-invalid='true']:not([type='checkbox']) { border-color: var(--error); box-shadow: 0 0 0 2px color-mix(in srgb, var(--error) 25%, transparent); }
+  form label.check:has([aria-invalid='true']) { color: var(--error); }
   .eyebrow-s { font: 500 12px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accText); }
 
   /* auth */
