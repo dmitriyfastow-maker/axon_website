@@ -1,6 +1,6 @@
 import { filesForAi, readText } from '../../worker/files';
 import { describe, expect, it } from 'vitest';
-import { cleanMemory, memoryBlock, ownWords, shapeReply } from '../../worker/workspace';
+import { cleanMemory, memoryBlock, ownWords, shapeReply, docCut } from '../../worker/workspace';
 import { cleanSite, slugOf } from '../../worker/modules';
 import { md } from '../../src/scripts/md';
 
@@ -120,5 +120,13 @@ describe('files for the AI', () => {
   it('keeps the short form for images and files with nothing read', async () => {
     expect(await filesForAi(dbWith({ id: '0123456789abcdef0123', name: 'a.png', type: 'image/png', descr: 'A fox' }), link)).toBe('[client attached file "a.png" (image/png): A fox]');
     expect(await filesForAi(dbWith({ id: '0123456789abcdef0123', name: 'a.zip', type: 'application/zip', descr: null }), link)).toBe('[client attached file "a.zip" (application/zip)]');
+  });
+});
+
+describe('docCut', () => {
+  it('spots a Canvas document the model did not finish', () => {
+    expect(docCut('План готов.\n[[DOC: Курсова]]\n# Вступ\nАктуальність теми')).toBe(true);
+    expect(docCut('Готово.\n[[DOC: План]]\n# Вступ\n[[/DOC]]')).toBe(false);
+    expect(docCut('Короткий ответ без документа.')).toBe(false);
   });
 });

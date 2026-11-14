@@ -69,6 +69,7 @@ AI HELPERS FOR EVERY ROLE: when you build a CRM, a team space or a partner progr
 THE WHOLE SOLUTION, NOT JUST THE PIECE ASKED: think about what the person really needs for the result to work, and offer it in the same answer. A site needs booking or a request form, a CRM, the AI consultant, payments and Google basics, so build or offer them together and say in one line why each helps. A video needs the right length and format for the platform, captions, music and a hook in the first seconds. A plan needs the next concrete step. Offer, never force: say plainly what is included in their plan and what is extra.
 FOR PRODUCTION WORK (video editing, design, a brand style, copy in a certain voice, an app screen): before starting, ask for one example they like (a link, a screenshot or a file) and their raw materials, in one short question, unless they already gave them. Then match the example's level and style, and say what you will improve on it.
 AIM FOR NUMBER ONE: whatever the task, from an everyday errand to a company strategy, aim for the best result on the market, not the minimum asked. Think a few steps ahead and take the thinking off the person: they may not know what is possible, you do. For a business that means the whole system, not one piece: site, booking, requests in a CRM their staff can join with roles, the AI consultant, a partner program, then content. Respect their choice, but when their idea is weaker than another option, say so plainly in one line with the reason and offer the stronger one: an honest assessment and a real solution, never just nodding along.
+WHEN THEY SAY GO ("ok, start", "do it", "давай", "начинай", "пиши", "do the maximum"): do not plan again and never send the same plan or document twice. Deliver the first real piece in full right now (the actual text of the chapter, the page, the posts, the course outline with lessons written out), then name what comes next.
 RESULT FIRST: Vaxo wins by a ready result, not by a long answer. Every reply ends in something the person can use now: numbers, a table, steps, a draft. Never say you cannot do something: when a task is bigger than this screen, give the part that works now and name the one next step.
 ${shape}
 ${memoryBlock(memory)}
@@ -143,11 +144,22 @@ export function shapeReply(raw: string, mode: string, wish: string, lang: string
   return { reply: text || (doc ? ON_CANVAS[lang] ?? ON_CANVAS.en : ''), doc, deploy, order };
 }
 
+/** The reply opened a Canvas document but never closed it: the model ran out of tokens. */
+export const docCut = (t: string) => /\[\[DOC:/i.test(t) && !/\[\[\/DOC\]\]/i.test(t);
+
 async function freeReply(ai: AiBinding, messages: { role: string; content: string }[], mode: string): Promise<string | null> {
   for (const model of MODELS) {
     try {
-      const r = (await ai.run(model, { messages, max_tokens: mode === 'deep' ? 1800 : 420, temperature: 0.5, chat_template_kwargs: { enable_thinking: false } })) as Record<string, any>;
-      const t = String(typeof r?.response === 'string' ? r.response : r?.choices?.[0]?.message?.content || '').trim();
+      const run = async (max: number) => {
+        const r = (await ai.run(model, { messages, max_tokens: max, temperature: 0.5, chat_template_kwargs: { enable_thinking: false } })) as Record<string, any>;
+        const t = String(typeof r?.response === 'string' ? r.response : r?.choices?.[0]?.message?.content || '').trim();
+        const used = Number(r?.usage?.completion_tokens) || 0, why = r?.choices?.[0]?.finish_reason;
+        return { t, cut: why === 'length' || used >= max - 2 || docCut(t) };
+      };
+      let a = await run(mode === 'deep' ? 1800 : 420);
+      // An answer cut off by the budget (14.11: a coursework and a plan ended mid-sentence): write it again with room.
+      if (a.t && a.cut) { const b = await run(mode === 'deep' ? 3200 : 1800).catch(() => null); if (b?.t && b.t.length > a.t.length) a = b; }
+      const t = a.t;
       if (t) return t;
     } catch (e) { console.error('[ws]', model, e); }
   }
