@@ -49,8 +49,10 @@ const OFFER = /^\W*(я\s+(также\s+|ще\s+|теж\s+)?(могу|можу)|�
 const TAIL = /^\W*vax\s+(can|может|може|puede|kann)\b/i;
 // The same for "to calculate this I need your weight...": the tool under the answer already has those fields.
 const NEEDS = /^\W*(чтобы\s+я|чтобы\s+точно|для\s+точного|мне\s+нужн|щоб\s+я|щоб\s+точно|для\s+точного|мені\s+потрібн|to\s+(give|calculate|make|do)\b|i\s+need\b|please\s+(tell|share|give))/i;
+// Small models sometimes write LaTeX arrows and signs ($\rightarrow$) in plain chat text.
+const TEX: Record<string, string> = { rightarrow: '→', to: '→', leftarrow: '←', Rightarrow: '⇒', times: '×', approx: '≈', le: '≤', ge: '≥', pm: '±', cdot: '·' };
 export function tidyReply(reply: string, hasTool: boolean): string {
-  return reply.replace(/\[+\s*TOOL\b[^\]]*\]+/gi, '').replace(/\[+\s*(canvas|холст|полотно|tool|calculator|калькулятор|doc)[^\]\n]*\]*/gi, '').split(/\n+/).map((p) => p.trim()).filter((p) => p && !TAIL.test(p) && !(hasTool && (OFFER.test(p) || NEEDS.test(p)))).join('\n\n');
+  return reply.replace(/\$\s*\\(rightarrow|to|leftarrow|Rightarrow|times|approx|le|ge|pm|cdot)\s*\$/g, (_m, k) => TEX[k]).replace(/\[+\s*TOOL\b[^\]]*\]+/gi, '').replace(/\[+\s*(canvas|холст|полотно|tool|calculator|калькулятор|doc)[^\]\n]*\]*/gi, '').split(/\n+/).map((p) => p.trim()).filter((p) => p && !TAIL.test(p) && !(hasTool && (OFFER.test(p) || NEEDS.test(p)))).join('\n\n');
 }
 export const READY: Record<string, string> = { en: 'Ready: enter your numbers below.', ru: 'Готово: введите свои данные ниже.', ua: 'Готово: введіть свої дані нижче.' };
 

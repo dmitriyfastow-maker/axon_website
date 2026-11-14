@@ -47,6 +47,10 @@ export function memoryBlock(m: Memory): string {
 const RECENT_FILES = 6; // messages from the end whose documents go to the model at full length
 const FILE_CHARS = 6000;
 
+const TRIP = /отпуск|отдых|поездк|подорож|відпуст|путешеств|маршрут|trip|vacation|holiday|itinerar|travel/i;
+const ACT_FOR_ME = /(оплат|забронир|заброню|купи|закаж|замов|pay|book|buy|order)[\p{L}]*\s.{0,30}(за меня|за мене|for me|мне|мені)|(за меня|за мене|for me)\s.{0,30}(оплат|забронир|заброню|купи|pay|book|buy)/iu;
+const PLAN_HINT = () => `Today is ${new Date().toISOString().slice(0, 10)}; all dates must be in the future. Answer with the full plan now, no question first: a day-by-day table with an estimated cost per item and a total, assumptions in one line. If I asked you to pay or book: say in half a line you cannot pay or book, then give the exact choices, the order to book in, and search links with the place and dates filled in (Google Flights with q=Flights from <my city, or the nearest big airport you assume> to <place> on YYYY-MM-DD, Booking.com with ss=, checkin=, checkout=). No generic tips.`;
+
 function system(lang: string, memory: Memory, mode: string): string {
   const shape = mode === 'deep'
     ? `ANSWER MODE: DEEP PROJECT. In the chat write the core in at most 3 lines. Then put the whole worked-out result between [[DOC: short title]] and [[/DOC]] in Markdown (## headings, lists, tables): it opens on the Canvas next to the chat, where the person can edit and download it. Make it complete and ready to use.`
@@ -70,6 +74,8 @@ THE WHOLE SOLUTION, NOT JUST THE PIECE ASKED: think about what the person really
 FOR PRODUCTION WORK (video editing, design, a brand style, copy in a certain voice, an app screen): before starting, ask for one example they like (a link, a screenshot or a file) and their raw materials, in one short question, unless they already gave them. Then match the example's level and style, and say what you will improve on it.
 AIM FOR NUMBER ONE: whatever the task, from an everyday errand to a company strategy, aim for the best result on the market, not the minimum asked. Think a few steps ahead and take the thinking off the person: they may not know what is possible, you do. For a business that means the whole system, not one piece: site, booking, requests in a CRM their staff can join with roles, the AI consultant, a partner program, then content. Respect their choice, but when their idea is weaker than another option, say so plainly in one line with the reason and offer the stronger one: an honest assessment and a real solution, never just nodding along.
 WHEN THEY SAY GO ("ok, start", "do it", "давай", "начинай", "пиши", "do the maximum"): do not plan again and never send the same plan or document twice. Deliver the first real piece in full right now (the actual text of the chapter, the page, the posts, the course outline with lessons written out), then name what comes next.
+EVERYDAY PLANS (a trip, a menu, a workout, a move, an event, a budget): do not ask first. Build the full plan at once with your best assumptions stated in one line (dates, people, budget level), as a day-by-day or step table with an estimated cost for each item and a total, then offer to adjust.
+ACTIONS IN THE REAL WORLD (pay, book, buy, order, call or sign for them): you cannot pay or book yourself and you never ask for card details; say so in half a line, then take everything else off them: the exact choice (which flight times, which area to stay in, which ticket), price ranges marked as estimates to check, the order to book in (what sells out or gets dearer first), ready search links with the route and dates filled in (e.g. https://www.google.com/travel/flights?q=Flights%20from%20Warsaw%20to%20Rome%20on%202026-06-10 , https://www.booking.com/searchresults.html?ss=Rome&checkin=2026-06-10&checkout=2026-06-12 ), and a checklist of documents and deadlines. Never answer with only general advice like "use Skyscanner".
 RESULT FIRST: Vaxo wins by a ready result, not by a long answer. Every reply ends in something the person can use now: numbers, a table, steps, a draft. Never say you cannot do something: when a task is bigger than this screen, give the part that works now and name the one next step.
 ${shape}
 ${memoryBlock(memory)}
@@ -296,6 +302,10 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   }
   if (turns[0]?.role !== 'user') turns.unshift({ role: 'user', content: '(start)' });
 
+  // A trip or a pay/book-for-me wish: the free models answered with bare tips ("use Google Flights"), so the
+  // reminder rides on this one message, where small models follow it.
+  const last = turns[turns.length - 1];
+  if (last?.role === 'user' && (TRIP.test(said) || ACT_FOR_ME.test(said))) last.content += `\n\n(${PLAN_HINT()})`;
   // A paying client: Claude from the pool. Everyone else, or if Claude fails: free models.
   let raw: string | null = null, paid = false;
   if (me) {

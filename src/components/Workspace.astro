@@ -265,7 +265,7 @@ const ico = {
   import { composer } from '../scripts/compose';
   import { renderTool } from '../scripts/tool';
   import { initTheme } from '../scripts/theme';
-  import { md } from '../scripts/md';
+  import { md, chatMd } from '../scripts/md';
   import type { ToolSpec } from '../../worker/toolcore';
 
   type R = Record<string, any>;
@@ -700,7 +700,9 @@ const ico = {
     const fw = m.content.match(/^\[\[FWD:([^\]]*)\]\]/);
     if (fw) d.append(el('small', 'fwd', `↗ ${T.fwdFrom} «${fw[1]}»`));
     for (const q of m.content.matchAll(/\[\[REPLY:([^\]]*)\]\]/g)) d.append(el('div', 'quote', q[1]));
-    const t = el('div', 'tx'); t.innerHTML = linkify(plain(m.content)); d.append(t);
+    const t = el('div', 'tx'); const pc = plain(m.content);
+    // Vax's tables and [text](link) read as a table and links, not as raw | and brackets.
+    if (m.role === 'assistant' && /^\s*\|.*\|\s*$|\]\(https?:/m.test(pc) && !/📎 /.test(pc)) { t.classList.add('mdx'); t.innerHTML = chatMd(pc); } else t.innerHTML = linkify(pc); d.append(t);
     // Vax offers a choice before a big build: answer questions first, or build now. One tap answers.
     const ch = m.role === 'assistant' ? m.content.match(/\[\[CHOICE:([^\]|]+)\|([^\]]+)\]\]/) : null;
     if (ch && m === S.msgs[S.msgs.length - 1]) { const row = el('div', 'choice'); row.append(btn('pri sm', ch[1].trim(), () => { row.remove(); input.focus(); input.placeholder = ch[1].trim() + '…'; }), btn('sec sm', ch[2].trim(), () => { row.remove(); ask(ch[2].trim()); })); d.append(row); }
@@ -1803,6 +1805,12 @@ const ico = {
   .wsp .exb:hover { border-color: var(--ink); }
   .wsp .m { max-width: 100%; font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
   .wsp .m .tx { white-space: pre-wrap; }
+  .wsp .m .tx.mdx { white-space: normal; overflow-wrap: anywhere; }
+  .wsp .m .tx.mdx p, .wsp .m .tx.mdx ul, .wsp .m .tx.mdx ol { margin: 0 0 8px; } .wsp .m .tx.mdx ul, .wsp .m .tx.mdx ol { padding-left: 20px; }
+  .wsp .m .tx.mdx > :last-child { margin-bottom: 0; }
+  .wsp .m .tx.mdx .tbl { overflow-x: auto; margin: 4px 0 10px; }
+  .wsp .m .tx.mdx table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  .wsp .m .tx.mdx th, .wsp .m .tx.mdx td { border: 1px solid var(--line); padding: 5px 7px; text-align: left; vertical-align: top; }
   .wsp .m.me { align-self: flex-end; max-width: 80%; background: var(--surf2, var(--surf)); border: 1px solid var(--line); border-radius: 16px 16px 4px 16px; padding: 9px 13px; }
   .wsp .m.vax { align-self: flex-start; }
   .wsp .m.wait { color: var(--mut); font-style: italic; }
