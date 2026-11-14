@@ -14,6 +14,57 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'first-customers-online-small-business',
+    date: '2026-11-14',
+    t: {
+      en: {
+        title: 'First customers online for a small business: a 7-step plan',
+        desc: 'A simple plan to get your first customers online without a big ad budget: a clear offer, free listings, a simple site, messages to people nearby and reviews.',
+        body: [
+          ['Start small and concrete', ['The first customers rarely come from ads. They come from people who already almost know you: neighbours, past clients, local groups. The goal of this plan is the first 10 paying customers, not fame.']],
+          ['1. One sentence about what you offer', ['Who it is for, what you do and why it is easy to order. “Home cakes to order in Lviv, delivery the next day, from 1 kg.” If you cannot say it in one sentence, customers will not get it either.']],
+          ['2. Free listings people search in', ['Add your business to Google Business Profile and to maps and local directories in your country. Same name, address, phone and hours everywhere — search engines trust consistent data.']],
+          ['3. One simple page with a clear button', ['What you do, prices or “from” prices, photos of real work, how to order, a phone or messenger. One clear action: “Order”, “Book”, “Write us”. A perfect site can wait; a clear one cannot.']],
+          ['4. Tell people who already know you', ['A short personal message to friends, past colleagues and old clients: what you started and one request — to order or to share with someone who needs it. Personal messages work better than one post for everyone.']],
+          ['5. Be where your customers ask questions', ['Local groups, chats of your district, forums of your niche. Answer questions usefully, without spam; mention your service only where it really helps.']],
+          ['6. Ask every customer for a review', ['Right after the order, send a link to leave a review on maps. A few honest reviews with photos often decide whether a stranger orders.']],
+          ['7. Count what brings customers', ['Ask every new customer “how did you find us?” and write it down. After a month you will see which channel to strengthen and which to drop.']],
+          ['How Vaxo helps', ['In Workspace describe your business in a few words — Vax writes the one-sentence offer, the page text, messages for acquaintances and a review request, and can build the site itself. You can start for free; paid plans start at $19 a month.']],
+        ],
+      },
+      ru: {
+        title: 'Первые клиенты в интернете для малого бизнеса: план из 7 шагов',
+        desc: 'Простой план, как найти первых клиентов в интернете без большого бюджета на рекламу: понятное предложение, бесплатные карты, простой сайт, сообщения знакомым и отзывы.',
+        body: [
+          ['Начните с малого и конкретного', ['Первые клиенты редко приходят из рекламы. Они приходят от людей, которые вас уже почти знают: соседи, прошлые клиенты, местные группы. Цель плана — первые 10 платящих клиентов, а не слава.']],
+          ['1. Одно предложение о том, что вы предлагаете', ['Для кого, что делаете и почему это легко заказать. «Домашние торты на заказ во Львове, доставка на следующий день, от 1 кг». Если не получается сказать одним предложением — клиенты тоже не поймут.']],
+          ['2. Бесплатные карты и каталоги, где ищут', ['Добавьте бизнес в Google Business Profile, на карты и в местные каталоги вашей страны. Везде одинаковые название, адрес, телефон и часы работы — поисковики доверяют совпадающим данным.']],
+          ['3. Одна простая страница с понятной кнопкой', ['Что делаете, цены или «от», фото настоящих работ, как заказать, телефон или мессенджер. Одно понятное действие: «Заказать», «Записаться», «Написать». Идеальный сайт может подождать, понятный — нет.']],
+          ['4. Расскажите тем, кто вас уже знает', ['Короткое личное сообщение друзьям, бывшим коллегам и старым клиентам: что вы начали, и одна просьба — заказать или переслать тому, кому нужно. Личные сообщения работают лучше одного поста для всех.']],
+          ['5. Будьте там, где клиенты задают вопросы', ['Местные группы, чаты района, форумы вашей ниши. Отвечайте по делу, без спама; упоминайте свою услугу только там, где она правда помогает.']],
+          ['6. Просите отзыв у каждого клиента', ['Сразу после заказа отправьте ссылку, чтобы оставить отзыв на картах. Несколько честных отзывов с фото часто решают, закажет ли незнакомый человек.']],
+          ['7. Считайте, что приводит клиентов', ['Спрашивайте каждого нового клиента «как вы нас нашли?» и записывайте. Через месяц будет видно, какой канал усилить, а какой бросить.']],
+          ['Чем помогает Vaxo', ['В Workspace опишите бизнес в паре слов — Vax напишет предложение одной фразой, текст страницы, сообщения знакомым и просьбу об отзыве, а может и сам собрать сайт. Начать можно бесплатно; платные тарифы — от $19 в месяц.']],
+        ],
+      },
+      ua: {
+        title: 'Перші клієнти в інтернеті для малого бізнесу: план із 7 кроків',
+        desc: 'Простий план, як знайти перших клієнтів в інтернеті без великого бюджету на рекламу: зрозуміла пропозиція, безкоштовні карти, простий сайт, повідомлення знайомим і відгуки.',
+        body: [
+          ['Почніть з малого й конкретного', ['Перші клієнти рідко приходять з реклами. Вони приходять від людей, які вас уже майже знають: сусіди, колишні клієнти, місцеві групи. Мета плану — перші 10 клієнтів, які платять, а не слава.']],
+          ['1. Одне речення про те, що ви пропонуєте', ['Для кого, що робите і чому це легко замовити. «Домашні торти на замовлення у Львові, доставка наступного дня, від 1 кг». Якщо не виходить сказати одним реченням — клієнти теж не зрозуміють.']],
+          ['2. Безкоштовні карти й каталоги, де шукають', ['Додайте бізнес у Google Business Profile, на карти й у місцеві каталоги вашої країни. Скрізь однакові назва, адреса, телефон і години роботи — пошуковики довіряють даним, що збігаються.']],
+          ['3. Одна проста сторінка зі зрозумілою кнопкою', ['Що робите, ціни або «від», фото справжніх робіт, як замовити, телефон чи месенджер. Одна зрозуміла дія: «Замовити», «Записатися», «Написати». Ідеальний сайт може зачекати, зрозумілий — ні.']],
+          ['4. Розкажіть тим, хто вас уже знає', ['Коротке особисте повідомлення друзям, колишнім колегам і старим клієнтам: що ви почали, і одне прохання — замовити або переслати тому, кому треба. Особисті повідомлення працюють краще за один пост для всіх.']],
+          ['5. Будьте там, де клієнти ставлять питання', ['Місцеві групи, чати району, форуми вашої ніші. Відповідайте по суті, без спаму; згадуйте свою послугу лише там, де вона справді допомагає.']],
+          ['6. Просіть відгук у кожного клієнта', ['Одразу після замовлення надішліть посилання, щоб залишити відгук на картах. Кілька чесних відгуків із фото часто вирішують, чи замовить незнайома людина.']],
+          ['7. Рахуйте, що приводить клієнтів', ['Питайте кожного нового клієнта «як ви нас знайшли?» і записуйте. За місяць буде видно, який канал посилити, а який кинути.']],
+          ['Чим допомагає Vaxo', ['У Workspace опишіть бізнес кількома словами — Vax напише пропозицію однією фразою, текст сторінки, повідомлення знайомим і прохання про відгук, а може й сам зібрати сайт. Почати можна безкоштовно; платні тарифи — від $19 на місяць.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'how-to-ask-ai-get-finished-result',
     date: '2026-11-14',
     t: {
