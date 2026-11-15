@@ -311,9 +311,9 @@ export async function servePage(db: DB, slug: string, manifest: boolean): Promis
 
 // A client's partner sees their own results by a private link: no login, no names or contacts of leads — only counts and dates.
 const PW: Record<string, Record<string, string>> = {
-  en: { h: 'Your partner page', for: 'Partner of', link: 'Your personal link', copy: 'Copy', copied: 'Copied', v: 'Visits', l: 'Requests', w: 'Deals', lv: 'Level', lvs: 'Start|Silver|Gold', next: 'To the next level', recent: 'Latest requests from your link', none: 'No requests yet. Share your link with friends and clients — every request is counted for you.', st: 'New|In progress|Deal|Closed', how: 'Rewards are agreed with the owner of the business. This page updates by itself.', by: 'Runs on Vaxo', paid: 'Paid to you' },
-  ru: { h: 'Ваша страница партнёра', for: 'Партнёр', link: 'Ваша личная ссылка', copy: 'Скопировать', copied: 'Скопировано', v: 'Переходы', l: 'Заявки', w: 'Сделки', lv: 'Уровень', lvs: 'Старт|Серебро|Золото', next: 'До следующего уровня', recent: 'Последние заявки по вашей ссылке', none: 'Заявок пока нет. Делитесь ссылкой с друзьями и клиентами — каждая заявка засчитывается вам.', st: 'Новая|В работе|Сделка|Закрыта', how: 'Награду вы обсуждаете с владельцем бизнеса. Страница обновляется сама.', by: 'Работает на Vaxo', paid: 'Вам выплачено' },
-  ua: { h: 'Ваша сторінка партнера', for: 'Партнер', link: 'Ваше особисте посилання', copy: 'Скопіювати', copied: 'Скопійовано', v: 'Переходи', l: 'Заявки', w: 'Угоди', lv: 'Рівень', lvs: 'Старт|Срібло|Золото', next: 'До наступного рівня', recent: 'Останні заявки за вашим посиланням', none: 'Заявок поки немає. Діліться посиланням з друзями та клієнтами — кожна заявка зараховується вам.', st: 'Нова|В роботі|Угода|Закрита', how: 'Винагороду ви обговорюєте з власником бізнесу. Сторінка оновлюється сама.', by: 'Працює на Vaxo', paid: 'Вам виплачено' },
+  en: { earned: 'Earned', due: 'To be paid', rate: 'Your reward', rateOf: 'of every deal', h: 'Your partner page', for: 'Partner of', link: 'Your personal link', copy: 'Copy', copied: 'Copied', v: 'Visits', l: 'Requests', w: 'Deals', lv: 'Level', lvs: 'Start|Silver|Gold', next: 'To the next level', recent: 'Latest requests from your link', none: 'No requests yet. Share your link with friends and clients — every request is counted for you.', st: 'New|In progress|Deal|Closed', how: 'Rewards are agreed with the owner of the business. This page updates by itself.', by: 'Runs on Vaxo', paid: 'Paid to you' },
+  ru: { earned: 'Заработано', due: 'К выплате', rate: 'Ваше вознаграждение', rateOf: 'с каждой сделки', h: 'Ваша страница партнёра', for: 'Партнёр', link: 'Ваша личная ссылка', copy: 'Скопировать', copied: 'Скопировано', v: 'Переходы', l: 'Заявки', w: 'Сделки', lv: 'Уровень', lvs: 'Старт|Серебро|Золото', next: 'До следующего уровня', recent: 'Последние заявки по вашей ссылке', none: 'Заявок пока нет. Делитесь ссылкой с друзьями и клиентами — каждая заявка засчитывается вам.', st: 'Новая|В работе|Сделка|Закрыта', how: 'Награду вы обсуждаете с владельцем бизнеса. Страница обновляется сама.', by: 'Работает на Vaxo', paid: 'Вам выплачено' },
+  ua: { earned: 'Зароблено', due: 'До виплати', rate: 'Ваша винагорода', rateOf: 'з кожної угоди', h: 'Ваша сторінка партнера', for: 'Партнер', link: 'Ваше особисте посилання', copy: 'Скопіювати', copied: 'Скопійовано', v: 'Переходи', l: 'Заявки', w: 'Угоди', lv: 'Рівень', lvs: 'Старт|Срібло|Золото', next: 'До наступного рівня', recent: 'Останні заявки за вашим посиланням', none: 'Заявок поки немає. Діліться посиланням з друзями та клієнтами — кожна заявка зараховується вам.', st: 'Нова|В роботі|Угода|Закрита', how: 'Винагороду ви обговорюєте з власником бізнесу. Сторінка оновлюється сама.', by: 'Працює на Vaxo', paid: 'Вам виплачено' },
 };
 export async function servePartner(db: DB, code: string, origin: string): Promise<Response> {
   const r = await db.prepare(`SELECT r.name, r.code, b.id, b.name AS biz, p.slug, p.data FROM biz_refs r JOIN biz b ON b.id = r.biz_id LEFT JOIN biz_pages p ON p.biz_id = b.id WHERE r.code = ?`).bind(code).first<{ name: string; code: string; id: number; biz: string; slug: string | null; data: string | null }>().catch(() => null);
@@ -326,6 +326,12 @@ export async function servePartner(db: DB, code: string, origin: string): Promis
       (SELECT COUNT(*) FROM biz_leads WHERE biz_id = ?1 AND source = ?2) AS l,
       (SELECT COUNT(*) FROM biz_leads WHERE biz_id = ?1 AND source = ?2 AND status = 'won') AS w`).bind(r.id, src).first<{ v: number; l: number; w: number }>().catch(() => null) ?? { v: 0, l: 0, w: 0 };
   const rows = (await db.prepare('SELECT at, status FROM biz_leads WHERE biz_id = ? AND source = ? ORDER BY id DESC LIMIT 10').bind(r.id, src).all<{ at: string; status: string | null }>().catch(() => ({ results: [] }))).results;
+  // The owner's reward rate (Settings in the CRM, default 10%) × the amounts of the deals this partner brought.
+  const rate = Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('biz_ref_rate_' + r.id).first<{ value: string }>().catch(() => null))?.value ?? 10);
+  const wonNotes = (await db.prepare("SELECT note FROM biz_leads WHERE biz_id = ? AND source = ? AND status = 'won'").bind(r.id, src).all<{ note: string | null }>().catch(() => ({ results: [] }))).results;
+  const { unpackNote } = await import('./biz.js');
+  const earned = Math.round(wonNotes.reduce((s0, x) => s0 + (unpackNote(x.note).amount || 0), 0) * rate) / 100;
+  const due = Math.max(0, Math.round((earned - rp.paid) * 100) / 100);
   const lv = c.w >= 10 ? 2 : c.w >= 3 ? 1 : 0, need = lv === 0 ? 3 - c.w : lv === 1 ? 10 - c.w : 0, lvs = t.lvs.split('|'), sts = t.st.split('|');
   const stOf = (s: string | null) => sts[s === 'won' ? 2 : s === 'work' || s === 'contacted' ? 1 : s === 'lost' || s === 'closed' ? 3 : 0];
   const url = `${origin}/s/${r.slug}?utm_source=${src}`;
@@ -337,7 +343,8 @@ h1{font-size:26px;margin:0 0 4px}.mut{color:var(--mut)}.card{background:var(--ca
 button{min-height:44px;padding:0 16px;border:0;border-radius:10px;background:var(--acc);color:#fff;font:inherit;font-weight:600;cursor:pointer}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}.stats b{display:block;font-size:28px}.bar{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:var(--acc)}
 ul{list-style:none;margin:0;padding:0}li{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line)}li:first-child{border-top:0}small{font-size:13px}a{color:var(--acc)}</style></head><body><main>
-<p class="mut">${esc(t.for)} · <b>${esc(r.biz)}</b></p><h1>${esc(t.h)}</h1><p class="mut">${esc(r.name)}</p>${rp.paid ? `<p><b>${esc(t.paid)}: $${rp.paid}</b></p>` : ''}
+<p class="mut">${esc(t.for)} · <b>${esc(r.biz)}</b></p><h1>${esc(t.h)}</h1><p class="mut">${esc(r.name)} · ${esc(t.rate)}: <b>${rate}%</b> ${esc(t.rateOf)}</p>
+<div class="card stats"><div><b>${earned}</b><small class="mut">${esc(t.earned)}</small></div><div><b>${rp.paid}</b><small class="mut">${esc(t.paid)}</small></div><div><b>${due}</b><small class="mut">${esc(t.due)}</small></div></div>
 <div class="card"><p style="margin:0 0 8px"><b>${esc(t.link)}</b></p><div class="row"><input readonly value="${esc(url)}" aria-label="${esc(t.link)}"><button id="cp">${esc(t.copy)}</button></div></div>
 <div class="card stats"><div><b>${c.v}</b><small class="mut">${esc(t.v)}</small></div><div><b>${c.l}</b><small class="mut">${esc(t.l)}</small></div><div><b>${c.w}</b><small class="mut">${esc(t.w)}</small></div></div>
 <div class="card"><b>${esc(t.lv)}: ${esc(lvs[lv])}</b>${need ? `<p class="mut" style="margin:4px 0 0">${esc(t.next)}: ${need} · ${esc(t.w).toLowerCase()}</p><div class="bar"><i style="width:${Math.round((c.w / (lv === 0 ? 3 : 10)) * 100)}%"></i></div>` : ''}</div>
@@ -346,4 +353,36 @@ ul{list-style:none;margin:0;padding:0}li{display:flex;justify-content:space-betw
 <script>document.getElementById('cp').onclick=async function(){var i=document.querySelector('input');try{await navigator.clipboard.writeText(i.value)}catch(e){i.select();document.execCommand('copy')}this.textContent=${JSON.stringify(t.copied)};var b=this;setTimeout(function(){b.textContent=${JSON.stringify(t.copy)}},1500)}</script>
 </main></body></html>`;
   return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer' } });
+}
+
+/** «Become a partner» of a client's business (15.11): a person leaves a name and a contact, gets a private page and a link
+ *  at once; the owner sees the new partner in the CRM as a request with the source «partner». */
+const PJ: Record<string, Record<string, string>> = {
+  en: { h: 'Become a partner of', p: 'Recommend us to friends and clients and get a reward for every deal. Your personal link and your results are on a private page.', name: 'Your name', contact: 'Phone, Telegram or email', go: 'Get my link', adult: 'I am 18 or older', err: 'Fill in the name and the contact.' },
+  ru: { h: 'Станьте партнёром', p: 'Рекомендуйте нас друзьям и клиентам и получайте вознаграждение за каждую сделку. Ваша личная ссылка и результаты — на личной странице.', name: 'Ваше имя', contact: 'Телефон, Telegram или почта', go: 'Получить ссылку', adult: 'Мне есть 18 лет', err: 'Заполните имя и контакт.' },
+  ua: { h: 'Станьте партнером', p: 'Рекомендуйте нас друзям і клієнтам та отримуйте винагороду за кожну угоду. Ваше особисте посилання й результати — на особистій сторінці.', name: 'Ваше імʼя', contact: 'Телефон, Telegram або пошта', go: 'Отримати посилання', adult: 'Мені є 18 років', err: 'Заповніть імʼя й контакт.' },
+};
+export async function servePartnerJoin(db: DB, slug: string, request: Request, origin: string): Promise<Response> {
+  const b = (await db.prepare('SELECT b.id, b.name, p.data FROM biz_pages p JOIN biz b ON b.id = p.biz_id WHERE p.slug = ?').bind(slug).first<{ id: number; name: string; data: string | null }>())
+    ?? (await db.prepare('SELECT b.id, b.name, s.data FROM ws_sites s JOIN biz b ON b.id = s.biz_id WHERE s.slug = ?').bind(slug).first<{ id: number; name: string; data: string | null }>().catch(() => null));
+  if (!b) return new Response('Not found', { status: 404 });
+  let lang = 'en'; try { lang = (JSON.parse(b.data || '{}') as Site).lang || 'en'; } catch {}
+  const t = PJ[lang] ?? PJ.en;
+  if (request.method === 'POST') {
+    const f = await request.formData().catch(() => null);
+    const name = String(f?.get('name') || '').trim().slice(0, 60), contact = String(f?.get('contact') || '').trim().slice(0, 120);
+    if (!name || !contact || f?.get('adult') !== 'on') return new Response(t.err, { status: 400 });
+    const n = await db.prepare('SELECT COUNT(*) AS n FROM biz_refs WHERE biz_id = ?').bind(b.id).first<{ n: number }>();
+    if ((n?.n ?? 0) >= 500) return new Response('Limit', { status: 429 });
+    const code = [...crypto.getRandomValues(new Uint8Array(4))].map((x) => x.toString(16).padStart(2, '0')).join('');
+    await db.prepare('INSERT INTO biz_refs (biz_id, code, name) VALUES (?, ?, ?)').bind(b.id, code, name).run();
+    await db.prepare("INSERT INTO biz_leads (biz_id, name, contact, message, source) VALUES (?, ?, ?, ?, 'partner')").bind(b.id, name, contact, `New partner · ${origin}/rp/${code}`).run();
+    return Response.redirect(`${origin}/rp/${code}`, 303);
+  }
+  const html = `<!doctype html><html lang="${lang === 'ua' ? 'uk' : lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${esc(t.h)} ${esc(b.name)}</title>
+<style>:root{--bg:#f7f6f3;--card:#fff;--ink:#16161a;--mut:#6b6b76;--line:#e6e4df;--acc:#2f6bff}@media(prefers-color-scheme:dark){:root{--bg:#121214;--card:#1c1c20;--ink:#f1f1f3;--mut:#a0a0ab;--line:#2c2c33}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:520px;margin:0 auto;padding:40px 16px}h1{font-size:28px;margin:0 0 8px}.mut{color:var(--mut)}form{display:grid;gap:10px;margin-top:20px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}input[type=text]{padding:13px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}button{min-height:48px;border:0;border-radius:10px;background:var(--acc);color:#fff;font:inherit;font-weight:700;cursor:pointer}label{display:flex;gap:8px;align-items:center;font-size:14px}</style></head>
+<body><main><h1>${esc(t.h)} «${esc(b.name)}»</h1><p class="mut">${esc(t.p)}</p>
+<form method="post"><input type="text" name="name" required maxlength="60" placeholder="${esc(t.name)}"><input type="text" name="contact" required maxlength="120" placeholder="${esc(t.contact)}"><label><input type="checkbox" name="adult" required> ${esc(t.adult)}</label><button>${esc(t.go)}</button></form>
+<p class="mut"><small><a href="${origin}/s/${esc(slug)}" style="color:inherit">← ${esc(b.name)}</a></small></p></main></body></html>`;
+  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY' } });
 }

@@ -261,12 +261,15 @@ export async function handleBiz(db: DB, request: Request, path: string, ai: AiBi
       const team = owner ? (await db.prepare('SELECT email, role, at FROM biz_members WHERE biz_id = ? ORDER BY at').bind(a.id).all()).results : [];
       return json(200, {
         ok: true,
+        refRate: Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('biz_ref_rate_' + a.id).first<{ value: string }>().catch(() => null))?.value ?? 10),
         biz: { id: a.id, name: a.name, domain: a.domain, role: a.role, about: owner ? a.about : null, code: owner ? `<script src="${origin}/w.js?k=${a.key}" async></script>` : null },
         stats: await stats(db, a.id, days), leads, team,
       });
     }
     if (sub === 'settings' && m === 'POST' && owner) {
       await db.prepare('UPDATE biz SET name = COALESCE(NULLIF(?, \'\'), name), domain = ?, about = ? WHERE id = ?').bind(cut(b.name, 80), host(cut(b.domain, 120)) || null, cut(b.about, 4000) || null, a.id).run();
+      const rr = Number(b.refRate);
+      if (b.refRate !== undefined && rr >= 0 && rr <= 50) await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind('biz_ref_rate_' + a.id, String(Math.round(rr * 10) / 10)).run();
       return json(200, { ok: true });
     }
     const lm = sub.match(/^leads\/(\d+)$/);
