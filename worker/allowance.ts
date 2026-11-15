@@ -68,6 +68,9 @@ export const TOPUP_PACKS: number[] = [];
 export const TOPUP_RATE = 40; // allowance units (AI cents) per $1
 export const TOPUP_DESC = 'Extra allowance for Vaxo Workspace';
 export const topupDesc = (usd: number, month: string) => `${TOPUP_DESC}, +$${usd} for ${month}`;
+/** Level rewards (Decision 51): extra work volume. Not added to the loyalty bonus — the larger of the two counts — so the
+ *  worst case stays near zero even on Ultra. The level is saved by the workspace when it counts the progress. */
+export const GAME_BONUS = [0, 0, 0, 10, 10, 15, 15, 20, 20, 25, 30];
 export type Limits = { day: { pct: number; reset: string }; week: { pct: number; reset: string }; month: { pct: number; reset: string }; blocked: 'month' | null; packs: number[] };
 export async function wsLimits(db: DB, clientId: number, plan: string): Promise<Limits> {
   const now = new Date();
@@ -76,7 +79,9 @@ export async function wsLimits(db: DB, clientId: number, plan: string): Promise<
   // partner gets 30% instead of 50%), and part of that goes back to the people who stay.
   const paidMonths = plan === 'start' ? 0 : (await db.prepare(`SELECT COUNT(*) AS n FROM invoices i JOIN leads l ON l.id = i.lead_id WHERE l.client_id = ? AND i.status = 'paid' AND i.description LIKE 'Vaxo %subscription%'`).bind(clientId).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const extra = (await db.prepare(`SELECT COALESCE(SUM(i.amount), 0) AS n FROM invoices i JOIN leads l ON l.id = i.lead_id WHERE l.client_id = ? AND i.status = 'paid' AND i.currency = 'USD' AND i.description LIKE ?`).bind(clientId, `${TOPUP_DESC}, % for ${start.toISOString().slice(0, 7)}`).first<{ n: number }>().catch(() => null))?.n ?? 0;
-  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * (paidMonths >= 3 ? 1.2 : 1) + extra * TOPUP_RATE);
+  const lv = Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('game_lv_' + clientId).first<{ value: string }>().catch(() => null))?.value) || 1;
+  const mult = Math.max(paidMonths >= 3 ? 1.2 : 1, 1 + (GAME_BONUS[lv] ?? 0) / 100);
+  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * mult + extra * TOPUP_RATE);
   const used = (await db.prepare('SELECT COALESCE(SUM(work), 0) AS n FROM ws_work WHERE client_id = ? AND at >= ?').bind(clientId, start.toISOString().slice(0, 19).replace('T', ' ')).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const m = { pct: Math.min(100, Math.round((used / cap) * 100)), reset: next.toISOString() };
   return { day: m, week: m, month: m, blocked: used >= cap ? 'month' : null, packs: plan === 'start' ? [] : TOPUP_PACKS };

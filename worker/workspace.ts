@@ -462,8 +462,11 @@ async function progress(db: DB, clientId: number, k: { objects: number; memory: 
     result: k.objects > 0, memory: k.memory, site: !!k.modules?.site || (k.modules?.pages?.length ?? 0) > 0, request: (k.modules?.requests ?? 0) > 0,
     partner: (k.modules?.partner?.refs?.length ?? k.modules?.partner?.links?.length ?? 0) > 0, team: team > 0,
   };
-  const xp = XP_STEPS.reduce((s, x) => s + (done[x.key] ? x.xp : 0), 0) + Math.min(weeks, 40) * 30;
-  return { xp, weeks, done, ...levelOf(xp) };
+  const pages = Math.min(k.modules?.pages?.length ?? 0, 10), requests = Math.min(k.modules?.requests ?? 0, 50);
+  const xp = XP_STEPS.reduce((s, x) => s + (done[x.key] ? x.xp : 0), 0) + Math.min(weeks, 52) * 40 + pages * 40 + requests * 15;
+  const lv = levelOf(xp);
+  await db.prepare("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind('game_lv_' + clientId, String(lv.level)).run().catch(() => {});
+  return { xp, weeks, pages, requests, done, ...lv };
 }
 
 let shareReady = false;
