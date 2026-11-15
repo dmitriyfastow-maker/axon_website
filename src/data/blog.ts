@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'reply-to-customer-reviews-bad-reviews',
+    date: '2026-11-15',
+    t: {
+      en: {
+        title: 'How to reply to customer reviews, even bad ones: a simple method with examples',
+        desc: 'What to write in reply to good, neutral and angry reviews, how fast to answer, what never to say, and how AI helps you reply in two minutes.',
+        body: [
+          ['Why replies matter more than the review itself', ['People who choose where to go read not only reviews but also how the business answers. A calm, helpful reply to a bad review often builds more trust than ten silent five-star ones.']],
+          ['1. Answer every review, and fast', ['Try to reply within a day. Short is fine. Silence looks like nobody cares — especially under a complaint.']],
+          ['2. Good review: thank them and be specific', ['Use the name and mention what they liked: “Thank you, Anna! Glad the haircut held up all week — see you next time.” A copy-paste “Thanks for your feedback!” under every review looks automatic.']],
+          ['3. Bad review: four short steps', ['Thank them for writing, apologise for the experience (without arguing), say what you will do, and offer to continue in private with a direct contact. For example: “Mark, sorry the order was late — that is not how it should be. We have changed how we confirm delivery times. Please write to us at … and we will sort it out.”']],
+          ['4. What never to write', ['Do not argue, do not blame the customer, do not reveal their personal details or order data, and do not promise what you cannot do. If a review is fake or abusive, reply calmly once and report it to the platform.']],
+          ['5. Turn reviews into fixes', ['Once a month read all complaints together. If the same thing comes up three times, it is not bad luck — it is something to change. Then you can honestly reply: “We fixed it.”']],
+          ['6. Ask happy customers for a review', ['Most satisfied people simply forget. Ask right after a good result, with one direct link to the review page. Never pay for reviews or write them yourself — platforms remove them and it damages trust.']],
+          ['How Vaxo helps', ['In Workspace you paste a review and Vax writes a ready reply in your tone, in the customer’s language, in a few seconds — you check it and post it. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как отвечать на отзывы клиентов, даже плохие: простой способ с примерами',
+        desc: 'Что писать в ответ на хорошие, нейтральные и злые отзывы, как быстро отвечать, чего никогда не писать и как ИИ помогает ответить за две минуты.',
+        body: [
+          ['Почему ответ важнее самого отзыва', ['Люди, которые выбирают, куда пойти, читают не только отзывы, но и то, как бизнес отвечает. Спокойный и полезный ответ на плохой отзыв часто вызывает больше доверия, чем десять молчаливых пятёрок.']],
+          ['1. Отвечайте на каждый отзыв и быстро', ['Старайтесь ответить в течение суток. Коротко — нормально. Молчание выглядит так, будто всем всё равно, особенно под жалобой.']],
+          ['2. Хороший отзыв: поблагодарите конкретно', ['Назовите по имени и упомяните, что понравилось: «Спасибо, Анна! Рады, что стрижка держалась всю неделю — ждём снова». Одинаковое «Спасибо за отзыв!» под каждым выглядит как автоответ.']],
+          ['3. Плохой отзыв: четыре коротких шага', ['Поблагодарите, что написали, извинитесь за опыт (без спора), скажите, что сделаете, и предложите продолжить в личке с прямым контактом. Например: «Марк, простите, что заказ опоздал — так быть не должно. Мы изменили, как подтверждаем время доставки. Напишите нам на …, и мы всё решим».']],
+          ['4. Чего никогда не писать', ['Не спорьте, не обвиняйте клиента, не раскрывайте его личные данные и детали заказа, не обещайте того, что не сможете. Если отзыв фальшивый или грубый — один раз спокойно ответьте и пожалуйтесь на него площадке.']],
+          ['5. Превращайте отзывы в улучшения', ['Раз в месяц прочитайте все жалобы вместе. Если одно и то же повторяется три раза — это не случайность, а то, что нужно менять. Тогда можно честно ответить: «Мы это исправили».']],
+          ['6. Просите довольных клиентов оставить отзыв', ['Большинство довольных людей просто забывают. Попросите сразу после хорошего результата и дайте одну прямую ссылку на страницу отзыва. Никогда не покупайте отзывы и не пишите их сами — площадки их удаляют, а доверие падает.']],
+          ['Чем помогает Vaxo', ['В Workspace вы вставляете отзыв, и Vax за несколько секунд пишет готовый ответ в вашем тоне и на языке клиента — вы проверяете и публикуете. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як відповідати на відгуки клієнтів, навіть погані: простий спосіб із прикладами',
+        desc: 'Що писати у відповідь на хороші, нейтральні й злі відгуки, як швидко відповідати, чого ніколи не писати і як ШІ допомагає відповісти за дві хвилини.',
+        body: [
+          ['Чому відповідь важливіша за сам відгук', ['Люди, які обирають, куди піти, читають не лише відгуки, а й те, як бізнес відповідає. Спокійна й корисна відповідь на поганий відгук часто викликає більше довіри, ніж десять мовчазних п’ятірок.']],
+          ['1. Відповідайте на кожен відгук і швидко', ['Намагайтеся відповісти протягом доби. Коротко — нормально. Мовчання виглядає так, ніби всім байдуже, особливо під скаргою.']],
+          ['2. Хороший відгук: подякуйте конкретно', ['Назвіть на ім’я і згадайте, що сподобалося: «Дякуємо, Анно! Раді, що стрижка трималася весь тиждень — чекаємо знову». Однакове «Дякуємо за відгук!» під кожним виглядає як автовідповідь.']],
+          ['3. Поганий відгук: чотири короткі кроки', ['Подякуйте, що написали, перепросіть за досвід (без суперечки), скажіть, що зробите, і запропонуйте продовжити в особистих з прямим контактом. Наприклад: «Марку, вибачте, що замовлення запізнилося — так не має бути. Ми змінили, як підтверджуємо час доставки. Напишіть нам на …, і ми все вирішимо».']],
+          ['4. Чого ніколи не писати', ['Не сперечайтеся, не звинувачуйте клієнта, не розкривайте його особисті дані й деталі замовлення, не обіцяйте того, чого не зможете. Якщо відгук фальшивий чи грубий — один раз спокійно відповідайте і поскаржтеся на нього майданчику.']],
+          ['5. Перетворюйте відгуки на покращення', ['Раз на місяць прочитайте всі скарги разом. Якщо те саме повторюється тричі — це не випадковість, а те, що треба змінити. Тоді можна чесно відповісти: «Ми це виправили».']],
+          ['6. Просіть задоволених клієнтів залишити відгук', ['Більшість задоволених людей просто забувають. Попросіть одразу після хорошого результату і дайте одне пряме посилання на сторінку відгуку. Ніколи не купуйте відгуки й не пишіть їх самі — майданчики їх видаляють, а довіра падає.']],
+          ['Чим допомагає Vaxo', ['У Workspace ви вставляєте відгук, і Vax за кілька секунд пише готову відповідь у вашому тоні й мовою клієнта — ви перевіряєте й публікуєте. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'plan-trip-with-ai-route-budget-bookings',
     date: '2026-11-15',
     t: {
