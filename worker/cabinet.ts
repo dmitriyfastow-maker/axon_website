@@ -266,7 +266,7 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
   // Google: /api/me/google?back=<room> → Google → /api/me/google/callback → /me/
   if (path === 'google' && request.method === 'GET') {
     if (!env.GOOGLE_CLIENT_ID) return Response.redirect(new URL('/app/?err=google_off#signin', url).toString(), 302);
-    const state = hex(16) + '.' + (ROOM_RE.test(url.searchParams.get('back') || '') ? url.searchParams.get('back') : '');
+    const state = hex(16) + '.' + (url.searchParams.get('for') === 'hq' ? 'hq' : ROOM_RE.test(url.searchParams.get('back') || '') ? url.searchParams.get('back') : '');
     const go = new URL('https://accounts.google.com/o/oauth2/v2/auth');
     go.search = new URLSearchParams({ client_id: env.GOOGLE_CLIENT_ID, redirect_uri: `${url.origin}/api/me/google/callback`, response_type: 'code', scope: 'openid email profile', state, prompt: 'select_account' }).toString();
     return new Response(null, { status: 302, headers: { Location: go.toString(), 'Set-Cookie': setCookie('vaxo_gst', state, 600) } });
@@ -282,6 +282,14 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
     const p = tok?.id_token ? JSON.parse(atob(tok.id_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))) : null;
     if (!p?.sub || p.aud !== env.GOOGLE_CLIENT_ID || !/accounts\.google\.com$/.test(p.iss || '') || !p.email_verified) return Response.redirect(new URL('/app/?err=google#signin', url).toString(), 302);
     const email = String(p.email).toLowerCase();
+    // HQ (Vaxo CRM) sign-in: only people in «Доступы»; the token goes back in the hash, the page stores it and wipes the hash.
+    if (state.endsWith('.hq')) {
+      const { staffSessionByEmail } = await import('./staff.js');
+      const t = await staffSessionByEmail(db, email);
+      const h = new Headers({ Location: new URL(t ? `/admin/#hq=${t}` : `/admin/?err=denied&e=${encodeURIComponent(email)}`, url).toString() });
+      h.append('Set-Cookie', setCookie('vaxo_gst', '', 0));
+      return new Response(null, { status: 302, headers: h });
+    }
     let c = await db.prepare('SELECT id FROM clients WHERE google_sub = ? OR email = ?').bind(p.sub, email).first<{ id: number }>();
     if (!c) {
       await db.prepare(`INSERT INTO clients (email, google_sub, name, email_verified_at) VALUES (?, ?, ?, datetime('now'))`).bind(email, p.sub, p.name || null).run();

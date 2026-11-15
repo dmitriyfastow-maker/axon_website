@@ -11,6 +11,16 @@ async function sha(s: string) {
   return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s))), (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+/** Google sign-in to the HQ (15.11): only an invited, active email gets a session; everybody else is turned away. */
+export async function staffSessionByEmail(db: DB, email: string): Promise<string | null> {
+  const s = await db.prepare('SELECT id, active FROM staff WHERE email = ?').bind(email.toLowerCase()).first<{ id: number; active: number }>();
+  if (!s?.active) return null;
+  const token = 's_' + hex(24);
+  await db.prepare('INSERT INTO staff_sessions (token, staff_id) VALUES (?, ?)').bind(await sha(token), s.id).run();
+  await db.prepare(`UPDATE staff SET last_login = datetime('now') WHERE id = ?`).bind(s.id).run();
+  return token;
+}
+
 /** HQ sections (tabs). "team" (access management) is the owner's only. */
 export const SECTIONS = ['today', 'plan', 'chats', 'leads', 'claude', 'work', 'stats', 'team', 'pay', 'fin', 'cartoon', 'auto', 'links'] as const;
 export const SECTION_NAMES: Record<string, string> = { today: 'Обзор', plan: 'Планы и прогноз', chats: 'Переписки', leads: 'Заявки', claude: 'Claude', work: 'Работа Claude', stats: 'Аналитика', team: 'Партнёры и менеджеры', pay: 'Выплаты', fin: 'Финансы', cartoon: 'Мультик', auto: 'Автопилот', links: 'Ссылки' };
