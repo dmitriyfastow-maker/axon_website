@@ -78,6 +78,13 @@ if(document.body)chat();else addEventListener('DOMContentLoaded',chat);`;
 }
 
 /** Tell the owner and their managers about a new request, in the owner's language. */
+let actReady = false;
+async function actTable(db: DB) {
+  if (actReady) return;
+  await db.prepare("CREATE TABLE IF NOT EXISTS biz_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, biz_id INTEGER NOT NULL, lead_id INTEGER NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')), who TEXT, text TEXT NOT NULL)").run();
+  actReady = true;
+}
+
 export async function tellOwner(db: DB, bizId: number, lead: { name: string; contact: string; message: string; source: string }) {
   const o = await db.prepare('SELECT b.name, c.email, c.lang FROM biz b JOIN clients c ON c.id = b.owner_id WHERE b.id = ?').bind(bizId).first<{ name: string; email: string | null; lang: string | null }>();
   if (!o) return;
@@ -281,7 +288,37 @@ export async function handleBiz(db: DB, request: Request, path: string, ai: AiBi
       }
       await db.prepare(`UPDATE biz_leads SET status = COALESCE(NULLIF(?, ''), status), note = COALESCE(?, note), assignee = CASE WHEN ? IS NULL THEN assignee ELSE NULLIF(?, '') END WHERE id = ? AND biz_id = ?${scope}`)
         .bind(status, note, assignee, assignee ?? '', Number(lm[1]), a.id, (me.email || '').toLowerCase()).run();
+      if (status) { await actTable(db); await db.prepare('INSERT INTO biz_activity (biz_id, lead_id, who, text) VALUES (?, ?, ?, ?)').bind(a.id, Number(lm[1]), (me.email || 'owner').toLowerCase(), `→ ${status}`).run().catch(() => {}); }
       return json(200, { ok: true });
+    }
+    // A lead's card (15.11): its history and comments, so the whole team sees what happened and what is next.
+    const la = sub.match(/^leads\/(\d+)\/activity$/);
+    if (la && canLeads) {
+      await actTable(db);
+      const lid = Number(la[1]);
+      if (!(await db.prepare('SELECT 1 FROM biz_leads WHERE id = ? AND biz_id = ?').bind(lid, a.id).first())) return json(404, { ok: false });
+      if (m === 'POST') {
+        const text = cut(b.text, 1000);
+        if (!text) return json(400, { ok: false });
+        await db.prepare('INSERT INTO biz_activity (biz_id, lead_id, who, text) VALUES (?, ?, ?, ?)').bind(a.id, lid, (me.email || 'owner').toLowerCase(), text).run();
+      }
+      const rows = (await db.prepare('SELECT at, who, text FROM biz_activity WHERE biz_id = ? AND lead_id = ? ORDER BY id DESC LIMIT 50').bind(a.id, lid).all()).results;
+      return json(200, { ok: true, items: rows });
+    }
+    const ln = sub.match(/^leads\/(\d+)\/next$/);
+    if (ln && m === 'POST' && canLeads) {
+      await actTable(db);
+      const l = await db.prepare('SELECT name, contact, message, source, status, note, at FROM biz_leads WHERE id = ? AND biz_id = ?').bind(Number(ln[1]), a.id).first<Record<string, string | null>>();
+      if (!l) return json(404, { ok: false });
+      const hist = (await db.prepare('SELECT at, text FROM biz_activity WHERE biz_id = ? AND lead_id = ? ORDER BY id DESC LIMIT 8').bind(a.id, Number(ln[1])).all()).results;
+      const lang = cut(b.lang, 2);
+      const prompt = `You are the AI sales manager of the business "${a.name}". About it: ${(a.about || 'not filled in yet').slice(0, 1200)}
+A request (JSON): ${JSON.stringify({ ...l, contact: l.contact ? 'given' : 'none', ...unpackNote(l.note) })}
+Its history, newest first (JSON): ${JSON.stringify(hist)}
+Reply in ${lang === 'ru' ? 'Russian' : lang === 'ua' ? 'Ukrainian' : 'English'} in exactly this form:
+NEXT: one concrete next step and when (one line)
+MESSAGE: a short, warm, personal message the business can send this person right now (2–4 sentences, no invented prices or facts, signed with the business name).`;
+      return json(200, { ok: true, text: (await askAi(ai, prompt, 320)) || '' });
     }
     if (sub === 'leads' && m === 'POST' && canLeads) {
       // A lead taken by phone or in person, typed in by hand.

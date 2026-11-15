@@ -53,9 +53,9 @@ const T = {
   },
 }[lang];
 const X = {
-  en: { amt: 'Deal amount', nextS: 'Next step date', due: 'next step today', over: 'next step overdue', sumWon: 'Won', sumOpen: 'In progress', all: 'All', find: 'Search by name, contact or text', note: 'Note: what was agreed, next step', noteSave: 'Save note', call: 'Call', mail: 'Email', wa: 'WhatsApp', tg: 'Telegram', csv: 'Download CSV', conv: 'Became clients', noMatch: 'Nothing found for this filter.', stale: 'waiting over a day' },
-  ru: { amt: 'Сумма сделки', nextS: 'Дата следующего шага', due: 'шаг сегодня', over: 'шаг просрочен', sumWon: 'Заработано', sumOpen: 'В работе', all: 'Все', find: 'Поиск по имени, контакту или тексту', note: 'Заметка: о чём договорились, следующий шаг', noteSave: 'Сохранить заметку', call: 'Позвонить', mail: 'Письмо', wa: 'WhatsApp', tg: 'Telegram', csv: 'Скачать CSV', conv: 'Стали клиентами', noMatch: 'По этому фильтру ничего нет.', stale: 'ждёт больше суток' },
-  ua: { amt: 'Сума угоди', nextS: 'Дата наступного кроку', due: 'крок сьогодні', over: 'крок прострочено', sumWon: 'Зароблено', sumOpen: 'У роботі', all: 'Усі', find: 'Пошук за імʼям, контактом або текстом', note: 'Нотатка: про що домовились, наступний крок', noteSave: 'Зберегти нотатку', call: 'Подзвонити', mail: 'Лист', wa: 'WhatsApp', tg: 'Telegram', csv: 'Завантажити CSV', conv: 'Стали клієнтами', noMatch: 'За цим фільтром нічого немає.', stale: 'чекає понад добу' },
+  en: { board: 'Board', list: 'List', today: 'Today', todayNone: 'Nothing due today — good.', open: 'Open', hist: 'History', comment: 'Add a comment…', add: 'Add', aiNext: '✦ Next step and a message from AI', aiWait: 'Thinking…', copyMsg: 'Copy the message', drag: 'Drag cards between columns', amt: 'Deal amount', nextS: 'Next step date', due: 'next step today', over: 'next step overdue', sumWon: 'Won', sumOpen: 'In progress', all: 'All', find: 'Search by name, contact or text', note: 'Note: what was agreed, next step', noteSave: 'Save note', call: 'Call', mail: 'Email', wa: 'WhatsApp', tg: 'Telegram', csv: 'Download CSV', conv: 'Became clients', noMatch: 'Nothing found for this filter.', stale: 'waiting over a day' },
+  ru: { board: 'Доска', list: 'Список', today: 'Сегодня', todayNone: 'На сегодня ничего не горит — отлично.', open: 'Открыть', hist: 'История', comment: 'Добавить комментарий…', add: 'Добавить', aiNext: '✦ Следующий шаг и сообщение от ИИ', aiWait: 'Думаю…', copyMsg: 'Скопировать сообщение', drag: 'Перетаскивайте карточки между колонками', amt: 'Сумма сделки', nextS: 'Дата следующего шага', due: 'шаг сегодня', over: 'шаг просрочен', sumWon: 'Заработано', sumOpen: 'В работе', all: 'Все', find: 'Поиск по имени, контакту или тексту', note: 'Заметка: о чём договорились, следующий шаг', noteSave: 'Сохранить заметку', call: 'Позвонить', mail: 'Письмо', wa: 'WhatsApp', tg: 'Telegram', csv: 'Скачать CSV', conv: 'Стали клиентами', noMatch: 'По этому фильтру ничего нет.', stale: 'ждёт больше суток' },
+  ua: { board: 'Дошка', list: 'Список', today: 'Сьогодні', todayNone: 'На сьогодні нічого не горить — чудово.', open: 'Відкрити', hist: 'Історія', comment: 'Додати коментар…', add: 'Додати', aiNext: '✦ Наступний крок і повідомлення від ШІ', aiWait: 'Думаю…', copyMsg: 'Скопіювати повідомлення', drag: 'Перетягуйте картки між колонками', amt: 'Сума угоди', nextS: 'Дата наступного кроку', due: 'крок сьогодні', over: 'крок прострочено', sumWon: 'Зароблено', sumOpen: 'У роботі', all: 'Усі', find: 'Пошук за імʼям, контактом або текстом', note: 'Нотатка: про що домовились, наступний крок', noteSave: 'Зберегти нотатку', call: 'Подзвонити', mail: 'Лист', wa: 'WhatsApp', tg: 'Telegram', csv: 'Завантажити CSV', conv: 'Стали клієнтами', noMatch: 'За цим фільтром нічого немає.', stale: 'чекає понад добу' },
 }[lang];
 ---
 
@@ -89,12 +89,29 @@ const X = {
     <div class="card" data-leads-box>
       <div class="lh"><h3>{T.leads}</h3><button type="button" class="ghost" data-csv>{X.csv}</button></div>
       <div class="funnel" data-funnel></div>
+      <div class="today" data-today></div>
+      <div class="vsw" data-vsw><button type="button" data-v="board" aria-pressed="true"></button><button type="button" data-v="list" aria-pressed="false"></button><small class="mut" data-drag></small></div>
+      <div class="kb" data-kb></div>
       <input class="lfind" type="search" maxlength="80" data-lfind placeholder={X.find} />
       <div data-leads></div>
       <details><summary>{T.addLead}</summary>
         <form class="row" data-lead-add><input name="name" maxlength="80" placeholder={T.lName} /><input name="contact" maxlength="120" placeholder={T.lContact} /><input name="message" maxlength="500" placeholder={T.lMsg} /><button class="cta">{T.add}</button></form>
       </details>
     </div>
+
+    <dialog class="ld" data-ld>
+      <header><b data-ld-h></b><button type="button" data-ld-x>×</button></header>
+      <div class="ld-b">
+        <p class="mut small" data-ld-meta></p>
+        <p data-ld-msg></p>
+        <button type="button" class="cta" data-ld-ai></button>
+        <pre class="ld-ai" data-ld-out hidden></pre>
+        <button type="button" class="ghost" data-ld-copy hidden></button>
+        <h4 data-ld-hh></h4>
+        <form class="row" data-ld-form><input name="t" maxlength="1000" /><button class="ghost"></button></form>
+        <ul class="ld-h" data-ld-list></ul>
+      </div>
+    </dialog>
 
     <form class="card ai" data-ai>
       <h3><span class="ai-dot" aria-hidden="true"></span>{T.ai}</h3>
@@ -145,6 +162,7 @@ const X = {
     return out.length ? `<span class="reach">${out.join('')}</span>` : '';
   };
   function renderLeads() {
+    queueMicrotask(renderBoard);
     const n = (k: string) => leads.filter((l) => l.status === k).length;
     const won = n('won'), done = won + n('lost');
     q('[data-funnel]').innerHTML = [['', T.all, leads.length], ...Object.entries(T.st).map(([k, v]) => [k, v, n(k)])]
@@ -172,6 +190,68 @@ const X = {
       const amount = av && Number(av) > 0 ? Number(av) : null;
       if ((await send(`/api/biz/${cur}/leads/${id}`, { note, amount, next })).ok) { const l = leads.find((x) => x.id === id); if (l) Object.assign(l, { note, amount, next: next || null }); renderLeads(); }
     }));
+  }
+
+  /* ---------- Board (kanban), today, the lead card ---------- */
+  let view = (() => { try { return localStorage.getItem('vx_biz_view') || 'board'; } catch { return 'board'; } })();
+  function renderBoard() {
+    const kb = q('[data-kb]'), sw = q('[data-vsw]');
+    sw.hidden = !leads.length;
+    sw.querySelectorAll<HTMLButtonElement>('[data-v]').forEach((b) => { b.textContent = T[b.dataset.v!]; b.setAttribute('aria-pressed', String(b.dataset.v === view)); b.onclick = () => { view = b.dataset.v!; try { localStorage.setItem('vx_biz_view', view); } catch {} renderLeads(); }; });
+    q('[data-drag]').textContent = view === 'board' ? T.drag : '';
+    const board = view === 'board' && leads.length > 0;
+    kb.hidden = !board; q('[data-leads]').hidden = board;
+    // Today: next steps due today or late
+    const today = new Date().toLocaleDateString('sv');
+    const hot = leads.filter((l) => l.next && l.next <= today && l.status !== 'won' && l.status !== 'lost');
+    q('[data-today]').innerHTML = leads.length ? `<b>☀ ${esc(T.today)}</b>` + (hot.length ? hot.map((l) => `<button type="button" data-open="${l.id}" class="${l.next < today ? 'late' : ''}">${esc(l.name || l.contact || '#' + l.id)}</button>`).join('') : `<span class="mut small">${esc(T.todayNone)}</span>`) : '';
+    if (board) {
+      const t = term.toLowerCase();
+      kb.innerHTML = Object.entries(T.st as R).map(([k, v]) => {
+        const col = leads.filter((l) => l.status === k && (!t || `${l.name} ${l.contact} ${l.message} ${l.note || ''}`.toLowerCase().includes(t)));
+        const sum = col.reduce((a, l) => a + (l.amount || 0), 0);
+        return `<div class="kc" data-col="${k}"><h5>${esc(v)} <span>${col.length}</span>${sum ? `<em>${fmt(sum)}</em>` : ''}</h5>${col.map((l) => `<article draggable="true" data-card="${l.id}"><b>${esc(l.name || l.contact || '#' + l.id)}</b><small>${esc((l.message || '').slice(0, 80))}</small><span>${esc(String(l.at).slice(5, 10))} · ${esc(l.source || '')}${l.amount ? ` · ${fmt(l.amount)}` : ''}${l.next ? ` · ⏰ ${esc(l.next)}` : ''}</span></article>`).join('')}</div>`;
+      }).join('');
+      kb.querySelectorAll<HTMLElement>('[data-card]').forEach((c) => {
+        c.ondragstart = (e) => e.dataTransfer?.setData('text/lead', c.dataset.card!);
+        c.onclick = () => openLead(Number(c.dataset.card));
+      });
+      kb.querySelectorAll<HTMLElement>('[data-col]').forEach((col) => {
+        col.ondragover = (e) => { e.preventDefault(); col.classList.add('over'); };
+        col.ondragleave = () => col.classList.remove('over');
+        col.ondrop = (e) => {
+          e.preventDefault(); col.classList.remove('over');
+          const id = Number(e.dataTransfer?.getData('text/lead')), l = leads.find((x) => x.id === id), st = col.dataset.col!;
+          if (!l || l.status === st) return;
+          l.status = st; send(`/api/biz/${cur}/leads/${id}`, { status: st }); renderLeads();
+        };
+      });
+    }
+    root.querySelectorAll<HTMLButtonElement>('[data-open]').forEach((b) => (b.onclick = () => openLead(Number(b.dataset.open))));
+  }
+  async function openLead(id: number) {
+    const l = leads.find((x) => x.id === id); if (!l) return;
+    const d = q<HTMLDialogElement>('[data-ld]');
+    q('[data-ld-h]').textContent = l.name || l.contact || '#' + id;
+    q('[data-ld-meta]').innerHTML = `${esc(String(l.at).slice(0, 16))} · ${esc(l.source || '')} · ${esc(T.st[l.status] || l.status)}${l.amount ? ' · ' + fmt(l.amount) : ''}${l.contact ? ' · ' + esc(l.contact) + ' ' + reach(l.contact) : ''}`;
+    q('[data-ld-msg]').textContent = l.message || '';
+    const ai = q<HTMLButtonElement>('[data-ld-ai]'), out = q('[data-ld-out]'), cp = q<HTMLButtonElement>('[data-ld-copy]');
+    ai.textContent = T.aiNext; out.hidden = true; cp.hidden = true; cp.textContent = T.copyMsg;
+    ai.onclick = async () => {
+      ai.disabled = true; ai.textContent = T.aiWait;
+      const r = await send(`/api/biz/${cur}/leads/${id}/next`, { lang: T.lang }).then((x) => x.json()).catch(() => null);
+      ai.disabled = false; ai.textContent = T.aiNext;
+      if (r?.text) { out.textContent = r.text; out.hidden = false; const m = r.text.split(/MESSAGE:|ПОВІДОМЛЕННЯ:|СООБЩЕНИЕ:/i)[1]; if (m) { cp.hidden = false; cp.onclick = () => navigator.clipboard.writeText(m.trim()).catch(() => {}); } }
+    };
+    q('[data-ld-hh]').textContent = T.hist;
+    const f = q<HTMLFormElement>('[data-ld-form]'), inp = f.querySelector('input')!;
+    inp.placeholder = T.comment; f.querySelector('button')!.textContent = T.add;
+    const draw = (items: R[]) => { q('[data-ld-list]').innerHTML = items.map((x) => `<li><small class="mut">${esc(String(x.at).slice(5, 16))} · ${esc(x.who || '')}</small><span>${esc(x.text)}</span></li>`).join(''); };
+    f.onsubmit = async (e) => { e.preventDefault(); const t = inp.value.trim(); if (!t) return; inp.value = ''; const r = await send(`/api/biz/${cur}/leads/${id}/activity`, { text: t }).then((x) => x.json()).catch(() => null); if (r?.ok) draw(r.items); };
+    draw([]);
+    fetch(`/api/biz/${cur}/leads/${id}/activity`).then((x) => x.json()).then((r) => r?.ok && draw(r.items)).catch(() => {});
+    q('[data-ld-x]').onclick = () => d.close();
+    d.showModal();
   }
 
   let booting = false;
@@ -383,4 +463,25 @@ const X = {
   @keyframes bizUp { from { opacity: 0; transform: translateY(14px); } }
   @media (max-width: 900px) { .biz .kpi, .biz .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .biz .grid4 { grid-template-columns: 1fr; } .biz .new { flex-direction: column; align-items: flex-start; } .biz .new img { width: 80px; } .biz .kpi { gap: 8px; } }
+  .biz .today { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 10px 0; }
+  .biz .today button { border: 1px solid var(--line); background: var(--surf2); color: var(--ink); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .biz .today button.late { border-color: #ef4444; color: #ef4444; }
+  .biz .vsw { display: flex; gap: 6px; align-items: center; margin: 6px 0 10px; }
+  .biz .vsw button { border: 1px solid var(--line); background: none; color: var(--ink); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13.5px; cursor: pointer; }
+  .biz .vsw button[aria-pressed='true'] { background: var(--ink); color: var(--bg); }
+  .biz .kb { display: grid; grid-template-columns: repeat(4, minmax(200px, 1fr)); gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+  .biz .kc { background: var(--surf2); border-radius: 14px; padding: 10px; min-height: 160px; display: grid; gap: 8px; align-content: start; transition: outline .1s; }
+  .biz .kc.over { outline: 2px dashed var(--accText); }
+  .biz .kc h5 { margin: 0 0 2px; font-size: 13px; display: flex; gap: 6px; align-items: center; }
+  .biz .kc h5 span { color: var(--mut); } .biz .kc h5 em { margin-left: auto; font-style: normal; color: #16a34a; }
+  .biz .kc article { background: var(--surf); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: grid; gap: 4px; cursor: grab; }
+  .biz .kc article b { font-size: 14px; } .biz .kc article small { color: var(--mut); font-size: 12.5px; } .biz .kc article span { font-size: 12px; color: var(--mut); }
+  .biz .ld { border: 1px solid var(--line); border-radius: 18px; background: var(--surf); color: var(--ink); padding: 0; width: min(560px, calc(100vw - 24px)); }
+  .biz .ld::backdrop { background: rgba(0,0,0,.5); }
+  .biz .ld header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  .biz .ld header button { border: 0; background: none; font-size: 22px; color: var(--ink); cursor: pointer; }
+  .biz .ld-b { padding: 16px 18px; display: grid; gap: 10px; }
+  .biz .ld-ai { white-space: pre-wrap; background: var(--surf2); border-radius: 12px; padding: 12px; font: inherit; font-size: 14px; margin: 0; }
+  .biz .ld-h { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; max-height: 240px; overflow-y: auto; }
+  .biz .ld-h li { display: grid; gap: 2px; padding: 8px 10px; border-radius: 10px; background: var(--surf2); font-size: 14px; }
 </style>

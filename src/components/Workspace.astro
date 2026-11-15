@@ -1142,8 +1142,8 @@ const ico = {
       if (from) who.append(el('small', 'from', '↳ ' + (from.title || from.slug)));
       r.append(who, s); box.append(r);
     }
-    const full = btn('sec', T.crmFullBtn + ' ↓', () => { full.remove(); bizbox.hidden = false; cvBody.append(bizbox); window.dispatchEvent(new CustomEvent('vx:signed-in')); bizbox.scrollIntoView({ behavior: 'smooth' }); });
-    box.append(full);
+    // 15.11: the full CRM (board, cards, history, AI) opens at once — no extra button.
+    queueMicrotask(() => { bizbox.hidden = false; cvBody.append(bizbox); window.dispatchEvent(new CustomEvent('vx:signed-in')); });
     openCv(T.crmH, box);
   }
 
