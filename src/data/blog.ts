@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'track-leads-small-business-simple-crm',
+    date: '2026-11-15',
+    t: {
+      en: {
+        title: 'How a small business stops losing leads: a simple CRM in 6 steps',
+        desc: 'Why requests get lost in messengers and notebooks, and a simple way to track every lead: one list, stages, a next step with a date, reminders and a weekly review.',
+        body: [
+          ['Where leads get lost', ['A request comes in Instagram, another by phone, a third on the site form. Someone says “I will think about it” — and a week later nobody remembers who it was. Most small businesses lose customers not on price, but because nobody wrote back on time.']],
+          ['1. Keep every request in one place', ['Whatever the channel, copy each request into one list: name, how to contact, what they want, where they came from. One list beats five apps half filled.']],
+          ['2. Use 4–5 simple stages', ['For example: New → Talking → Offer sent → Won / Lost. Do not invent twenty stages; you should understand at a glance where each person is.']],
+          ['3. Every lead has a next step with a date', ['Not “follow up sometime”, but “call on Thursday” or “send the price tomorrow at 10”. A lead without a next step is a lead you will forget.']],
+          ['4. Reply fast to new requests', ['The first answer within an hour often decides the deal. If you cannot answer in full, send a short “Got it, I will send the price today” — people wait more calmly when they know they were heard.']],
+          ['5. Write down the amount and the reason for “no”', ['Put the deal amount on each lead and, if you lost it, one word why: price, timing, chose another. After a month you see what you really earn and what to fix.']],
+          ['6. A 10-minute review once a week', ['Look at overdue steps, stuck offers and where new leads came from. Close what is dead, plan the rest — and the list stays clean and useful.']],
+          ['How Vaxo helps', ['In Workspace, the CRM for your business is already there: a board with stages you drag cards between, a deal amount and a next-step date on every lead, a morning email with today’s and overdue steps, and import from Excel or another CRM. Vax can also draft the next message to the client. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как малому бизнесу перестать терять заявки: простая CRM за 6 шагов',
+        desc: 'Почему заявки теряются в мессенджерах и блокнотах, и простой способ вести каждую: один список, этапы, следующий шаг с датой, напоминания и обзор раз в неделю.',
+        body: [
+          ['Где теряются заявки', ['Одна заявка пришла в Instagram, другая — звонком, третья — с формы на сайте. Человек сказал «я подумаю» — и через неделю никто не помнит, кто это был. Малый бизнес чаще теряет клиентов не из-за цены, а потому что вовремя не ответил.']],
+          ['1. Все заявки — в одном месте', ['Откуда бы ни пришла заявка, переносите её в один список: имя, как связаться, что хочет, откуда пришёл. Один список лучше пяти приложений, заполненных наполовину.']],
+          ['2. 4–5 простых этапов', ['Например: Новая → Общаемся → Отправили предложение → Купил / Отказ. Не придумывайте двадцать этапов: с одного взгляда должно быть видно, где каждый человек.']],
+          ['3. У каждой заявки — следующий шаг с датой', ['Не «перезвонить как-нибудь», а «позвонить в четверг» или «завтра в 10 отправить цену». Заявка без следующего шага — заявка, о которой вы забудете.']],
+          ['4. Быстро отвечайте на новые заявки', ['Первый ответ в течение часа часто решает сделку. Если сразу не можете ответить полностью, напишите коротко: «Получили, сегодня пришлю цену» — люди спокойнее ждут, когда знают, что их услышали.']],
+          ['5. Записывайте сумму и причину отказа', ['У каждой заявки — сумма сделки, а если не купил — одно слово почему: цена, сроки, выбрал другого. Через месяц видно, сколько вы реально зарабатываете и что исправить.']],
+          ['6. Обзор на 10 минут раз в неделю', ['Посмотрите просроченные шаги, зависшие предложения и откуда пришли новые заявки. Закройте то, что умерло, запланируйте остальное — и список остаётся чистым и полезным.']],
+          ['Чем помогает Vaxo', ['В Workspace CRM для вашего бизнеса уже есть: доска с этапами, по которой карточки перетаскиваются, сумма сделки и дата следующего шага у каждой заявки, утреннее письмо с шагами на сегодня и просроченными, загрузка из Excel или другой CRM. Vax ещё и подготовит следующее сообщение клиенту. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як малому бізнесу перестати втрачати заявки: проста CRM за 6 кроків',
+        desc: 'Чому заявки губляться в месенджерах і блокнотах, і простий спосіб вести кожну: один список, етапи, наступний крок із датою, нагадування й огляд раз на тиждень.',
+        body: [
+          ['Де губляться заявки', ['Одна заявка прийшла в Instagram, друга — дзвінком, третя — з форми на сайті. Людина сказала «я подумаю» — і за тиждень ніхто не пам’ятає, хто це був. Малий бізнес частіше втрачає клієнтів не через ціну, а тому що вчасно не відповів.']],
+          ['1. Усі заявки — в одному місці', ['Звідки б не прийшла заявка, переносьте її в один список: ім’я, як зв’язатися, що хоче, звідки прийшов. Один список кращий за п’ять застосунків, заповнених наполовину.']],
+          ['2. 4–5 простих етапів', ['Наприклад: Нова → Спілкуємося → Надіслали пропозицію → Купив / Відмова. Не вигадуйте двадцять етапів: з одного погляду має бути видно, де кожна людина.']],
+          ['3. У кожної заявки — наступний крок із датою', ['Не «передзвонити колись», а «зателефонувати в четвер» чи «завтра о 10 надіслати ціну». Заявка без наступного кроку — заявка, про яку ви забудете.']],
+          ['4. Швидко відповідайте на нові заявки', ['Перша відповідь протягом години часто вирішує угоду. Якщо одразу не можете відповісти повністю, напишіть коротко: «Отримали, сьогодні надішлю ціну» — люди спокійніше чекають, коли знають, що їх почули.']],
+          ['5. Записуйте суму й причину відмови', ['У кожної заявки — сума угоди, а якщо не купив — одне слово чому: ціна, терміни, обрав іншого. За місяць видно, скільки ви реально заробляєте і що виправити.']],
+          ['6. Огляд на 10 хвилин раз на тиждень', ['Перегляньте прострочені кроки, пропозиції, що зависли, і звідки прийшли нові заявки. Закрийте те, що померло, заплануйте решту — і список лишається чистим і корисним.']],
+          ['Чим допомагає Vaxo', ['У Workspace CRM для вашого бізнесу вже є: дошка з етапами, якою картки перетягуються, сума угоди й дата наступного кроку в кожної заявки, ранковий лист із кроками на сьогодні та простроченими, завантаження з Excel чи іншої CRM. Vax ще й підготує наступне повідомлення клієнту. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'first-customers-online-small-business',
     date: '2026-11-14',
     t: {
