@@ -27,7 +27,7 @@ const ld = [
 ];
 ---
 
-<Base lang={lang} title={P.title.length > 58 ? P.title : `${P.title} — Vaxo`} description={P.desc} path={alts[lang]} alts={alts}>
+<Base lang={lang} title={(() => { const t = P.seo ?? P.title; return t.length > 52 ? t : `${t} — Vaxo`; })()} description={P.desc} path={alts[lang]} alts={alts}>
   {ld.map((x) => <script type="application/ld+json" set:html={JSON.stringify(x)} />)}
   <Header lang={lang} t={t} home={home} alts={alts} />
   <main class="article">
