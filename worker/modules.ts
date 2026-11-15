@@ -115,6 +115,28 @@ export async function addRef(db: DB, clientId: number, name: string, bizId?: num
   return true;
 }
 
+/** Partner payouts kept inside biz_refs.name: "name" + "\u2063" + JSON {p}. Plain old names stay plain (no schema change). */
+const REF_MARK = '\u2063';
+export function unpackRef(raw: string | null): { name: string; paid: number } {
+  const s = raw ?? '', i = s.indexOf(REF_MARK);
+  if (i < 0) return { name: s, paid: 0 };
+  try { const o = JSON.parse(s.slice(i + 1)); return { name: s.slice(0, i), paid: typeof o.p === 'number' && o.p > 0 ? o.p : 0 }; } catch { return { name: s.slice(0, i), paid: 0 }; }
+}
+export function packRef(name: string, paid: number): string {
+  const p = Math.min(Math.max(0, Math.round(paid * 100) / 100), 1e9);
+  return p > 0 ? name + REF_MARK + JSON.stringify({ p }) : name;
+}
+/** The owner marks money paid to one partner (a negative amount corrects a mistake). Returns false if the link is not theirs. */
+export async function markRefPaid(db: DB, clientId: number, code: string, add: number, bizId?: number | null): Promise<boolean> {
+  const b = await pickBiz(db, clientId, bizId);
+  if (!b || !code || !Number.isFinite(add) || add === 0 || Math.abs(add) > 1e7) return false;
+  const r = await db.prepare('SELECT id, name FROM biz_refs WHERE biz_id = ? AND code = ?').bind(b.id, code).first<{ id: number; name: string }>();
+  if (!r) return false;
+  const cur = unpackRef(r.name);
+  await db.prepare('UPDATE biz_refs SET name = ? WHERE id = ?').bind(packRef(cur.name, cur.paid + add), r.id).run();
+  return true;
+}
+
 export async function deployModule(db: DB, ai: AiBinding | undefined, clientId: number, kind: string, name: string, lang: string, memory: { niche: string; goals: string; project: string }, access: boolean, bizId?: number | null) {
   const w = WORDS[lang] ?? WORDS.en;
   const biz = await ensureBiz(db, clientId, name || memory.project.slice(0, 60) || memory.niche.slice(0, 60), lang, bizId);
@@ -248,7 +270,7 @@ export async function modulesState(db: DB, clientId: number, origin: string, acc
     pages,
     crm: access ? { url, total, leads } : null,
     requests: total,
-    partner: refs.length ? { links: refs.map((r) => ({ ...r, url: `${url}?utm_source=ref_${r.code}`, page: `${origin}/rp/${r.code}` })) } : null,
+    partner: refs.length ? { links: refs.map((r) => ({ ...r, ...unpackRef(r.name), url: `${url}?utm_source=ref_${r.code}`, page: `${origin}/rp/${r.code}` })) } : null,
     site: biz.kind === 'site' ? { url, slug: biz.slug, ...(JSON.parse(biz.data || '{}') as Site) } : null,
   };
 }
@@ -289,13 +311,14 @@ export async function servePage(db: DB, slug: string, manifest: boolean): Promis
 
 // A client's partner sees their own results by a private link: no login, no names or contacts of leads — only counts and dates.
 const PW: Record<string, Record<string, string>> = {
-  en: { h: 'Your partner page', for: 'Partner of', link: 'Your personal link', copy: 'Copy', copied: 'Copied', v: 'Visits', l: 'Requests', w: 'Deals', lv: 'Level', lvs: 'Start|Silver|Gold', next: 'To the next level', recent: 'Latest requests from your link', none: 'No requests yet. Share your link with friends and clients — every request is counted for you.', st: 'New|In progress|Deal|Closed', how: 'Rewards are agreed with the owner of the business. This page updates by itself.', by: 'Runs on Vaxo' },
-  ru: { h: 'Ваша страница партнёра', for: 'Партнёр', link: 'Ваша личная ссылка', copy: 'Скопировать', copied: 'Скопировано', v: 'Переходы', l: 'Заявки', w: 'Сделки', lv: 'Уровень', lvs: 'Старт|Серебро|Золото', next: 'До следующего уровня', recent: 'Последние заявки по вашей ссылке', none: 'Заявок пока нет. Делитесь ссылкой с друзьями и клиентами — каждая заявка засчитывается вам.', st: 'Новая|В работе|Сделка|Закрыта', how: 'Награду вы обсуждаете с владельцем бизнеса. Страница обновляется сама.', by: 'Работает на Vaxo' },
-  ua: { h: 'Ваша сторінка партнера', for: 'Партнер', link: 'Ваше особисте посилання', copy: 'Скопіювати', copied: 'Скопійовано', v: 'Переходи', l: 'Заявки', w: 'Угоди', lv: 'Рівень', lvs: 'Старт|Срібло|Золото', next: 'До наступного рівня', recent: 'Останні заявки за вашим посиланням', none: 'Заявок поки немає. Діліться посиланням з друзями та клієнтами — кожна заявка зараховується вам.', st: 'Нова|В роботі|Угода|Закрита', how: 'Винагороду ви обговорюєте з власником бізнесу. Сторінка оновлюється сама.', by: 'Працює на Vaxo' },
+  en: { h: 'Your partner page', for: 'Partner of', link: 'Your personal link', copy: 'Copy', copied: 'Copied', v: 'Visits', l: 'Requests', w: 'Deals', lv: 'Level', lvs: 'Start|Silver|Gold', next: 'To the next level', recent: 'Latest requests from your link', none: 'No requests yet. Share your link with friends and clients — every request is counted for you.', st: 'New|In progress|Deal|Closed', how: 'Rewards are agreed with the owner of the business. This page updates by itself.', by: 'Runs on Vaxo', paid: 'Paid to you' },
+  ru: { h: 'Ваша страница партнёра', for: 'Партнёр', link: 'Ваша личная ссылка', copy: 'Скопировать', copied: 'Скопировано', v: 'Переходы', l: 'Заявки', w: 'Сделки', lv: 'Уровень', lvs: 'Старт|Серебро|Золото', next: 'До следующего уровня', recent: 'Последние заявки по вашей ссылке', none: 'Заявок пока нет. Делитесь ссылкой с друзьями и клиентами — каждая заявка засчитывается вам.', st: 'Новая|В работе|Сделка|Закрыта', how: 'Награду вы обсуждаете с владельцем бизнеса. Страница обновляется сама.', by: 'Работает на Vaxo', paid: 'Вам выплачено' },
+  ua: { h: 'Ваша сторінка партнера', for: 'Партнер', link: 'Ваше особисте посилання', copy: 'Скопіювати', copied: 'Скопійовано', v: 'Переходи', l: 'Заявки', w: 'Угоди', lv: 'Рівень', lvs: 'Старт|Срібло|Золото', next: 'До наступного рівня', recent: 'Останні заявки за вашим посиланням', none: 'Заявок поки немає. Діліться посиланням з друзями та клієнтами — кожна заявка зараховується вам.', st: 'Нова|В роботі|Угода|Закрита', how: 'Винагороду ви обговорюєте з власником бізнесу. Сторінка оновлюється сама.', by: 'Працює на Vaxo', paid: 'Вам виплачено' },
 };
 export async function servePartner(db: DB, code: string, origin: string): Promise<Response> {
   const r = await db.prepare(`SELECT r.name, r.code, b.id, b.name AS biz, p.slug, p.data FROM biz_refs r JOIN biz b ON b.id = r.biz_id LEFT JOIN biz_pages p ON p.biz_id = b.id WHERE r.code = ?`).bind(code).first<{ name: string; code: string; id: number; biz: string; slug: string | null; data: string | null }>().catch(() => null);
   if (!r?.slug) return new Response('Not found', { status: 404 });
+  const rp = unpackRef(r.name); r.name = rp.name;
   let lang = 'en'; try { lang = (JSON.parse(r.data || '{}') as Site).lang || 'en'; } catch {}
   const t = PW[lang] ?? PW.en, src = 'ref_' + r.code;
   const c = await db.prepare(`SELECT
@@ -314,7 +337,7 @@ h1{font-size:26px;margin:0 0 4px}.mut{color:var(--mut)}.card{background:var(--ca
 button{min-height:44px;padding:0 16px;border:0;border-radius:10px;background:var(--acc);color:#fff;font:inherit;font-weight:600;cursor:pointer}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}.stats b{display:block;font-size:28px}.bar{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:var(--acc)}
 ul{list-style:none;margin:0;padding:0}li{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line)}li:first-child{border-top:0}small{font-size:13px}a{color:var(--acc)}</style></head><body><main>
-<p class="mut">${esc(t.for)} · <b>${esc(r.biz)}</b></p><h1>${esc(t.h)}</h1><p class="mut">${esc(r.name)}</p>
+<p class="mut">${esc(t.for)} · <b>${esc(r.biz)}</b></p><h1>${esc(t.h)}</h1><p class="mut">${esc(r.name)}</p>${rp.paid ? `<p><b>${esc(t.paid)}: $${rp.paid}</b></p>` : ''}
 <div class="card"><p style="margin:0 0 8px"><b>${esc(t.link)}</b></p><div class="row"><input readonly value="${esc(url)}" aria-label="${esc(t.link)}"><button id="cp">${esc(t.copy)}</button></div></div>
 <div class="card stats"><div><b>${c.v}</b><small class="mut">${esc(t.v)}</small></div><div><b>${c.l}</b><small class="mut">${esc(t.l)}</small></div><div><b>${c.w}</b><small class="mut">${esc(t.w)}</small></div></div>
 <div class="card"><b>${esc(t.lv)}: ${esc(lvs[lv])}</b>${need ? `<p class="mut" style="margin:4px 0 0">${esc(t.next)}: ${need} · ${esc(t.w).toLowerCase()}</p><div class="bar"><i style="width:${Math.round((c.w / (lv === 0 ? 3 : 10)) * 100)}%"></i></div>` : ''}</div>

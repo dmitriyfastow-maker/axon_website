@@ -10,7 +10,7 @@ import { describeImage, filesForAi, readText } from './files.js';
 import { feedUrl, upcoming } from './booking.js';
 import { drawImage, heroImage, sitePhotos, WANTS_IMAGE } from './images.js';
 import type { Notify } from './deals.js';
-import { addRef, cleanSite, deployModule, liveSite, moduleAccess, modulesState, saveSite, sitePreview, slugOf, startTrial, updateLiveSite, writeSite, type Site } from './modules.js';
+import { addRef, markRefPaid, cleanSite, deployModule, liveSite, moduleAccess, modulesState, saveSite, sitePreview, slugOf, startTrial, updateLiveSite, writeSite, type Site } from './modules.js';
 import { handleDomain, type Cf } from './domains.js';
 import { agentStep } from './agent.js';
 import type { DB } from './partner.js';
@@ -644,6 +644,10 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
     if (path === 'module/ref' && m === 'POST') {
       const access = await moduleAccess(db, me.id);
       return out((await addRef(db, me.id, cut(b.name, 80), bz)) ? 200 : 400, { ok: true, modules: await modulesState(db, me.id, url.origin, access, bz) });
+    }
+    if (path === 'module/ref/paid' && m === 'POST') {
+      const access = await moduleAccess(db, me.id);
+      return out((await markRefPaid(db, me.id, cut(b.code, 16), Number(b.amount), bz)) ? 200 : 400, { ok: true, modules: await modulesState(db, me.id, url.origin, access, bz) });
     }
     if (path === 'order' && m === 'POST') {
       // "Send to Vaxo production": the brief, the chat and every file attached in it reach the team as one request.
