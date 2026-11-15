@@ -82,7 +82,10 @@ export async function wsLimits(db: DB, clientId: number, plan: string): Promise<
   const extra = (await db.prepare(`SELECT COALESCE(SUM(i.amount), 0) AS n FROM invoices i JOIN leads l ON l.id = i.lead_id WHERE l.client_id = ? AND i.status = 'paid' AND i.currency = 'USD' AND i.description LIKE ?`).bind(clientId, `${TOPUP_DESC}, % for ${start.toISOString().slice(0, 7)}`).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const lv = Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('game_lv_' + clientId).first<{ value: string }>().catch(() => null))?.value) || 1;
   const mult = Math.max(paidMonths >= 3 ? 1.2 : 1, plan === 'start' || paidMonths >= 2 ? 1 + (GAME_BONUS[lv] ?? 0) / 100 : 1);
-  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * mult + extra * TOPUP_RATE);
+  // Cashback (Decision 52 v2): 5% of every renewal paid this month (not the first payment) back as Vax bonuses = more work.
+  const renew = plan === 'start' || paidMonths < 2 ? 0 : (await db.prepare(`SELECT COALESCE(SUM(i.amount), 0) AS n FROM invoices i JOIN leads l ON l.id = i.lead_id WHERE l.client_id = ? AND i.status = 'paid' AND i.currency = 'USD' AND i.description LIKE 'Vaxo %subscription%' AND i.at >= ? AND i.id > (SELECT MIN(i2.id) FROM invoices i2 JOIN leads l2 ON l2.id = i2.lead_id WHERE l2.client_id = ? AND i2.status = 'paid' AND i2.description LIKE 'Vaxo %subscription%')`).bind(clientId, start.toISOString().slice(0, 19).replace('T', ' '), clientId).first<{ n: number }>().catch(() => null))?.n ?? 0;
+  const cashback = renew * 0.935 * 0.05 * TOPUP_RATE;
+  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * mult + extra * TOPUP_RATE + cashback);
   const used = (await db.prepare('SELECT COALESCE(SUM(work), 0) AS n FROM ws_work WHERE client_id = ? AND at >= ?').bind(clientId, start.toISOString().slice(0, 19).replace('T', ' ')).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const m = { pct: Math.min(100, Math.round((used / cap) * 100)), reset: next.toISOString() };
   return { day: m, week: m, month: m, blocked: used >= cap ? 'month' : null, packs: plan === 'start' ? [] : TOPUP_PACKS };

@@ -13,6 +13,8 @@ export const RATES = {
   products: 50, // our digital products
   offers: 70, // share of the payout Vaxo receives from partner offers
   team: 10, // 10% of every sale made by the partner's direct team members (one level only), paid by Vaxo on top
+  viral: 10, // 10% of every payment of friends invited by the partner's own clients, for life (Decision 52 v2, Dmitry 15.11)
+  cashback: 5, // clients get 5% of each renewal back as extra work volume (Vax bonuses)
   holdDays: 14, // commission becomes payable after the refund window
 };
 

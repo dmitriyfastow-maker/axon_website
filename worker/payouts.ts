@@ -32,8 +32,11 @@ export async function createPayouts(db: DB, leadId: number) {
   // Buying through your own link earns nothing (partner terms).
   if (l.self_ref) { if (l.closer_id === l.referrer_id) l.closer_id = null; l.referrer_id = null; }
   // First link wins: if this person first came by a client's invite link, no partner commission (the client gets a free month instead).
+  let viral: number | null = null;
   if (l.referrer_id) { const f = await firstReferral(db, leadId); if (f && f.kind === 'client') l.referrer_id = null; }
+  if (!l.referrer_id) viral = await viralPartner(db, leadId);
   const rows: [number, string, number][] = [];
+  if (viral) rows.push([viral, 'viral', RATES.viral]);
   if (l.referrer_id && l.referrer_id === l.closer_id) rows.push([l.referrer_id, 'referral', RATES.fullCycle]);
   else if (l.referrer_id) rows.push([l.referrer_id, 'referral', RATES.agencyOwn]);
   if (l.closer_id && l.closer_id !== l.referrer_id) rows.push([l.closer_id, 'manager', RATES.agencyGiven]);
@@ -42,9 +45,7 @@ export async function createPayouts(db: DB, leadId: number) {
     const up = await db.prepare('SELECT parent_id FROM partners WHERE id = ?').bind(l.referrer_id).first<{ parent_id: number | null }>();
     if (up?.parent_id && up.parent_id !== l.referrer_id) rows.push([up.parent_id, 'team', RATES.team]);
   }
-  // A payment for 3, 6 or 12 months: the same whole commission, released in equal parts month by month as the client
-  // uses the service — no cash gap and no loss if a yearly client leaves early with a refund.
-  const months = Math.max(1, Math.min(12, Number(l.period) || 1));
+  const months = 1; // 15.11 (Dmitry): the whole commission becomes payable after the 14-day refund window, even for a year
   const net = Math.round(l.value_usd * NET * 100) / 100;
   for (const [pid, kind, rate] of rows) {
     const total = Math.round(net * rate) / 100;
@@ -108,6 +109,11 @@ export async function addRenewal(db: DB, leadId: number, amountUsd: number) {
   if (!l) return false;
   if (l.referrer_id) { const f = await firstReferral(db, leadId); if (f && f.kind === 'client') l.referrer_id = null; }
   const tag = Date.now().toString(36);
+  if (!l.referrer_id) {
+    const vp = await viralPartner(db, leadId);
+    if (vp) await db.prepare('INSERT INTO payouts (partner_id, lead_id, kind, rate, base_usd, amount_usd) VALUES (?, ?, ?, ?, ?, ?)')
+      .bind(vp, leadId, `renewal-viral:${tag}`, RATES.viral, Math.round(amountUsd * NET * 100) / 100, Math.round(amountUsd * NET * RATES.viral) / 100).run();
+  }
   const rows: [number, string][] = [];
   if (l.referrer_id) rows.push([l.referrer_id, `renewal-referral:${tag}`]);
   // Only an active manager keeps the lifetime share; a paused one loses it (the project moves to another manager).
@@ -127,4 +133,18 @@ export async function addRenewal(db: DB, leadId: number, amountUsd: number) {
     }
   }
   return true;
+}
+
+/** The partner behind a friend's invite: the friend came by a client's link, and that client was brought by a partner. */
+export async function viralPartner(db: DB, leadId: number): Promise<number | null> {
+  try {
+    const f = await firstReferral(db, leadId);
+    if (!f || f.kind !== 'client') return null;
+    const r = await db.prepare('SELECT referrer_client_id AS c FROM referrals WHERE id = ?').bind(f.id).first<{ c: number | null }>();
+    if (!r?.c) return null;
+    const p = await db.prepare(`SELECT COALESCE(
+        (SELECT r2.referrer_partner_id FROM referrals r2 JOIN leads d2 ON d2.id = r2.lead_id WHERE d2.client_id = ?1 AND r2.kind = 'partner' ORDER BY r2.id LIMIT 1),
+        (SELECT k.partner_id FROM leads d3 JOIN links k ON k.slug = d3.ref WHERE d3.client_id = ?1 AND d3.ref IS NOT NULL ORDER BY d3.id LIMIT 1)) AS pid`).bind(r.c).first<{ pid: number | null }>();
+    return p?.pid ?? null;
+  } catch { return null; }
 }
