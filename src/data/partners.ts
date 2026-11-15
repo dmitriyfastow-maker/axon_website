@@ -43,7 +43,7 @@ type Text = {
   aloneSub: string;
   alone: [string, string, string][]; // icon, title, text
   promoteH: string;
-  directions: { name: string; rate: string; price: string; what: string; points: string[] }[];
+  directions: { name: string; rate: string; price: string; what: string; points: string[]; cta?: [string, 'earn' | 'shop' | 'cab'] }[];
   calcH: string;
   calcSub: string;
   calcRows: CalcRow[];
@@ -108,6 +108,7 @@ const en: Text = {
       price: 'plans from $39/mo',
       what: 'Vax and our team do the work for anyone — from personal tasks to companies: sites, apps, AI, ads, content.',
       points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `Clients can join too and earn the same`],
+      cta: ['Count my income →', 'earn'],
     },
     {
       name: 'Our templates',
@@ -115,6 +116,7 @@ const en: Text = {
       price: '$9 – $67',
       what: 'Ready-made templates and guides for everyday and work tasks. A cheap, easy first purchase — great for content.',
       points: ['Half of every sale is yours', 'Bundle of all templates — $67', 'Instant download, no support needed from you'],
+      cta: ['See the templates →', 'shop'],
     },
     {
       name: 'Partner offers',
@@ -122,6 +124,7 @@ const en: Text = {
       price: 'coming soon',
       what: 'Offers from other companies, checked by us. You get most of what the company pays us.',
       points: [`${r.offers}% of the payout we receive`, 'Every offer shows its own rules', 'Same cabinet, same links'],
+      cta: ['Join and get notified →', 'cab'],
     },
   ],
   calcH: 'Count your income',
@@ -217,6 +220,7 @@ const ua: Text = {
       price: 'підписка від $39/міс',
       what: 'Vax і наша команда роблять роботу для будь-кого — від особистих справ до компаній: сайти, застосунки, ШІ, реклама, контент.',
       points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `Клієнти теж можуть приєднатися й заробляти так само`],
+      cta: ['Порахувати мій дохід →', 'earn'],
     },
     {
       name: 'Наші шаблони',
@@ -224,6 +228,7 @@ const ua: Text = {
       price: '$9 – $67',
       what: 'Готові шаблони та посібники для побутових і робочих задач. Дешева і легка перша покупка — ідеально для контенту.',
       points: ['Половина кожного продажу — ваша', 'Набір усіх шаблонів — $67', 'Миттєве завантаження, підтримка від вас не потрібна'],
+      cta: ['Подивитися шаблони →', 'shop'],
     },
     {
       name: 'Офери партнерів',
@@ -231,6 +236,7 @@ const ua: Text = {
       price: 'скоро',
       what: 'Пропозиції інших компаній, перевірені нами. Ви отримуєте більшу частину того, що компанія платить нам.',
       points: [`${r.offers}% від виплати, яку отримуємо ми`, 'У кожного офера свої правила', 'Той самий кабінет і посилання'],
+      cta: ['Приєднатися й дізнатися першим →', 'cab'],
     },
   ],
   calcH: 'Порахуйте свій дохід',
@@ -326,6 +332,7 @@ const ru: Text = {
       price: 'подписка от $39/мес',
       what: 'Vax и наша команда делают работу для любого — от личных дел до компаний: сайты, приложения, ИИ, реклама, контент.',
       points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `Клиенты тоже могут присоединиться и зарабатывать так же`],
+      cta: ['Посчитать мой доход →', 'earn'],
     },
     {
       name: 'Наши шаблоны',
@@ -333,6 +340,7 @@ const ru: Text = {
       price: '$9 – $67',
       what: 'Готовые шаблоны и руководства для бытовых и рабочих задач. Дешёвая и лёгкая первая покупка — идеально для контента.',
       points: ['Половина каждой продажи — ваша', 'Набор всех шаблонов — $67', 'Мгновенная загрузка, поддержка от вас не нужна'],
+      cta: ['Посмотреть шаблоны →', 'shop'],
     },
     {
       name: 'Офферы партнёров',
@@ -340,6 +348,7 @@ const ru: Text = {
       price: 'скоро',
       what: 'Предложения других компаний, проверенные нами. Вы получаете бо́льшую часть того, что компания платит нам.',
       points: [`${r.offers}% от выплаты, которую получаем мы`, 'У каждого оффера свои правила', 'Тот же кабинет и ссылки'],
+      cta: ['Присоединиться и узнать первым →', 'cab'],
     },
   ],
   calcH: 'Посчитайте свой доход',

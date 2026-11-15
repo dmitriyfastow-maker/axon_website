@@ -80,6 +80,7 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
               <div class="tag">{d.price}</div>
               <p>{d.what}</p>
               <ul>{d.points.map((x) => <li>{x}</li>)}</ul>
+              {d.cta && <a class="dir-go" href={d.cta[1] === 'earn' ? '#earn' : d.cta[1] === 'shop' ? `${lang === 'en' ? '' : '/' + lang}/shop/` : cab}>{d.cta[0]}</a>}
             </article>
           ))}
         </div>
@@ -341,6 +342,10 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
   .tag { font-family: var(--mono); font-size: 13px; color: var(--mut); margin-bottom: 10px; }
   .rate { font-size: clamp(44px, 5vw, 58px); font-weight: 600; letter-spacing: -0.03em; color: var(--accText); line-height: 1; margin-bottom: 14px; }
   .dir.main { border-color: var(--acc); }
+  .dir { display: flex; flex-direction: column; }
+  .dir ul { flex: 1; }
+  .dir-go { display: inline-block; margin-top: 14px; padding: 10px 0; font-weight: 600; color: var(--acc); text-decoration: none; }
+  .dir-go:hover { text-decoration: underline; }
 
   /* calculator */
   .calc { display: grid; grid-template-columns: 1.35fr 1fr; border-radius: 24px; overflow: hidden; border: 1px solid var(--line); }
