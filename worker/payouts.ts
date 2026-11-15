@@ -7,6 +7,9 @@ import type { DB } from './partner.js';
 import { RATES } from '../src/data/partners.js';
 import { firstReferral } from './referrals.js';
 
+/** Commissions are counted from the net payment: minus the 5% single tax and the card fee (industry standard, Decision 52). */
+export const NET = 0.935;
+
 export async function createPayouts(db: DB, leadId: number) {
   const l = await db
     .prepare(
@@ -39,16 +42,24 @@ export async function createPayouts(db: DB, leadId: number) {
     const up = await db.prepare('SELECT parent_id FROM partners WHERE id = ?').bind(l.referrer_id).first<{ parent_id: number | null }>();
     if (up?.parent_id && up.parent_id !== l.referrer_id) rows.push([up.parent_id, 'team', RATES.team]);
   }
+  // A payment for 3, 6 or 12 months: the same whole commission, released in equal parts month by month as the client
+  // uses the service — no cash gap and no loss if a yearly client leaves early with a refund.
+  const months = Math.max(1, Math.min(12, Number(l.period) || 1));
+  const net = Math.round(l.value_usd * NET * 100) / 100;
   for (const [pid, kind, rate] of rows) {
-    // One row per lead and kind; a corrected deal value updates an unpaid row.
-    await db
-      .prepare(
-        `INSERT INTO payouts (partner_id, lead_id, kind, rate, base_usd, amount_usd) VALUES (?, ?, ?, ?, ?, ?)
-         ON CONFLICT (lead_id, kind) DO UPDATE SET partner_id = excluded.partner_id, base_usd = excluded.base_usd, amount_usd = excluded.amount_usd
-         WHERE payouts.status = 'due'`,
-      )
-      .bind(pid, leadId, kind, rate, l.value_usd, Math.round(l.value_usd * rate) / 100)
-      .run();
+    const total = Math.round(net * rate) / 100;
+    for (let k = 0; k < months; k++) {
+      const part = k === months - 1 ? Math.round((total - Math.round((total / months) * 100) / 100 * (months - 1)) * 100) / 100 : Math.round((total / months) * 100) / 100;
+      // One row per lead and kind (and month part); a corrected deal value updates an unpaid row.
+      await db
+        .prepare(
+          `INSERT INTO payouts (partner_id, lead_id, kind, rate, base_usd, amount_usd, created_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now', ?))
+           ON CONFLICT (lead_id, kind) DO UPDATE SET partner_id = excluded.partner_id, base_usd = excluded.base_usd, amount_usd = excluded.amount_usd
+           WHERE payouts.status = 'due'`,
+        )
+        .bind(pid, leadId, months > 1 ? `${kind}:${k + 1}/${months}` : kind, rate, net, part, `+${k} months`)
+        .run();
+    }
   }
 }
 
@@ -104,7 +115,7 @@ export async function addRenewal(db: DB, leadId: number, amountUsd: number) {
   for (const [pid, kind] of rows) {
     await db
       .prepare('INSERT INTO payouts (partner_id, lead_id, kind, rate, base_usd, amount_usd) VALUES (?, ?, ?, ?, ?, ?)')
-      .bind(pid, leadId, kind, RATES.agencyRenewal, amountUsd, Math.round(amountUsd * RATES.agencyRenewal) / 100)
+      .bind(pid, leadId, kind, RATES.agencyRenewal, Math.round(amountUsd * NET * 100) / 100, Math.round(amountUsd * NET * RATES.agencyRenewal) / 100)
       .run();
   }
   // Team bonus on renewals too: 10% to the referrer's direct sponsor.
@@ -112,7 +123,7 @@ export async function addRenewal(db: DB, leadId: number, amountUsd: number) {
     const up = await db.prepare('SELECT parent_id FROM partners WHERE id = ?').bind(l.referrer_id).first<{ parent_id: number | null }>();
     if (up?.parent_id && up.parent_id !== l.referrer_id) {
       await db.prepare('INSERT INTO payouts (partner_id, lead_id, kind, rate, base_usd, amount_usd) VALUES (?, ?, ?, ?, ?, ?)')
-        .bind(up.parent_id, leadId, `renewal-team:${tag}`, RATES.team, amountUsd, Math.round(amountUsd * RATES.team) / 100).run();
+        .bind(up.parent_id, leadId, `renewal-team:${tag}`, RATES.team, Math.round(amountUsd * NET * 100) / 100, Math.round(amountUsd * NET * RATES.team) / 100).run();
     }
   }
   return true;

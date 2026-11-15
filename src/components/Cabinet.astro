@@ -19,6 +19,12 @@ import { OFFER_TEXT, PROMPT_TEXT } from '../data/ai-toolkit-i18n';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const c = CABINET[lang];
+// Top of the home tab, like the reference cabinet (AiBox / Morrow, 15.11): money now, where it came from, bonuses.
+const MC = {
+  en: { bal: 'Available to withdraw', balP: 'free now — 14 days after the client paid', out: 'Withdraw', pend: 'On hold', paid: 'Already paid out', total: 'Earned in total', inc: 'Income', incP: 'earned from your sales', own: 'Personal sales', ownP: 'your clients · 50% first payment, 30% after', team: 'Team sales', teamP: 'clients of partners you invited · 10%', note: 'Income is a share of payments, not the whole amount the clients paid.', vx: 'Vax bonuses', vxP: 'spend them in the store', shop: 'Spend in the store', vxHow: '5 bonuses for every $1 your clients renew. 100 bonuses = $1.', steps: ['Copy your link', 'Share it with your audience', 'Get 50% of the first payment'], start: 'How to start earning', storeH: 'Bonus store', buy: 'Get', need: 'need {n} more', addr: 'Delivery address (country, city, street, name, phone)', done: 'Order received — we will contact you within 2 working days.', fail: 'Could not place the order.', orders: 'My orders' },
+  ru: { bal: 'Доступно к выводу', balP: 'свободно сейчас — через 14 дней после оплаты клиента', out: 'Вывести средства', pend: 'В ожидании', paid: 'Уже выведено', total: 'Всего заработано', inc: 'Доход', incP: 'заработано с ваших продаж', own: 'Личные продажи', ownP: 'ваши клиенты · 50% первой оплаты, 30% дальше', team: 'Продажи команды', teamP: 'клиенты приглашённых партнёров · 10%', note: 'Доход — это доля оплат, а не вся сумма, которую заплатили клиенты.', vx: 'Бонусы Vax', vxP: 'тратьте в магазине', shop: 'Потратить в магазине', vxHow: '5 бонусов за каждый $1 продлений ваших клиентов. 100 бонусов = $1.', steps: ['Скопируйте ссылку', 'Поделитесь с аудиторией', 'Получайте 50% первой оплаты'], start: 'Как начать зарабатывать', storeH: 'Бонусный магазин', buy: 'Получить', need: 'ещё {n}', addr: 'Адрес доставки (страна, город, улица, имя, телефон)', done: 'Заказ принят — свяжемся в течение 2 рабочих дней.', fail: 'Не получилось оформить заказ.', orders: 'Мои заказы' },
+  ua: { bal: 'Доступно до виведення', balP: 'вільно зараз — через 14 днів після оплати клієнта', out: 'Вивести кошти', pend: 'В очікуванні', paid: 'Уже виведено', total: 'Усього зароблено', inc: 'Дохід', incP: 'зароблено з ваших продажів', own: 'Особисті продажі', ownP: 'ваші клієнти · 50% першої оплати, 30% далі', team: 'Продажі команди', teamP: 'клієнти запрошених партнерів · 10%', note: 'Дохід — це частка оплат, а не вся сума, яку заплатили клієнти.', vx: 'Бонуси Vax', vxP: 'витрачайте в магазині', shop: 'Витратити в магазині', vxHow: '5 бонусів за кожен $1 продовжень ваших клієнтів. 100 бонусів = $1.', steps: ['Скопіюйте посилання', 'Поділіться з аудиторією', 'Отримуйте 50% першої оплати'], start: 'Як почати заробляти', storeH: 'Бонусний магазин', buy: 'Отримати', need: 'ще {n}', addr: 'Адреса доставки (країна, місто, вулиця, імʼя, телефон)', done: 'Замовлення прийнято — звʼяжемося протягом 2 робочих днів.', fail: 'Не вдалося оформити замовлення.', orders: 'Мої замовлення' },
+}[lang];
 const PF = {
   en: { h: 'Payout details', p: 'Fill this in once — no payout is sent without it. We pay by Payoneer, Wise or bank transfer. Partners in Ukraine are paid only as a registered sole proprietor (FOP). We do not pay in crypto yet.', status: 'Your status', st: [['fop', 'Sole proprietor (FOP / self-employed)'], ['person', 'Private person'], ['company', 'Company']], country: 'Country you live in', residency: 'Tax residency (country)', legal: 'Full legal name (or company name)', tax: 'Tax ID (optional)', method: 'How to pay you', account: 'Payoneer / Wise email or IBAN', adult: 'I am 18 or older', offer: 'I accept the partner terms', save: 'Save', ok: 'Saved. Payouts can be sent to you.', err: 'Please fill in every field.', ua: 'Partners in Ukraine are paid only as a FOP — please register a FOP first.', filled: 'Filled in', soon: 'The form opens in a few days — please come back then.' },
   ru: { h: 'Данные для выплат', p: 'Заполните один раз — без этого выплата не уходит. Платим через Payoneer, Wise или банковским переводом. Партнёрам из Украины — только как ФОП. Криптой пока не платим.', status: 'Ваш статус', st: [['fop', 'ФОП / самозанятый'], ['person', 'Физическое лицо'], ['company', 'Компания']], country: 'Страна проживания', residency: 'Налоговое резидентство (страна)', legal: 'Полное имя по документам (или название компании)', tax: 'Налоговый номер (необязательно)', method: 'Как вам платить', account: 'Email Payoneer / Wise или IBAN', adult: 'Мне 18 лет или больше', offer: 'Я принимаю условия партнёрской программы', save: 'Сохранить', ok: 'Сохранено. Выплаты можно отправлять.', err: 'Заполните все поля.', ua: 'Партнёрам из Украины платим только как ФОП — сначала оформите ФОП.', filled: 'Заполнено', soon: 'Форма заработает в ближайшие дни — загляните чуть позже.' },
@@ -114,6 +120,42 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
           <h1>{c.home.hi}, <span data-name></span> 👋</h1>
           <p class="mut">{c.home.today}</p>
         </div>
+
+        <div class="money">
+          <div class="card mbal">
+            <span class="eyebrow-s">{MC.bal}</span>
+            <b class="big" data-m-avail>$0</b>
+            <small class="mut">{MC.balP}</small>
+            <button type="button" class="cta wide" data-go="rules">↑ {MC.out}</button>
+            <dl>
+              <div><dt>{MC.total}</dt><dd data-m-total>$0</dd></div>
+              <div><dt>{MC.pend}</dt><dd data-m-pend>$0</dd></div>
+              <div><dt>{MC.paid}</dt><dd data-m-paid>$0</dd></div>
+            </dl>
+          </div>
+          <div class="card minc">
+            <span class="eyebrow-s">{MC.inc}</span>
+            <b class="big" data-m-inc>+$0</b>
+            <small class="mut">{MC.incP}</small>
+            <div class="mrow"><span>◎</span><div><b>{MC.own}</b><small>{MC.ownP}</small></div><em data-m-own>+$0</em></div>
+            <div class="mrow"><span>👥</span><div><b>{MC.team}</b><small>{MC.teamP}</small></div><em data-m-team>+$0</em></div>
+            <small class="mut">ⓘ {MC.note}</small>
+          </div>
+          <div class="card mvx">
+            <span class="eyebrow-s">{MC.vx}</span>
+            <b class="big">🦝 <span data-m-vx>0</span></b>
+            <small class="mut">{MC.vxP}</small>
+            <button type="button" class="ghost wide" data-store-open>🛍 {MC.shop}</button>
+            <small class="mut">{MC.vxHow}</small>
+          </div>
+        </div>
+        <div class="card msteps"><b>🚀 {MC.start}</b><ol>{MC.steps.map((x, i) => <li><span>{i + 1}</span>{x}</li>)}</ol></div>
+        <dialog class="store" data-store>
+          <header><b>{MC.storeH} · 🦝 <span data-store-vx>0</span></b><button type="button" data-store-x>×</button></header>
+          <div class="sgrid" data-store-items></div>
+          <p class="mut small" data-store-msg></p>
+        </dialog>
+        <script type="application/json" data-mc set:html={JSON.stringify({ buy: MC.buy, need: MC.need, addr: MC.addr, done: MC.done, fail: MC.fail, lang })} />
 
         <div class="mylink card">
           <div class="ml-link">
@@ -575,6 +617,17 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
     const leads = data.links.reduce((n, l) => n + l.leads, 0);
     const sales = data.sales ?? 0;
     $('[data-balance]').textContent = '$' + (Math.round((data.balance ?? 0) * 100) / 100).toLocaleString('en-US');
+    {
+      const d = data as any, usd = (n: number) => '$' + (Math.round((n || 0) * 100) / 100).toLocaleString('en-US');
+      $('[data-m-avail]').textContent = usd(d.available ?? 0);
+      $('[data-m-pend]').textContent = usd(d.pending ?? 0);
+      $('[data-m-paid]').textContent = usd(d.paidOut ?? 0);
+      $('[data-m-total]').textContent = usd((d.balance ?? 0) + (d.paidOut ?? 0));
+      $('[data-m-own]').textContent = '+' + usd(d.earnedOwn ?? 0);
+      $('[data-m-team]').textContent = '+' + usd(d.earnedTeam ?? 0);
+      $('[data-m-inc]').textContent = '+' + usd((d.earnedOwn ?? 0) + (d.earnedTeam ?? 0));
+      $('[data-m-vx]').textContent = String(d.vx ?? 0);
+    }
     $('[data-total="clicks"]').textContent = String(clicks);
     $('[data-total="leads"]').textContent = String(leads);
     $('[data-total="sales"]').textContent = String(sales);
@@ -703,6 +756,38 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
 
   renderPrompts();
   load();
+
+  /* ---------- Bonus store ---------- */
+  {
+    const dlg = document.querySelector<HTMLDialogElement>('[data-store]');
+    const M = JSON.parse(document.querySelector('[data-mc]')?.textContent || '{}');
+    const msg = document.querySelector<HTMLElement>('[data-store-msg]');
+    const draw = async () => {
+      const d = await fetch('/api/partner/store').then((r) => r.json()).catch(() => null);
+      if (!d?.ok || !dlg) return;
+      dlg.querySelector('[data-store-vx]')!.textContent = String(d.vx);
+      const box = dlg.querySelector<HTMLElement>('[data-store-items]')!; box.replaceChildren();
+      for (const it of d.items) {
+        const card = document.createElement('div'); card.className = 'sitem';
+        const n = document.createElement('b'); n.textContent = it.name[M.lang] || it.name.en;
+        const pr = document.createElement('span'); pr.textContent = '🦝 ' + it.vx.toLocaleString('en-US');
+        const b = document.createElement('button'); b.type = 'button';
+        const short = it.vx - d.vx;
+        b.className = short > 0 ? 'ghost sm' : 'cta sm'; b.disabled = short > 0;
+        b.textContent = short > 0 ? M.need.replace('{n}', short.toLocaleString('en-US')) : M.buy;
+        b.onclick = async () => {
+          let address = '';
+          if (it.ship) { address = (prompt(M.addr) || '').trim(); if (!address) return; }
+          const r = await fetch('/api/partner/store', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ item: it.id, address }) }).then((x) => x.json()).catch(() => null);
+          if (msg) msg.textContent = r?.ok ? M.done : M.fail;
+          if (r?.ok) draw();
+        };
+        card.append(n, pr, b); box.append(card);
+      }
+    };
+    document.querySelector('[data-store-open]')?.addEventListener('click', () => { draw(); dlg?.showModal(); });
+    document.querySelector('[data-store-x]')?.addEventListener('click', () => dlg?.close());
+  }
 </script>
 
 <style>
@@ -891,4 +976,28 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   .promo .pgrid > div { display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; }
   .promo .pgrid p { flex: 1; margin: 0; font-size: 14px; overflow-wrap: anywhere; }
   .promo .idea { margin: 12px 0 0; white-space: pre-wrap; font-size: 15px; }
+  .money { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 14px 0; }
+  .money .card { display: grid; gap: 8px; align-content: start; }
+  .money .big { font-size: clamp(32px, 4vw, 46px); line-height: 1.05; letter-spacing: -.03em; }
+  .money .wide { width: 100%; justify-content: center; }
+  .money dl { margin: 6px 0 0; display: grid; gap: 0; }
+  .money dl div { display: flex; justify-content: space-between; padding: 9px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  .money dt { color: var(--mut); } .money dd { margin: 0; font-weight: 700; }
+  .mrow { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; padding: 10px; border-radius: 12px; background: var(--surf2); }
+  .mrow > span { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--bg); }
+  .mrow b { display: block; font-size: 14px; } .mrow small { color: var(--mut); font-size: 12px; } .mrow em { font-style: normal; font-weight: 800; color: #16a34a; }
+  .mvx { background: linear-gradient(160deg, color-mix(in srgb, var(--acc) 16%, var(--surf)), var(--surf)); }
+  .msteps { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+  .msteps ol { display: flex; gap: 8px; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+  .msteps li { display: flex; gap: 8px; align-items: center; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 14px; }
+  .msteps li span { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--acc); color: #111; font-weight: 800; font-size: 12px; }
+  .store { border: 1px solid var(--line); border-radius: 18px; background: var(--surf); color: var(--ink); padding: 0; width: min(760px, calc(100vw - 24px)); }
+  .store::backdrop { background: rgba(0,0,0,.55); }
+  .store header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  .store header button { border: 0; background: none; font-size: 22px; cursor: pointer; color: var(--ink); }
+  .sgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; padding: 16px 18px; }
+  .sgrid :global(.sitem) { display: grid; gap: 6px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; }
+  .sgrid :global(.sitem span) { color: var(--mut); font-size: 14px; }
+  .store > p { padding: 0 18px 14px; margin: 0; }
+  @media (max-width: 900px) { .money { grid-template-columns: 1fr; } }
 </style>

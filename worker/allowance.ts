@@ -56,9 +56,10 @@ export function windows(now = new Date()) {
 /** Decision 50: a monthly budget of work you may use at any pace (all of it in one day if you need to). It renews on the
  *  1st of each month, also on 3/6/12-month plans, so prepaid months never run ahead of the money. Units are cents of AI
  *  spend for Claude answers (a free-model answer costs 1–3), so the budget is about 40% of the plan price: never a loss. */
-// 15.11: bigger plans give more work per dollar (Plus ×1, Pro ×2.5, Max ×8.5, Ultra ×20), like Claude and ChatGPT do.
-// Worst case (all used + loyalty +20% + a partner's 30% + 5% tax) still stays positive: Ultra ≈ +4%, Max ≈ +5%.
-export const MONTH_CAPS: Record<string, number> = { start: 300, personal: 760, care: 1900, growth: 6460, pro: 15200 };
+// 15.11 (Decision 52 v2): bigger plans give more work per dollar (Plus ×1, Pro ×2.5, Max ×8.5, Ultra ×20), and no plan
+// spends more than ~38% of its price on AI. Worst case of a FIRST payment via a partner (50% + team 10% of the net, tax,
+// card fee, the whole volume used) ends at about zero; renewals stay positive even with the loyalty or level bonus.
+export const MONTH_CAPS: Record<string, number> = { start: 300, personal: 570, care: 1425, growth: 4845, pro: 11400 };
 /** Extra allowance (top-up): a one-off pack on top of this month's budget, at the same rate as the plans (40% of the
  *  price goes to AI, so a pack is never a loss). Bought as an invoice whose description names the month, so it counts
  *  only for that month even when it is paid a few days later. EMPTY = switched off until Dmitry's "yes" on the price
@@ -80,7 +81,7 @@ export async function wsLimits(db: DB, clientId: number, plan: string): Promise<
   const paidMonths = plan === 'start' ? 0 : (await db.prepare(`SELECT COUNT(*) AS n FROM invoices i JOIN leads l ON l.id = i.lead_id WHERE l.client_id = ? AND i.status = 'paid' AND i.description LIKE 'Vaxo %subscription%'`).bind(clientId).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const extra = (await db.prepare(`SELECT COALESCE(SUM(i.amount), 0) AS n FROM invoices i JOIN leads l ON l.id = i.lead_id WHERE l.client_id = ? AND i.status = 'paid' AND i.currency = 'USD' AND i.description LIKE ?`).bind(clientId, `${TOPUP_DESC}, % for ${start.toISOString().slice(0, 7)}`).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const lv = Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('game_lv_' + clientId).first<{ value: string }>().catch(() => null))?.value) || 1;
-  const mult = Math.max(paidMonths >= 3 ? 1.2 : 1, 1 + (GAME_BONUS[lv] ?? 0) / 100);
+  const mult = Math.max(paidMonths >= 3 ? 1.2 : 1, plan === 'start' || paidMonths >= 2 ? 1 + (GAME_BONUS[lv] ?? 0) / 100 : 1);
   const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * mult + extra * TOPUP_RATE);
   const used = (await db.prepare('SELECT COALESCE(SUM(work), 0) AS n FROM ws_work WHERE client_id = ? AND at >= ?').bind(clientId, start.toISOString().slice(0, 19).replace('T', ' ')).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const m = { pct: Math.min(100, Math.round((used / cap) * 100)), reset: next.toISOString() };

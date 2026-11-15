@@ -194,8 +194,31 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
       .all();
     const team = await db.prepare('SELECT COUNT(*) AS n FROM partners WHERE parent_id = ?').bind(me.id).first<{ n: number }>();
     const plan = await db.prepare('SELECT plan, friend FROM partners WHERE id = ?').bind(me.id).first<{ plan: string; friend: number }>();
-    const earned = await db.prepare(`SELECT COALESCE(SUM(CASE WHEN status = 'due' THEN amount_usd END), 0) AS due, COALESCE(SUM(CASE WHEN status = 'paid' THEN amount_usd END), 0) AS paid FROM payouts WHERE partner_id = ?`).bind(me.id).first<{ due: number; paid: number }>().catch(() => null);
-    return json(200, { ok: true, partner: me, links, team: team?.n ?? 0, balance: earned?.due ?? 0, paidOut: earned?.paid ?? 0, plan: plan?.plan ?? 'classic', friend: plan?.friend === 1 });
+    const earned = await db.prepare(`SELECT COALESCE(SUM(CASE WHEN status = 'due' THEN amount_usd END), 0) AS due,
+        COALESCE(SUM(CASE WHEN status = 'due' AND created_at <= datetime('now', '-14 days') THEN amount_usd END), 0) AS free,
+        COALESCE(SUM(CASE WHEN status = 'paid' THEN amount_usd END), 0) AS paid FROM payouts WHERE partner_id = ?`).bind(me.id).first<{ due: number; free: number; paid: number }>().catch(() => null);
+    const kinds = await db.prepare(`SELECT COALESCE(SUM(CASE WHEN kind LIKE '%team%' THEN amount_usd END), 0) AS team, COALESCE(SUM(CASE WHEN kind NOT LIKE '%team%' THEN amount_usd END), 0) AS own FROM payouts WHERE partner_id = ? AND status != 'cancelled'`).bind(me.id).first<{ team: number; own: number }>().catch(() => null);
+    const vx = await vxBalance(db, me.id);
+    return json(200, { ok: true, partner: me, links, team: team?.n ?? 0, earnedOwn: kinds?.own ?? 0, earnedTeam: kinds?.team ?? 0, vx, balance: earned?.due ?? 0, available: earned?.free ?? 0, pending: Math.round(((earned?.due ?? 0) - (earned?.free ?? 0)) * 100) / 100, paidOut: earned?.paid ?? 0, plan: plan?.plan ?? 'classic', friend: plan?.friend === 1 });
+  }
+
+  // Bonus store (Decision 52 v2): Vax bonuses come only from clients' renewals (5% of the net), so every prize is paid
+  // for in advance by money already received. An order goes to the HQ; Dmitry or Claude sends the prize.
+  if (path === 'store' && method === 'GET') {
+    return json(200, { ok: true, vx: await vxBalance(db, me.id), items: STORE, orders: (await db.prepare('SELECT id, item, vx, status, created_at FROM vx_orders WHERE partner_id = ? ORDER BY id DESC LIMIT 20').bind(me.id).all().catch(() => ({ results: [] }))).results });
+  }
+  if (path === 'store' && method === 'POST') {
+    const b = await readBody(request);
+    const it = STORE.find((x) => x.id === String(b.item));
+    if (!it) return json(400, { ok: false, error: 'item' });
+    const bal = await vxBalance(db, me.id);
+    if (bal < it.vx) return json(400, { ok: false, error: 'balance' });
+    const address = s(b.address, 300);
+    if (it.ship && !address) return json(400, { ok: false, error: 'address' });
+    await vxTable(db);
+    await db.prepare('INSERT INTO vx_orders (partner_id, item, vx, address) VALUES (?, ?, ?, ?)').bind(me.id, it.id, it.vx, address || null).run();
+    await notify?.(`🎁 Заказ из бонусного магазина: ${it.name.ru} за ${it.vx} бонусов — партнёр #${me.id} ${me.email}${address ? `\nАдрес: ${address}` : ''}`).catch(() => {});
+    return json(200, { ok: true, vx: bal - it.vx });
   }
 
   if (path === 'plan' && method === 'POST') {
@@ -242,4 +265,31 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
   }
 
   return json(404, { ok: false });
+}
+
+/** 100 bonuses = $1 of our cost. A partner gets 5 bonuses for every $1 of net renewals of their own clients. */
+export const VX_PER_USD = 5;
+type Item = { id: string; vx: number; ship: boolean; name: { en: string; ru: string; ua: string } };
+export const STORE: Item[] = [
+  { id: 'month-pro', vx: 2000, ship: false, name: { en: 'A month of Pro for you or a friend', ru: 'Месяц тарифа Про — себе или другу', ua: 'Місяць тарифу Про — собі або другу' } },
+  { id: 'cap', vx: 2500, ship: true, name: { en: 'Vaxo cap', ru: 'Кепка Vaxo', ua: 'Кепка Vaxo' } },
+  { id: 'tee', vx: 3000, ship: true, name: { en: 'Vaxo T-shirt', ru: 'Футболка Vaxo', ua: 'Футболка Vaxo' } },
+  { id: 'hoodie', vx: 6000, ship: true, name: { en: 'Vaxo hoodie', ru: 'Худи Vaxo', ua: 'Худі Vaxo' } },
+  { id: 'box', vx: 10000, ship: true, name: { en: 'Vaxo box: hoodie, cap, T-shirt, bottle', ru: 'Набор Vaxo: худи, кепка, футболка, бутылка', ua: 'Набір Vaxo: худі, кепка, футболка, пляшка' } },
+  { id: 'airpods', vx: 25000, ship: true, name: { en: 'AirPods Pro', ru: 'AirPods Pro', ua: 'AirPods Pro' } },
+  { id: 'iphone', vx: 120000, ship: true, name: { en: 'iPhone (latest Pro)', ru: 'iPhone (последний Pro)', ua: 'iPhone (останній Pro)' } },
+  { id: 'macbook', vx: 200000, ship: true, name: { en: 'MacBook Pro', ru: 'MacBook Pro', ua: 'MacBook Pro' } },
+  { id: 'car', vx: 3500000, ship: false, name: { en: 'A car (agreed with you personally)', ru: 'Автомобиль (подбираем с вами лично)', ua: 'Автомобіль (підбираємо з вами особисто)' } },
+];
+let vxReady = false;
+async function vxTable(db: DB) {
+  if (vxReady) return;
+  await db.prepare("CREATE TABLE IF NOT EXISTS vx_orders (id INTEGER PRIMARY KEY AUTOINCREMENT, partner_id INTEGER NOT NULL, item TEXT NOT NULL, vx INTEGER NOT NULL, address TEXT, status TEXT NOT NULL DEFAULT 'new', created_at TEXT NOT NULL DEFAULT (datetime('now')))").run();
+  vxReady = true;
+}
+export async function vxBalance(db: DB, partnerId: number): Promise<number> {
+  await vxTable(db).catch(() => {});
+  const got = (await db.prepare(`SELECT COALESCE(SUM(base_usd), 0) AS n FROM payouts WHERE partner_id = ? AND status != 'cancelled' AND kind LIKE 'renewal-referral%' AND created_at <= datetime('now', '-14 days')`).bind(partnerId).first<{ n: number }>().catch(() => null))?.n ?? 0;
+  const spent = (await db.prepare(`SELECT COALESCE(SUM(vx), 0) AS n FROM vx_orders WHERE partner_id = ? AND status != 'cancelled'`).bind(partnerId).first<{ n: number }>().catch(() => null))?.n ?? 0;
+  return Math.max(0, Math.floor(got * VX_PER_USD) - spent);
 }

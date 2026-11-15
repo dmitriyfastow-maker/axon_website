@@ -1,0 +1,14 @@
+import { chromium } from 'playwright';
+const [k, out, out2] = process.argv.slice(2);
+const b = await chromium.launch({ channel: 'chrome' });
+const p = await b.newPage({ viewport: { width: 1440, height: 1000 } });
+p.on('pageerror', (e) => console.log('ERR', e.message));
+await p.goto(`https://vaxogroup.com/api/me/as?k=${k}`, { waitUntil: 'networkidle' });
+await p.waitForTimeout(2500);
+await p.evaluate(() => document.querySelector('.money')?.scrollIntoView({ block: 'start' }));
+await p.waitForTimeout(500);
+await p.screenshot({ path: out });
+await p.click('[data-store-open]');
+await p.waitForTimeout(1500);
+await p.screenshot({ path: out2 });
+await b.close();
