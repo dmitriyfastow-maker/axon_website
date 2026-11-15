@@ -93,7 +93,7 @@ export async function trackUx(db: DB, request: Request) {
   if (stmts.length) await db.batch(stmts);
 }
 
-/** Behaviour summary for the CRM: per page depth/time, what people click, dead and rage clicks, lead sources. */
+/** Behaviour summary for the CRM: per page depth/time, what people click, dead and rage clicks (last 7 days only: the site changes often, older ones point at removed text), lead sources. */
 async function behaviour(db: DB) {
   const q = async (sql: string) => (await db.prepare(sql).all()).results;
   const [pages, clicks, dead, rage, leadSrc, go] = await Promise.all([
@@ -103,8 +103,8 @@ async function behaviour(db: DB) {
          SUM(kind IN ('click','dead','rage')) AS clicks
        FROM ux WHERE at > datetime('now','-30 days') GROUP BY path ORDER BY visits DESC LIMIT 12`),
     q(`SELECT path AS p, sel AS s, COUNT(*) AS n FROM ux WHERE kind='click' AND at > datetime('now','-30 days') GROUP BY path, sel ORDER BY n DESC LIMIT 15`),
-    q(`SELECT path AS p, sel AS s, COUNT(*) AS n FROM ux WHERE kind='dead' AND at > datetime('now','-30 days') GROUP BY path, sel ORDER BY n DESC LIMIT 10`),
-    q(`SELECT path AS p, sel AS s, COUNT(*) AS n FROM ux WHERE kind='rage' AND at > datetime('now','-30 days') GROUP BY path, sel ORDER BY n DESC LIMIT 10`),
+    q(`SELECT path AS p, sel AS s, COUNT(*) AS n FROM ux WHERE kind='dead' AND at > datetime('now','-7 days') GROUP BY path, sel ORDER BY n DESC LIMIT 10`),
+    q(`SELECT path AS p, sel AS s, COUNT(*) AS n FROM ux WHERE kind='rage' AND at > datetime('now','-7 days') GROUP BY path, sel ORDER BY n DESC LIMIT 10`),
     q(`SELECT COALESCE(source, 'не известно') AS s, COUNT(*) AS n, SUM(status='won') AS won FROM leads
        WHERE created_at > datetime('now','-30 days') AND COALESCE(page,'') != 'test' AND contact NOT LIKE 'test%' GROUP BY s ORDER BY n DESC LIMIT 12`),
     q(`SELECT path AS s, COUNT(*) AS n FROM events WHERE kind='go' AND at > datetime('now','-30 days') GROUP BY path ORDER BY n DESC`),
