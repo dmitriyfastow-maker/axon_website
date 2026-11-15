@@ -107,7 +107,7 @@ const en: Text = {
     {
       name: 'Vaxo plans',
       rate: `${r.agencyOwn}%`,
-      price: 'plans from $39/mo',
+      price: 'plans from $19/mo',
       what: 'Vax and our team do the work for anyone — from personal tasks to companies: sites, apps, AI, ads, content.',
       points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `Clients can join too and earn the same`],
       cta: ['Count my income →', 'earn'],
@@ -219,7 +219,7 @@ const ua: Text = {
     {
       name: 'Підписки Vaxo',
       rate: `${r.agencyOwn}%`,
-      price: 'підписка від $39/міс',
+      price: 'підписка від $19/міс',
       what: 'Vax і наша команда роблять роботу для будь-кого — від особистих справ до компаній: сайти, застосунки, ШІ, реклама, контент.',
       points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `Клієнти теж можуть приєднатися й заробляти так само`],
       cta: ['Порахувати мій дохід →', 'earn'],
@@ -331,7 +331,7 @@ const ru: Text = {
     {
       name: 'Подписки Vaxo',
       rate: `${r.agencyOwn}%`,
-      price: 'подписка от $39/мес',
+      price: 'подписка от $19/мес',
       what: 'Vax и наша команда делают работу для любого — от личных дел до компаний: сайты, приложения, ИИ, реклама, контент.',
       points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `Клиенты тоже могут присоединиться и зарабатывать так же`],
       cta: ['Посчитать мой доход →', 'earn'],
