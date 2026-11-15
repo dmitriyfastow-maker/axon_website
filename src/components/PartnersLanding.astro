@@ -23,6 +23,11 @@ const AG = {
   ru: { h: 'Агентствам и фрилансерам: растите вместе с Vaxo', p: 'У вас уже есть клиенты, и вы хотите дать им больше? Предложите Vaxo как ИИ-платформу за вашим сервисом. Индивидуальные условия для команд, которые приводят несколько клиентов.', li: ['Те же прозрачные ставки и персональный менеджер для вашей команды', 'Ваши клиенты остаются вашими; мы делаем работу с ИИ за кадром', 'Приоритетная поддержка и ранний доступ к новым функциям', 'Белая этикетка по умолчанию: на любом платном тарифе на сайте клиента нет логотипа Vaxo — только бренд вашего клиента (свой домен — скоро)'], cta: 'Расскажите о вашем агентстве' },
   ua: { h: 'Агентствам і фрилансерам: ростіть разом із Vaxo', p: 'У вас уже є клієнти, і ви хочете дати їм більше? Запропонуйте Vaxo як ШІ-платформу за вашим сервісом. Індивідуальні умови для команд, які приводять кількох клієнтів.', li: ['Ті самі прозорі ставки й персональний менеджер для вашої команди', 'Ваші клієнти лишаються вашими; ми робимо роботу з ШІ за кадром', 'Пріоритетна підтримка та ранній доступ до нових функцій', 'Біла етикетка за замовчуванням: на будь-якому платному тарифі на сайті клієнта немає логотипа Vaxo — лише бренд вашого клієнта (свій домен — скоро)'], cta: 'Розкажіть про ваше агентство' },
 }[lang];
+const M = {
+  en: { h: 'How the money works', p: 'Two simple levels and no ranks: the same transparent terms for every partner from day one.', cards: [[`${RATES.agencyOwn}%`, 'Of the first payment', 'A client signs up by your link and pays — half of that whole payment is yours, even for a year at once.'], [`${RATES.agencyRenewal}%`, 'Of every later payment', 'While the client keeps paying, you keep earning. The client stays yours for life.'], [`${RATES.team}%`, 'From your team', 'Invite partners: you get 10% of every sale they make, on top, paid by Vaxo — they lose nothing.']], pay: [['14 days', 'after the client pays, the money is free to withdraw (the refund window)'], ['0%', 'Vaxo fee on payouts'], ['FOP account', 'payouts go to a Ukrainian FOP account under the partner agreement']], note: 'Figures in the calculator are an example, not a promise of income. Partners must mark their posts as advertising.' },
+  ru: { h: 'Как устроены деньги', p: 'Два понятных уровня и никаких рангов: одинаковые прозрачные условия для каждого партнёра с первого дня.', cards: [[`${RATES.agencyOwn}%`, 'С первой оплаты', 'Клиент пришёл по вашей ссылке и оплатил — половина всей этой оплаты ваша, даже если он оплатил сразу год.'], [`${RATES.agencyRenewal}%`, 'С каждой следующей оплаты', 'Пока клиент платит, вы зарабатываете. Клиент закрепляется за вами навсегда.'], [`${RATES.team}%`, 'С вашей команды', 'Приглашайте партнёров: 10% с каждой их продажи — сверху, от Vaxo, у них ничего не убавляется.']], pay: [['14 дней', 'после оплаты клиента деньги можно выводить (столько длится право на возврат)'], ['0%', 'комиссия Vaxo за выплату'], ['Счёт ФОП', 'выплаты на счёт ФОП по партнёрскому договору']], note: 'Цифры в калькуляторе — пример расчёта, а не обещание дохода. Посты партнёров должны быть помечены как реклама.' },
+  ua: { h: 'Як влаштовані гроші', p: 'Два зрозумілі рівні й жодних рангів: однакові прозорі умови для кожного партнера з першого дня.', cards: [[`${RATES.agencyOwn}%`, 'З першої оплати', 'Клієнт прийшов за вашим посиланням і оплатив — половина всієї цієї оплати ваша, навіть якщо він оплатив одразу рік.'], [`${RATES.agencyRenewal}%`, 'З кожної наступної оплати', 'Поки клієнт платить, ви заробляєте. Клієнт закріплюється за вами назавжди.'], [`${RATES.team}%`, 'З вашої команди', 'Запрошуйте партнерів: 10% з кожного їхнього продажу — зверху, від Vaxo, у них нічого не зменшується.']], pay: [['14 днів', 'після оплати клієнта гроші можна виводити (стільки триває право на повернення)'], ['0%', 'комісія Vaxo за виплату'], ['Рахунок ФОП', 'виплати на рахунок ФОП за партнерським договором']], note: 'Цифри в калькуляторі — приклад розрахунку, а не обіцянка доходу. Пости партнерів мають бути позначені як реклама.' },
+}[lang];
 const p = PARTNERS_TEXT[lang];
 const home = langPath(lang);
 const cab = lang === 'en' ? '/partner/' : `/${lang}/partner/`;
@@ -90,12 +95,13 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
     <section id="earn" class="rv alt">
       <div class="in"><PartnerEarn lang={lang} /></div>
     </section>
-    <section id="agency" class="rv">
-      <div class="in agency">
-        <h2>{AG.h}</h2>
-        <p>{AG.p}</p>
-        <ul>{AG.li.map((x) => <li>{x}</li>)}</ul>
-        <a class="agcta" href={`${home === '/' ? '' : home.replace(/\/$/, '')}/collab/`}>{AG.cta} →</a>
+    <section id="money" class="rv">
+      <div class="in">
+        <h2>{M.h}</h2>
+        <p class="msub">{M.p}</p>
+        <div class="mgrid">{M.cards.map(([n, h, d]) => <article class="mc"><b>{n}</b><h3>{h}</h3><p>{d}</p></article>)}</div>
+        <div class="mpay">{M.pay.map(([h, d]) => <div><b>{h}</b><span>{d}</span></div>)}</div>
+        <small class="mnote">{M.note}</small>
       </div>
     </section>
 
@@ -422,4 +428,16 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
     .flow li, .flow .dot, .flow .pay, .marquee div, .orbit i, .gift { animation: none; }
     :global(.js-rv) .rv { opacity: 1; transform: none; transition: none; }
   }
+  #money h2 { margin-bottom: 8px; }
+  .msub { color: var(--mut); max-width: 640px; margin: 0 0 24px; }
+  .mgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .mc { border: 1px solid var(--line); border-radius: 20px; padding: 22px; background: var(--surf); }
+  .mc b { display: block; font-size: clamp(40px, 5vw, 56px); line-height: 1; letter-spacing: -.03em; color: var(--accText); }
+  .mc h3 { margin: 10px 0 6px; font-size: 18px; }
+  .mc p { margin: 0; color: var(--mut); font-size: 15px; line-height: 1.5; }
+  .mpay { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+  .mpay div { display: grid; gap: 4px; padding: 16px 18px; border-radius: 16px; background: var(--surf2); }
+  .mpay b { font-size: 20px; } .mpay span { color: var(--mut); font-size: 14px; }
+  .mnote { display: block; margin-top: 14px; color: var(--mut); font-size: 13px; }
+  @media (max-width: 820px) { .mgrid, .mpay { grid-template-columns: 1fr; } }
 </style>
