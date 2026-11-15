@@ -249,6 +249,7 @@ export async function handleBiz(db: DB, request: Request, path: string, ai: AiBi
       const days = [1, 7, 30, 90].includes(Number(url.searchParams.get('days'))) ? Number(url.searchParams.get('days')) : 7;
       const leads = canLeads
         ? (await db.prepare(`SELECT id, at, name, contact, message, source, path, status, assignee, note FROM biz_leads WHERE biz_id = ? ${a.role === 'manager' ? 'AND (assignee IS NULL OR assignee = ?)' : 'AND ? IS NOT NULL'} ORDER BY id DESC LIMIT 200`).bind(a.id, (me.email || '').toLowerCase()).all()).results
+          .map((l: Record<string, unknown>) => ({ ...l, ...unpackNote(l.note as string | null) }))
         : [];
       const team = owner ? (await db.prepare('SELECT email, role, at FROM biz_members WHERE biz_id = ? ORDER BY at').bind(a.id).all()).results : [];
       return json(200, {
@@ -267,8 +268,19 @@ export async function handleBiz(db: DB, request: Request, path: string, ai: AiBi
       if (status && !['new', 'work', 'won', 'lost'].includes(status)) return json(400, { ok: false });
       const assignee = owner && typeof b.assignee === 'string' ? cut(b.assignee, 190).toLowerCase() : null;
       const scope = a.role === 'manager' ? ' AND (assignee IS NULL OR assignee = ?)' : ' AND ? IS NOT NULL';
+      // Deal amount and next-step date live inside the note (no schema change needed).
+      let note: string | null = null;
+      if (typeof b.note === 'string' || b.amount !== undefined || b.next !== undefined) {
+        const was = await db.prepare('SELECT note FROM biz_leads WHERE id = ? AND biz_id = ?').bind(Number(lm[1]), a.id).first<{ note: string | null }>();
+        const cur = unpackNote(was?.note ?? null);
+        note = packNote(
+          typeof b.note === 'string' ? cut(b.note, 1000) : cur.note,
+          b.amount !== undefined ? b.amount : cur.amount,
+          b.next !== undefined ? b.next : cur.next,
+        ) ?? '';
+      }
       await db.prepare(`UPDATE biz_leads SET status = COALESCE(NULLIF(?, ''), status), note = COALESCE(?, note), assignee = CASE WHEN ? IS NULL THEN assignee ELSE NULLIF(?, '') END WHERE id = ? AND biz_id = ?${scope}`)
-        .bind(status, typeof b.note === 'string' ? cut(b.note, 1000) : null, assignee, assignee ?? '', Number(lm[1]), a.id, (me.email || '').toLowerCase()).run();
+        .bind(status, note, assignee, assignee ?? '', Number(lm[1]), a.id, (me.email || '').toLowerCase()).run();
       return json(200, { ok: true });
     }
     if (sub === 'leads' && m === 'POST' && canLeads) {
@@ -323,4 +335,22 @@ Answer in ${lang === 'ru' ? 'Russian' : lang === 'ua' ? 'Ukrainian' : 'English'}
     if (/no such table/i.test(String(e))) return soon();
     throw e;
   }
+}
+
+/** CRM extras kept inside biz_leads.note: "\u2063" + JSON {t, a, n}. Plain old notes stay plain text. */
+const NOTE_MARK = '\u2063';
+export function unpackNote(raw: string | null): { note: string; amount: number | null; next: string | null } {
+  if (raw && raw.startsWith(NOTE_MARK)) {
+    try {
+      const o = JSON.parse(raw.slice(1));
+      return { note: String(o.t ?? ''), amount: typeof o.a === 'number' ? o.a : null, next: typeof o.n === 'string' ? o.n : null };
+    } catch { /* fall through */ }
+  }
+  return { note: raw ?? '', amount: null, next: null };
+}
+export function packNote(note: string, amount: unknown, next: unknown): string | null {
+  const a = Number(amount), n = typeof next === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(next) ? next : null;
+  const amt = amount !== null && amount !== '' && Number.isFinite(a) && a > 0 ? Math.min(Math.round(a * 100) / 100, 1e9) : null;
+  if (amt === null && !n) return note || null;
+  return NOTE_MARK + JSON.stringify({ t: note || '', ...(amt !== null ? { a: amt } : {}), ...(n ? { n } : {}) });
 }
