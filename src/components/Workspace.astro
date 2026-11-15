@@ -891,7 +891,7 @@ const ico = {
     const pdf = btn('sec', 'PDF', () => { const w = window.open('', '_blank'); if (!w) return; w.document.write(docHtml()); w.document.close(); w.focus(); setTimeout(() => w.print(), 400); });
     const deck = btn('sec', ({ ru: 'Презентация', ua: 'Презентація' } as R)[lang] || 'Slides', async () => {
       const w = window as any;
-      if (!w.PptxGenJS) await new Promise<void>((ok, bad) => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js'; sc.onload = () => ok(); sc.onerror = () => bad(); document.head.append(sc); }).catch(() => null);
+      if (!w.PptxGenJS) await new Promise<void>((ok, bad) => { const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'; sc.onload = () => ok(); sc.onerror = () => bad(); document.head.append(sc); }).catch(() => null);
       if (!w.PptxGenJS) return;
       const p = new w.PptxGenJS(); p.layout = 'LAYOUT_WIDE';
       const t0 = p.addSlide(); t0.background = { color: '16161A' };
@@ -1501,7 +1501,19 @@ const ico = {
     const box = el('div', 'pf'), p = S.mods?.partner;
     box.append(el('p', 'hint', T.parP));
     if (!S.mods?.biz) { box.append(el('p', 'hint', T.botNoSite)); openCv(T.parMine, box); return; }
-    if (!p) box.append(deployCard('partner', T.parP));
+    // 15.11: before the programme is on, say plainly what it gives (the same line used to show twice and nothing else).
+    if (!p) {
+      const W = ({
+        ru: { h: 'Что даёт партнёрская программа', li: ['Каждый партнёр получает личную ссылку на ваш сайт — переходы, заявки и сделки считаются сами', 'Страница «Стать партнёром» на вашем сайте: люди регистрируются сами, вы видите их в заявках', 'Вознаграждение — % от суммы сделки, вы задаёте его один раз', 'У каждого партнёра своя страница: заработано, выплачено, к выплате и история выплат'], go: 'Включить партнёрскую программу' },
+        ua: { h: 'Що дає партнерська програма', li: ['Кожен партнер отримує особисте посилання на ваш сайт — переходи, заявки й угоди рахуються самі', 'Сторінка «Стати партнером» на вашому сайті: люди реєструються самі, ви бачите їх у заявках', 'Винагорода — % від суми угоди, ви задаєте її один раз', 'У кожного партнера своя сторінка: зароблено, виплачено, до виплати та історія виплат'], go: 'Увімкнути партнерську програму' },
+        en: { h: 'What the partner programme gives you', li: ['Every partner gets a personal link to your site; visits, requests and deals are counted by themselves', 'A “Become a partner” page on your site: people sign up themselves and appear in your requests', 'The reward is a % of each deal, set once', 'Every partner has a page: earned, paid, to be paid and the payout history'], go: 'Turn on the partner programme' },
+      } as Record<string, { h: string; li: string[]; go: string }>)[lang] || null;
+      if (W) { box.replaceChildren(el('b', '', W.h)); const ul = el('ul', 'hint'); W.li.forEach((x) => ul.append(el('li', '', x))); box.append(ul); }
+      const card = deployCard('partner', '');
+      card.querySelector('p')?.remove();
+      const go = card.querySelector('button'); if (go && W) { go.textContent = W.go; go.addEventListener('click', () => setTimeout(() => { if (go.textContent === T.dep) go.textContent = W.go; }, 50)); }
+      box.append(card);
+    }
     else {
       const Z = T.pz;
       // 15.11: the reward is a % of each deal, kept on the server (the same number the partners see on their page).
