@@ -85,6 +85,18 @@ ${FACTS}`;
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
+/** The consultant in the corner of every page (15.11): answers questions about Vaxo itself, short and with today's facts. */
+function helpPrompt(lang: string): string {
+  return `You are Vax, the friendly raccoon who answers visitors' questions about Vaxo in the corner of its website. Reply in ${LANG_NAME[lang] ?? 'English'}, in 1–4 short sentences, warm and plain, no lists unless asked, no hype.
+FACTS (use only these; if something is not here, say you are not sure and offer hello@vaxogroup.com):
+- Vaxo is a product: you write a task in your own words and Vax does it — a site with booking and payments, a CRM, an AI consultant, a partner programme, texts, plans, calculations, pictures. Everyday tasks too (a trip plan, a contract review, a budget).
+- The work happens in the workspace at vaxogroup.com/app/ (or /ru/app/, /ua/app/). Start free, no card.
+- Plans: Free $0, Plus $19/month, Pro $39, Max $129, Ultra $299. Every plan can do everything; they differ only in how much work Vax does a month: Pro 2.5×, Max 8.5×, Ultra 20× the work of Plus (bigger plans are better value). Paying for 3, 6 or 12 months at once saves 10%, 15% or 20%.
+- The plan renews by itself; a reminder comes 3 days before; cancel with one button in the profile. Changed your mind within 14 days of the first payment — a full refund.
+- Partner programme (18+): 50% of a client's whole first payment, 30% of every later payment, plus 10% of what partners you invited earn; money is released after 14 days. Details at vaxogroup.com/partners/.
+- Never invent clients, numbers, discounts or promises. Never ask for contacts. If the person wants something DONE (a site, a document), say in one line that Vax will do it in the workspace and that the button below opens it.`;
+}
+
 function clean(x: unknown): Msg[] | null {
   if (!Array.isArray(x) || !x.length) return null;
   const out: Msg[] = [];
@@ -142,15 +154,16 @@ export async function handleChat(env: ChatEnv, request: Request, waitUntil?: (p:
   }
   // A tool is being built next to this answer: it has its own fields, so never ask the person for those numbers.
   const toolHint = !demo && WANTS_TOOL.test(messages[messages.length - 1].content) ? '\nA ready tool appears under your answer. Do not ask for numbers or details: give the general answer in 1–3 sentences and say the person can enter their own values in the tool below.' : '';
-  const input = { messages: [{ role: 'system', content: (demo ? demoPrompt(demo) : systemPrompt(lang)) + toolHint }, ...messages], max_tokens: 420, temperature: 0.6, chat_template_kwargs: { enable_thinking: false } };
+  const help = body.mode === 'help';
+  const input = { messages: [{ role: 'system', content: help ? helpPrompt(lang) : (demo ? demoPrompt(demo) : systemPrompt(lang)) + toolHint }, ...messages], max_tokens: help ? 300 : 420, temperature: 0.5, chat_template_kwargs: { enable_thinking: false } };
   // Pictures (Decision 39): free, on Workers AI, with a daily limit.
-  if (!demo && WANTS_IMAGE.test(messages[messages.length - 1].content)) {
+  if (!help && !demo && WANTS_IMAGE.test(messages[messages.length - 1].content)) {
     const pic = await drawImage(ai, env.LEADS, messages[messages.length - 1].content, lang, request.headers.get('CF-Connecting-IP') || 'local').catch((e) => { console.error('[image]', e); return null; });
     if (pic) return json(200, { ok: true, ...pic });
   }
   // Execution engine (Decision 38): the tool is built next to the answer, so the wait stays the same.
   const wish = messages[messages.length - 1].content;
-  const building = !demo && WANTS_TOOL.test(wish) ? buildTool(ai, wish, lang).catch(() => null) : Promise.resolve(null);
+  const building = !help && !demo && WANTS_TOOL.test(wish) ? buildTool(ai, wish, lang).catch(() => null) : Promise.resolve(null);
   for (const model of MODELS) {
     try {
       const raw = await ai.run(model, input);

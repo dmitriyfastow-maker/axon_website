@@ -731,6 +731,7 @@ const ico = {
     if (!G || off) { b.hidden = true; return; }
     const pct = G.to ? Math.round(((G.xp - G.from) / (G.to - G.from)) * 100) : 100;
     b.hidden = false; b.style.setProperty('--p', String(pct));
+    b.title = `${T.game.lv} ${G.level} · ${T.game.names[G.level - 1]} · ${G.xp} ${T.game.xp}`;
     b.innerHTML = `<i><b>${G.level}</b></i><span><strong>${T.game.names[G.level - 1]}</strong><small>${G.xp} ${T.game.xp}${G.to ? ' · ' + T.game.next.replace('{n}', String(G.level + 1)) : ''}</small></span>`;
     b.onclick = () => {
       const box = el('div', 'gpanel');
@@ -2199,4 +2200,21 @@ const ico = {
   .wsp .gpanel { display: grid; gap: 8px; }
   .wsp .gstep { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: var(--surf2); font-size: 14px; }
   .wsp .gstep.ok { color: var(--mut); }
+
+  /* 15.11: a compact footer and clear fold arrows */
+  .wsp .side .foot { grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px; align-items: center; }
+  .wsp .side .foot .game { grid-column: 1; width: auto; margin: 0; padding: 6px; border-radius: 12px; align-self: stretch; }
+  .wsp .side .foot .game span { display: none; }
+  .wsp .side .foot .usage { grid-column: 2 / 4; }
+  .wsp .side .foot .game[hidden] + .usage { grid-column: 1 / 4; }
+  .wsp .side .foot .who { grid-column: 1 / 3; min-width: 0; }
+  .wsp .side .foot .who small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .wsp .side .foot .langs { grid-column: 3; }
+  .wsp .side .lbl { margin-top: 10px; }
+  .wsp .car2 { width: 26px; height: 30px; font-size: 15px; color: var(--ink); border-radius: 8px; }
+  .wsp .car2:hover, .wsp .objt:hover { background: var(--surf2); }
+  .wsp .you > summary { padding-right: 6px; border-radius: 8px; }
+  .wsp .you > summary:hover { background: var(--surf2); }
+  .wsp .you > summary i { font-size: 15px; color: var(--ink); width: 22px; text-align: center; }
+  .wsp .objt { font-size: 13px; }
 </style>

@@ -111,11 +111,12 @@ const TX = {
 }[lang];
 const T = TX!;
 const WORKS: [string, string, string][] = [
+  // Only real sites here (15.11: no app screens, no simple templates).
   ['flagship', `flagship-${L3}.webp`, 'Ember'], ['eco-shop', `eco-shop-${L3}.webp`, 'Ostra'], ['eco-clinic', `eco-clinic-${L3}.webp`, 'Aurelia'],
-  ['shop-2026', `shop-2026-${L3}.webp`, 'Kettle & Leaf'], ['personal-brand', `personal-brand-${L3}.webp`, 'Mila Hart'], ['client-app', `client-app-${L3}.webp`, 'Aurora'],
-  ['coach', 'coach.webp', 'Maya Reed'], ['skincare', 'skincare.webp', 'Lumen'], ['dental', 'dental.webp', 'Dental'],
+  ['shop-2026', `shop-2026-${L3}.webp`, 'Kettle & Leaf'], ['personal-brand', `personal-brand-${L3}.webp`, 'Mila Hart'],
 ];
 const MORE: Record<string, [string, string, string][]> = {
+  site: WORKS.slice(1),
   book: [['eco-clinic', `eco-clinic-${L3}.webp`, 'Aurelia Skin Clinic'], ['client-app', `client-app-${L3}.webp`, 'Aurora']],
   crm: [['crm', `crm-${L3}.webp`, 'Aurelia HQ'], ['eco-crm', `eco-os-${L3}.webp`, 'Owner\'s panel']],
   bot: [['ai-assistant', `ai-assistant-${L3}.webp`, 'Lumo AI'], ['shop-2026', `shop-2026-${L3}.webp`, 'Kettle & Leaf']],
@@ -161,7 +162,7 @@ const ICO: Record<string, string> = {
             <div class="vis" data-vis>
             <a class="sl on" data-slug={LIVE[k] || ''} href={LIVE[k] ? `/examples/${LIVE[k]}/?lang=${lang}` : app(q)} target={LIVE[k] ? '_blank' : undefined} rel={LIVE[k] ? 'noopener' : undefined} tabindex="-1" aria-hidden="true">
               {k === 'site' && (
-                <div class="gal">{WORKS.map(([, img, n], j) => <figure class:list={[{ on: j === 0 }]}><img src={`/examples/thumbs/${img}`} alt="" loading="lazy" width="640" height="400" /><figcaption>{n}</figcaption></figure>)}</div>
+                <div class="gal">{WORKS.slice(0, 1).map(([, img, n], j) => <figure class:list={[{ on: j === 0 }]}><img src={`/examples/thumbs/${img}`} alt="" loading="lazy" width="640" height="400" /><figcaption>{n}</figcaption></figure>)}</div>
               )}
               {k === 'book' && (
                 <div class="bkm">

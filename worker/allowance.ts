@@ -56,7 +56,9 @@ export function windows(now = new Date()) {
 /** Decision 50: a monthly budget of work you may use at any pace (all of it in one day if you need to). It renews on the
  *  1st of each month, also on 3/6/12-month plans, so prepaid months never run ahead of the money. Units are cents of AI
  *  spend for Claude answers (a free-model answer costs 1–3), so the budget is about 40% of the plan price: never a loss. */
-export const MONTH_CAPS: Record<string, number> = { start: 300, personal: 760, care: 1560, growth: 5160, pro: 11960 };
+// 15.11: bigger plans give more work per dollar (Plus ×1, Pro ×2.5, Max ×8.5, Ultra ×20), like Claude and ChatGPT do.
+// Worst case (all used + loyalty +20% + a partner's 30% + 5% tax) still stays positive: Ultra ≈ +4%, Max ≈ +5%.
+export const MONTH_CAPS: Record<string, number> = { start: 300, personal: 760, care: 1900, growth: 6460, pro: 15200 };
 /** Extra allowance (top-up): a one-off pack on top of this month's budget, at the same rate as the plans (40% of the
  *  price goes to AI, so a pack is never a loss). Bought as an invoice whose description names the month, so it counts
  *  only for that month even when it is paid a few days later. EMPTY = switched off until Dmitry's "yes" on the price
