@@ -413,3 +413,43 @@ export function packNote(note: string, amount: unknown, next: unknown): string |
   if (amt === null && !n) return note || null;
   return NOTE_MARK + JSON.stringify({ t: note || '', ...(amt !== null ? { a: amt } : {}), ...(n ? { n } : {}) });
 }
+
+/** Morning reminder for client businesses (15.11): at 9:00 Kyiv time the owner gets the requests whose next step is
+ *  today or late, and new requests nobody touched for a day; each manager gets only theirs and the unassigned ones.
+ *  The cron fires once an hour, so the 9 o'clock window happens once a day. Days with nothing due send nothing. */
+export async function bizReminders(db: DB, send: (to: string, subj: string, text: string) => Promise<unknown>, now = new Date()) {
+  const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Kyiv', hour: 'numeric', hourCycle: 'h23' }).format(now));
+  if (hour !== 9) return;
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Kyiv' }).format(now);
+  const dayAgo = new Date(now.getTime() - 864e5).toISOString().slice(0, 19).replace('T', ' ');
+  const rows = (await db.prepare("SELECT id, biz_id, at, name, contact, status, note, assignee FROM biz_leads WHERE status IN ('new', 'work') OR status IS NULL ORDER BY id DESC LIMIT 5000")
+    .all<{ id: number; biz_id: number; at: string; name: string | null; contact: string | null; status: string | null; note: string | null; assignee: string | null }>().catch(() => ({ results: [] }))).results;
+  const byBiz = new Map<number, { line: string; who: string | null; late: boolean }[]>();
+  for (const r of rows) {
+    const n = unpackNote(r.note);
+    const due = n.next && n.next <= today, stale = (r.status ?? 'new') === 'new' && r.at < dayAgo;
+    if (!due && !stale) continue;
+    const list = byBiz.get(r.biz_id) ?? [];
+    list.push({ line: `${r.name || r.contact || '#' + r.id}${n.note ? ' — ' + n.note.slice(0, 80) : ''}`, who: r.assignee, late: !!(n.next && n.next < today) });
+    byBiz.set(r.biz_id, list);
+  }
+  for (const [bizId, list] of byBiz) {
+    const o = await db.prepare('SELECT b.name, c.email, c.lang FROM biz b JOIN clients c ON c.id = b.owner_id WHERE b.id = ?').bind(bizId).first<{ name: string; email: string | null; lang: string | null }>().catch(() => null);
+    if (!o) continue;
+    const ru = o.lang === 'ru', ua = o.lang === 'ua';
+    const mk = (items: typeof list) => {
+      const subj = `${ru ? 'Сегодня в CRM' : ua ? 'Сьогодні в CRM' : 'Today in your CRM'}: ${items.length} — ${o.name}`;
+      const text = [ru ? 'Доброе утро! Эти заявки ждут вас сегодня:' : ua ? 'Доброго ранку! Ці заявки чекають на вас сьогодні:' : 'Good morning! These requests are waiting for you today:', '',
+        ...items.slice(0, 30).map((x) => `${x.late ? '🔴' : '•'} ${x.line}`), '',
+        `${ru ? 'Открыть CRM' : ua ? 'Відкрити CRM' : 'Open the CRM'}: https://vaxogroup.com/${ru ? 'ru/' : ua ? 'ua/' : ''}app/#crm`].join('\n');
+      return { subj, text };
+    };
+    if (o.email) { const m = mk(list); await send(o.email, m.subj, m.text).catch(() => false); }
+    const team = (await db.prepare("SELECT email FROM biz_members WHERE biz_id = ? AND role = 'manager'").bind(bizId).all<{ email: string }>().catch(() => ({ results: [] }))).results.map((x) => x.email.toLowerCase());
+    for (const t of team) {
+      if (t === o.email?.toLowerCase()) continue;
+      const mine = list.filter((x) => !x.who || x.who.toLowerCase() === t);
+      if (mine.length) { const m = mk(mine); await send(t, m.subj, m.text).catch(() => false); }
+    }
+  }
+}

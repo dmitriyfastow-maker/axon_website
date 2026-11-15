@@ -38,7 +38,7 @@ import { handleCabinet, type CabinetEnv } from './cabinet.js';
 import { handleInvoicePublic } from './invoices.js';
 import { handleStaffLogin } from './staff.js';
 import { handleLevel } from './level.js';
-import { handleBiz, handleCollect, snippet, tellOwner } from './biz.js';
+import { handleBiz, handleCollect, snippet, tellOwner, bizReminders } from './biz.js';
 import { checkout, refBiz, settle } from './sitepay.js';
 import { handleDemoAi } from './demoai.js';
 import { monoCheck, monoPay, monoReceiptSweep, monoWebhook } from './mono.js';
@@ -337,7 +337,7 @@ export default {
       }).catch(() => {});
     };
     // The autopilot's hourly round: deadlines, AI grading, quality control, client summaries, the morning digest.
-    for (const job of [() => checkDomains(env.LEADS!, { token: env.CF_SAAS_TOKEN }, notify), () => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => labSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => matureReferrals(env.LEADS!, notify), () => rescueUnanswered(env.LEADS!, env.AI, notify), () => monthlyBilling(env.LEADS!, notify), () => autopaySweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => morningBookings(env.LEADS!, sendMail), () => pruneBots(env.LEADS!)]) {
+    for (const job of [() => checkDomains(env.LEADS!, { token: env.CF_SAAS_TOKEN }, notify), () => sweep(env.LEADS!, notify), () => gradePending(env.LEADS!, env.AI, notify), () => qcSweep(env.LEADS!, env.AI, notify), () => summarizeClients(env.LEADS!, env.AI), () => maybeDigest(env.LEADS!, env.AI, notify), () => aiFollowups(env.LEADS!, env.AI, notify), () => learnFromChats(env.LEADS!, env.AI), () => notifyOwnerChat(env.LEADS!, notify), () => monoReceiptSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => labSweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => matureReferrals(env.LEADS!, notify), () => rescueUnanswered(env.LEADS!, env.AI, notify), () => monthlyBilling(env.LEADS!, notify), () => autopaySweep(env.LEADS!, env.MONO_ACQ_TOKEN, notify), () => morningBookings(env.LEADS!, sendMail), () => bizReminders(env.LEADS!, sendMail), () => pruneBots(env.LEADS!)]) {
       await job().catch((e) => console.error('[cron]', e));
     }
   },  // Letters to hello@vaxogroup.com (Cloudflare Email Routing → this worker) go into the client's project chat.
