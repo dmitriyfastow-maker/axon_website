@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'plan-trip-with-ai-route-budget-bookings',
+    date: '2026-11-15',
+    t: {
+      en: {
+        title: 'How to plan a trip with AI in 15 minutes: route, budget and bookings',
+        desc: 'A simple way to get a ready trip plan from AI: what to tell it, how to get a day-by-day route with prices, and how to check bookings before you pay.',
+        body: [
+          ['Why most AI trip plans are useless', ['Ask “plan a trip to Lisbon” and you get a generic list from a guidebook. The plan becomes useful only when the AI knows your dates, budget, who is going and what you like.']],
+          ['1. Give the basics in one message', ['Where, when, how many people, total budget, how you travel (car, train, plane) and two or three things you love or hate. For example: “Lisbon, 12–16 May, two adults, €1200 without flights, we like food and walking, no museums.”']],
+          ['2. Ask for a day-by-day table', ['Ask for a table: day, morning / afternoon / evening, approximate cost, travel time between places. A table shows at once if a day is overloaded or the budget does not add up.']],
+          ['3. Ask for real links with your dates', ['For hotels, tickets and tables ask for links already filled with your dates and number of people. You still choose and pay yourself — but you skip half an hour of typing the same dates on every site.']],
+          ['4. Check the important things yourself', ['Opening hours, prices and cancellation rules change. Before paying, open the official site and read the cancellation terms. AI saves time on search; the final check is yours.']],
+          ['5. Keep a plan B for each day', ['Ask for one rainy-day option and one cheaper option per day. Then a closed museum or bad weather does not ruin the trip.']],
+          ['6. Take the plan with you', ['Ask for a short version: addresses, booking numbers, times. Save it offline on your phone — it works without internet.']],
+          ['How Vaxo helps', ['In Workspace you describe the trip in one message and Vax returns the whole plan at once: a table by days with prices, links with your dates, rainy-day and budget options. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как спланировать поездку с ИИ за 15 минут: маршрут, бюджет и брони',
+        desc: 'Простой способ получить от ИИ готовый план поездки: что ему написать, как получить маршрут по дням с ценами и как проверить брони перед оплатой.',
+        body: [
+          ['Почему планы поездок от ИИ часто бесполезны', ['Напишите «спланируй поездку в Лиссабон» — и получите общий список из путеводителя. План становится полезным, только когда ИИ знает ваши даты, бюджет, кто едет и что вы любите.']],
+          ['1. Дайте основное одним сообщением', ['Куда, когда, сколько человек, общий бюджет, на чём едете (машина, поезд, самолёт) и две-три вещи, которые вы любите или не любите. Например: «Лиссабон, 12–16 мая, двое взрослых, €1200 без перелёта, любим еду и прогулки, без музеев».']],
+          ['2. Попросите таблицу по дням', ['Попросите таблицу: день, утро / день / вечер, примерная стоимость, время в дороге между местами. По таблице сразу видно, где день перегружен или бюджет не сходится.']],
+          ['3. Попросите настоящие ссылки с вашими датами', ['Для отелей, билетов и столиков просите ссылки, где уже стоят ваши даты и число людей. Выбираете и платите вы сами — но не тратите полчаса, вбивая одни и те же даты на каждом сайте.']],
+          ['4. Важное проверьте сами', ['Часы работы, цены и правила отмены меняются. Перед оплатой откройте официальный сайт и прочитайте условия отмены. ИИ экономит время на поиске, последняя проверка — ваша.']],
+          ['5. На каждый день — запасной план', ['Попросите по одному варианту на дождь и одному подешевле на каждый день. Тогда закрытый музей или плохая погода не испортят поездку.']],
+          ['6. Возьмите план с собой', ['Попросите короткую версию: адреса, номера броней, время. Сохраните её на телефоне офлайн — она работает без интернета.']],
+          ['Чем помогает Vaxo', ['В Workspace вы описываете поездку одним сообщением, и Vax сразу возвращает весь план: таблицу по дням с ценами, ссылки с вашими датами, варианты на дождь и подешевле. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як спланувати подорож з ШІ за 15 хвилин: маршрут, бюджет і бронювання',
+        desc: 'Простий спосіб отримати від ШІ готовий план подорожі: що йому написати, як отримати маршрут по днях із цінами і як перевірити бронювання перед оплатою.',
+        body: [
+          ['Чому плани подорожей від ШІ часто марні', ['Напишіть «сплануй подорож до Лісабона» — і отримаєте загальний список із путівника. План стає корисним, лише коли ШІ знає ваші дати, бюджет, хто їде і що ви любите.']],
+          ['1. Дайте основне одним повідомленням', ['Куди, коли, скільки людей, загальний бюджет, чим їдете (авто, потяг, літак) і дві-три речі, які ви любите чи не любите. Наприклад: «Лісабон, 12–16 травня, двоє дорослих, €1200 без перельоту, любимо їжу й прогулянки, без музеїв».']],
+          ['2. Попросіть таблицю по днях', ['Попросіть таблицю: день, ранок / день / вечір, приблизна вартість, час у дорозі між місцями. З таблиці одразу видно, де день перевантажений або бюджет не сходиться.']],
+          ['3. Попросіть справжні посилання з вашими датами', ['Для готелів, квитків і столиків просіть посилання, де вже стоять ваші дати й кількість людей. Обираєте й платите ви самі — але не витрачаєте пів години, вбиваючи ті самі дати на кожному сайті.']],
+          ['4. Важливе перевірте самі', ['Години роботи, ціни й правила скасування змінюються. Перед оплатою відкрийте офіційний сайт і прочитайте умови скасування. ШІ економить час на пошуку, остання перевірка — ваша.']],
+          ['5. На кожен день — запасний план', ['Попросіть по одному варіанту на дощ і одному дешевшому на кожен день. Тоді зачинений музей чи погана погода не зіпсують подорож.']],
+          ['6. Візьміть план із собою', ['Попросіть коротку версію: адреси, номери бронювань, час. Збережіть її на телефоні офлайн — вона працює без інтернету.']],
+          ['Чим допомагає Vaxo', ['У Workspace ви описуєте подорож одним повідомленням, і Vax одразу повертає весь план: таблицю по днях із цінами, посилання з вашими датами, варіанти на дощ і дешевші. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'track-leads-small-business-simple-crm',
     date: '2026-11-15',
     t: {
