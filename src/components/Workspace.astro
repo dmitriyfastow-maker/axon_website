@@ -884,6 +884,29 @@ const ico = {
     });
     const copy = btn('sec', T.copy, async () => { await copyText(area.hidden ? m.doc!.body : area.value); flash(copy, T.copied, T.copy); });
     const dl = btn('sec', T.dl, () => download(m.doc!.title, m.doc!.body, 'text/markdown'));
+    // 15.11: the same document as Word, PDF and a PowerPoint deck, made in the browser (no extra service, no subscription).
+    const safeName = (m.doc!.title || 'Vaxo').replace(/[^\p{L}\p{N} -]+/gu, '').slice(0, 60) || 'Vaxo';
+    const docHtml = () => `<html><head><meta charset="utf-8"><title>${safeName}</title><style>body{font:12pt/1.5 Calibri,Arial,sans-serif;max-width:760px;margin:24px auto;color:#111}h1,h2,h3{font-family:Calibri,Arial,sans-serif}table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:4px 8px}</style></head><body><h1>${safeName}</h1>${md(m.doc!.body)}</body></html>`;
+    const word = btn('sec', 'Word', () => { const a = el('a') as HTMLAnchorElement; a.href = URL.createObjectURL(new Blob(['\ufeff' + docHtml()], { type: 'application/msword' })); a.download = safeName + '.doc'; a.click(); URL.revokeObjectURL(a.href); });
+    const pdf = btn('sec', 'PDF', () => { const w = window.open('', '_blank'); if (!w) return; w.document.write(docHtml()); w.document.close(); w.focus(); setTimeout(() => w.print(), 400); });
+    const deck = btn('sec', ({ ru: 'Презентация', ua: 'Презентація' } as R)[lang] || 'Slides', async () => {
+      const w = window as any;
+      if (!w.PptxGenJS) await new Promise<void>((ok, bad) => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js'; sc.onload = () => ok(); sc.onerror = () => bad(); document.head.append(sc); }).catch(() => null);
+      if (!w.PptxGenJS) return;
+      const p = new w.PptxGenJS(); p.layout = 'LAYOUT_WIDE';
+      const t0 = p.addSlide(); t0.background = { color: '16161A' };
+      t0.addText(safeName, { x: 0.6, y: 2.4, w: 12, h: 1.6, fontSize: 40, bold: true, color: 'FFFFFF', fontFace: 'Calibri' });
+      t0.addText('Vaxo', { x: 0.6, y: 4.1, w: 12, h: 0.6, fontSize: 18, color: 'E8A33D', fontFace: 'Calibri' });
+      const parts = m.doc!.body.split(/^#{1,3}\s+/m).map((x) => x.trim()).filter(Boolean);
+      for (const part of parts) {
+        const [head, ...rest] = part.split('\n');
+        const bullets = rest.map((l) => l.replace(/^\s*([-*•]|\d+[.)])\s*/, '').replace(/\*\*/g, '').trim()).filter((l) => l && !/^\|?[-: |]+\|?$/.test(l)).slice(0, 8);
+        const sl = p.addSlide();
+        sl.addText(head.replace(/\*\*/g, '').slice(0, 90), { x: 0.6, y: 0.4, w: 12, h: 1, fontSize: 30, bold: true, color: '16161A', fontFace: 'Calibri' });
+        if (bullets.length) sl.addText(bullets.map((b) => ({ text: b.slice(0, 160), options: { bullet: true } })), { x: 0.8, y: 1.6, w: 11.6, h: 5.2, fontSize: 18, color: '333333', fontFace: 'Calibri', valign: 'top', paraSpaceAfter: 8 });
+      }
+      await p.writeFile({ fileName: safeName + '.pptx' });
+    });
     const drawPub = () => {
       if (!m.pub) { pubBox.replaceChildren(); return; }
       const off = btn('lnk', T.pubOff, async () => { const { d } = await postJ('/api/ws/publish', { id: m.id, off: true }); if (d.ok) { m.pub = undefined; pub.textContent = T.pub; drawPub(); } });
@@ -896,7 +919,7 @@ const ico = {
       pub.textContent = d.ok ? T.pubDone : T.pub;
       if (d.url) { m.pub = d.url; drawPub(); }
     });
-    bar.append(pub, edit, copy, dl);
+    bar.append(pub, edit, copy, dl, word, pdf, deck);
     drawPub();
     const wrap = el('div', 'art'); wrap.append(bar, pubBox, view, area);
     return wrap;

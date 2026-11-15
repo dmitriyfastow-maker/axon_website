@@ -6,6 +6,8 @@ import type { DB } from './partner.js';
 const SCREEN = '@cf/google/gemma-4-26b-a4b-it';
 const IMAGE = '@cf/black-forest-labs/flux-1-schnell';
 export const DAILY = 5;
+/** Pictures a day by plan (Flux Schnell on Workers AI costs a fraction of a cent, the plan's work volume is also spent). */
+export const IMG_CAP: Record<string, number> = { start: 5, personal: 30, care: 60, growth: 150, pro: 300 };
 
 export const WANTS_IMAGE = /нарисуй|намалюй|сгенерируй\s+(картинк|изображ|фото|логотип)|згенеруй\s+(картинк|зображ|фото|логотип)|(создай|сделай|зроби|створи)\s+(картинк|изображен|зображен|иллюстрац|ілюстрац)|\bdraw\b|\bpaint\s+(me\s+)?(a|an)\b|\b(generate|create|make)\s+(me\s+)?(a|an|the)?\s*(image|picture|illustration|drawing)\b/i;
 
@@ -13,9 +15,9 @@ const RULE = `Turn the wish into one short English image prompt. Reply with the 
 If the wish involves nudity or sex, any child in a sexual or harmful way, real named people, gore, hate, weapons instructions, fake documents or logos of real brands, reply exactly: BLOCK`;
 
 const WORDS: Record<string, [string, string, string]> = {
-  en: ['Here is your picture.', 'I cannot draw that.', 'That is all the free pictures for today. More tomorrow.'],
-  ru: ['Вот ваша картинка.', 'Такое я не рисую.', 'Бесплатные картинки на сегодня закончились. Завтра будут новые.'],
-  ua: ['Ось ваша картинка.', 'Таке я не малюю.', 'Безкоштовні картинки на сьогодні закінчились. Завтра будуть нові.'],
+  en: ['Here is your picture.', 'I cannot draw that.', 'That is all the pictures for today on your plan. More tomorrow, or a bigger plan gives more.'],
+  ru: ['Вот ваша картинка.', 'Такое я не рисую.', 'Картинки на сегодня по вашему тарифу закончились. Завтра будут новые, а на тарифе выше их больше.'],
+  ua: ['Ось ваша картинка.', 'Таке я не малюю.', 'Картинки на сьогодні за вашим тарифом закінчились. Завтра будуть нові, а на тарифі вище їх більше.'],
 };
 
 async function ipKey(ip: string) {
@@ -23,12 +25,12 @@ async function ipKey(ip: string) {
   return Array.from(new Uint8Array(h).slice(0, 8), (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-export async function drawImage(ai: AiBinding, db: DB | undefined, wish: string, lang: string, ip: string): Promise<{ reply: string; image?: string } | null> {
+export async function drawImage(ai: AiBinding, db: DB | undefined, wish: string, lang: string, ip: string, cap = DAILY): Promise<{ reply: string; image?: string } | null> {
   const [ok, no, over] = WORDS[lang] ?? WORDS.en;
   if (!db) return null;
   const who = await ipKey(ip);
   const used = (await db.prepare(`SELECT COUNT(*) AS n FROM events WHERE kind = 'img' AND path = ? AND at >= date('now')`).bind(who).first<{ n: number }>())?.n ?? 0;
-  if (used >= DAILY) return { reply: over };
+  if (used >= cap) return { reply: over };
   const s = (await ai.run(SCREEN, { messages: [{ role: 'system', content: RULE }, { role: 'user', content: wish.slice(0, 400) }], max_tokens: 120, temperature: 0, chat_template_kwargs: { enable_thinking: false } })) as Record<string, any>;
   const prompt = String(typeof s?.response === 'string' ? s.response : s?.choices?.[0]?.message?.content || '').trim();
   if (!prompt) return null;
