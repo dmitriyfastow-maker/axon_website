@@ -524,7 +524,7 @@ const en = {
     },
     {
       "q": "How do I pay?",
-      "a": "Launch: 50% to start, 50% after you approve the result (from $3,000 — in 3 stages). Plans — monthly in advance, by card. Pay a year at once — 2 months free."
+      "a": "Launch: 50% to start, 50% after you approve the result (from $3,000 — in 3 stages). Plans — monthly in advance, by card. Pay for 3, 6 or 12 months at once — up to 20% off."
     },
     {
       "q": "Who will be in touch?",
