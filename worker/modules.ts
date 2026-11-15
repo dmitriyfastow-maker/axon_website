@@ -262,6 +262,14 @@ export async function modulesState(db: DB, clientId: number, origin: string, acc
       (SELECT COUNT(*) FROM biz_leads l WHERE l.biz_id = r.biz_id AND l.source = 'ref_' || r.code) AS leads,
       (SELECT COUNT(*) FROM biz_leads l WHERE l.biz_id = r.biz_id AND l.source = 'ref_' || r.code AND l.status = 'won') AS won
     FROM biz_refs r WHERE r.biz_id = ? ORDER BY r.id`).bind(biz.id).all<{ name: string; code: string; visits: number; leads: number; won: number }>()).results;
+  // What each partner earned: the reward % × the amounts of their won deals (amounts live in the lead's note).
+  const refRate = Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('biz_ref_rate_' + biz.id).first<{ value: string }>().catch(() => null))?.value ?? 10);
+  const earnedBy: Record<string, number> = {};
+  if (refs.length) {
+    const { unpackNote } = await import('./biz.js');
+    const won = (await db.prepare("SELECT source, note FROM biz_leads WHERE biz_id = ? AND status = 'won' AND source LIKE 'ref_%'").bind(biz.id).all<{ source: string; note: string | null }>().catch(() => ({ results: [] }))).results;
+    for (const x of won) { const c = x.source.slice(4); earnedBy[c] = Math.round(((earnedBy[c] || 0) + (unpackNote(x.note).amount || 0) * refRate / 100) * 100) / 100; }
+  }
   const extra = (await db.prepare('SELECT slug, data FROM ws_sites WHERE client_id = ? AND biz_id = ? ORDER BY at DESC LIMIT 20').bind(clientId, biz.id).all<{ slug: string; data: string }>().catch(() => ({ results: [] }))).results;
   const pages = [...extra.map((p) => ({ ...(JSON.parse(p.data) as Site), slug: p.slug, url: `${origin}/s/${p.slug}` })), ...(biz.kind === 'site' ? [{ ...(JSON.parse(biz.data || '{}') as Site), slug: biz.slug, url, main: true }] : [])];
   return {
@@ -270,7 +278,7 @@ export async function modulesState(db: DB, clientId: number, origin: string, acc
     pages,
     crm: access ? { url, total, leads } : null,
     requests: total,
-    partner: refs.length ? { links: refs.map((r) => ({ ...r, ...unpackRef(r.name), url: `${url}?utm_source=ref_${r.code}`, page: `${origin}/rp/${r.code}` })) } : null,
+    partner: refs.length ? { rate: refRate, links: refs.map((r) => ({ ...r, ...unpackRef(r.name), earned: earnedBy[r.code] || 0, url: `${url}?utm_source=ref_${r.code}`, page: `${origin}/rp/${r.code}` })) } : null,
     site: biz.kind === 'site' ? { url, slug: biz.slug, ...(JSON.parse(biz.data || '{}') as Site) } : null,
   };
 }

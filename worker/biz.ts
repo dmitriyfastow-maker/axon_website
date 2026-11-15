@@ -266,6 +266,13 @@ export async function handleBiz(db: DB, request: Request, path: string, ai: AiBi
         stats: await stats(db, a.id, days), leads, team,
       });
     }
+    // Partners' reward, % of each deal, shared by the CRM, the workspace and the partners' pages.
+    if (sub === 'refrate' && m === 'POST' && owner) {
+      const rr = Number(b.rate);
+      if (!(rr >= 0 && rr <= 50)) return json(400, { ok: false });
+      await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind('biz_ref_rate_' + a.id, String(Math.round(rr * 10) / 10)).run();
+      return json(200, { ok: true });
+    }
     if (sub === 'settings' && m === 'POST' && owner) {
       await db.prepare('UPDATE biz SET name = COALESCE(NULLIF(?, \'\'), name), domain = ?, about = ? WHERE id = ?').bind(cut(b.name, 80), host(cut(b.domain, 120)) || null, cut(b.about, 4000) || null, a.id).run();
       const rr = Number(b.refRate);
@@ -322,6 +329,18 @@ Reply in ${lang === 'ru' ? 'Russian' : lang === 'ua' ? 'Ukrainian' : 'English'} 
 NEXT: one concrete next step and when (one line)
 MESSAGE: a short, warm, personal message the business can send this person right now (2–4 sentences, no invented prices or facts, signed with the business name).`;
       return json(200, { ok: true, text: (await askAi(ai, prompt, 320)) || '' });
+    }
+    // Import from a table (CSV from Excel, Google Sheets or another CRM): up to 500 rows at a time.
+    if (sub === 'import' && m === 'POST' && canLeads) {
+      const rows = Array.isArray(b.rows) ? (b.rows as Record<string, unknown>[]).slice(0, 500) : [];
+      let n = 0;
+      for (const r of rows) {
+        const name = cut(r.name, 80), contact = cut(r.contact, 120), msg = cut(r.message, 2000);
+        if (!name && !contact) continue;
+        await db.prepare("INSERT INTO biz_leads (biz_id, name, contact, message, source) VALUES (?, ?, ?, ?, 'import')").bind(a.id, name || null, contact || null, msg || null).run();
+        n++;
+      }
+      return json(200, { ok: true, n });
     }
     if (sub === 'leads' && m === 'POST' && canLeads) {
       // A lead taken by phone or in person, typed in by hand.

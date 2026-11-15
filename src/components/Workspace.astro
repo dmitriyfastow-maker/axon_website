@@ -1480,16 +1480,17 @@ const ico = {
     if (!S.mods?.biz) { box.append(el('p', 'hint', T.botNoSite)); openCv(T.parMine, box); return; }
     if (!p) box.append(deployCard('partner', T.parP));
     else {
-      const Z = T.pz, rk = `vaxo_par_rew_${S.proj?.biz || 0}`;
-      let rew = 0; try { rew = Math.max(0, Number(localStorage.getItem(rk)) || 0); } catch {}
+      const Z = T.pz;
+      // 15.11: the reward is a % of each deal, kept on the server (the same number the partners see on their page).
+      let rew = Number(p.rate ?? 10);
       const rw = el('label', 'hint'), ri = el('input') as HTMLInputElement, sum = el('p', 'hint'), list = el('div');
-      ri.type = 'number'; ri.min = '0'; ri.step = '1'; ri.inputMode = 'decimal'; ri.value = rew ? String(rew) : ''; ri.placeholder = '0'; ri.style.maxWidth = '8em'; ri.title = Z.rewTip;
-      rw.append(el('span', '', Z.rew + ' '), ri); rw.title = Z.rewTip;
+      ri.type = 'number'; ri.min = '0'; ri.max = '50'; ri.step = '0.5'; ri.inputMode = 'decimal'; ri.value = rew ? String(rew) : ''; ri.placeholder = '0'; ri.style.maxWidth = '8em'; ri.title = Z.rewTip;
+      rw.append(el('span', '', ({ ru: 'Вознаграждение партнёрам, % от суммы сделки', ua: 'Винагорода партнерам, % від суми угоди' } as R)[lang] || 'Partners’ reward, % of each deal'), ri);
       const links = [...p.links].sort((a: any, b: any) => (b.won || 0) - (a.won || 0) || b.leads - a.leads || b.visits - a.visits);
       const draw = () => {
         list.replaceChildren(); let owed = 0;
         for (const l of links as any[]) {
-          const won = l.won || 0, lv = won >= 10 ? 2 : won >= 3 ? 1 : 0, paid = l.paid || 0, due = Math.max(0, won * rew - paid); owed += due;
+          const won = l.won || 0, lv = won >= 10 ? 2 : won >= 3 ? 1 : 0, paid = l.paid || 0, due = Math.max(0, Math.round(((l.earned || 0) - paid) * 100) / 100); owed += due;
           const r = el('div', 'lead col'), h = el('b', '', l.name + ' · '), tag = el('small', '', Z.lv[lv]);
           tag.title = Z.lvTip; h.append(tag);
           const conv = l.leads ? Math.round((won / l.leads) * 100) : 0;
@@ -1508,7 +1509,7 @@ const ico = {
         }
         sum.textContent = rew && links.length ? `${Z.total}: $${owed}` : '';
       };
-      ri.oninput = () => { rew = Math.max(0, Number(ri.value) || 0); try { localStorage.setItem(rk, String(rew)); } catch {} draw(); };
+      ri.onchange = async () => { rew = Math.min(50, Math.max(0, Number(ri.value) || 0)); const was = Number(p.rate ?? 10) || 0; await post(`/api/biz/${S.mods!.biz!.id}/refrate`, { rate: rew }).catch(() => null); for (const l of p.links as any[]) l.earned = was ? Math.round((l.earned || 0) * rew / was * 100) / 100 : 0; p.rate = rew; draw(); };
       box.append(rw, sum, el('small', 'hint', Z.top + ' · ' + Z.lvTip), list); draw();
       const f = el('form', 'add'), i = el('input'), b = el('button', 'sec', T.parAdd);
       i.placeholder = T.parName; i.maxLength = 80; i.required = true; i.setAttribute('aria-label', T.parName);
