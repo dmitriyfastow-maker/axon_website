@@ -51,6 +51,15 @@ const TRIP = /отпуск|отдых|поездк|подорож|відпуст
 const ACT_FOR_ME = /(оплат|забронир|заброню|купи|закаж|замов|pay|book|buy|order)[\p{L}]*\s.{0,30}(за меня|за мене|for me|мне|мені)|(за меня|за мене|for me)\s.{0,30}(оплат|забронир|заброню|купи|pay|book|buy)/iu;
 const PLAN_HINT = () => `Today is ${new Date().toISOString().slice(0, 10)}; all dates must be in the future. Answer with the full plan now, no question first: a day-by-day table with an estimated cost per item and a total, assumptions in one line. If I asked you to pay or book: say in half a line you cannot pay or book, then give the exact choices, the order to book in, and search links with the place and dates filled in (Google Flights with q=Flights from <my city, or the nearest big airport you assume> to <place> on YYYY-MM-DD, Booking.com with ss=, checkin=, checkout=). No generic tips.`;
 
+/** Which language a text is written in by its letters ('' when it can't be told, e.g. «Барбершоп» is the same in Russian and Ukrainian). */
+export function speaks(t: string): string {
+  const w = t.replace(/https?:\S+|\[\[[^\]]*\]\]|📎 \S+/gu, '');
+  if (/[іїєґ]/i.test(w)) return 'ua';
+  if (/[ыэъё]/i.test(w)) return 'ru';
+  if (/[а-я]/i.test(w)) return '';
+  return /[a-z]{3,}/i.test(w) ? 'en' : '';
+}
+
 function system(lang: string, memory: Memory, mode: string): string {
   const shape = mode === 'deep'
     ? `ANSWER MODE: DEEP PROJECT. In the chat write the core in at most 3 lines. Then put the whole worked-out result between [[DOC: short title]] and [[/DOC]] in Markdown (## headings, lists, tables): it opens on the Canvas next to the chat, where the person can edit and download it. Make it complete and ready to use.`
@@ -290,7 +299,9 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   }
 
   const building = WANTS_TOOL.test(said) ? buildTool(ai, said, lang).catch(() => null) : Promise.resolve(null);
-  const sys = system(lang, memory, mode) + (WANTS_TOOL.test(said) ? '\nA ready tool appears on the Canvas to the right of the chat (never say "below"). Do not ask for numbers: answer in 1–3 sentences and say they can enter their own values on the Canvas. Never write markers like [canvas: ...].' : '');
+  // Reply in the person's own language (15.11: a Russian speaker on /ua/app/ got Ukrainian replies): the latest message decides, else their earlier ones.
+  const talk = [said, ...history.filter((m) => m.role === 'user').map((m) => m.content).reverse()].map(speaks).find(Boolean) || '';
+  const sys = system(talk || lang, memory, mode) + (talk ? `\nThe person writes in ${LANGS[talk]}: answer in ${LANGS[talk]}, even if earlier replies were in another language.` : '') + (WANTS_TOOL.test(said) ? '\nA ready tool appears on the Canvas to the right of the chat (never say "below"). Do not ask for numbers: answer in 1–3 sentences and say they can enter their own values on the Canvas. Never write markers like [canvas: ...].' : '');
   const turns: { role: string; content: string }[] = [];
   // Attached files reach the model as their name plus what is on an image or in a document; recent ones in full.
   const all = [...history, { role: 'user' as const, content: forModel(q) }];

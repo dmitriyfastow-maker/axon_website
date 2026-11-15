@@ -1,6 +1,6 @@
 import { filesForAi, readText } from '../../worker/files';
 import { describe, expect, it } from 'vitest';
-import { cleanMemory, memoryBlock, ownWords, shapeReply, docCut } from '../../worker/workspace';
+import { cleanMemory, memoryBlock, ownWords, shapeReply, docCut, speaks } from '../../worker/workspace';
 import { cleanSite, slugOf } from '../../worker/modules';
 import { md } from '../../src/scripts/md';
 
@@ -128,5 +128,15 @@ describe('docCut', () => {
     expect(docCut('План готов.\n[[DOC: Курсова]]\n# Вступ\nАктуальність теми')).toBe(true);
     expect(docCut('Готово.\n[[DOC: План]]\n# Вступ\n[[/DOC]]')).toBe(false);
     expect(docCut('Короткий ответ без документа.')).toBe(false);
+  });
+});
+
+describe('speaks', () => {
+  it('tells the language by letters', () => {
+    expect(speaks('1. Полноценный 2. Да')).toBe('ru');
+    expect(speaks('Повноцінний сайт, їжа')).toBe('ua');
+    expect(speaks('Барбершоп')).toBe('');
+    expect(speaks('Make me a site')).toBe('en');
+    expect(speaks('📎 file.pdf Да')).toBe('');
   });
 });
