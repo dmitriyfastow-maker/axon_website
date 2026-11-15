@@ -1716,6 +1716,8 @@ const ico = {
     const h = location.hash;
     const link = h.match(/^#in=([^.]+)\.(\d{6})$/);
     if (link) { history.replaceState(null, '', location.pathname + location.search); try { await enter(atob(link[1]), link[2]); } catch {} }
+    // Show the start screen at once (it needs no data), so the first second is not a blank page; redrawn below.
+    try { drawEmpty(); } catch {}
     const [d] = await Promise.all([fetch('/api/ws').then((r) => r.json()).catch(() => null), loadMe()]);
     if (d?.signedIn) {
       // Signed in any way (link, Google, password): what the guest did in this browser joins the account.
