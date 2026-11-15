@@ -178,6 +178,16 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   }
   // Test accounts for every role (Dmitry, 12.11): HQ opens any of them in one click, and each has a real password, so the
   // owner can also sign in to them from any browser without the HQ. Stored only here, shown only in the HQ.
+  // HQ structure edited in place (Dmitry 15.11): order of tabs and blocks, hidden ones, own titles.
+  if (path === 'layout') {
+    if (request.method === 'POST') {
+      const raw = JSON.stringify((await request.json().catch(() => ({}))) ?? {}).slice(0, 20000);
+      await db.prepare("INSERT INTO settings (key, value) VALUES ('hq_layout', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(raw).run();
+      return json(200, { ok: true });
+    }
+    const v = (await db.prepare("SELECT value FROM settings WHERE key = 'hq_layout'").first<{ value: string }>().catch(() => null))?.value;
+    return json(200, { ok: true, layout: v ? JSON.parse(v) : {} });
+  }
   if (path === 'test-accounts' && request.method === 'GET') {
     return json(200, { ok: true, list: await ensureTestAccounts(db) });
   }

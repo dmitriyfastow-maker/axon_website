@@ -9,6 +9,7 @@ import Base from '../layouts/Base.astro';
     <header class="top">
       <h1>Vaxo <span>· CRM</span> <small class="mut" data-who></small></h1>
       <div class="top-r" data-on hidden>
+        <button type="button" class="ghost" data-edit-mode title="Перетаскивайте разделы и блоки, скрывайте лишнее, нажмите на заголовок, чтобы переименовать">✏️ Настроить</button>
         <button type="button" class="ghost" data-reload>Обновить</button>
         <button type="button" class="ghost" data-out>Выйти</button>
       </div>
@@ -1200,7 +1201,7 @@ import Base from '../layouts/Base.astro';
   const curView = () => $<HTMLButtonElement>('[data-view][aria-pressed="true"]');
   const syncFab = () => {
     const v = curView()?.dataset.view || 'today';
-    $('[data-fab]').hidden = v === 'today' || $('[data-app]').hidden;
+    $('[data-fab]').hidden = $('[data-app]').hidden;
     if (v === 'today') $('[data-hlp]').hidden = true;
     $('[data-hlp-where]').textContent = '· ' + (curView()?.textContent || '').replace(/\s*\d+\s*$/, '').trim();
     $('[data-hlp-quick]').replaceChildren(...(QUICK[v] || DEF_Q).map((q) => el('button', { type: 'button', class: 'ghost', onclick: () => askHlp(q) }, q)));
@@ -1309,6 +1310,64 @@ import Base from '../layouts/Base.astro';
   });
   load();
   setInterval(() => { if (!document.hidden && token && $('[data-drawer]').hidden) load(); }, 60000);
+
+  /* ---------- ✏️ Edit the HQ in place: drag tabs and blocks, hide, rename (saved for the whole HQ) ---------- */
+  {
+    type L = { subs?: string[]; hide?: string[]; names?: Record<string, string>; blocks?: Record<string, string[]>; bhide?: string[] };
+    let lay: L = {};
+    const subsBox = document.querySelector<HTMLElement>('.subs')!;
+    const keyOfBlock = (h: HTMLElement) => (h.dataset.k ||= (h.textContent || '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim().slice(0, 40));
+    const save = () => api('/layout', lay).catch(() => null);
+    // A block = an h2 and everything after it up to the next h2, inside one panel.
+    const blocksOf = (panel: HTMLElement) => {
+      const out: { h: HTMLElement; els: HTMLElement[] }[] = [];
+      [...panel.children].forEach((c) => { const e = c as HTMLElement; if (e.tagName === 'H2') out.push({ h: e, els: [e] }); else if (out.length) out[out.length - 1].els.push(e); });
+      return out;
+    };
+    const apply = () => {
+      if (lay.subs) lay.subs.forEach((v) => { const b = subsBox.querySelector(`[data-view="${v}"]`); if (b) subsBox.append(b); });
+      subsBox.querySelectorAll<HTMLElement>('[data-view]').forEach((b) => { const v = b.dataset.view!; b.classList.toggle('lhide', !!lay.hide?.includes(v)); if (lay.names?.['v:' + v]) { const pill = b.querySelector('.pill'); b.textContent = lay.names['v:' + v] + ' '; if (pill) b.append(pill); } });
+      document.querySelectorAll<HTMLElement>('[data-panel]').forEach((panel) => {
+        const bl = blocksOf(panel), order = lay.blocks?.[panel.dataset.panel!];
+        bl.forEach((b) => { const k = keyOfBlock(b.h); b.els.forEach((e) => e.classList.toggle('lhide', !!lay.bhide?.includes(panel.dataset.panel + ':' + k))); if (lay.names?.['b:' + panel.dataset.panel + ':' + k]) b.h.firstChild!.textContent = lay.names['b:' + panel.dataset.panel + ':' + k] + ' '; });
+        if (order) order.forEach((k) => { const b = bl.find((x) => keyOfBlock(x.h) === k); if (b) b.els.forEach((e) => panel.append(e)); });
+      });
+    };
+    api('/layout').then((r: any) => { if (r?.ok) { lay = r.layout || {}; apply(); } }).catch(() => {});
+    let on = false;
+    const btn = document.querySelector<HTMLButtonElement>('[data-edit-mode]')!;
+    const tools = (on2: boolean) => {
+      document.body.classList.toggle('hq-edit', on2);
+      document.querySelectorAll('.etool').forEach((x) => x.remove());
+      if (!on2) return;
+      // tabs: drag to reorder, eye to hide, double-click to rename
+      subsBox.querySelectorAll<HTMLElement>('[data-view]').forEach((b) => {
+        b.draggable = true;
+        b.ondragstart = (e) => e.dataTransfer?.setData('text/hq-tab', b.dataset.view!);
+        b.ondragover = (e) => e.preventDefault();
+        b.ondrop = (e) => { e.preventDefault(); const v = e.dataTransfer?.getData('text/hq-tab'); const from = v && subsBox.querySelector(`[data-view="${v}"]`); if (from && from !== b) { subsBox.insertBefore(from, b); lay.subs = [...subsBox.querySelectorAll<HTMLElement>('[data-view]')].map((x) => x.dataset.view!); save(); } };
+        const eye = el('span', { class: 'etool', title: 'Скрыть / показать' }, lay.hide?.includes(b.dataset.view!) ? '🙈' : '👁');
+        eye.onclick = (e: Event) => { e.stopPropagation(); const v = b.dataset.view!; lay.hide = lay.hide || []; lay.hide = lay.hide.includes(v) ? lay.hide.filter((x) => x !== v) : [...lay.hide, v]; save(); apply(); tools(true); };
+        const ren = el('span', { class: 'etool', title: 'Переименовать' }, '✎');
+        ren.onclick = (e: Event) => { e.stopPropagation(); const cur = (b.firstChild?.textContent || '').trim(); const n = (prompt('Новое название раздела', cur) || '').trim(); if (!n) return; lay.names = { ...(lay.names || {}), ['v:' + b.dataset.view]: n.slice(0, 40) }; save(); apply(); tools(true); };
+        b.append(eye, ren);
+      });
+      // blocks of the open panel: move up/down, hide, rename
+      document.querySelectorAll<HTMLElement>('[data-panel]').forEach((panel) => {
+        blocksOf(panel).forEach((b) => {
+          const k = keyOfBlock(b.h), id = panel.dataset.panel + ':' + k;
+          const mk = (t: string, title: string, f: () => void) => { const x = el('button', { type: 'button', class: 'etool', title }, t); x.onclick = (e: Event) => { e.preventDefault(); e.stopPropagation(); f(); }; return x; };
+          const move = (d: number) => { const bl = blocksOf(panel); const i = bl.findIndex((x) => x.h === b.h), j = i + d; if (j < 0 || j >= bl.length) return; const order = bl.map((x) => keyOfBlock(x.h)); [order[i], order[j]] = [order[j], order[i]]; lay.blocks = { ...(lay.blocks || {}), [panel.dataset.panel!]: order }; save(); apply(); tools(true); };
+          b.h.append(
+            mk('↑', 'Выше', () => move(-1)), mk('↓', 'Ниже', () => move(1)),
+            mk(lay.bhide?.includes(id) ? '🙈' : '👁', 'Скрыть / показать', () => { lay.bhide = lay.bhide || []; lay.bhide = lay.bhide.includes(id) ? lay.bhide.filter((x) => x !== id) : [...lay.bhide, id]; save(); apply(); tools(true); }),
+            mk('✎', 'Переименовать', () => { const n = (prompt('Новый заголовок блока', (b.h.firstChild?.textContent || '').trim()) || '').trim(); if (!n) return; lay.names = { ...(lay.names || {}), ['b:' + id]: n.slice(0, 60) }; save(); apply(); tools(true); }),
+          );
+        });
+      });
+    };
+    btn.onclick = () => { on = !on; btn.textContent = on ? '✓ Готово' : '✏️ Настроить'; tools(on); };
+  }
 </script>
 
 <style is:global>
@@ -1560,4 +1619,9 @@ import Base from '../layouts/Base.astro';
   @media (prefers-reduced-motion: reduce) { .adm * { transition: none !important; } }
   @media (max-width: 640px) { .adm { padding: 16px 12px 80px; } .adm h1 { font-size: 22px; } .adm .proc strong, .adm .kpi b { font-size: 24px; } }
   .tacc { margin-top: 12px; } .tacc summary { cursor: pointer; font-weight: 600; } .tt { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; } .tt td, .tt th { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; }
+  .lhide { display: none !important; }
+  body.hq-edit .lhide { display: revert !important; opacity: .35; }
+  body.hq-edit .subs [data-view] { cursor: grab; outline: 1px dashed var(--line); }
+  .etool { display: inline-flex; margin-left: 6px; font-size: 12px; cursor: pointer; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  body.hq-edit [data-panel] > h2 { outline: 1px dashed var(--accText, #c79a2b); outline-offset: 4px; border-radius: 6px; }
 </style>
