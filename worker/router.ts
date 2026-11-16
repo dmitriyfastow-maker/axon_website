@@ -23,7 +23,8 @@ export const EASY: Tier = { model: HAIKU, effort: 'medium', price: 0 };
 // 40% goes to the pool, 3% stays for servers, so that month closes at about zero.
 export const POOL_SHARE = 0.4;
 /** Free plan: what one account, one network and all free users together may cost a month, in USD. */
-export const FREE_CAP = { user: 0.5, ip: 1.5, all: 30 };
+// 16.11 (Dmitry): no spending before revenue — free accounts stay on the free models; Claude only for paying clients.
+export const FREE_CAP = { user: 0, ip: 0, all: 0 };
 
 // USD per 1M tokens: input, output, cache read, cache write (5 minutes). Anthropic price list (Haiku: prompts ≤100K).
 const PRICE: Record<string, [number, number, number, number]> = {

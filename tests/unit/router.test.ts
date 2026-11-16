@@ -5,8 +5,8 @@ const POOL = 1000;
 const paid = (lead = 0, all = 0, pool = POOL) => ({ lead, all, pool });
 describe('pickTier', () => {
   it('does nothing without a key', () => expect(pickTier('pro', false, true, paid(), false)).toBeNull());
-  it('free accounts get Haiku under the caps, nothing past any cap', () => {
-    expect(pickTier('start', false, true, { ...paid(), user: 0, ip: 0, free: 0 }, true)).toBe(EASY);
+  it('free accounts get no Claude (16.11: no spending before revenue)', () => {
+    expect(pickTier('start', false, true, { ...paid(), user: 0, ip: 0, free: 0 }, true)).toBeNull();
     expect(pickTier('start', false, false, { ...paid(), user: FREE_CAP.user }, true)).toBeNull();
     expect(pickTier('start', false, false, { ...paid(), ip: FREE_CAP.ip }, true)).toBeNull();
     expect(pickTier('care', true, true, { ...paid(), free: FREE_CAP.all }, true)).toBeNull();
@@ -53,12 +53,12 @@ describe('pickModel', () => {
       expect(pickModel(plan, false, 2, 'auto', p, true)?.model).toBe('claude-opus-5-5');
     }
   });
-  it('a paid client may choose an exact model; a free one gets Haiku whatever they pick', () => {
+  it('a paid client may choose an exact model; a free one gets no Claude whatever they pick', () => {
     expect(pickModel('personal', false, 0, 'opus-5-5', p, true)?.model).toBe('claude-opus-5-5');
     expect(pickModel('care', false, 2, 'haiku-5-5', p, true)).toBe(EASY);
     expect(pickModel('care', false, 2, 'sonnet-5', p, true)?.model).toBe('claude-sonnet-5');
     expect(pickModel('care', false, 2, 'max', p, true)?.model).toBe('claude-opus-5-5');
-    expect(pickModel('start', false, 2, 'opus-5-5', { ...p, user: 0, ip: 0, free: 0 }, true)).toBe(EASY);
+    expect(pickModel('start', false, 2, 'opus-5-5', { ...p, user: 0, ip: 0, free: 0 }, true)).toBeNull();
   });
   it('sorts tasks into three levels', () => {
     expect(taskLevel('Привет')).toBe(0);
