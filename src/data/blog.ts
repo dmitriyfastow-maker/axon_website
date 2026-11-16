@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'social-media-content-plan-month-small-business',
+    date: '2026-11-16',
+    t: {
+      en: {
+        title: 'A month of social media posts in 20 minutes: a simple content plan for small business', seo: 'A month of social media posts in 20 minutes',
+        desc: 'What to post, how often, a ready weekly rhythm, examples for a café, salon and online shop, and how AI writes the posts for you.',
+        body: [
+          ['Why most business pages go quiet', ['Not because there is nothing to say, but because every day starts with “what do I post today?”. A plan made once a month removes that question.']],
+          ['1. Pick a rhythm you can keep', ['Three posts a week done every week beats daily posts for two weeks and then silence. Regularity is what people and the platforms notice.']],
+          ['2. Use four kinds of posts', ['Show the work (a process, a before/after). Help (a tip your customer can use today). Prove (a real review, a result, a number you can back up). Invite (an offer, a date, a simple “write to us”). Rotate them and the page never feels like an advert.']],
+          ['3. A ready weekly rhythm', ['Monday — a tip. Wednesday — behind the scenes. Friday — a review or result plus an invitation. Four weeks of this is twelve posts, which is a full month.']],
+          ['4. Examples', ['Café: “how we make our morning bun”, “3 ways to keep coffee hot longer”, a guest’s review with a photo. Salon: a before/after, “how often to trim to grow hair longer”, free slots for Saturday. Online shop: packing an order, “how to choose the right size”, a customer photo with the product.']],
+          ['5. One caption formula', ['First line — a hook that stops the scroll. Then two or three short sentences of value. Finish with one clear action: “Book via the link in bio”, “Write ‘menu’ in messages”. Hashtags are optional; a clear first line matters more.']],
+          ['6. Prepare everything in one sitting', ['Once a month write all twelve captions, collect photos, and schedule them in the platform’s own planner (Meta Business Suite for Instagram and Facebook, built-in scheduling in TikTok and LinkedIn). Then you only answer comments.']],
+          ['How Vaxo helps', ['In Workspace you write “content plan for my bakery for December” — Vax makes the 12 posts with captions, ideas for photos and dates, in your language, and you can edit any of them. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Посты для соцсетей на месяц за 20 минут: простой контент-план для малого бизнеса', seo: 'Посты для соцсетей на месяц за 20 минут',
+        desc: 'Что публиковать, как часто, готовый ритм на неделю, примеры для кафе, салона и интернет-магазина и как ИИ пишет посты за вас.',
+        body: [
+          ['Почему страницы бизнеса затихают', ['Не потому, что нечего сказать, а потому, что каждый день начинается с вопроса «что сегодня выложить?». План, сделанный раз в месяц, убирает этот вопрос.']],
+          ['1. Выберите ритм, который выдержите', ['Три поста в неделю каждую неделю лучше, чем посты каждый день две недели, а потом тишина. Регулярность замечают и люди, и площадки.']],
+          ['2. Четыре вида постов', ['Показать работу (процесс, до/после). Помочь (совет, который клиент применит сегодня). Доказать (настоящий отзыв, результат, цифра, которую можно подтвердить). Пригласить (предложение, дата, простое «напишите нам»). Чередуйте — и страница не выглядит сплошной рекламой.']],
+          ['3. Готовый ритм на неделю', ['Понедельник — совет. Среда — закулисье. Пятница — отзыв или результат плюс приглашение. Четыре недели — это 12 постов, целый месяц.']],
+          ['4. Примеры', ['Кафе: «как мы печём утреннюю булочку», «3 способа дольше сохранить кофе горячим», отзыв гостя с фото. Салон: до/после, «как часто подстригать кончики, чтобы отрастить волосы», свободные окна на субботу. Интернет-магазин: упаковка заказа, «как выбрать размер», фото покупателя с товаром.']],
+          ['5. Одна формула подписи', ['Первая строка — крючок, который останавливает ленту. Потом две-три короткие фразы пользы. В конце одно понятное действие: «Запись по ссылке в профиле», «Напишите „меню“ в личку». Хэштеги — по желанию, понятная первая строка важнее.']],
+          ['6. Подготовьте всё за один раз', ['Раз в месяц напишите все 12 подписей, соберите фото и поставьте публикации в отложку встроенным планировщиком (Meta Business Suite для Instagram и Facebook, встроенное планирование в TikTok и LinkedIn). Дальше остаётся только отвечать на комментарии.']],
+          ['Чем помогает Vaxo', ['В Workspace напишите «контент-план для моей пекарни на декабрь» — Vax сделает 12 постов с подписями, идеями для фото и датами на вашем языке, любой можно поправить. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Пости для соцмереж на місяць за 20 хвилин: простий контент-план для малого бізнесу', seo: 'Пости для соцмереж на місяць за 20 хвилин',
+        desc: 'Що публікувати, як часто, готовий ритм на тиждень, приклади для кав’ярні, салону та інтернет-магазину і як ШІ пише пости за вас.',
+        body: [
+          ['Чому сторінки бізнесу затихають', ['Не тому, що нема чого сказати, а тому, що кожен день починається з питання «що сьогодні викласти?». План, зроблений раз на місяць, прибирає це питання.']],
+          ['1. Оберіть ритм, який витримаєте', ['Три пости на тиждень щотижня краще, ніж пости щодня два тижні, а потім тиша. Регулярність помічають і люди, і майданчики.']],
+          ['2. Чотири види постів', ['Показати роботу (процес, до/після). Допомогти (порада, яку клієнт застосує сьогодні). Довести (справжній відгук, результат, цифра, яку можна підтвердити). Запросити (пропозиція, дата, просте «напишіть нам»). Чергуйте — і сторінка не виглядає суцільною рекламою.']],
+          ['3. Готовий ритм на тиждень', ['Понеділок — порада. Середа — закулісся. П’ятниця — відгук чи результат плюс запрошення. Чотири тижні — це 12 постів, цілий місяць.']],
+          ['4. Приклади', ['Кав’ярня: «як ми печемо ранкову булочку», «3 способи довше зберегти каву гарячою», відгук гостя з фото. Салон: до/після, «як часто підстригати кінчики, щоб відростити волосся», вільні вікна на суботу. Інтернет-магазин: пакування замовлення, «як обрати розмір», фото покупця з товаром.']],
+          ['5. Одна формула підпису', ['Перший рядок — гачок, який зупиняє стрічку. Потім дві-три короткі фрази користі. Наприкінці одна зрозуміла дія: «Запис за посиланням у профілі», «Напишіть „меню“ в особисті». Хештеги — за бажанням, зрозумілий перший рядок важливіший.']],
+          ['6. Підготуйте все за один раз', ['Раз на місяць напишіть усі 12 підписів, зберіть фото й поставте публікації у відкладені вбудованим планувальником (Meta Business Suite для Instagram і Facebook, вбудоване планування в TikTok і LinkedIn). Далі лишається тільки відповідати на коментарі.']],
+          ['Чим допомагає Vaxo', ['У Workspace напишіть «контент-план для моєї пекарні на грудень» — Vax зробить 12 постів з підписами, ідеями для фото й датами вашою мовою, будь-який можна виправити. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'reply-to-customer-reviews-bad-reviews',
     date: '2026-11-15',
     t: {
