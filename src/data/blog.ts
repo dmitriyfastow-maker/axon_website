@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'product-description-that-sells',
+    date: '2026-11-16',
+    t: {
+      en: {
+        title: 'How to write a product description that sells: a simple formula', seo: 'Product descriptions that sell: a simple formula',
+        desc: 'Who the product is for, benefit before features, the details buyers check, photos, answers to doubts — and how AI writes descriptions for the whole catalogue.',
+        body: [
+          ['Why descriptions matter', ['A buyer cannot touch the product. The description and photos are the shop assistant: they answer questions, remove doubts and help decide. A bare “Size M, cotton” sells much worse than a short, clear story.']],
+          ['1. Start with who it is for', ['One line: who needs this and when. “A warm sweater for cold walks and the office” tells more than any list of fabrics.']],
+          ['2. Benefit first, then features', ['Not “400 ml, steel”, but “keeps coffee hot for 6 hours — 400 ml, steel, fits a car cup holder”. The feature proves the benefit.']],
+          ['3. The details buyers always check', ['Size and dimensions, material, colour as it really looks, what is in the box, care, delivery time, returns. If these are missing, people leave to ask somewhere else.']],
+          ['4. Answer doubts in advance', ['Think of the three most common questions in your messages: “will it fit?”, “is it true to size?”, “how fast is delivery?”. Put the answers into the description.']],
+          ['5. Easy to read on a phone', ['Short paragraphs, 3–6 bullet points, the main thing in the first two lines. Most people read on a phone and only see the beginning.']],
+          ['6. Photos and honest words', ['Photos in daylight, in use and from several sides. No “the best in the world” — specific facts and real reviews convince more.']],
+          ['How Vaxo helps', ['In Workspace send a list of products with a few words about each — Vax writes descriptions by this formula, in your tone and in several languages, for a shop, a marketplace or Instagram. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как написать описание товара, которое продаёт: простая формула', seo: 'Описание товара, которое продаёт',
+        desc: 'Для кого товар, польза раньше характеристик, детали, которые проверяют покупатели, фото, ответы на сомнения — и как ИИ напишет описания для всего каталога.',
+        body: [
+          ['Почему описание так важно', ['Покупатель не может потрогать товар. Описание и фото — это продавец-консультант: отвечают на вопросы, снимают сомнения и помогают решиться. Голое «Размер M, хлопок» продаёт намного хуже короткого понятного рассказа.']],
+          ['1. Начните с того, для кого товар', ['Одна строка: кому и когда он нужен. «Тёплый свитер для прогулок в холод и офиса» говорит больше любого списка тканей.']],
+          ['2. Сначала польза, потом характеристики', ['Не «400 мл, сталь», а «держит кофе горячим 6 часов — 400 мл, сталь, помещается в подстаканник авто». Характеристика доказывает пользу.']],
+          ['3. Детали, которые всегда проверяют', ['Размер и габариты, материал, цвет как в жизни, что в комплекте, уход, срок доставки, возврат. Если этого нет — люди уходят спрашивать в другое место.']],
+          ['4. Ответьте на сомнения заранее', ['Вспомните три самых частых вопроса в сообщениях: «подойдёт ли?», «соответствует ли размеру?», «как быстро доставка?». Ответы — прямо в описание.']],
+          ['5. Удобно читать с телефона', ['Короткие абзацы, 3–6 пунктов списком, главное — в первых двух строках. Большинство читает с телефона и видит только начало.']],
+          ['6. Фото и честные слова', ['Фото при дневном свете, в использовании и с разных сторон. Никаких «лучший в мире» — убеждают конкретные факты и настоящие отзывы.']],
+          ['Чем помогает Vaxo', ['В Workspace отправьте список товаров и пару слов о каждом — Vax напишет описания по этой формуле, в вашем тоне и на нескольких языках, для магазина, маркетплейса или Instagram. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як написати опис товару, який продає: проста формула', seo: 'Опис товару, який продає',
+        desc: 'Для кого товар, користь раніше за характеристики, деталі, які перевіряють покупці, фото, відповіді на сумніви — і як ШІ напише описи для всього каталогу.',
+        body: [
+          ['Чому опис такий важливий', ['Покупець не може торкнутися товару. Опис і фото — це продавець-консультант: відповідають на запитання, знімають сумніви й допомагають наважитися. Голе «Розмір M, бавовна» продає значно гірше за коротку зрозумілу розповідь.']],
+          ['1. Почніть із того, для кого товар', ['Один рядок: кому і коли він потрібен. «Теплий светр для прогулянок у холод і офісу» каже більше за будь-який перелік тканин.']],
+          ['2. Спочатку користь, потім характеристики', ['Не «400 мл, сталь», а «тримає каву гарячою 6 годин — 400 мл, сталь, вміщується в підстаканник авто». Характеристика доводить користь.']],
+          ['3. Деталі, які завжди перевіряють', ['Розмір і габарити, матеріал, колір як у житті, що в комплекті, догляд, строк доставки, повернення. Якщо цього немає — люди йдуть питати деінде.']],
+          ['4. Дайте відповідь на сумніви заздалегідь', ['Згадайте три найчастіші запитання в повідомленнях: «чи підійде?», «чи відповідає розміру?», «як швидко доставка?». Відповіді — просто в опис.']],
+          ['5. Зручно читати з телефона', ['Короткі абзаци, 3–6 пунктів списком, головне — у перших двох рядках. Більшість читає з телефона й бачить лише початок.']],
+          ['6. Фото і чесні слова', ['Фото при денному світлі, у використанні та з різних боків. Жодних «найкращий у світі» — переконують конкретні факти й справжні відгуки.']],
+          ['Чим допомагає Vaxo', ['У Workspace надішліть перелік товарів і кілька слів про кожен — Vax напише описи за цією формулою, у вашому тоні та кількома мовами, для магазину, маркетплейсу чи Instagram. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'family-budget-month-with-ai',
     date: '2026-11-16',
     t: {
