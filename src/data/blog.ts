@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'family-budget-month-with-ai',
+    date: '2026-11-16',
+    t: {
+      en: {
+        title: 'A family budget for the month in 15 minutes: a simple method with AI', seo: 'A family budget for the month in 15 minutes',
+        desc: 'Where the money goes, a simple 50/30/20 split, a ready table for a family, small habits that save money, and how AI builds the budget for you.',
+        body: [
+          ['Why money “disappears”', ['Usually not because of one big purchase, but because of many small ones nobody wrote down. A budget is not about saving every cent — it is about seeing where the money goes and deciding in advance.']],
+          ['1. Write down what comes in', ['Only money you are sure of: salaries, regular payments. Bonuses and side income — count them when they arrive, not before.']],
+          ['2. Fixed costs first', ['Rent or mortgage, utilities, phone and internet, transport, loans, subscriptions. These are paid anyway, so they go to the top of the table.']],
+          ['3. A simple split: 50/30/20', ['A popular starting point: about 50% for needs (housing, food, bills), 30% for wants (cafés, hobbies, clothes beyond the basics), 20% for savings and paying off debt. It is a guide, not a law — adjust it to your life.']],
+          ['4. A ready table', ['Columns: category, planned, actual, difference. Rows: housing, food, transport, children, health, subscriptions, gifts, fun, savings. Once a week, in five minutes, fill in “actual” from your bank app.']],
+          ['5. Small habits that work', ['A shopping list before the store. Cancel subscriptions you have not used for a month. A separate “cushion” account for unexpected costs. One “no-spend” day a week. A gift fund so December does not hurt.']],
+          ['6. Review once a month', ['Look at the difference column: where you went over, decide whether the plan was unrealistic or the spending was. Change one thing for the next month, not ten.']],
+          ['How Vaxo helps', ['In Workspace write “family budget for 2 adults and a child, income 2,500, rent 800” — Vax makes the table with categories, a plan by the split and tips for your case, and you can download it as Word or PDF. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Семейный бюджет на месяц за 15 минут: простой способ с ИИ', seo: 'Семейный бюджет на месяц за 15 минут',
+        desc: 'Куда уходят деньги, простое правило 50/30/20, готовая таблица для семьи, привычки, которые экономят, и как ИИ составит бюджет за вас.',
+        body: [
+          ['Почему деньги «исчезают»', ['Обычно не из-за одной большой покупки, а из-за множества мелких, которые никто не записал. Бюджет — не про экономию каждой копейки, а про то, чтобы видеть, куда уходят деньги, и решать заранее.']],
+          ['1. Запишите доходы', ['Только то, в чём уверены: зарплаты, регулярные поступления. Премии и подработки — считайте, когда пришли, а не заранее.']],
+          ['2. Сначала обязательные расходы', ['Аренда или ипотека, коммуналка, связь и интернет, транспорт, кредиты, подписки. Это платится в любом случае, поэтому идёт в начало таблицы.']],
+          ['3. Простое деление: 50/30/20', ['Популярная точка старта: около 50% — на необходимое (жильё, еда, счета), 30% — на желания (кафе, хобби, одежда сверх нужного), 20% — на накопления и погашение долгов. Это ориентир, а не закон — подстройте под свою жизнь.']],
+          ['4. Готовая таблица', ['Колонки: категория, план, факт, разница. Строки: жильё, еда, транспорт, дети, здоровье, подписки, подарки, развлечения, накопления. Раз в неделю за пять минут заполняйте «факт» из банковского приложения.']],
+          ['5. Маленькие привычки, которые работают', ['Список покупок перед магазином. Отменить подписки, которыми не пользовались месяц. Отдельный счёт-«подушка» на непредвиденное. Один день в неделю без трат. Копилка на подарки, чтобы декабрь не бил по карману.']],
+          ['6. Раз в месяц — разбор', ['Посмотрите на колонку «разница»: где вышли за план — решите, нереальным был план или траты. Поменяйте одну вещь на следующий месяц, а не десять.']],
+          ['Чем помогает Vaxo', ['В Workspace напишите «семейный бюджет на двоих взрослых и ребёнка, доход 60 000, аренда 18 000» — Vax сделает таблицу с категориями, план по правилу и советы под ваш случай, её можно скачать в Word или PDF. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Сімейний бюджет на місяць за 15 хвилин: простий спосіб із ШІ', seo: 'Сімейний бюджет на місяць за 15 хвилин',
+        desc: 'Куди йдуть гроші, просте правило 50/30/20, готова таблиця для родини, звички, що заощаджують, і як ШІ складе бюджет за вас.',
+        body: [
+          ['Чому гроші «зникають»', ['Зазвичай не через одну велику покупку, а через безліч дрібних, які ніхто не записав. Бюджет — не про економію кожної копійки, а про те, щоб бачити, куди йдуть гроші, і вирішувати заздалегідь.']],
+          ['1. Запишіть доходи', ['Лише те, у чому впевнені: зарплати, регулярні надходження. Премії й підробітки — рахуйте, коли надійшли, а не наперед.']],
+          ['2. Спочатку обов’язкові витрати', ['Оренда чи іпотека, комуналка, зв’язок та інтернет, транспорт, кредити, підписки. Це сплачується будь-що, тож іде на початок таблиці.']],
+          ['3. Простий поділ: 50/30/20', ['Популярна точка старту: близько 50% — на необхідне (житло, їжа, рахунки), 30% — на бажання (кафе, хобі, одяг понад потрібне), 20% — на заощадження та погашення боргів. Це орієнтир, а не закон — підлаштуйте під своє життя.']],
+          ['4. Готова таблиця', ['Колонки: категорія, план, факт, різниця. Рядки: житло, їжа, транспорт, діти, здоров’я, підписки, подарунки, розваги, заощадження. Раз на тиждень за п’ять хвилин заповнюйте «факт» із банківського застосунку.']],
+          ['5. Маленькі звички, що працюють', ['Список покупок перед магазином. Скасувати підписки, якими не користувалися місяць. Окремий рахунок-«подушка» на непередбачене. Один день на тиждень без витрат. Скарбничка на подарунки, щоб грудень не бив по кишені.']],
+          ['6. Раз на місяць — розбір', ['Подивіться на колонку «різниця»: де вийшли за план — вирішіть, нереальним був план чи витрати. Змініть одну річ на наступний місяць, а не десять.']],
+          ['Чим допомагає Vaxo', ['У Workspace напишіть «сімейний бюджет на двох дорослих і дитину, дохід 40 000, оренда 12 000» — Vax зробить таблицю з категоріями, план за правилом і поради під ваш випадок, її можна завантажити у Word або PDF. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'social-media-content-plan-month-small-business',
     date: '2026-11-16',
     t: {
