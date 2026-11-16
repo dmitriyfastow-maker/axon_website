@@ -70,6 +70,12 @@ import Base from '../layouts/Base.astro';
       </nav>
 
       <section data-panel="today">
+        <form class="card keycard" data-ckey hidden>
+          <b>🔑 Подключите Claude API — тогда Vax отвечает клиентам на уровне Claude</b>
+          <small class="mut">Ключ создаётся на console.anthropic.com → API Keys (начинается с sk-ant-). Вставьте сюда — сайт сам проверит его и сохранит в зашифрованном виде. Пошагово: claude.ai/artifact/M1uZu5Z8qU9wmciN5rYD72</small>
+          <div class="two"><input name="key" type="password" placeholder="sk-ant-…" autocomplete="off" required /><button class="cta">Подключить</button></div>
+          <small class="mut" data-ckey-msg></small>
+        </form>
         <form class="say" data-say>
           <textarea name="text" rows="1" placeholder="Скажите Claude, что сделать или изменить — например: «сделай 3 ролика про кофейни» или «перестань писать партнёрам по выходным»"></textarea>
           <button class="cta">Отправить Claude</button>
@@ -1377,6 +1383,21 @@ import Base from '../layouts/Base.astro';
     };
     btn.onclick = () => { on = !on; btn.textContent = on ? '✓ Готово' : '✏️ Настроить'; tools(on); };
   }
+
+  // Claude API key card: shown until a key is connected.
+  {
+    const f = document.querySelector<HTMLFormElement>('[data-ckey]')!;
+    const msg = document.querySelector<HTMLElement>('[data-ckey-msg]')!;
+    api('/claude-key').then((r: any) => { if (r?.ok && !r.at) f.hidden = false; }).catch(() => {});
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const key = String(new FormData(f).get('key') || '').trim();
+      msg.textContent = 'Проверяю ключ у Anthropic…';
+      const r: any = await api('/claude-key', { key }).catch(() => null);
+      if (r?.ok) { msg.textContent = '✅ Подключено. Клиенты теперь получают ответы Claude.'; f.reset(); setTimeout(() => { f.hidden = true; }, 4000); }
+      else msg.textContent = r?.error === 'format' ? 'Это не похоже на ключ: он начинается с sk-ant-.' : 'Anthropic не принял ключ: проверьте, что он скопирован целиком и на счёте есть деньги.';
+    });
+  }
 </script>
 
 <style is:global>
@@ -1634,4 +1655,5 @@ import Base from '../layouts/Base.astro';
   .etool { display: inline-flex; margin-left: 6px; font-size: 12px; cursor: pointer; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
   body.hq-edit [data-panel] > h2 { outline: 1px dashed var(--accText, #c79a2b); outline-offset: 4px; border-radius: 6px; }
   .gbtn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; background: #fff !important; color: #1f1f1f !important; border: 1px solid var(--line); min-height: 44px; border-radius: 10px; font-weight: 600; }
+  .keycard { display: grid; gap: 8px; border: 1px solid #e8a33d; margin-bottom: 14px; }
 </style>

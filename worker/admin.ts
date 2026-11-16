@@ -4,6 +4,7 @@ import { ownerLead, ownerOverview, ownerUpdateLead, ownerUpdatePartner, type Not
 import { staffMessage } from './rooms.js';
 import { aiReply, decideOffer, setAiState } from './aimanager.js';
 import { handleFinanceAdmin } from './finance.js';
+import { seal } from './sitepay.js';
 import { handleInvoiceAdmin, invoiceForPayment } from './invoices.js';
 import { handleOwnerChat } from './ownerchat.js';
 import { newRoom } from './rooms.js';
@@ -179,6 +180,23 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   // Test accounts for every role (Dmitry, 12.11): HQ opens any of them in one click, and each has a real password, so the
   // owner can also sign in to them from any browser without the HQ. Stored only here, shown only in the HQ.
   // HQ structure edited in place (Dmitry 15.11): order of tabs and blocks, hidden ones, own titles.
+  // The Claude API key (16.11): the owner pastes it once in the HQ; checked with Anthropic, kept encrypted, never shown back.
+  if (path === 'claude-key') {
+    const at = async () => (await db.prepare("SELECT value FROM settings WHERE key = 'anthropic_key_at'").first<{ value: string }>().catch(() => null))?.value || null;
+    if (request.method === 'POST') {
+      if (me.role !== 'owner') return json(403, { ok: false });
+      const key = String(((await request.json().catch(() => ({}))) as { key?: string }).key || '').trim();
+      if (!/^sk-ant-[A-Za-z0-9_-]{20,}$/.test(key) || !token) return json(400, { ok: false, error: 'format' });
+      const r = await fetch('https://api.anthropic.com/v1/models', { headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' } }).catch(() => null);
+      if (!r?.ok) return json(400, { ok: false, error: 'check' });
+      const put = (k: string, v: string) => db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(k, v).run();
+      await put('anthropic_key', await seal(token, key));
+      await put('anthropic_key_at', new Date().toISOString());
+      await notify('🤖 Claude API подключён из Штаба: клиенты теперь получают ответы Claude.').catch(() => {});
+      return json(200, { ok: true, at: await at() });
+    }
+    return json(200, { ok: true, at: await at() });
+  }
   if (path === 'layout') {
     if (request.method === 'POST') {
       const raw = JSON.stringify((await request.json().catch(() => ({}))) ?? {}).slice(0, 20000);
