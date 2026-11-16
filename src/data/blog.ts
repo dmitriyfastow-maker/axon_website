@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'write-resume-with-ai-30-minutes',
+    date: '2026-11-16',
+    t: {
+      en: {
+        title: 'How to write a strong CV in 30 minutes with AI', seo: 'Write a strong CV in 30 minutes with AI',
+        desc: 'One page, results instead of duties, a CV tailored to each job, a short cover letter — and how AI helps without inventing anything.',
+        body: [
+          ['What a recruiter looks at', ['A recruiter often spends less than a minute on a CV. They look for the job title, recent experience, results and contacts. Everything else is read only if the beginning hooks them.']],
+          ['1. One page, clear structure', ['Name and contacts, a two-line summary, experience (newest first), skills, education, languages. One page is enough for most people; two — only with long relevant experience.']],
+          ['2. Results instead of duties', ['Not “responsible for sales”, but “brought 40 new clients in a year”. Numbers, deadlines, what changed thanks to you. If there are no numbers — describe the result in words.']],
+          ['3. Tailor it to each job', ['Read the vacancy and use its words for the skills you really have. Put the most relevant experience higher. Ten minutes per vacancy gives far more replies than one CV for everyone.']],
+          ['4. A short cover letter', ['Three paragraphs: why this company, what you can do for them, a proposal to talk. No retelling of the CV.']],
+          ['5. Check before sending', ['No typos, the same date format, a working email and phone, a file named “Name-Surname-CV.pdf”. Send as PDF so the layout does not break.']],
+          ['6. Only the truth', ['Do not add skills or results you do not have — this comes out at the interview. AI should rephrase your real experience, not invent a new one.']],
+          ['How Vaxo helps', ['In Workspace write a few words about your experience and paste the vacancy — Vax will make a one-page CV and a cover letter in the right language and give you a Word or PDF file. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как написать сильное резюме за 30 минут с ИИ', seo: 'Сильное резюме за 30 минут с ИИ',
+        desc: 'Одна страница, результаты вместо обязанностей, резюме под каждую вакансию, короткое сопроводительное письмо — и как ИИ помогает, ничего не выдумывая.',
+        body: [
+          ['Что смотрит рекрутер', ['Рекрутер часто тратит на резюме меньше минуты. Он ищет должность, последний опыт, результаты и контакты. Всё остальное читают, только если зацепило начало.']],
+          ['1. Одна страница, понятная структура', ['Имя и контакты, кратко о себе в две строки, опыт (с последнего места), навыки, образование, языки. Большинству хватает одной страницы; две — только при длинном подходящем опыте.']],
+          ['2. Результаты вместо обязанностей', ['Не «отвечал за продажи», а «привёл 40 новых клиентов за год». Цифры, сроки, что изменилось благодаря вам. Если цифр нет — опишите результат словами.']],
+          ['3. Под каждую вакансию', ['Прочитайте вакансию и используйте её слова для тех навыков, что у вас действительно есть. Самый подходящий опыт — выше. 10 минут на вакансию дают намного больше ответов, чем одно резюме для всех.']],
+          ['4. Короткое сопроводительное письмо', ['Три абзаца: почему эта компания, что вы можете для неё сделать, предложение поговорить. Без пересказа резюме.']],
+          ['5. Проверьте перед отправкой', ['Без опечаток, один формат дат, рабочие почта и телефон, файл «Имя-Фамилия-CV.pdf». Отправляйте в PDF, чтобы вёрстка не поехала.']],
+          ['6. Только правда', ['Не добавляйте навыки и результаты, которых нет, — это всплывёт на собеседовании. ИИ должен переформулировать ваш настоящий опыт, а не придумать новый.']],
+          ['Чем помогает Vaxo', ['В Workspace напишите пару слов о своём опыте и вставьте вакансию — Vax сделает резюме на одну страницу и сопроводительное письмо на нужном языке и выдаст файл Word или PDF. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як написати сильне резюме за 30 хвилин із ШІ', seo: 'Сильне резюме за 30 хвилин із ШІ',
+        desc: 'Одна сторінка, результати замість обов’язків, резюме під кожну вакансію, короткий супровідний лист — і як ШІ допомагає, нічого не вигадуючи.',
+        body: [
+          ['Що дивиться рекрутер', ['Рекрутер часто витрачає на резюме менше хвилини. Він шукає посаду, останній досвід, результати й контакти. Усе інше читають, лише якщо зачепив початок.']],
+          ['1. Одна сторінка, зрозуміла структура', ['Ім’я та контакти, коротко про себе у два рядки, досвід (з останнього місця), навички, освіта, мови. Більшості вистачає однієї сторінки; дві — лише за довгого доречного досвіду.']],
+          ['2. Результати замість обов’язків', ['Не «відповідав за продажі», а «привів 40 нових клієнтів за рік». Цифри, строки, що змінилося завдяки вам. Якщо цифр немає — опишіть результат словами.']],
+          ['3. Під кожну вакансію', ['Прочитайте вакансію й використовуйте її слова для тих навичок, які у вас справді є. Найдоречніший досвід — вище. 10 хвилин на вакансію дають значно більше відповідей, ніж одне резюме для всіх.']],
+          ['4. Короткий супровідний лист', ['Три абзаци: чому ця компанія, що ви можете для неї зробити, пропозиція поговорити. Без переказу резюме.']],
+          ['5. Перевірте перед надсиланням', ['Без помилок, один формат дат, робочі пошта й телефон, файл «Ім’я-Прізвище-CV.pdf». Надсилайте в PDF, щоб верстка не з’їхала.']],
+          ['6. Лише правда', ['Не додавайте навичок і результатів, яких немає, — це спливе на співбесіді. ШІ має переформулювати ваш справжній досвід, а не вигадати новий.']],
+          ['Чим допомагає Vaxo', ['У Workspace напишіть кілька слів про свій досвід і вставте вакансію — Vax зробить резюме на одну сторінку та супровідний лист потрібною мовою і видасть файл Word або PDF. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'product-description-that-sells',
     date: '2026-11-16',
     t: {
