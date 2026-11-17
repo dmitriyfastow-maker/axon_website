@@ -428,7 +428,8 @@ const ico = {
     if (!S.chats.length && !S.projects.length) nav.append(el('small', '', T.noChats));
     $('[data-title]').textContent = S.chats.find((c) => c.id === S.cur)?.title || '';
     $('[data-del]').hidden = !S.cur;
-    $('[data-mat]').hidden = !S.cur;
+    $('[data-mat]').hidden = true;
+    $('[data-cv]').hidden = level() === 'chat' && !S.proj;
     drawPins();
   }
 
@@ -780,11 +781,12 @@ const ico = {
     await useProject(c?.project);
     drawChats(); drawAll();
     const last = [...S.msgs].reverse().find(hasArt);
-    if (last && matchMedia('(min-width: 1100px)').matches) showArt(last); else if (matchMedia('(min-width: 1100px)').matches) studio(); else closeCv();
+    const lv = level();
+    if (!matchMedia('(min-width: 1100px)').matches || lv === 'chat') closeCv(); else if (lv === 'board') showBoard(); else if (last) showArt(last); else closeCv();
   }
   /** A newcomer with nothing made yet sees only the start screen: the studio does not open by itself. */
   const novice = () => !S.chats.length && !S.projects.length && !(S.mods?.pages || []).length && !S.proj?.biz;
-  const autoStudio = () => { if (matchMedia('(min-width: 1100px)').matches && !novice()) studio(); else closeCv(); };
+  const autoStudio = () => closeCv();
   function fresh() { S.cur = 0; S.msgs = []; quotes = []; drawQuotes(); drawChats(); drawEmpty(); autoStudio(); input.focus(); }
 
   /** After the very first result: three ready next steps, once per browser. */
@@ -837,10 +839,57 @@ const ico = {
       saveGuest();
     }
     drawChats();
-    if (hasArt(say)) { showArt(say); nextTip(); }
+    if (hasArt(say)) { showArt(say); nextTip(); } else if (cv.hidden && level() === 'board' && matchMedia('(min-width: 1100px)').matches) showBoard();
     refreshUsage();
     S.busy = false;
   }
+
+  /* ---------- Canvas by task (Decision 54): a plain question stays a chat; one result opens beside it; a big task gets a board ---------- */
+  const BIG = /\[\[(CHOICE|ORDER|DEPLOY)/i;
+  const BW = ({
+    ru: { made: 'Сделано в этом разговоре', inProj: 'Всё, что сделано в проекте', empty: 'Это большая задача — здесь будет собираться всё, что Vax сделает по ней: сайт, заявки, документы, картинки, таблицы. Ответьте в чате на вопросы или нажмите «Делай сразу».', mkP: 'Задача растёт? Сделайте её проектом — появятся вкладки бизнеса: сайт, заявки, записи, оплаты, команда, партнёры.', mk: '+ Сделать проектом', all: 'Весь холст' },
+    ua: { made: 'Зроблено в цій розмові', inProj: 'Усе, що зроблено в проєкті', empty: 'Це велике завдання — тут збиратиметься все, що Vax зробить для нього: сайт, заявки, документи, картинки, таблиці. Дайте відповідь у чаті на питання або натисніть «Роби одразу».', mkP: 'Завдання росте? Зробіть його проєктом — з’являться вкладки бізнесу: сайт, заявки, записи, оплати, команда, партнери.', mk: '+ Зробити проєктом', all: 'Усе полотно' },
+    en: { made: 'Made in this chat', inProj: 'Everything made in this project', empty: 'This is a big task: everything Vax makes for it will gather here, the site, requests, documents, pictures, tables. Answer the questions in the chat or pick «build now».', mkP: 'Is the task growing? Make it a project to get the business tabs: site, requests, bookings, payments, team, partners.', mk: '+ Make it a project', all: 'Whole canvas' },
+  } as Record<string, any>)[lang] || ({} as any);
+  function chatObjs(): Obj[] {
+    const pid = S.proj?.id || S.chats.find((x) => x.id === S.cur)?.project;
+    const ids = new Set(pid ? S.chats.filter((x) => x.project === pid).map((x) => x.id) : [S.cur]);
+    const seen = new Set<string>();
+    return objectsOf().filter((o) => ids.has(o.chat)).filter((o) => { const k = o.kind + (o.url || o.title || o.id); if (seen.has(k)) return false; seen.add(k); return true; });
+  }
+  /** chat — just talking, no canvas; one — a single result beside the chat; board — a big task with everything it made. */
+  function level(): 'chat' | 'one' | 'board' {
+    if (!S.cur) return 'chat';
+    const c = S.chats.find((x) => x.id === S.cur), n = chatObjs().length;
+    if (c?.project || n >= 2 || S.msgs.some((m) => m.role === 'assistant' && (BIG.test(m.content || '') || !!m.site || !!m.deploy))) return 'board';
+    return n || S.msgs.some(hasArt) ? 'one' : 'chat';
+  }
+  function board() {
+    const c = S.chats.find((x) => x.id === S.cur);
+    const box = el('div', 'pf board54');
+    if (S.proj && (S.proj.biz || S.mods?.site)) { const hb = homeBox(); if (hb) box.append(hb); }
+    const objs = chatObjs(), sec = el('section', 'blk');
+    sec.append(el('h3', '', S.proj ? BW.inProj : BW.made));
+    if (!objs.length) sec.append(el('p', 'hint', BW.empty));
+    const g = el('div', 'b54g');
+    for (const o of objs.slice(0, 48)) {
+      const card = el('div', 'b54c'), b = btn('b54o', '', () => openObject(o));
+      b.innerHTML = `<span class="h53i">${ico(o.kind, 18)}</span>`;
+      b.append(el('b', '', o.title || T.matTabs[o.kind] || ''), el('small', '', T.matTabs[o.kind] || ''));
+      card.append(b);
+      if (o.url) { const a = el('a', 'b54go', '↗') as HTMLAnchorElement; a.href = o.url; a.target = '_blank'; a.rel = 'noopener'; a.title = o.url; card.append(a); }
+      g.append(card);
+    }
+    if (objs.length) sec.append(g);
+    box.append(sec);
+    if (c && !c.project && !S.proj) {
+      const s2 = el('section', 'blk');
+      s2.append(el('p', 'hint', BW.mkP), btn('sec', BW.mk, async () => { const p = await newProject(c.title); if (p) { await moveChat(c, p.id); openProject(p.id, 'home'); } }));
+      box.append(s2);
+    }
+    openCv(S.proj?.name || c?.title || T.canvas, box);
+  }
+  const showBoard = () => { if (S.proj) openProject(S.proj.id, 'home'); else board(); };
 
   /* ---------- Canvas ---------- */
   function openCv(title: string, ...body: Node[]) { cvTitle.textContent = title; parkBiz(); cvBody.replaceChildren(...body); cv.hidden = false; root.classList.add('wide'); side(false); $('[data-cv-label]').textContent = T.hideCv; }
@@ -925,7 +974,8 @@ const ico = {
     return wrap;
   }
 
-  function showArt(m: Msg) {
+  function showArt(m: Msg) { showArt0(m); if (!S.proj && level() === 'board' && !cv.hidden) cvBody.prepend(btn('sec b54back', '← ' + BW.all, board)); }
+  function showArt0(m: Msg) {
     // A site of the current business opens inside its project, with the project's tabs on top.
     if (m.site) { if (S.proj?.biz && m.site.url) openProject(S.proj.id, 'site', () => siteView(m.site!, m)); else siteView(m.site, m); return; }
     const parts: Node[] = [];
@@ -1246,7 +1296,7 @@ const ico = {
   }
 
   // «Обзор» (Decision 53): the whole project on one screen — one number and one action per card, then «what to do now».
-  function homePanel() {
+  function homeBox(): HTMLElement | null {
     const H = ({
       ru: { now: 'Что сделать сейчас', all: 'Всё в порядке — Vax следит за проектом. Напишите в чат, что сделать дальше.', site: 'Сайт', live: 'работает', noSite: 'ещё нет', leads: 'Заявки', newL: 'новых', par: 'Партнёры', due: 'к выплате', bot: 'ИИ-консультант', on: 'включён', off: 'выключен', dom: 'Свой домен', pay: 'Оплаты', open: 'Открыть', t: {
         site: 'Соберите сайт: напишите в чат, чем вы занимаетесь', leads: 'Ответьте на новые заявки: {n}', bot: 'Включите ИИ-консультанта — он отвечает клиентам 24/7', partner: 'Включите партнёрскую программу — клиенты будут приводить клиентов', domain: 'Подключите свой домен вместо vaxogroup.com/s/…', pay: 'Подключите онлайн-оплату на сайте' } },
@@ -1255,7 +1305,7 @@ const ico = {
       en: { now: 'What to do now', all: 'All good — Vax keeps an eye on the project. Tell it in the chat what to do next.', site: 'Site', live: 'live', noSite: 'not yet', leads: 'Requests', newL: 'new', par: 'Partners', due: 'to pay', bot: 'AI consultant', on: 'on', off: 'off', dom: 'Own domain', pay: 'Payments', open: 'Open', t: {
         site: 'Build the site: tell the chat what you do', leads: 'Answer the new requests: {n}', bot: 'Turn on the AI consultant — it answers customers 24/7', partner: 'Turn on the partner programme — customers bring customers', domain: 'Connect your own domain instead of vaxogroup.com/s/…', pay: 'Turn on online payments on the site' } },
     } as Record<string, any>)[lang] || null;
-    if (!H) { sitePanel(); return; }
+    if (!H) return null;
     const m = S.mods || ({} as R), pid = S.proj!.id;
     const leads = (m.crm?.leads || []) as R[], newN = leads.filter((l) => !l.status || l.status === 'new').length;
     const links = (m.partner?.links || []) as R[], due = Math.round(links.reduce((a, l) => a + Math.max(0, (l.earned || 0) - (l.paid || 0)), 0) * 100) / 100;
@@ -1284,8 +1334,9 @@ const ico = {
     if (!todo.length) now.append(el('p', 'hint', H.all));
     for (const [k, txt] of todo.slice(0, 5)) { const b = btn('sec h53t', '→ ' + txt, () => openProject(pid, k)); now.append(b); }
     box.append(grid, now);
-    openCv(S.proj?.name || T.canvas, box);
+    return box;
   }
+  function homePanel() { board(); }
   function botPanel() {
     // The AI consultant on the site and what it knows: the site's own text plus the owner's facts and files (prices, hours, rules).
     const box = el('div', 'pf'), bot = S.mods?.bot, main = (S.mods?.pages || []).find((x: R) => x.main) || (S.mods?.pages || [])[0];
@@ -1751,7 +1802,7 @@ const ico = {
   })();
   $('[data-cv-x]').onclick = closeCv;
   $('[data-cv-full]').onclick = () => { const on = root.classList.toggle('cvfull'); $('[data-cv-full-label]').textContent = on ? T.unfull : T.full; };
-  $('[data-cv]').onclick = () => { if (!cv.hidden) { closeCv(); return; } const last = [...S.msgs].reverse().find(hasArt); if (last) showArt(last); else studio(); };
+  $('[data-cv]').onclick = () => { if (!cv.hidden) { closeCv(); return; } if (level() === 'board' || (S.proj && !S.cur)) { showBoard(); return; } const last = [...S.msgs].reverse().find(hasArt); if (last) showArt(last); else studio(); };
   $('[data-del]').onclick = async () => {
     if (!confirm(T.delQ)) return;
     if (S.signed) await post('/api/ws/chat/' + S.cur, {});
@@ -2337,6 +2388,15 @@ const ico = {
   .wsp .itiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
   .wsp .itiles div { display: grid; gap: 2px; padding: 10px; border-radius: 12px; background: var(--surf2); text-align: center; }
   .wsp .itiles b { font-size: 22px; } .wsp .itiles small { color: var(--mut); font-size: 12px; }
+  .wsp .b54g { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+  .wsp .b54c { position: relative; }
+  .wsp .b54o { width: 100%; display: grid; gap: 3px; text-align: left; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); color: var(--ink); cursor: pointer; font: inherit; min-height: 96px; }
+  .wsp .b54o:hover { border-color: var(--ink); }
+  .wsp .b54o b { font-size: 14px; line-height: 1.3; overflow-wrap: anywhere; }
+  .wsp .b54o small { color: var(--mut); font-size: 12px; }
+  .wsp .b54go { position: absolute; top: 8px; right: 10px; text-decoration: none; color: var(--mut); font-size: 15px; }
+  .wsp .b54back { margin-bottom: 10px; }
+  .wsp .board54 .blk + .blk { margin-top: 14px; }
   .wsp .h53g { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 6px 0 14px; }
   .wsp .h53c { display: grid; gap: 2px; text-align: left; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); color: var(--ink); cursor: pointer; font: inherit; }
   .wsp .h53c:hover { border-color: var(--ink); }

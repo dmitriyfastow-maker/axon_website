@@ -72,7 +72,7 @@ const WS_FACTS = `ABOUT VAXO (use only these facts about Vaxo itself; if somethi
 function system(lang: string, memory: Memory, mode: string): string {
   const shape = mode === 'deep'
     ? `ANSWER MODE: DEEP PROJECT. In the chat write the core in at most 3 lines. Then put the whole worked-out result between [[DOC: short title]] and [[/DOC]] in Markdown (## headings, lists, tables): it opens on the Canvas next to the chat, where the person can edit and download it. Make it complete and ready to use.`
-    : `ANSWER SIZE: YOU DECIDE. A question or a small task: only the essence in the chat, at most 4 lines, the exact answer and the next step. A result that is a real document (a plan, a brief, a script, a strategy, a contract review, a report, anything longer than about 10 lines): say the core in at most 3 lines and put the whole result between [[DOC: short title]] and [[/DOC]] in Markdown; it opens on the Canvas, where they can edit and download it.`;
+    : `ANSWER SIZE: YOU DECIDE. A question or a small task: only the essence in the chat, at most 4 lines, the exact answer and the next step. A result that is a real document (a plan, a brief, a script, a strategy, a contract review, a report, anything longer than about 10 lines): say the core in at most 3 lines and put the whole result between [[DOC: short title]] and [[/DOC]] in Markdown; it opens on the Canvas, where they can edit and download it. EVERYDAY QUESTIONS (cooking, health tips, how to do something at home, facts, advice, translations, quick calculations, a short recipe or list) are always answered right in the chat, even with steps, and NEVER as a [[DOC]]: the Canvas is only for work the person will keep, edit, send or build on (Decision 54).`;
   return `You are Vax, the personal doer inside the Vaxo workspace. The screen has the chat and a Canvas to the right of it (in Russian call it «холст», in Ukrainian «полотно»).
 Answer in the language of the person's latest message; when unclear, ${LANGS[lang] ?? 'English'}.
 Do the work now. You lay the task out in steps and give the solution at once. Never ask for a name, email, phone or Telegram, never mention a manager, a callback or a waiting time. Do not ask what you can work out yourself; for small tasks ask at most one question, and only when the answer changes the result.
@@ -147,6 +147,10 @@ const ON_CANVAS: Record<string, string> = { en: 'The full version is on the Canv
 const AGENCY = /(команд\S* (продакшн|продакшен|монтаж|дизайн|разработ|специалист)|продакшн-команд|наш\S* (команд|специалист|менеджер|монтажер|монтажёр|дизайнер)|менеджер\S* (свяж|напиш)|production team|our (team|specialists?|editors?|designers?|manager)|a manager will|команд\S* (продакшн|монтаж|дизайн|розроб|фахівц)|наш\S* (фахівц|менеджер))/i;
 const BRIEF_READY: Record<string, string> = { en: 'The brief is ready on the Canvas: format, script with timings and shot list.', ru: 'Бриф готов на холсте: формат, сценарий по секундам и список кадров.', ua: 'Бриф готовий на полотні: формат, сценарій по секундах і список кадрів.' };
 
+/** A short everyday question (cooking, how-to, a fact), not a request for a document, a site or production work. */
+const WORK = /(план|документ|договор|бриф|стратег|отч[её]т|звіт|сценар|презентац|таблиц|резюме|письм|лист\b|кп\b|комерц|коммерч|контент|сайт|бізнес|бизнес|магазин|crm|smm|plan|document|contract|brief|strateg|report|script|presentation|table|spreadsheet|resume|letter|proposal|website|site\b|business|shop|store|модел|расч[её]т|розрах|бюджет|смет|кошторис|анализ|аналіз|аудит|прогноз|финанс|фінанс|графи?к|расписан|розклад|техзадан|тз\b|инструкц|інструкц|чек-?лист|курс\b|урок|программ|програм|model|budget|estimate|forecast|financ|analys|audit|schedule|checklist|course|lesson|program)/i;
+export const everyday = (wish: string) => wish.trim().length <= 140 && !WORK.test(wish) && !BIG_TASK.test(wish);
+
 /** Splits the model's text into the chat line, the Canvas document and the deploy button. */
 export function shapeReply(raw: string, mode: string, wish: string, lang: string): { reply: string; doc: Doc | null; deploy: string | null; order: string | null } {
   let text = raw;
@@ -156,13 +160,16 @@ export function shapeReply(raw: string, mode: string, wish: string, lang: string
   const m = text.match(DOC_RE);
   let doc: Doc | null = null;
   if (m && m[2].trim()) { doc = { title: m[1].trim(), body: m[2].trim() }; text = text.replace(m[0], ''); }
+  // Decision 54: an everyday question stays in the chat; the Canvas is for work people keep, edit, send or build on.
+  const daily = !order && !deploy && everyday(wish);
+  if (doc && daily && !/\|\s*-{3}/.test(doc.body)) { text = `${text.replace(m![0], '').trim()}\n\n${doc.body.replace(/^#+\s*/gm, '')}`.trim(); doc = null; }
   text = text.replace(/\[\[\/?DOC[^\]]*\]\]/gi, '').replace(/\*\*/g, '').trim();
   if (AGENCY.test(text)) {
     text = text.split(/(?<=[.!?])\s+|\n+/).filter((x) => x.trim() && !AGENCY.test(x)).join(' ').trim();
     if (!text && doc) text = BRIEF_READY[lang] ?? BRIEF_READY.en;
   }
   // A long answer without the marker still must not become a wall of text in the chat.
-  if (!doc && (mode === 'deep' ? text.length > 700 : text.length > 1400)) {
+  if (!doc && !daily && text.length > (mode === 'deep' ? 700 : 1400)) {
     doc = { title: wish.replace(/\s+/g, ' ').slice(0, 60), body: text };
     text = text.split(/\n\s*\n/)[0].slice(0, 280);
   }
