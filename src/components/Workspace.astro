@@ -1045,13 +1045,43 @@ const ico = {
     if (t.kind === 'calc') wrap.append(el('small', 'hint', T.toolMore));
     return wrap;
   }
+  /** Decision 64: text edited right on the canvas goes back to Markdown (headings, lists, tables, bold). */
+  function htmlToMd(root: HTMLElement): string {
+    const inl = (n: Node): string => [...n.childNodes].map((c) => c.nodeType === 3 ? (c.textContent || '') : (c as HTMLElement).tagName === 'STRONG' || (c as HTMLElement).tagName === 'B' ? `**${inl(c)}**` : (c as HTMLElement).tagName === 'EM' || (c as HTMLElement).tagName === 'I' ? `*${inl(c)}*` : (c as HTMLElement).tagName === 'BR' ? '\n' : inl(c)).join('');
+    // Lists keep their nesting: the item's own text, then its inner lists indented.
+    const list = (ul: Element, d: number): string => [...ul.children].filter((x) => x.tagName === 'LI').map((li, i) => {
+      const own = [...li.childNodes].filter((c) => !(c.nodeType === 1 && /^(UL|OL)$/.test((c as HTMLElement).tagName)));
+      const box = document.createElement('div'); own.forEach((c) => box.append(c.cloneNode(true)));
+      const kids = [...li.children].filter((c) => /^(UL|OL)$/.test(c.tagName)).map((c) => list(c, d + 1)).join('\n');
+      return '  '.repeat(d) + (ul.tagName === 'OL' ? `${i + 1}. ` : '- ') + inl(box).trim() + (kids ? '\n' + kids : '');
+    }).join('\n');
+    const out: string[] = [];
+    for (const n of [...root.children] as HTMLElement[]) {
+      const t = n.tagName;
+      if (/^H[1-6]$/.test(t)) out.push('#'.repeat(Math.min(3, +t[1])) + ' ' + inl(n).trim());
+      else if (t === 'UL' || t === 'OL') out.push(list(n, 0));
+      else if (t === 'TABLE') { const rows = [...n.querySelectorAll('tr')].map((tr) => '| ' + [...tr.children].map((c) => inl(c).trim().replace(/\|/g, '/')).join(' | ') + ' |'); if (rows.length) { const w = (rows[0].match(/\|/g)!.length - 1); rows.splice(1, 0, '|' + ' --- |'.repeat(w)); } out.push(rows.join('\n')); }
+      else if (t === 'BLOCKQUOTE') out.push(inl(n).trim().split('\n').map((l) => '> ' + l).join('\n'));
+      else if (t === 'PRE') out.push('```\n' + (n.textContent || '') + '\n```');
+      else if (t === 'HR') out.push('---');
+      else { const x = inl(n).trim(); if (x) out.push(x); }
+    }
+    return out.join('\n\n');
+  }
   function docView(m: Msg) {
     const view = el('div', 'doc'), area = el('textarea', 'src'), bar = el('div', 'tbar'), pubBox = el('div');
     const paint = () => { view.innerHTML = md(m.doc!.body); };
     paint(); area.value = m.doc!.body; area.hidden = true;
-    const edit = btn('sec', T.edit, async () => {
+    // Decision 64: click any text of the document and type; it saves itself a moment later.
+    view.contentEditable = 'true'; view.spellcheck = true; view.classList.add('inplace');
+    let saveT = 0;
+    const count = (h: HTMLElement) => h.querySelectorAll('h1,h2,h3,li,tr').length;
+    const saveNow = async () => { const body = htmlToMd(view); if (!body || body === m.doc!.body) return; const probe = el('div'); probe.innerHTML = md(body); if (count(probe) < count(view)) { console.warn('[doc] structure would shrink; kept the source as is'); return; } m.doc!.body = body; area.value = body; if (S.signed && m.id) { await post('/api/ws/doc', { id: m.id, ...m.doc }); if (m.pub) await post('/api/ws/publish', { id: m.id }); } else saveGuest(); };
+    view.addEventListener('input', () => { clearTimeout(saveT); saveT = window.setTimeout(saveNow, 1200); });
+    view.addEventListener('blur', () => { clearTimeout(saveT); saveNow(); });
+    const edit = btn('sec', ({ ru: 'Исходный текст', ua: 'Вихідний текст' } as R)[lang] || 'Source text', async () => {
       if (area.hidden) { area.hidden = false; view.hidden = true; edit.textContent = T.done; area.focus(); return; }
-      m.doc!.body = area.value; area.hidden = true; view.hidden = false; edit.textContent = T.edit; paint();
+      m.doc!.body = area.value; area.hidden = true; view.hidden = false; edit.textContent = ({ ru: 'Исходный текст', ua: 'Вихідний текст' } as R)[lang] || 'Source text'; paint();
       if (S.signed && m.id) { await post('/api/ws/doc', { id: m.id, ...m.doc }); if (m.pub) await post('/api/ws/publish', { id: m.id }); } else saveGuest();
     });
     const copy = btn('sec', T.copy, async () => { await copyText(area.hidden ? m.doc!.body : area.value); flash(copy, T.copied, T.copy); });
@@ -1115,7 +1145,7 @@ const ico = {
     selBar.append(el('small', 'hint', DL.selH), selN, selIn, selGo);
     let selOn = false, order = 0;
     const paintN = () => { const n = view.querySelectorAll('[data-vxs]').length; selN.textContent = DL.selN.replace('{n}', String(n)); };
-    const stopSel = () => { selOn = false; view.classList.remove('selmode'); view.querySelectorAll('[data-vxs]').forEach((x) => x.removeAttribute('data-vxs')); selBar.hidden = true; pick.textContent = DL.sel; };
+    const stopSel = () => { selOn = false; view.classList.remove('selmode'); view.contentEditable = 'true'; view.querySelectorAll('[data-vxs]').forEach((x) => x.removeAttribute('data-vxs')); selBar.hidden = true; pick.textContent = DL.sel; };
     view.addEventListener('click', (e) => {
       if (!selOn) return;
       const t = (e.target as HTMLElement).closest('p, li, h1, h2, h3, h4, tr, blockquote, pre') as HTMLElement | null; if (!t || !view.contains(t)) return;
@@ -1124,10 +1154,11 @@ const ico = {
       else t.dataset.vxs = String(++order);
       paintN();
     });
-    const pick = btn('sec', DL.sel, () => { if (selOn) { stopSel(); return; } if (!area.hidden) edit.click(); selOn = true; order = 0; view.classList.add('selmode'); selBar.hidden = false; pick.textContent = DL.selOn; paintN(); });
+    const pick = btn('sec', DL.sel, () => { if (selOn) { stopSel(); return; } if (!area.hidden) edit.click(); selOn = true; order = 0; view.classList.add('selmode'); view.contentEditable = 'false'; selBar.hidden = false; pick.textContent = DL.selOn; paintN(); });
     bar.append(dlb, pub, edit, pick, copy);
     drawPub();
-    const wrap = el('div', 'art'); wrap.append(bar, selBar, pubBox, view, area);
+    const tip = el('small', 'hint inhint', ({ ru: 'Нажмите на любой текст, чтобы исправить — сохраняется само. Выделите места и попросите Vax переделать.', ua: 'Натисніть на будь-який текст, щоб виправити — зберігається само. Виділіть місця й попросіть Vax переробити.' } as R)[lang] || 'Click any text to change it; it saves by itself. Select parts and ask Vax to redo them.');
+    const wrap = el('div', 'art'); wrap.append(bar, tip, selBar, pubBox, view, area);
     return wrap;
   }
 
@@ -2558,6 +2589,10 @@ const ico = {
   .wsp .usage .gift { display: block; margin-top: 4px; color: var(--accText); font-size: 11.5px; line-height: 1.3; }
   .wsp .tiernote { display: grid; gap: 4px; margin: -4px 0 14px; padding: 10px 12px; border: 1px dashed var(--line); border-radius: 12px; color: var(--mut); font-size: 13.5px; line-height: 1.45; }
   .wsp .tiernote .lnk { justify-self: start; }
+  .wsp .doc.inplace { outline: none; border-radius: 10px; padding: 2px 6px; margin: 0 -6px; transition: box-shadow .15s; }
+  .wsp .doc.inplace:focus { box-shadow: 0 0 0 2px rgba(232,176,74,.45); }
+  .wsp .doc.inplace:not(.selmode) :is(p, li, h1, h2, h3, td):hover { background: rgba(232,176,74,.08); border-radius: 6px; }
+  .wsp .inhint { display: block; margin: 6px 0 2px; }
   .wsp .gpanel { display: grid; gap: 8px; }
   .wsp .gstep { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: var(--surf2); font-size: 14px; }
   .wsp .gstep.ok { color: var(--mut); }
