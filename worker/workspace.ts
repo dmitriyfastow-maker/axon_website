@@ -12,6 +12,7 @@ import { drawImage, heroImage, IMG_CAP, sitePhotos, WANTS_IMAGE } from './images
 import type { Notify } from './deals.js';
 import { addRef, markRefPaid, cleanSite, deployModule, liveSite, moduleAccess, modulesState, saveSite, sitePreview, slugOf, startTrial, updateLiveSite, writeSite, type Site } from './modules.js';
 import { handleDomain, type Cf } from './domains.js';
+import { ensureReviews, listReviews, setReview } from './reviews.js';
 import { agentStep } from './agent.js';
 import type { DB } from './partner.js';
 import { claudeReply, routeFor, taskLevel } from './router.js';
@@ -653,6 +654,14 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
         await db.prepare(`UPDATE invoices SET status = 'paid' WHERE token = ?`).bind(tok).run();
       }
       return out(200, { ok: true, url: `/api/shop/dl?t=${tok}` });
+    }
+    // 17.11: reviews of the owner's business — the owner approves, hides or deletes; only approved ones are public.
+    if (path === 'reviews') {
+      const own = bz ? await db.prepare('SELECT id FROM biz WHERE id = ? AND owner_id = ?').bind(bz, me.id).first<{ id: number }>() : null;
+      if (!own) return out(404, { ok: false });
+      await ensureReviews(db);
+      if (m === 'POST' && !(await setReview(db, own.id, Number(b.id), String(b.status)))) return out(400, { ok: false });
+      return out(200, { ok: true, list: await listReviews(db, own.id, true) });
     }
     // Decision 63: public or private — the programme page of a project's business.
     const pubm = path.match(/^project\/(\d+)\/public$/);
