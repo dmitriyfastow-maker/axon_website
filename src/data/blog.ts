@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'prepare-job-interview-with-ai',
+    date: '2026-11-17',
+    t: {
+      en: {
+        title: 'How to prepare for a job interview in one evening with AI', seo: 'Prepare for a job interview in one evening',
+        desc: 'Study the company, prepare 5 stories from your experience, rehearse the hard questions, ask your own — and how AI helps you practise without scripts.',
+        body: [
+          ['What the interviewer wants to understand', ['Three things: can you do the job, will you fit the team, do you really want this place. Every question is about one of them. Prepare answers for all three.']],
+          ['1. Study the company in 20 minutes', ['Website, products, recent news, the vacancy text. Write down what they do, who their clients are and what problem the role solves. One or two facts in the conversation show real interest.']],
+          ['2. Prepare 5 stories', ['A success, a mistake and what you learned, a conflict, a difficult deadline, a time you helped others. Tell each in the order: situation — what you did — result. Two minutes per story.']],
+          ['3. Rehearse the hard questions', ['“Tell me about yourself”, “why are you leaving”, “your weaknesses”, “expected salary”. Say the answers out loud, not just in your head. Find the market salary range in advance and name a range, not one number.']],
+          ['4. Ask your own questions', ['What the first three months look like, how success is measured, what the team is like. Good questions show you are thinking about the work, not just the offer.']],
+          ['5. The day before', ['Check the time, the address or the call link, camera and sound. Put the CV and the vacancy in front of you. After the interview send a short thank-you note on the same day.']],
+          ['Be yourself', ['Do not memorise ready-made answers or invent experience. Practise to speak calmly about what you really did.']],
+          ['How Vaxo helps', ['In Workspace paste the vacancy and your CV — Vax will make a short note about the company, likely questions with hints from your own experience, and will play the interviewer so you can rehearse. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как подготовиться к собеседованию за вечер с ИИ', seo: 'Подготовка к собеседованию за вечер',
+        desc: 'Изучить компанию, подготовить 5 историй из опыта, отрепетировать трудные вопросы, задать свои — и как ИИ помогает тренироваться без заученных ответов.',
+        body: [
+          ['Что хочет понять собеседующий', ['Три вещи: справитесь ли вы с работой, подойдёте ли команде, хотите ли вы именно сюда. Каждый вопрос — про одно из этого. Подготовьте ответы на все три.']],
+          ['1. Изучите компанию за 20 минут', ['Сайт, продукты, свежие новости, текст вакансии. Запишите, чем они занимаются, кто их клиенты и какую задачу решает эта должность. Один-два факта в разговоре показывают настоящий интерес.']],
+          ['2. Подготовьте 5 историй', ['Успех, ошибка и чему она научила, конфликт, сложный срок, случай, когда вы помогли другим. Каждую рассказывайте по порядку: ситуация — что сделали — результат. Две минуты на историю.']],
+          ['3. Отрепетируйте трудные вопросы', ['«Расскажите о себе», «почему уходите», «ваши слабые стороны», «ожидаемая зарплата». Проговорите ответы вслух, а не в голове. Узнайте заранее зарплаты на рынке и называйте вилку, а не одно число.']],
+          ['4. Задайте свои вопросы', ['Как выглядят первые три месяца, по чему оценивают успех, какая команда. Хорошие вопросы показывают, что вы думаете о работе, а не только об оффере.']],
+          ['5. Накануне', ['Проверьте время, адрес или ссылку на звонок, камеру и звук. Положите перед собой резюме и вакансию. После собеседования в тот же день отправьте короткое «спасибо».']],
+          ['Будьте собой', ['Не заучивайте готовые ответы и не придумывайте опыт. Тренируйтесь, чтобы спокойно рассказывать о том, что вы действительно делали.']],
+          ['Чем помогает Vaxo', ['В Workspace вставьте вакансию и своё резюме — Vax сделает короткую справку о компании, вероятные вопросы с подсказками из вашего же опыта и сыграет собеседующего, чтобы вы отрепетировали. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як підготуватися до співбесіди за вечір із ШІ', seo: 'Підготовка до співбесіди за вечір',
+        desc: 'Вивчити компанію, підготувати 5 історій із досвіду, відрепетирувати складні питання, поставити свої — і як ШІ допомагає тренуватися без завчених відповідей.',
+        body: [
+          ['Що хоче зрозуміти співбесідник', ['Три речі: чи впораєтеся ви з роботою, чи пасуєте команді, чи хочете ви саме сюди. Кожне питання — про одне з цього. Підготуйте відповіді на всі три.']],
+          ['1. Вивчіть компанію за 20 хвилин', ['Сайт, продукти, свіжі новини, текст вакансії. Запишіть, чим вони займаються, хто їхні клієнти і яке завдання розв’язує ця посада. Один-два факти в розмові показують справжній інтерес.']],
+          ['2. Підготуйте 5 історій', ['Успіх, помилка і чого вона навчила, конфлікт, складний строк, випадок, коли ви допомогли іншим. Кожну розповідайте по черзі: ситуація — що зробили — результат. Дві хвилини на історію.']],
+          ['3. Відрепетируйте складні питання', ['«Розкажіть про себе», «чому йдете», «ваші слабкі сторони», «очікувана зарплата». Промовте відповіді вголос, а не в голові. Дізнайтеся заздалегідь зарплати на ринку й називайте вилку, а не одне число.']],
+          ['4. Поставте свої питання', ['Як виглядають перші три місяці, за чим оцінюють успіх, яка команда. Добрі питання показують, що ви думаєте про роботу, а не лише про офер.']],
+          ['5. Напередодні', ['Перевірте час, адресу або посилання на дзвінок, камеру й звук. Покладіть перед собою резюме та вакансію. Після співбесіди того ж дня надішліть коротке «дякую».']],
+          ['Будьте собою', ['Не завчайте готових відповідей і не вигадуйте досвіду. Тренуйтеся, щоб спокійно розповідати про те, що ви справді робили.']],
+          ['Чим допомагає Vaxo', ['У Workspace вставте вакансію і своє резюме — Vax зробить коротку довідку про компанію, ймовірні питання з підказками з вашого ж досвіду і зіграє співбесідника, щоб ви відрепетирували. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'write-resume-with-ai-30-minutes',
     date: '2026-11-16',
     t: {
