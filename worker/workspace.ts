@@ -621,6 +621,19 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       const made = await createInvoice(db, { leadId: leadIds[0], amount: usd, currency: 'USD', description: topupDesc(usd, new Date().toISOString().slice(0, 7)), part: 'other', lang, origin: url.origin, send: false });
       return out(200, { ok: true, url: made.url });
     }
+    // Decision 62: whoever came by an invite link takes all 12 templates ($67) free. A digital copy costs Vaxo nothing.
+    if (path === 'gift-bundle' && m === 'POST') {
+      const ok = await db.prepare(`SELECT 1 FROM referrals r JOIN leads d ON d.id = r.lead_id WHERE d.client_id = ? AND r.status NOT IN ('rejected', 'cancelled') LIMIT 1`).bind(me.id).first().catch(() => null);
+      if (!ok) return out(403, { ok: false });
+      const desc = 'Vaxo template: All 12 Vaxo templates (bundle)', buyer = 'gift:client:' + me.id;
+      let tok = (await db.prepare('SELECT token FROM invoices WHERE buyer = ? AND description = ?').bind(buyer, desc).first<{ token: string }>().catch(() => null))?.token;
+      if (!tok) {
+        tok = [...crypto.getRandomValues(new Uint8Array(16))].map((x) => x.toString(16).padStart(2, '0')).join('');
+        await db.prepare(`INSERT INTO invoices (number, token, lead_id, buyer, currency, amount, description, part, lang, due) VALUES (?, ?, NULL, ?, 'USD', 0, ?, 'product', ?, date('now'))`).bind(`GIFT-${me.id}`, tok, buyer, desc, cut(b.lang, 2) || 'en').run();
+        await db.prepare(`UPDATE invoices SET status = 'paid' WHERE token = ?`).bind(tok).run();
+      }
+      return out(200, { ok: true, url: `/api/shop/dl?t=${tok}` });
+    }
     if (path === 'avatar' && m === 'POST') {
       const lv = Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('game_lv_' + me.id).first<{ value: string }>().catch(() => null))?.value || 1);
       const a = AVATARS.includes(String(b.a)) ? String(b.a) : '', f = Math.max(0, Math.min(Number(b.f) || 0, frameMax(lv)));

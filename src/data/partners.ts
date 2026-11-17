@@ -15,6 +15,7 @@ export const RATES = {
   team: 10, // 10% of every sale made by the partner's direct team members (one level only), paid by Vaxo on top
   viral: 10, // 10% of every payment of friends invited by the partner's own clients, for life (Decision 52 v2, Dmitry 15.11)
   cashback: 5, // clients get 5% of each renewal back as extra work volume (Vax bonuses)
+  prepaid: 35, // Decision 62: a prepaid 3, 6 or 12 months pays the partner 35% of the whole sum at once
   holdDays: 14, // commission becomes payable after the refund window
 };
 
@@ -109,7 +110,7 @@ const en: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'plans from $19/mo',
       what: 'Vax does the work itself for anyone — from personal tasks to companies: sites, apps, AI, ads, content.',
-      points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `+${r.viral}% — from payments of friends your clients invite, for life`, `Your clients get +25% work volume for the whole first paid period, a month or a year (Free plan: +50% for 30 days)`],
+      points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `+${r.viral}% — from payments of friends your clients invite, for life`, `Your clients get +20% work volume for the whole first paid plan, a month or a year, plus all 12 templates ($67) free`],
       cta: ['Count my income →', 'earn'],
     },
     {
@@ -172,7 +173,7 @@ const en: Text = {
   soonP: 'Regular draws and challenges with prizes for partners who post and help clients. Join now to take part from the first one.',
   faqH: 'Questions',
   faq: [
-    ['Can clients invite people too?', 'Yes. Clients can invite too — they get extra work volume; partners get money. Everyone who comes by an invite link gets a welcome gift: +25% work volume for the whole first paid period, a month or a year (Free plan: +50% for 30 days); a monthly payment by a partner’s link: +10% in the first month. A prepaid 3, 6 or 12 months pays the partner as if monthly: 50% of the first month and 30% of the rest. One new client counts once: the first link wins.'],
+    ['Can clients invite people too?', 'Yes. Clients can invite too — they get extra work volume; partners get money. Everyone who comes by an invite link gets a welcome gift: +20% work volume for the whole first paid plan, a month or a year, plus all 12 templates ($67) free. A prepaid 3, 6 or 12 months pays the partner 35% of the whole sum at once. One new client counts once: the first link wins.'],
     ['Does it cost anything?', 'No. Signing up, the cabinet, training and the AI toolkit are free.'],
     ['I have never worked online. Can I do it?', 'Yes. The “Start here” checklist and training show every step. AI writes the texts with you.'],
     ['How much will I earn?', 'It depends only on real sales you bring. The calculator above shows the exact math. We never promise income.'],
@@ -221,7 +222,7 @@ const ua: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'підписка від $19/міс',
       what: 'Vax сам робить роботу для будь-кого — від особистих справ до компаній: сайти, застосунки, ШІ, реклама, контент.',
-      points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `+${r.viral}% — з оплат друзів, яких запросили ваші клієнти, назавжди`, `Ваші клієнти отримують +25% обсягу на весь перший оплачений період — місяць чи рік (безкоштовний тариф: +50% на 30 днів)`],
+      points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `+${r.viral}% — з оплат друзів, яких запросили ваші клієнти, назавжди`, `Ваші клієнти отримують +20% обсягу на весь перший оплачений тариф — місяць чи рік, і набір усіх 12 шаблонів ($67) безкоштовно`],
       cta: ['Порахувати мій дохід →', 'earn'],
     },
     {
@@ -284,7 +285,7 @@ const ua: Text = {
   soonP: 'Регулярні розіграші та челенджі з призами для тих, хто публікує контент і допомагає клієнтам. Приєднуйтесь зараз, щоб брати участь з першого.',
   faqH: 'Питання',
   faq: [
-    ['Клієнти теж можуть запрошувати?', 'Так. Клієнти теж можуть запрошувати — отримують додатковий обсяг роботи; партнери — гроші. Кожен, хто прийшов за посиланням-запрошенням, отримує подарунок: +25% обсягу на весь перший оплачений період — місяць чи рік (безкоштовний тариф: +50% на 30 днів); при помісячній оплаті за посиланням партнера: +10% у перший місяць. Передоплата за 3, 6 чи 12 місяців платить партнеру як помісячно: 50% першого місяця і 30% решти. Один новий клієнт зараховується один раз: перемагає перше посилання.'],
+    ['Клієнти теж можуть запрошувати?', 'Так. Клієнти теж можуть запрошувати — отримують додатковий обсяг роботи; партнери — гроші. Кожен, хто прийшов за посиланням-запрошенням, отримує подарунок: +20% обсягу на весь перший оплачений тариф — місяць чи рік, і набір усіх 12 шаблонів ($67) безкоштовно. Передоплата за 3, 6 чи 12 місяців — партнеру 35% усієї суми одразу. Один новий клієнт зараховується один раз: перемагає перше посилання.'],
     ['Це щось коштує?', 'Ні. Реєстрація, кабінет, навчання та ШІ-набір — безкоштовні.'],
     ['Я ніколи не працював онлайн. Впораюсь?', 'Так. Чек-лист «З чого почати» і навчання показують кожен крок. Тексти ШІ пише разом з вами.'],
     ['Скільки я зароблю?', 'Залежить лише від реальних продажів. Калькулятор вище показує точний розрахунок. Ми ніколи не обіцяємо дохід.'],
@@ -333,7 +334,7 @@ const ru: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'подписка от $19/мес',
       what: 'Vax сам делает работу для любого — от личных дел до компаний: сайты, приложения, ИИ, реклама, контент.',
-      points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `+${r.viral}% — с оплат друзей, которых пригласили ваши клиенты, навсегда`, `Ваши клиенты получают +25% объёма на весь первый оплаченный период — месяц или год (бесплатный тариф: +50% на 30 дней)`],
+      points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `+${r.viral}% — с оплат друзей, которых пригласили ваши клиенты, навсегда`, `Ваши клиенты получают +20% объёма на весь первый оплаченный тариф — месяц или год, и набор всех 12 шаблонов ($67) бесплатно`],
       cta: ['Посчитать мой доход →', 'earn'],
     },
     {
@@ -396,7 +397,7 @@ const ru: Text = {
   soonP: 'Регулярные розыгрыши и челленджи с призами для тех, кто публикует контент и помогает клиентам. Присоединяйтесь сейчас, чтобы участвовать с первого.',
   faqH: 'Вопросы',
   faq: [
-    ['Клиенты тоже могут приглашать?', 'Да. Клиенты тоже могут приглашать — получают дополнительный объём работы; партнёры — деньги. Каждый, кто пришёл по ссылке-приглашению, получает подарок: +25% объёма на весь первый оплаченный период — месяц или год (бесплатный тариф: +50% на 30 дней); при помесячной оплате по ссылке партнёра: +10% в первый месяц. Предоплата за 3, 6 или 12 месяцев платит партнёру как помесячно: 50% первого месяца и 30% остальных. Один новый клиент засчитывается один раз: побеждает первая ссылка.'],
+    ['Клиенты тоже могут приглашать?', 'Да. Клиенты тоже могут приглашать — получают дополнительный объём работы; партнёры — деньги. Каждый, кто пришёл по ссылке-приглашению, получает подарок: +20% объёма на весь первый оплаченный тариф — месяц или год, и набор всех 12 шаблонов ($67) бесплатно. Предоплата за 3, 6 или 12 месяцев — партнёру 35% всей суммы сразу. Один новый клиент засчитывается один раз: побеждает первая ссылка.'],
     ['Это что-то стоит?', 'Нет. Регистрация, кабинет, обучение и ИИ-набор — бесплатные.'],
     ['Я никогда не работал онлайн. Справлюсь?', 'Да. Чек-лист «С чего начать» и обучение показывают каждый шаг. Тексты ИИ пишет вместе с вами.'],
     ['Сколько я заработаю?', 'Зависит только от реальных продаж. Калькулятор выше показывает точный расчёт. Мы никогда не обещаем доход.'],

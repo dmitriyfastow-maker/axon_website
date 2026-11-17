@@ -49,7 +49,9 @@ export async function createPayouts(db: DB, leadId: number) {
   // month at the first-payment rate, the other months at the renewal rate. Same money as monthly, and it funds the
   // client's bonus for the whole period, so nobody loses.
   const period = Math.max(1, Math.min(12, Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('period_' + leadId).first<{ value: string }>().catch(() => null))?.value) || 1));
-  const blend = (r: number) => (period > 1 ? Math.round(((r + RATES.agencyRenewal * (period - 1)) / period) * 100) / 100 : r);
+  // Decision 62: simpler and fair — a prepaid 3, 6 or 12 months pays the partner 35% of the whole sum at once (about
+  // what a year of monthly payments gives, but paid right away), and Vaxo stays in the plus on every plan.
+  const blend = (r: number) => (period > 1 ? Math.min(r, RATES.prepaid) : r);
   for (const row of rows) if (row[1] === 'referral') row[2] = blend(row[2]);
   const months = 1; // 15.11 (Dmitry): the whole commission becomes payable after the 14-day refund window, even for a year
   const net = Math.round(l.value_usd * NET * 100) / 100;

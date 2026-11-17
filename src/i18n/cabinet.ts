@@ -55,7 +55,7 @@ const en = {
   },
   links: {
     h1: 'My links',
-    p: 'Make a separate link for every place you post (TikTok, Instagram, a group, a video) — then you see what brings clients. Unlimited links, turn any off at any time. Everyone who comes by your link gets +25% work volume for the whole first paid period, a month or a year (Free plan: +50% for 30 days); a monthly payment by a partner’s link: +10% in the first month. They see it right on the site.',
+    p: 'Make a separate link for every place you post (TikTok, Instagram, a group, a video) — then you see what brings clients. Unlimited links, turn any off at any time. Everyone who comes by your link gets +20% work volume for the whole first paid plan, a month or a year, plus all 12 templates ($67) free. They see it right on the site.',
     where: 'Enter a name',
     wherePh: 'e.g. TikTok, Instagram bio, Facebook group',
     to: 'Where does it lead?',
@@ -190,7 +190,7 @@ const ua: CabinetText = {
   },
   links: {
     h1: 'Мої посилання',
-    p: 'Створюйте окреме посилання для кожного місця (TikTok, Instagram, група, відео) — так видно, що приводить клієнтів. Посилань без обмежень, будь-яке можна вимкнути. Кожен, хто прийде за вашим посиланням, отримує +25% обсягу на весь перший оплачений період — місяць чи рік (безкоштовний тариф: +50% на 30 днів); при помісячній оплаті за посиланням партнера: +10% у перший місяць. Це видно прямо на сайті.',
+    p: 'Створюйте окреме посилання для кожного місця (TikTok, Instagram, група, відео) — так видно, що приводить клієнтів. Посилань без обмежень, будь-яке можна вимкнути. Кожен, хто прийде за вашим посиланням, отримує +20% обсягу на весь перший оплачений тариф — місяць чи рік, і набір усіх 12 шаблонів ($67) безкоштовно. Це видно прямо на сайті.',
     where: 'Введіть назву',
     wherePh: 'напр. TikTok, профіль Instagram, група Facebook',
     to: 'Куди воно веде?',
@@ -341,7 +341,7 @@ const ru: CabinetText = {
   },
   links: {
     h1: 'Мои ссылки',
-    p: 'Создавайте отдельную ссылку для каждого места (TikTok, Instagram, группа, видео) — так видно, что приводит клиентов. Ссылок без ограничений, любую можно выключить. Каждый, кто придёт по вашей ссылке, получает +25% объёма на весь первый оплаченный период — месяц или год (бесплатный тариф: +50% на 30 дней); при помесячной оплате по ссылке партнёра: +10% в первый месяц. Это видно прямо на сайте.',
+    p: 'Создавайте отдельную ссылку для каждого места (TikTok, Instagram, группа, видео) — так видно, что приводит клиентов. Ссылок без ограничений, любую можно выключить. Каждый, кто придёт по вашей ссылке, получает +20% объёма на весь первый оплаченный тариф — месяц или год, и набор всех 12 шаблонов ($67) бесплатно. Это видно прямо на сайте.',
     where: 'Введите название',
     wherePh: 'напр. TikTok, профиль Instagram, группа Facebook',
     to: 'Куда она ведёт?',
