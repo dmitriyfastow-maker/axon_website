@@ -4,7 +4,7 @@ import { ownerLead, ownerOverview, ownerUpdateLead, ownerUpdatePartner, type Not
 import { staffMessage } from './rooms.js';
 import { aiReply, decideOffer, setAiState } from './aimanager.js';
 import { handleFinanceAdmin } from './finance.js';
-import { seal } from './sitepay.js';
+import { seal, open as openSealed } from './sitepay.js';
 import { handleInvoiceAdmin, invoiceForPayment } from './invoices.js';
 import { handleOwnerChat } from './ownerchat.js';
 import { newRoom } from './rooms.js';
@@ -194,6 +194,15 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
       await put('anthropic_key_at', new Date().toISOString());
       await notify('🤖 Claude API подключён из Штаба: клиенты теперь получают ответы Claude.').catch(() => {});
       return json(200, { ok: true, at: await at() });
+    }
+    // ?test=1: one tiny real request to Claude with the saved key — proves the key and the balance work.
+    if (new URL(request.url).searchParams.get('test') === '1' && token) {
+      const v = (await db.prepare("SELECT value FROM settings WHERE key = 'anthropic_key'").first<{ value: string }>().catch(() => null))?.value;
+      const key = v ? await openSealed(token, v).catch(() => null) : null;
+      if (!key) return json(200, { ok: false, error: 'no-key' });
+      const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' }, body: JSON.stringify({ model: 'claude-haiku-5-5', max_tokens: 20, messages: [{ role: 'user', content: 'Ответь одним словом: работает?' }] }) }).catch(() => null);
+      const d = r ? await r.json().catch(() => null) as any : null;
+      return json(200, { ok: !!r?.ok, status: r?.status ?? 0, reply: d?.content?.[0]?.text ?? null, error: d?.error?.message ?? null });
     }
     return json(200, { ok: true, at: await at() });
   }
