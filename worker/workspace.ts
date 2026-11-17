@@ -111,7 +111,7 @@ const SITE_EXISTING = /(^|\s)(с|из|на|со|з|із)\s+(мо[её]го\s+|м
 const SITE_BUILD_NEAR = /(собер|сдела|созда|напиш|сверста|зроби|створ|збер|build|make|create|design)\S*\s+(мне\s+|мені\s+|me\s+|a\s+|an\s+|new\s+|новый\s+|новий\s+){0,2}(сайт|лендинг|посадочн|website|landing|web ?page)/i;
 export const wantsSite = (q: string) => !QUESTION.test(q) && !(SITE_EXISTING.test(q) && !SITE_BUILD_NEAR.test(q)) && (SITE_VERB.test(q) || (SITE_NOUN.test(q) && /(^|\s)(для|for|під)\s/i.test(q)));
 export const WANTS_SITE = { test: wantsSite };
-const EDIT: Record<string, { ai: string; photo: string; hint: string }> = {"en": {"ai": "Change with Vax", "photo": "Replace photo", "hint": "Click any text to edit it, or a photo to replace it"}, "ru": {"ai": "Изменить с Vax", "photo": "Заменить фото", "hint": "Нажмите на текст, чтобы править, или на фото, чтобы заменить"}, "ua": {"ai": "Змінити з Vax", "photo": "Замінити фото", "hint": "Натисніть на текст, щоб правити, або на фото, щоб замінити"}};
+const EDIT: Record<string, { ai: string; photo: string; hint: string; more?: string }> = {"en": {"ai": "Change with Vax", "more": "+ Pick more", "photo": "Replace photo", "hint": "Click any text to edit it, a photo to replace it; Shift-click to pick several"}, "ru": {"ai": "Изменить с Vax", "more": "+ Выбрать ещё", "photo": "Заменить фото", "hint": "Нажмите на текст, чтобы править, на фото — чтобы заменить; с Shift — выбрать несколько"}, "ua": {"ai": "Змінити з Vax", "more": "+ Вибрати ще", "photo": "Замінити фото", "hint": "Натисніть на текст, щоб правити, на фото — щоб замінити; із Shift — вибрати кілька"}};
 
 const SITE_DRAFT: Record<string, string> = {
   en: 'The page with its form is on the Canvas. Sign in with your email (one step) and it goes live at once on its own address, with requests landing in your CRM.',
@@ -480,6 +480,17 @@ export const XP_STEPS: { key: string; xp: number }[] = [
   { key: 'result', xp: 50 }, { key: 'memory', xp: 30 }, { key: 'site', xp: 100 }, { key: 'request', xp: 100 }, { key: 'partner', xp: 50 }, { key: 'team', xp: 50 },
 ];
 export const LEVELS = [0, 100, 250, 500, 800, 1200, 1700, 2300, 3000, 4000];
+/** Decision 56: an avatar and a frame. Frames open with levels: bronze 3, silver 5, gold 7, legend 9. */
+export const AVATARS = ['🦝', '🦊', '🐼', '🐯', '🦁', '🐨', '🐸', '🦉', '🐙', '🦄', '🐝', '🐳', '🚀', '⚡', '🌿', '💎'];
+export const frameMax = (level: number) => (level >= 9 ? 4 : level >= 7 ? 3 : level >= 5 ? 2 : level >= 3 ? 1 : 0);
+/** Days in a row with at least one message, counting today or, if nothing yet today, up to yesterday. */
+export function streakOf(days: string[], today: string): number {
+  const set = new Set(days), d = new Date(today + 'T00:00:00Z');
+  if (!set.has(today)) d.setUTCDate(d.getUTCDate() - 1);
+  let n = 0;
+  while (set.has(d.toISOString().slice(0, 10))) { n++; d.setUTCDate(d.getUTCDate() - 1); }
+  return n;
+}
 export function levelOf(xp: number) {
   let lv = 1; for (let i = 0; i < LEVELS.length; i++) if (xp >= LEVELS[i]) lv = i + 1;
   return { level: lv, from: LEVELS[lv - 1], to: LEVELS[lv] ?? null };
@@ -496,7 +507,11 @@ async function progress(db: DB, clientId: number, k: { objects: number; memory: 
   const xp = XP_STEPS.reduce((s, x) => s + (done[x.key] ? x.xp : 0), 0) + Math.min(weeks, 52) * 40 + pages * 40 + requests * 15;
   const lv = levelOf(xp);
   await db.prepare("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind('game_lv_' + clientId, String(lv.level)).run().catch(() => {});
-  return { xp, weeks, pages, requests, done, ...lv };
+  const days = ((await db.prepare(`SELECT DISTINCT date(m.at) AS d FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user' AND m.at >= date('now', '-120 day')`).bind(clientId).all<{ d: string }>().catch(() => ({ results: [] as { d: string }[] }))).results || []).map((r) => r.d);
+  const streak = streakOf(days, new Date().toISOString().slice(0, 10));
+  let av: { a?: string; f?: number } = {};
+  try { av = JSON.parse((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('ws_av_' + clientId).first<{ value: string }>())?.value || '{}'); } catch { /* none yet */ }
+  return { xp, weeks, pages, requests, done, streak, av: { a: av.a || '', f: Math.min(av.f ?? frameMax(lv.level), frameMax(lv.level)) }, frames: frameMax(lv.level), ...lv };
 }
 
 let shareReady = false;
@@ -567,6 +582,12 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       const lang = ['ru', 'ua'].includes(String(b.lang)) ? String(b.lang) : 'en';
       const made = await createInvoice(db, { leadId: leadIds[0], amount: usd, currency: 'USD', description: topupDesc(usd, new Date().toISOString().slice(0, 7)), part: 'other', lang, origin: url.origin, send: false });
       return out(200, { ok: true, url: made.url });
+    }
+    if (path === 'avatar' && m === 'POST') {
+      const lv = Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('game_lv_' + me.id).first<{ value: string }>().catch(() => null))?.value || 1);
+      const a = AVATARS.includes(String(b.a)) ? String(b.a) : '', f = Math.max(0, Math.min(Number(b.f) || 0, frameMax(lv)));
+      await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind('ws_av_' + me.id, JSON.stringify({ a, f })).run();
+      return out(200, { ok: true, av: { a, f } });
     }
     if (path === 'memory' && m === 'POST') { await writeMemory(db, me.id, cleanMemory(b), b.mode === 'deep' ? 'deep' : 'short'); return out(200, { ok: true }); }
     if (path === 'import' && m === 'POST') { await importGuest(db, me.id, b); return out(200, { ok: true }); }

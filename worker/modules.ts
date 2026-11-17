@@ -190,7 +190,7 @@ export async function publishSite(db: DB, clientId: number, x: Record<string, un
 }
 
 /** The same page for the Canvas preview: no scripts, the form does nothing. */
-export const sitePreview = (s: Site, edit?: { ai: string; photo: string; hint: string }) => {
+export const sitePreview = (s: Site, edit?: { ai: string; photo: string; hint: string; more?: string }) => {
   const html = renderSite({ ...s, style: styleOf(s.style || s.tone) }, { key: '', slug: 'preview', index: false, name: s.title || 'Site', edit: !!edit }).replace(/<script(?! data-keep)[\s\S]*?<\/script>/g, '').replace(/<link rel="manifest"[^>]*>/, '');
   return edit ? html.replace('</body>', editLayer(edit) + '</body>') : html;
 };

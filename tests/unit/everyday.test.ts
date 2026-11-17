@@ -20,3 +20,15 @@ describe('everyday answers stay in the chat', () => {
     expect(r.doc?.title).toBe('План');
   });
 });
+
+import { streakOf, frameMax } from '../../worker/workspace';
+describe('game: streak and frames (Decision 56)', () => {
+  it('counts days in a row up to today or yesterday', () => {
+    expect(streakOf(['2026-11-17', '2026-11-16', '2026-11-15', '2026-11-12'], '2026-11-17')).toBe(3);
+    expect(streakOf(['2026-11-16', '2026-11-15'], '2026-11-17')).toBe(2);
+    expect(streakOf(['2026-11-14'], '2026-11-17')).toBe(0);
+  });
+  it('opens frames with levels', () => {
+    expect([1, 3, 5, 7, 9].map(frameMax)).toEqual([0, 1, 2, 3, 4]);
+  });
+});

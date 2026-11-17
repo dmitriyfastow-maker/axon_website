@@ -72,7 +72,8 @@ export const topupDesc = (usd: number, month: string) => `${TOPUP_DESC}, +$${usd
 /** Level rewards (Decision 51): extra work volume. Not added to the loyalty bonus — the larger of the two counts — so the
  *  worst case stays near zero even on Ultra. The level is saved by the workspace when it counts the progress. */
 export const GAME_BONUS = [0, 0, 0, 10, 10, 15, 15, 20, 20, 25, 30];
-export type Limits = { day: { pct: number; reset: string }; week: { pct: number; reset: string }; month: { pct: number; reset: string }; blocked: 'month' | null; packs: number[] };
+export const WELCOME = { pct: 50, partnerPaid: 10 };
+export type Limits = { day: { pct: number; reset: string }; week: { pct: number; reset: string }; month: { pct: number; reset: string }; blocked: 'month' | null; packs: number[]; gift?: { pct: number; until: string } };
 export async function wsLimits(db: DB, clientId: number, plan: string): Promise<Limits> {
   const now = new Date();
   const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)), next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
@@ -85,10 +86,16 @@ export async function wsLimits(db: DB, clientId: number, plan: string): Promise<
   // Cashback (Decision 52 v2): 5% of every renewal paid this month (not the first payment) back as Vax bonuses = more work.
   const renew = plan === 'start' || paidMonths < 2 ? 0 : (await db.prepare(`SELECT COALESCE(SUM(i.amount), 0) AS n FROM invoices i JOIN leads l ON l.id = i.lead_id WHERE l.client_id = ? AND i.status = 'paid' AND i.currency = 'USD' AND i.description LIKE 'Vaxo %subscription%' AND i.at >= ? AND i.id > (SELECT MIN(i2.id) FROM invoices i2 JOIN leads l2 ON l2.id = i2.lead_id WHERE l2.client_id = ? AND i2.status = 'paid' AND i2.description LIKE 'Vaxo %subscription%')`).bind(clientId, start.toISOString().slice(0, 19).replace('T', ' '), clientId).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const cashback = renew * 0.935 * 0.05 * TOPUP_RATE;
-  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * mult + extra * TOPUP_RATE + cashback);
+  // Welcome gift (Decision 57, 17.11): whoever came by an invite link (a client's or a partner's) gets more work for their
+  // first 30 days. +50%; only a PAID plan that came through a PARTNER gets +10%, so the first payment, of which the
+  // partner keeps 50%, still does not go below zero.
+  const ref = await db.prepare(`SELECT r.kind, r.at FROM referrals r JOIN leads d ON d.id = r.lead_id WHERE d.client_id = ? AND r.status NOT IN ('rejected', 'cancelled') AND r.at > datetime('now', '-30 day') ORDER BY r.at LIMIT 1`).bind(clientId).first<{ kind: string; at: string }>().catch(() => null);
+  const giftPct = !ref ? 0 : plan !== 'start' && ref.kind === 'partner' ? WELCOME.partnerPaid : WELCOME.pct;
+  const gift = ref && giftPct ? { pct: giftPct, until: new Date(Date.parse(ref.at.replace(' ', 'T') + 'Z') + 30 * 864e5).toISOString() } : undefined;
+  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * mult * (1 + giftPct / 100) + extra * TOPUP_RATE + cashback);
   const used = (await db.prepare('SELECT COALESCE(SUM(work), 0) AS n FROM ws_work WHERE client_id = ? AND at >= ?').bind(clientId, start.toISOString().slice(0, 19).replace('T', ' ')).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const m = { pct: Math.min(100, Math.round((used / cap) * 100)), reset: next.toISOString() };
-  return { day: m, week: m, month: m, blocked: used >= cap ? 'month' : null, packs: plan === 'start' ? [] : TOPUP_PACKS };
+  return { day: m, week: m, month: m, blocked: used >= cap ? 'month' : null, packs: plan === 'start' ? [] : TOPUP_PACKS, ...(gift ? { gift } : {}) };
 }
 export async function wsLimitsOld(db: DB, clientId: number, plan: string) {
   const w = windows();

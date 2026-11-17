@@ -98,7 +98,7 @@ const en: Text = {
   aloneSub: 'Never sold anything online? That is fine. Your pitch is one line: “try an AI partner that moves first — free to start”.',
   alone: [
     ['🎓', 'Step-by-step training', 'Videos, posts, personal messages, communities — what to do, in what order, with examples.'],
-    ['🤖', 'AI does the hard part', 'Ready prompts with your link already inside. One click opens them in Claude, ChatGPT or Gemini.'],
+    ['🤖', 'AI does the hard part', 'Ready prompts with your link already inside. One click and Vax writes the post or script for you, right in Vaxo.'],
     ['🦝', 'Vax sells with you', 'Vax talks to your client first: asks the goal, shows the plan and price, explains why. Our team delivers. You just bring people.'],
     ['👥', 'Build your team', `Invite other partners and earn +${r.team}% of every sale they make — on top, from us.`],
   ],
@@ -108,8 +108,8 @@ const en: Text = {
       name: 'Vaxo plans',
       rate: `${r.agencyOwn}%`,
       price: 'plans from $19/mo',
-      what: 'Vax and our team do the work for anyone — from personal tasks to companies: sites, apps, AI, ads, content.',
-      points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `Clients can join too and earn the same`],
+      what: 'Vax does the work itself for anyone — from personal tasks to companies: sites, apps, AI, ads, content.',
+      points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `+${r.viral}% — from payments of friends your clients invite, for life`, `Your clients get +50% work volume for their first 30 days`],
       cta: ['Count my income →', 'earn'],
     },
     {
@@ -146,7 +146,7 @@ const en: Text = {
   academySub: 'Short, practical lessons. Each one shows the free way to start and the maximum way for faster results.',
   modules: [
     ['Start here', 'How the money is made and your first 3 actions today'],
-    ['Video factory', 'Unlimited short videos with AI: scripts, hooks, editing, posting'],
+    ['Video factory', 'Short videos with AI: scripts, hooks, editing, posting'],
     ['Posts & your profile', 'A profile that sells, captions and a weekly content plan'],
     ['Personal messages', 'Find businesses, write to them personally, follow up — without spam'],
     ['Communities', 'Help in groups and forums so people come to you'],
@@ -154,8 +154,8 @@ const en: Text = {
     ['Build your team', 'Invite partners honestly and grow your +10%'],
   ],
   ways: [
-    ['Free way', 'Free Claude, ChatGPT or Gemini, CapCut and your phone. Enough to start and earn.'],
-    ['Maximum way', 'Claude Pro: it remembers your offer and style, writes a week of content in one go, and gives the strongest texts. Upgrade when you see results.'],
+    ['Free way', 'A free Vaxo account and your phone. Vax writes the texts and scripts with you. Enough to start and earn.'],
+    ['Maximum way', 'A paid Vaxo plan: Vax remembers your offer and style, writes a week of content in one go on the strongest AI models. Upgrade when you see results.'],
   ],
   stepsH: 'How it works',
   steps: [
@@ -172,11 +172,11 @@ const en: Text = {
   soonP: 'Regular draws and challenges with prizes for partners who post and help clients. Join now to take part from the first one.',
   faqH: 'Questions',
   faq: [
-    ['Can clients invite people too?', 'Yes. Clients can invite too — they get free months of our service; partners get money. A friend who comes by your partner link and pays for 3, 6 or 12 months at once gets one more month as a gift. One new client counts once: the first link wins.'],
+    ['Can clients invite people too?', 'Yes. Clients can invite too — they get free months of our service; partners get money. Everyone who comes by an invite link gets a welcome gift: +50% work volume for the first 30 days, and a gift month after the first payment. One new client counts once: the first link wins.'],
     ['Does it cost anything?', 'No. Signing up, the cabinet, training and the AI toolkit are free.'],
     ['I have never worked online. Can I do it?', 'Yes. The “Start here” checklist and training show every step. AI writes the texts with you.'],
     ['How much will I earn?', 'It depends only on real sales you bring. The calculator above shows the exact math. We never promise income.'],
-    ['When and how do I get paid?', `Every week, for money we received and held for ${r.holdDays} days (refund protection). Paid by Payoneer, Wise or bank transfer (Ukraine: to a FOP account only).`],
+    ['When and how do I get paid?', `Every week, for money we received and held for ${r.holdDays} days (refund protection). Ukraine: to a FOP account under the partner agreement. For partners in other countries we agree the payout method individually.`],
     ['Where can I promote?', 'Anywhere, honestly: social media, video, blogs, communities, your own clients. No spam, no fake reviews, no paid clicks.'],
     ['Does my buyer have to register?', 'Only an email — that is the lightest possible start. A buyer who comes by your link and pays for even one template is remembered by that email for good.'],
     ['Do I earn when the same person buys again?', `Yes, for life. Whatever that person buys later with the same email — templates, a plan, a project — pays you ${r.agencyRenewal}% every time, and your sponsor gets +${r.team}% on top. The first purchase pays ${r.agencyOwn}%.`],
@@ -210,7 +210,7 @@ const ua: Text = {
   aloneSub: 'Ніколи нічого не продавали онлайн? Нічого страшного. Ваша фраза — одна: «спробуй ШІ-партнера, який діє першим, старт безкоштовний».',
   alone: [
     ['🎓', 'Покрокове навчання', 'Відео, пости, особисті повідомлення, спільноти — що робити, в якому порядку, з прикладами.'],
-    ['🤖', 'Складне робить ШІ', 'Готові промпти з вашим посиланням. Один клік — і вони відкриваються в Claude, ChatGPT чи Gemini.'],
+    ['🤖', 'Складне робить ШІ', 'Готові промпти з вашим посиланням. Один клік — і Vax пише пост чи сценарій за вас, прямо у Vaxo.'],
     ['🦝', 'Продає разом з вами Vax', 'Vax першим говорить із клієнтом: питає мету, показує план і ціну, пояснює чому. Робота — на нашій команді. Ви лише приводите людей.'],
     ['👥', 'Будуйте команду', `Запрошуйте партнерів і отримуйте +${r.team}% з кожного їхнього продажу — понад, від нас.`],
   ],
@@ -220,8 +220,8 @@ const ua: Text = {
       name: 'Підписки Vaxo',
       rate: `${r.agencyOwn}%`,
       price: 'підписка від $19/міс',
-      what: 'Vax і наша команда роблять роботу для будь-кого — від особистих справ до компаній: сайти, застосунки, ШІ, реклама, контент.',
-      points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `Клієнти теж можуть приєднатися й заробляти так само`],
+      what: 'Vax сам робить роботу для будь-кого — від особистих справ до компаній: сайти, застосунки, ШІ, реклама, контент.',
+      points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `+${r.viral}% — з оплат друзів, яких запросили ваші клієнти, назавжди`, `Ваші клієнти отримують +50% обсягу роботи на перші 30 днів`],
       cta: ['Порахувати мій дохід →', 'earn'],
     },
     {
@@ -258,7 +258,7 @@ const ua: Text = {
   academySub: 'Короткі практичні уроки. У кожному — безкоштовний спосіб почати і максимальний — для швидшого результату.',
   modules: [
     ['З чого почати', 'Як заробляються гроші і ваші перші 3 дії сьогодні'],
-    ['Завод відео', 'Необмежено коротких відео з ШІ: сценарії, гачки, монтаж, публікація'],
+    ['Завод відео', 'Короткі відео з ШІ: сценарії, гачки, монтаж, публікація'],
     ['Пости і профіль', 'Профіль, що продає, підписи і план контенту на тиждень'],
     ['Особисті повідомлення', 'Знайти бізнеси, написати особисто, нагадати — без спаму'],
     ['Спільноти', 'Допомагайте в групах і форумах — і люди прийдуть до вас'],
@@ -266,8 +266,8 @@ const ua: Text = {
     ['Своя команда', 'Чесно запрошуйте партнерів і ростіть свої +10%'],
   ],
   ways: [
-    ['Безкоштовний шлях', 'Безкоштовні Claude, ChatGPT чи Gemini, CapCut і ваш телефон. Цього достатньо, щоб почати й заробити.'],
-    ['Максимум', 'Claude Pro: пам’ятає ваш офер і стиль, пише контент на тиждень за раз і дає найсильніші тексти. Переходьте, коли побачите результат.'],
+    ['Безкоштовний шлях', 'Безкоштовний акаунт Vaxo і ваш телефон. Vax пише тексти й сценарії разом із вами. Цього достатньо, щоб почати й заробити.'],
+    ['Максимум', 'Платний тариф Vaxo: Vax пам’ятає ваш офер і стиль, пише контент на тиждень за раз на найсильніших ШІ-моделях. Переходьте, коли побачите результат.'],
   ],
   stepsH: 'Як це працює',
   steps: [
@@ -284,11 +284,11 @@ const ua: Text = {
   soonP: 'Регулярні розіграші та челенджі з призами для тих, хто публікує контент і допомагає клієнтам. Приєднуйтесь зараз, щоб брати участь з першого.',
   faqH: 'Питання',
   faq: [
-    ['Клієнти теж можуть запрошувати?', 'Так. Клієнти теж можуть запрошувати — отримують місяці безкоштовно; партнери — гроші. Друг, який прийшов за вашим партнерським посиланням і оплатив одразу 3, 6 або 12 місяців, отримує ще місяць у подарунок. Один новий клієнт зараховується один раз: перемагає перше посилання.'],
+    ['Клієнти теж можуть запрошувати?', 'Так. Клієнти теж можуть запрошувати — отримують місяці безкоштовно; партнери — гроші. Кожен, хто прийшов за посиланням-запрошенням, отримує подарунок: +50% обсягу роботи на перші 30 днів і місяць у подарунок після першої оплати. Один новий клієнт зараховується один раз: перемагає перше посилання.'],
     ['Це щось коштує?', 'Ні. Реєстрація, кабінет, навчання та ШІ-набір — безкоштовні.'],
     ['Я ніколи не працював онлайн. Впораюсь?', 'Так. Чек-лист «З чого почати» і навчання показують кожен крок. Тексти ШІ пише разом з вами.'],
     ['Скільки я зароблю?', 'Залежить лише від реальних продажів. Калькулятор вище показує точний розрахунок. Ми ніколи не обіцяємо дохід.'],
-    ['Коли і як виплати?', `Щотижня, за гроші, які ми отримали і тримали ${r.holdDays} днів (захист від повернень). Виплата через Payoneer, Wise або банківським переказом (Україна — лише на рахунок ФОП).`],
+    ['Коли і як виплати?', `Щотижня, за гроші, які ми отримали і тримали ${r.holdDays} днів (захист від повернень). Україна — на рахунок ФОП за партнерським договором. Для партнерів з інших країн спосіб виплати погоджуємо індивідуально.`],
     ['Де можна рекламувати?', 'Будь-де, чесно: соцмережі, відео, блоги, спільноти, ваші клієнти. Без спаму, фейкових відгуків і купленого трафіку.'],
     ['Чи має покупець реєструватися?', 'Лише email — це найлегший старт. Покупця, який прийшов за вашим посиланням і оплатив навіть один шаблон, ми запам’ятовуємо за цим email назавжди.'],
     ['Чи заробляю я, коли ця людина купує знову?', `Так, назавжди. Усе, що вона купить пізніше з тим самим email — шаблони, тариф, проєкт — щоразу приносить вам ${r.agencyRenewal}%, а вашому спонсору ще +${r.team}%. Перша покупка дає ${r.agencyOwn}%.`],
@@ -322,7 +322,7 @@ const ru: Text = {
   aloneSub: 'Никогда ничего не продавали онлайн? Ничего страшного. Ваша фраза — одна: «попробуй ИИ-партнёра, который действует первым, старт бесплатный».',
   alone: [
     ['🎓', 'Пошаговое обучение', 'Видео, посты, личные сообщения, сообщества — что делать, в каком порядке, с примерами.'],
-    ['🤖', 'Сложное делает ИИ', 'Готовые промпты с вашей ссылкой внутри. Один клик — и они открываются в Claude, ChatGPT или Gemini.'],
+    ['🤖', 'Сложное делает ИИ', 'Готовые промпты с вашей ссылкой внутри. Один клик — и Vax пишет пост или сценарий за вас, прямо в Vaxo.'],
     ['🦝', 'Продаёт вместе с вами Vax', 'Vax сам говорит с клиентом, показывает тарифы и делает работу. Вы только делитесь ссылкой.'],
     ['👥', 'Стройте команду', `Приглашайте партнёров и получайте +${r.team}% с каждой их продажи — сверху, от нас.`],
   ],
@@ -332,8 +332,8 @@ const ru: Text = {
       name: 'Подписки Vaxo',
       rate: `${r.agencyOwn}%`,
       price: 'подписка от $19/мес',
-      what: 'Vax и наша команда делают работу для любого — от личных дел до компаний: сайты, приложения, ИИ, реклама, контент.',
-      points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `Клиенты тоже могут присоединиться и зарабатывать так же`],
+      what: 'Vax сам делает работу для любого — от личных дел до компаний: сайты, приложения, ИИ, реклама, контент.',
+      points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `+${r.viral}% — с оплат друзей, которых пригласили ваши клиенты, навсегда`, `Ваши клиенты получают +50% объёма работы на первые 30 дней`],
       cta: ['Посчитать мой доход →', 'earn'],
     },
     {
@@ -370,7 +370,7 @@ const ru: Text = {
   academySub: 'Короткие практичные уроки. В каждом — бесплатный способ начать и максимальный — для более быстрого результата.',
   modules: [
     ['С чего начать', 'Как зарабатываются деньги и ваши первые 3 действия сегодня'],
-    ['Завод видео', 'Неограниченно коротких видео с ИИ: сценарии, хуки, монтаж, публикация'],
+    ['Завод видео', 'Короткие видео с ИИ: сценарии, хуки, монтаж, публикация'],
     ['Посты и профиль', 'Продающий профиль, подписи и контент-план на неделю'],
     ['Личные сообщения', 'Найти бизнесы, написать лично, напомнить — без спама'],
     ['Сообщества', 'Помогайте в группах и форумах — и люди придут к вам'],
@@ -378,8 +378,8 @@ const ru: Text = {
     ['Своя команда', 'Честно приглашайте партнёров и растите свои +10%'],
   ],
   ways: [
-    ['Бесплатный путь', 'Бесплатные Claude, ChatGPT или Gemini, CapCut и ваш телефон. Этого достаточно, чтобы начать и заработать.'],
-    ['Максимум', 'Claude Pro: помнит ваш оффер и стиль, пишет контент на неделю за раз и даёт самые сильные тексты. Переходите, когда увидите результат.'],
+    ['Бесплатный путь', 'Бесплатный аккаунт Vaxo и ваш телефон. Vax пишет тексты и сценарии вместе с вами. Этого достаточно, чтобы начать и заработать.'],
+    ['Максимум', 'Платный тариф Vaxo: Vax помнит ваш оффер и стиль, пишет контент на неделю за раз на самых сильных ИИ-моделях. Переходите, когда увидите результат.'],
   ],
   stepsH: 'Как это работает',
   steps: [
@@ -396,11 +396,11 @@ const ru: Text = {
   soonP: 'Регулярные розыгрыши и челленджи с призами для тех, кто публикует контент и помогает клиентам. Присоединяйтесь сейчас, чтобы участвовать с первого.',
   faqH: 'Вопросы',
   faq: [
-    ['Клиенты тоже могут приглашать?', 'Да. Клиенты тоже могут приглашать — получают месяцы бесплатно; партнёры — деньги. Друг, пришедший по вашей партнёрской ссылке и оплативший сразу 3, 6 или 12 месяцев, получает ещё месяц в подарок. Один новый клиент засчитывается один раз: побеждает первая ссылка.'],
+    ['Клиенты тоже могут приглашать?', 'Да. Клиенты тоже могут приглашать — получают месяцы бесплатно; партнёры — деньги. Каждый, кто пришёл по ссылке-приглашению, получает подарок: +50% объёма работы на первые 30 дней и месяц в подарок после первой оплаты. Один новый клиент засчитывается один раз: побеждает первая ссылка.'],
     ['Это что-то стоит?', 'Нет. Регистрация, кабинет, обучение и ИИ-набор — бесплатные.'],
     ['Я никогда не работал онлайн. Справлюсь?', 'Да. Чек-лист «С чего начать» и обучение показывают каждый шаг. Тексты ИИ пишет вместе с вами.'],
     ['Сколько я заработаю?', 'Зависит только от реальных продаж. Калькулятор выше показывает точный расчёт. Мы никогда не обещаем доход.'],
-    ['Когда и как выплаты?', `Каждую неделю, за деньги, которые мы получили и держали ${r.holdDays} дней (защита от возвратов). Выплата через Payoneer, Wise или банковским переводом (Украина — только на счёт ФОП).`],
+    ['Когда и как выплаты?', `Каждую неделю, за деньги, которые мы получили и держали ${r.holdDays} дней (защита от возвратов). Украина — на счёт ФОП по партнёрскому договору. Для партнёров из других стран способ выплаты согласуем индивидуально.`],
     ['Где можно рекламировать?', 'Где угодно, честно: соцсети, видео, блоги, сообщества, ваши клиенты. Без спама, фейковых отзывов и купленного трафика.'],
     ['Должен ли покупатель регистрироваться?', 'Только email — это самый лёгкий старт. Покупателя, который пришёл по вашей ссылке и оплатил хотя бы один шаблон, мы запоминаем по этому email навсегда.'],
     ['Зарабатываю ли я, когда этот человек покупает снова?', `Да, навсегда. Всё, что он купит позже с тем же email — шаблоны, тариф, проект — каждый раз приносит вам ${r.agencyRenewal}%, а вашему спонсору ещё +${r.team}%. Первая покупка даёт ${r.agencyOwn}%.`],
