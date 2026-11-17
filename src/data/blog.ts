@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'write-business-proposal-that-gets-accepted',
+    date: '2026-11-17',
+    t: {
+      en: {
+        title: 'How to write a business proposal that clients say yes to', seo: 'Write a business proposal clients accept',
+        desc: 'One page, the client’s problem first, a clear result, price and terms without surprises, one next step — and how AI helps you write it in 15 minutes.',
+        body: [
+          ['Why most proposals are ignored', ['They talk about the seller: history, team, awards. The client wants to see their own problem and a way out of it. Start with them, not with you.']],
+          ['1. Ask before you write', ['Find out what the client wants to change, by when, what stops them now and who decides. Without this a proposal is a guess. Five minutes of questions save a week of waiting.']],
+          ['2. Their problem in their words', ['The first paragraph repeats what you heard: “You get 20 requests a week and lose half of them”. The client sees that you listened.']],
+          ['3. The result, not the list of work', ['Describe what will be different after: what they get, by what date, how they will know it works. List the work below, briefly.']],
+          ['4. Price and terms without surprises', ['One clear price or two or three options. What is included and what is not, payment terms, deadlines. Hidden extras kill trust.']],
+          ['5. Proof', ['One real example or a short review is enough. Never invent cases or numbers — one honest example works better than ten made-up ones.']],
+          ['6. One next step', ['End with a single action and a date: “Reply ‘yes’ by Friday and we start on Monday”. Call or write two days later if there is no answer.']],
+          ['How Vaxo helps', ['In Workspace describe the client and what you discussed — Vax will write a one-page proposal, two or three price options from your own prices and a short follow-up message, and will export it to PDF or Word. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как написать коммерческое предложение, на которое соглашаются', seo: 'Коммерческое предложение, на которое соглашаются',
+        desc: 'Одна страница, сначала задача клиента, понятный результат, цена и условия без сюрпризов, один следующий шаг — и как ИИ помогает написать КП за 15 минут.',
+        body: [
+          ['Почему большинство КП не читают', ['Они рассказывают о продавце: история, команда, награды. Клиент хочет увидеть свою задачу и выход из неё. Начинайте с него, а не с себя.']],
+          ['1. Спросите, прежде чем писать', ['Узнайте, что клиент хочет изменить, к какому сроку, что мешает сейчас и кто принимает решение. Без этого КП — догадка. Пять минут вопросов экономят неделю ожидания.']],
+          ['2. Его задача его словами', ['Первый абзац повторяет то, что вы услышали: «У вас 20 заявок в неделю, и половина теряется». Клиент видит, что его услышали.']],
+          ['3. Результат, а не список работ', ['Опишите, что изменится после: что он получит, к какой дате, как поймёт, что работает. Список работ — ниже и коротко.']],
+          ['4. Цена и условия без сюрпризов', ['Одна понятная цена или два-три варианта. Что входит и что нет, порядок оплаты, сроки. Скрытые доплаты убивают доверие.']],
+          ['5. Доказательство', ['Достаточно одного реального примера или короткого отзыва. Никогда не придумывайте кейсы и цифры — один честный пример работает лучше десяти выдуманных.']],
+          ['6. Один следующий шаг', ['Закончите одним действием и датой: «Ответьте „да“ до пятницы — начнём в понедельник». Если ответа нет, напишите или позвоните через два дня.']],
+          ['Чем помогает Vaxo', ['В Workspace опишите клиента и то, о чём договорились, — Vax напишет КП на одну страницу, два-три варианта цены по вашим же ценам и короткое письмо-напоминание, и выгрузит всё в PDF или Word. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як написати комерційну пропозицію, на яку погоджуються', seo: 'Комерційна пропозиція, на яку погоджуються',
+        desc: 'Одна сторінка, спершу задача клієнта, зрозумілий результат, ціна й умови без сюрпризів, один наступний крок — і як ШІ допомагає написати КП за 15 хвилин.',
+        body: [
+          ['Чому більшість КП не читають', ['Вони розповідають про продавця: історія, команда, нагороди. Клієнт хоче побачити свою задачу і вихід із неї. Починайте з нього, а не з себе.']],
+          ['1. Запитайте, перш ніж писати', ['Дізнайтеся, що клієнт хоче змінити, до якого строку, що заважає зараз і хто ухвалює рішення. Без цього КП — здогадка. П’ять хвилин питань заощаджують тиждень очікування.']],
+          ['2. Його задача його словами', ['Перший абзац повторює те, що ви почули: «У вас 20 заявок на тиждень, і половина губиться». Клієнт бачить, що його почули.']],
+          ['3. Результат, а не перелік робіт', ['Опишіть, що зміниться після: що він отримає, до якої дати, як зрозуміє, що працює. Перелік робіт — нижче й коротко.']],
+          ['4. Ціна й умови без сюрпризів', ['Одна зрозуміла ціна або два-три варіанти. Що входить і що ні, порядок оплати, строки. Приховані доплати вбивають довіру.']],
+          ['5. Доказ', ['Досить одного реального прикладу або короткого відгуку. Ніколи не вигадуйте кейсів і цифр — один чесний приклад працює краще за десять вигаданих.']],
+          ['6. Один наступний крок', ['Завершіть однією дією і датою: «Відповідайте „так“ до п’ятниці — почнемо в понеділок». Якщо відповіді немає, напишіть або зателефонуйте через два дні.']],
+          ['Чим допомагає Vaxo', ['У Workspace опишіть клієнта і те, про що домовилися, — Vax напише КП на одну сторінку, два-три варіанти ціни за вашими ж цінами і короткий лист-нагадування, і вивантажить усе в PDF або Word. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'prepare-job-interview-with-ai',
     date: '2026-11-17',
     t: {
