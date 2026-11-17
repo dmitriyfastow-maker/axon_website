@@ -72,7 +72,7 @@ export const topupDesc = (usd: number, month: string) => `${TOPUP_DESC}, +$${usd
 /** Level rewards (Decision 51): extra work volume. Not added to the loyalty bonus — the larger of the two counts — so the
  *  worst case stays near zero even on Ultra. The level is saved by the workspace when it counts the progress. */
 export const GAME_BONUS = [0, 0, 0, 10, 10, 15, 15, 20, 20, 25, 30];
-export const WELCOME = { pct: 50, partnerPaid: 10 };
+export const WELCOME = { pct: 50, free: 50, paid: 25, partnerMonthly: 10 };
 export type Limits = { day: { pct: number; reset: string }; week: { pct: number; reset: string }; month: { pct: number; reset: string }; blocked: 'month' | null; packs: number[]; gift?: { pct: number; until: string }; friends?: number };
 export async function wsLimits(db: DB, clientId: number, plan: string): Promise<Limits> {
   const now = new Date();
@@ -89,14 +89,19 @@ export async function wsLimits(db: DB, clientId: number, plan: string): Promise<
   // Welcome gift (Decision 57, 17.11): whoever came by an invite link (a client's or a partner's) gets more work for their
   // first 30 days. +50%; only a PAID plan that came through a PARTNER gets +10%, so the first payment, of which the
   // partner keeps 50%, still does not go below zero.
-  const ref = await db.prepare(`SELECT r.kind, r.at FROM referrals r JOIN leads d ON d.id = r.lead_id WHERE d.client_id = ? AND r.status NOT IN ('rejected', 'cancelled') AND r.at > datetime('now', '-30 day') ORDER BY r.at LIMIT 1`).bind(clientId).first<{ kind: string; at: string }>().catch(() => null);
-  const giftPct = !ref ? 0 : plan !== 'start' && ref.kind === 'partner' ? WELCOME.partnerPaid : WELCOME.pct;
-  const gift = ref && giftPct ? { pct: giftPct, until: new Date(Date.parse(ref.at.replace(' ', 'T') + 'Z') + 30 * 864e5).toISOString() } : undefined;
+  // Decision 59 (17.11): the bonus covers the whole first purchase, a month or a year: +25% of the volume for the entire
+  // prepaid period (Free: +50% for 30 days). A monthly payment by a PARTNER's link gets +10% for that month, because
+  // the partner keeps 50% of it. Prepaid periods pay the partner as if monthly (payouts.ts), which funds the +25%.
+  const ref = await db.prepare(`SELECT r.kind, r.at, r.lead_id FROM referrals r JOIN leads d ON d.id = r.lead_id WHERE d.client_id = ? AND r.status NOT IN ('rejected', 'cancelled') AND r.at > datetime('now', '-400 day') ORDER BY r.at LIMIT 1`).bind(clientId).first<{ kind: string; at: string; lead_id: number }>().catch(() => null);
+  const period = ref && plan !== 'start' ? Math.max(1, Math.min(12, Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('period_' + ref.lead_id).first<{ value: string }>().catch(() => null))?.value) || 1)) : 1;
+  const giftPct = !ref ? 0 : plan === 'start' ? WELCOME.free : ref.kind === 'partner' && period === 1 ? WELCOME.partnerMonthly : WELCOME.paid;
+  const giftEnd = ref ? Date.parse(ref.at.replace(' ', 'T') + 'Z') + (plan === 'start' ? 30 : period * 31 + 7) * 864e5 : 0;
+  const gift = ref && giftPct && giftEnd > Date.now() ? { pct: giftPct, until: new Date(giftEnd).toISOString() } : undefined;
   // The inviting client (Decision 57 v2): for each friend whose first payment stayed 14 days, half of the FRIEND's plan
   // volume for 30 days. It costs at most ~20% of the friend's payment, so every invite stays in the plus.
   const friends = (await db.prepare(`SELECT plan FROM referrals WHERE referrer_client_id = ? AND status IN ('credited', 'applied') AND credited_at > datetime('now', '-30 day')`).bind(clientId).all<{ plan: string | null }>().catch(() => ({ results: [] as { plan: string | null }[] }))).results || [];
   const forFriends = friends.reduce((a, f) => a + (MONTH_CAPS[f.plan || ''] ?? 0) * WELCOME.pct / 100, 0);
-  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * mult * (1 + giftPct / 100) + forFriends + extra * TOPUP_RATE + cashback);
+  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * mult * (1 + (gift ? giftPct : 0) / 100) + forFriends + extra * TOPUP_RATE + cashback);
   const used = (await db.prepare('SELECT COALESCE(SUM(work), 0) AS n FROM ws_work WHERE client_id = ? AND at >= ?').bind(clientId, start.toISOString().slice(0, 19).replace('T', ' ')).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const m = { pct: Math.min(100, Math.round((used / cap) * 100)), reset: next.toISOString() };
   return { day: m, week: m, month: m, blocked: used >= cap ? 'month' : null, packs: plan === 'start' ? [] : TOPUP_PACKS, ...(gift ? { gift } : {}), ...(forFriends ? { friends: friends.length } : {}) };

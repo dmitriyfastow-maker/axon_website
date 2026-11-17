@@ -9,7 +9,7 @@ export const DAILY = 10;
 /** Pictures without a felt limit (Decision 58, 17.11): Flux Schnell on Workers AI costs about $0.0006 a picture (≈$0.001
  *  at 8 steps), and pictures never spend the plan's work volume. The caps below only stop bots and abuse: 40 a day is
  *  at most ~$0.03 for a free account, 1,000 a day ~$1 for Ultra, far below any plan's price. */
-export const IMG_CAP: Record<string, number> = { start: 40, personal: 300, care: 400, growth: 600, pro: 1000 };
+export const IMG_CAP: Record<string, number> = { start: 60, personal: 120, care: 120, growth: 200, pro: 300 }; // per HOUR for signed-in people
 
 export const WANTS_IMAGE = /нарисуй|намалюй|сгенерируй\s+(картинк|изображ|фото|логотип)|згенеруй\s+(картинк|зображ|фото|логотип)|(создай|сделай|зроби|створи)\s+(картинк|изображен|зображен|иллюстрац|ілюстрац)|\bdraw\b|\bpaint\s+(me\s+)?(a|an)\b|\b(generate|create|make)\s+(me\s+)?(a|an|the)?\s*(image|picture|illustration|drawing)\b/i;
 
@@ -17,9 +17,9 @@ const RULE = `Turn the wish into one precise English image prompt: keep every de
 If the wish involves nudity or sex, any child in a sexual or harmful way, real named people, gore, hate, weapons instructions, fake documents or logos of real brands, reply exactly: BLOCK`;
 
 const WORDS: Record<string, [string, string, string]> = {
-  en: ['Here is your picture.', 'I cannot draw that.', 'You have drawn a lot today. Let us continue tomorrow.'],
-  ru: ['Вот ваша картинка.', 'Такое я не рисую.', 'Сегодня вы нарисовали очень много — продолжим завтра.'],
-  ua: ['Ось ваша картинка.', 'Таке я не малюю.', 'Сьогодні ви намалювали дуже багато — продовжимо завтра.'],
+  en: ['Here is your picture.', 'I cannot draw that.', 'That was a lot of pictures in one hour. Give me a few minutes and we continue.'],
+  ru: ['Вот ваша картинка.', 'Такое я не рисую.', 'Очень много картинок за час — дайте мне пару минут, и продолжим.'],
+  ua: ['Ось ваша картинка.', 'Таке я не малюю.', 'Дуже багато картинок за годину — дайте мені кілька хвилин, і продовжимо.'],
 };
 
 async function ipKey(ip: string) {
@@ -31,7 +31,9 @@ export async function drawImage(ai: AiBinding, db: DB | undefined, wish: string,
   const [ok, no, over] = WORDS[lang] ?? WORDS.en;
   if (!db) return null;
   const who = await ipKey(ip);
-  const used = (await db.prepare(`SELECT COUNT(*) AS n FROM events WHERE kind = 'img' AND path = ? AND at >= date('now')`).bind(who).first<{ n: number }>())?.n ?? 0;
+  // Signed-in people: no daily limit, only a bot-speed cap per hour (Decision 60). Guests: a few a day per network.
+  const hourly = ip.startsWith('client:');
+  const used = (await db.prepare(`SELECT COUNT(*) AS n FROM events WHERE kind = 'img' AND path = ? AND at >= ${hourly ? "datetime('now', '-1 hour')" : "date('now')"}`).bind(who).first<{ n: number }>())?.n ?? 0;
   if (used >= cap) return { reply: over };
   const s = (await ai.run(SCREEN, { messages: [{ role: 'system', content: RULE }, { role: 'user', content: wish.slice(0, 400) }], max_tokens: 120, temperature: 0, chat_template_kwargs: { enable_thinking: false } })) as Record<string, any>;
   const prompt = String(typeof s?.response === 'string' ? s.response : s?.choices?.[0]?.message?.content || '').trim();

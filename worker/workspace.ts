@@ -249,14 +249,20 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   const me = await sessionClient(db, request);
   const ip = request.headers.get('CF-Connecting-IP') || 'local';
   let memory = cleanMemory(b.memory), history: Turn[] = [], chat = 0, leadIds: number[] = [], uid = 0;
-  let project: Project | null = null;
+  let project: Project | null = null, baseOnly = false;
 
   if (me) {
     memory = await readMemory(db, me.id);
     leadIds = await clientLeads(db, me.id);
     const al = await allowance(db, leadIds).catch(() => null);
     const lim = await wsLimits(db, me.id, al?.plan ?? 'start');
-    if (lim.blocked) return out(429, { ok: false, error: lim.blocked, reset: lim[lim.blocked].reset });
+    // Decision 60 (17.11): the plan's volume is for the strong models. When it runs out, Vax keeps answering on the base
+    // model without a limit (like the big AI apps do), and nothing more is counted. Only a bot-speed cap stays.
+    if (lim.blocked) {
+      baseOnly = true;
+      const hour = (await db.prepare(`SELECT COUNT(*) AS n FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user' AND m.at > datetime('now', '-1 hour')`).bind(me.id).first<{ n: number }>().catch(() => null))?.n ?? 0;
+      if (hour >= 60) return out(429, { ok: false, error: 'hour', reset: new Date(Date.now() + 36e5).toISOString() });
+    }
     chat = Number(b.chat) || 0;
     if (chat && !(await db.prepare('SELECT 1 FROM ws_chats WHERE id = ? AND client_id = ?').bind(chat, me.id).first())) chat = 0;
     if (chat) {
@@ -280,7 +286,7 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   let usd = 0;
   const save = async (reply: string, x: { tool?: ToolSpec | null; doc?: Doc | null; image?: string; deploy?: string | null; site?: Site | null }) => {
     if (!me) return null;
-    await spendWork(db, me.id, workOf({ deep: mode === 'deep', tool: !!x.tool, site: !!x.site, image: !!x.image, usd })).catch((e) => console.error('[ws work]', e));
+    if (!baseOnly) await spendWork(db, me.id, workOf({ deep: mode === 'deep', tool: !!x.tool, site: !!x.site, image: !!x.image, usd })).catch((e) => console.error('[ws work]', e));
     const r = await db.prepare(`INSERT INTO ws_msgs (chat_id, role, text, tool, doc, image, deploy, site) VALUES (?, 'assistant', ?, ?, ?, ?, ?, ?) RETURNING id`)
       .bind(chat, reply, x.tool ? JSON.stringify(x.tool) : null, x.doc ? JSON.stringify(x.doc) : null, x.image ?? null, x.deploy ?? null, x.site ? JSON.stringify(x.site) : null).first<{ id: number }>();
     return r?.id ?? null;
@@ -353,7 +359,7 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   if (last?.role === 'user' && (TRIP.test(said) || ACT_FOR_ME.test(said))) last.content += `\n\n(${PLAN_HINT()})`;
   // A paying client: Claude from the pool. Everyone else, or if Claude fails: free models.
   let raw: string | null = null, paid = false;
-  if (me) {
+  if (me && !baseOnly) {
     // Signed in: Claude (Haiku for easy messages, the plan's strong model for hard ones); guests: the free models.
     const al = leadIds.length ? await allowance(db, leadIds).catch(() => null) : null;
     const want = { leadId: leadIds[0] ?? null, clientId: me.id, plan: al?.plan ?? 'start', trial: !!al?.trial, level: taskLevel(q, mode === 'deep', /📎/u.test(q)), ipKey: await ipKey(ip) };
@@ -401,7 +407,7 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     const n = (await db.prepare(`SELECT COUNT(*) AS n FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user'`).bind(me.id).first<{ n: number }>())?.n ?? 0;
     if (n === 1 || n % 3 === 0) wait(learn(db, ai, me.id, recent).catch((e) => console.error('[ws learn]', e)));
   }
-  return out(200, { ok: true, chat, uid, id, reply, tool, doc: shaped.doc, deploy, paid });
+  return out(200, { ok: true, chat, uid, id, reply, tool, doc: shaped.doc, deploy, paid, ...(baseOnly ? { base: true } : {}) });
 }
 
 /** Decision 46: a project is a business. Its own site, CRM, site chat and partner links live in its biz. */

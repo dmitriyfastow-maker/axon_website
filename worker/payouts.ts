@@ -45,6 +45,12 @@ export async function createPayouts(db: DB, leadId: number) {
     const up = await db.prepare('SELECT parent_id FROM partners WHERE id = ?').bind(l.referrer_id).first<{ parent_id: number | null }>();
     if (up?.parent_id && up.parent_id !== l.referrer_id) rows.push([up.parent_id, 'team', RATES.team]);
   }
+  // Decision 59 (17.11): a prepaid period (3, 6, 12 months) pays the partner as if the client paid monthly: the first
+  // month at the first-payment rate, the other months at the renewal rate. Same money as monthly, and it funds the
+  // client's bonus for the whole period, so nobody loses.
+  const period = Math.max(1, Math.min(12, Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('period_' + leadId).first<{ value: string }>().catch(() => null))?.value) || 1));
+  const blend = (r: number) => (period > 1 ? Math.round(((r + RATES.agencyRenewal * (period - 1)) / period) * 100) / 100 : r);
+  for (const row of rows) if (row[1] === 'referral') row[2] = blend(row[2]);
   const months = 1; // 15.11 (Dmitry): the whole commission becomes payable after the 14-day refund window, even for a year
   const net = Math.round(l.value_usd * NET * 100) / 100;
   for (const [pid, kind, rate] of rows) {

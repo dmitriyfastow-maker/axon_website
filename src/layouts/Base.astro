@@ -124,9 +124,9 @@ const jsonLd = {
       (function () {
         try {
           var r = localStorage.getItem('vaxo_ref'), at = Number(localStorage.getItem('vaxo_ref_at') || 0);
-          if (!r || !at || Date.now() - at > 2592e6 || localStorage.getItem('vaxo_gift_x')) return;
+          if (!r || !at || Date.now() - at > 3456e7 || localStorage.getItem('vaxo_gift_x')) return;
           var c = /^c_/.test(r);
-          var T = { ru: ['🎁 Вы пришли по приглашению: +50% объёма работы на первые 30 дней', ' (на платном тарифе по ссылке партнёра +10%)', 'Закрыть'], ua: ['🎁 Ви прийшли за запрошенням: +50% обсягу роботи на перші 30 днів', ' (на платному тарифі за посиланням партнера +10%)', 'Закрити'], en: ['🎁 You came by an invite: +50% work volume for your first 30 days', ' (a paid plan by a partner’s link: +10%)', 'Close'] }[L] || null;
+          var T = { ru: ['🎁 Вы пришли по приглашению: +25% объёма на весь первый оплаченный период — месяц или год (бесплатный тариф: +50% на 30 дней)', ' · при помесячной оплате по ссылке партнёра: +10% в первый месяц', 'Закрыть'], ua: ['🎁 Ви прийшли за запрошенням: +25% обсягу на весь перший оплачений період — місяць чи рік (безкоштовний тариф: +50% на 30 днів)', ' · при помісячній оплаті за посиланням партнера: +10% у перший місяць', 'Закрити'], en: ['🎁 You came by an invite: +25% work volume for the whole first paid period, a month or a year (Free plan: +50% for 30 days)', ' · a monthly payment by a partner’s link: +10% in the first month', 'Close'] }[L] || null;
           if (!T) return;
           var b = document.createElement('div'); b.className = 'vxgift'; b.setAttribute('role', 'status');
           var t = document.createElement('span'); t.textContent = T[0] + (c ? '' : T[1]); b.appendChild(t);
