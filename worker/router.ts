@@ -149,6 +149,23 @@ export async function claudeReply(db: DB, route: Route, system: string, messages
     return r.content.filter((b) => b.type === 'text').map((b) => b.text).join('').trim() || null;
   } catch (e) {
     console.error('[claude]', e);
+    // Out of credit or key trouble: the client still gets an answer from the base model (the caller falls back), and the
+    // hourly job tells Dmitry once a day (claudeHealth).
+    const msg = String((e as { message?: string })?.message || e);
+    if (/credit balance|insufficient|billing|authentication|invalid x-api-key|permission/i.test(msg))
+      await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind('claude_trouble', JSON.stringify({ at: new Date().toISOString(), msg: msg.slice(0, 200) })).run().catch(() => {});
     return null;
   }
+}
+
+/** Hourly: if Claude failed for money or key reasons, tell the owner (at most once a day). */
+export async function claudeHealth(db: DB, notify: (t: string) => Promise<unknown>) {
+  const t = (await db.prepare("SELECT value FROM settings WHERE key = 'claude_trouble'").first<{ value: string }>().catch(() => null))?.value;
+  if (!t) return;
+  const last = (await db.prepare("SELECT value FROM settings WHERE key = 'claude_trouble_told'").first<{ value: string }>().catch(() => null))?.value;
+  if (last && Date.now() - Date.parse(last) < 864e5) return;
+  let m = ''; try { m = JSON.parse(t).msg || ''; } catch {}
+  await notify(`⚠️ Claude не ответил платящему клиенту (${/credit|billing|insufficient/i.test(m) ? 'закончился баланс' : 'проблема с ключом'}). Клиенты сейчас получают ответы базовой модели. Пополните: platform.claude.com/settings/billing → «Купить кредиты».`).catch(() => {});
+  await db.prepare("INSERT INTO settings (key, value) VALUES ('claude_trouble_told', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(new Date().toISOString()).run();
+  await db.prepare("DELETE FROM settings WHERE key = 'claude_trouble'").run();
 }
