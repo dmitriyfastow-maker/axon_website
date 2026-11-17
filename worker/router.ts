@@ -133,6 +133,8 @@ export async function claudeReply(db: DB, route: Route, system: string, messages
       max_tokens: 4000,
       ...(haiku ? {} : { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' }),
       output_config: { effort: tier.effort },
+      // Web search (17.11): only when the message needs fresh facts and the model is not Haiku (≈$0.10 a search).
+      ...((route as { search?: boolean }).search && !haiku ? { tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 2 }] } : {}),
       system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }],
       messages: messages.map((m) => ({ role: m.role === 'assistant' ? 'assistant' as const : 'user' as const, content: m.content })),
     } as never) as unknown as { stop_reason: string; usage: Usage; content: { type: string; text?: string }[] };

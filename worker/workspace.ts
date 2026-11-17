@@ -151,6 +151,8 @@ const ON_CANVAS: Record<string, string> = { en: 'The full version is on the Canv
 const AGENCY = /(команд\S* (продакшн|продакшен|монтаж|дизайн|разработ|специалист)|продакшн-команд|наш\S* (команд|специалист|менеджер|монтажер|монтажёр|дизайнер)|менеджер\S* (свяж|напиш)|production team|our (team|specialists?|editors?|designers?|manager)|a manager will|команд\S* (продакшн|монтаж|дизайн|розроб|фахівц)|наш\S* (фахівц|менеджер))/i;
 const BRIEF_READY: Record<string, string> = { en: 'The brief is ready on the Canvas: format, script with timings and shot list.', ru: 'Бриф готов на холсте: формат, сценарий по секундам и список кадров.', ua: 'Бриф готовий на полотні: формат, сценарій по секундах і список кадрів.' };
 
+/** Needs fresh facts from the internet: today, prices, rates, news, «find online». */
+const FRESH = /(сегодня|сейчас|на данный момент|актуальн|последн\S* новост|новост|курс (доллар|евро|валют)|курс\b|цен[аы] на|сколько стоит сейчас|найди в интернете|поищи|загугли|погода|расписание|сьогодні|зараз|новини|знайди в інтернеті|today|right now|latest|current price|exchange rate|news|search the web|look up|weather)/i;
 const PARTNER_WISH = /(партн[её]рск|партнерськ|реферальн|referral|affiliate|partner program)/i;
 /** A short everyday question (cooking, how-to, a fact), not a request for a document, a site or production work. */
 const WORK = /(план|документ|договор|бриф|стратег|отч[её]т|звіт|сценар|презентац|таблиц|резюме|письм|лист\b|кп\b|комерц|коммерч|контент|сайт|бізнес|бизнес|магазин|crm|smm|plan|document|contract|brief|strateg|report|script|presentation|table|spreadsheet|resume|letter|proposal|website|site\b|business|shop|store|модел|расч[её]т|розрах|бюджет|смет|кошторис|анализ|аналіз|аудит|прогноз|финанс|фінанс|графи?к|расписан|розклад|техзадан|тз\b|инструкц|інструкц|чек-?лист|курс\b|урок|программ|програм|model|budget|estimate|forecast|financ|analys|audit|schedule|checklist|course|lesson|program)/i;
@@ -365,6 +367,7 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     const al = leadIds.length ? await allowance(db, leadIds).catch(() => null) : null;
     const want = { leadId: leadIds[0] ?? null, clientId: me.id, plan: al?.plan ?? 'start', trial: !!al?.trial, level: taskLevel(q, mode === 'deep', /📎/u.test(q)), ipKey: await ipKey(ip) };
     const route = await routeFor(db, { ...want, choice: cut(b.model, 20) || 'auto' }).catch(() => null);
+    if (route && FRESH.test(said)) (route as { search?: boolean }).search = true;
     if (route) raw = await claudeReply(db, route, sys, turns, (c) => { usd = c; });
     // A hand-picked model that failed: answer on Auto rather than drop to the free models.
     if (route && !raw && b.model && b.model !== 'auto') { const r2 = await routeFor(db, want).catch(() => null); if (r2) raw = await claudeReply(db, r2, sys, turns, (c) => { usd = c; }); }
