@@ -27,7 +27,7 @@ const LESSONS_EN: Lesson[] = [
     time: '5 min',
     goal: 'Understand how you earn and do your first 3 actions today.',
     steps: [
-      'How it works: a person clicks your link → leaves a request or buys → our team does the work → you get your commission every week.',
+      'How it works: a person clicks your link → leaves a request or buys → Vax does the work → you get your commission every week.',
       'Clients stay yours for life: the first link they clicked is saved, even if they buy months later.',
       'Pick one main channel to start (most people: short videos). Do not try everything at once.',
       'Make a separate link for that channel in the “Links” tab — so you see what works.',
@@ -155,7 +155,7 @@ const LESSONS_EN: Lesson[] = [
     steps: [
       'Thank them and answer simply. Use the “Answer a client question” prompt.',
       'Send them your link and ask them to leave a request — it takes a minute. The request is saved to your name.',
-      'Our team replies, prepares the proposal and does the work. You see the lead in your cabinet.',
+      'Vax replies, shows the plan and price and does the work. You see the lead in your cabinet.',
       'Price question or “I’ll think about it”? Use the objection prompt. Never promise what is not on our site.',
     ],
     free: 'One free AI chat is enough.',

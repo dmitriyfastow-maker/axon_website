@@ -35,7 +35,7 @@ const en = {
     }
   ],
   "whyTitle": "Why it's faster and better value with us",
-  "whySub": "A new kind of studio: AI makes the work many times faster, our team owns the result.",
+  "whySub": "A new kind of product: Vax does the work itself, many times faster, and you see every step.",
   "why": [
     {
       "n": "01",
