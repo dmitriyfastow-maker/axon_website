@@ -610,6 +610,23 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       const access = await moduleAccess(db, me.id);
       return out(200, { ok: true, project: pr, access, modules: pr.biz ? await modulesState(db, me.id, url.origin, access, pr.biz) : null });
     }
+    // Search the person's own chats (Decision 53, stage 3): titles and message text, newest first, a short snippet each.
+    if (path === 'search' && m === 'GET') {
+      const q = (url.searchParams.get('q') || '').trim().slice(0, 80);
+      if (q.length < 2) return out(200, { ok: true, hits: [] });
+      const like = '%' + q.replace(/[\\%_]/g, (c) => '\\' + c) + '%';
+      const rows = (await db.prepare(`SELECT c.id AS chat, c.title, m.text FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id
+        WHERE c.client_id = ? AND (m.text LIKE ? ESCAPE '\\' OR m.doc LIKE ? ESCAPE '\\') ORDER BY m.id DESC LIMIT 60`).bind(me.id, like, like).all<{ chat: number; title: string; text: string }>().catch(() => ({ results: [] as { chat: number; title: string; text: string }[] }))).results || [];
+      const seen = new Set<number>(), hits: { chat: number; title: string; snip: string }[] = [];
+      const low = q.toLowerCase();
+      for (const r of rows) {
+        if (seen.has(r.chat)) continue; seen.add(r.chat);
+        const t = String(r.text || '').replace(/\s+/g, ' '), i = t.toLowerCase().indexOf(low);
+        hits.push({ chat: r.chat, title: r.title, snip: i < 0 ? t.slice(0, 90) : (i > 30 ? '…' : '') + t.slice(Math.max(0, i - 30), i + q.length + 60) });
+        if (hits.length >= 12) break;
+      }
+      return out(200, { ok: true, hits });
+    }
     if (path === 'limits' && m === 'GET') {
       const al = await allowance(db, await clientLeads(db, me.id)).catch(() => null);
       return out(200, { ok: true, usage: await wsLimits(db, me.id, al?.plan ?? 'start') });
