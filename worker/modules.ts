@@ -52,7 +52,7 @@ export function cleanSite(x: Record<string, unknown>, lang: string): Site {
   return {
     lang: lang in WORDS ? lang : 'en',
     tone: cut(x.tone, 8) in TONES ? cut(x.tone, 8) : 'clean', style,
-    title: cut(x.title, 80), sub: cut(x.sub, 180), about: cut(x.about, 900),
+    title: cut(String(x.title ?? '').replace(/<\/?[a-z][^>]*>/gi, ''), 80), sub: cut(x.sub, 180), about: cut(x.about, 900),
     kicker: cut(x.kicker, 60) || undefined, accent: cut(x.accent, 30) || undefined, color: /^#[0-9a-f]{6}$/i.test(String(x.color || '')) ? String(x.color) : undefined, hero: ['full', 'split', 'center'].includes(String(x.hero)) ? String(x.hero) : undefined, promise: cut(x.promise, 120) || undefined,
     services, details: details.some(Boolean) ? details : undefined, steps: steps.length === 3 ? steps : undefined, faq: faq.length ? faq : undefined,
     cta: cut(x.cta, 40),

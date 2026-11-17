@@ -5,19 +5,21 @@ import type { DB } from './partner.js';
 
 const SCREEN = '@cf/google/gemma-4-26b-a4b-it';
 const IMAGE = '@cf/black-forest-labs/flux-1-schnell';
-export const DAILY = 5;
-/** Pictures a day by plan (Flux Schnell on Workers AI costs a fraction of a cent, the plan's work volume is also spent). */
-export const IMG_CAP: Record<string, number> = { start: 5, personal: 30, care: 60, growth: 150, pro: 300 };
+export const DAILY = 10;
+/** Pictures without a felt limit (Decision 58, 17.11): Flux Schnell on Workers AI costs about $0.0006 a picture (≈$0.001
+ *  at 8 steps), and pictures never spend the plan's work volume. The caps below only stop bots and abuse: 40 a day is
+ *  at most ~$0.03 for a free account, 1,000 a day ~$1 for Ultra, far below any plan's price. */
+export const IMG_CAP: Record<string, number> = { start: 40, personal: 300, care: 400, growth: 600, pro: 1000 };
 
 export const WANTS_IMAGE = /нарисуй|намалюй|сгенерируй\s+(картинк|изображ|фото|логотип)|згенеруй\s+(картинк|зображ|фото|логотип)|(создай|сделай|зроби|створи)\s+(картинк|изображен|зображен|иллюстрац|ілюстрац)|\bdraw\b|\bpaint\s+(me\s+)?(a|an)\b|\b(generate|create|make)\s+(me\s+)?(a|an|the)?\s*(image|picture|illustration|drawing)\b/i;
 
-const RULE = `Turn the wish into one short English image prompt. Reply with the prompt only.
+const RULE = `Turn the wish into one precise English image prompt: keep every detail the person named (subject, count, colours, style, text on it, composition, mood), add good lighting and quality words, nothing they did not ask for. Reply with the prompt only.
 If the wish involves nudity or sex, any child in a sexual or harmful way, real named people, gore, hate, weapons instructions, fake documents or logos of real brands, reply exactly: BLOCK`;
 
 const WORDS: Record<string, [string, string, string]> = {
-  en: ['Here is your picture.', 'I cannot draw that.', 'That is all the pictures for today on your plan. More tomorrow, or a bigger plan gives more.'],
-  ru: ['Вот ваша картинка.', 'Такое я не рисую.', 'Картинки на сегодня по вашему тарифу закончились. Завтра будут новые, а на тарифе выше их больше.'],
-  ua: ['Ось ваша картинка.', 'Таке я не малюю.', 'Картинки на сьогодні за вашим тарифом закінчились. Завтра будуть нові, а на тарифі вище їх більше.'],
+  en: ['Here is your picture.', 'I cannot draw that.', 'You have drawn a lot today. Let us continue tomorrow.'],
+  ru: ['Вот ваша картинка.', 'Такое я не рисую.', 'Сегодня вы нарисовали очень много — продолжим завтра.'],
+  ua: ['Ось ваша картинка.', 'Таке я не малюю.', 'Сьогодні ви намалювали дуже багато — продовжимо завтра.'],
 };
 
 async function ipKey(ip: string) {
@@ -25,7 +27,7 @@ async function ipKey(ip: string) {
   return Array.from(new Uint8Array(h).slice(0, 8), (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-export async function drawImage(ai: AiBinding, db: DB | undefined, wish: string, lang: string, ip: string, cap = DAILY): Promise<{ reply: string; image?: string } | null> {
+export async function drawImage(ai: AiBinding, db: DB | undefined, wish: string, lang: string, ip: string, cap = DAILY, fine = false): Promise<{ reply: string; image?: string } | null> {
   const [ok, no, over] = WORDS[lang] ?? WORDS.en;
   if (!db) return null;
   const who = await ipKey(ip);
@@ -35,7 +37,8 @@ export async function drawImage(ai: AiBinding, db: DB | undefined, wish: string,
   const prompt = String(typeof s?.response === 'string' ? s.response : s?.choices?.[0]?.message?.content || '').trim();
   if (!prompt) return null;
   if (/^BLOCK\b/i.test(prompt)) return { reply: no };
-  const r = (await ai.run(IMAGE, { prompt: prompt.slice(0, 500), steps: 4 })) as { image?: string };
+  // Paid plans: 8 steps, sharper detail and more exact to the wish.
+  const r = (await ai.run(IMAGE, { prompt: prompt.slice(0, 500), steps: fine ? 8 : 4 })) as { image?: string };
   if (!r?.image) return null;
   await db.prepare(`INSERT INTO events (kind, path) VALUES ('img', ?)`).bind(who).run().catch(() => {});
   return { reply: ok, image: `data:image/jpeg;base64,${r.image}` };

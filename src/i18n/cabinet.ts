@@ -55,7 +55,7 @@ const en = {
   },
   links: {
     h1: 'My links',
-    p: 'Make a separate link for every place you post (TikTok, Instagram, a group, a video) — then you see what brings clients. Unlimited links, turn any off at any time.',
+    p: 'Make a separate link for every place you post (TikTok, Instagram, a group, a video) — then you see what brings clients. Unlimited links, turn any off at any time. Everyone who comes by your link gets +50% work volume for their first 30 days (on a paid plan: +10%), and sees it right on the site.',
     where: 'Enter a name',
     wherePh: 'e.g. TikTok, Instagram bio, Facebook group',
     to: 'Where does it lead?',
@@ -190,7 +190,7 @@ const ua: CabinetText = {
   },
   links: {
     h1: 'Мої посилання',
-    p: 'Створюйте окреме посилання для кожного місця (TikTok, Instagram, група, відео) — так видно, що приводить клієнтів. Посилань без обмежень, будь-яке можна вимкнути.',
+    p: 'Створюйте окреме посилання для кожного місця (TikTok, Instagram, група, відео) — так видно, що приводить клієнтів. Посилань без обмежень, будь-яке можна вимкнути. Кожен, хто прийде за вашим посиланням, отримує +50% обсягу роботи на перші 30 днів (на платному тарифі +10%) і бачить це прямо на сайті.',
     where: 'Введіть назву',
     wherePh: 'напр. TikTok, профіль Instagram, група Facebook',
     to: 'Куди воно веде?',
@@ -341,7 +341,7 @@ const ru: CabinetText = {
   },
   links: {
     h1: 'Мои ссылки',
-    p: 'Создавайте отдельную ссылку для каждого места (TikTok, Instagram, группа, видео) — так видно, что приводит клиентов. Ссылок без ограничений, любую можно выключить.',
+    p: 'Создавайте отдельную ссылку для каждого места (TikTok, Instagram, группа, видео) — так видно, что приводит клиентов. Ссылок без ограничений, любую можно выключить. Каждый, кто придёт по вашей ссылке, получает +50% объёма работы на первые 30 дней (на платном тарифе +10%) и видит это прямо на сайте.',
     where: 'Введите название',
     wherePh: 'напр. TikTok, профиль Instagram, группа Facebook',
     to: 'Куда она ведёт?',

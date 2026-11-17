@@ -9,7 +9,7 @@
 import type { DB } from './partner.js';
 import type { Notify } from './deals.js';
 
-export const CLIENT_REF = { friendMonths: 2, holdDays: 14, maxMonthsYear: 12, windowDays: 60, burstPerDay: 3 };
+export const CLIENT_REF = { friendMonths: 0, holdDays: 14, maxMonthsYear: 12, windowDays: 60, burstPerDay: 3 };
 export const PLAN_PRICES: Record<string, number> = { start: 0, personal: 19, care: 39, growth: 129, pro: 299 };
 export const SLUG_C = /^c_[a-z0-9]{6,10}$/;
 
@@ -138,7 +138,7 @@ export async function attributeLead(db: DB, leadId: number, ref: string | null |
     await db.prepare('INSERT OR IGNORE INTO referrals (lead_id, slug, kind, referrer_client_id, referrer_partner_id, ip_hash, friend_months, status, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
       .bind(leadId, ref, kind, cid, pid, ipHash, CLIENT_REF.friendMonths, status, reason).run();
     await db.prepare(`INSERT INTO lead_events (lead_id, actor, kind, text) VALUES (?, 'system', 'note', ?)`)
-      .bind(leadId, `Came by an invite link (${kind}): the friend gets +1 gift month after the first paid payment`).run().catch(() => {});
+      .bind(leadId, `Came by an invite link (${kind}): +${kind === 'partner' ? '50% work volume for 30 days (+10% on a paid plan)' : '50% work volume for 30 days'}`).run().catch(() => {});
     if (status === 'review') await notify?.(`⚠️ Реферал на проверку: заявка #${leadId}, клиент #${cid} — много приглашений с одного IP за день. Штаб → 📊 Экономика.`);
   } catch (e) { console.error('[referral attribute]', e); }
 }
@@ -212,7 +212,7 @@ export async function matureReferrals(db: DB, notify?: Notify) {
     for (const r of due) {
       await db.prepare(`UPDATE referrals SET status = 'credited', credited_at = datetime('now') WHERE id = ? AND status = 'pending'`).bind(r.id).run();
     }
-    if (due.length) await notify?.(`🎁 Клиентам начислено бесплатных месяцев за друзей: ${due.length}. Учтите их в следующем счёте (Штаб → 📊 Экономика).`);
+    if (due.length) await notify?.(`🎁 Клиентам за друзей: +объём работы на 30 дней (половина тарифа друга) — ${due.length}.`);
   } catch {}
 }
 

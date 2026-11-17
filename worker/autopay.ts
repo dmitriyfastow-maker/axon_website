@@ -26,10 +26,13 @@ export function saveCardExtra(inv: Inv, agreed: boolean): Record<string, unknown
   return agreed && inv.lead_id && isSubscription(inv.description) ? { saveCardData: { saveCard: true, walletId: `sub-${inv.lead_id}` } } : {};
 }
 
+const PARTNER_GIFT_MONTH_OFF = true;
 /** Decision 50: a client who came by a partner's link and pays for 3, 6 or 12 months at once gets one more month as a
  *  gift, once. Not for a partner's own link (same email or account), not for invites under review. The gift month is a
  *  later renewal date (lead_events 'free-month', read by billing), never cash. */
 export async function partnerBonus(db: DB, inv: Inv) {
+  // Decision 57 v2 (Dmitry 17.11): no gift months; whoever came by a link gets +volume in their first month instead.
+  if (PARTNER_GIFT_MONTH_OFF) return;
   if (!inv.lead_id || !isSubscription(inv.description)) return;
   const months = Number((await get(db, `period_${inv.lead_id}`)) || 1);
   if (months < 3) return;

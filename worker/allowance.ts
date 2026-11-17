@@ -73,7 +73,7 @@ export const topupDesc = (usd: number, month: string) => `${TOPUP_DESC}, +$${usd
  *  worst case stays near zero even on Ultra. The level is saved by the workspace when it counts the progress. */
 export const GAME_BONUS = [0, 0, 0, 10, 10, 15, 15, 20, 20, 25, 30];
 export const WELCOME = { pct: 50, partnerPaid: 10 };
-export type Limits = { day: { pct: number; reset: string }; week: { pct: number; reset: string }; month: { pct: number; reset: string }; blocked: 'month' | null; packs: number[]; gift?: { pct: number; until: string } };
+export type Limits = { day: { pct: number; reset: string }; week: { pct: number; reset: string }; month: { pct: number; reset: string }; blocked: 'month' | null; packs: number[]; gift?: { pct: number; until: string }; friends?: number };
 export async function wsLimits(db: DB, clientId: number, plan: string): Promise<Limits> {
   const now = new Date();
   const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)), next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
@@ -92,10 +92,14 @@ export async function wsLimits(db: DB, clientId: number, plan: string): Promise<
   const ref = await db.prepare(`SELECT r.kind, r.at FROM referrals r JOIN leads d ON d.id = r.lead_id WHERE d.client_id = ? AND r.status NOT IN ('rejected', 'cancelled') AND r.at > datetime('now', '-30 day') ORDER BY r.at LIMIT 1`).bind(clientId).first<{ kind: string; at: string }>().catch(() => null);
   const giftPct = !ref ? 0 : plan !== 'start' && ref.kind === 'partner' ? WELCOME.partnerPaid : WELCOME.pct;
   const gift = ref && giftPct ? { pct: giftPct, until: new Date(Date.parse(ref.at.replace(' ', 'T') + 'Z') + 30 * 864e5).toISOString() } : undefined;
-  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * mult * (1 + giftPct / 100) + extra * TOPUP_RATE + cashback);
+  // The inviting client (Decision 57 v2): for each friend whose first payment stayed 14 days, half of the FRIEND's plan
+  // volume for 30 days. It costs at most ~20% of the friend's payment, so every invite stays in the plus.
+  const friends = (await db.prepare(`SELECT plan FROM referrals WHERE referrer_client_id = ? AND status IN ('credited', 'applied') AND credited_at > datetime('now', '-30 day')`).bind(clientId).all<{ plan: string | null }>().catch(() => ({ results: [] as { plan: string | null }[] }))).results || [];
+  const forFriends = friends.reduce((a, f) => a + (MONTH_CAPS[f.plan || ''] ?? 0) * WELCOME.pct / 100, 0);
+  const cap = Math.round((MONTH_CAPS[plan] ?? MONTH_CAPS.start) * mult * (1 + giftPct / 100) + forFriends + extra * TOPUP_RATE + cashback);
   const used = (await db.prepare('SELECT COALESCE(SUM(work), 0) AS n FROM ws_work WHERE client_id = ? AND at >= ?').bind(clientId, start.toISOString().slice(0, 19).replace('T', ' ')).first<{ n: number }>().catch(() => null))?.n ?? 0;
   const m = { pct: Math.min(100, Math.round((used / cap) * 100)), reset: next.toISOString() };
-  return { day: m, week: m, month: m, blocked: used >= cap ? 'month' : null, packs: plan === 'start' ? [] : TOPUP_PACKS, ...(gift ? { gift } : {}) };
+  return { day: m, week: m, month: m, blocked: used >= cap ? 'month' : null, packs: plan === 'start' ? [] : TOPUP_PACKS, ...(gift ? { gift } : {}), ...(forFriends ? { friends: friends.length } : {}) };
 }
 export async function wsLimitsOld(db: DB, clientId: number, plan: string) {
   const w = windows();

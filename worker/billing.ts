@@ -46,8 +46,11 @@ export async function freeDaysSince(db: DB, leadId: number, since: string): Prom
   } catch { return 0; }
 }
 
+const GIFT_MONTHS_OFF = true;
 /** The next unused gift for this subscription: the client's reward for an invited friend, else the friend's own gift month. */
 async function nextGift(db: DB, lead: Row): Promise<{ kind: 'inviter' | 'friend'; refId: number; usd: number } | null> {
+  // Decision 57 v2 (Dmitry 17.11): no free months for invites any more; the reward is extra work volume (allowance.ts).
+  if (GIFT_MONTHS_OFF) return null;
   try {
     if (lead.client_id) {
       const r = await db.prepare(`SELECT id, credit_usd FROM referrals WHERE referrer_client_id = ? AND status = 'credited' AND credit_usd > 0 ORDER BY credited_at, id LIMIT 1`).bind(lead.client_id).first<{ id: number; credit_usd: number }>();
