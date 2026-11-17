@@ -199,7 +199,17 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
         COALESCE(SUM(CASE WHEN status = 'paid' THEN amount_usd END), 0) AS paid FROM payouts WHERE partner_id = ?`).bind(me.id).first<{ due: number; free: number; paid: number }>().catch(() => null);
     const kinds = await db.prepare(`SELECT COALESCE(SUM(CASE WHEN kind LIKE '%team%' THEN amount_usd END), 0) AS team, COALESCE(SUM(CASE WHEN kind NOT LIKE '%team%' THEN amount_usd END), 0) AS own FROM payouts WHERE partner_id = ? AND status != 'cancelled'`).bind(me.id).first<{ team: number; own: number }>().catch(() => null);
     const vx = await vxBalance(db, me.id);
-    return json(200, { ok: true, partner: me, links, team: team?.n ?? 0, earnedOwn: kinds?.own ?? 0, earnedTeam: kinds?.team ?? 0, vx, balance: earned?.due ?? 0, available: earned?.free ?? 0, pending: Math.round(((earned?.due ?? 0) - (earned?.free ?? 0)) * 100) / 100, paidOut: earned?.paid ?? 0, plan: plan?.plan ?? 'classic', friend: plan?.friend === 1 });
+    // Dmitry 17.11: every client the partner brought, with a clear state — waiting for the 14-day refund window (until
+    // when), credited, paid out, or refunded (declined). A client who refunded and later paid again shows the new payment.
+    const clientRows = ((await db.prepare(`SELECT p.id, p.kind, p.amount_usd AS amount, p.base_usd AS base, p.status, p.created_at AS at, p.paid_at, d.name
+        FROM payouts p JOIN leads d ON d.id = p.lead_id WHERE p.partner_id = ? ORDER BY p.id DESC LIMIT 100`).bind(me.id).all<Record<string, any>>().catch(() => ({ results: [] }))).results || [])
+      .map((x) => {
+        const at = Date.parse(String(x.at).replace(' ', 'T') + 'Z'), until = at + 14 * 864e5;
+        const state = x.status === 'cancelled' ? 'refund' : x.status === 'paid' ? 'paid' : Date.now() >= until ? 'ready' : 'hold';
+        const nm = String(x.name || '').trim().split(/\s+/), who = nm[0] ? nm[0] + (nm[1] ? ' ' + nm[1][0] + '.' : '') : '—';
+        return { id: x.id, who, kind: String(x.kind).replace(/:.*$/, ''), amount: x.amount, base: x.base, state, at: x.at, until: new Date(until).toISOString(), paidAt: x.paid_at };
+      });
+    return json(200, { ok: true, clients: clientRows, partner: me, links, team: team?.n ?? 0, earnedOwn: kinds?.own ?? 0, earnedTeam: kinds?.team ?? 0, vx, balance: earned?.due ?? 0, available: earned?.free ?? 0, pending: Math.round(((earned?.due ?? 0) - (earned?.free ?? 0)) * 100) / 100, paidOut: earned?.paid ?? 0, plan: plan?.plan ?? 'classic', friend: plan?.friend === 1 });
   }
 
   // Bonus store (Decision 52 v2): Vax bonuses come only from clients' renewals (5% of the net), so every prize is paid

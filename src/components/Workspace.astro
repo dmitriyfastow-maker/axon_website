@@ -1433,13 +1433,17 @@ const ico = {
       // 15.11: easy to follow and to grow — the three steps, the numbers, one-tap sharing.
       const st = el('ol', 'isteps'); T.inv2.steps.forEach((x: string, i: number) => { const li = el('li'); li.append(el('b', '', String(i + 1)), el('span', '', x)); st.append(li); });
       const tl = el('div', 'itiles'); [inv.invited || 0, inv.pending || 0, inv.credited || 0].forEach((n, i) => { const t = el('div'); t.append(el('b', '', String(n)), el('small', '', T.inv2.tiles[i])); tl.append(t); });
+      // Each invited friend and where it stands (Dmitry 17.11).
+      const FR = ({ ru: { joined: 'Зарегистрировался, ещё не оплатил', hold: 'Оплатил — ждём конца срока возврата', done: 'Бонус начислен', refund: 'Возврат — отклонено', review: 'На проверке', off: 'Не засчитано', until: 'до' }, ua: { joined: 'Зареєструвався, ще не оплатив', hold: 'Оплатив — чекаємо кінця строку повернення', done: 'Бонус нараховано', refund: 'Повернення — відхилено', review: 'На перевірці', off: 'Не зараховано', until: 'до' } } as R)[lang] || { joined: 'Signed up, not paid yet', hold: 'Paid — waiting for the refund window', done: 'Bonus credited', refund: 'Refunded — declined', review: 'Under review', off: 'Not counted', until: 'until' };
+      const fl = el('div', 'ifriends');
+      for (const f of ((inv.friends || []) as R[]).slice(0, 20)) { const r = el('div', 'ifr ' + f.state); r.append(el('span', '', f.who), el('em', '', FR[f.state] + (f.state === 'hold' && f.until ? ` ${FR.until} ${new Date(String(f.until).replace(' ', 'T') + 'Z').toLocaleDateString(lang === 'ua' ? 'uk' : lang, { day: 'numeric', month: 'short' })}` : ''))); fl.append(r); }
       const sh = el('div', 'ishare');
       const text = T.inv2.msg + link;
       const tg = el('a', 'sec sm', T.inv2.tg) as HTMLAnchorElement; tg.href = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(T.inv2.msg); tg.target = '_blank'; tg.rel = 'noopener';
       const wa = el('a', 'sec sm', T.inv2.wa) as HTMLAnchorElement; wa.href = 'https://wa.me/?text=' + encodeURIComponent(text); wa.target = '_blank'; wa.rel = 'noopener';
       sh.append(tg, wa);
       if (navigator.share) sh.append(btn('sec sm', T.inv2.share, () => navigator.share({ text, url: link }).catch(() => {})));
-      sec1.append(st, linkRow(link), sh, tl);
+      sec1.append(st, linkRow(link), sh, tl); if (fl.childElementCount) sec1.append(fl);
     }
     else if (!S.signed) sec1.append(btn('pri sm', T.signin, () => openSign()));
     if (S.signed) sec1.append(el('p', 'bal', `${CT.bonus}: ${money(ME.bonus || 0)}`));
@@ -2709,6 +2713,9 @@ const ico = {
   .wsp .doc.inplace:focus { box-shadow: 0 0 0 2px rgba(232,176,74,.45); }
   .wsp .doc.inplace:not(.selmode) :is(p, li, h1, h2, h3, td):hover { background: rgba(232,176,74,.08); border-radius: 6px; }
   .wsp .inhint { display: block; margin: 6px 0 2px; }
+  .wsp .ifriends { display: grid; gap: 6px; margin-top: 10px; }
+  .wsp .ifr { display: flex; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 14px; }
+  .wsp .ifr em { font-style: normal; color: var(--mut); text-align: right; } .wsp .ifr.hold em { color: #b7791f; } .wsp .ifr.done em { color: #2f855a; } .wsp .ifr.refund em { color: #c53030; }
   .wsp .gpanel { display: grid; gap: 8px; }
   .wsp .gstep { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: var(--surf2); font-size: 14px; }
   .wsp .gstep.ok { color: var(--mut); }

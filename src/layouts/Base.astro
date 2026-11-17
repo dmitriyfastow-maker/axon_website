@@ -126,7 +126,7 @@ const jsonLd = {
           var r = localStorage.getItem('vaxo_ref'), at = Number(localStorage.getItem('vaxo_ref_at') || 0);
           if (!r || !at || Date.now() - at > 3456e7 || localStorage.getItem('vaxo_gift_x')) return;
           var c = /^c_/.test(r);
-          var T = { ru: ['🎁 Вы пришли по приглашению: +20% объёма на весь первый оплаченный тариф — месяц или год, и набор всех 12 шаблонов ($67) бесплатно', '', 'Закрыть'], ua: ['🎁 Ви прийшли за запрошенням: +20% обсягу на весь перший оплачений тариф — місяць чи рік, і набір усіх 12 шаблонів ($67) безкоштовно', '', 'Закрити'], en: ['🎁 You came by an invite: +20% work volume for the whole first paid plan, a month or a year, plus all 12 templates ($67) free', '', 'Close'] }[L] || null;
+          var T = { ru: ['🎁 Вы пришли по приглашению: +20% объёма на весь первый оплаченный тариф — месяц или год, и набор всех 12 шаблонов ($67) бесплатно', ' · по ссылке партнёра при оплате сразу за 3–12 месяцев +20% действует первый месяц', 'Закрыть'], ua: ['🎁 Ви прийшли за запрошенням: +20% обсягу на весь перший оплачений тариф — місяць чи рік, і набір усіх 12 шаблонів ($67) безкоштовно', ' · за посиланням партнера при оплаті одразу за 3–12 місяців +20% діє перший місяць', 'Закрити'], en: ['🎁 You came by an invite: +20% work volume for the whole first paid plan, a month or a year, plus all 12 templates ($67) free', ' · by a partner’s link, on a 3–12 month prepay the +20% covers the first month', 'Close'] }[L] || null;
           if (!T) return;
           var b = document.createElement('div'); b.className = 'vxgift'; b.setAttribute('role', 'status');
           var t = document.createElement('span'); t.textContent = T[0] + (c ? '' : T[1]); b.appendChild(t);

@@ -26,7 +26,15 @@ export async function createPayouts(db: DB, leadId: number) {
   // Lifetime attribution by e-mail (migration 0035): a buyer who already paid before is a renewal (30%), not a new sale.
   try {
     const br = await db.prepare(`SELECT b.first_lead FROM buyer_ref b JOIN leads d ON lower(trim(d.contact)) = b.email WHERE d.id = ?`).bind(leadId).first<{ first_lead: number | null }>();
-    if (br?.first_lead && br.first_lead !== leadId) { await addRenewal(db, br.first_lead, l.value_usd); return; }
+    if (br?.first_lead && br.first_lead !== leadId) {
+      // Dmitry 17.11: a first payment that was refunded does not count. The next real payment becomes the first one
+      // (the first-payment rate), and the buyer stays with the partner who brought them, even without the link now.
+      const live = await db.prepare(`SELECT 1 AS x FROM payouts WHERE lead_id = ? AND status != 'cancelled' LIMIT 1`).bind(br.first_lead).first().catch(() => null);
+      if (live) { await addRenewal(db, br.first_lead, l.value_usd); return; }
+      const was = await db.prepare('SELECT r.partner_id AS pid FROM leads d JOIN links r ON r.slug = d.ref WHERE d.id = ?').bind(br.first_lead).first<{ pid: number }>().catch(() => null);
+      if (was?.pid && !l.referrer_id) l.referrer_id = was.pid;
+      await db.prepare('UPDATE buyer_ref SET first_lead = ? WHERE first_lead = ?').bind(leadId, br.first_lead).run().catch(() => {});
+    }
     if (br && !br.first_lead && l.referrer_id) await db.prepare(`UPDATE buyer_ref SET first_lead = ? WHERE email = (SELECT lower(trim(contact)) FROM leads WHERE id = ?) AND first_lead IS NULL`).bind(leadId, leadId).run();
   } catch { /* migration not applied yet */ }
   // Buying through your own link earns nothing (partner terms).
@@ -45,14 +53,8 @@ export async function createPayouts(db: DB, leadId: number) {
     const up = await db.prepare('SELECT parent_id FROM partners WHERE id = ?').bind(l.referrer_id).first<{ parent_id: number | null }>();
     if (up?.parent_id && up.parent_id !== l.referrer_id) rows.push([up.parent_id, 'team', RATES.team]);
   }
-  // Decision 59 (17.11): a prepaid period (3, 6, 12 months) pays the partner as if the client paid monthly: the first
-  // month at the first-payment rate, the other months at the renewal rate. Same money as monthly, and it funds the
-  // client's bonus for the whole period, so nobody loses.
-  const period = Math.max(1, Math.min(12, Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('period_' + leadId).first<{ value: string }>().catch(() => null))?.value) || 1));
-  // Decision 62: simpler and fair — a prepaid 3, 6 or 12 months pays the partner 35% of the whole sum at once (about
-  // what a year of monthly payments gives, but paid right away), and Vaxo stays in the plus on every plan.
-  const blend = (r: number) => (period > 1 ? Math.min(r, RATES.prepaid) : r);
-  for (const row of rows) if (row[1] === 'referral') row[2] = blend(row[2]);
+  // Dmitry 17.11 (final): whatever the plan or period, the partner gets the full rate of the first payment (50%) in one
+  // payout as soon as the 14-day refund window has passed. No splitting, no lower rate for prepaid periods.
   const months = 1; // 15.11 (Dmitry): the whole commission becomes payable after the 14-day refund window, even for a year
   const net = Math.round(l.value_usd * NET * 100) / 100;
   for (const [pid, kind, rate] of rows) {

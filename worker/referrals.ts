@@ -161,7 +161,9 @@ export async function referralOnPaid(db: DB, leadId: number, usd: number, paymen
     const first = await firstReferral(db, leadId);
     if (!first) return;
     const ref = await db.prepare(`SELECT * FROM referrals WHERE id = ?`).bind(first.id).first<Record<string, any>>();
-    if (!ref || ref.kind !== 'client' || !['attributed', 'review'].includes(ref.status) || ref.payment_id) return;
+    // A friend whose first payment was refunded and who later pays again still belongs to the client who invited them.
+    const again = ref?.status === 'cancelled' && /refunded|cancelled/.test(String(ref.reason || ''));
+    if (!ref || ref.kind !== 'client' || (!['attributed', 'review'].includes(ref.status) && !again) || (ref.payment_id && !again)) return;
     const lead = await db.prepare('SELECT id, plan, service, interest, value_usd, contact, email_addr, client_id, page FROM leads WHERE id = ?').bind(leadId).first<Record<string, any>>();
     if (!lead) return;
     const set = (status: string, reason: string | null, extra: Record<string, unknown> = {}) => {
@@ -218,7 +220,7 @@ export async function matureReferrals(db: DB, notify?: Notify) {
 
 /** The cabinet card: the link and the progress. Zeros when the tables are not there yet. */
 export async function clientInvite(db: DB, clientId: number) {
-  const out = { slug: null as string | null, clicks: 0, invited: 0, pending: 0, credited: 0, creditUsd: 0, yearMonths: 0, rules: CLIENT_REF, friendBonus: null as null | { months: number } };
+  const out = { slug: null as string | null, clicks: 0, invited: 0, pending: 0, credited: 0, creditUsd: 0, yearMonths: 0, rules: CLIENT_REF, friendBonus: null as null | { months: number }, friends: [] as { who: string; state: string; at: string; until: string | null }[] };
   try {
     out.slug = await clientRefSlug(db, clientId);
     const r = await db.prepare(`SELECT COUNT(*) AS invited, SUM(status IN ('pending', 'review')) AS pending, SUM(status = 'credited') AS credited,
@@ -227,6 +229,12 @@ export async function clientInvite(db: DB, clientId: number) {
       FROM referrals WHERE referrer_client_id = ?`).bind(clientId).first<Record<string, number>>();
     out.invited = r?.invited ?? 0; out.pending = r?.pending ?? 0; out.credited = r?.credited ?? 0; out.creditUsd = r?.usd ?? 0; out.yearMonths = r?.year ?? 0;
     out.clicks = (await db.prepare('SELECT clicks FROM client_refs WHERE client_id = ?').bind(clientId).first<{ clicks: number }>())?.clicks ?? 0;
+    // Each invited friend with a clear state (Dmitry 17.11): signed up, paid and waiting 14 days, bonus credited, refunded.
+    out.friends = ((await db.prepare(`SELECT r.status, r.reason, r.at, r.hold_until, d.name FROM referrals r JOIN leads d ON d.id = r.lead_id WHERE r.referrer_client_id = ? ORDER BY r.id DESC LIMIT 50`).bind(clientId).all<Record<string, any>>().catch(() => ({ results: [] }))).results || []).map((x) => {
+      const nm = String(x.name || '').trim().split(/\s+/);
+      const state = x.status === 'pending' ? 'hold' : x.status === 'credited' || x.status === 'applied' ? 'done' : x.status === 'cancelled' ? (/refund|cancelled/.test(String(x.reason || '')) ? 'refund' : 'off') : x.status === 'review' ? 'review' : 'joined';
+      return { who: nm[0] ? nm[0] + (nm[1] ? ' ' + nm[1][0] + '.' : '') : '—', state, at: x.at, until: x.hold_until || null };
+    });
     // This client came by an invite: show their gift month (after the first payment).
     const mine = await db.prepare(`SELECT r.friend_months FROM referrals r JOIN leads d ON d.id = r.lead_id WHERE d.client_id = ? AND r.status NOT IN ('rejected') ORDER BY r.at LIMIT 1`).bind(clientId).first<{ friend_months: number }>();
     if (mine) out.friendBonus = { months: mine.friend_months };

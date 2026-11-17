@@ -149,6 +149,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
             <small class="mut">{MC.vxHow}</small>
           </div>
         </div>
+        <div class="card mclients" data-mclients hidden><b data-mclients-h></b><small class="mut" data-mclients-p></small><div class="mctbl" data-mclients-body></div></div>
         <div class="card msteps"><b>🚀 {MC.start}</b><ol>{MC.steps.map((x, i) => <li><span>{i + 1}</span>{x}</li>)}</ol></div>
         <dialog class="store" data-store>
           <header><b>{MC.storeH} · 🦝 <span data-store-vx>0</span></b><button type="button" data-store-x>×</button></header>
@@ -627,6 +628,18 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
       $('[data-m-team]').textContent = '+' + usd(d.earnedTeam ?? 0);
       $('[data-m-inc]').textContent = '+' + usd((d.earnedOwn ?? 0) + (d.earnedTeam ?? 0));
       $('[data-m-vx]').textContent = String(d.vx ?? 0);
+      // Clients brought by this partner and where each payment stands (Dmitry 17.11).
+      const lang = (JSON.parse(document.querySelector('[data-mc]')?.textContent || '{}').lang as string) || document.documentElement.lang?.slice(0, 2).replace('uk', 'ua') || 'en';
+      const CL = ({ ru: { h: 'Ваши клиенты и выплаты', p: 'Выплата начисляется, когда прошли 14 дней на возврат. Если клиент вернул деньги — платёж отклоняется; если он потом купит снова, он всё равно ваш.', hold: 'Ждёт конца срока возврата', ready: 'Зачислено — к выплате', paid: 'Выплачено', refund: 'Возврат — отклонено', until: 'до', kinds: { referral: 'первая оплата', renewal: 'продление', team: 'бонус команды', viral: 'друг клиента', manager: 'закрыли сами' }, none: 'Пока нет оплат по вашим ссылкам.' },
+        ua: { h: 'Ваші клієнти й виплати', p: 'Виплата нараховується, коли минули 14 днів на повернення. Якщо клієнт повернув гроші — платіж відхиляється; якщо він потім купить знову, він усе одно ваш.', hold: 'Чекає кінця строку повернення', ready: 'Зараховано — до виплати', paid: 'Виплачено', refund: 'Повернення — відхилено', until: 'до', kinds: { referral: 'перша оплата', renewal: 'продовження', team: 'бонус команди', viral: 'друг клієнта', manager: 'закрили самі' }, none: 'Поки немає оплат за вашими посиланнями.' },
+        en: { h: 'Your clients and payouts', p: 'A payout is credited once the 14-day refund window has passed. If a client gets a refund, that payment is declined; if they buy again later, they are still yours.', hold: 'Waiting for the refund window', ready: 'Credited — to be paid', paid: 'Paid out', refund: 'Refunded — declined', until: 'until', kinds: { referral: 'first payment', renewal: 'renewal', team: 'team bonus', viral: 'client’s friend', manager: 'closed by you' }, none: 'No payments by your links yet.' } } as any)[lang] || null;
+      const box = document.querySelector<HTMLElement>('[data-mclients]');
+      if (CL && box) {
+        box.hidden = false; $('[data-mclients-h]').textContent = CL.h; $('[data-mclients-p]').textContent = CL.p;
+        const rows = (d.clients || []) as any[], body = $('[data-mclients-body]');
+        const loc = lang === 'ua' ? 'uk' : lang, day = (x: string) => new Date(x.replace(' ', 'T') + (x.includes('Z') ? '' : 'Z')).toLocaleDateString(loc, { day: 'numeric', month: 'short' });
+        body.innerHTML = rows.length ? rows.map((r) => `<div class="mcr ${r.state}"><span class="who">${String(r.who).replace(/[<>&]/g, '')}</span><span class="kd">${CL.kinds[String(r.kind).replace(/^renewal.*/, 'renewal')] || ''} · ${day(r.at)}</span><b>${usd(r.amount)}</b><em>${CL[r.state]}${r.state === 'hold' ? ` ${CL.until} ${day(r.until)}` : ''}</em></div>`).join('') : `<p class="mut">${CL.none}</p>`;
+      }
     }
     $('[data-total="clicks"]').textContent = String(clicks);
     $('[data-total="leads"]').textContent = String(leads);
@@ -1000,4 +1013,9 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   .sgrid :global(.sitem span) { color: var(--mut); font-size: 14px; }
   .store > p { padding: 0 18px 14px; margin: 0; }
   @media (max-width: 900px) { .money { grid-template-columns: 1fr; } }
+  .mclients { display: grid; gap: 8px; margin-top: 14px; }
+  .mctbl { display: grid; gap: 6px; }
+  .mcr { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 12px; border: 1px solid var(--line, #e5e5e5); border-radius: 12px; }
+  .mcr .kd { grid-column: 1; font-size: 13px; opacity: .7; } .mcr b { grid-row: 1; grid-column: 2; text-align: right; } .mcr em { grid-column: 2; font-style: normal; font-size: 13px; text-align: right; }
+  .mcr.hold em { color: #b7791f; } .mcr.ready em { color: #2f855a; } .mcr.paid em { opacity: .7; } .mcr.refund em { color: #c53030; } .mcr.refund b { text-decoration: line-through; opacity: .6; }
 </style>

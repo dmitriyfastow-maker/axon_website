@@ -98,7 +98,9 @@ export async function wsLimits(db: DB, clientId: number, plan: string): Promise<
   // first paid plan. At full use it still leaves Vaxo in the plus on every plan, even with the partner's 50% (see
   // research/decision-62.md). The Free plan needs no bonus: its base model has no limit.
   const giftPct = !ref || plan === 'start' ? 0 : WELCOME.paid;
-  const giftEnd = ref ? Date.parse(ref.at.replace(' ', 'T') + 'Z') + (period * 31 + 7) * 864e5 : 0;
+  // The partner takes 50% of the whole first payment (a year too), so a prepaid plan by a partner's link gets the +20%
+  // for its first month; by a client's link (no commission) for the whole prepaid period.
+  const giftEnd = ref ? Date.parse(ref.at.replace(' ', 'T') + 'Z') + ((ref.kind === 'partner' ? 1 : period) * 31 + 7) * 864e5 : 0;
   const gift = ref && giftPct && giftEnd > Date.now() ? { pct: giftPct, until: new Date(giftEnd).toISOString() } : undefined;
   // The inviting client (Decision 57 v2): for each friend whose first payment stayed 14 days, half of the FRIEND's plan
   // volume for 30 days. It costs at most ~20% of the friend's payment, so every invite stays in the plus.
