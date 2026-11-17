@@ -135,6 +135,8 @@ export async function handleFinanceAdmin(db: DB, request: Request, path: string,
     // A cancelled or refunded payment takes its cashback back.
     if (cancel[1] === 'payment') await db.prepare(`DELETE FROM bonuses WHERE kind = 'cashback' AND note = ?`).bind(`payment:${cancel[2]}`).run();
     if (cancel[1] === 'payment') await referralOnRefund(db, Number(cancel[2]));
+    // A refunded client means no partner commission: unpaid payouts of that deal are cancelled (Dmitry 17.11).
+    if (cancel[1] === 'payment') await db.prepare(`UPDATE payouts SET status = 'cancelled' WHERE status = 'due' AND lead_id = (SELECT lead_id FROM payments WHERE id = ?)`).bind(Number(cancel[2])).run().catch(() => {});
     return json(200, { ok: true });
   }
   if (path === 'code' && request.method === 'POST') {

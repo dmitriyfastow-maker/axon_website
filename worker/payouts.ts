@@ -97,6 +97,9 @@ export async function setPayout(db: DB, id: number, status: string) {
   if (status === 'paid') {
     const ok = await db.prepare('SELECT pr.payout_filled_at AS f FROM payouts p JOIN partners pr ON pr.id = p.partner_id WHERE p.id = ?').bind(id).first<{ f: string | null }>().catch(() => ({ f: 'no-column-yet' }));
     if (!ok?.f) return false;
+    // Dmitry 17.11: a partner is paid only after the client's 14-day refund window has passed, never earlier.
+    const ripe = await db.prepare(`SELECT 1 AS x FROM payouts WHERE id = ? AND created_at <= datetime('now', '-${RATES.holdDays} days')`).bind(id).first().catch(() => null);
+    if (!ripe) return false;
   }
   await db.prepare(`UPDATE payouts SET status = ?, paid_at = CASE WHEN ? = 'paid' THEN datetime('now') ELSE NULL END WHERE id = ?`).bind(status, status, id).run();
   return true;

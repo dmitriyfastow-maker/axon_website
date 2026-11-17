@@ -387,6 +387,7 @@ const ico = {
   }
 
   const objOpen = new Set<number>();
+  const baseShown = new Set<number>();
   const clean = (t: string) => (t || '').replace(/<\/?[a-z][^>]*>/gi, '').trim();
   function drawChats() {
     const nav = $('[data-chats]'); nav.replaceChildren();
@@ -838,6 +839,7 @@ const ico = {
     const wait = el('div', 'm vax wait', T.think); log.append(wait); log.scrollTop = log.scrollHeight;
     const history = S.msgs.slice(-15, -1).map(({ role, content }) => ({ role, content }));
     let say: Msg = { role: 'assistant', content: T.err };
+    let baseTier = false;
     try {
       const r = await post('/api/ws/ask', { q, lang, mode: S.mode, model: MODEL, chat: S.signed ? S.cur : 0, ...(S.signed ? {} : { history, memory: S.memory }) });
       const d = await r.json();
@@ -857,12 +859,20 @@ const ico = {
           closed.delete(pj.id); keepClosed();
           await useProject(pj.id);
         }
+        baseTier = d.tier === 'base' && (!S.plan || S.plan === 'start');
         if (d.base) { let seen = false; try { seen = sessionStorage.getItem('vx_base') === '1'; sessionStorage.setItem('vx_base', '1'); } catch {} if (!seen) toast(({ ru: 'Объём сильных моделей на этот месяц использован. Vax продолжает без ограничений на базовой модели; сильные вернутся с новым месяцем или с пополнением.', ua: 'Обсяг сильних моделей на цей місяць використано. Vax продовжує без обмежень на базовій моделі; сильні повернуться з новим місяцем або з поповненням.' } as R)[lang] || 'This month’s volume for the strong models is used. Vax keeps going without limits on the base model; the strong ones return with the new month or a top-up.'); }
         if (S.signed && (d.tool || d.doc || d.site || d.image)) S.objects.unshift({ id: d.id, chat: d.chat, kind: d.site ? 'site' : d.tool ? 'tool' : d.doc ? 'doc' : 'image', title: d.site?.title || d.tool?.title || d.doc?.title || '', url: d.site?.url });
       }
     } catch { /* the message above says so */ }
     wait.remove();
     S.msgs.push(say); drawMsg(say);
+    // Decision 63: once per chat, under a serious task done on the free plan — what the paid level gives, in plain words.
+    if (baseTier && !baseShown.has(S.cur)) {
+      baseShown.add(S.cur);
+      const n = el('div', 'tiernote'), BT = ({ ru: ['Это сделано на базовой модели бесплатного тарифа: рабочий результат, но простой.', 'На платном тарифе ту же задачу Vax делает на сильнейших моделях мира — глубже, точнее и на уровне топ-студий.', 'Сравнить тарифы'], ua: ['Це зроблено на базовій моделі безкоштовного тарифу: робочий результат, але простий.', 'На платному тарифі те саме завдання Vax робить на найсильніших моделях світу — глибше, точніше й на рівні топ-студій.', 'Порівняти тарифи'] } as R)[lang] || ['This was made on the free plan’s base model: it works, but it is simple.', 'On a paid plan Vax does the same task on the world’s strongest models: deeper, more exact, at the level of top studios.', 'Compare plans'];
+      n.append(el('span', '', `${BT[0]} ${BT[1]}`), btn('lnk', BT[2] + ' →', () => openProf('plan')));
+      log.append(n);
+    }
     if (!S.signed) {
       if (!S.cur) { S.cur = Date.now(); S.chats.unshift({ id: S.cur, title: plain(q).slice(0, 60), msgs: S.msgs, project: S.pendingProject || undefined }); S.pendingProject = 0; }
       const c = S.chats.find((x) => x.id === S.cur); if (c) c.msgs = S.msgs.map((m) => ({ ...m, image: undefined }));
@@ -1751,7 +1761,9 @@ const ico = {
     if (!S.mods?.biz) { box.append(el('p', 'hint', T.botNoSite)); openCv(T.parMine, box); return; }
     // Decision 61: the public programme page, shared with anyone who might want to recommend the business.
     const pubSlug = S.mods?.site?.slug || (S.mods?.pages || [])[0]?.slug;
-    if (pubSlug) { const pb = el('section', 'blk'); pb.append(el('h3', '', ({ ru: 'Публичная страница программы', ua: 'Публічна сторінка програми' } as R)[lang] || 'Public programme page'), el('p', 'hint', ({ ru: 'Условия, калькулятор дохода и запись в партнёры. Делитесь ей в соцсетях и с клиентами — новые партнёры появятся здесь сами.', ua: 'Умови, калькулятор доходу й запис у партнери. Діліться нею в соцмережах і з клієнтами — нові партнери з’являться тут самі.' } as R)[lang] || 'Terms, an income calculator and sign-up. Share it on social media and with clients; new partners appear here by themselves.'), linkRow(`${location.origin}/s/${pubSlug}/partner`)); box.append(pb); }
+    if (pubSlug) { const pb = el('section', 'blk'); pb.append(el('h3', '', ({ ru: 'Публичная страница программы', ua: 'Публічна сторінка програми' } as R)[lang] || 'Public programme page'), el('p', 'hint', ({ ru: 'Условия, калькулятор дохода и запись в партнёры. Делитесь ей в соцсетях и с клиентами — новые партнёры появятся здесь сами.', ua: 'Умови, калькулятор доходу й запис у партнери. Діліться нею в соцмережах і з клієнтами — нові партнери з’являться тут самі.' } as R)[lang] || 'Terms, an income calculator and sign-up. Share it on social media and with clients; new partners appear here by themselves.'), linkRow(`${location.origin}/s/${pubSlug}/partner`));
+      const pid0 = S.proj?.id; if (pid0) { let on = (S.mods as R)?.pub !== false; const tg = btn('sec', '', async () => { on = !on; paint(); await post(`/api/ws/project/${pid0}/public`, { on }); }); const paint = () => { tg.textContent = on ? (({ ru: '● Открыта для всех — скрыть', ua: '● Відкрита для всіх — сховати' } as R)[lang] || '● Public — hide it') : (({ ru: '○ Скрыта — открыть', ua: '○ Схована — відкрити' } as R)[lang] || '○ Hidden — open it'); }; paint(); pb.append(tg); }
+      box.append(pb); }
     // 15.11: before the programme is on, say plainly what it gives (the same line used to show twice and nothing else).
     if (!p) {
       const W = ({
@@ -2544,6 +2556,8 @@ const ico = {
   .wsp .gfrb.fr1 i { box-shadow: 0 0 0 2px #b0763b; } .wsp .gfrb.fr2 i { box-shadow: 0 0 0 2px #b9c2cc; } .wsp .gfrb.fr3 i { box-shadow: 0 0 0 2px #e8b04a; } .wsp .gfrb.fr4 i { box-shadow: 0 0 0 2px #c86bff, 0 0 10px rgba(200,107,255,.6); }
   @media (max-width: 420px) { .wsp .gavg { grid-template-columns: repeat(6, 1fr); } }
   .wsp .usage .gift { display: block; margin-top: 4px; color: var(--accText); font-size: 11.5px; line-height: 1.3; }
+  .wsp .tiernote { display: grid; gap: 4px; margin: -4px 0 14px; padding: 10px 12px; border: 1px dashed var(--line); border-radius: 12px; color: var(--mut); font-size: 13.5px; line-height: 1.45; }
+  .wsp .tiernote .lnk { justify-self: start; }
   .wsp .gpanel { display: grid; gap: 8px; }
   .wsp .gstep { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: var(--surf2); font-size: 14px; }
   .wsp .gstep.ok { color: var(--mut); }
