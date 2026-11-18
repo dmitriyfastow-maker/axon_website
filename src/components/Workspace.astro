@@ -1807,7 +1807,26 @@ const ico = {
     if (!biz) { box.append(el('p', 'hint', T.botNoSite)); openCv(T.ptabs.rev, box); return; }
     const slug = S.mods?.site?.slug || (S.mods?.pages || [])[0]?.slug;
     box.append(el('p', 'hint', L.p));
-    if (slug) { const sec = el('section', 'blk'); sec.append(el('h3', '', L.link), linkRow(`${location.origin}/s/${slug}/reviews`)); box.append(sec); }
+    if (slug) {
+      const url = `${location.origin}/s/${slug}/reviews`, sec = el('section', 'blk');
+      sec.append(el('h3', '', L.link), linkRow(url));
+      // 18.11: «Ask for a review» — a ready, editable message with the link, sent in one tap to WhatsApp, Telegram or Viber.
+      const ask = ({
+        ru: { h: 'Попросить отзыв', p: 'Готовое сообщение — поправьте под себя и отправьте клиенту после работы. Лучше всего — в тот же день.', msg: 'Здравствуйте! Спасибо, что выбрали {b}. Если не сложно, расскажите в паре слов, как всё прошло — это займёт минуту и очень нам поможет:' },
+        ua: { h: 'Попросити відгук', p: 'Готове повідомлення — виправте під себе й надішліть клієнту після роботи. Найкраще — того ж дня.', msg: 'Вітаю! Дякуємо, що обрали {b}. Якщо не складно, розкажіть кількома словами, як усе пройшло — це займе хвилину й дуже нам допоможе:' },
+        en: { h: 'Ask for a review', p: 'A ready message: adjust it and send it to a customer after the job. The same day works best.', msg: 'Hi! Thank you for choosing {b}. If you have a minute, tell us in a few words how it went. It really helps us:' },
+      } as Record<string, { h: string; p: string; msg: string }>)[lang] || null;
+      if (ask) {
+        const ta = el('textarea') as HTMLTextAreaElement; ta.rows = 4; ta.style.cssText = 'width:100%;margin:6px 0'; ta.setAttribute('aria-label', ask.h);
+        ta.value = ask.msg.replace('{b}', S.mods?.biz?.name || '').replace(/\s+([.,!])/g, '$1') + '\n' + url;
+        const row = el('div'); row.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap';
+        const go = (label: string, href: (v: string) => string) => { const a = el('a', 'sec sm', label) as HTMLAnchorElement; a.target = '_blank'; a.rel = 'noopener'; a.href = href(ta.value); a.addEventListener('click', () => { a.href = href(ta.value); }); return a; };
+        const cp = btn('pri sm', T.copy, async () => { await copyText(ta.value); flash(cp, T.copied, T.copy); });
+        row.append(cp, go('WhatsApp', (v) => `https://wa.me/?text=${encodeURIComponent(v)}`), go('Telegram', (v) => `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(v.replace(url, '').trim())}`), go('Viber', (v) => `viber://forward?text=${encodeURIComponent(v)}`));
+        sec.append(el('h3', '', ask.h), el('p', 'hint', ask.p), ta, row);
+      }
+      box.append(sec);
+    }
     const list = el('div', 'pf'); box.append(list);
     const draw = (rows: R[]) => {
       list.replaceChildren();
