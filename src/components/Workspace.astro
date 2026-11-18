@@ -1128,16 +1128,43 @@ const ico = {
     }
     return out.join('\n\n');
   }
+  /** 18.11: numbers of every table on the canvas counted at once (total, average, min, max) + a bar chart; outside the editable text. */
+  const TS = ({ ru: { t: 'Расчёт по таблице', col: 'Столбец', sum: 'Сумма', avg: 'Среднее', min: 'Мин', max: 'Макс', n: 'строк', chart: 'График', hide: 'Скрыть график', by: 'по' }, ua: { t: 'Розрахунок за таблицею', col: 'Стовпець', sum: 'Сума', avg: 'Середнє', min: 'Мін', max: 'Макс', n: 'рядків', chart: 'Графік', hide: 'Сховати графік', by: 'за' }, en: { t: 'Table numbers', col: 'Column', sum: 'Total', avg: 'Average', min: 'Min', max: 'Max', n: 'rows', chart: 'Chart', hide: 'Hide chart', by: 'by' } } as Record<string, any>)[lang] || {};
+  const numOf = (x: string): number | null => { let s = (x || '').replace(/[\s\u00a0$€£₴%]|грн|uah|usd|руб/gi, ''); if (!/^[+\-]?[\d.,]*\d[\d.,]*$/.test(s)) return null; if (/,\d{1,2}$/.test(s) && !/\.\d/.test(s)) s = s.replace(/\./g, '').replace(',', '.'); else s = s.replace(/,/g, ''); const v = parseFloat(s); return isFinite(v) ? v : null; };
+  const fmtN = (v: number) => (Math.round(v * 100) / 100).toLocaleString(lang === 'en' ? 'en-US' : 'uk-UA');
+  function tableStats(view: HTMLElement): HTMLElement {
+    const box = el('div', 'tstats');
+    view.querySelectorAll('table').forEach((tb, ti) => {
+      const rows = [...tb.querySelectorAll('tr')].map((r) => [...r.querySelectorAll('th,td')].map((c) => (c.textContent || '').trim()));
+      if (rows.length < 3) return;
+      const head = rows[0], body = rows.slice(1).filter((r) => !/^(итог|всего|total|сумма|разом|усього|сума)/i.test(r[0] || ''));
+      const cols = head.map((h, i) => ({ h: h || TS.col + ' ' + (i + 1), i, v: body.map((r) => numOf(r[i] || '')) })).filter((c) => c.i > 0 && c.v.filter((x) => x !== null).length >= Math.max(2, body.length * 0.6));
+      if (!cols.length) return;
+      const card = el('div', 'tsc'); card.append(el('b', '', `📊 ${TS.t}${view.querySelectorAll('table').length > 1 ? ' ' + (ti + 1) : ''} · ${body.length} ${TS.n}`));
+      const grid = el('div', 'tsg');
+      for (const c of cols) { const v = c.v.filter((x): x is number => x !== null), sum = v.reduce((a, b) => a + b, 0); const r = el('div', 'tsr'); r.append(el('span', '', c.h), el('small', '', `${TS.sum} ${fmtN(sum)} · ${TS.avg} ${fmtN(sum / v.length)} · ${TS.min} ${fmtN(Math.min(...v))} · ${TS.max} ${fmtN(Math.max(...v))}`)); grid.append(r); }
+      const sel = el('select', 'tssel') as HTMLSelectElement; cols.forEach((c, k) => sel.append(new Option(c.h, String(k))));
+      const ch = el('div', 'tsch'); ch.hidden = true;
+      const draw = () => { const c = cols[+sel.value], items = body.map((r, k) => ({ l: r[0] || String(k + 1), v: c.v[k] ?? 0 })).slice(0, 24), mx = Math.max(1e-9, ...items.map((x) => Math.abs(x.v))); ch.replaceChildren(...items.map((x) => { const r = el('div', 'tsb'), bar = el('i'); bar.style.width = (Math.abs(x.v) / mx * 100).toFixed(1) + '%'; if (x.v < 0) bar.classList.add('neg'); r.append(el('span', '', x.l), el('em', '', ''), el('small', '', fmtN(x.v))); (r.children[1] as HTMLElement).append(bar); return r; })); };
+      sel.onchange = draw;
+      const tg = btn('sec sm', TS.chart, () => { ch.hidden = !ch.hidden; tg.textContent = ch.hidden ? TS.chart : TS.hide; sel.hidden = ch.hidden || cols.length < 2; if (!ch.hidden) draw(); });
+      sel.hidden = true;
+      const ctl = el('div', 'tsctl'); ctl.append(tg, sel);
+      card.append(grid, ctl, ch); box.append(card);
+    });
+    return box;
+  }
   function docView(m: Msg) {
     const view = el('div', 'doc'), area = el('textarea', 'src'), bar = el('div', 'tbar'), pubBox = el('div');
-    const paint = () => { view.innerHTML = md(m.doc!.body); };
+    let stats: HTMLElement = el('div'); const restat = () => { const n = tableStats(view); stats.replaceWith(n); stats = n; };
+    const paint = () => { view.innerHTML = md(m.doc!.body); restat(); };
     paint(); area.value = m.doc!.body; area.hidden = true;
     // Decision 64: click any text of the document and type; it saves itself a moment later.
     view.contentEditable = 'true'; view.spellcheck = true; view.classList.add('inplace');
     let saveT = 0;
     const count = (h: HTMLElement) => h.querySelectorAll('h1,h2,h3,li,tr').length;
     const saveNow = async () => { const body = htmlToMd(view); if (!body || body === m.doc!.body) return; const probe = el('div'); probe.innerHTML = md(body); if (count(probe) < count(view)) { console.warn('[doc] structure would shrink; kept the source as is'); return; } m.doc!.body = body; area.value = body; if (S.signed && m.id) { await post('/api/ws/doc', { id: m.id, ...m.doc }); if (m.pub) await post('/api/ws/publish', { id: m.id }); } else saveGuest(); };
-    view.addEventListener('input', () => { clearTimeout(saveT); saveT = window.setTimeout(saveNow, 1200); });
+    view.addEventListener('input', () => { clearTimeout(saveT); saveT = window.setTimeout(() => { saveNow(); restat(); }, 1200); });
     view.addEventListener('blur', () => { clearTimeout(saveT); saveNow(); });
     const edit = btn('sec', ({ ru: 'Исходный текст', ua: 'Вихідний текст' } as R)[lang] || 'Source text', async () => {
       if (area.hidden) { area.hidden = false; view.hidden = true; edit.textContent = T.done; area.focus(); return; }
@@ -1218,7 +1245,7 @@ const ico = {
     bar.append(dlb, pub, edit, pick, copy);
     drawPub();
     const tip = el('small', 'hint inhint', ({ ru: 'Нажмите на любой текст, чтобы исправить — сохраняется само. Выделите места и попросите Vax переделать.', ua: 'Натисніть на будь-який текст, щоб виправити — зберігається само. Виділіть місця й попросіть Vax переробити.' } as R)[lang] || 'Click any text to change it; it saves by itself. Select parts and ask Vax to redo them.');
-    const wrap = el('div', 'art'); wrap.append(bar, tip, selBar, pubBox, view, area);
+    const wrap = el('div', 'art'); wrap.append(bar, tip, selBar, pubBox, view, stats, area);
     return wrap;
   }
 
@@ -2397,6 +2424,18 @@ const ico = {
   .wsp .doc ul, .wsp .doc ol { padding-left: 20px; }
   .wsp .doc .tbl { overflow-x: auto; margin-bottom: 10px; }
   .wsp .doc table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  .wsp .tstats { display: grid; gap: 10px; margin-top: 12px; }
+  .wsp .tsc { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
+  .wsp .tsg { display: grid; gap: 4px; }
+  .wsp .tsr { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+  .wsp .tsr span { font-weight: 600; }
+  .wsp .tsctl { display: flex; gap: 8px; flex-wrap: wrap; }
+  .wsp .tsch { display: grid; gap: 4px; }
+  .wsp .tsb { display: grid; grid-template-columns: minmax(60px, 32%) 1fr auto; gap: 8px; align-items: center; font-size: 13px; }
+  .wsp .tsb span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wsp .tsb em { display: block; height: 10px; background: color-mix(in srgb, var(--line) 50%, transparent); border-radius: 5px; overflow: hidden; }
+  .wsp .tsb i { display: block; height: 100%; background: var(--acc, #ff7a1a); border-radius: 5px; }
+  .wsp .tsb i.neg { background: #d9534f; }
   .wsp .doc th, .wsp .doc td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
   .wsp .doc pre { background: var(--bg); padding: 10px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
   .wsp .pf { display: grid; gap: 10px; }
