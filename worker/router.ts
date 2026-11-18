@@ -128,7 +128,7 @@ export async function claudeReply(db: DB, route: Route, system: string, messages
   try {
     const client = new Anthropic({ apiKey });
     const haiku = tier.model === HAIKU; // Haiku has no server-side fallback
-    const r = await client.beta.messages.create({
+    const params = {
       model: tier.model,
       max_tokens: (route as { deep?: boolean }).deep ? 8000 : 4000,
       ...(haiku ? {} : { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' }),
@@ -144,9 +144,20 @@ export async function claudeReply(db: DB, route: Route, system: string, messages
         return tools.length ? { tools } : {};
       })(),
       system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }],
-      messages: messages.map((m) => ({ role: m.role === 'assistant' ? 'assistant' as const : 'user' as const, content: m.content })),
-    } as never) as unknown as { stop_reason: string; usage: Usage; content: { type: string; text?: string }[] };
-    const usd = costUsd(tier.model, r.usage);
+      messages: messages.map((m) => ({ role: m.role === 'assistant' ? 'assistant' as const : 'user' as const, content: m.content })) as unknown[],
+    };
+    type Resp = { stop_reason: string; usage: Usage; content: { type: string; text?: string }[] };
+    let r = await client.beta.messages.create(params as never) as unknown as Resp;
+    // Server tools (search/fetch) can stop with pause_turn mid-work: send the turn back so Claude finishes,
+    // otherwise the client gets half an answer. At most 2 continuations; cost of each is counted.
+    let usd = costUsd(tier.model, r.usage);
+    const parts: { type: string; text?: string }[] = [...r.content];
+    for (let i = 0; i < 2 && r.stop_reason === 'pause_turn'; i++) {
+      params.messages = [...params.messages, { role: 'assistant', content: r.content }];
+      r = await client.beta.messages.create(params as never) as unknown as Resp;
+      usd += costUsd(tier.model, r.usage);
+      parts.push(...r.content);
+    }
     onCost?.(usd);
     await db.prepare(`INSERT INTO api_usage (lead_id, month, usd) VALUES (?, ?, ?) ON CONFLICT (lead_id, month) DO UPDATE SET usd = usd + excluded.usd`)
       .bind(route.ledger, month(), usd).run();
@@ -156,7 +167,7 @@ export async function claudeReply(db: DB, route: Route, system: string, messages
       await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(k, String(prev + usd)).run();
     }
     if (r.stop_reason === 'refusal') return null;
-    return r.content.filter((b) => b.type === 'text').map((b) => b.text).join('').trim() || null;
+    return parts.filter((b) => b.type === 'text').map((b) => b.text).join('').trim() || null;
   } catch (e) {
     console.error('[claude]', e);
     // Out of credit or key trouble: the client still gets an answer from the base model (the caller falls back), and the
