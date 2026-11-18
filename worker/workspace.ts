@@ -163,7 +163,7 @@ export function shapeReply(raw: string, mode: string, wish: string, lang: string
   let text = raw;
   const deploy = text.match(DEPLOY_RE)?.[1].toLowerCase() ?? null;
   const order = text.match(ORDER_RE)?.[1].trim() ?? null;
-  text = text.replace(new RegExp(DEPLOY_RE, 'gi'), '').replace(new RegExp(ORDER_RE, 'gi'), '').replace(/\[\[(REFRATE|PARTNER|TRUST|PUBLIC):[^\]]*\]\]/gi, '');
+  text = text.replace(new RegExp(DEPLOY_RE, 'gi'), '').replace(new RegExp(ORDER_RE, 'gi'), '').replace(/\[\[(REFRATE|PARTNER|TRUST|PUBLIC|REVIEW):[^\]]*\]\]/gi, '');
   const m = text.match(DOC_RE);
   let doc: Doc | null = null;
   if (m && m[2].trim()) { doc = { title: m[1].trim(), body: m[2].trim() }; text = text.replace(m[0], ''); }
@@ -341,6 +341,10 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     if (ms) {
       const book = !!ms.site?.book?.on, links = ms.partner?.links || [];
       state = `\nPROJECT STATE (true, live now): business «${ms.biz?.name || ''}»; site: ${ms.site?.url || 'none yet'}; online booking: ${book ? 'on' : 'off'}; requests in CRM: ${ms.requests ?? 0}; AI consultant: ${ms.bot?.on ? 'on' : 'off'}; partner programme: ${links.length ? `on, reward ${ms.partner.rate}% of a deal, ${links.length} links (${links.slice(0, 6).map((l: any) => l.label || l.name).join(', ')})` : 'not set up yet'}; more pages: ${(ms.pages || []).length}.`;
+      // 18.11: reviews of the business, so Vax can approve, hide or delete them on request (marker [[REVIEW:...]]).
+      await ensureReviews(db);
+      const rv = (await listReviews(db, projRow.biz, true).catch(() => [])).slice(0, 12);
+      state += `\nREVIEWS of this business (${rv.length ? rv.map((r) => `#${r.id} ${r.name} ${r.stars}★ ${r.status === 'ok' ? 'shown' : r.status === 'hidden' ? 'hidden' : 'new, waiting'}: «${r.text.replace(/\s+/g, ' ').slice(0, 80)}»`).join('; ') : 'none yet'}). Public page: ${ms.site?.url ? ms.site.url + '/reviews' : 'after the site is made'}. When the owner asks to show (approve), hide or delete reviews, add one marker per review at the end: [[REVIEW:<id> show]], [[REVIEW:<id> hide]] or [[REVIEW:<id> delete]]; for all new ones [[REVIEW:new show]]. Delete only when they clearly say delete. Then say what changed, in one line.`;
     }
   }
   const trust = me ? (await db.prepare('SELECT value FROM settings WHERE key = ?').bind('ws_trust_' + me.id).first<{ value: string }>().catch(() => null))?.value === '1' : false;
@@ -383,6 +387,15 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     if (projRow?.biz) {
       const pv = raw.match(/\[\[PUBLIC:\s*(on|off)\s*\]\]/i);
       if (pv) await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind('biz_partner_public_' + projRow.biz, pv[1].toLowerCase() === 'off' ? '0' : '1').run().catch(() => {});
+      const ST: Record<string, string> = { show: 'ok', approve: 'ok', hide: 'hidden', delete: 'del' };
+      const marks: RegExpMatchArray[] = [...raw.matchAll(/\[\[REVIEW:\s*(\d{1,9}|new)\s+(show|approve|hide|delete)\s*\]\]/gi)].slice(0, 30);
+      // The free model may forget the marker: «одобри все отзывы» / «approve all reviews» still works.
+      if (!marks.length && /(одобр|опублик|покаж|схвал|опублік|покаж|approve|publish|show)[^.?!]{0,30}(все|всі|усі|all)[^.?!]{0,20}(отзыв|відгук|review)|(все|всі|усі|all)[^.?!]{0,20}(отзыв|відгук|review)[^.?!]{0,30}(одобр|опублик|покаж|схвал|опублік|approve|publish|show)/i.test(said)) marks.push(['', 'new', 'show'] as unknown as RegExpExecArray);
+      if (marks.length) {
+        await ensureReviews(db);
+        const fresh = marks.some((x) => x[1].toLowerCase() === 'new') ? (await listReviews(db, projRow.biz, true).catch(() => [])).filter((r) => r.status === 'new') : [];
+        for (const x of marks) for (const id of x[1].toLowerCase() === 'new' ? fresh.map((r) => r.id) : [Number(x[1])]) await setReview(db, projRow.biz, id, ST[x[2].toLowerCase()]).catch(() => false);
+      }
       const rr = raw.match(/\[\[REFRATE:\s*(\d{1,2})\s*\]\]/i);
       if (rr && +rr[1] >= 1 && +rr[1] <= 50) await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind('biz_ref_rate_' + projRow.biz, rr[1]).run().catch(() => {});
       for (const pm of [...raw.matchAll(/\[\[PARTNER:\s*([^\]]{1,60})\]\]/gi)].slice(0, 6)) await addRef(db, me.id, pm[1].trim(), projRow.biz).catch(() => false);
