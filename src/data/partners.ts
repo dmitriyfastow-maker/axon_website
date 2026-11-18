@@ -84,7 +84,7 @@ const en: Text = {
   },
   eyebrow: 'Partner program',
   h1: 'Recommend Vax and earn 50% of the first payment, then 30% every month.',
-  sub: 'Vax is an AI product that does the work itself: sites, CRM, texts, plans, calculations — for business and for everyday life. You share your link; the client works in Vaxo; you earn from every payment while they stay. Plus 10% from the sales of partners you invite. Free to join, training and ready posts included.',
+  sub: 'Share your link to Vax — the AI that does the work: sites, CRM, texts, calculations. You get a share of every payment your client makes, for as long as they stay. Free to join.',
   join: 'Become a partner →',
   login: 'Log in',
   flow: ['Your link', 'The client starts free', 'The client pays', 'You get paid'],
@@ -109,7 +109,7 @@ const en: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'plans from $19/mo',
       what: 'Vax does the work itself for anyone — from personal tasks to companies: sites, apps, AI, ads, content.',
-      points: [`${r.agencyOwn}% — a client you found`, `${r.agencyGiven}% — a warm lead we give you to close`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `+${r.viral}% — from payments of friends your clients invite, for life`, `Your clients get +20% work volume (a month, or the first month of a prepaid plan) plus all 12 templates ($67) free`],
+      points: [`${r.agencyOwn}% of the first payment — any plan, month or year`, `+${r.agencyRenewal}% — every renewal and monthly payment, for life`, `+${r.viral}% — from payments of friends your clients invite, for life`, 'Your client gets +20% volume and 12 templates as a gift'],
       cta: ['Count my income →', 'earn'],
     },
     {
@@ -150,7 +150,7 @@ const en: Text = {
     ['Posts & your profile', 'A profile that sells, captions and a weekly content plan'],
     ['Personal messages', 'Find businesses, write to them personally, follow up — without spam'],
     ['Communities', 'Help in groups and forums so people come to you'],
-    ['When a client answers', 'What to say and how to hand the client over to us'],
+    ['When someone answers', 'What to say and how to help them start in Vaxo'],
     ['Build your team', 'Invite partners honestly and grow your +10%'],
   ],
   ways: [
@@ -172,7 +172,7 @@ const en: Text = {
   soonP: 'Regular draws and challenges with prizes for partners who post and help clients. Join now to take part from the first one.',
   faqH: 'Questions',
   faq: [
-    ['Can clients invite people too?', 'Yes. Clients can invite too — they get extra work volume; partners get money. Everyone who comes by an invite link gets a welcome gift: +20% work volume for the whole first paid plan, a month or a year, plus all 12 templates ($67) free. Whatever plan or period the client buys, the partner gets 50% of that payment in one payout after the 14-day refund window. One new client counts once: the first link wins.'],
+    ['Can clients invite people too?', 'Yes. Clients get work volume for friends, and every 3 paying friends give them a free month of Pro; partners get money. A newcomer by any link gets +20% volume and 12 templates as a gift. One person counts once — by the first link.'],
     ['Does it cost anything?', 'No. Signing up, the cabinet, training and the AI toolkit are free.'],
     ['I have never worked online. Can I do it?', 'Yes. The “Start here” checklist and training show every step. AI writes the texts with you.'],
     ['How much will I earn?', 'It depends only on real sales you bring. The calculator above shows the exact math. We never promise income.'],
@@ -196,7 +196,7 @@ const ua: Text = {
   },
   eyebrow: 'Партнерська програма',
   h1: 'Рекомендуйте Vax і отримуйте 50% першої оплати, а далі 30% щомісяця.',
-  sub: 'Vax — ШІ-продукт, який сам робить роботу: сайти, CRM, тексти, плани, розрахунки — для бізнесу й для побуту. Ви ділитеся посиланням, клієнт працює у Vaxo, а ви отримуєте частку кожної його оплати, поки він з нами. Плюс 10% із продажів партнерів, яких ви запросили. Участь безкоштовна, навчання й готові пости — всередині.',
+  sub: 'Діліться посиланням на Vax — ШІ, який сам робить роботу: сайти, CRM, тексти, розрахунки. Ви отримуєте частку кожної оплати клієнта, поки він з нами. Участь безкоштовна.',
   join: 'Стати партнером →',
   login: 'Увійти',
   flow: ['Ваше посилання', 'Клієнт починає безкоштовно', 'Клієнт оплачує', 'Вам виплата'],
@@ -221,7 +221,7 @@ const ua: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'підписка від $19/міс',
       what: 'Vax сам робить роботу для будь-кого — від особистих справ до компаній: сайти, застосунки, ШІ, реклама, контент.',
-      points: [`${r.agencyOwn}% — клієнт, якого знайшли ви`, `${r.agencyGiven}% — теплий клієнт від нас, якого закриваєте ви`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `+${r.viral}% — з оплат друзів, яких запросили ваші клієнти, назавжди`, `Ваші клієнти отримують +20% обсягу (на місяць або на перший місяць передоплаченого тарифу) і набір усіх 12 шаблонів ($67) безкоштовно`],
+      points: [`${r.agencyOwn}% першої оплати — будь-який тариф, місяць чи рік`, `+${r.agencyRenewal}% — кожне продовження і щомісячна оплата, назавжди`, `+${r.viral}% — з оплат друзів, яких запросили ваші клієнти, назавжди`, 'Ваш клієнт отримує +20% обсягу і 12 шаблонів у подарунок'],
       cta: ['Порахувати мій дохід →', 'earn'],
     },
     {
@@ -262,7 +262,7 @@ const ua: Text = {
     ['Пости і профіль', 'Профіль, що продає, підписи і план контенту на тиждень'],
     ['Особисті повідомлення', 'Знайти бізнеси, написати особисто, нагадати — без спаму'],
     ['Спільноти', 'Допомагайте в групах і форумах — і люди прийдуть до вас'],
-    ['Коли клієнт відповів', 'Що сказати і як передати клієнта нам'],
+    ['Коли людина відповіла', 'Що сказати і як допомогти їй почати у Vaxo'],
     ['Своя команда', 'Чесно запрошуйте партнерів і ростіть свої +10%'],
   ],
   ways: [
@@ -284,7 +284,7 @@ const ua: Text = {
   soonP: 'Регулярні розіграші та челенджі з призами для тих, хто публікує контент і допомагає клієнтам. Приєднуйтесь зараз, щоб брати участь з першого.',
   faqH: 'Питання',
   faq: [
-    ['Клієнти теж можуть запрошувати?', 'Так. Клієнти теж можуть запрошувати — отримують додатковий обсяг роботи; партнери — гроші. Кожен, хто прийшов за посиланням-запрошенням, отримує подарунок: +20% обсягу на весь перший оплачений тариф — місяць чи рік, і набір усіх 12 шаблонів ($67) безкоштовно. Який би тариф і період клієнт не купив, партнер отримує 50% цієї оплати однією виплатою після 14 днів. Один новий клієнт зараховується один раз: перемагає перше посилання.'],
+    ['Клієнти теж можуть запрошувати?', 'Так. Клієнти за друзів отримують обсяг роботи, а кожні 3 друзі, що оплатили, — місяць Pro у подарунок; партнери — гроші. Новачок за будь-яким посиланням отримує +20% обсягу і 12 шаблонів у подарунок. Одна людина зараховується один раз — за першим посиланням.'],
     ['Це щось коштує?', 'Ні. Реєстрація, кабінет, навчання та ШІ-набір — безкоштовні.'],
     ['Я ніколи не працював онлайн. Впораюсь?', 'Так. Чек-лист «З чого почати» і навчання показують кожен крок. Тексти ШІ пише разом з вами.'],
     ['Скільки я зароблю?', 'Залежить лише від реальних продажів. Калькулятор вище показує точний розрахунок. Ми ніколи не обіцяємо дохід.'],
@@ -308,7 +308,7 @@ const ru: Text = {
   },
   eyebrow: 'Партнёрская программа',
   h1: 'Рекомендуйте Vax и получайте 50% первой оплаты, а дальше 30% каждый месяц.',
-  sub: 'Vax — ИИ-продукт, который сам делает работу: сайты, CRM, тексты, планы, расчёты — для бизнеса и для быта. Вы делитесь ссылкой, клиент работает в Vaxo, а вы получаете долю каждой его оплаты, пока он с нами. Плюс 10% с продаж партнёров, которых вы пригласили. Участие бесплатное, обучение и готовые посты — внутри.',
+  sub: 'Делитесь ссылкой на Vax — ИИ, который сам делает работу: сайты, CRM, тексты, расчёты. Вы получаете долю каждой оплаты клиента, пока он с нами. Участие бесплатное.',
   join: 'Стать партнёром →',
   login: 'Войти',
   flow: ['Ваша ссылка', 'Клиент начинает бесплатно', 'Клиент оплачивает', 'Вам выплата'],
@@ -333,7 +333,7 @@ const ru: Text = {
       rate: `${r.agencyOwn}%`,
       price: 'подписка от $19/мес',
       what: 'Vax сам делает работу для любого — от личных дел до компаний: сайты, приложения, ИИ, реклама, контент.',
-      points: [`${r.agencyOwn}% — клиент, которого нашли вы`, `${r.agencyGiven}% — тёплый клиент от нас, которого закрываете вы`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `+${r.viral}% — с оплат друзей, которых пригласили ваши клиенты, навсегда`, `Ваши клиенты получают +20% объёма (на месяц или на первый месяц предоплаченного тарифа) и набор всех 12 шаблонов ($67) бесплатно`],
+      points: [`${r.agencyOwn}% первой оплаты — любой тариф, месяц или год`, `+${r.agencyRenewal}% — каждое продление и ежемесячная оплата, навсегда`, `+${r.viral}% — с оплат друзей, которых пригласили ваши клиенты, навсегда`, 'Ваш клиент получает +20% объёма и 12 шаблонов в подарок'],
       cta: ['Посчитать мой доход →', 'earn'],
     },
     {
@@ -374,7 +374,7 @@ const ru: Text = {
     ['Посты и профиль', 'Продающий профиль, подписи и контент-план на неделю'],
     ['Личные сообщения', 'Найти бизнесы, написать лично, напомнить — без спама'],
     ['Сообщества', 'Помогайте в группах и форумах — и люди придут к вам'],
-    ['Когда клиент ответил', 'Что сказать и как передать клиента нам'],
+    ['Когда человек ответил', 'Что сказать и как помочь ему начать в Vaxo'],
     ['Своя команда', 'Честно приглашайте партнёров и растите свои +10%'],
   ],
   ways: [
@@ -396,7 +396,7 @@ const ru: Text = {
   soonP: 'Регулярные розыгрыши и челленджи с призами для тех, кто публикует контент и помогает клиентам. Присоединяйтесь сейчас, чтобы участвовать с первого.',
   faqH: 'Вопросы',
   faq: [
-    ['Клиенты тоже могут приглашать?', 'Да. Клиенты тоже могут приглашать — получают дополнительный объём работы; партнёры — деньги. Каждый, кто пришёл по ссылке-приглашению, получает подарок: +20% объёма на весь первый оплаченный тариф — месяц или год, и набор всех 12 шаблонов ($67) бесплатно. Какой бы тариф и период клиент ни купил, партнёр получает 50% этой оплаты одной выплатой после 14 дней. Один новый клиент засчитывается один раз: побеждает первая ссылка.'],
+    ['Клиенты тоже могут приглашать?', 'Да. Клиенты за друзей получают объём работы, а каждые 3 оплативших друга — месяц Pro в подарок; партнёры — деньги. Новичок по любой ссылке получает +20% объёма и 12 шаблонов в подарок. Один человек засчитывается один раз — по первой ссылке.'],
     ['Это что-то стоит?', 'Нет. Регистрация, кабинет, обучение и ИИ-набор — бесплатные.'],
     ['Я никогда не работал онлайн. Справлюсь?', 'Да. Чек-лист «С чего начать» и обучение показывают каждый шаг. Тексты ИИ пишет вместе с вами.'],
     ['Сколько я заработаю?', 'Зависит только от реальных продаж. Калькулятор выше показывает точный расчёт. Мы никогда не обещаем доход.'],

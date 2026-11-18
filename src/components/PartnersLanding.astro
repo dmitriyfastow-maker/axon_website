@@ -95,16 +95,6 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
     <section id="earn" class="rv alt">
       <div class="in"><PartnerEarn lang={lang} /></div>
     </section>
-    <section id="money" class="rv">
-      <div class="in">
-        <h2>{M.h}</h2>
-        <p class="msub">{M.p}</p>
-        <div class="mgrid">{M.cards.map(([n, h, d]) => <article class="mc"><b>{n}</b><h3>{h}</h3><p>{d}</p></article>)}</div>
-        <div class="mpay">{M.pay.map(([h, d]) => <div><b>{h}</b><span>{d}</span></div>)}</div>
-        <small class="mnote">{M.note}</small>
-      </div>
-    </section>
-
     <section id="calc" class="rv alt">
       <div class="in">
         <div class="calc" data-calc={JSON.stringify(calc)}>
@@ -152,20 +142,8 @@ const payout = Math.round(CALC.packages[1] * RATES.agencyOwn) / 100;
         <p class="lead">{p.academySub}</p>
         <ol class="modules">
           {p.modules.map(([h, x], i) => (
-            <li class="card"><span class="num">{String(i).padStart(2, '0')}</span><div><h3>{h}</h3><p>{x}</p></div></li>
+            <li class="card" title={x}><span class="num">{String(i + 1).padStart(2, '0')}</span><div><h3>{h}</h3></div></li>
           ))}
-        </ol>
-        <div class="grid two ways">
-          {p.ways.map(([h, x], i) => <div class={`card way${i ? ' max' : ''}`}><h3>{h}</h3><p>{x}</p></div>)}
-        </div>
-      </div>
-    </section>
-
-    <section class="rv alt">
-      <div class="in">
-        <h2>{p.stepsH}</h2>
-        <ol class="steps">
-          {p.steps.map(([h, x]) => <li class="card"><h3>{h}</h3><p>{x}</p></li>)}
         </ol>
       </div>
     </section>

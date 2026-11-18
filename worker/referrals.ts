@@ -207,12 +207,36 @@ export async function referralOnRefund(db: DB, paymentId: number) {
   try { await db.prepare(`UPDATE referrals SET status = 'cancelled', reason = 'payment refunded or cancelled' WHERE payment_id = ? AND status IN ('pending', 'review', 'credited')`).bind(paymentId).run(); } catch {}
 }
 
+/** Decision 67 (18.11): every FRIENDS_PER_MONTH friends whose payment stayed 14 days give the inviter a month of Pro:
+ *  on the Free plan the Pro plan itself for 30 days, on a paid plan the Pro month's volume on top. At most 6 a year.
+ *  Three paid friends bring Vaxo at least 3 × $17.8, the gift costs at most $14.25 of AI — always in the plus. */
+export const FRIEND_REWARD = { friends: 3, days: 30, maxYear: 6 };
+export type ProReward = { until: string; mode: 'plan' | 'volume'; got: string[] };
+export async function proReward(db: DB, clientId: number): Promise<ProReward | null> {
+  const v = (await db.prepare('SELECT value FROM settings WHERE key = ?').bind('reward_pro_' + clientId).first<{ value: string }>().catch(() => null))?.value;
+  if (!v) return null;
+  try { const x = JSON.parse(v) as ProReward; return x && x.until ? x : null; } catch { return null; }
+}
+async function friendMilestone(db: DB, clientId: number, notify?: Notify) {
+  const n = (await db.prepare(`SELECT COUNT(*) AS n FROM referrals WHERE referrer_client_id = ? AND status IN ('credited', 'applied')`).bind(clientId).first<{ n: number }>())?.n ?? 0;
+  if (!n || n % FRIEND_REWARD.friends) return;
+  const cur = await proReward(db, clientId), now = Date.now();
+  const got = (cur?.got || []).filter((d) => Date.parse(d) > now - 365 * 864e5);
+  if (got.length >= FRIEND_REWARD.maxYear) return;
+  const paid = await db.prepare(`SELECT 1 FROM invoices i JOIN leads l ON l.id = i.lead_id WHERE l.client_id = ? AND i.status = 'paid' AND i.amount > 0 AND i.description LIKE 'Vaxo %subscription%' AND i.at > datetime('now', '-40 day') LIMIT 1`).bind(clientId).first();
+  const from = Math.max(now, cur ? Date.parse(cur.until) : 0);
+  const next: ProReward = { until: new Date(from + FRIEND_REWARD.days * 864e5).toISOString(), mode: paid ? 'volume' : 'plan', got: [...got, new Date(now).toISOString()] };
+  await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind('reward_pro_' + clientId, JSON.stringify(next)).run();
+  await notify?.(`🏆 Клиент #${clientId}: ${n} оплативших друзей → месяц Pro в подарок (${next.mode === 'plan' ? 'тариф Pro' : 'объём Pro сверху'}) до ${next.until.slice(0, 10)}.`);
+}
+
 /** Hourly: rewards whose 14-day hold has passed become free months. */
 export async function matureReferrals(db: DB, notify?: Notify) {
   try {
     const due = (await db.prepare(`SELECT id, referrer_client_id, credit_usd FROM referrals WHERE status = 'pending' AND hold_until <= datetime('now')`).all<{ id: number; referrer_client_id: number; credit_usd: number }>()).results;
     for (const r of due) {
       await db.prepare(`UPDATE referrals SET status = 'credited', credited_at = datetime('now') WHERE id = ? AND status = 'pending'`).bind(r.id).run();
+      if (r.referrer_client_id) await friendMilestone(db, r.referrer_client_id, notify).catch(() => {});
     }
     if (due.length) await notify?.(`🎁 Клиентам за друзей: +объём работы на 30 дней (половина тарифа друга) — ${due.length}.`);
   } catch {}
@@ -238,8 +262,19 @@ export async function clientInvite(db: DB, clientId: number) {
     // This client came by an invite: show their gift month (after the first payment).
     const mine = await db.prepare(`SELECT r.friend_months FROM referrals r JOIN leads d ON d.id = r.lead_id WHERE d.client_id = ? AND r.status NOT IN ('rejected') ORDER BY r.at LIMIT 1`).bind(clientId).first<{ friend_months: number }>();
     if (mine) out.friendBonus = { months: mine.friend_months };
+    // Decision 67: the road to the next free Pro month, and the piggy bank (+5% for each friend who keeps paying, up to +50%).
+    const paidN = (await db.prepare(`SELECT COUNT(*) AS n FROM referrals WHERE referrer_client_id = ? AND status IN ('credited', 'applied')`).bind(clientId).first<{ n: number }>())?.n ?? 0;
+    const rw = await proReward(db, clientId);
+    const active = await activeFriends(db, clientId);
+    (out as Record<string, unknown>).reward = { per: FRIEND_REWARD.friends, toNext: FRIEND_REWARD.friends - (paidN % FRIEND_REWARD.friends), paid: paidN, until: rw && Date.parse(rw.until) > Date.now() ? rw.until : null, mode: rw?.mode || null, bank: Math.min(PIGGY.max, active * PIGGY.per), active };
   } catch {}
   return out;
+}
+
+/** The piggy bank (Decision 67): +5% of your plan's volume for each invited friend who paid in the last 35 days, up to +50%. */
+export const PIGGY = { per: 5, max: 50 };
+export async function activeFriends(db: DB, clientId: number): Promise<number> {
+  return (await db.prepare(`SELECT COUNT(DISTINCT r.id) AS n FROM referrals r JOIN invoices i ON i.lead_id = r.lead_id WHERE r.referrer_client_id = ? AND r.status IN ('credited', 'applied') AND i.status = 'paid' AND i.amount > 0 AND i.at > datetime('now', '-35 day')`).bind(clientId).first<{ n: number }>().catch(() => null))?.n ?? 0;
 }
 
 /** HQ: referrals for the economics panel, and the owner's decision on one under review. */

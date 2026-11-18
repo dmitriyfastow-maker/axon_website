@@ -25,12 +25,13 @@ const abs = (p: string) => new URL(p, site).href;
 const ogImage = abs(`/og-${lang}.png`);
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
+  '@type': 'Organization',
   name: 'Vaxo',
   description,
   url: abs(langPath(lang)),
   image: ogImage,
   areaServed: ['Ukraine', 'Europe', 'United States', 'United Kingdom', 'United Arab Emirates', 'Canada'],
+  sameAs: ['https://www.instagram.com/vaxo_group/', 'https://www.tiktok.com/@vaxo_group', 'https://www.youtube.com/@vaxo_group', 'https://www.threads.net/@vaxo_group', 'https://www.linkedin.com/company/145357235/'],
 };
 ---
 

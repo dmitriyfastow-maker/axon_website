@@ -8,6 +8,15 @@ const { t, home = '', lang = 'en' } = Astro.props;
 const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start: 'Start free', shop: 'Templates shop', me: 'Client cabinet', login: 'Partner login', collab: 'Collaborate', about: 'About', gifts: 'Gifts 🎁', terms: 'Terms & refunds', privacy: 'Privacy', refunds: 'Refunds', pterms: 'Partner terms' },
             ru: { examples: 'Примеры работ', tools: 'Бесплатные инструменты', blog: 'Блог', start: 'Начать бесплатно', shop: 'Магазин шаблонов', me: 'Кабинет клиента', login: 'Вход для партнёров', collab: 'Сотрудничество', about: 'О нас', gifts: 'Подарки 🎁', terms: 'Условия и возвраты', privacy: 'Конфиденциальность', refunds: 'Возвраты', pterms: 'Условия партнёрки' },
             ua: { examples: 'Приклади робіт', tools: 'Безкоштовні інструменти', blog: 'Блог', start: 'Почати безкоштовно', shop: 'Магазин шаблонів', me: 'Кабінет клієнта', login: 'Вхід для партнерів', collab: 'Співпраця', about: 'Про нас', gifts: 'Подарунки 🎁', terms: 'Умови та повернення', privacy: 'Конфіденційність', refunds: 'Повернення', pterms: 'Умови партнерки' } }[lang];
+// Our social accounts (18.11): only the ones that are live. Facebook joins after the business portfolio.
+const SOC: [string, string, string][] = [
+  ['Instagram', 'https://www.instagram.com/vaxo_group/', 'M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Zm5 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm5.2-1.6a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z'],
+  ['TikTok', 'https://www.tiktok.com/@vaxo_group', 'M14 3v11.5a3.5 3.5 0 1 1-3-3.46V8.1A6.5 6.5 0 1 0 17 14.5V8.8a7 7 0 0 0 4 1.2V7a4 4 0 0 1-4-4h-3Z'],
+  ['YouTube', 'https://www.youtube.com/@vaxo_group', 'M22 8.2a3 3 0 0 0-2.1-2.1C18 5.6 12 5.6 12 5.6s-6 0-7.9.5A3 3 0 0 0 2 8.2 31 31 0 0 0 1.6 12 31 31 0 0 0 2 15.8a3 3 0 0 0 2.1 2.1c1.9.5 7.9.5 7.9.5s6 0 7.9-.5a3 3 0 0 0 2.1-2.1c.3-1.2.4-2.5.4-3.8s-.1-2.6-.4-3.8ZM10 15V9l5.2 3L10 15Z'],
+  ['Threads', 'https://www.threads.net/@vaxo_group', 'M16.7 11.1c-.1-2.6-1.6-4.1-4.2-4.1-1.6 0-2.9.7-3.6 1.9l1.4.9c.5-.8 1.2-1.1 2.2-1.1 1.3 0 2.1.7 2.3 1.9a10 10 0 0 0-2.2-.1c-2.3.1-3.8 1.4-3.7 3.3.1 1.8 1.7 3 3.7 2.9 2.4-.1 3.6-1.8 3.9-3.9.8.5 1.2 1.1 1.4 1.9.4 1.4-.1 3-1.3 4.2-1.1 1.1-2.4 1.6-4.4 1.6-2.2 0-3.9-.7-5-2.1-1-1.3-1.6-3.2-1.6-5.5s.5-4.2 1.6-5.5c1.1-1.4 2.8-2.1 5-2.1 2.3 0 4 .7 5.1 2.1.6.7 1 1.5 1.3 2.5l1.7-.5c-.3-1.2-.9-2.3-1.6-3.2C17.3 2.9 15.2 2 12.5 2 9.8 2 7.7 2.9 6.3 4.6 5 6.2 4.3 8.5 4.3 11.2s.7 5 2 6.6c1.4 1.7 3.5 2.6 6.2 2.6 2.4 0 4.1-.6 5.5-2 1.8-1.8 2.4-4.2 1.7-6.2-.4-1.4-1.4-2.4-3-3.1Zm-4.2 4.6c-1 0-2-.4-2-1.3 0-.7.5-1.5 2.3-1.6.7 0 1.4 0 2 .2-.2 1.8-1.1 2.7-2.3 2.7Z'],
+  ['LinkedIn', 'https://www.linkedin.com/company/145357235/', 'M4.5 3.5a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM3 9h3v12H3V9Zm6 0h2.9v1.7c.5-.9 1.7-2 3.6-2 3.1 0 4.5 1.9 4.5 5.2V21h-3v-6.4c0-1.7-.6-2.9-2.1-2.9-1.6 0-2.4 1.2-2.4 2.9V21H9V9Z'],
+  ['Discord', 'https://discord.com/invite/aUgWVKhzSM', 'M19.3 5.3A16.6 16.6 0 0 0 15.2 4l-.5 1a15.4 15.4 0 0 0-5.4 0l-.5-1a16.6 16.6 0 0 0-4.1 1.3C2 9.2 1.3 13 1.6 16.7a16.7 16.7 0 0 0 5 2.6l1.1-1.7c-.6-.2-1.2-.5-1.7-.9l.4-.3a11.9 11.9 0 0 0 11.2 0l.4.3c-.5.4-1.1.7-1.7.9l1.1 1.7a16.6 16.6 0 0 0 5-2.6c.4-4.3-.7-8-3.1-11.4ZM8.7 14.5c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z'],
+];
 ---
 
 <footer class="footer">
@@ -42,6 +51,11 @@ const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start
         <a href={navHref('/refunds/', lang)}>{F.refunds}</a>
         <a href={navHref('/partner-terms/', lang)}>{F.pterms}</a>
       </nav>
+    </div>
+    <div class="soc">
+      <b>{{ en: 'Follow Vaxo', ru: 'Мы в соцсетях', ua: 'Ми в соцмережах' }[lang]}</b>
+      <p>{{ en: 'Cartoons with Vax and Roxy, real results and new features — every week.', ru: 'Мультики про Vax и Roxy, реальные результаты и новые возможности — каждую неделю.', ua: 'Мультики про Vax і Roxy, реальні результати й нові можливості — щотижня.' }[lang]}</p>
+      <div class="sl">{SOC.map(([n, href, d]) => <a href={href} target="_blank" rel="noopener me" aria-label={n} title={n}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d={d} fill="currentColor" fill-rule="evenodd" /></svg><span>{n}</span></a>)}</div>
     </div>
     <nav class="legal-links" aria-label="Niches">
       {NICHES.map((n) => <a href={navHref(`/for/${n.slug}/`, lang)}>{n.t[lang].name}</a>)}
@@ -95,4 +109,11 @@ const F = { en: { examples: 'Examples', tools: 'Free tools', blog: 'Blog', start
   .cols nav { display: grid; gap: 9px; align-content: start; }
   .cols nav b { color: var(--ink); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 2px; }
   @media (max-width: 760px) { .cols { grid-template-columns: 1fr 1fr; } }
+  .soc { flex-basis: 100%; display: grid; gap: 8px; padding: 18px 0 4px; border-top: 1px solid var(--line); }
+  .soc b { font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
+  .soc p { margin: 0; color: var(--mut); font-size: 14px; }
+  .soc .sl { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .soc .sl a { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 14px 0 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 600; transition: border-color .2s, transform .2s, background .2s; }
+  .soc .sl a:hover { border-color: var(--accText); transform: translateY(-1px); background: color-mix(in srgb, var(--accText) 8%, transparent); }
+  .soc .sl svg { color: var(--accText); flex: none; }
 </style>

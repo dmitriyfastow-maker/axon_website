@@ -13,6 +13,7 @@ const app = (q: string) => `${P('/app/')}#q=${encodeURIComponent(q)}`;
 
 const TX = {
   ru: {
+    why: { h: 'Что вы получаете на самом деле', cards: [['🌍', 'Уровень мировых компаний', 'Под каждую задачу Vax думает как лучший эксперт именно вашей ниши: проверенные методы, точные цифры, сильные тексты, которые продают.'], ['✨', 'Решение только под вас', 'Никаких шаблонов на всех: дизайн, функции и тексты собираются под вашу цель, ваших клиентов и ваш стиль.'], ['🤝', 'Партнёр, а не исполнитель', 'Vax предложит лучший путь, честно скажет о рисках и альтернативах и объяснит почему. Решаете вы — а сделает он.'], ['🧩', 'Целые экосистемы', 'Сайт, запись, CRM, ИИ-консультант, реклама, приложение, партнёрка — связаны в одну систему и работают вместе на результат.']], line: 'Любая ваша идея — от личного дела до компании — превращается в работающую систему. Если нужного ещё нет — Vax это создаст.' },
     tag: 'Что вы получите', h: 'Одно слово — и у вас работает всё', p: 'Напишите, чем занимаетесь. Vax сам продумает, что нужно, чтобы стать первым в нише, и за минуту соберёт всё вместе: сайт, запись, CRM для вашей команды, ИИ-консультанта и партнёров.',
     words: ['Барбершоп', 'Стоматология', 'Кофейня', 'Фитнес-студия', 'Онлайн-школа'],
     parts: ['Сайт с фото', 'Онлайн-запись', 'Заявки в CRM', 'ИИ-консультант', 'Партнёры'],
@@ -45,6 +46,7 @@ const TX = {
     auto: { flow: [["10:02", "Клиент оставил заявку на сайте"], ["10:02", "Заявка уже в CRM, менеджеру — задача"], ["10:02", "Вам сообщение в Telegram"], ["за 2 часа", "Клиенту напоминание о визите"], ["через день", "Просьба оставить отзыв"]], note: "Всё это происходит само. Вы только видите результат." },
   },
   ua: {
+    why: { h: 'Що ви отримуєте насправді', cards: [['🌍', 'Рівень світових компаній', 'Під кожне завдання Vax думає як найкращий експерт саме вашої ніші: перевірені методи, точні цифри, сильні тексти, що продають.'], ['✨', 'Рішення лише під вас', 'Жодних шаблонів на всіх: дизайн, функції й тексти збираються під вашу мету, ваших клієнтів і ваш стиль.'], ['🤝', 'Партнер, а не виконавець', 'Vax запропонує найкращий шлях, чесно скаже про ризики й альтернативи та пояснить чому. Вирішуєте ви — а зробить він.'], ['🧩', 'Цілі екосистеми', 'Сайт, запис, CRM, ШІ-консультант, реклама, застосунок, партнерка — пов’язані в одну систему й працюють разом на результат.']], line: 'Будь-яка ваша ідея — від особистої справи до компанії — стає робочою системою. Якщо потрібного ще немає — Vax це створить.' },
     tag: 'Що ви отримаєте', h: 'Одне слово — і у вас працює все', p: 'Напишіть, чим займаєтеся. Vax сам продумає, що потрібно, щоб стати першим у ніші, і за хвилину збере все разом: сайт, запис, CRM для вашої команди, ШІ-консультанта й партнерів.',
     words: ['Барбершоп', 'Стоматологія', 'Кавʼярня', 'Фітнес-студія', 'Онлайн-школа'],
     parts: ['Сайт із фото', 'Онлайн-запис', 'Заявки в CRM', 'ШІ-консультант', 'Партнери'],
@@ -77,6 +79,7 @@ const TX = {
     auto: { flow: [["10:02", "Клієнт залишив заявку на сайті"], ["10:02", "Заявка вже в CRM, менеджеру — завдання"], ["10:02", "Вам повідомлення в Telegram"], ["за 2 години", "Клієнту нагадування про візит"], ["через день", "Прохання залишити відгук"]], note: "Усе це відбувається само. Ви лише бачите результат." },
   },
   en: {
+    why: { h: 'What you really get', cards: [['🌍', 'World-class level', 'For every task Vax thinks like the best expert in your exact niche: proven methods, precise numbers, strong copy that sells.'], ['✨', 'Built only for you', 'No one-size-fits-all templates: design, features and copy are shaped around your goal, your customers and your style.'], ['🤝', 'A partner, not a contractor', 'Vax suggests the best route, is honest about risks and alternatives and explains why. You decide — Vax does it.'], ['🧩', 'Whole ecosystems', 'Website, booking, CRM, AI assistant, ads, app, referral program — linked into one system that works together for the result.']], line: "Any idea — from a personal task to a company — becomes a working system. If what you need doesn't exist yet, Vax builds it." },
     tag: 'What you get', h: 'One word, and everything works for you', p: 'Say what you do. Vax works out what it takes to lead your niche and puts it all together in a minute: the site, booking, a CRM for your team, an AI consultant and partners.',
     words: ['Barbershop', 'Dental clinic', 'Coffee shop', 'Fitness studio', 'Online school'],
     parts: ['Site with photos', 'Online booking', 'Requests in CRM', 'AI consultant', 'Partners'],
@@ -247,6 +250,8 @@ const ICO: Record<string, string> = {
               </a>
             ))}
             <div class="sdots" data-sdots></div>
+            <button type="button" class="nav pv" data-pv aria-label="‹">‹</button><button type="button" class="nav nx" data-nx aria-label="›">›</button>
+            <span class="cnt" data-cnt></span>
             </div>
             <div class="foot">
               <div><b>{h}</b><p>{d}</p></div>
@@ -257,6 +262,11 @@ const ICO: Record<string, string> = {
       </div>
     </div>
     <p class="only">ⓘ {T.only}</p>
+    <div class="why">
+      <h3>{T.why.h}</h3>
+      <div class="whyg">{T.why.cards.map(([i, h, d]) => <article><span>{i}</span><b>{h}</b><p>{d}</p></article>)}</div>
+      <p class="whyl">{T.why.line}</p>
+    </div>
     <div class="end"><a class="big" href={P('/app/')}>{T.go} →</a><a class="all" href={P('/examples/')}>{T.all}</a></div>
   </div>
 </section>
@@ -288,24 +298,50 @@ const ICO: Record<string, string> = {
         d.i = (n + sl.length) % sl.length; d.t = performance.now();
         sl.forEach((x, j) => x.classList.toggle('on', j === d.i));
         [...dots.children].forEach((x, j) => x.classList.toggle('on', j === d.i));
+        const c = p.querySelector<HTMLElement>('[data-cnt]'); if (c) c.textContent = sl.length > 1 ? `${d.i + 1} / ${sl.length}` : '';
         const slug = sl[d.i].dataset.slug;
         if (lv && slug) lv.href = `${lv.dataset.base}?cat=${lv.dataset.k}&ex=${slug}`;
       } };
-      if (sl.length > 1) sl.forEach((_, j) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', String(j + 1)); b.onclick = () => { auto = false; d.go(j); }; dots.append(b); });
+      if (sl.length > 1) sl.forEach((_, j) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', String(j + 1)); b.onclick = () => { stop(); d.go(j); }; dots.append(b); });
       d.go(0);
       return d;
     });
+    // Manual control (18.11): arrows, swipe and dots stop the auto-play — the visitor is in charge from then on.
+    let manual = false;
+    function stop() { auto = false; manual = true; }
+    const step = (dir: number) => {
+      stop();
+      const d = decks[at], n = d.i + dir;
+      if (n >= 0 && n < d.sl.length) return d.go(n);
+      const t = (at + dir + tabs.length) % tabs.length; show(t);
+      if (dir < 0) decks[t].go(decks[t].sl.length - 1);
+    };
+    panes.forEach((p) => {
+      p.querySelector<HTMLElement>('[data-pv]')?.addEventListener('click', () => step(-1));
+      p.querySelector<HTMLElement>('[data-nx]')?.addEventListener('click', () => step(1));
+      const vis = p.querySelector<HTMLElement>('[data-vis]'); if (!vis) return;
+      let x0 = 0, y0 = 0, moved = false;
+      vis.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; moved = false; }, { passive: true });
+      vis.addEventListener('touchend', (e) => {
+        const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) { moved = true; step(dx < 0 ? 1 : -1); }
+      }, { passive: true });
+      vis.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+    });
+    const strip = root.querySelector<HTMLElement>('.tabs')!;
     const durOf = (i: number) => Math.max(6500, decks[i].sl.length * SLIDE);
     const show = (i: number) => {
       at = i; t0 = performance.now();
       tabs.forEach((b, j) => { b.classList.toggle('on', j === i); b.setAttribute('aria-selected', String(j === i)); b.style.setProperty('--p', '0'); });
       panes.forEach((p, j) => { p.classList.toggle('on', j === i); if (j === i) { p.classList.remove('run'); void p.offsetWidth; p.classList.add('run'); } });
       decks[i].go(0);
+      if (strip.scrollWidth > strip.clientWidth + 4) { const b = tabs[i]; strip.scrollTo({ left: b.offsetLeft - (strip.clientWidth - b.clientWidth) / 2, behavior: calm ? 'auto' : 'smooth' }); }
       panes[i].querySelectorAll<HTMLElement>('[data-count]').forEach((e) => { const end = +e.dataset.count!; let n = 0; const st = setInterval(() => { n = Math.min(end, n + Math.ceil(end / 24)); e.textContent = String(n); if (n >= end) clearInterval(st); }, 40); });
     };
-    tabs.forEach((b, i) => (b.onclick = () => { auto = false; show(i); }));
-    root.querySelector('.board')!.addEventListener('mouseenter', () => (hold = true));
-    root.querySelector('.board')!.addEventListener('mouseleave', () => { hold = false; t0 = performance.now(); });
+    tabs.forEach((b, i) => (b.onclick = () => { stop(); show(i); }));
+    // pause only under a real mouse: on phones a tap fired mouseenter and froze the show for good
+    root.querySelector('.board')!.addEventListener('pointerenter', (e) => { if ((e as PointerEvent).pointerType === 'mouse') hold = true; });
+    root.querySelector('.board')!.addEventListener('pointerleave', () => { hold = false; t0 = performance.now(); });
     // The site tab flips through real works.
     const figs = [...root.querySelectorAll<HTMLElement>('.gal figure')]; let fi = 0;
     setInterval(() => { if (!panes[0].classList.contains('on') || calm) return; figs[fi].classList.remove('on'); fi = (fi + 1) % figs.length; figs[fi].classList.add('on'); }, 1600);
@@ -317,7 +353,7 @@ const ICO: Record<string, string> = {
       }
       // the slides of the open tab move on by themselves (also after the visitor picked a tab), and pause on hover
       const d = decks[at];
-      if (!calm && !hold && d.sl.length > 1 && now - d.t > SLIDE) d.go(d.i + 1);
+      if (!calm && !hold && !manual && d.sl.length > 1 && now - d.t > SLIDE) d.go(d.i + 1);
       requestAnimationFrame(tick);
     };
     show(0); requestAnimationFrame(tick);
@@ -521,4 +557,18 @@ const ICO: Record<string, string> = {
   .ag .log b { color: var(--accText); font-size: 13.5px; margin-top: 2px; }
   @media (max-width: 900px) { .ag .log span:nth-child(n+3) { display: none; } .store .scr img:nth-child(3) { display: none; } .store .scr { grid-template-columns: 1fr 1fr; } }
   @media (prefers-reduced-motion: reduce) { .ag .log span { opacity: 1; animation: none; } .ag .dot { display: none; } }
+  /* arrows + counter (18.11): big, obvious targets instead of tiny dots */
+  .vis .nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 4; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line2); background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(6px); color: var(--ink); font: 700 24px/1 system-ui; display: grid; place-items: center; cursor: pointer; opacity: .9; transition: opacity .2s, transform .2s; }
+  .vis .nav:hover { opacity: 1; transform: translateY(-50%) scale(1.06); }
+  .vis .pv { left: 8px; } .vis .nx { right: 8px; }
+  .vis .cnt { position: absolute; top: 10px; right: 12px; z-index: 4; font: 600 12px/1 system-ui; color: var(--mut); background: color-mix(in srgb, var(--bg) 80%, transparent); padding: 5px 9px; border-radius: 99px; }
+  .vis .cnt:empty { display: none; }
+  .vis { touch-action: pan-y; }
+  @media (max-width: 900px) { .vis .nav { width: 38px; height: 38px; font-size: 20px; } }
+  .why { margin-top: 30px; display: grid; gap: 14px; }
+  .why h3 { margin: 0; font-size: clamp(22px, 3vw, 30px); }
+  .whyg { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .whyg article { background: var(--surf); border: 1px solid var(--line2); border-radius: 18px; padding: 18px; display: grid; gap: 6px; align-content: start; }
+  .whyg span { font-size: 26px; } .whyg b { font-size: 17px; } .whyg p { margin: 0; color: var(--mut); font-size: 15px; line-height: 1.5; }
+  .whyl { margin: 0; font-weight: 600; font-size: 16.5px; }
 </style>

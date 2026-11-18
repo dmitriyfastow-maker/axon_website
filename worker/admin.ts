@@ -204,6 +204,15 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
       const d = r ? await r.json().catch(() => null) as any : null;
       return json(200, { ok: !!r?.ok, status: r?.status ?? 0, text: (d?.content || []).filter((b: any) => b.type === 'text').map((b: any) => b.text).join('').slice(0, 300), usage: d?.usage ?? null, error: d?.error?.message ?? null });
     }
+    if (new URL(request.url).searchParams.get('test') === 'fetch' && token) {
+      // 18.11: the link-reading tool, the same settings the workspace sends.
+      const v = (await db.prepare("SELECT value FROM settings WHERE key = 'anthropic_key'").first<{ value: string }>().catch(() => null))?.value;
+      const key = v ? await openSealed(token, v).catch(() => null) : null;
+      if (!key) return json(200, { ok: false, error: 'no-key' });
+      const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' }, body: JSON.stringify({ model: 'claude-sonnet-5-5', max_tokens: 300, tools: [{ type: 'web_fetch_20260209', name: 'web_fetch', max_uses: 3, max_content_tokens: 30000 }], messages: [{ role: 'user', content: 'Открой https://vaxogroup.com/ и одной строкой скажи, что написано в главном заголовке.' }] }) }).catch(() => null);
+      const d = r ? await r.json().catch(() => null) as any : null;
+      return json(200, { ok: !!r?.ok, status: r?.status ?? 0, text: (d?.content || []).filter((b: any) => b.type === 'text').map((b: any) => b.text).join('').slice(0, 300), usage: d?.usage ?? null, error: d?.error?.message ?? null });
+    }
     if (new URL(request.url).searchParams.get('test') === '1' && token) {
       const v = (await db.prepare("SELECT value FROM settings WHERE key = 'anthropic_key'").first<{ value: string }>().catch(() => null))?.value;
       const key = v ? await openSealed(token, v).catch(() => null) : null;

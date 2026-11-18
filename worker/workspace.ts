@@ -14,6 +14,7 @@ import { addRef, markRefPaid, cleanSite, deployModule, liveSite, moduleAccess, m
 import { handleDomain, type Cf } from './domains.js';
 import { ensureReviews, listReviews, setReview } from './reviews.js';
 import { agentStep } from './agent.js';
+import { getVersion, keepVersion, listVersions } from './versions.js';
 import type { DB } from './partner.js';
 import { claudeReply, routeFor, taskLevel } from './router.js';
 import { sanitizeTool, type ToolSpec } from './toolcore.js';
@@ -80,6 +81,7 @@ Do the work now. You lay the task out in steps and give the solution at once. Ne
 A PARTNER, NOT A FORM (Dmitry 17.11, replaces the old ask-first rule): you work like a world-class partner who is always next to the person. Build first, never answer a build request with only questions: make the best version for their niche with smart guesses, then say in 1–3 lines what is ready and where (which Canvas tab), and at most 2 short questions that would make it more theirs.
 WORLD-CLASS IN EVERY NICHE (Dmitry 18.11): for each task, first think how the best expert in the world in exactly that niche would do it (a top agency for a brand, a senior lawyer for a contract, a Michelin-level chef for a menu, a top growth marketer for a launch, a principal engineer for an app) and deliver at that level: exact numbers, real names of methods and tools, concrete steps, ready-to-use texts, the details amateurs miss. Add one or two smart moves the person would not think of themselves, in one line each. Never generic advice, never "it depends" without a decision, never filler. Quality over length.
 OFFER THE BETTER WHOLE, NEVER IMPOSE IT: people often do not know what is possible. When the request is one piece of a bigger whole (a site for a barbershop, only a form, only a post), deliver the piece, then in 1–3 plain lines say what the complete system would be for them (for a business: online booking, CRM for requests, an AI consultant answering 24/7, a partner/referral programme, online payments, review requests, a content plan) and WHY it brings them more clients or saves time, then end with [[CHOICE:<build the whole system>|<only what I asked>]] in their language. Their choice is final: if they want only their piece, do exactly that, and keep suggesting the next best step later in one line, never pushing. If they pick the whole system or say they trust you to do it all («доверяю», «делай как лучше», «сам решай»), add [[TRUST:on]] at the end and build everything at once.
+HONEST PARTNER ON IDEAS: when the person proposes an idea or a choice, first weigh it in 2–4 plain lines — what is strong, the real risk, and a better alternative if one exists, with why (numbers if you know them). Then do what THEY decide; if they just say «do it», do it without arguing again.
 AUTONOMY: if the notes say AUTONOMY ON, the person fully trusts you: do not ask permission for improvements inside their project, build, automate and scale on your own (still never spend their money, send messages to their customers or publish anything public without their yes), and report in a few lines what you did and why.
 EVERY SITE IS ITS OWN: never reuse the look or text of an earlier site. Pick the style, the accent colour ("accent" as #hex that fits this brand, not the style's default) and the layout for this business and what the person said they like; if they named an example or a mood, follow it. Two businesses of the same niche must not get the same site. If someone asks for a human, answer first, then say a person can be reached at hello@vaxogroup.com. Texts the user will send to their own customers (review replies, posts, messages, letters) speak in the user's name: never put Vaxo's name, email or site into them; where a contact belongs, use the user's own from memory or a short placeholder in square brackets, written in the same language as that text (in English: [your phone]).
 Warm, plain, no hype, at most one light joke. No hard selling: never name a plan or a price unless the person asked about plans or prices; offering the better, complete solution in 1–3 lines is welcome (see OFFER THE BETTER WHOLE). Use what the notes below already say (a budget, a city) instead of asking for it again. Facts only: never invent numbers, clients or guarantees, and say so when something is unknown.
@@ -248,7 +250,7 @@ ${said.map((s) => '- ' + s.slice(0, 400)).join('\n')}`, 300);
 }
 
 async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, unknown>, wait: (p: Promise<unknown>) => void) {
-  const q = cut(b.q, 4000), lang = cut(b.lang, 2) in LANGS ? cut(b.lang, 2) : 'en', mode = b.mode === 'deep' ? 'deep' : 'short';
+  const q = cut(b.q, 12000), lang = cut(b.lang, 2) in LANGS ? cut(b.lang, 2) : 'en', mode = b.mode === 'deep' ? 'deep' : 'short';
   if (!q) return out(400, { ok: false });
   const said = ownWords(q);
   const me = await sessionClient(db, request);
@@ -349,8 +351,10 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
       state += `\nREVIEWS of this business (${rv.length ? rv.map((r) => `#${r.id} ${r.name} ${r.stars}★ ${r.status === 'ok' ? 'shown' : r.status === 'hidden' ? 'hidden' : 'new, waiting'}: «${r.text.replace(/\s+/g, ' ').slice(0, 80)}»`).join('; ') : 'none yet'}). Public page: ${ms.site?.url ? ms.site.url + '/reviews' : 'after the site is made'}. When the owner asks to show (approve), hide or delete reviews, add one marker per review at the end: [[REVIEW:<id> show]], [[REVIEW:<id> hide]] or [[REVIEW:<id> delete]]; for all new ones [[REVIEW:new show]]. Delete only when they clearly say delete. Then say what changed, in one line.`;
     }
   }
-  const trust = me ? (await db.prepare('SELECT value FROM settings WHERE key = ?').bind('ws_trust_' + me.id).first<{ value: string }>().catch(() => null))?.value === '1' : false;
-  const sys = (trust ? 'AUTONOMY ON.\n' : '') + system(talk || lang, memory, mode) + state + (talk ? `\nThe person writes in ${LANGS[talk]}: answer in ${LANGS[talk]}, even if earlier replies were in another language.` : '') + (WANTS_TOOL.test(said) ? '\nA ready tool appears on the Canvas to the right of the chat (never say "below"). Do not ask for numbers: answer in 1–3 sentences and say they can enter their own values on the Canvas. Never write markers like [canvas: ...].' : '');
+  // How much Vax does on its own (18.11): '1' full autopilot, 'manual' only on command, anything else — asks about the important.
+  const trustV = me ? (await db.prepare('SELECT value FROM settings WHERE key = ?').bind('ws_trust_' + me.id).first<{ value: string }>().catch(() => null))?.value : null;
+  const trust = trustV === '1';
+  const sys = (trust ? 'AUTONOMY ON.\n' : trustV === 'manual' ? 'AUTONOMY MANUAL: the person wants control — do exactly what they ask; give your ideas as short options (gain, risk, effort) and act on one only after their yes.\n' : '') + system(talk || lang, memory, mode) + state + (talk ? `\nThe person writes in ${LANGS[talk]}: answer in ${LANGS[talk]}, even if earlier replies were in another language.` : '') + (WANTS_TOOL.test(said) ? '\nA ready tool appears on the Canvas to the right of the chat (never say "below"). Do not ask for numbers: answer in 1–3 sentences and say they can enter their own values on the Canvas. Never write markers like [canvas: ...].' : '');
   const turns: { role: string; content: string }[] = [];
   // Attached files reach the model as their name plus what is on an image or in a document; recent ones in full.
   const all = [...history, { role: 'user' as const, content: forModel(q) }];
@@ -366,6 +370,12 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   // reminder rides on this one message, where small models follow it.
   const last = turns[turns.length - 1];
   if (last?.role === 'user' && (TRIP.test(said) || ACT_FOR_ME.test(said))) last.content += `\n\n(${PLAN_HINT()})`;
+  // «Where is it?» (18.11): the person's own map — projects, recent chats and where settings live — rides on this one message.
+  if (last?.role === 'user' && me && /^(Помоги найти в Vaxo|Допоможи знайти у Vaxo|Help me find in Vaxo)/.test(q)) {
+    const pr = await db.prepare('SELECT id, name FROM ws_projects WHERE client_id = ? ORDER BY id DESC LIMIT 30').bind(me.id).all<{ id: number; name: string }>().catch(() => ({ results: [] as { id: number; name: string }[] }));
+    const ch = await db.prepare('SELECT id, title FROM ws_chats WHERE client_id = ? ORDER BY id DESC LIMIT 60').bind(me.id).all<{ id: number; title: string }>().catch(() => ({ results: [] as { id: number; title: string }[] }));
+    last.content += `\n\n(MAP OF THIS PERSON'S VAXO — answer only from it, name the exact place and the clicks; if it is not there, say so and offer to make it.\nProjects: ${(pr.results || []).map((x) => x.name).join('; ') || 'none'}\nRecent chats: ${(ch.results || []).map((x) => x.title).join('; ') || 'none'}\nSettings: plan, billing, bonuses and invite link → avatar at the bottom left → «Тариф»; what Vax remembers → «Память»; email, language, sign out → «Аккаунт»; a project's site, pages, partners, reviews → open the project in the left list → its Canvas; import from another AI → 📎 → «Перенести из другого ИИ»; search → «Поиск» or ⌘K.)`;
+  }
   // A paying client: Claude from the pool. Everyone else, or if Claude fails: free models.
   let raw: string | null = null, paid = false;
   if (me && !baseOnly) {
@@ -374,6 +384,7 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     const want = { leadId: leadIds[0] ?? null, clientId: me.id, plan: al?.plan ?? 'start', trial: !!al?.trial, level: taskLevel(q, mode === 'deep', /📎/u.test(q)), ipKey: await ipKey(ip) };
     const route = await routeFor(db, { ...want, choice: cut(b.model, 20) || 'auto' }).catch(() => null);
     if (route && (FRESH.test(said) || RESEARCH.test(said))) (route as { search?: boolean }).search = true;
+    if (route && /https?:\/\/[^\s]{4,}/i.test(q)) (route as { fetch?: boolean }).fetch = true;
     // Research mode (18.11): several searches, sources compared, a report with links on the Canvas.
     if (route && RESEARCH.test(said)) { (route as { deep?: boolean }).deep = true; const lt = turns[turns.length - 1]; if (lt?.role === 'user') lt.content += '\n\n(RESEARCH MODE: search several independent sources, compare them, give exact numbers and dates, and put a full report between [[DOC: title]] and [[/DOC]] with a «Sources» section listing each source name and link. In the chat give the 3 key findings.)'; }
     if (route) raw = await claudeReply(db, route, sys, turns, (c) => { usd = c; });
@@ -566,7 +577,9 @@ async function progress(db: DB, clientId: number, k: { objects: number; memory: 
     partner: (k.modules?.partner?.refs?.length ?? k.modules?.partner?.links?.length ?? 0) > 0, team: team > 0,
   };
   const pages = Math.min(k.modules?.pages?.length ?? 0, 10), requests = Math.min(k.modules?.requests ?? 0, 50);
-  const xp = XP_STEPS.reduce((s, x) => s + (done[x.key] ? x.xp : 0), 0) + Math.min(weeks, 52) * 40 + pages * 40 + requests * 15;
+  // Decision 67: a friend who paid counts most — 200 XP each (results stay small: they cost us, friends bring revenue).
+  const friendsPaid = (await db.prepare(`SELECT COUNT(*) AS n FROM referrals WHERE referrer_client_id = ? AND status IN ('credited', 'applied')`).bind(clientId).first<{ n: number }>().catch(() => null))?.n ?? 0;
+  const xp = XP_STEPS.reduce((s, x) => s + (done[x.key] ? x.xp : 0), 0) + Math.min(weeks, 52) * 40 + pages * 40 + requests * 15 + Math.min(friendsPaid, 50) * 200;
   const lv = levelOf(xp);
   await db.prepare("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind('game_lv_' + clientId, String(lv.level)).run().catch(() => {});
   const days = ((await db.prepare(`SELECT DISTINCT date(m.at) AS d FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user' AND m.at >= date('now', '-120 day')`).bind(clientId).all<{ d: string }>().catch(() => ({ results: [] as { d: string }[] }))).results || []).map((r) => r.d);
@@ -799,8 +812,39 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
     }
     if (path === 'doc' && m === 'POST') {
       const id = Number(b.id), doc = { title: cut(b.title, 120), body: cut(b.body, 20000) };
+      const was = await db.prepare('SELECT doc FROM ws_msgs WHERE id = ? AND chat_id IN (SELECT id FROM ws_chats WHERE client_id = ?)').bind(id, me.id).first<{ doc: string | null }>().catch(() => null);
+      if (was?.doc && was.doc !== JSON.stringify(doc)) await keepVersion(db, me.id, 'doc', String(id), was.doc).catch(() => {});
       await db.prepare('UPDATE ws_msgs SET doc = ? WHERE id = ? AND chat_id IN (SELECT id FROM ws_chats WHERE client_id = ?)').bind(JSON.stringify(doc), id, me.id).run();
       return out(200, { ok: true });
+    }
+    // Undo (18.11): versions of a site or a document, and bringing one back (the current one is kept first, so it is undoable too).
+    if (path === 'versions' && m === 'GET') {
+      const kind = url.searchParams.get('kind') === 'site' ? 'site' : 'doc', ref = cut(url.searchParams.get('ref'), 80);
+      return out(200, { ok: true, list: ref ? await listVersions(db, me.id, kind, ref) : [] });
+    }
+    if (path === 'versions/restore' && m === 'POST') {
+      const v = await getVersion(db, me.id, Number(b.id));
+      if (!v) return out(404, { ok: false });
+      if (v.kind === 'doc') {
+        const cur = await db.prepare('SELECT doc FROM ws_msgs WHERE id = ? AND chat_id IN (SELECT id FROM ws_chats WHERE client_id = ?)').bind(Number(v.ref), me.id).first<{ doc: string | null }>();
+        if (!cur) return out(404, { ok: false });
+        await keepVersion(db, me.id, 'doc', v.ref, cur.doc);
+        await db.prepare('UPDATE ws_msgs SET doc = ? WHERE id = ?').bind(v.data, Number(v.ref)).run();
+        return out(200, { ok: true, kind: 'doc', data: v.data });
+      }
+      let x: Record<string, unknown> = {}; try { x = JSON.parse(v.data); } catch { return out(400, { ok: false }); }
+      if (!(await updateLiveSite(db, me.id, v.ref, x, String(x.lang || 'en')))) return out(404, { ok: false });
+      return out(200, { ok: true, kind: 'site', data: v.data });
+    }
+    // The autopilot level (18.11): full / ask about the important / only on command. One switch, changeable any time.
+    if (path === 'trust') {
+      const k = 'ws_trust_' + me.id;
+      if (m === 'POST') {
+        const v = b.mode === 'full' ? '1' : b.mode === 'manual' ? 'manual' : 'ask';
+        await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(k, v).run();
+      }
+      const v = (await db.prepare('SELECT value FROM settings WHERE key = ?').bind(k).first<{ value: string }>().catch(() => null))?.value;
+      return out(200, { ok: true, mode: v === '1' ? 'full' : v === 'manual' ? 'manual' : 'ask' });
     }
     if (path === 'module' && m === 'POST') {
       if (!me.email_verified_at) return out(403, { ok: false, error: 'verify' });

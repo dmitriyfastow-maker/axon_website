@@ -134,7 +134,15 @@ export async function claudeReply(db: DB, route: Route, system: string, messages
       ...(haiku ? {} : { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' }),
       output_config: { effort: tier.effort },
       // Web search (17.11): only when the message needs fresh facts and the model is not Haiku (≈$0.10 a search).
-      ...((route as { search?: boolean }).search && !haiku ? { tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: (route as { deep?: boolean }).deep ? 6 : 2 }] } : {}),
+      // Reading links (18.11): when the person gives an address (their site, a competitor's page, an article, a document),
+      // Claude opens it itself instead of guessing. Tokens only, no per-use fee.
+      ...(() => {
+        const R = route as { search?: boolean; deep?: boolean; fetch?: boolean };
+        const tools: Record<string, unknown>[] = [];
+        if (R.search && !haiku) tools.push({ type: 'web_search_20260209', name: 'web_search', max_uses: R.deep ? 6 : 2 });
+        if (R.fetch && !haiku) tools.push({ type: 'web_fetch_20260209', name: 'web_fetch', max_uses: R.deep ? 5 : 3, max_content_tokens: 30000 });
+        return tools.length ? { tools } : {};
+      })(),
       system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }],
       messages: messages.map((m) => ({ role: m.role === 'assistant' ? 'assistant' as const : 'user' as const, content: m.content })),
     } as never) as unknown as { stop_reason: string; usage: Usage; content: { type: string; text?: string }[] };

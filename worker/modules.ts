@@ -3,6 +3,7 @@
 // partner, whose visits and requests count themselves through the source ref_<code>. Site: the same page as a one-page site.
 // The site is free for everyone and carries a "Made on Vaxo" line until the first payment; the rest is Care and above.
 // A page holds only escaped text and one fixed form, so nobody can publish scripts or their own forms on our domain.
+import { keepVersion } from './versions.js';
 import { sitePay } from './sitepay.js';
 import { askAi, json as parse } from './autopilot.js';
 import { buyerRef } from './buyers.js';
@@ -226,6 +227,10 @@ export async function liveSite(db: DB, clientId: number, x: Record<string, unkno
 /** Saves edits to one of the person's live pages, main or extra. False if the address is not theirs. */
 export async function updateLiveSite(db: DB, clientId: number, slug: string, x: Record<string, unknown>, lang: string): Promise<boolean> {
   const site = JSON.stringify(cleanSite(x, lang));
+  // Undo (18.11): the page as it was before this change.
+  const was = (await db.prepare('SELECT p.data FROM biz_pages p JOIN biz b ON b.id = p.biz_id WHERE p.slug = ? AND b.owner_id = ?').bind(slug, clientId).first<{ data: string }>().catch(() => null))
+    ?? (await db.prepare('SELECT data FROM ws_sites WHERE slug = ? AND client_id = ?').bind(slug, clientId).first<{ data: string }>().catch(() => null));
+  if (was?.data && was.data !== site) await keepVersion(db, clientId, 'site', slug, was.data).catch(() => {});
   const main = await db.prepare(`UPDATE biz_pages SET data = ?, kind = 'site' WHERE slug = ? AND biz_id IN (SELECT id FROM biz WHERE owner_id = ?)`).bind(site, slug, clientId).run();
   if ((main as { meta?: { changes?: number } })?.meta?.changes) return true;
   const extra = await db.prepare('UPDATE ws_sites SET data = ? WHERE slug = ? AND client_id = ?').bind(site, slug, clientId).run();
@@ -249,6 +254,8 @@ export async function saveSite(db: DB, clientId: number, b: Record<string, unkno
   const biz = pk ? await db.prepare('SELECT b.id, p.data FROM biz b JOIN biz_pages p ON p.biz_id = b.id WHERE b.id = ?').bind(pk.id).first<{ id: number; data: string }>() : null;
   if (!biz) return;
   const old = JSON.parse(biz.data) as Site;
+  const slugRow = await db.prepare('SELECT slug FROM biz_pages WHERE biz_id = ?').bind(biz.id).first<{ slug: string }>().catch(() => null);
+  if (slugRow?.slug) await keepVersion(db, clientId, 'site', slugRow.slug, biz.data).catch(() => {});
   await db.prepare(`UPDATE biz_pages SET data = ? WHERE biz_id = ?`).bind(JSON.stringify(cleanSite({ ...old, ...b }, old.lang)), biz.id).run();
 }
 
