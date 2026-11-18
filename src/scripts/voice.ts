@@ -40,6 +40,7 @@ export function attachMic(button: HTMLButtonElement, field: Field, lang: () => s
   const note = (s: string) => { field.placeholder = s; };
   const put = (base: string, said: string) => {
     field.value = (base ? base.replace(/\s*$/, ' ') : '') + said.trim();
+    if (said.trim()) field.dataset.voice = '1'; // the chat may answer this turn aloud
     field.dispatchEvent(new Event('input', { bubbles: true }));
   };
   const hint = (s = t().allow) => { note(s); field.focus(); setTimeout(() => note(ph), 9000); };
@@ -130,3 +131,67 @@ export function attachMic(button: HTMLButtonElement, field: Field, lang: () => s
 
 /** Mic icon (inline SVG) for the button. */
 export const MIC_SVG = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2Z"/></svg>';
+
+// ---------- Answers read aloud (Decision 53: "dictate → hear the answer") ----------
+// The browser's own speech (speechSynthesis): free, works offline, no audio sent anywhere. Chrome cuts one long
+// utterance after ~15 s, so the text is spoken sentence by sentence.
+export const canSpeak = (): boolean => typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+let speakRun = 0;
+let speakEnd: (() => void) | null = null;
+
+/** Text for the ear: no markers, links, code, table bars or emoji. */
+export function speakable(s: string): string {
+  return s
+    .replace(/\[\[[^\]]*\]\]/g, ' ')
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/https?:\/\/\S+/g, ' ')
+    .replace(/^📎.*$/gmu, ' ')
+    .replace(/[*_`#>|~]+/g, ' ')
+    .replace(/^\s*[-•]\s+/gm, '')
+    .replace(/\p{Extended_Pictographic}|️/gu, '')
+    .replace(/\s*\n+\s*/g, '. ')
+    .replace(/\.(\s*\.)+/g, '.')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+function pickVoice(loc: string): SpeechSynthesisVoice | undefined {
+  const vs = speechSynthesis.getVoices();
+  const two = loc.slice(0, 2);
+  const mine = vs.filter((v) => v.lang.replace('_', '-').toLowerCase().startsWith(two));
+  return mine.find((v) => /natural|neural|premium|enhanced|google/i.test(v.name)) || mine.find((v) => v.localService) || mine[0];
+}
+
+export function stopSpeak(): void {
+  speakRun++;
+  try { speechSynthesis.cancel(); } catch {}
+  const f = speakEnd; speakEnd = null; f?.();
+}
+
+/** Speaks the text in the page language; onEnd runs when it finishes or is stopped. */
+export function speak(text: string, lang: string, onEnd?: () => void): boolean {
+  if (!canSpeak()) return false;
+  stopSpeak();
+  const said = speakable(text);
+  if (!said) return false;
+  const run = ++speakRun;
+  speakEnd = onEnd || null;
+  const loc = LOCALE[lang] || (/[іїєґ]/i.test(said) ? 'uk-UA' : /[а-яё]/i.test(said) ? 'ru-RU' : 'en-US');
+  const parts = said.match(/[^.!?…]+[.!?…]*\s*/g)?.reduce<string[]>((a, p) => { const l = a.length - 1; if (l >= 0 && (a[l] + p).length < 220) a[l] += p; else a.push(p); return a; }, []) || [said];
+  const go = (i: number) => {
+    if (run !== speakRun) return;
+    if (i >= parts.length) { const f = speakEnd; speakEnd = null; f?.(); return; }
+    const u = new SpeechSynthesisUtterance(parts[i].trim());
+    u.lang = loc;
+    const v = pickVoice(loc); if (v) u.voice = v;
+    u.rate = 1.03;
+    u.onend = () => go(i + 1);
+    u.onerror = () => go(i + 1);
+    speechSynthesis.speak(u);
+  };
+  // Voices load late on the first call in Chrome.
+  if (!speechSynthesis.getVoices().length) { let started = false; const s = () => { if (!started) { started = true; go(0); } }; speechSynthesis.addEventListener('voiceschanged', s, { once: true }); setTimeout(s, 400); } else go(0);
+  return true;
+}

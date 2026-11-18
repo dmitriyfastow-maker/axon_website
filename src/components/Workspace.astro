@@ -145,6 +145,7 @@ const ico = {
     <aside class="side" data-side>
       <a class="logo" href={`${pre}/`}>VAXO<span>.</span></a>
       <button class="newc" type="button" data-new>+ {T.new}</button>
+      <button class="nav mapbtn" type="button" data-find><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span data-find-l></span><kbd class="kb">⌘K</kbd></button>
       <button class="nav mapbtn" type="button" data-map><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.map}</button>
       <div class="lblrow"><p class="lbl">{T.chats}</p><button class="addp" type="button" data-newproj title={T.newProj} aria-label={T.newProj}>+</button></div>
       <input class="wsearch" type="search" data-search placeholder={T.srch.ph} aria-label={T.srch.ph} autocomplete="off" />
@@ -265,7 +266,7 @@ const ico = {
 </Base>
 
 <script>
-  import { attachMic, MIC_SVG } from '../scripts/voice';
+  import { attachMic, MIC_SVG, canSpeak, speak, stopSpeak } from '../scripts/voice';
   import { attachFiles, linkify } from '../scripts/attach';
   import { composer } from '../scripts/compose';
   import { renderTool } from '../scripts/tool';
@@ -368,7 +369,7 @@ const ico = {
 
   /* ---------- The tree: projects → chats → what each chat made (Decision 45) ---------- */
   type Obj = { id: number | string; chat: number; kind: string; title: string; url?: string; ref?: Msg };
-  const KIND: Record<string, string> = { video: 'M3 6h13v12H3zM16 10l5-3v10l-5-3M8 9.5v5l4-2.5z', clipf: 'M20 11.5l-8.2 8.2a5 5 0 0 1-7-7L13 4.4a3.3 3.3 0 0 1 4.7 4.7l-8.3 8.2a1.7 1.7 0 0 1-2.3-2.4L14.6 7.5', user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0', cal: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5', know: 'M5 4h11l3 3v13H5zM9 9h6M9 13h6M9 17h4', site: 'M3 5h18v14H3zM3 9h18', tool: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', doc: 'M7 3h7l5 5v13H7zM14 3v5h5', image: 'M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6', link: 'M10 13a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7L12 6m2 5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7L12 18', file: 'M6 3h9l4 4v14H6zM15 3v4h4', pin: 'M12 17v5M8 3h8l-1 6 4 4H5l4-4z', reply: 'M9 14 4 9l5-5M4 9h10a6 6 0 0 1 6 6v3', fwd: 'M15 4l5 5-5 5M20 9H10a6 6 0 0 0-6 6v3', copy: 'M9 9h11v11H9zM5 15H4V4h11v1' };
+  const KIND: Record<string, string> = { video: 'M3 6h13v12H3zM16 10l5-3v10l-5-3M8 9.5v5l4-2.5z', clipf: 'M20 11.5l-8.2 8.2a5 5 0 0 1-7-7L13 4.4a3.3 3.3 0 0 1 4.7 4.7l-8.3 8.2a1.7 1.7 0 0 1-2.3-2.4L14.6 7.5', user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0', cal: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5', know: 'M5 4h11l3 3v13H5zM9 9h6M9 13h6M9 17h4', site: 'M3 5h18v14H3zM3 9h18', tool: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', doc: 'M7 3h7l5 5v13H7zM14 3v5h5', image: 'M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6', link: 'M10 13a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7L12 6m2 5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7L12 18', file: 'M6 3h9l4 4v14H6zM15 3v4h4', pin: 'M12 17v5M8 3h8l-1 6 4 4H5l4-4z', reply: 'M9 14 4 9l5-5M4 9h10a6 6 0 0 1 6 6v3', fwd: 'M15 4l5 5-5 5M20 9H10a6 6 0 0 0-6 6v3', copy: 'M9 9h11v11H9zM5 15H4V4h11v1', speak: 'M4 9h4l5-4v14l-5-4H4zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12', hush: 'M4 9h4l5-4v14l-5-4H4zM16 9l5 6M21 9l-5 6' };
   const ico = (k: string, n = 14) => `<svg viewBox="0 0 24 24" width="${n}" height="${n}" aria-hidden="true"><path d="${KIND[k] || ''}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const icoBtn = (cls: string, k: string, label: string, go: (e: MouseEvent) => void) => { const b = el('button', cls); b.type = 'button'; b.innerHTML = ico(k, 15); b.title = label; b.setAttribute('aria-label', label); b.onclick = (e) => { e.stopPropagation(); go(e); }; return b; };
   const artKind = (m: Msg) => (m.site ? 'site' : m.tool ? 'tool' : m.doc ? 'doc' : m.image ? 'image' : '');
@@ -393,6 +394,7 @@ const ico = {
 
   const objOpen = new Set<number>();
   const baseShown = new Set<number>();
+  let voiceTurn = false;
   const clean = (t: string) => (t || '').replace(/<\/?[a-z][^>]*>/gi, '').trim();
   function drawChats() {
     const nav = $('[data-chats]'); nav.replaceChildren();
@@ -570,12 +572,24 @@ const ico = {
     if (act && go) t.append(btn('lnk', act, () => { t.remove(); go(); }));
     root.append(t); setTimeout(() => t.remove(), 4000);
   }
+  /** 🔊 on an answer: Vax reads it aloud in the browser's own voice; a second tap stops. */
+  const SPK = ({ ru: ['Прочитать вслух', 'Остановить'], ua: ['Прочитати вголос', 'Зупинити'] } as R)[lang] || ['Read aloud', 'Stop'];
+  let speaking: HTMLButtonElement | null = null;
+  function sayAloud(m: Msg, b?: HTMLButtonElement | null) {
+    const on = (x: HTMLButtonElement | null, v: boolean) => { if (!x) return; x.classList.toggle('on', v); x.innerHTML = ico(v ? 'hush' : 'speak', 15); x.title = SPK[v ? 1 : 0]; x.setAttribute('aria-label', x.title); };
+    if (b && speaking === b) { stopSpeak(); return; }
+    b = b || (nodes.get(m)?.querySelector('[data-spk]') as HTMLButtonElement | null);
+    const me = b;
+    if (speak(plain(m.content), lang, () => { on(me, false); if (speaking === me) speaking = null; })) { speaking = me; on(me, true); }
+  }
+  function speakBtn(m: Msg) { const b = icoBtn('mb', 'speak', SPK[0], () => sayAloud(m, b)); b.dataset.spk = '1'; return b; }
   function msgBar(m: Msg) {
     const bar = el('div', 'mbar');
     bar.append(
       icoBtn('mb', 'reply', T.reply, () => startReply(m)),
       ...(!S.signed || m.id ? [icoBtn('mb' + (m.pinned ? ' on' : ''), 'pin', m.pinned ? T.unpin : T.pin, () => pinMsg(m, !m.pinned)), icoBtn('mb', 'fwd', T.fwd, () => openForward(m))] : []),
       icoBtn('mb', 'copy', T.copyMsg, async () => { await copyText(plain(m.content)); toast(T.copied); }),
+      ...(m.role === 'assistant' && canSpeak() ? [speakBtn(m)] : []),
     );
     return bar;
   }
@@ -635,6 +649,36 @@ const ico = {
     dlg.showModal();
   }
   $('[data-map-x]').onclick = () => $<HTMLDialogElement>('[data-mapdlg]').close();
+
+  /* ---------- Search everything (Decision 53 stage 3, 18.11): chats, messages, documents; ⌘K / Ctrl+K ---------- */
+  {
+    const SL = ({ ru: { l: 'Поиск', ph: 'Найти в разговорах и документах…', none: 'Ничего не нашлось.', k: { chat: 'Разговор', msg: 'Сообщение', doc: 'Документ' } }, ua: { l: 'Пошук', ph: 'Знайти в розмовах і документах…', none: 'Нічого не знайшлося.', k: { chat: 'Розмова', msg: 'Повідомлення', doc: 'Документ' } } } as R)[lang] || { l: 'Search', ph: 'Find in chats and documents…', none: 'Nothing found.', k: { chat: 'Chat', msg: 'Message', doc: 'Document' } };
+    $('[data-find-l]').textContent = SL.l;
+    const dlg = el('dialog', 'wsign findd') as HTMLDialogElement, inp = el('input') as HTMLInputElement, list = el('div', 'findl');
+    inp.type = 'search'; inp.placeholder = SL.ph; inp.setAttribute('aria-label', SL.ph);
+    dlg.append(inp, list); root.append(dlg);
+    const esc2 = (x: string) => x.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' } as R)[c]);
+    const mark = (x: string, q: string) => { const i = x.toLowerCase().indexOf(q.toLowerCase()); return i < 0 ? esc2(x) : esc2(x.slice(0, i)) + '<mark>' + esc2(x.slice(i, i + q.length)) + '</mark>' + esc2(x.slice(i + q.length)); };
+    let tm = 0;
+    const draw = (hits: R[], q: string) => {
+      list.replaceChildren();
+      if (!hits.length) { list.append(el('p', 'hint', q.length >= 2 ? SL.none : '')); return; }
+      for (const h of hits) { const b = btn('findr', '', () => { dlg.close(); side(false); openChat(h.chat); }); b.innerHTML = `<small>${esc2(SL.k[h.kind] || '')} · ${esc2(h.title || '')}</small><span>${mark(h.snip || '', q)}</span>`; list.append(b); }
+    };
+    const run = async () => {
+      const q = inp.value.trim();
+      if (q.length < 2) { draw([], q); return; }
+      if (S.signed) { const d = await fetch('/api/ws/search?q=' + encodeURIComponent(q)).then((r) => r.json()).catch(() => null); draw(d?.hits || [], q); return; }
+      const low = q.toLowerCase(), hits: R[] = [];
+      for (const c of S.chats) for (const m of c.msgs || []) { const tx = `${m.doc?.title || ''} ${m.doc?.body || ''} ${m.content || ''}`; const i = tx.toLowerCase().indexOf(low); if (i >= 0) { hits.push({ chat: c.id, title: c.title, kind: m.doc ? 'doc' : 'msg', snip: tx.slice(Math.max(0, i - 50), i + 110) }); break; } }
+      draw(hits.slice(0, 25), q);
+    };
+    inp.oninput = () => { clearTimeout(tm); tm = window.setTimeout(run, 250); };
+    const open = () => { inp.value = ''; draw([], ''); dlg.showModal(); inp.focus(); };
+    $('[data-find]').onclick = open;
+    addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); open(); } });
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  }
 
 
   /* ---------- Model picker (Decision 50): Auto by default; paid plans may pick Strong or Maximum ---------- */
@@ -835,6 +879,8 @@ const ico = {
   async function ask(q: string) {
     q = q.trim();
     if (!q || S.busy) return;
+    const voiceTurn = input.dataset.voice === '1'; delete input.dataset.voice;
+    stopSpeak();
     log.querySelector('.nexttip')?.remove();
     S.busy = true;
     if (!S.msgs.length) log.replaceChildren();
@@ -871,6 +917,9 @@ const ico = {
     } catch { /* the message above says so */ }
     wait.remove();
     S.msgs.push(say); drawMsg(say);
+    if (voiceTurn && say.content) { voiceTurn = false; setTimeout(() => sayAloud(say), 150); }
+    // Asked by voice → the answer is read aloud too (Decision 53: a talk, not only dictation).
+    if (voiceTurn && say.content) sayAloud(say);
     // Decision 63: once per chat, under a serious task done on the free plan — what the paid level gives, in plain words.
     if (baseTier && !baseShown.has(S.cur)) {
       baseShown.add(S.cur);
@@ -2147,6 +2196,9 @@ const ico = {
   form.onsubmit = (e) => { e.preventDefault(); const q = input.value; input.value = ''; ask(q); };
   composer(input, () => form.requestSubmit());
   const mic = $<HTMLButtonElement>('[data-mic]'); mic.innerHTML = MIC_SVG; attachMic(mic, input, () => lang);
+  // Voice conversation (18.11): a question asked by voice gets its answer read aloud; typing switches it off again.
+  mic.addEventListener('click', () => { voiceTurn = true; });
+  input.addEventListener('keydown', (e) => { if (e.key.length === 1) voiceTurn = false; });
   attachFiles($<HTMLButtonElement>('[data-clip-real]'), input, () => lang, form);
   {
     const real = $<HTMLButtonElement>('[data-clip-real]'), clip = $<HTMLButtonElement>('[data-clip]'), menu = $<HTMLElement>('[data-clipm]'), dlg = $<HTMLDialogElement>('[data-imp]');
@@ -2735,6 +2787,14 @@ const ico = {
   .wsp .ifriends { display: grid; gap: 6px; margin-top: 10px; }
   .wsp .ifr { display: flex; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 14px; }
   .wsp .ifr em { font-style: normal; color: var(--mut); text-align: right; } .wsp .ifr.hold em { color: #b7791f; } .wsp .ifr.done em { color: #2f855a; } .wsp .ifr.refund em { color: #c53030; }
+  .wsp .kb { margin-left: auto; font: 500 11px var(--font); color: var(--mut); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; }
+  .findd { width: min(640px, 94vw); padding: 14px; display: grid; gap: 10px; }
+  .findd input { width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font: 16px var(--font); background: var(--bg); color: var(--ink); }
+  .findl { display: grid; gap: 4px; max-height: 60vh; overflow: auto; }
+  .findr { display: grid; gap: 2px; text-align: left; padding: 10px 12px; border: 0; border-radius: 10px; background: none; color: var(--ink); cursor: pointer; font: inherit; }
+  .findr:hover, .findr:focus-visible { background: var(--surf2, var(--bg)); }
+  .findr small { color: var(--mut); font-size: 12px; } .findr span { font-size: 14px; line-height: 1.4; }
+  .findr mark { background: rgba(232,176,74,.35); color: inherit; border-radius: 3px; }
   .wsp .gpanel { display: grid; gap: 8px; }
   .wsp .gstep { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: var(--surf2); font-size: 14px; }
   .wsp .gstep.ok { color: var(--mut); }
