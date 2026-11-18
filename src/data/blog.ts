@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'weekly-meal-plan-shopping-list-with-ai',
+    date: '2026-11-18',
+    t: {
+      en: {
+        title: 'Weekly meal plan and shopping list in 15 minutes with AI', seo: 'Weekly meal plan and shopping list with AI',
+        desc: 'Seven days of meals for your family, one shopping list grouped by store aisle, a budget you can see — and how AI does the boring part for you.',
+        body: [
+          ['Why a plan saves money and evenings', ['Without a plan you shop several times a week, buy extra and still ask “what’s for dinner?” at 7 pm. One plan and one list solve all three.']],
+          ['1. Tell the basics', ['How many people, any allergies or foods you avoid, how much time you have to cook on weekdays and weekends, and your weekly food budget.']],
+          ['2. Pick 4–5 dinners you already like', ['Start with what your family eats anyway. Add one or two new dishes per week — not seven at once.']],
+          ['3. Cook once, eat twice', ['Plan leftovers on purpose: a roast chicken on Sunday becomes salad and soup on Monday. Fewer hours at the stove, less waste.']],
+          ['4. One list, grouped by aisle', ['Vegetables, dairy, meat, dry goods, household. Check what is already at home and cross it out before you go.']],
+          ['5. See the budget', ['Put rough prices next to each item and look at the total. If it is too high, swap one or two dishes for cheaper ones — not the whole plan.']],
+          ['6. Keep what worked', ['Mark the dishes everyone liked. In a month you will have a ready set of plans to repeat.']],
+          ['How Vaxo helps', ['In Workspace write “meal plan for 3 people, budget 1500 UAH a week, 30 minutes on weekdays” — Vax will make a table of meals for 7 days, a shopping list by aisle with prices and a total, and recalculate it when you change a dish. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Меню на неделю и список покупок за 15 минут с ИИ', seo: 'Меню на неделю и список покупок с ИИ',
+        desc: 'Семь дней блюд для семьи, один список покупок по отделам магазина, понятный бюджет — и как ИИ делает скучную часть за вас.',
+        body: [
+          ['Почему план экономит деньги и вечера', ['Без плана вы ходите в магазин несколько раз в неделю, покупаете лишнее и всё равно в 19:00 спрашиваете «что на ужин?». Один план и один список решают все три проблемы.']],
+          ['1. Назовите исходные', ['Сколько человек, есть ли аллергии или продукты, которые не едите, сколько времени на готовку в будни и выходные и какой бюджет на еду в неделю.']],
+          ['2. Возьмите 4–5 ужинов, которые уже любите', ['Начните с того, что семья и так ест. Добавляйте одно-два новых блюда в неделю — не семь сразу.']],
+          ['3. Готовьте раз — ешьте дважды', ['Планируйте остатки заранее: курица в воскресенье превращается в салат и суп в понедельник. Меньше часов у плиты, меньше выброшенной еды.']],
+          ['4. Один список по отделам', ['Овощи, молочное, мясо, крупы, бытовое. Проверьте, что уже есть дома, и вычеркните до выхода.']],
+          ['5. Видьте бюджет', ['Поставьте примерную цену у каждой позиции и посмотрите итог. Если дорого — замените одно-два блюда на дешевле, а не весь план.']],
+          ['6. Сохраняйте то, что сработало', ['Отмечайте блюда, которые понравились всем. Через месяц у вас будет готовый набор меню, который можно повторять.']],
+          ['Чем помогает Vaxo', ['В Workspace напишите «меню на 3 человека, бюджет 1500 грн в неделю, в будни 30 минут» — Vax сделает таблицу блюд на 7 дней, список покупок по отделам с ценами и итогом и пересчитает, если вы поменяете блюдо. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Меню на тиждень і список покупок за 15 хвилин із ШІ', seo: 'Меню на тиждень і список покупок із ШІ',
+        desc: 'Сім днів страв для родини, один список покупок за відділами магазину, зрозумілий бюджет — і як ШІ робить нудну частину за вас.',
+        body: [
+          ['Чому план заощаджує гроші й вечори', ['Без плану ви ходите в магазин кілька разів на тиждень, купуєте зайве і все одно о 19:00 питаєте «що на вечерю?». Один план і один список розв’язують усі три проблеми.']],
+          ['1. Назвіть вихідні дані', ['Скільки людей, чи є алергії або продукти, яких не їсте, скільки часу на готування в будні й вихідні і який бюджет на їжу на тиждень.']],
+          ['2. Візьміть 4–5 вечер, які вже любите', ['Почніть із того, що родина й так їсть. Додавайте одну-дві нові страви на тиждень — не сім одразу.']],
+          ['3. Готуйте раз — їжте двічі', ['Плануйте залишки заздалегідь: курка в неділю перетворюється на салат і суп у понеділок. Менше годин біля плити, менше викинутої їжі.']],
+          ['4. Один список за відділами', ['Овочі, молочне, м’ясо, крупи, побутове. Перевірте, що вже є вдома, і викресліть до виходу.']],
+          ['5. Бачте бюджет', ['Поставте приблизну ціну біля кожної позиції і подивіться підсумок. Якщо дорого — замініть одну-дві страви на дешевші, а не весь план.']],
+          ['6. Зберігайте те, що спрацювало', ['Позначайте страви, які сподобалися всім. За місяць у вас буде готовий набір меню, який можна повторювати.']],
+          ['Чим допомагає Vaxo', ['У Workspace напишіть «меню на 3 людини, бюджет 1500 грн на тиждень, у будні 30 хвилин» — Vax зробить таблицю страв на 7 днів, список покупок за відділами з цінами й підсумком і перерахує, якщо ви зміните страву. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'write-business-proposal-that-gets-accepted',
     date: '2026-11-17',
     t: {
