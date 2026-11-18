@@ -40,7 +40,6 @@ export function attachMic(button: HTMLButtonElement, field: Field, lang: () => s
   const note = (s: string) => { field.placeholder = s; };
   const put = (base: string, said: string) => {
     field.value = (base ? base.replace(/\s*$/, ' ') : '') + said.trim();
-    if (said.trim()) field.dataset.voice = '1'; // the chat may answer this turn aloud
     field.dispatchEvent(new Event('input', { bubbles: true }));
   };
   const hint = (s = t().allow) => { note(s); field.focus(); setTimeout(() => note(ph), 9000); };

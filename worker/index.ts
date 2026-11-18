@@ -1,7 +1,7 @@
 // Cloudflare Worker: serves the static site from ./dist and handles the lead form.
 import { handleWorkspace } from './workspace.js';
 import { pageFacts, servePage, servePartner, servePartnerJoin } from './modules.js';
-import { serveReviews } from './reviews.js';
+import { serveReviews, serveServices } from './reviews.js';
 import { handleBookGet, handleFeed, morningBookings } from './booking.js';
 import { serveDoc } from './workspace.js';
 import { serveImage } from './images.js';
@@ -123,6 +123,8 @@ export default {
     };
     const pj = url.pathname.match(/^\/s\/([a-z0-9-]{3,80})\/partner\/?$/);
     if (pj) return env.LEADS ? servePartnerJoin(env.LEADS, pj[1], request, url.origin) : json(503, { ok: false });
+    const svcm = url.pathname.match(/^\/s\/([a-z0-9-]{3,80})\/services\/?$/);
+    if (svcm) return env.LEADS ? serveServices(env.LEADS, svcm[1], url.origin) : json(503, { ok: false });
     const rvw = url.pathname.match(/^\/s\/([a-z0-9-]{3,80})\/reviews\/?$/);
     if (rvw) return env.LEADS ? serveReviews(env.LEADS, rvw[1], request, url.origin) : json(503, { ok: false });
     const pref = url.pathname.match(/^\/rp\/([0-9a-f]{8})\/?$/);

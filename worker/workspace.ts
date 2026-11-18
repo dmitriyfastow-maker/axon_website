@@ -78,6 +78,7 @@ function system(lang: string, memory: Memory, mode: string): string {
 Answer in the language of the person's latest message; when unclear, ${LANGS[lang] ?? 'English'}.
 Do the work now. You lay the task out in steps and give the solution at once. Never ask for a name, email, phone or Telegram, never mention a manager, a callback or a waiting time. Do not ask what you can work out yourself; for small tasks ask at most one question, and only when the answer changes the result.
 A PARTNER, NOT A FORM (Dmitry 17.11, replaces the old ask-first rule): you work like a world-class partner who is always next to the person. Build first, never answer a build request with only questions: make the best version for their niche with smart guesses, then say in 1–3 lines what is ready and where (which Canvas tab), and at most 2 short questions that would make it more theirs.
+WORLD-CLASS IN EVERY NICHE (Dmitry 18.11): for each task, first think how the best expert in the world in exactly that niche would do it (a top agency for a brand, a senior lawyer for a contract, a Michelin-level chef for a menu, a top growth marketer for a launch, a principal engineer for an app) and deliver at that level: exact numbers, real names of methods and tools, concrete steps, ready-to-use texts, the details amateurs miss. Add one or two smart moves the person would not think of themselves, in one line each. Never generic advice, never "it depends" without a decision, never filler. Quality over length.
 OFFER THE BETTER WHOLE, NEVER IMPOSE IT: people often do not know what is possible. When the request is one piece of a bigger whole (a site for a barbershop, only a form, only a post), deliver the piece, then in 1–3 plain lines say what the complete system would be for them (for a business: online booking, CRM for requests, an AI consultant answering 24/7, a partner/referral programme, online payments, review requests, a content plan) and WHY it brings them more clients or saves time, then end with [[CHOICE:<build the whole system>|<only what I asked>]] in their language. Their choice is final: if they want only their piece, do exactly that, and keep suggesting the next best step later in one line, never pushing. If they pick the whole system or say they trust you to do it all («доверяю», «делай как лучше», «сам решай»), add [[TRUST:on]] at the end and build everything at once.
 AUTONOMY: if the notes say AUTONOMY ON, the person fully trusts you: do not ask permission for improvements inside their project, build, automate and scale on your own (still never spend their money, send messages to their customers or publish anything public without their yes), and report in a few lines what you did and why.
 EVERY SITE IS ITS OWN: never reuse the look or text of an earlier site. Pick the style, the accent colour ("accent" as #hex that fits this brand, not the style's default) and the layout for this business and what the person said they like; if they named an example or a mood, follow it. Two businesses of the same niche must not get the same site. If someone asks for a human, answer first, then say a person can be reached at hello@vaxogroup.com. Texts the user will send to their own customers (review replies, posts, messages, letters) speak in the user's name: never put Vaxo's name, email or site into them; where a contact belongs, use the user's own from memory or a short placeholder in square brackets, written in the same language as that text (in English: [your phone]).
@@ -152,6 +153,7 @@ const AGENCY = /(команд\S* (продакшн|продакшен|монта
 const BRIEF_READY: Record<string, string> = { en: 'The brief is ready on the Canvas: format, script with timings and shot list.', ru: 'Бриф готов на холсте: формат, сценарий по секундам и список кадров.', ua: 'Бриф готовий на полотні: формат, сценарій по секундах і список кадрів.' };
 
 /** Needs fresh facts from the internet: today, prices, rates, news, «find online». */
+const RESEARCH = /(исследуй|исследовани|проанализируй рынок|анализ рынка|сравни (рынок|конкурент|цены|варианты)|изучи рынок|досліди|дослідженн|аналіз ринку|research|deep dive|market analysis|compare the market)/i;
 const FRESH = /(сегодня|сейчас|на данный момент|актуальн|последн\S* новост|новост|курс (доллар|евро|валют)|курс\b|цен[аы] на|сколько стоит сейчас|найди в интернете|поищи|загугли|погода|расписание|сьогодні|зараз|новини|знайди в інтернеті|today|right now|latest|current price|exchange rate|news|search the web|look up|weather)/i;
 const PARTNER_WISH = /(партн[её]рск|партнерськ|реферальн|referral|affiliate|partner program)/i;
 /** A short everyday question (cooking, how-to, a fact), not a request for a document, a site or production work. */
@@ -371,7 +373,9 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     const al = leadIds.length ? await allowance(db, leadIds).catch(() => null) : null;
     const want = { leadId: leadIds[0] ?? null, clientId: me.id, plan: al?.plan ?? 'start', trial: !!al?.trial, level: taskLevel(q, mode === 'deep', /📎/u.test(q)), ipKey: await ipKey(ip) };
     const route = await routeFor(db, { ...want, choice: cut(b.model, 20) || 'auto' }).catch(() => null);
-    if (route && FRESH.test(said)) (route as { search?: boolean }).search = true;
+    if (route && (FRESH.test(said) || RESEARCH.test(said))) (route as { search?: boolean }).search = true;
+    // Research mode (18.11): several searches, sources compared, a report with links on the Canvas.
+    if (route && RESEARCH.test(said)) { (route as { deep?: boolean }).deep = true; const lt = turns[turns.length - 1]; if (lt?.role === 'user') lt.content += '\n\n(RESEARCH MODE: search several independent sources, compare them, give exact numbers and dates, and put a full report between [[DOC: title]] and [[/DOC]] with a «Sources» section listing each source name and link. In the chat give the 3 key findings.)'; }
     if (route) raw = await claudeReply(db, route, sys, turns, (c) => { usd = c; });
     // A hand-picked model that failed: answer on Auto rather than drop to the free models.
     if (route && !raw && b.model && b.model !== 'auto') { const r2 = await routeFor(db, want).catch(() => null); if (r2) raw = await claudeReply(db, r2, sys, turns, (c) => { usd = c; }); }
@@ -686,6 +690,26 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       if (!pr?.biz_id) return out(404, { ok: false });
       await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind('biz_partner_public_' + pr.biz_id, b.on === false ? '0' : '1').run();
       return out(200, { ok: true, on: b.on !== false });
+    }
+    // Decision 53 stage 3: search everything — chat titles, messages and documents (18.11).
+    if (path === 'search' && m === 'GET') {
+      const q = (url.searchParams.get('q') || '').trim().slice(0, 80);
+      if (q.length < 2) return out(200, { ok: true, hits: [] });
+      const v = [q, q[0].toUpperCase() + q.slice(1), q.toLowerCase()].map((x) => `%${x.replace(/[%_]/g, '')}%`);
+      const rows = (await db.prepare(`SELECT c.id AS chat, c.title, m.id AS msg, m.text, m.doc FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id
+          WHERE c.client_id = ? AND (m.text LIKE ? OR m.text LIKE ? OR m.text LIKE ? OR m.doc LIKE ? OR m.doc LIKE ? OR m.doc LIKE ? OR c.title LIKE ? OR c.title LIKE ? OR c.title LIKE ?)
+          ORDER BY m.id DESC LIMIT 60`).bind(me.id, ...v, ...v, ...v).all<{ chat: number; title: string; msg: number; text: string; doc: string | null }>().catch(() => ({ results: [] }))).results || [];
+      const low = q.toLowerCase(), seen = new Set<string>(), hits: { chat: number; title: string; kind: string; snip: string }[] = [];
+      for (const r of rows) {
+        let kind = 'msg', body = r.text || '';
+        try { const d = r.doc ? JSON.parse(r.doc) : null; if (d && `${d.title} ${d.body}`.toLowerCase().includes(low)) { kind = 'doc'; body = `${d.title}: ${d.body}`; } } catch {}
+        if (!body.toLowerCase().includes(low) && r.title.toLowerCase().includes(low)) { kind = 'chat'; body = r.title; }
+        const key = r.chat + kind; if (seen.has(key)) continue; seen.add(key);
+        const i = Math.max(0, body.toLowerCase().indexOf(low) - 50);
+        hits.push({ chat: r.chat, title: r.title, kind, snip: (i ? '…' : '') + body.replace(/\[\[[^\]]*\]\]|[#*|]/g, ' ').replace(/\s+/g, ' ').slice(i, i + 160) });
+        if (hits.length >= 25) break;
+      }
+      return out(200, { ok: true, hits });
     }
     if (path === 'avatar' && m === 'POST') {
       const lv = Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind('game_lv_' + me.id).first<{ value: string }>().catch(() => null))?.value || 1);

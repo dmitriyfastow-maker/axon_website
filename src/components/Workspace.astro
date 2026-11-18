@@ -879,7 +879,6 @@ const ico = {
   async function ask(q: string) {
     q = q.trim();
     if (!q || S.busy) return;
-    const voiceTurn = input.dataset.voice === '1'; delete input.dataset.voice;
     stopSpeak();
     log.querySelector('.nexttip')?.remove();
     S.busy = true;
@@ -918,8 +917,6 @@ const ico = {
     wait.remove();
     S.msgs.push(say); drawMsg(say);
     if (voiceTurn && say.content) { voiceTurn = false; setTimeout(() => sayAloud(say), 150); }
-    // Asked by voice → the answer is read aloud too (Decision 53: a talk, not only dictation).
-    if (voiceTurn && say.content) sayAloud(say);
     // Decision 63: once per chat, under a serious task done on the free plan — what the paid level gives, in plain words.
     if (baseTier && !baseShown.has(S.cur)) {
       baseShown.add(S.cur);
@@ -962,6 +959,15 @@ const ico = {
     const c = S.chats.find((x) => x.id === S.cur);
     const box = el('div', 'pf board54');
     if (S.proj && (S.proj.biz || S.mods?.site)) { const hb = homeBox(); if (hb) box.append(hb); }
+    // Decision 66: every public page of the business in one place (open in a new tab, copy, share).
+    const slug0 = S.mods?.site?.slug || (S.mods?.pages || [])[0]?.slug;
+    if (S.proj && slug0) {
+      const PB = ({ ru: { h: 'Публичные страницы бизнеса', p: 'Их видят все: клиенты, партнёры, Google.', site: 'Сайт', svc: 'Услуги', rev: 'Отзывы', par: 'Партнёрская программа' }, ua: { h: 'Публічні сторінки бізнесу', p: 'Їх бачать усі: клієнти, партнери, Google.', site: 'Сайт', svc: 'Послуги', rev: 'Відгуки', par: 'Партнерська програма' } } as R)[lang] || { h: 'Public pages of the business', p: 'Everyone sees them: clients, partners, Google.', site: 'Site', svc: 'Services', rev: 'Reviews', par: 'Partner programme' };
+      const sec0 = el('section', 'blk pubpages'); sec0.append(el('h3', '', PB.h), el('p', 'hint', PB.p));
+      const base = `${location.origin}/s/${slug0}`;
+      for (const [k, u] of [['site', base], ['svc', base + '/services'], ['rev', base + '/reviews'], ['par', base + '/partner']] as [string, string][]) { const row = el('div', 'pubrow'); row.append(el('b', '', PB[k]), linkRow(u)); sec0.append(row); }
+      box.append(sec0);
+    }
     const objs = chatObjs();
     if (!objs.length) { const e0 = el('section', 'blk'); e0.append(el('h3', '', S.proj ? BW.inProj : BW.made), el('p', 'hint', BW.empty)); box.append(e0); }
     // Live things (sites, tools) first, files (documents, pictures) in their own shelf below.
@@ -2795,6 +2801,7 @@ const ico = {
   .findr:hover, .findr:focus-visible { background: var(--surf2, var(--bg)); }
   .findr small { color: var(--mut); font-size: 12px; } .findr span { font-size: 14px; line-height: 1.4; }
   .findr mark { background: rgba(232,176,74,.35); color: inherit; border-radius: 3px; }
+  .wsp .pubpages { display: grid; gap: 8px; } .wsp .pubrow { display: grid; gap: 4px; } .wsp .pubrow b { font-size: 13px; color: var(--mut); }
   .wsp .gpanel { display: grid; gap: 8px; }
   .wsp .gstep { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: var(--surf2); font-size: 14px; }
   .wsp .gstep.ok { color: var(--mut); }
