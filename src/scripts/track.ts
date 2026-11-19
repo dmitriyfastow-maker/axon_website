@@ -52,7 +52,8 @@ export function startTracking(): void {
     if (!t || evs.length > 80) return;
     const x = Math.round((e.pageX / Math.max(document.documentElement.scrollWidth, 1)) * 100);
     const y = Math.round((e.pageY / docH()) * 100);
-    const dead = !t.closest(CLICKABLE);
+    // A click on a <dialog> itself is a backdrop click — it closes the window, so it is an action, not a blind spot.
+    const dead = t.tagName !== 'DIALOG' && !t.closest(CLICKABLE);
     // Rage: 3+ clicks within a second in about the same spot.
     const near = Math.abs(e.pageX - last.x) < 30 && Math.abs(e.pageY - last.y) < 30 && Date.now() - last.t < 1000;
     last.n = near ? last.n + 1 : 1; last.t = Date.now(); last.x = e.pageX; last.y = e.pageY;
