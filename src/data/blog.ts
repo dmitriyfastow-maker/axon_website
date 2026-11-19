@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'validate-business-idea-before-building',
+    date: '2026-11-19',
+    t: {
+      en: {
+        title: 'How to test a business idea in one week before you build it', seo: 'Test a business idea in one week',
+        desc: 'One sentence offer, five real people, a simple page and a first “yes” with money — how to know if an idea works before you spend months on it.',
+        body: [
+          ['Why test first', ['Most ideas fail not because they are built badly, but because nobody needed them. A week of testing costs almost nothing and saves months.']],
+          ['1. Write the offer in one sentence', ['“I help [who] get [result] without [pain].” If you cannot say it in one line, people will not understand it either.']],
+          ['2. Talk to five real people', ['Not friends who will say “cool”. People who have the problem. Ask how they solve it now, what it costs them and what annoys them most.']],
+          ['3. Collect every “why not”', ['Write down all objections word for word. Put them into AI and ask: what are the three main reasons people would not buy, and how to answer each.']],
+          ['4. Make one simple page', ['Headline with the offer, three benefits, a price and one button. No logo, no perfect design — you are testing interest, not style.']],
+          ['5. Ask for a small commitment', ['A pre-order, a deposit, a booked call. Likes and “I would buy it” are not a signal; money or time is.']],
+          ['6. Decide by numbers', ['Set a goal before you start, for example 3 pre-orders from 50 visitors. Reached — build. Not reached — change the offer or the audience, not the colour of the button.']],
+          ['How Vaxo helps', ['In Workspace write “test the idea: home cakes to order in my district” — Vax will write the one-line offer, questions for five interviews, list likely objections with answers and build a simple page with a price and a button. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как проверить идею бизнеса за неделю, до того как строить', seo: 'Проверить идею бизнеса за неделю',
+        desc: 'Оффер в одну строку, пять живых людей, простая страница и первое «да» деньгами — как понять, работает ли идея, до того как тратить на неё месяцы.',
+        body: [
+          ['Почему сначала проверять', ['Большинство идей проваливаются не потому, что их плохо сделали, а потому что они никому не были нужны. Неделя проверки почти ничего не стоит и экономит месяцы.']],
+          ['1. Напишите оффер одной строкой', ['«Помогаю [кому] получить [результат] без [боли]». Если не получается сказать в одну строку — люди тоже не поймут.']],
+          ['2. Поговорите с пятью живыми людьми', ['Не с друзьями, которые скажут «круто». С людьми, у которых есть эта проблема. Спросите, как они решают её сейчас, во что это обходится и что раздражает больше всего.']],
+          ['3. Соберите все «почему нет»', ['Запишите возражения дословно. Отдайте их ИИ и спросите: какие три главные причины не купить и как ответить на каждую.']],
+          ['4. Сделайте одну простую страницу', ['Заголовок с оффером, три пользы, цена и одна кнопка. Без логотипа и идеального дизайна — вы проверяете интерес, а не стиль.']],
+          ['5. Попросите маленькое обязательство', ['Предзаказ, предоплату, запись на звонок. Лайки и «я бы купил» — не сигнал; сигнал — деньги или время.']],
+          ['6. Решайте по цифрам', ['Поставьте цель до старта, например 3 предзаказа из 50 посетителей. Достигли — стройте. Нет — меняйте оффер или аудиторию, а не цвет кнопки.']],
+          ['Чем помогает Vaxo', ['В Workspace напишите «проверить идею: домашние торты на заказ в моём районе» — Vax напишет оффер в одну строку, вопросы для пяти разговоров, вероятные возражения с ответами и соберёт простую страницу с ценой и кнопкой. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як перевірити ідею бізнесу за тиждень, перш ніж будувати', seo: 'Перевірити ідею бізнесу за тиждень',
+        desc: 'Офер в один рядок, п’ять живих людей, проста сторінка і перше «так» грошима — як зрозуміти, чи працює ідея, перш ніж витрачати на неї місяці.',
+        body: [
+          ['Чому спершу перевіряти', ['Більшість ідей провалюються не тому, що їх погано зробили, а тому що вони нікому не були потрібні. Тиждень перевірки майже нічого не коштує і заощаджує місяці.']],
+          ['1. Напишіть офер одним рядком', ['«Допомагаю [кому] отримати [результат] без [болю]». Якщо не виходить сказати одним рядком — люди теж не зрозуміють.']],
+          ['2. Поговоріть із п’ятьма живими людьми', ['Не з друзями, які скажуть «круто». З людьми, у яких є ця проблема. Запитайте, як вони розв’язують її зараз, у що це обходиться і що дратує найбільше.']],
+          ['3. Зберіть усі «чому ні»', ['Запишіть заперечення дослівно. Віддайте їх ШІ і запитайте: які три головні причини не купити і як відповісти на кожну.']],
+          ['4. Зробіть одну просту сторінку', ['Заголовок з офером, три користі, ціна й одна кнопка. Без логотипа й ідеального дизайну — ви перевіряєте інтерес, а не стиль.']],
+          ['5. Попросіть маленьке зобов’язання', ['Передзамовлення, передоплату, запис на дзвінок. Лайки й «я б купив» — не сигнал; сигнал — гроші або час.']],
+          ['6. Вирішуйте за цифрами', ['Поставте ціль до старту, наприклад 3 передзамовлення з 50 відвідувачів. Досягли — будуйте. Ні — змінюйте офер або аудиторію, а не колір кнопки.']],
+          ['Чим допомагає Vaxo', ['У Workspace напишіть «перевірити ідею: домашні торти на замовлення в моєму районі» — Vax напише офер одним рядком, питання для п’яти розмов, ймовірні заперечення з відповідями і збере просту сторінку з ціною й кнопкою. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'weekly-meal-plan-shopping-list-with-ai',
     date: '2026-11-18',
     t: {
