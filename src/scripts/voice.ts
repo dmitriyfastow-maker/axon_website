@@ -170,7 +170,7 @@ export function stopSpeak(): void {
 }
 
 /** Speaks the text in the page language; onEnd runs when it finishes or is stopped. */
-export function speak(text: string, lang: string, onEnd?: () => void): boolean {
+export function speak(text: string, lang: string, onEnd?: () => void, opt: { voice?: string; rate?: number } = {}): boolean {
   if (!canSpeak()) return false;
   stopSpeak();
   const said = speakable(text);
@@ -184,8 +184,10 @@ export function speak(text: string, lang: string, onEnd?: () => void): boolean {
     if (i >= parts.length) { const f = speakEnd; speakEnd = null; f?.(); return; }
     const u = new SpeechSynthesisUtterance(parts[i].trim());
     u.lang = loc;
-    const v = pickVoice(loc); if (v) u.voice = v;
-    u.rate = 1.03;
+    // The voice the person picked in voice mode (saved in the browser), else the best one for the language.
+    let want = opt.voice; if (want === undefined) { try { want = localStorage.getItem('vx_voice') || ''; } catch { want = ''; } }
+    const v = (want && speechSynthesis.getVoices().find((x) => x.name === want)) || pickVoice(loc); if (v) u.voice = v;
+    u.rate = opt.rate || (() => { try { return Number(localStorage.getItem('vx_rate')) || 1.03; } catch { return 1.03; } })();
     u.onend = () => go(i + 1);
     u.onerror = () => go(i + 1);
     speechSynthesis.speak(u);

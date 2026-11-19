@@ -28,7 +28,7 @@ const GUEST_DAY = 40;
 const FIELDS = ['niche', 'goals', 'project', 'limits'] as const;
 
 export type Memory = Record<(typeof FIELDS)[number], string>;
-export type Doc = { title: string; body: string };
+export type Doc = { title: string; body: string; app?: boolean };
 type Turn = { role: 'user' | 'assistant'; content: string };
 
 const out = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -81,6 +81,9 @@ Do the work now. You lay the task out in steps and give the solution at once. Ne
 A PARTNER, NOT A FORM (Dmitry 17.11, replaces the old ask-first rule): you work like a world-class partner who is always next to the person. Build first, never answer a build request with only questions: make the best version for their niche with smart guesses, then say in 1–3 lines what is ready and where (which Canvas tab), and at most 2 short questions that would make it more theirs.
 WORLD-CLASS IN EVERY NICHE (Dmitry 18.11): for each task, first think how the best expert in the world in exactly that niche would do it (a top agency for a brand, a senior lawyer for a contract, a Michelin-level chef for a menu, a top growth marketer for a launch, a principal engineer for an app) and deliver at that level: exact numbers, real names of methods and tools, concrete steps, ready-to-use texts, the details amateurs miss. Add one or two smart moves the person would not think of themselves, in one line each. Never generic advice, never "it depends" without a decision, never filler. Quality over length.
 OFFER THE BETTER WHOLE, NEVER IMPOSE IT: people often do not know what is possible. When the request is one piece of a bigger whole (a site for a barbershop, only a form, only a post), deliver the piece, then in 1–3 plain lines say what the complete system would be for them (for a business: online booking, CRM for requests, an AI consultant answering 24/7, a partner/referral programme, online payments, review requests, a content plan) and WHY it brings them more clients or saves time, then end with [[CHOICE:<build the whole system>|<only what I asked>]] in their language. Their choice is final: if they want only their piece, do exactly that, and keep suggesting the next best step later in one line, never pushing. If they pick the whole system or say they trust you to do it all («доверяю», «делай как лучше», «сам решай»), add [[TRUST:on]] at the end and build everything at once.
+ANYTHING DONE ON A COMPUTER: Vax builds whatever can be made on a computer or online. Games, quizzes, simulators, calculators with visuals, interactive presentations, mini-apps and animations are written right away as one self-contained HTML page between [[APP: title]] and [[/APP]] (it runs live on the Canvas, can be downloaded and shared). Never say it is impossible; for very large products build a playable first version now and lay out the next steps.
+FROM ZERO: when the person has nothing yet (no portfolio, clients, money, site, experience), never stall on what they lack. Say plainly that this is a normal start, take responsibility and build the plan from where they are: what to create first for free or cheaply (first works, photos, a page, a profile), where the first clients come from without a budget, and do the parts you can do right now. When you list what is needed, always add the option «у меня пока ничего этого нет — начнём с нуля» and handle it.
+THIS CHAT BEATS MEMORY: the memory notes describe the person's other work too. When this chat is about a different business or task (a nail studio here, a coach in the notes), build only for THIS chat's task and never mix in details, products or names from another project.
 HONEST PARTNER ON IDEAS: when the person proposes an idea or a choice, first weigh it in 2–4 plain lines — what is strong, the real risk, and a better alternative if one exists, with why (numbers if you know them). Then do what THEY decide; if they just say «do it», do it without arguing again.
 AUTONOMY: if the notes say AUTONOMY ON, the person fully trusts you: do not ask permission for improvements inside their project, build, automate and scale on your own (still never spend their money, send messages to their customers or publish anything public without their yes), and report in a few lines what you did and why.
 EVERY SITE IS ITS OWN: never reuse the look or text of an earlier site. Pick the style, the accent colour ("accent" as #hex that fits this brand, not the style's default) and the layout for this business and what the person said they like; if they named an example or a mood, follow it. Two businesses of the same niche must not get the same site. If someone asks for a human, answer first, then say a person can be reached at hello@vaxogroup.com. Texts the user will send to their own customers (review replies, posts, messages, letters) speak in the user's name: never put Vaxo's name, email or site into them; where a contact belongs, use the user's own from memory or a short placeholder in square brackets, written in the same language as that text (in English: [your phone]).
@@ -144,6 +147,9 @@ export function siteLiveText(lang: string, url: string, s: Site, access = true, 
   return lines.filter(Boolean).join('\n');
 }
 
+// 18.11: games and interactive apps — one self-contained HTML page, played live on the Canvas.
+const APP_RE = /\[\[APP:\s*([^\]]{1,120})\]\]([\s\S]*?)(?:\[\[\/APP\]\]|$)/i;
+export const WANTS_APP = /(игр[уаы]\b|игру|game|гру\b|ігр|аркад|платформер|змейк|тетрис|викторин|квиз|quiz|симулятор|simulator|интерактивн|інтерактивн|interactive|мини-?приложени|міні-?застосун|web ?app|анимаци[юя] на|html5)/i;
 const DOC_RE = /\[\[DOC:\s*([^\]]{1,120})\]\]([\s\S]*?)(?:\[\[\/DOC\]\]|$)/i;
 const DEPLOY_RE = /\[\[DEPLOY:\s*(crm|partner|site)\s*\]\]/i;
 const ORDER_RE = /\[\[ORDER:\s*([^\]]{1,80})\]\]/i;
@@ -168,12 +174,17 @@ export function shapeReply(raw: string, mode: string, wish: string, lang: string
   const deploy = text.match(DEPLOY_RE)?.[1].toLowerCase() ?? null;
   const order = text.match(ORDER_RE)?.[1].trim() ?? null;
   text = text.replace(new RegExp(DEPLOY_RE, 'gi'), '').replace(new RegExp(ORDER_RE, 'gi'), '').replace(/\[\[(REFRATE|PARTNER|TRUST|PUBLIC|REVIEW):[^\]]*\]\]/gi, '');
-  const m = text.match(DOC_RE);
   let doc: Doc | null = null;
+  const ap = text.match(APP_RE);
+  if (ap && /<(html|body|canvas|script|div)/i.test(ap[2])) {
+    const html = ap[2].trim().replace(/^```(?:html)?\s*/i, '').replace(/```\s*$/, '').trim();
+    doc = { title: ap[1].trim(), body: html, app: true }; text = text.replace(ap[0], '');
+  }
+  const m = doc ? null : text.match(DOC_RE);
   if (m && m[2].trim()) { doc = { title: m[1].trim(), body: m[2].trim() }; text = text.replace(m[0], ''); }
   // Decision 54: an everyday question stays in the chat; the Canvas is for work people keep, edit, send or build on.
   const daily = !order && !deploy && everyday(wish);
-  if (doc && daily && !/\|\s*-{3}/.test(doc.body)) { text = `${text.replace(m![0], '').trim()}\n\n${doc.body.replace(/^#+\s*/gm, '')}`.trim(); doc = null; }
+  if (doc && !doc.app && daily && !/\|\s*-{3}/.test(doc.body)) { text = `${text.replace(m![0], '').trim()}\n\n${doc.body.replace(/^#+\s*/gm, '')}`.trim(); doc = null; }
   text = text.replace(/\[\[\/?DOC[^\]]*\]\]/gi, '').replace(/\*\*/g, '').trim();
   if (AGENCY.test(text)) {
     text = text.split(/(?<=[.!?])\s+|\n+/).filter((x) => x.trim() && !AGENCY.test(x)).join(' ').trim();
@@ -385,6 +396,7 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     const route = await routeFor(db, { ...want, choice: cut(b.model, 20) || 'auto' }).catch(() => null);
     if (route && (FRESH.test(said) || RESEARCH.test(said))) (route as { search?: boolean }).search = true;
     if (route && /https?:\/\/[^\s]{4,}/i.test(q)) (route as { fetch?: boolean }).fetch = true;
+    if (route && WANTS_APP.test(said)) { (route as { app?: boolean }).app = true; const lt = turns[turns.length - 1]; if (lt?.role === 'user') lt.content += '\n\n(APP MODE: build it now as ONE complete self-contained HTML page between [[APP: title]] and [[/APP]] — inline CSS and JS, no external files, works with touch on a phone and with keyboard/mouse on a computer, polished visuals, sound via WebAudio if it helps, a start screen, score or progress, restart. In the chat: 1–2 lines what it is and how to play/use it.)'; }
     // Research mode (18.11): several searches, sources compared, a report with links on the Canvas.
     if (route && RESEARCH.test(said)) { (route as { deep?: boolean }).deep = true; const lt = turns[turns.length - 1]; if (lt?.role === 'user') lt.content += '\n\n(RESEARCH MODE: search several independent sources, compare them, give exact numbers and dates, and put a full report between [[DOC: title]] and [[/DOC]] with a «Sources» section listing each source name and link. In the chat give the 3 key findings.)'; }
     if (route) raw = await claudeReply(db, route, sys, turns, (c) => { usd = c; });
@@ -811,7 +823,7 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       return out(200, { ok: true, chat: to, id: r?.id });
     }
     if (path === 'doc' && m === 'POST') {
-      const id = Number(b.id), doc = { title: cut(b.title, 120), body: cut(b.body, 20000) };
+      const id = Number(b.id), doc: Doc = { title: cut(b.title, 120), body: cut(b.body, 80000), ...(b.app ? { app: true } : {}) };
       const was = await db.prepare('SELECT doc FROM ws_msgs WHERE id = ? AND chat_id IN (SELECT id FROM ws_chats WHERE client_id = ?)').bind(id, me.id).first<{ doc: string | null }>().catch(() => null);
       if (was?.doc && was.doc !== JSON.stringify(doc)) await keepVersion(db, me.id, 'doc', String(id), was.doc).catch(() => {});
       await db.prepare('UPDATE ws_msgs SET doc = ? WHERE id = ? AND chat_id IN (SELECT id FROM ws_chats WHERE client_id = ?)').bind(JSON.stringify(doc), id, me.id).run();

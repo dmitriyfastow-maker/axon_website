@@ -130,7 +130,7 @@ export async function claudeReply(db: DB, route: Route, system: string, messages
     const haiku = tier.model === HAIKU; // Haiku has no server-side fallback
     const params = {
       model: tier.model,
-      max_tokens: (route as { deep?: boolean }).deep ? 8000 : 4000,
+      max_tokens: (route as { app?: boolean }).app ? 16000 : (route as { deep?: boolean }).deep ? 8000 : 4000,
       ...(haiku ? {} : { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' }),
       output_config: { effort: tier.effort },
       // Web search (17.11): only when the message needs fresh facts and the model is not Haiku (≈$0.10 a search).

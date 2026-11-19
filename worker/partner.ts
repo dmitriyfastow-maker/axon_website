@@ -252,17 +252,21 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
     // Until migration 0032 is on the live DB the columns are missing: answer "not yet" instead of crashing.
     const r = await db.prepare('SELECT payout_profile, payout_filled_at FROM partners WHERE id = ?').bind(me.id).first<{ payout_profile: string | null; payout_filled_at: string | null }>().catch(() => undefined);
     if (r === undefined) return json(503, { ok: false, error: 'soon' });
-    return json(200, { ok: true, profile: r?.payout_profile ? JSON.parse(r.payout_profile) : null, at: r?.payout_filled_at ?? null });
+    return json(200, { ok: true, v2: await payoutV2(db), profile: r?.payout_profile ? JSON.parse(r.payout_profile) : null, at: r?.payout_filled_at ?? null });
   }
   if (path === 'payout' && method === 'POST') {
     const b = await readBody(request);
     const status = String(b.status);
     if (!['fop', 'person', 'company'].includes(status)) return json(400, { ok: false, error: 'status' });
     const country = s(b.country, 60), residency = s(b.residency, 60), method_ = s(b.method, 30), account = s(b.account, 200), legal = s(b.legal_name, 120);
-    if (!country || !residency || !legal || !account || !['payoneer', 'wise', 'bank'].includes(method_)) return json(400, { ok: false, error: 'fields' });
+    // Decision 68: more ways to be paid once the owner switches them on (settings payout_v2 = 1).
+    const v2 = await payoutV2(db);
+    const methods = ['payoneer', 'wise', 'bank', ...(v2 ? ['fop_ua', 'card_ua', 'usdt', 'credit'] : [])];
+    if (!country || !residency || !legal || (!account && method_ !== 'credit') || !methods.includes(method_)) return json(400, { ok: false, error: 'fields' });
+    if (method_ === 'usdt' && !/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(account)) return json(400, { ok: false, error: 'wallet' });
     if (b.adult !== true || b.offer !== true) return json(400, { ok: false, error: 'consent' });
     const ua = /ukrain|україн|украин|^ua$/i.test(country) || /ukrain|україн|украин|^ua$/i.test(residency);
-    if (ua && status !== 'fop') return json(400, { ok: false, error: 'ua_fop' });
+    if (ua && status !== 'fop' && !(v2 && ['card_ua', 'usdt', 'credit'].includes(method_))) return json(400, { ok: false, error: 'ua_fop' });
     const profile = { status, country, residency, legal_name: legal, tax_id: s(b.tax_id, 40), method: method_, account, adult: true, offer: true };
     const saved = await db.prepare("UPDATE partners SET payout_profile = ?, payout_filled_at = datetime('now') WHERE id = ?").bind(JSON.stringify(profile), me.id).run().then(() => true, () => false);
     return saved ? json(200, { ok: true }) : json(503, { ok: false, error: 'soon' });
@@ -275,6 +279,11 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
   }
 
   return json(404, { ok: false });
+}
+
+/** Decision 68 switch: the extra payout ways (FOP, card under a civil contract, USDT, Vaxo credit ×1.5). */
+async function payoutV2(db: DB): Promise<boolean> {
+  return (await db.prepare("SELECT value FROM settings WHERE key = 'payout_v2'").first<{ value: string }>().catch(() => null))?.value === '1';
 }
 
 /** 100 bonuses = $1 of our cost. A partner gets 5 bonuses for every $1 of net renewals of their own clients. */

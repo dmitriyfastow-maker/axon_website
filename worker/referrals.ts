@@ -210,7 +210,7 @@ export async function referralOnRefund(db: DB, paymentId: number) {
 /** Decision 67 (18.11): every FRIENDS_PER_MONTH friends whose payment stayed 14 days give the inviter a month of Pro:
  *  on the Free plan the Pro plan itself for 30 days, on a paid plan the Pro month's volume on top. At most 6 a year.
  *  Three paid friends bring Vaxo at least 3 × $17.8, the gift costs at most $14.25 of AI — always in the plus. */
-export const FRIEND_REWARD = { friends: 3, days: 30, maxYear: 6 };
+export const FRIEND_REWARD = { friends: 3, days: 30, maxYear: 12 };
 export type ProReward = { until: string; mode: 'plan' | 'volume'; got: string[] };
 export async function proReward(db: DB, clientId: number): Promise<ProReward | null> {
   const v = (await db.prepare('SELECT value FROM settings WHERE key = ?').bind('reward_pro_' + clientId).first<{ value: string }>().catch(() => null))?.value;
@@ -272,7 +272,7 @@ export async function clientInvite(db: DB, clientId: number) {
 }
 
 /** The piggy bank (Decision 67): +5% of your plan's volume for each invited friend who paid in the last 35 days, up to +50%. */
-export const PIGGY = { per: 5, max: 50 };
+export const PIGGY = { per: 5, max: 100 }; // each friend's 5% lasts while that friend pays — so inviting always pays off
 export async function activeFriends(db: DB, clientId: number): Promise<number> {
   return (await db.prepare(`SELECT COUNT(DISTINCT r.id) AS n FROM referrals r JOIN invoices i ON i.lead_id = r.lead_id WHERE r.referrer_client_id = ? AND r.status IN ('credited', 'applied') AND i.status = 'paid' AND i.amount > 0 AND i.at > datetime('now', '-35 day')`).bind(clientId).first<{ n: number }>().catch(() => null))?.n ?? 0;
 }

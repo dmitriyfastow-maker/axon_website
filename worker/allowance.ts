@@ -80,8 +80,8 @@ export const TOPUP_DESC = 'Extra allowance for Vaxo Workspace';
 export const topupDesc = (usd: number, month: string) => `${TOPUP_DESC}, +$${usd} for ${month}`;
 /** Level rewards (Decision 51): extra work volume. Not added to the loyalty bonus — the larger of the two counts — so the
  *  worst case stays near zero even on Ultra. The level is saved by the workspace when it counts the progress. */
-// Decision 67 (18.11): results give a small bonus (max +15%); the big rewards are for friends who pay (referrals.ts).
-export const GAME_BONUS = [0, 0, 0, 5, 5, 8, 8, 10, 10, 12, 15];
+// Decision 67 (18.11): results give a small bonus (max +10%, Dmitry 18.11); the big rewards are for friends who pay (referrals.ts).
+export const GAME_BONUS = [0, 0, 0, 3, 3, 5, 5, 7, 7, 8, 10];
 export const WELCOME = { pct: 50, paid: 20 };
 export type Limits = { day: { pct: number; reset: string }; week: { pct: number; reset: string }; month: { pct: number; reset: string }; blocked: 'month' | null; packs: number[]; gift?: { pct: number; until: string }; invited?: boolean; friends?: number };
 export async function wsLimits(db: DB, clientId: number, plan: string): Promise<Limits> {
