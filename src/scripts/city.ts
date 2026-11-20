@@ -25,9 +25,9 @@ export type CityOpts = {
 };
 
 const TX: Record<string, Record<string, string>> = {
-  ru: { office: 'Офис', enter: '🏢 Зайти в офис', back: '← В город', taskO: 'Задача агентам этого офиса…', working: 'Работаю…', idle: 'Жду задачу', agents: 'агентов', openR: 'Открыть', kd_site: 'Сайт', kd_doc: 'Документ', kd_tool: 'Инструмент', kd_image: 'Картинка', results: 'Результаты на мониторах', reply: 'Ответ', now: 'Сейчас в работе', none: 'Пока без результатов — дайте задачу, и агент сядет за стол.', busy: 'Vax занят другой задачей — подождите пару секунд.', officeHint: 'Нажмите на монитор — откроется результат · задача внизу справа', title: 'Город Vaxo', proj: 'проектов', chats: 'разговоров', res: 'результатов', find: 'Найти здание или квартал…', reset: '⌂ Обзор', hint: 'Тяните — повернуть · колесо — ближе · нажмите на здание, квартал или штаб', solo: 'Отдельные разговоры', hq: 'Ваш штаб', open: 'Открыть разговор', openP: 'Открыть проект', taskC: 'Дать задачу этому разговору…', taskP: 'Новая задача в этом проекте…', taskN: 'Первая задача для Vax…', go: 'Отправить', last: 'Последнее в разговоре', msgs: 'сообщений', made: 'Сделано', mk_site: 'сайтов', mk_doc: 'документов', mk_tool: 'инструментов', mk_img: 'картинок', mem: 'Память проекта', noMem: 'Правил пока нет — Vax запомнит их сам или впишите в обзоре проекта.', inP: 'Разговоры квартала', dist: 'Квартал проекта', empty: 'Город пока пустой. Дайте Vax первую задачу — и здесь вырастет первое здание.', ago: 'активность', loading: 'Строю город…', glErr: 'Ваш браузер не показывает 3D. Ниже — то же самое списком.' },
-  ua: { office: 'Офіс', enter: '🏢 Зайти в офіс', back: '← До міста', taskO: 'Завдання агентам цього офісу…', working: 'Працюю…', idle: 'Чекаю завдання', agents: 'агентів', openR: 'Відкрити', kd_site: 'Сайт', kd_doc: 'Документ', kd_tool: 'Інструмент', kd_image: 'Картинка', results: 'Результати на моніторах', reply: 'Відповідь', now: 'Зараз у роботі', none: 'Поки без результатів — дайте завдання, і агент сяде за стіл.', busy: 'Vax зайнятий іншим завданням — зачекайте кілька секунд.', officeHint: 'Натисніть на монітор — відкриється результат · завдання внизу праворуч', title: 'Місто Vaxo', proj: 'проєктів', chats: 'розмов', res: 'результатів', find: 'Знайти будівлю чи квартал…', reset: '⌂ Огляд', hint: 'Тягніть — повернути · коліщатко — ближче · натисніть на будівлю, квартал чи штаб', solo: 'Окремі розмови', hq: 'Ваш штаб', open: 'Відкрити розмову', openP: 'Відкрити проєкт', taskC: 'Дати завдання цій розмові…', taskP: 'Нове завдання в цьому проєкті…', taskN: 'Перше завдання для Vax…', go: 'Надіслати', last: 'Останнє в розмові', msgs: 'повідомлень', made: 'Зроблено', mk_site: 'сайтів', mk_doc: 'документів', mk_tool: 'інструментів', mk_img: 'картинок', mem: 'Памʼять проєкту', noMem: 'Правил поки немає — Vax запамʼятає їх сам або впишіть в огляді проєкту.', inP: 'Розмови кварталу', dist: 'Квартал проєкту', empty: 'Місто поки порожнє. Дайте Vax перше завдання — і тут виросте перша будівля.', ago: 'активність', loading: 'Будую місто…', glErr: 'Ваш браузер не показує 3D. Нижче — те саме списком.' },
-  en: { office: 'Office', enter: '🏢 Enter the office', back: '← Back to the city', taskO: 'A task for this office’s agents…', working: 'Working…', idle: 'Waiting for a task', agents: 'agents', openR: 'Open', kd_site: 'Site', kd_doc: 'Document', kd_tool: 'Tool', kd_image: 'Image', results: 'Results on the monitors', reply: 'Answer', now: 'In progress', none: 'No results yet — give a task and an agent sits down at a desk.', busy: 'Vax is busy with another task — wait a few seconds.', officeHint: 'Click a monitor to open the result · the task field is on the right', title: 'Vaxo City', proj: 'projects', chats: 'chats', res: 'results', find: 'Find a building or district…', reset: '⌂ Overview', hint: 'Drag to turn · wheel to zoom · click a building, a district or the HQ', solo: 'Separate chats', hq: 'Your HQ', open: 'Open the chat', openP: 'Open the project', taskC: 'Give this chat a task…', taskP: 'A new task in this project…', taskN: 'A first task for Vax…', go: 'Send', last: 'Latest in the chat', msgs: 'messages', made: 'Made', mk_site: 'sites', mk_doc: 'documents', mk_tool: 'tools', mk_img: 'images', mem: 'Project memory', noMem: 'No rules yet — Vax learns them itself, or write them in the project overview.', inP: 'Chats in this district', dist: 'Project district', empty: 'The city is empty so far. Give Vax a first task and the first building grows here.', ago: 'active', loading: 'Building the city…', glErr: 'Your browser cannot show 3D. Below is the same as a list.' },
+  ru: { musOn: '♪ Музыка', musOff: '♪ Без музыки', office: 'Офис', enter: '🏢 Зайти в офис', back: '← В город', taskO: 'Задача агентам этого офиса…', working: 'Работаю…', idle: 'Жду задачу', agents: 'агентов', openR: 'Открыть', kd_site: 'Сайт', kd_doc: 'Документ', kd_tool: 'Инструмент', kd_image: 'Картинка', results: 'Результаты на мониторах', reply: 'Ответ', now: 'Сейчас в работе', none: 'Пока без результатов — дайте задачу, и агент сядет за стол.', busy: 'Vax занят другой задачей — подождите пару секунд.', officeHint: 'Нажмите на монитор — откроется результат · задача внизу справа', title: 'Город Vaxo', proj: 'проектов', chats: 'разговоров', res: 'результатов', find: 'Найти здание или квартал…', reset: '⌂ Обзор', hint: 'Тяните — повернуть · колесо — ближе · нажмите на здание, квартал или штаб', solo: 'Отдельные разговоры', hq: 'Ваш штаб', open: 'Открыть разговор', openP: 'Открыть проект', taskC: 'Дать задачу этому разговору…', taskP: 'Новая задача в этом проекте…', taskN: 'Первая задача для Vax…', go: 'Отправить', last: 'Последнее в разговоре', msgs: 'сообщений', made: 'Сделано', mk_site: 'сайтов', mk_doc: 'документов', mk_tool: 'инструментов', mk_img: 'картинок', mem: 'Память проекта', noMem: 'Правил пока нет — Vax запомнит их сам или впишите в обзоре проекта.', inP: 'Разговоры квартала', dist: 'Квартал проекта', empty: 'Город пока пустой. Дайте Vax первую задачу — и здесь вырастет первое здание.', ago: 'активность', loading: 'Строю город…', glErr: 'Ваш браузер не показывает 3D. Ниже — то же самое списком.' },
+  ua: { musOn: '♪ Музика', musOff: '♪ Без музики', office: 'Офіс', enter: '🏢 Зайти в офіс', back: '← До міста', taskO: 'Завдання агентам цього офісу…', working: 'Працюю…', idle: 'Чекаю завдання', agents: 'агентів', openR: 'Відкрити', kd_site: 'Сайт', kd_doc: 'Документ', kd_tool: 'Інструмент', kd_image: 'Картинка', results: 'Результати на моніторах', reply: 'Відповідь', now: 'Зараз у роботі', none: 'Поки без результатів — дайте завдання, і агент сяде за стіл.', busy: 'Vax зайнятий іншим завданням — зачекайте кілька секунд.', officeHint: 'Натисніть на монітор — відкриється результат · завдання внизу праворуч', title: 'Місто Vaxo', proj: 'проєктів', chats: 'розмов', res: 'результатів', find: 'Знайти будівлю чи квартал…', reset: '⌂ Огляд', hint: 'Тягніть — повернути · коліщатко — ближче · натисніть на будівлю, квартал чи штаб', solo: 'Окремі розмови', hq: 'Ваш штаб', open: 'Відкрити розмову', openP: 'Відкрити проєкт', taskC: 'Дати завдання цій розмові…', taskP: 'Нове завдання в цьому проєкті…', taskN: 'Перше завдання для Vax…', go: 'Надіслати', last: 'Останнє в розмові', msgs: 'повідомлень', made: 'Зроблено', mk_site: 'сайтів', mk_doc: 'документів', mk_tool: 'інструментів', mk_img: 'картинок', mem: 'Памʼять проєкту', noMem: 'Правил поки немає — Vax запамʼятає їх сам або впишіть в огляді проєкту.', inP: 'Розмови кварталу', dist: 'Квартал проєкту', empty: 'Місто поки порожнє. Дайте Vax перше завдання — і тут виросте перша будівля.', ago: 'активність', loading: 'Будую місто…', glErr: 'Ваш браузер не показує 3D. Нижче — те саме списком.' },
+  en: { musOn: '♪ Music', musOff: '♪ No music', office: 'Office', enter: '🏢 Enter the office', back: '← Back to the city', taskO: 'A task for this office’s agents…', working: 'Working…', idle: 'Waiting for a task', agents: 'agents', openR: 'Open', kd_site: 'Site', kd_doc: 'Document', kd_tool: 'Tool', kd_image: 'Image', results: 'Results on the monitors', reply: 'Answer', now: 'In progress', none: 'No results yet — give a task and an agent sits down at a desk.', busy: 'Vax is busy with another task — wait a few seconds.', officeHint: 'Click a monitor to open the result · the task field is on the right', title: 'Vaxo City', proj: 'projects', chats: 'chats', res: 'results', find: 'Find a building or district…', reset: '⌂ Overview', hint: 'Drag to turn · wheel to zoom · click a building, a district or the HQ', solo: 'Separate chats', hq: 'Your HQ', open: 'Open the chat', openP: 'Open the project', taskC: 'Give this chat a task…', taskP: 'A new task in this project…', taskN: 'A first task for Vax…', go: 'Send', last: 'Latest in the chat', msgs: 'messages', made: 'Made', mk_site: 'sites', mk_doc: 'documents', mk_tool: 'tools', mk_img: 'images', mem: 'Project memory', noMem: 'No rules yet — Vax learns them itself, or write them in the project overview.', inP: 'Chats in this district', dist: 'Project district', empty: 'The city is empty so far. Give Vax a first task and the first building grows here.', ago: 'active', loading: 'Building the city…', glErr: 'Your browser cannot show 3D. Below is the same as a list.' },
 };
 
 const CSS = `
@@ -84,6 +84,45 @@ const CSS = `
 @media (max-width:760px){.vxc .c-brand small,.vxc .c-hint{display:none}.vxc .c-pan{top:auto;bottom:10px;height:58vh;right:10px;left:10px;width:auto}.vxc .c-find{max-width:none}}
 `;
 
+
+// Our own ambient music for the city (21.11, Dmitry: «a melody that fits the atmosphere, can be switched on and off»).
+// Made live in the browser (no recordings, nothing borrowed): warm slow chords, a soft echoing arpeggio, a deep bass,
+// all through a long reverb. Calm, a little cosmic — like a city at night that works for you.
+export function ambient(): { setOn: (on: boolean) => void; blip: () => void; stop: () => void } {
+  const AC = (window as any).AudioContext || (window as any).webkitAudioContext; const ac: AudioContext = new AC(); (window as any).__vxMus = ac;
+  const master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
+  // a long soft reverb made from decaying noise
+  const conv = ac.createConvolver(); { const len = ac.sampleRate * 3.2, b = ac.createBuffer(2, len, ac.sampleRate); for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); } conv.buffer = b; }
+  const wet = ac.createGain(); wet.gain.value = 0.55; conv.connect(wet); wet.connect(master);
+  const dry = ac.createGain(); dry.gain.value = 0.5; dry.connect(master);
+  const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; lp.Q.value = 0.6; lp.connect(dry); lp.connect(conv);
+  const lfo = ac.createOscillator(), lfoG = ac.createGain(); lfo.frequency.value = 0.05; lfoG.gain.value = 380; lfo.connect(lfoG); lfoG.connect(lp.frequency); lfo.start();
+  const echo = ac.createDelay(1.5); echo.delayTime.value = 0.42; const fb = ac.createGain(); fb.gain.value = 0.38; echo.connect(fb); fb.connect(echo); echo.connect(conv); echo.connect(dry);
+  const hz = (n: number) => 440 * Math.pow(2, (n - 69) / 12);
+  // A minor colours: Am9 → Fmaj7 → Cmaj7 → G6(add9)
+  const CH = [[57, 60, 64, 67, 71], [53, 57, 60, 64, 69], [48, 55, 59, 64, 67], [55, 59, 62, 64, 69]];
+  let on = false, step = 0, timer: number | null = null, arp: number | null = null;
+  const pad = (notes: number[], t: number, dur: number) => {
+    for (const n of notes) for (const det of [-7, 6]) {
+      const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = hz(n); o.detune.value = det;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.022, t + 2.5); g.gain.setValueAtTime(0.022, t + dur - 2.5); g.gain.linearRampToValueAtTime(0, t + dur + 1.5);
+      o.connect(g); g.connect(lp); o.start(t); o.stop(t + dur + 1.6);
+    }
+    const b = ac.createOscillator(), bg = ac.createGain(); b.type = 'sine'; b.frequency.value = hz(notes[0] - 12);
+    bg.gain.setValueAtTime(0, t); bg.gain.linearRampToValueAtTime(0.09, t + 1.5); bg.gain.linearRampToValueAtTime(0, t + dur + 1); b.connect(bg); bg.connect(dry); b.start(t); b.stop(t + dur + 1.1);
+  };
+  const pluck = (n: number, t: number, v = 0.05) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'triangle'; o.frequency.value = hz(n); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0008, t + 1.4); o.connect(g); g.connect(echo); g.connect(dry); o.start(t); o.stop(t + 1.5); };
+  const bar = () => { const t = ac.currentTime + 0.05, ch = CH[step % CH.length]; pad(ch, t, 8); step++; };
+  const tick = () => { if (Math.random() < 0.62) { const ch = CH[(step + CH.length - 1) % CH.length]; pluck(ch[Math.floor(Math.random() * ch.length)] + 12 + (Math.random() < 0.25 ? 12 : 0), ac.currentTime + 0.02); } };
+  const start = () => { if (timer) return; bar(); timer = window.setInterval(bar, 8000); arp = window.setInterval(tick, 420); };
+  const halt = () => { if (timer) clearInterval(timer); if (arp) clearInterval(arp); timer = arp = null; };
+  return {
+    setOn: (v: boolean) => { on = v; if (v) { ac.resume().catch(() => {}); start(); master.gain.cancelScheduledValues(ac.currentTime); master.gain.linearRampToValueAtTime(0.85, ac.currentTime + 2.5); } else { master.gain.cancelScheduledValues(ac.currentTime); master.gain.linearRampToValueAtTime(0, ac.currentTime + 0.8); setTimeout(() => { if (!on) halt(); }, 900); } },
+    blip: () => { if (!on) return; const t = ac.currentTime; const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(880, t); o.frequency.exponentialRampToValueAtTime(1320, t + 0.08); g.gain.setValueAtTime(0.06, t); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.35); o.connect(g); g.connect(dry); g.connect(conv); o.start(t); o.stop(t + 0.4); },
+    stop: () => { halt(); try { lfo.stop(); } catch { /* */ } ac.close().catch(() => {}); },
+  };
+}
+
 export function openCity(o: CityOpts): void {
   const t = TX[o.lang] || TX.en;
   if (!document.getElementById('vxc-css')) { const st = document.createElement('style'); st.id = 'vxc-css'; st.textContent = CSS; document.head.append(st); }
@@ -95,7 +134,7 @@ export function openCity(o: CityOpts): void {
   d.innerHTML = `<div class="c-load">${t.loading}</div>
     <div class="c-top"><div class="c-brand c-glass"><b>${t.title.replace('Vaxo', 'VAXO<i>.</i>')}</b><small>${projects.length} ${t.proj} · ${chats.length} ${t.chats} · ${total} ${t.res}</small></div>
       <label class="c-find c-glass"><input type="search" placeholder="${t.find}" aria-label="${t.find}"></label>
-      <button type="button" class="c-btn c-glass c-reset">${t.reset}</button>
+      <button type="button" class="c-btn c-glass c-reset">${t.reset}</button><button type="button" class="c-btn c-glass c-mus" aria-pressed="false"></button>
       <button type="button" class="c-x c-glass" aria-label="×">×</button></div>
     <div class="c-hint c-glass">${t.hint}</div>
     <aside class="c-pan c-glass" hidden><div class="c-ph"><div><small class="c-kind"></small><h3 class="c-name"></h3></div><button type="button" class="c-btn c-close" aria-label="×">×</button></div><div class="c-pb"></div></aside>
@@ -104,6 +143,14 @@ export function openCity(o: CityOpts): void {
   const $ = <E extends HTMLElement>(s: string) => d.querySelector<E>(s)!;
   const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls = '', text?: string) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
   let alive = true;
+  // music: on by default, the choice is remembered
+  const mus = ambient(), musB = $<HTMLButtonElement>('.c-mus');
+  let musOn = (() => { try { return localStorage.getItem('vx_city_music') !== '0'; } catch { return true; } })();
+  const paintMus = () => { musB.textContent = musOn ? t.musOn : t.musOff; musB.setAttribute('aria-pressed', String(musOn)); musB.style.opacity = musOn ? '1' : '.6'; };
+  paintMus(); mus.setOn(musOn);
+  musB.onclick = () => { musOn = !musOn; try { localStorage.setItem('vx_city_music', musOn ? '1' : '0'); } catch { /* */ } paintMus(); mus.setOn(musOn); };
+  // a browser that waits for a touch before playing sound starts the music on the first click inside the city
+  d.addEventListener('pointerdown', () => { if (musOn) mus.setOn(true); }, { once: true });
 
   // ---------- panel (the office / the district / the HQ)
   const pan = $('.c-pan'), pb = $('.c-pb');
@@ -142,7 +189,7 @@ export function openCity(o: CityOpts): void {
   // ---------- 3D
   let renderer: THREE.WebGLRenderer;
   try { renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' }); }
-  catch { $('.c-load').textContent = t.glErr; hqPanel(); return; }
+  catch { $('.c-load').textContent = t.glErr; mus.stop(); hqPanel(); $('.c-x').onclick = () => { d.close(); d.remove(); }; return; }
   renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.domElement.className = 'c-gl';
   d.prepend(renderer.domElement);
   const scene = new THREE.Scene();
@@ -169,7 +216,7 @@ export function openCity(o: CityOpts): void {
     for (let y = 2; y < 64; y += 6) for (let i = 2; i < 32; i += 7) if (rnd() < lit) { x.fillStyle = rnd() < 0.78 ? '#ffc874' : '#7fe6f5'; x.fillRect(i, y, 4, 3); }
     const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; tx.wrapS = tx.wrapT = THREE.RepeatWrapping; tx.magFilter = THREE.NearestFilter; return tx;
   };
-  type B = { c: (typeof chats)[number]; mesh: THREE.Mesh; mat: THREE.MeshStandardMaterial; base: number };
+  type B = { c: (typeof chats)[number]; mesh: THREE.Mesh; mat: THREE.MeshStandardMaterial; base: number; target?: number };
   const buildings: B[] = [], plates: { pid: number | null; mesh: THREE.Mesh; center: THREE.Vector3; lbl: HTMLElement }[] = [];
   const pickables: THREE.Object3D[] = [], beacons: THREE.Mesh[] = [];
   const labels: { el: HTMLElement; pos: THREE.Vector3 }[] = [];
@@ -245,6 +292,104 @@ export function openCity(o: CityOpts): void {
   roads.forEach(([a, b], i) => { const k = Math.min(6, 1 + Math.round((groups[i]?.list.reduce((s, c) => s + c.results, 0) || 0) / 2)); for (let j = 0; j < k; j++) { const m = new THREE.Mesh(agentGeo, new THREE.MeshBasicMaterial({ color: j % 2 ? 0xf2a93b : 0x7fe6f5 })); scene.add(m); agents.push({ m, path: (u) => a.clone().lerp(b, u).setY(0.5), s: 0.05 + Math.random() * 0.06, o: Math.random() }); } });
   arcs.forEach((cv) => { for (let j = 0; j < 3; j++) { const m = new THREE.Mesh(agentGeo, new THREE.MeshBasicMaterial({ color: 0xffd28a })); scene.add(m); agents.push({ m, path: (u) => cv.getPoint(u), s: 0.06 + Math.random() * 0.04, o: j / 3 }); } });
 
+  // ---------- life in the city (21.11, Dmitry: «in the example the city was alive»): traffic both ways and on a ring road,
+  // people walking round the districts, drones over finished work and flying to the HQ, windows switching on and off,
+  // cranes where work is going on right now, sparks over results, shooting stars at night.
+  const life: ((tt: number, dt: number) => void)[] = [];
+  const hgt = (m: THREE.Mesh) => (m.geometry as THREE.BoxGeometry).parameters.height;
+  {
+    const carGeo = new THREE.BoxGeometry(0.9, 0.36, 0.46), cabGeo = new THREE.BoxGeometry(0.45, 0.24, 0.4), lgGeo = new THREE.BoxGeometry(0.06, 0.12, 0.34);
+    const CARS = [0x2b3b52, 0x6b2f3a, 0x2e5a44, 0xe3e7ee, 0xf2a93b, 0x3a3f4a];
+    const mkCar = () => {
+      const g = new THREE.Group(), mat = new THREE.MeshStandardMaterial({ color: CARS[Math.floor(Math.random() * CARS.length)], metalness: 0.5, roughness: 0.35 });
+      const b = new THREE.Mesh(carGeo, mat); b.position.y = 0.28; g.add(b);
+      const cab = new THREE.Mesh(cabGeo, mat); cab.position.set(-0.05, 0.56, 0); g.add(cab);
+      const hl = new THREE.Mesh(lgGeo, new THREE.MeshBasicMaterial({ color: 0xfff4d6 })); hl.position.set(0.46, 0.28, 0); g.add(hl);
+      const tl = new THREE.Mesh(lgGeo, new THREE.MeshBasicMaterial({ color: 0xff4040 })); tl.position.set(-0.46, 0.28, 0); g.add(tl);
+      g.scale.setScalar(1.55); scene.add(g); return g;
+    };
+    roads.forEach(([a, b]) => {
+      const dir = b.clone().sub(a), len = dir.length(), ang = Math.atan2(dir.z, dir.x), side = new THREE.Vector3(-dir.z, 0, dir.x).normalize();
+      for (let j = 0; j < 4; j++) {
+        const car = mkCar(), fwd = j % 2 === 0, sp = (2.6 + Math.random() * 2.4) / len, off = Math.random();
+        car.rotation.y = -ang + (fwd ? 0 : Math.PI);
+        life.push((tt) => { let u = (off + tt * sp) % 1; if (!fwd) u = 1 - u; const p = a.clone().lerp(b, 0.2 + u * 0.68).addScaledVector(side, fwd ? 0.5 : -0.5); car.position.set(p.x, 0, p.z); });
+      }
+    });
+    const RR = 7.6;
+    const ringRoad = new THREE.Mesh(new THREE.RingGeometry(RR - 0.75, RR + 0.75, 72), new THREE.MeshBasicMaterial({ color: dark ? 0x0d1f2c : 0xd3dce6, side: THREE.DoubleSide })); ringRoad.rotation.x = -Math.PI / 2; ringRoad.position.y = 0.03; scene.add(ringRoad);
+    const dash = new THREE.Mesh(new THREE.RingGeometry(RR - 0.03, RR + 0.03, 72), new THREE.MeshBasicMaterial({ color: 0xf2a93b, side: THREE.DoubleSide, transparent: true, opacity: 0.6 })); dash.rotation.x = -Math.PI / 2; dash.position.y = 0.05; scene.add(dash);
+    for (let j = 0; j < 6; j++) { const car = mkCar(), off = j / 6, sp = 0.035 + Math.random() * 0.02; life.push((tt) => { const an = (off + tt * sp) * Math.PI * 2; car.position.set(Math.cos(an) * (RR + 0.35), 0, Math.sin(an) * (RR + 0.35)); car.rotation.y = -(an + Math.PI / 2); }); }
+  }
+  // people walking round each district
+  plates.forEach((pl, i) => {
+    const g = groups[i], n = Math.min(10, 3 + g.list.length), half = (pl.mesh.geometry as THREE.BoxGeometry).parameters.width / 2 + 0.55, a2 = pl.mesh.rotation.y;
+    const pg = new THREE.CapsuleGeometry(0.17, 0.42, 4, 8);
+    for (let j = 0; j < n; j++) {
+      const m = new THREE.Mesh(pg, new THREE.MeshStandardMaterial({ color: [0xf2a93b, 0x57d3e6, 0xeeeeee, 0x8bd17c, 0xe06c75, 0xb48cf2][j % 6], emissive: dark ? 0x1a1a1a : 0x000000 })); scene.add(m);
+      const off = Math.random(), sp = (0.012 + Math.random() * 0.016) * (Math.random() < 0.5 ? 1 : -1);
+      life.push((tt) => {
+        const u = (((off + tt * sp) % 1) + 1) % 1, per = u * 4, k = Math.floor(per), f = per - k;
+        const lx = k === 0 ? -half + f * 2 * half : k === 1 ? half : k === 2 ? half - f * 2 * half : -half;
+        const lz = k === 0 ? -half : k === 1 ? -half + f * 2 * half : k === 2 ? half : half - f * 2 * half;
+        m.position.set(pl.center.x + lx * Math.cos(a2) - lz * Math.sin(a2), 0.4 + Math.abs(Math.sin(tt * 8 + j)) * 0.05, pl.center.z + lx * Math.sin(a2) + lz * Math.cos(a2));
+      });
+    }
+  });
+  // street lamps and trees around every district
+  { const post = new THREE.CylinderGeometry(0.06, 0.08, 2.4, 6), bulb = new THREE.SphereGeometry(0.2, 10, 10), trunk = new THREE.CylinderGeometry(0.1, 0.14, 0.7, 6), crown = new THREE.ConeGeometry(0.6, 1.5, 8);
+    const pm = new THREE.MeshStandardMaterial({ color: 0x3a4250 }), bm = new THREE.MeshBasicMaterial({ color: 0xffd9a0 }), tm = new THREE.MeshStandardMaterial({ color: 0x6b4a2f }), cm1 = new THREE.MeshStandardMaterial({ color: dark ? 0x2f6b46 : 0x58a86c }), cm2 = new THREE.MeshStandardMaterial({ color: dark ? 0x3d7d4e : 0x6cbb7a });
+    plates.forEach((pl) => {
+      const half = (pl.mesh.geometry as THREE.BoxGeometry).parameters.width / 2 + 1.1, a2 = pl.mesh.rotation.y, at = (lx: number, lz: number) => new THREE.Vector3(pl.center.x + lx * Math.cos(a2) - lz * Math.sin(a2), 0, pl.center.z + lx * Math.sin(a2) + lz * Math.cos(a2));
+      for (const [lx, lz] of [[-half, -half], [half, -half], [half, half], [-half, half], [0, -half], [0, half], [-half, 0], [half, 0]]) { const p = at(lx, lz); const m = new THREE.Mesh(post, pm); m.position.set(p.x, 1.2, p.z); scene.add(m); const b = new THREE.Mesh(bulb, bm); b.position.set(p.x, 2.45, p.z); scene.add(b); }
+      for (let k = 0; k < 6; k++) { const side = k % 4, f = (Math.random() - 0.5) * 1.6 * half, lx = side === 0 ? f : side === 1 ? half + 0.9 : side === 2 ? f : -half - 0.9, lz = side === 0 ? -half - 0.9 : side === 1 ? f : side === 2 ? half + 0.9 : f; const p = at(lx, lz); const t1 = new THREE.Mesh(trunk, tm); t1.position.set(p.x, 0.35, p.z); scene.add(t1); const c1 = new THREE.Mesh(crown, k % 2 ? cm1 : cm2); c1.position.set(p.x, 1.4, p.z); scene.add(c1); }
+    });
+  }
+  // drones: hovering over finished work, or flying between it and the HQ
+  buildings.filter((b) => b.c.results).slice(0, 14).forEach((b, j) => {
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 10), new THREE.MeshStandardMaterial({ color: 0xdde3ea, metalness: 0.6, roughness: 0.3 })));
+    const rot = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.035, 6, 20), new THREE.MeshBasicMaterial({ color: 0x57d3e6 })); rot.rotation.x = Math.PI / 2; g.add(rot);
+    const led = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 6), new THREE.MeshBasicMaterial({ color: 0xff4d4d })); led.position.y = -0.2; g.add(led);
+    scene.add(g);
+    const top = b.mesh.position.clone(); top.y = hgt(b.mesh) + 1.8;
+    const hqP = new THREE.Vector3(0, hqH + 1, 0), mid = top.clone().add(hqP).multiplyScalar(0.5); mid.y += 7;
+    const cv = new THREE.QuadraticBezierCurve3(hqP, mid, top), off = Math.random(), sp = 0.035 + Math.random() * 0.03, hover = j % 2 === 0;
+    life.push((tt) => {
+      if (hover) g.position.set(top.x + Math.cos(tt * 0.8 + j) * 1.5, top.y + Math.sin(tt * 2 + j) * 0.3, top.z + Math.sin(tt * 0.8 + j) * 1.5);
+      else { const u = (off + tt * sp) % 2; g.position.copy(cv.getPoint(u > 1 ? 2 - u : u)); }
+      rot.rotation.z = tt * 12; (led.material as THREE.MeshBasicMaterial).color.setHex(Math.sin(tt * 6 + j) > 0 ? 0xff4d4d : 0x330000);
+    });
+  });
+  // windows switch on and off
+  { let acc = 0; life.push((_tt, dt) => {
+    acc += dt;
+    if (acc > 0.22 && buildings.length) { acc = 0; const b = buildings[Math.floor(Math.random() * buildings.length)]; if (b.mat.emissiveMap) b.mat.emissiveMap.offset.y = Math.floor(Math.random() * 8) / 8; b.target = b.base * (0.7 + Math.random() * 0.65); }
+    for (const b of buildings) if (b !== hover && b.target != null) b.mat.emissiveIntensity += (b.target - b.mat.emissiveIntensity) * 0.05;
+  }); }
+  // cranes where work went on in the last hours
+  buildings.filter((b) => b.c.last && Date.now() - new Date(b.c.last.replace(' ', 'T') + 'Z').getTime() < 3 * 3600e3).slice(0, 6).forEach((b, j) => {
+    const h = hgt(b.mesh), p = b.mesh.position, cm = new THREE.MeshStandardMaterial({ color: 0xf2a93b, emissive: 0xf2a93b, emissiveIntensity: 0.35 });
+    const mast = new THREE.Mesh(new THREE.BoxGeometry(0.16, h + 4, 0.16), cm); mast.position.set(p.x + 1.45, (h + 4) / 2, p.z + 1.45); scene.add(mast);
+    const arm = new THREE.Group(); arm.position.set(p.x + 1.45, h + 4, p.z + 1.45);
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(5, 0.14, 0.14), cm); bar.position.x = 1.3; arm.add(bar);
+    const hook = new THREE.Mesh(new THREE.BoxGeometry(0.03, 1.6, 0.03), new THREE.MeshBasicMaterial({ color: 0x999999 })); hook.position.set(3, -0.8, 0); arm.add(hook);
+    const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 8), new THREE.MeshBasicMaterial({ color: 0xff3b3b })); lamp.position.set(3.7, 0.2, 0); arm.add(lamp);
+    scene.add(arm);
+    life.push((tt) => { arm.rotation.y = Math.sin(tt * 0.3 + j) * 1.3; hook.scale.y = 1 + Math.sin(tt * 0.7 + j) * 0.4; (lamp.material as THREE.MeshBasicMaterial).color.setHex(Math.sin(tt * 4 + j) > 0 ? 0xff3b3b : 0x400000); });
+  });
+  // sparks over finished work
+  { const sparks: { m: THREE.Mesh; v: THREE.Vector3; l: number }[] = [], sg = new THREE.SphereGeometry(0.09, 6, 6), lit = buildings.filter((b) => b.c.results); let acc = 0;
+    life.push((_tt, dt) => {
+      acc += dt;
+      if (acc > 2.4 && lit.length) { acc = 0; const b = lit[Math.floor(Math.random() * lit.length)], top = b.mesh.position.clone(); top.y = hgt(b.mesh) + 1; for (let k = 0; k < 14; k++) { const m = new THREE.Mesh(sg, new THREE.MeshBasicMaterial({ color: k % 2 ? 0xffd28a : 0x7fe6f5, transparent: true })); m.position.copy(top); scene.add(m); sparks.push({ m, v: new THREE.Vector3((Math.random() - 0.5) * 3, 2 + Math.random() * 2.5, (Math.random() - 0.5) * 3), l: 1.3 }); } }
+      for (let k = sparks.length - 1; k >= 0; k--) { const sp = sparks[k]; sp.l -= dt; sp.v.y -= dt * 3; sp.m.position.addScaledVector(sp.v, dt); (sp.m.material as THREE.MeshBasicMaterial).opacity = Math.max(0, sp.l / 1.3); if (sp.l <= 0) { scene.remove(sp.m); (sp.m.material as THREE.Material).dispose(); sparks.splice(k, 1); } }
+    });
+  }
+  // shooting stars at night
+  if (dark) { const st = new THREE.Mesh(new THREE.BoxGeometry(3, 0.06, 0.06), new THREE.MeshBasicMaterial({ color: 0xcfefff, transparent: true })); scene.add(st); let s0 = -10, from = new THREE.Vector3(), to = new THREE.Vector3();
+    life.push((tt) => { if (tt - s0 > 7) { s0 = tt; from.set((Math.random() - 0.5) * 200, 70 + Math.random() * 40, -80 - Math.random() * 60); to.copy(from).add(new THREE.Vector3(40, -18, 20)); st.lookAt(to); } const k = (tt - s0) / 1.1; st.visible = k < 1; if (k < 1) { st.position.lerpVectors(from, to, k); (st.material as THREE.MeshBasicMaterial).opacity = 1 - k; st.rotation.y = Math.atan2(-(to.z - from.z), to.x - from.x); } }); }
+
   // ---------- post: a soft glow (bloom) at night
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, cam));
@@ -289,7 +434,7 @@ export function openCity(o: CityOpts): void {
   renderer.domElement.addEventListener('pointerup', (ev) => {
     if (performance.now() - downAt > 400 || Math.hypot(ev.clientX - downXY[0], ev.clientY - downXY[1]) > 6) return; // that was a drag
     const ob = pick(ev); if (!ob) return;
-    const u = ob.userData;
+    const u = ob.userData; mus.blip();
     if (u.kind === 'res') { close(); o.openResult(u.chat, u.id); return; }
     if (u.kind === 'agent') { pb.querySelector<HTMLInputElement>('.c-task input')?.focus(); return; }
     if (inOffice) return;
@@ -306,7 +451,8 @@ export function openCity(o: CityOpts): void {
   // with what is being done; a task given here is worked on right here — an agent types, the result lands on a new monitor.
   let inOffice = false, office: THREE.Group | null = null, officeChat: (typeof chats)[number] | null = null;
   const officePick: THREE.Object3D[] = [];
-  let crew: { g: THREE.Group; head: THREE.Mesh; base: THREE.Vector3; phase: number; work: boolean; screen?: THREE.Mesh; walk?: boolean }[] = [];
+  let crew: { g: THREE.Group; head: THREE.Mesh; base: THREE.Vector3; phase: number; work: boolean; screen?: THREE.Mesh; walk?: boolean; arms?: THREE.Mesh[]; tail?: THREE.Mesh; title?: string }[] = [];
+  let officeT0 = 0, bubbles: { sp: THREE.Sprite; a: number; until: number }[] = [], bubbleAcc = 0, steam: THREE.Mesh[] = [], route: THREE.Vector3[] = [], codes: THREE.Texture[] = [];
   const OFF = new THREE.Vector3(0, 0, 700);
   const KI: Record<string, string> = { site: '🌐', doc: '📄', tool: '🧮', image: '🖼' };
   const screenTex = (rows: { t: string; f: string; c: string }[], w = 512, h = 320, bg = '#0b1724', border = '#57d3e6') => {
@@ -334,12 +480,15 @@ export function openCity(o: CityOpts): void {
     const nose = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), new THREE.MeshBasicMaterial({ color: 0x111111 })); nose.position.set(0, -0.08, -0.46); head.add(nose);
     const ring = new THREE.Mesh(new THREE.RingGeometry(0.7, 0.92, 32), new THREE.MeshBasicMaterial({ color: work ? 0xf2a93b : 0x57d3e6, side: THREE.DoubleSide, transparent: true, opacity: 0.85 }));
     ring.rotation.x = -Math.PI / 2; ring.position.y = 0.04; g.add(ring);
-    return { g, head };
+    const arms: THREE.Mesh[] = [];
+    for (const sx of [-0.5, 0.5]) { const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.09, 0.42, 4, 8), new THREE.MeshStandardMaterial({ color: 0x8d8f96 })); arm.position.set(sx, 1.35, -0.18); arm.rotation.x = -1.1; g.add(arm); arms.push(arm); }
+    const tail = new THREE.Mesh(new THREE.CapsuleGeometry(0.12, 0.6, 4, 8), new THREE.MeshStandardMaterial({ color: 0x6f7178 })); tail.position.set(0, 0.6, 0.45); tail.rotation.x = 0.9; g.add(tail);
+    return { g, head, arms, tail };
   };
   type It = { id: number; kind: string; title: string };
   function buildOffice(c: (typeof chats)[number], items: It[], wall: { q: string; a: string }, working?: string) {
     if (office) { scene.remove(office); office.traverse((ob) => { const m = ob as THREE.Mesh; m.geometry?.dispose?.(); const mt = m.material as THREE.MeshBasicMaterial | undefined; mt?.map?.dispose(); mt?.dispose?.(); }); }
-    const room = new THREE.Group(); office = room; room.position.copy(OFF); scene.add(room); officePick.length = 0; crew = [];
+    const room = new THREE.Group(); office = room; room.position.copy(OFF); scene.add(room); officePick.length = 0; crew = []; route = []; codes = []; steam = [];
     const desks: (It | null)[] = [...items.slice(-7), null]; // the last desk waits for a new task
     const cols = Math.min(4, desks.length), rows = Math.ceil(desks.length / cols), W = cols * 6 + 6, D = rows * 6 + 10;
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(W, D), new THREE.MeshStandardMaterial({ color: dark ? 0x0c141e : 0xeef1f5, roughness: 0.9 })); floor.rotation.x = -Math.PI / 2; room.add(floor);
@@ -371,10 +520,27 @@ export function openCity(o: CityOpts): void {
       if (it) { scr.userData = { kind: 'res', id: it.id, chat: c.id, title: it.title }; officePick.push(scr); }
       const a = agentMesh(isWork || !!it); a.g.position.set(x, 0, z + 1.35); room.add(a.g); // faces its monitor, like people at desks
       a.g.traverse((m) => { m.userData = { kind: it ? 'res' : 'agent', id: it?.id, chat: c.id, title: it?.title || '' }; }); officePick.push(...(a.g.children as THREE.Object3D[]));
-      crew.push({ g: a.g, head: a.head, base: a.g.position.clone(), phase: Math.random() * 6, work: isWork || !!it, screen: isWork ? scr : undefined });
+      crew.push({ g: a.g, head: a.head, base: a.g.position.clone(), phase: Math.random() * 6, work: isWork || !!it, screen: isWork ? scr : undefined, arms: a.arms, tail: a.tail, title: it?.title });
+      // a live «working» strip on the monitor (scrolling lines) and a status LED
+      const code = codeTex(); codes.push(code);
+      const strip = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 0.32), new THREE.MeshBasicMaterial({ map: code, transparent: true, opacity: 0.85 })); strip.position.set(x, 1.8, z - 0.54); room.add(strip);
+      const led = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), new THREE.MeshBasicMaterial({ color: it ? 0x4ad295 : isWork ? 0xf2a93b : 0x57d3e6 })); led.position.set(x + 1.1, 1.66, z - 0.54); room.add(led);
+      route.push(new THREE.Vector3(x - 2.2, 0, z + 1.6));
     });
-    // one agent walks between the desks, carrying work
-    const w = agentMesh(false); w.g.position.set(-W / 2 + 3, 0, D / 2 - 3); room.add(w.g); crew.push({ g: w.g, head: w.head, base: new THREE.Vector3(0, 0, 0), phase: 0, work: false, walk: true });
+    // the corner: a coffee machine with steam, plants, a sofa — and one agent walking coffee → desks → the wall screen
+    const cm = new THREE.Group(); cm.position.set(W / 2 - 1.6, 0, -D / 2 + 1.6); room.add(cm);
+    const box = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.9, 0.9), new THREE.MeshStandardMaterial({ color: 0x2a2f38, metalness: 0.5, roughness: 0.3 })); box.position.y = 0.95; cm.add(box);
+    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.1, 0.22, 12), new THREE.MeshStandardMaterial({ color: 0xffffff })); cup.position.set(0, 0.95, 0.5); cm.add(cup);
+    const cl = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), new THREE.MeshBasicMaterial({ color: 0xf2a93b })); cl.position.set(0.4, 1.6, 0.46); cm.add(cl);
+    steam = [0, 1, 2].map((k) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4 })); m.position.set(0, 1.15 + k * 0.3, 0.5); m.userData.k = k; cm.add(m); return m; });
+    for (const [px, pz] of [[-W / 2 + 1.2, -D / 2 + 1.2], [W / 2 - 1.2, D / 2 - 1.2], [-W / 2 + 1.2, D / 2 - 1.2]]) {
+      const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.35, 0.7, 14), new THREE.MeshStandardMaterial({ color: 0xc9a27a })); pot.position.set(px, 0.35, pz); room.add(pot);
+      for (let k = 0; k < 3; k++) { const lf = new THREE.Mesh(new THREE.SphereGeometry(0.55 - k * 0.1, 12, 10), new THREE.MeshStandardMaterial({ color: [0x3f8f4f, 0x4fa35e, 0x5cb86a][k] })); lf.position.set(px + (k - 1) * 0.2, 1.0 + k * 0.45, pz); room.add(lf); }
+    }
+    const sofa = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.7, 1.1), new THREE.MeshStandardMaterial({ color: 0x3b4a6b, roughness: 0.9 })); sofa.position.set(-W / 2 + 2.4, 0.35, D / 2 - 1.4); room.add(sofa);
+    route = [cm.position.clone().add(new THREE.Vector3(-0.9, 0, 1.4)), ...route, new THREE.Vector3(0, 0, -D / 2 + 3)];
+    const w = agentMesh(false); w.g.position.copy(route[0]); room.add(w.g); crew.push({ g: w.g, head: w.head, base: new THREE.Vector3(0, 0, 0), phase: 0, work: false, walk: true, arms: w.arms, tail: w.tail });
+    officeT0 = performance.now(); bubbles = []; bubbleAcc = 1.5;
     // light for the room (the city's night light is too dim indoors)
     const lamp = new THREE.PointLight(0xfff1dc, dark ? 260 : 160, 60, 1.6); lamp.position.set(0, 9, 0); room.add(lamp);
     const fill = new THREE.PointLight(0x9fe8f5, dark ? 120 : 60, 50, 1.6); fill.position.set(-W / 3, 6, D / 3); room.add(fill);
@@ -382,14 +548,59 @@ export function openCity(o: CityOpts): void {
     officeSize = { W, D };
   }
   let officeSize = { W: 20, D: 16 };
-  function animOffice(tt: number) {
+  const codeTex = () => {
+    const cv = document.createElement('canvas'); cv.width = 256; cv.height = 128; const x = cv.getContext('2d')!;
+    for (let y = 4; y < 128; y += 9) { let px = 6; while (px < 240) { const w = 8 + Math.random() * 40; x.fillStyle = ['#57d3e6', '#f2a93b', '#8bd17c', '#cfd8e3'][Math.floor(Math.random() * 4)]; x.globalAlpha = 0.5 + Math.random() * 0.5; x.fillRect(px, y, w, 4); px += w + 6; } }
+    const tx = new THREE.CanvasTexture(cv); tx.wrapT = THREE.RepeatWrapping; tx.repeat.set(1, 0.35); return tx;
+  };
+  const PH: Record<string, string[]> = {
+    ru: ['Проверяю «{t}»', 'Улучшаю текст…', 'Считаю цифры', 'Готово ✓', '☕ Минутку', 'Ищу идеи…', 'Сверяю с памятью проекта', 'Отправил на холст', 'Ещё чуть-чуть…', 'Нашёл ошибку — правлю'],
+    ua: ['Перевіряю «{t}»', 'Покращую текст…', 'Рахую цифри', 'Готово ✓', '☕ Хвилинку', 'Шукаю ідеї…', 'Звіряю з памʼяттю проєкту', 'Відправив на полотно', 'Ще трішки…', 'Знайшов помилку — виправляю'],
+    en: ['Checking “{t}”', 'Polishing the text…', 'Crunching numbers', 'Done ✓', '☕ One sec', 'Looking for ideas…', 'Checking project memory', 'Sent to the canvas', 'Almost there…', 'Found a bug — fixing'],
+  };
+  const bubbleSprite = (text: string) => {
+    const cv = document.createElement('canvas'); const x = cv.getContext('2d')!; x.font = '600 30px Inter, sans-serif';
+    const w = Math.min(560, x.measureText(text).width + 44); cv.width = w; cv.height = 64; const y = cv.getContext('2d')!;
+    y.fillStyle = 'rgba(255,255,255,.95)'; y.beginPath(); (y as any).roundRect ? (y as any).roundRect(2, 2, w - 4, 52, 22) : y.rect(2, 2, w - 4, 52); y.fill();
+    y.fillStyle = '#10141c'; y.font = '600 30px Inter, sans-serif'; y.textBaseline = 'middle'; y.fillText(text, 22, 29);
+    const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tx, transparent: true, depthTest: false })); sp.scale.set(w / 64, 1, 1); sp.renderOrder = 5; return sp;
+  };
+  function animOffice(tt: number, dt: number) {
+    const since = (performance.now() - officeT0) / 1000, greet = since < 2.2 ? Math.sin(Math.min(1, since / 2.2) * Math.PI) : 0;
     for (const a of crew) {
-      if (a.walk) { const u = (tt * 0.06) % 1, ang = u * Math.PI * 2, rx = officeSize.W / 2 - 3, rz = officeSize.D / 2 - 2.2; a.g.position.set(Math.cos(ang) * rx, Math.abs(Math.sin(tt * 6)) * 0.12, Math.sin(ang) * rz + 1); a.g.rotation.y = -ang; continue; }
+      if (a.walk) {
+        // walk the route: coffee → each desk → the wall screen → back
+        const n = route.length, seg = (tt * 0.22) % n, i0 = Math.floor(seg), f = seg - i0, A = route[i0], Bp = route[(i0 + 1) % n];
+        const pause = f < 0.25; const k = pause ? 0 : (f - 0.25) / 0.75;
+        a.g.position.lerpVectors(A, Bp, k); a.g.position.y = pause ? 0 : Math.abs(Math.sin(tt * 9)) * 0.1;
+        if (!pause) a.g.rotation.y = Math.atan2(-(Bp.x - A.x), -(Bp.z - A.z));
+        if (a.arms) { a.arms[0].rotation.x = -0.3 + Math.sin(tt * 9) * (pause ? 0 : 0.5); a.arms[1].rotation.x = -0.3 - Math.sin(tt * 9) * (pause ? 0 : 0.5); }
+        if (a.tail) a.tail.rotation.z = Math.sin(tt * 4) * 0.4;
+        continue;
+      }
       const sp = a.work ? 7 : 2;
       a.head.position.y = 2.05 + Math.sin(tt * sp + a.phase) * (a.work ? 0.05 : 0.025);
       a.head.rotation.z = Math.sin(tt * 1.3 + a.phase) * 0.08;
+      a.head.rotation.y = greet * Math.PI * 0.85; // they turn to greet you when you come in
+      if (a.arms) { const typ = a.work ? Math.sin(tt * 18 + a.phase) * 0.18 : Math.sin(tt * 1.5 + a.phase) * 0.05; a.arms[0].rotation.x = -1.1 + typ; a.arms[1].rotation.x = -1.1 - typ; }
+      if (a.tail) a.tail.rotation.z = Math.sin(tt * 2 + a.phase) * 0.35;
       if (a.screen) (a.screen.material as THREE.MeshBasicMaterial).color.setScalar(0.75 + 0.25 * Math.sin(tt * 5));
     }
+    for (const c of codes) c.offset.y = (c.offset.y + dt * 0.12) % 1;
+    for (const m of steam) { const k = ((tt * 0.6 + m.userData.k / 3) % 1); m.position.y = 1.15 + k * 0.9; (m.material as THREE.MeshBasicMaterial).opacity = 0.45 * (1 - k); m.scale.setScalar(0.8 + k * 1.2); }
+    // speech bubbles: what the agents are doing
+    bubbleAcc -= dt;
+    if (bubbleAcc <= 0 && office) {
+      bubbleAcc = 2 + Math.random() * 2;
+      const pool = crew.map((c, i) => i).filter((i) => !crew[i].walk && !bubbles.some((b) => b.a === i));
+      if (pool.length) {
+        const ai = pool[Math.floor(Math.random() * pool.length)], c = crew[ai], ph = PH[o.lang] || PH.en;
+        const txt = ph[Math.floor(Math.random() * ph.length)].replace('{t}', (c.title || '').slice(0, 26) || '…');
+        const sp = bubbleSprite(txt); sp.position.copy(c.g.position).add(new THREE.Vector3(0, 3.1, 0)); office.add(sp); bubbles.push({ sp, a: ai, until: tt + 3.2 });
+      }
+    }
+    for (let i = bubbles.length - 1; i >= 0; i--) { const b = bubbles[i]; const left = b.until - tt; b.sp.position.y = 3.1 + Math.sin(tt * 2 + i) * 0.05; (b.sp.material as THREE.SpriteMaterial).opacity = Math.min(1, left * 2); if (left <= 0) { office?.remove(b.sp); b.sp.material.map?.dispose(); b.sp.material.dispose(); bubbles.splice(i, 1); } }
   }
   async function enterOffice(c: (typeof chats)[number], note?: { q: string; a: string }) {
     officeChat = c; ctl.autoRotate = false;
@@ -437,17 +648,18 @@ export function openCity(o: CityOpts): void {
   }
 
   // ---------- loop
-  const v = new THREE.Vector3(), t0 = performance.now();
+  const v = new THREE.Vector3(), t0 = performance.now(); let lastT = t0;
   const loop = (now: number) => {
     if (!alive) return;
-    const tt = (now - t0) / 1000;
+    const tt = (now - t0) / 1000, dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+    if (!inOffice) for (const f of life) f(tt, dt);
     if (fly) { const k = Math.min(1, (now - fly.s) / 1100), e = 1 - Math.pow(1 - k, 3); cam.position.lerpVectors(fly.p0, fly.p1, e); ctl.target.lerpVectors(fly.t0, fly.t1, e); if (k >= 1) fly = null; }
     ctl.update();
     rings.forEach((r, i) => { r.rotation.z = tt * (0.3 + i * 0.25) * (i % 2 ? -1 : 1); r.position.y = hqH * (0.45 + i * 0.2) + Math.sin(tt * 1.2 + i) * 0.3; });
     crown.rotation.y = tt * 0.8; crown.position.y = hqH + 1.8 + Math.sin(tt * 1.5) * 0.25;
     for (const b of beacons) (b.material as THREE.MeshBasicMaterial).opacity = 0.55 + 0.45 * Math.sin(tt * 3 + b.userData.blink), (b.material as THREE.MeshBasicMaterial).transparent = true;
     for (const a of agents) { const u = (a.o + tt * a.s) % 2, p = a.path(u > 1 ? 2 - u : u); a.m.position.copy(p); }
-    if (inOffice) animOffice(tt);
+    if (inOffice) animOffice(tt, dt);
     bloom.strength = inOffice ? (dark ? 0.28 : 0.12) : (dark ? 0.95 : 0.35);
     composer.render();
     // labels follow their places on screen
@@ -458,7 +670,7 @@ export function openCity(o: CityOpts): void {
   requestAnimationFrame(loop);
 
   function close() {
-    if (!alive) return; alive = false; ro.disconnect(); ctl.dispose();
+    if (!alive) return; alive = false; mus.stop(); ro.disconnect(); ctl.dispose();
     scene.traverse((ob) => { const m = ob as THREE.Mesh; m.geometry?.dispose?.(); const mt = m.material as THREE.Material | THREE.Material[] | undefined; (Array.isArray(mt) ? mt : mt ? [mt] : []).forEach((x) => { (x as THREE.MeshStandardMaterial).emissiveMap?.dispose(); x.dispose(); }); });
     composer.dispose(); renderer.dispose();
     if (d.open) d.close(); d.remove();

@@ -2175,7 +2175,7 @@ const ico = {
     if (!S.signed) { openSign(); return; }
     if (!prof.open) prof.showModal();
     if (!ME.signedIn) await loadMe();
-    const tabs = ['plan', 'earn', 'eye', 'memory', ...((ME.projects || []).length ? ['projects'] : []), 'account'];
+    const tabs = ['plan', 'earn', 'memory', ...((ME.projects || []).length ? ['projects'] : []), 'account'];
     if (!tabs.includes(tab)) tab = 'plan';
     prof.classList.toggle('wide', tab === 'eye'); // the eye needs room for the radar and the bars side by side
     $('[data-ptabs]').replaceChildren(...tabs.map((k) => { const b = btn(k === tab ? 'on' : '', T.pTabs[k], () => openProf(k)); b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(k === tab)); return b; }));
@@ -2541,14 +2541,13 @@ const ico = {
     vm.setAttribute('aria-label', vm.title);
     vm.innerHTML = '<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     mic.after(vm);
-    let wake: import('../scripts/wake').Wake | null = null;
-    const openVM = (first?: string) => import('../scripts/voicemode').then(({ openVoiceMode }) => { wake?.pause(true); openVoiceMode(lang, async (q) => {
+    const openVM = (first?: string) => import('../scripts/voicemode').then(({ openVoiceMode }) => { openVoiceMode(lang, async (q) => {
       const before = S.msgs.length; await ask(q);
       const last = S.msgs.slice(before).reverse().find((m) => m.role === 'assistant');
       if (!last) return null;
       const made = last.site ? 'site' : last.doc?.app ? 'app' : last.doc ? 'doc' : last.tool ? 'tool' : last.image ? 'image' : '';
       return { text: plain(last.content) + (last.doc && !last.doc.app && !plain(last.content).length ? last.doc.body.slice(0, 900) : ''), made };
-    }, undefined, { first, onClose: () => wake?.pause(false), mount: root, hud: vmHud() }); });
+    }, undefined, { first, mount: root, hud: vmHud() }); });
     // 20.11: the voice screen shows THIS chat (or project) — its canvas, numbers, talk and the project's other chats.
     function vmHud() {
       const VH = ({ ru: { msgs: 'Сообщений', res: 'Результатов', lv: 'Уровень', proj: 'Проект', none: 'Отдельный разговор', fresh: 'Новый разговор', chats: 'Разговоры проекта' }, ua: { msgs: 'Повідомлень', res: 'Результатів', lv: 'Рівень', proj: 'Проєкт', none: 'Окрема розмова', fresh: 'Нова розмова', chats: 'Розмови проєкту' }, en: { msgs: 'Messages', res: 'Results', lv: 'Level', proj: 'Project', none: 'Separate chat', fresh: 'New chat', chats: 'Project chats' } } as Record<string, Record<string, string>>)[lang] || {};
@@ -2574,20 +2573,12 @@ const ico = {
           return false;
         },
         fresh: () => fresh(),
+        city: () => openCityView(),
         vocab: () => [...S.projects.map((p) => p.name), ...S.chats.slice(0, 8).map((c) => c.title.split(/\s+/).slice(0, 4).join(' '))].join(', '),
         nav: () => { const p = pj(); if (!p) return null; const list = S.chats.filter((c) => c.project === p.id).slice(0, 8); return list.length > 1 ? { head: VH.chats, items: list.map((c) => ({ label: c.title, on: c.id === S.cur, go: () => openChat(c.id) })) } : null; },
       };
     }
     vm.onclick = () => openVM();
-    // «Привет, VAXO» (20.11): switched on once, remembered; VAXO waits for its name while the tab is open.
-    const WK = ({ ru: ['«Привет, VAXO»: включить — VAXO будет слушать своё имя, пока открыта вкладка', 'VAXO слушает «Привет, VAXO» — нажмите, чтобы выключить', '🎙 Скажите «Привет, VAXO»…', 'Разрешите микрофон у адреса сайта'], ua: ['«Привіт, VAXO»: увімкнути — VAXO слухатиме своє ім’я, поки відкрита вкладка', 'VAXO слухає «Привіт, VAXO» — натисніть, щоб вимкнути', '🎙 Скажіть «Привіт, VAXO»…', 'Дозвольте мікрофон біля адреси сайту'], en: ['“Hey VAXO”: turn on — VAXO listens for its name while this tab is open', 'VAXO listens for “Hey VAXO” — click to turn off', '🎙 Say “Hey VAXO”…', 'Allow the microphone next to the address'] } as Record<string, string[]>)[lang] || [];
-    const wk = document.createElement('button'); wk.type = 'button'; wk.className = 'ib wkb'; wk.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M8 18a4 4 0 0 0 4 3 4 4 0 0 0 4-3c0-2 2-3 2-6a6 6 0 1 0-12 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>';
-    vm.after(wk);
-    const paintWk = () => { const on = !!wake; wk.classList.toggle('on', on); wk.title = on ? WK[1] : WK[0]; wk.setAttribute('aria-label', wk.title); wk.setAttribute('aria-pressed', String(on)); if (on && !input.value) input.placeholder = WK[2]; else if (!on) input.placeholder = T.ph; };
-    const wkOn = async () => { const m = await import('../scripts/wake'); wake = await m.startWake(() => lang, (rest) => openVM(rest || undefined), (st) => { if (st === 'error') { toast(WK[3]); wake = null; try { localStorage.removeItem('vx_wake'); } catch { /* */ } paintWk(); } }); paintWk(); };
-    wk.onclick = async () => { if (wake) { wake.stop(); wake = null; try { localStorage.removeItem('vx_wake'); } catch { /* */ } paintWk(); return; } try { localStorage.setItem('vx_wake', '1'); } catch { /* */ } await wkOn(); };
-    paintWk();
-    try { if (localStorage.getItem('vx_wake') === '1') setTimeout(wkOn, 800); } catch { /* */ }
   }
   // Voice conversation (18.11): a question asked by voice gets its answer read aloud; typing switches it off again.
   mic.addEventListener('click', () => { voiceTurn = true; });
@@ -3350,8 +3341,6 @@ const ico = {
   .wsp .you.shut > :not(.youh) { display: none; }
   mark.vxhit { background: color-mix(in srgb, var(--accText, #e8a33d) 38%, transparent); color: inherit; border-radius: 4px; padding: 0 2px; box-shadow: 0 0 0 2px color-mix(in srgb, var(--accText, #e8a33d) 55%, transparent); animation: vxhit 1.6s ease-out 2; }
   @keyframes vxhit { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accText, #e8a33d) 25%, transparent); } }
-  .wsp .wkb.on { color: #e8a33d; box-shadow: 0 0 0 2px color-mix(in srgb, #e8a33d 45%, transparent); border-radius: 50%; animation: wkpulse 2.4s ease-in-out infinite; }
-  @keyframes wkpulse { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, #e8a33d 12%, transparent); } }
   .eyesw { display: flex; gap: 6px; margin: 0 0 14px; padding: 4px; border-radius: 999px; background: color-mix(in srgb, currentColor 6%, transparent); width: max-content; max-width: 100%; }
   .eyesw button { border: 0; background: none; color: inherit; font: 600 13.5px/1 inherit; padding: 9px 14px; border-radius: 999px; cursor: pointer; opacity: .7; }
   .eyesw button.on { background: var(--ink, #0d1117); color: var(--bg, #fff); opacity: 1; }
