@@ -2789,6 +2789,8 @@ const ico = {
   .wsp .toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--bg); border-radius: 12px; padding: 10px 16px; font-size: 14px; display: flex; gap: 12px; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
   .wsp .toast .lnk { color: var(--bg); font-weight: 700; }
   @media (hover: none) { .wsp .mbar { opacity: 1; } .wsp .dots { opacity: .7; } }
+  /* Touch: invisible 44px hit area around small icon buttons (layout unchanged) */
+  @media (hover: none) { .wsp .addp, .wsp .dots, .wsp .car2 { position: relative; } .wsp .addp::after, .wsp .dots::after, .wsp .car2::after { content: ''; position: absolute; inset: -9px; } }
   .wsp .hi .tag3 { display: inline-block; color: var(--accText); font-weight: 700; font-size: 13px; letter-spacing: .02em; margin-bottom: 6px; }
   .wsp .why3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 16px; }
   .wsp .why3 .wy { display: flex; flex-direction: column; gap: 4px; border-left: 2px solid var(--accText); padding: 2px 0 2px 12px; }
