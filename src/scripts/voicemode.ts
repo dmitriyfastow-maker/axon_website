@@ -111,7 +111,7 @@ const CSS = `
 .vxm .v-nav button::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--mt);flex:none}
 .vxm .v-nav button.v-on{border-color:var(--am)}.vxm .v-nav button.v-on::before{background:var(--am);box-shadow:0 0 8px var(--am)}
 .vxm .v-nav button:hover{border-color:var(--cy)}
-@media (max-width:980px){.vxm .v-in{grid-template-columns:1fr;grid-template-rows:auto auto auto auto;overflow:auto;height:100%}.vxm .v-core,.vxm .v-board,.vxm .v-side{grid-row:auto;grid-column:1}.vxm .v-core{min-height:62vh}.vxm .v-board{min-height:60vh}.vxm .v-clock,.vxm .v-wake{display:none}.vxm .v-stage{min-height:36vh}.vxm canvas{width:min(80vw,44vh)}}
+@media (max-width:980px){.vxm .v-crumb small,.vxm .v-hud{display:none}.vxm .v-top{gap:8px}.vxm .v-pan{overflow:visible;max-width:100%;flex:none}.vxm .v-pan::after{display:none}.vxm .v-core .v-stage{flex:none;height:40vh;min-height:0}.vxm .v-holo{min-height:50vh;flex:none}.vxm .v-board .v-kpis{grid-template-columns:1fr 1fr}.vxm .v-in{padding:0 10px 10px;grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-auto-rows:max-content;overflow:auto;height:100%}.vxm .v-core,.vxm .v-board,.vxm .v-side{grid-row:auto;grid-column:1}.vxm .v-pan{min-height:auto}.vxm .v-clock,.vxm .v-wake{display:none}.vxm .v-stage{min-height:36vh}.vxm canvas{width:min(80vw,44vh)}}
 @media (prefers-reduced-motion:reduce){.vxm *{animation:none!important}}
 `;
 
@@ -313,7 +313,7 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
   // adapts to the microphone), Whisper on our server makes the text. The browser's recognition runs alongside only for
   // live captions; if it gives a final text in time, we use it and skip Whisper.
   const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-  let srOff = !SR, recog: any = null;
+  let srOff = !SR, recog: any = null, deadMic = false;
   const LOC: Record<string, string> = { ru: 'ru-RU', ua: 'uk-UA', en: 'en-US' };
   // Whisper invents these on silence or background noise — never treat them as the person's words.
   const FAKE = /ии-помощник|^(\s*(ваксо|vaxo|вакс|vax)[\s,.!?]*){2,}$|субтитр|продолжение следует|спасибо за просмотр|подписывайтесь на канал|редактор субтитров|корректор|amara\.org|thanks for watching|subscribe to|DimaTorzok/i;
@@ -337,12 +337,16 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
     const chunks: Blob[] = []; r.ondataavailable = (e) => e.data.size && chunks.push(e.data);
     const an = mic!.createAnalyser(); an.fftSize = 1024; const src = mic!.createMediaStreamSource(stream!); src.connect(an);
     const buf = new Uint8Array(an.fftSize);
-    let spoke = false, quiet = 0, noise = 0, n = 0, voiced = 0, floor = 99, peak = 0; const start = Date.now();
+    let spoke = false, quiet = 0, noise = 0, n = 0, voiced = 0, floor = 99, peak = 0, dead = 0; const start = Date.now();
     // setInterval, not requestAnimationFrame: it keeps listening even when the window is not in front.
     const iv = setInterval(() => {
       if (r.state !== 'recording') { clearInterval(iv); return; }
       an.getByteTimeDomainData(buf); let x = 0; for (const v of buf) x += (v - 128) ** 2; const rms = Math.sqrt(x / buf.length);
       const now = Date.now();
+      // A microphone that went silent to the last bit (another app took it, headphones switched) never recovers by itself:
+      // after ~2.5 s of pure zeros the stream is opened again.
+      dead = rms === 0 ? dead + 1 : 0;
+      if (dead > 40) { clearInterval(iv); deadMic = true; r.stop(); return; }
       // 20.11 (tested live): the room's noise floor drifts (a fan, a street), so it is tracked all the time — it falls at once
       // and rises slowly — and a phrase ends when the sound drops back near that floor or far below the phrase's own peak.
       floor = rms < floor ? rms : floor + (rms - floor) * 0.004;
@@ -357,6 +361,7 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
     r.onstop = async () => {
       src.disconnect();
       const live = recog; recog = null; try { live?.stop(); } catch { /* */ }
+      if (deadMic) { deadMic = false; meter?.(); meter = null; stream?.getTracks().forEach((x) => x.stop()); stream = null; if (alive && mode !== 'paused') listen(); return; }
       if (!alive || mode === 'paused') return;
       if (!spoke || voiced < 650) { listen(); return; } // a cough or a click is not a phrase
       set('think');
@@ -366,7 +371,9 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
         if (!srOff) srOff = true; // heard speech but no text from the browser → Whisper from now on
         const blob = new Blob(chunks, { type: r.mimeType || type || 'audio/webm' });
         const res = await fetch(`/api/stt?lang=${encodeURIComponent(lang)}`, { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob }).catch(() => null);
-        said = ((res?.ok ? await res.json().catch(() => null) : null)?.text || '').trim();
+        const js = res?.ok ? await res.json().catch(() => null) : null;
+        said = (js?.text || '').trim();
+        const H2 = ((window as any).__vxHeard ||= []); H2.push({ said, raw: js?.raw, segs: js?.segs, ms: Date.now() - start, voiced }); if (H2.length > 8) H2.shift();
       }
       if (!said || FAKE.test(said) || said.replace(/[^\p{L}]/gu, '').length < 2) { me.textContent = ''; listen(); return; }
       handle(said);

@@ -364,7 +364,7 @@ const ava = '/mascot/vax-talk.webp';
     };
     openVoiceMode(lang, async (q) => {
       msgs.push({ role: 'user', content: q });
-      const r = await fetch('/api/ws/ask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q, lang, mode: 'short', chat: 0, history: msgs.slice(0, -1).map((m) => ({ role: m.role, content: m.content })).slice(-12) }) }).then((x) => x.json()).catch(() => null);
+      const r = await fetch('/api/ws/ask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q, lang, tz: Intl.DateTimeFormat().resolvedOptions().timeZone, mode: 'short', chat: 0, history: msgs.slice(0, -1).map((m) => ({ role: m.role, content: m.content })).slice(-12) }) }).then((x) => x.json()).catch(() => null);
       if (!r?.ok) { msgs.pop(); return null; }
       const m = { role: 'assistant', content: String(r.reply || ''), doc: r.doc || undefined, site: r.site || undefined, image: r.image || undefined, tool: r.tool || undefined };
       msgs.push(m); save(msgs[0].content);

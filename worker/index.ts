@@ -342,6 +342,12 @@ export default {
     if (page.status === 200 && env.LEADS && request.method === 'GET' && (!mode || mode === 'navigate') && !prefetch && url.pathname !== '/offline' && !/^\/(admin|room|partner|ua\/partner|ru\/partner|demo)\b/.test(url.pathname) && (url.pathname.endsWith('/') || !url.pathname.includes('.'))) {
       waitUntil(trackView(env.LEADS, request, url).catch(() => {}));
     }
+    // 20.11 (found live): a missing /_astro file got the «keep for a year» header too, so a browser that asked for a new
+    // file in the seconds of a deploy kept the error for a year and the workspace never started. Errors are never cached.
+    if (page.status >= 400) {
+      const h = new Headers(page.headers); h.set('Cache-Control', 'no-store');
+      return new Response(page.body, { status: page.status, statusText: page.statusText, headers: h });
+    }
     return page;
   },
   // Hourly: overdue leads go back to the pool even when nobody opens the cabinet.

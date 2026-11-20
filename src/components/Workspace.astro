@@ -291,6 +291,7 @@ const ico = {
   type Mem = { niche: string; goals: string; project: string; limits: string };
 
   const root = document.querySelector<HTMLElement>('[data-ws]')!;
+  (window as any).__vxBuild = '71b'; // a new file name for this script: browsers that stored an error for the old one load it fresh
   const T = JSON.parse(root.querySelector('[data-t]')!.textContent || '{}');
   const CT = JSON.parse(root.querySelector('[data-ct]')!.textContent || '{}');
   const lang = root.dataset.lang || 'en', pre = root.dataset.pre || '';
@@ -946,7 +947,7 @@ const ico = {
     let say: Msg = { role: 'assistant', content: T.err };
     let baseTier = false;
     try {
-      const r = await post('/api/ws/ask', { q, lang, mode: S.mode, model: MODEL, chat: S.signed ? S.cur : 0, project: S.pendingProject || S.proj?.id || 0, ...(S.signed ? {} : { history, memory: S.memory }) });
+      const r = await post('/api/ws/ask', { q, lang, tz: Intl.DateTimeFormat().resolvedOptions().timeZone, mode: S.mode, model: MODEL, chat: S.signed ? S.cur : 0, project: S.pendingProject || S.proj?.id || 0, ...(S.signed ? {} : { history, memory: S.memory }) });
       const d = await r.json();
       if (r.status === 429) say.content = d.error === 'hour' ? (({ ru: 'Очень много сообщений за час — дайте мне пару минут.', ua: 'Дуже багато повідомлень за годину — дайте мені кілька хвилин.' } as R)[lang] || 'That was a lot of messages in one hour. Give me a few minutes.') : d.error === 'guest' ? T.guestLimit : d.reset ? (d.error === 'month' ? T.lim.outMonth : d.error === 'week' ? T.lim.outWeek : T.lim.outDay).replace('{t}', when(d.reset)) : T.limit;
       else if (d.ok) {
@@ -2164,6 +2165,7 @@ const ico = {
     if (!ME.signedIn) await loadMe();
     const tabs = ['plan', 'earn', 'eye', 'memory', ...((ME.projects || []).length ? ['projects'] : []), 'account'];
     if (!tabs.includes(tab)) tab = 'plan';
+    prof.classList.toggle('wide', tab === 'eye'); // the eye needs room for the radar and the bars side by side
     $('[data-ptabs]').replaceChildren(...tabs.map((k) => { const b = btn(k === tab ? 'on' : '', T.pTabs[k], () => openProf(k)); b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(k === tab)); return b; }));
     // 20.11: «Earn with Vaxo» opens here in the middle, like Memory and Plan, not on the canvas.
     if (tab === 'earn') { const holder = el('p', 'hint', '…'); $('[data-pbody]').replaceChildren(holder); partnerPanel(true).then((n) => { if (n) holder.replaceWith(n); }); return; }
@@ -3331,4 +3333,6 @@ const ico = {
   @media (max-width: 620px) { .eyegrid { grid-template-columns: 1fr; } .eyerad { max-width: 280px; margin: 0 auto; } }
   .wsp .eyenav svg { color: #e8a33d; filter: drop-shadow(0 0 4px rgba(232,163,61,.55)); animation: eyeblink 6s ease-in-out infinite; }
   @keyframes eyeblink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.15); } }
+  .wsp .wprof.wide { width: min(900px, calc(100vw - 24px)); height: min(90vh, 860px); max-height: min(90vh, 860px); }
+  @media (min-width: 700px) { .wsp .wprof.wide .eyegrid { grid-template-columns: minmax(260px, 340px) 1fr; } }
 </style>

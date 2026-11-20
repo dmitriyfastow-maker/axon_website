@@ -375,7 +375,9 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   // How much Vax does on its own (18.11): '1' full autopilot, 'manual' only on command, anything else — asks about the important.
   const trustV = me ? (await db.prepare('SELECT value FROM settings WHERE key = ?').bind('ws_trust_' + me.id).first<{ value: string }>().catch(() => null))?.value : null;
   const trust = trustV === '1';
-  const sys = (trust ? 'AUTONOMY ON.\n' : trustV === 'manual' ? 'AUTONOMY MANUAL: the person wants control — do exactly what they ask; give your ideas as short options (gain, risk, effort) and act on one only after their yes.\n' : '') + system(talk || lang, memory, mode) + state + (talk ? `\nThe person writes in ${LANGS[talk]}: answer in ${LANGS[talk]}, even if earlier replies were in another language.` : '') + (WANTS_TOOL.test(said) ? '\nA ready tool appears on the Canvas to the right of the chat (never say "below"). Do not ask for numbers: answer in 1–3 sentences and say they can enter their own values on the Canvas. Never write markers like [canvas: ...].' : '');
+  // 20.11 (tested live): «what day is it?» got «I do not know the date». The person's own date and time go into every turn.
+  const now = (() => { const tz = cut(b.tz, 40) || 'Europe/Kyiv'; try { return new Intl.DateTimeFormat('en-GB', { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date()) + ` (${tz})`; } catch { return new Date().toUTCString(); } })();
+  const sys = `NOW: ${now} — the person's local date and time; use it for «today», weekdays, deadlines and ages.\n` + (trust ? 'AUTONOMY ON.\n' : trustV === 'manual' ? 'AUTONOMY MANUAL: the person wants control — do exactly what they ask; give your ideas as short options (gain, risk, effort) and act on one only after their yes.\n' : '') + system(talk || lang, memory, mode) + state + (talk ? `\nThe person writes in ${LANGS[talk]}: answer in ${LANGS[talk]}, even if earlier replies were in another language.` : '') + (WANTS_TOOL.test(said) ? '\nA ready tool appears on the Canvas to the right of the chat (never say "below"). Do not ask for numbers: answer in 1–3 sentences and say they can enter their own values on the Canvas. Never write markers like [canvas: ...].' : '');
   const turns: { role: string; content: string }[] = [];
   // Attached files reach the model as their name plus what is on an image or in a document; recent ones in full.
   const all = [...history, { role: 'user' as const, content: forModel(q) }];
@@ -447,10 +449,16 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
     }
   }
   let pulled = pullList(shaped.reply);
-  const built = await building;
+  let built = await building;
+  // 20.11 (seen live): the tool builder sometimes returns broken JSON while the chat reply already says «it is on the
+  // Canvas». Try again (twice); if it still fails, never claim a result that is not there.
+  for (let i = 0; i < 2 && !built && WANTS_TOOL.test(said) && !pulled.tool && !shaped.doc; i++) built = await buildTool(ai, said, lang).catch(() => null);
   if (!built && !pulled.tool) pulled = pullChecklist(pulled.reply, said.replace(/\s+/g, ' ').slice(0, 70));
   const tool = built ?? pulled.tool; // the Canvas shows the working tool first and the worked-out document under it
-  const reply = tidyReply(pulled.reply, true) || READY[lang] || READY.en;
+  let reply = tidyReply(pulled.reply, true) || READY[lang] || READY.en;
+  if (!tool && !shaped.doc && WANTS_TOOL.test(said) && /холст|полотн|canvas/i.test(reply)) {
+    reply = ({ ru: 'Не получилось собрать инструмент с первого раза. Напишите «ещё раз» — соберу заново.', ua: 'Не вдалося зібрати інструмент з першого разу. Напишіть «ще раз» — зберу заново.', en: 'I could not build the tool on the first try. Say “again” and I will build it once more.' } as Record<string, string>)[lang] || 'I could not build the tool on the first try. Say “again” and I will build it once more.';
+  }
   // A module button only when the person asked for that module, never added to a calculation or a plan by itself.
   const asked: Record<string, RegExp> = { crm: /crm|црм|заявк|лид|lead|request/i, site: /сайт|лендинг|страниц|сторінк|site|landing|page/i, partner: /партн|partner|реферал|referral|affiliate/i };
   // A production task gets the "send to Vaxo production" card (stored in the deploy column as order:<title>).

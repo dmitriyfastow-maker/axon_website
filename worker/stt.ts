@@ -20,7 +20,7 @@ export async function handleStt(ai: AiBinding | undefined, request: Request, lan
     const r = (await ai.run('@cf/openai/whisper-large-v3-turbo', { audio: b64, ...(LANG[lang] ? { language: LANG[lang] } : {}), initial_prompt: 'Ваксо, VAXO.', vad_filter: true })) as { text?: string; segments?: { text?: string; no_speech_prob?: number; avg_logprob?: number; compression_ratio?: number }[] };
     const segs = Array.isArray(r?.segments) ? r.segments : null;
     const text = segs ? segs.filter((g) => (g.no_speech_prob ?? 0) < 0.5 && (g.avg_logprob ?? 0) > -1 && (g.compression_ratio ?? 1) < 2.4).map((g) => String(g.text || '').trim()).join(' ') : r?.text;
-    return out(200, { ok: true, text: clean(text) });
+    return out(200, { ok: true, text: clean(text), raw: String(r?.text || '').slice(0, 300), segs: segs ? segs.map((g) => [Math.round((g.no_speech_prob ?? 0) * 100) / 100, Math.round((g.avg_logprob ?? 0) * 100) / 100]) : null });
   } catch (err) {
     console.error('[stt]', err);
     try {
