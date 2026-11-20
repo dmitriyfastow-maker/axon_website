@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'how-to-name-your-business',
+    date: '2026-11-20',
+    t: {
+      en: {
+        title: 'How to name your business: 6 steps and a free-name check', seo: 'How to name your business: 6 steps + name check',
+        desc: 'Collect words from your customers, make 30 options, keep the short ones, check that the name, domain and social handles are free — and test it out loud before you decide.',
+        body: [
+          ['Why naming feels hard', ['People try to find one perfect word at once. It is easier to make many options quickly and then remove the weak ones by simple rules.']],
+          ['1. Write what you do and for whom', ['One sentence: “I bake birthday cakes for families in Lviv.” Under it write 10–15 words your customers use: feelings, results, places, details of your work.']],
+          ['2. Make 30 options fast', ['Combine the words, shorten them, join two into one, use a place or your own name. Do not judge yet — quantity first, quality later.']],
+          ['3. Keep the short and clear ones', ['A good name is easy to say, easy to spell after hearing it once and does not look like a famous brand. Remove anything longer than three words or hard to type.']],
+          ['4. Check that it is free', ['Search the name on Google and Maps in your city, look for a free domain and the same handle on Instagram, TikTok and Facebook. If a similar business already uses it, drop it — it will confuse customers. For an important brand, also check the trademark register of your country.']],
+          ['5. Say it out loud', ['Tell 3–5 people the name once, without spelling it, and ask them to write it down tomorrow. If they cannot remember or write it correctly, it will be hard to find you.']],
+          ['6. Decide and register', ['Choose one, buy the domain and take the handles on the same day, so nobody takes them before you. A logo and colours can come later.']],
+          ['How Vaxo helps', ['In Workspace write “come up with a name for my cake shop in Lviv” — Vax will ask a few questions, suggest options with explanations, show how to check the domain and handles in two minutes and make the first page of your site under the chosen name. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как придумать название для бизнеса: 6 шагов и проверка, что оно свободно', seo: 'Как придумать название для бизнеса: 6 шагов',
+        desc: 'Собрать слова ваших клиентов, сделать 30 вариантов, оставить короткие, проверить, что свободны название, домен и ники в соцсетях, — и проверить вслух, прежде чем решать.',
+        body: [
+          ['Почему с названием так сложно', ['Люди пытаются сразу найти одно идеальное слово. Проще быстро сделать много вариантов, а потом убрать слабые по простым правилам.']],
+          ['1. Напишите, что вы делаете и для кого', ['Одно предложение: «Пеку торты на день рождения для семей во Львове». Под ним — 10–15 слов, которыми говорят ваши клиенты: чувства, результат, места, детали вашей работы.']],
+          ['2. Сделайте 30 вариантов быстро', ['Сочетайте слова, сокращайте, склеивайте два в одно, используйте место или своё имя. Пока не оценивайте — сначала количество, потом качество.']],
+          ['3. Оставьте короткие и понятные', ['Хорошее название легко произнести, легко написать, услышав один раз, и оно не похоже на известный бренд. Уберите всё длиннее трёх слов или сложное для набора.']],
+          ['4. Проверьте, что оно свободно', ['Поищите название в Google и на Картах в вашем городе, проверьте свободный домен и такой же ник в Instagram, TikTok и Facebook. Если похожий бизнес уже так называется — откажитесь, клиенты будут путаться. Для важного бренда загляните ещё в реестр торговых марок вашей страны.']],
+          ['5. Скажите вслух', ['Назовите вариант 3–5 людям один раз, не диктуя по буквам, и попросите завтра его записать. Если не помнят или пишут с ошибкой — вас будет трудно найти.']],
+          ['6. Решите и закрепите', ['Выберите одно, в тот же день купите домен и займите ники, чтобы их не забрали раньше вас. Логотип и цвета можно сделать потом.']],
+          ['Чем помогает Vaxo', ['В Workspace напишите «придумай название для моей кондитерской во Львове» — Vax задаст пару вопросов, предложит варианты с объяснением, покажет, как за две минуты проверить домен и ники, и сделает первую страницу сайта под выбранным названием. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як придумати назву для бізнесу: 6 кроків і перевірка, що вона вільна', seo: 'Як придумати назву для бізнесу: 6 кроків',
+        desc: 'Зібрати слова ваших клієнтів, зробити 30 варіантів, залишити короткі, перевірити, що вільні назва, домен і нікнейми в соцмережах, — і перевірити вголос, перш ніж вирішувати.',
+        body: [
+          ['Чому з назвою так складно', ['Люди намагаються одразу знайти одне ідеальне слово. Простіше швидко зробити багато варіантів, а потім прибрати слабкі за простими правилами.']],
+          ['1. Напишіть, що ви робите і для кого', ['Одне речення: «Печу торти на день народження для родин у Львові». Під ним — 10–15 слів, якими говорять ваші клієнти: почуття, результат, місця, деталі вашої роботи.']],
+          ['2. Зробіть 30 варіантів швидко', ['Поєднуйте слова, скорочуйте, склеюйте два в одне, використовуйте місце чи своє ім’я. Поки не оцінюйте — спершу кількість, потім якість.']],
+          ['3. Залиште короткі й зрозумілі', ['Гарну назву легко вимовити, легко написати, почувши один раз, і вона не схожа на відомий бренд. Приберіть усе довше за три слова або складне для набору.']],
+          ['4. Перевірте, що вона вільна', ['Пошукайте назву в Google і на Картах у вашому місті, перевірте вільний домен і такий самий нікнейм в Instagram, TikTok і Facebook. Якщо схожий бізнес уже так називається — відмовтеся, клієнти плутатимуться. Для важливого бренду загляньте ще в реєстр торговельних марок вашої країни.']],
+          ['5. Скажіть уголос', ['Назвіть варіант 3–5 людям один раз, не диктуючи по літерах, і попросіть завтра його записати. Якщо не пам’ятають або пишуть з помилкою — вас буде важко знайти.']],
+          ['6. Вирішіть і закріпіть', ['Оберіть одну, того ж дня купіть домен і займіть нікнейми, щоб їх не забрали раніше за вас. Логотип і кольори можна зробити потім.']],
+          ['Чим допомагає Vaxo', ['У Workspace напишіть «придумай назву для моєї кондитерської у Львові» — Vax поставить кілька питань, запропонує варіанти з поясненням, покаже, як за дві хвилини перевірити домен і нікнейми, і зробить першу сторінку сайту під обраною назвою. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'how-to-price-your-service-small-business',
     date: '2026-11-20',
     t: {
