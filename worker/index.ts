@@ -261,7 +261,7 @@ export default {
     if (file) return serveFile(env.FILES, file[1]);
     const prev = url.pathname.match(/^\/p\/([a-f0-9]{20})\/?$/);
     if (prev) return servePreview(env.FILES, prev[1]);
-    if (url.pathname === '/api/stt') return handleStt(env.AI, request, url.searchParams.get('lang') || '');
+    if (url.pathname === '/api/stt') return handleStt(env.AI, request, url.searchParams.get('lang') || '', url.searchParams.get('hint') || '');
     if (url.pathname === '/api/chat') return handleChat(env, request, ctx ? (p) => ctx.waitUntil(p) : undefined);
     if (url.pathname === '/api/lead') {
       if (request.method !== 'POST') return json(405, { ok: false });

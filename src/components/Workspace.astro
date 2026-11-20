@@ -944,6 +944,9 @@ const ico = {
     // 20.11: Vax at work — the raccoon (or the VAXO core, if the person turned the raccoon off) and what he does right now.
     const wait = workIndicator(q); log.append(wait); log.scrollTop = log.scrollHeight;
     const history = S.msgs.slice(-15, -1).map(({ role, content }) => ({ role, content }));
+    // 20.11 (found live): switching to another chat while Vax was answering put the answer into the chat now open.
+    // The answer belongs to the chat it was asked in; if the person moved away, it stays there and a note says it is ready.
+    const startCur = S.cur, startMsgs = S.msgs, away = () => S.cur !== startCur || S.msgs !== startMsgs;
     let say: Msg = { role: 'assistant', content: T.err };
     let baseTier = false;
     try {
@@ -953,12 +956,13 @@ const ico = {
       else if (d.ok) {
         say = { id: d.id ?? undefined, role: 'assistant', content: d.reply, tool: d.tool || undefined, doc: d.doc || undefined, image: d.image, deploy: d.deploy || undefined, site: d.site || undefined };
         if (d.uid) mine.id = d.uid;
-        if (S.signed && d.chat && d.chat !== S.cur) {
-          S.cur = d.chat; S.chats.unshift({ id: d.chat, title: plain(q).slice(0, 60), project: S.pendingProject || undefined });
+        if (S.signed && d.chat && d.chat !== startCur) {
+          if (!away()) S.cur = d.chat;
+          if (!S.chats.some((x) => x.id === d.chat)) S.chats.unshift({ id: d.chat, title: plain(q).slice(0, 60), project: S.pendingProject || undefined });
           if (S.pendingProject) post(`/api/ws/chat/${d.chat}/move`, { project: S.pendingProject });
           S.pendingProject = 0;
         }
-        if (d.project) {
+        if (d.project && !away()) {
           let pj = S.projects.find((x) => x.id === d.project.id);
           if (!pj) { pj = { id: d.project.id, name: d.project.name, biz: d.project.biz }; S.projects.push(pj); } else pj.biz = d.project.biz;
           const ch = S.chats.find((c) => c.id === S.cur); if (ch) ch.project = pj.id;
@@ -971,6 +975,14 @@ const ico = {
       }
     } catch { /* the message above says so */ }
     wait.remove();
+    if (away()) {
+      startMsgs.push(say);
+      if (!S.signed) { let c = S.chats.find((x) => x.id === startCur); if (!c) { c = { id: Date.now(), title: plain(q).slice(0, 60), msgs: startMsgs }; S.chats.unshift(c); } c.msgs = startMsgs.map((m) => ({ ...m, image: undefined })); saveGuest(); }
+      const id = S.chats.find((x) => x.id === startCur)?.id ?? S.chats.find((x) => x.title === plain(q).slice(0, 60))?.id;
+      drawChats(); refreshUsage(); S.busy = false;
+      toast(({ ru: 'Vax ответил в другом разговоре', ua: 'Vax відповів в іншій розмові', en: 'Vax answered in another chat' } as Record<string, string>)[lang] || 'Vax answered in another chat', ({ ru: 'Открыть', ua: 'Відкрити', en: 'Open' } as Record<string, string>)[lang] || 'Open', () => { if (id) openChat(id); });
+      return;
+    }
     S.msgs.push(say); drawMsg(say);
     // 19.11: the person asked to build — Vax builds the site right away instead of waiting for one more click.
     if (say.deploy === 'site' && !S.mods?.site && /собра|постро|созда|сдела|запусти|build|make|create|зібра|створ|зроби/i.test(q)) setTimeout(() => { panel('site'); const f = cvBody.querySelector<HTMLFormElement>('form.pf'); const inp = f?.querySelector('input'); if (f && inp?.value) f.requestSubmit(); }, 400);
@@ -2522,6 +2534,21 @@ const ico = {
         canvas: () => { const has = cvBody.textContent?.trim() || cvBody.querySelector('iframe,img,canvas,svg'); if (!has) return null; const c = cvBody.cloneNode(true) as HTMLElement; c.querySelectorAll('[id]').forEach((x) => x.removeAttribute('id')); return c; },
         stats: () => { const n = S.msgs.length, r = S.msgs.filter((m) => m.site || m.doc || m.tool || m.image).length; return [[VH.msgs, String(n)], [VH.res, String(r)], ...(pj() ? [[VH.proj, pj()!.name]] : []), ...(G ? [[VH.lv, String(G.level)]] : [])] as [string, string][]; },
         feed: () => S.msgs.map((m) => ({ role: m.role, text: plain(m.content || '') || (m.doc?.title ? '📄 ' + m.doc.title : m.site ? '🌐' : '') })).filter((m) => m.text),
+        // the real canvas moves into the voice panel while it is open (everything on it keeps working), then comes back
+        mount: (holder: HTMLElement) => {
+          const home = cvBody.parentElement, next = cvBody.nextSibling;
+          if (!cvBody.textContent?.trim() && !cvBody.querySelector('iframe,img,canvas,svg')) { try { showBoard(); } catch { /* */ } }
+          holder.append(cvBody);
+          return () => { if (home) home.insertBefore(cvBody, next && next.parentNode === home ? next : null); };
+        },
+        go: async (name: string) => {
+          const n = name.toLowerCase().replace(/[«»"]/g, '').trim(), hit = (t: string) => { const x = t.toLowerCase(); return x.includes(n) || (n.length >= 5 && x.includes(n.slice(0, Math.max(5, n.length - 2)))); };
+          const c = S.chats.find((x) => hit(x.title)); if (c) { await openChat(c.id); return true; }
+          const p = S.projects.find((x) => hit(x.name)); if (p) { S.cur = 0; S.msgs = []; drawChats(); drawEmpty(); await openProject(p.id, 'home'); return true; }
+          return false;
+        },
+        fresh: () => fresh(),
+        vocab: () => [...S.projects.map((p) => p.name), ...S.chats.slice(0, 8).map((c) => c.title.split(/\s+/).slice(0, 4).join(' '))].join(', '),
         nav: () => { const p = pj(); if (!p) return null; const list = S.chats.filter((c) => c.project === p.id).slice(0, 8); return list.length > 1 ? { head: VH.chats, items: list.map((c) => ({ label: c.title, on: c.id === S.cur, go: () => openChat(c.id) })) } : null; },
       };
     }

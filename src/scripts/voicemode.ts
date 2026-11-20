@@ -2,7 +2,7 @@
 // Full screen, a living core (or Vax the raccoon) that breathes while listening, gathers while thinking and pulses with
 // the voice; live captions; a side column with what VAXO is doing right now; camera optional (each question then
 // carries a photo). Speech → text: /api/stt (Whisper). Text → speech: /api/tts (live Google voices), else the browser.
-import { speak, stopSpeak, canSpeak } from './voice';
+import { speak, stopSpeak, canSpeak, speakable } from './voice';
 
 type Reply = { text: string; made?: string } | null;
 // What the voice screen shows about the chat it was opened from (20.11, Dmitry: the same information as the normal screen,
@@ -13,12 +13,16 @@ export type Hud = {
   stats?: () => [string, string][];
   feed?: () => { role: string; text: string }[];
   nav?: () => { head: string; items: { label: string; on?: boolean; go: () => Promise<void> | void }[] } | null;
+  mount?: (holder: HTMLElement) => (() => void) | null; // the REAL canvas moves into the panel (works: open, edit, click)
+  go?: (name: string) => Promise<boolean>; // «открой чат …» / «перейди в проект …»
+  fresh?: () => void; // «новый разговор»
+  vocab?: () => string; // names of chats and projects: helps speech recognition hear «открой чат …» right
 };
 type Ask = (q: string) => Promise<Reply>;
 const T: Record<string, Record<string, string>> = {
-  ru: { coreH: 'Ядро VAXO', board: 'Холст', talkH: 'Разговор', emptyB: 'Холст этого разговора', emptyP: 'Скажите задачу — результат появится здесь, как в обычном режиме.', clockL: 'ru-RU', wake: '«VAXO» — я рядом', listen: 'Слушаю', hear: 'Слышу', think: 'Думаю', talk: 'Говорю', paused: 'Пауза', hint: 'Скажите задачу — например: «VAXO, подготовь поездку по Европе на неделю»', tap: 'Нажмите на ядро, чтобы перебить или поставить на паузу', side: 'VAXO делает сейчас', idle: 'Здесь появится, что я делаю', cam: 'Камера', camOff: 'Камера выкл.', face: 'Лицо', core: 'Ядро', vax: 'Енот Vax', voice: 'Голос', end: 'Завершить', mic: 'Разрешите микрофон: значок у адреса сайта → Микрофон → Разрешить.', camErr: 'Камера недоступна — разрешите её у адреса сайта.', none: 'Не расслышал — повторите, пожалуйста.', s1: 'Понимаю задачу', s2: 'Работаю', s3: 'Готово', canvas: 'Результат — на холсте', v_warm: 'Тёплый', v_calm: 'Деловой', v_bright: 'Энергичный', v_soft: 'Мягкий' },
-  ua: { coreH: 'Ядро VAXO', board: 'Полотно', talkH: 'Розмова', emptyB: 'Полотно цієї розмови', emptyP: 'Скажіть завдання — результат зʼявиться тут, як у звичайному режимі.', clockL: 'uk-UA', wake: '«VAXO» — я поруч', listen: 'Слухаю', hear: 'Чую', think: 'Думаю', talk: 'Говорю', paused: 'Пауза', hint: 'Скажіть завдання — наприклад: «VAXO, підготуй поїздку Європою на тиждень»', tap: 'Натисніть на ядро, щоб перебити або поставити на паузу', side: 'VAXO робить зараз', idle: 'Тут з’явиться, що я роблю', cam: 'Камера', camOff: 'Камера вимк.', face: 'Обличчя', core: 'Ядро', vax: 'Єнот Vax', voice: 'Голос', end: 'Завершити', mic: 'Дозвольте мікрофон: значок біля адреси сайту → Мікрофон → Дозволити.', camErr: 'Камера недоступна — дозвольте її біля адреси сайту.', none: 'Не розчув — повторіть, будь ласка.', s1: 'Розумію завдання', s2: 'Працюю', s3: 'Готово', canvas: 'Результат — на полотні', v_warm: 'Теплий', v_calm: 'Діловий', v_bright: 'Енергійний', v_soft: 'М’який' },
-  en: { coreH: 'VAXO core', board: 'Canvas', talkH: 'Conversation', emptyB: 'This chat’s canvas', emptyP: 'Say a task — the result appears here, just like in the normal view.', clockL: 'en-GB', wake: '«VAXO» — I am here', listen: 'Listening', hear: 'Hearing', think: 'Thinking', talk: 'Speaking', paused: 'Paused', hint: 'Say a task — e.g. “VAXO, plan me a week in Europe”', tap: 'Tap the core to interrupt or pause', side: 'VAXO is doing now', idle: 'What I am doing shows here', cam: 'Camera', camOff: 'Camera off', face: 'Face', core: 'Core', vax: 'Vax the raccoon', voice: 'Voice', end: 'End', mic: 'Allow the microphone: the icon next to the address → Microphone → Allow.', camErr: 'Camera unavailable — allow it next to the address.', none: 'I did not catch that — please repeat.', s1: 'Understanding the task', s2: 'Working', s3: 'Done', canvas: 'The result is on the Canvas', v_warm: 'Warm', v_calm: 'Business', v_bright: 'Energetic', v_soft: 'Soft' },
+  ru: { lmA: '🎙 Слушаю всегда', lmT: '👆 Слушаю по нажатию', lmTip: 'Нажмите на ядро или енота и говорите', far: 'Слышу разговор вдалеке — жду вас у микрофона', typeP: 'Напишите или скажите задачу…', again: '↻ Повтори', shorter: 'Короче', more: 'Подробнее', nextQ: 'Что дальше?', shorterQ: 'Скажи то же самое короче, в 2 предложениях', moreQ: 'Расскажи подробнее и сделай результат на холсте', nextQ2: 'Что мне сделать дальше? Предложи следующий шаг и сделай его, если я соглашусь', rest: 'Остальное — на холсте.', cmdH: 'Голосовые команды', cmds: '«Открой чат …»|«Перейди в проект …»|«Новый разговор»|«Повтори»|«Короче» / «Подробнее»|«Включи енота» / «Включи ядро»|«Говори деловым голосом»|«Включи камеру»|«Пауза» · «Закрой голосовой режим»', ok: 'Готово.', noFind: 'Не нашёл такой чат или проект.', opened: 'Открыл.', bye: 'До связи.', coreH: 'Ядро VAXO', board: 'Холст', talkH: 'Разговор', emptyB: 'Холст этого разговора', emptyP: 'Скажите задачу — результат появится здесь, как в обычном режиме.', clockL: 'ru-RU', wake: '«VAXO» — я рядом', listen: 'Слушаю', hear: 'Слышу', think: 'Думаю', talk: 'Говорю', paused: 'Пауза', hint: 'Скажите задачу — например: «VAXO, подготовь поездку по Европе на неделю»', tap: 'Нажмите на ядро, чтобы перебить или поставить на паузу', side: 'VAXO делает сейчас', idle: 'Здесь появится, что я делаю', cam: 'Камера', camOff: 'Камера выкл.', face: 'Лицо', core: 'Ядро', vax: 'Енот Vax', voice: 'Голос', end: 'Завершить', mic: 'Разрешите микрофон: значок у адреса сайта → Микрофон → Разрешить.', camErr: 'Камера недоступна — разрешите её у адреса сайта.', none: 'Не расслышал — повторите, пожалуйста.', s1: 'Понимаю задачу', s2: 'Работаю', s3: 'Готово', canvas: 'Результат — на холсте', v_warm: 'Тёплый', v_calm: 'Деловой', v_bright: 'Энергичный', v_soft: 'Мягкий' },
+  ua: { lmA: '🎙 Слухаю завжди', lmT: '👆 Слухаю за натисканням', lmTip: 'Натисніть на ядро чи єнота й говоріть', far: 'Чую розмову вдалині — чекаю вас біля мікрофона', typeP: 'Напишіть або скажіть завдання…', again: '↻ Повтори', shorter: 'Коротше', more: 'Детальніше', nextQ: 'Що далі?', shorterQ: 'Скажи те саме коротше, у 2 реченнях', moreQ: 'Розкажи детальніше й зроби результат на полотні', nextQ2: 'Що мені зробити далі? Запропонуй наступний крок і зроби його, якщо я погоджуся', rest: 'Решта — на полотні.', cmdH: 'Голосові команди', cmds: '«Відкрий чат …»|«Перейди в проєкт …»|«Нова розмова»|«Повтори»|«Коротше» / «Детальніше»|«Увімкни єнота» / «Увімкни ядро»|«Говори діловим голосом»|«Увімкни камеру»|«Пауза» · «Закрий голосовий режим»', ok: 'Готово.', noFind: 'Не знайшов такий чат чи проєкт.', opened: 'Відкрив.', bye: 'На звʼязку.', coreH: 'Ядро VAXO', board: 'Полотно', talkH: 'Розмова', emptyB: 'Полотно цієї розмови', emptyP: 'Скажіть завдання — результат зʼявиться тут, як у звичайному режимі.', clockL: 'uk-UA', wake: '«VAXO» — я поруч', listen: 'Слухаю', hear: 'Чую', think: 'Думаю', talk: 'Говорю', paused: 'Пауза', hint: 'Скажіть завдання — наприклад: «VAXO, підготуй поїздку Європою на тиждень»', tap: 'Натисніть на ядро, щоб перебити або поставити на паузу', side: 'VAXO робить зараз', idle: 'Тут з’явиться, що я роблю', cam: 'Камера', camOff: 'Камера вимк.', face: 'Обличчя', core: 'Ядро', vax: 'Єнот Vax', voice: 'Голос', end: 'Завершити', mic: 'Дозвольте мікрофон: значок біля адреси сайту → Мікрофон → Дозволити.', camErr: 'Камера недоступна — дозвольте її біля адреси сайту.', none: 'Не розчув — повторіть, будь ласка.', s1: 'Розумію завдання', s2: 'Працюю', s3: 'Готово', canvas: 'Результат — на полотні', v_warm: 'Теплий', v_calm: 'Діловий', v_bright: 'Енергійний', v_soft: 'М’який' },
+  en: { lmA: '🎙 Always listening', lmT: '👆 Listen on tap', lmTip: 'Tap the core or the raccoon and speak', far: 'I hear talk far away — waiting for you at the mic', typeP: 'Type or say a task…', again: '↻ Repeat', shorter: 'Shorter', more: 'More detail', nextQ: 'What next?', shorterQ: 'Say the same shorter, in 2 sentences', moreQ: 'Tell me more and make the result on the canvas', nextQ2: 'What should I do next? Suggest the next step and do it if I agree', rest: 'The rest is on the canvas.', cmdH: 'Voice commands', cmds: '“Open chat …”|“Go to project …”|“New chat”|“Repeat”|“Shorter” / “More detail”|“Show the raccoon” / “Show the core”|“Use the business voice”|“Turn on the camera”|“Pause” · “Close voice mode”', ok: 'Done.', noFind: 'I did not find that chat or project.', opened: 'Opened.', bye: 'Talk soon.', coreH: 'VAXO core', board: 'Canvas', talkH: 'Conversation', emptyB: 'This chat’s canvas', emptyP: 'Say a task — the result appears here, just like in the normal view.', clockL: 'en-GB', wake: '«VAXO» — I am here', listen: 'Listening', hear: 'Hearing', think: 'Thinking', talk: 'Speaking', paused: 'Paused', hint: 'Say a task — e.g. “VAXO, plan me a week in Europe”', tap: 'Tap the core to interrupt or pause', side: 'VAXO is doing now', idle: 'What I am doing shows here', cam: 'Camera', camOff: 'Camera off', face: 'Face', core: 'Core', vax: 'Vax the raccoon', voice: 'Voice', end: 'End', mic: 'Allow the microphone: the icon next to the address → Microphone → Allow.', camErr: 'Camera unavailable — allow it next to the address.', none: 'I did not catch that — please repeat.', s1: 'Understanding the task', s2: 'Working', s3: 'Done', canvas: 'The result is on the Canvas', v_warm: 'Warm', v_calm: 'Business', v_bright: 'Energetic', v_soft: 'Soft' },
 };
 const WORK: [RegExp, Record<string, string>][] = [
   [/сайт|лендинг|site|сторінк/i, { ru: 'Собираю сайт', ua: 'Збираю сайт', en: 'Building the site' }],
@@ -65,7 +69,7 @@ const CSS = `
 .vxm .v-face .v-spark{position:absolute;inset:0;pointer-events:none}
 .vxm .v-face .v-spark i{position:absolute;left:50%;top:50%;width:9px;height:9px;border-radius:50%;background:var(--am2);box-shadow:0 0 12px var(--am);animation:vxsp .9s ease-out forwards}
 @keyframes vxsp{to{transform:translate(var(--x),var(--y)) scale(.2);opacity:0}}
-.vxm[data-face="vax"] .v-face{opacity:1}.vxm[data-face="vax"] canvas{opacity:.4}
+.vxm[data-face="vax"] .v-face{opacity:1}.vxm[data-face="vax"] canvas:not(.v-hv){opacity:.25}.vxm[data-face="vax"] .v-halo{display:none}
 .vxm .v-hud{position:absolute;width:min(92%,66vh);aspect-ratio:1;border-radius:50%;pointer-events:none;border:1px dashed color-mix(in srgb,var(--cy) 30%,transparent);animation:vxspin 40s linear infinite}
 .vxm .v-hud::before{content:"";position:absolute;inset:6%;border-radius:50%;border:2px solid transparent;border-top-color:color-mix(in srgb,var(--am) 60%,transparent);border-right-color:color-mix(in srgb,var(--cy) 40%,transparent);animation:vxspin 9s linear infinite reverse}
 .vxm .v-hud::after{content:"";position:absolute;inset:-3%;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 85%,color-mix(in srgb,var(--cy) 28%,transparent) 92%,transparent 100%);animation:vxspin 6s linear infinite}
@@ -96,6 +100,17 @@ const CSS = `
 .vxm .v-holo .v-scan::before{content:"";position:absolute;left:0;right:0;top:0;height:120px;background:linear-gradient(transparent,color-mix(in srgb,var(--cy) 10%,transparent),transparent);animation:vxsweep 5s linear infinite}
 @keyframes vxsweep{from{transform:translateY(-120px)}to{transform:translateY(80vh)}}
 .vxm .v-side{grid-row:2;grid-column:3;overflow:auto}
+.vxm .v-type{display:flex;gap:6px;margin:0 14px 10px;padding:4px 4px 4px 12px;border:1px solid var(--ln);border-radius:999px;background:color-mix(in srgb,var(--tx) 4%,transparent)}
+.vxm .v-type input{flex:1;min-width:0;border:0;background:none;color:var(--tx);font:500 14px Inter,sans-serif;outline:none}
+.vxm .v-type button{border:0;border-radius:50%;width:34px;height:34px;background:var(--am);color:#1a1205;font-size:15px;cursor:pointer}
+.vxm .v-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 14px 8px;min-height:0}
+.vxm .v-chips button{font:600 12.5px Inter,sans-serif;color:var(--tx);background:color-mix(in srgb,var(--cy) 10%,transparent);border:1px solid color-mix(in srgb,var(--cy) 35%,transparent);border-radius:999px;padding:6px 12px;cursor:pointer;animation:vxin .4s both}
+.vxm .v-chips button:hover{border-color:var(--am)}
+.vxm .v-cmds{padding:0 14px 14px;display:flex;flex-wrap:wrap;gap:6px}.vxm .v-cmds span{font-size:12px;color:var(--mt);border:1px dashed var(--ln2);border-radius:10px;padding:5px 8px}
+.vxm .v-live{min-height:100%}.vxm .v-live>*{max-width:100%}
+.vxm .v-hv{position:absolute;height:min(100%,62vh);aspect-ratio:640/760;max-width:100%}
+.vxm .v-face .v-pose{position:absolute;opacity:0!important;width:2px;height:2px;pointer-events:none}
+.vxm .v-face::after{display:none}
 .vxm .v-tasks,.vxm .v-feed,.vxm .v-nav{padding:0 14px 8px;display:grid;gap:8px}
 .vxm .v-tk{border:1px solid var(--ln2);border-radius:14px;padding:10px 12px;background:color-mix(in srgb,var(--tx) 3%,transparent);display:grid;gap:6px;animation:vxin .45s cubic-bezier(.2,.8,.2,1) both}
 @keyframes vxin{from{opacity:0;transform:translateX(14px)}}
@@ -125,13 +140,13 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
   d.innerHTML = `<div class="v-bg"></div><div class="v-in">
     <header class="v-top"><b class="v-logo">VAXO<i>.</i></b><div class="v-crumb"><small class="v-cr"></small><b class="v-ttl"></b></div><div class="v-wake"><i></i>${t.wake}</div><span class="v-clock"></span><span class="v-st"></span><button type="button" class="v-x" aria-label="${t.end}">×</button></header>
     <section class="v-pan v-core"><h3>${t.coreH}<em class="v-fname"></em></h3>
-      <div class="v-stage"><p class="v-tip">${t.hint}</p><video class="v-cam" playsinline muted hidden></video><div class="v-hud"></div><canvas width="900" height="900" aria-label="VAXO"></canvas><div class="v-face"><div class="v-halo"></div><img class="v-pose" src="${vaxImg}" alt="Vax"><div class="v-spark"></div></div></div>
-      <div class="v-cap"><div class="v-me"></div><div class="v-vx" aria-live="polite"></div></div>
+      <div class="v-stage"><p class="v-tip">${t.hint}</p><video class="v-cam" playsinline muted hidden></video><div class="v-hud"></div><canvas width="900" height="900" aria-label="VAXO"></canvas><div class="v-face"><canvas class="v-hv" width="640" height="760" aria-label="Vax"></canvas><img class="v-pose" src="${vaxImg}" alt=""><div class="v-halo"></div><div class="v-spark"></div></div></div>
+      <div class="v-cap"><div class="v-me"></div><div class="v-vx" aria-live="polite"></div></div><div class="v-chips"></div><form class="v-type"><input type="text" maxlength="2000" placeholder="${t.typeP}" aria-label="${t.typeP}"><button type="submit" aria-label="OK">➤</button></form>
       <div class="v-ctl"><span class="v-lab">${t.face}</span><button type="button" data-f="core">${t.core}</button><button type="button" data-f="vax">${t.vax}</button>
         <span class="v-lab">${t.voice}</span>${voices.map((v) => `<button type="button" data-v="${v}">${t['v_' + v]}</button>`).join('')}
-        <button type="button" class="v-camb">📷 ${t.cam}</button><button type="button" class="v-end">${t.end}</button></div></section>
+        <button type="button" class="v-lm"></button><button type="button" class="v-camb">📷 ${t.cam}</button><button type="button" class="v-end">${t.end}</button></div></section>
     <section class="v-pan v-board"><h3>${t.board}<em class="v-bname"></em></h3><div class="v-kpis"></div><div class="v-holo"></div></section>
-    <aside class="v-pan v-side"><h3>${t.side}</h3><div class="v-tasks"><p class="v-idle">${t.idle}</p></div><h3>${t.talkH}</h3><div class="v-feed"></div><h3 class="v-navh" hidden></h3><div class="v-nav"></div></aside></div>`;
+    <aside class="v-pan v-side"><h3>${t.side}</h3><div class="v-tasks"><p class="v-idle">${t.idle}</p></div><h3>${t.talkH}</h3><div class="v-feed"></div><h3 class="v-navh" hidden></h3><div class="v-nav"></div><h3>${t.cmdH}</h3><div class="v-cmds">${t.cmds.split("|").map((c) => `<span>${c}</span>`).join("")}</div></aside></div>`;
   (opts.mount || document.body).append(d); d.showModal();
   const $ = <E extends HTMLElement>(s: string) => d.querySelector<E>(s)!;
   const stEl = $('.v-st'), cv = $<HTMLCanvasElement>('canvas'), cx = cv.getContext('2d')!, me = $('.v-me'), vx = $('.v-vx'), tasks = $('.v-tasks'), video = $<HTMLVideoElement>('.v-cam'), tip = $('.v-tip');
@@ -145,15 +160,24 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
   // ---- the panel: this chat's canvas, numbers, conversation and the project's other chats
   const H = opts.hud || {};
   const clock = $('.v-clock'); const tickClock = () => { clock.textContent = new Date().toLocaleString(t.clockL, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); }; tickClock(); const clk = setInterval(tickClock, 15000);
+  let live: HTMLElement | null = null, unmount: (() => void) | null = null;
   const refresh = () => {
     const title = H.title?.() || '', crumb = H.crumb?.() || '';
     $('.v-ttl').textContent = title; $('.v-cr').textContent = crumb; $('.v-bname').textContent = title;
     const k = $('.v-kpis'); k.replaceChildren(...(H.stats?.() || []).map(([a, b]) => { const e = document.createElement('div'); e.className = 'v-kpi'; e.innerHTML = '<small></small><b></b><i>' + Array.from({ length: 5 }, (_, i) => `<s style="height:${30 + ((i * 37) % 70)}%;animation-delay:${i * 0.15}s"></s>`).join('') + '</i>'; e.querySelector('small')!.textContent = a; e.querySelector('b')!.textContent = b; return e; }));
     k.hidden = !k.childElementCount;
-    const holo = $('.v-holo'), node = H.canvas?.() || null;
-    holo.replaceChildren(Object.assign(document.createElement('div'), { className: 'v-scan' }));
-    if (node) { const w = document.createElement('div'); w.className = 'v-clone'; w.append(node); holo.append(w); }
-    else { const e = document.createElement('div'); e.className = 'v-empty'; e.innerHTML = '<div><b></b><span></span></div>'; e.querySelector('b')!.textContent = t.emptyB; e.querySelector('span')!.textContent = t.emptyP; holo.append(e); }
+    const holo = $('.v-holo');
+    const empty = () => { const e = document.createElement('div'); e.className = 'v-empty'; e.innerHTML = '<div><b></b><span></span></div>'; e.querySelector('b')!.textContent = t.emptyB; e.querySelector('span')!.textContent = t.emptyP; return e; };
+    if (H.mount) {
+      // the workspace's own canvas lives here while the panel is open: everything on it works as usual
+      if (!live) { live = document.createElement('div'); live.className = 'v-live'; holo.replaceChildren(Object.assign(document.createElement('div'), { className: 'v-scan' }), live); unmount = H.mount(live); }
+      const has = !!(live.textContent?.trim() || live.querySelector('iframe,img,canvas,svg,input'));
+      holo.querySelector('.v-empty')?.remove(); live.hidden = !has; if (!has) holo.append(empty());
+    } else {
+      const node = H.canvas?.() || null;
+      holo.replaceChildren(Object.assign(document.createElement('div'), { className: 'v-scan' }));
+      if (node) { const w = document.createElement('div'); w.className = 'v-clone'; w.append(node); holo.append(w); } else holo.append(empty());
+    }
     const feed = $('.v-feed'); const msgs = (H.feed?.() || []).slice(-6);
     feed.replaceChildren(...msgs.map((m) => { const e = document.createElement('div'); e.className = 'v-fm' + (m.role === 'user' ? ' v-u' : ''); e.textContent = m.text.replace(/\s+/g, ' ').slice(0, 220); return e; }));
     if (!msgs.length) { const e = document.createElement('p'); e.className = 'v-idle'; e.textContent = '—'; feed.append(e); }
@@ -167,6 +191,63 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
   let mode: Mode = 'paused', amp = 0, level = 0, alive = true; const t0 = performance.now();
   const N = 240, pts = Array.from({ length: N }, (_, i) => ({ a: (i / N) * Math.PI * 2, r: 0.6 + Math.random() * 0.24, s: 0.3 + Math.random() * 0.7, k: Math.random() }));
   const LAY = [[242, 169, 59], [87, 211, 230], [255, 206, 130], [235, 130, 40], [120, 232, 244]];
+  // Vax as a hologram (20.11, Dmitry: «like Jarvis — as if a hologram talks to you»): a projector disc with a light cone,
+  // the raccoon tinted into light, see-through scan lines, a soft glow, glitches that follow the voice and rising sparks.
+  const hv = d.querySelector<HTMLCanvasElement>('.v-hv')!, hx = hv.getContext('2d')!;
+  const off = document.createElement('canvas'), ox = off.getContext('2d')!;
+  const dust = Array.from({ length: 46 }, () => ({ x: Math.random() * 2 - 1, y: Math.random(), s: 0.4 + Math.random() * 1.2, v: 0.15 + Math.random() * 0.5 }));
+  const holo3 = (tt: number, bob: number, tilt: number, sq: number) => {
+    const W = hv.width, Hh = hv.height, light = d.dataset.theme === 'light';
+    const C1 = '87,211,230', C2 = '242,169,59';
+    hx.clearRect(0, 0, W, Hh);
+    const bx = W / 2;
+    // a dark round «screen» behind the hologram: light needs darkness to glow (in the light theme too)
+    const sr = W * 0.49, sy = Hh * 0.47;
+    const bg = hx.createRadialGradient(bx, sy, sr * 0.2, bx, sy, sr);
+    bg.addColorStop(0, light ? 'rgba(10,26,38,.92)' : 'rgba(6,16,24,.75)'); bg.addColorStop(0.85, light ? 'rgba(8,18,28,.9)' : 'rgba(5,10,16,.55)'); bg.addColorStop(1, 'rgba(5,10,16,0)');
+    hx.fillStyle = bg; hx.beginPath(); hx.arc(bx, sy, sr, 0, Math.PI * 2); hx.fill();
+    hx.strokeStyle = `rgba(${C1},${0.35 + amp * 0.3})`; hx.lineWidth = 1.5; hx.beginPath(); hx.arc(bx, sy, sr * 0.97, 0, Math.PI * 2); hx.stroke();
+    hx.save(); hx.beginPath(); hx.arc(bx, sy, sr * 0.96, 0, Math.PI * 2); hx.clip();
+    hx.strokeStyle = `rgba(${C1},.07)`; hx.lineWidth = 1; for (let g = -sr; g <= sr; g += 28) { hx.beginPath(); hx.moveTo(bx + g, sy - sr); hx.lineTo(bx + g, sy + sr); hx.stroke(); hx.beginPath(); hx.moveTo(bx - sr, sy + g); hx.lineTo(bx + sr, sy + g); hx.stroke(); }
+    hx.restore();
+    const by = sy + sr * 0.8;
+    // the light cone from the projector
+    const cone = hx.createLinearGradient(0, by, 0, 120);
+    cone.addColorStop(0, `rgba(${C1},${0.28 + amp * 0.2})`); cone.addColorStop(1, `rgba(${C1},0)`);
+    hx.fillStyle = cone; hx.beginPath(); hx.moveTo(bx - 70, by); hx.lineTo(bx + 70, by); hx.lineTo(bx + 200, sy - sr * 0.7); hx.lineTo(bx - 200, sy - sr * 0.7); hx.closePath(); hx.fill();
+    // rising sparks inside the cone
+    for (const p of dust) { p.y += p.v * 0.006 * (1 + amp * 2); if (p.y > 1) { p.y = 0; p.x = Math.random() * 2 - 1; } const yy = by - p.y * (by - (sy - sr * 0.7)), half = 70 + (130 * p.y); hx.fillStyle = `rgba(${p.x > 0.4 ? C2 : C1},${(1 - p.y) * 0.8})`; hx.beginPath(); hx.arc(bx + p.x * half, yy, p.s * 1.6, 0, Math.PI * 2); hx.fill(); }
+    // the raccoon in light
+    if (pose.complete && pose.naturalWidth) {
+      const ar = pose.naturalWidth / pose.naturalHeight, dh = Math.min(sr * 1.42, (sr * 1.5) / ar), dw = dh * ar;
+      if (off.width !== Math.round(dw)) { off.width = Math.round(dw); off.height = Math.round(dh); }
+      ox.globalCompositeOperation = 'source-over'; ox.clearRect(0, 0, off.width, off.height); ox.globalAlpha = 1;
+      ox.drawImage(pose, 0, 0, off.width, off.height);
+      ox.globalCompositeOperation = 'source-atop';
+      const tint = ox.createLinearGradient(0, 0, 0, off.height); tint.addColorStop(0, `rgba(${C1},.68)`); tint.addColorStop(0.65, `rgba(${C1},.56)`); tint.addColorStop(1, `rgba(${C2},.6)`);
+      ox.fillStyle = tint; ox.fillRect(0, 0, off.width, off.height);
+      ox.globalCompositeOperation = 'destination-out'; ox.fillStyle = 'rgba(0,0,0,.42)';
+      const sh = (tt * 40) % 5; for (let y = sh; y < off.height; y += 5) ox.fillRect(0, y, off.width, 2);
+      const x0 = bx - dw / 2, y0 = by - 14 - dh - bob;
+      hx.save(); hx.translate(bx, y0 + dh); hx.rotate((tilt * Math.PI) / 180 * 0.6); hx.scale(sq, 2 - sq); hx.translate(-bx, -(y0 + dh));
+      const flick = 0.86 + Math.sin(tt * 37) * 0.04 + (Math.random() < 0.03 ? -0.25 : 0);
+      hx.globalAlpha = flick; hx.shadowColor = `rgba(${C1},.9)`; hx.shadowBlur = 26 + amp * 30;
+      hx.drawImage(off, x0, y0);
+      hx.shadowBlur = 0; hx.globalCompositeOperation = 'lighter'; hx.globalAlpha = 0.22 + amp * 0.25; hx.drawImage(off, x0, y0);
+      // glitches: more while it talks loudly
+      if (Math.random() < (mode === 'talk' ? 0.06 + level * 0.25 : 0.015)) {
+        hx.globalCompositeOperation = 'source-over'; hx.globalAlpha = 0.8;
+        for (let k = 0; k < 2 + Math.floor(Math.random() * 3); k++) { const sy = Math.random() * off.height, shh = 4 + Math.random() * 18, dx = (Math.random() - 0.5) * 26; hx.drawImage(off, 0, sy, off.width, shh, x0 + dx, y0 + sy, off.width, shh); }
+      }
+      hx.restore();
+    }
+    // the projector disc
+    hx.globalCompositeOperation = 'source-over'; hx.globalAlpha = 1;
+    for (let i = 0; i < 3; i++) { hx.strokeStyle = `rgba(${i === 1 ? C2 : C1},${0.75 - i * 0.2})`; hx.lineWidth = 2.2 - i * 0.5; hx.setLineDash(i === 2 ? [6, 8] : []); hx.lineDashOffset = -tt * 30; hx.beginPath(); hx.ellipse(bx, by + i * 6, 80 + i * 26, 16 + i * 6, 0, 0, Math.PI * 2); hx.stroke(); }
+    hx.setLineDash([]);
+    const disc = hx.createRadialGradient(bx, by, 4, bx, by, 90); disc.addColorStop(0, `rgba(${C1},${0.55 + amp * 0.3})`); disc.addColorStop(1, `rgba(${C1},0)`);
+    hx.fillStyle = disc; hx.beginPath(); hx.ellipse(bx, by, 90, 18, 0, 0, Math.PI * 2); hx.fill();
+  };
   const draw = (now: number) => {
     if (!alive) return;
     const tt = (now - t0) / 1000, W = cv.width, C = W / 2, light = d.dataset.theme === 'light';
@@ -208,8 +289,8 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
       const talk = mode === 'talk', bob = talk ? level * 16 + Math.sin(tt * 9) * level * 4 : mode === 'think' ? Math.sin(tt * 2.2) * 5 : Math.sin(tt * 1.8) * 4;
       const tilt = mode === 'hear' ? Math.sin(tt * 2) * 6 + 4 : talk ? Math.sin(tt * 6) * 3 * (0.4 + level) : mode === 'think' ? Math.sin(tt * 1.3) * 8 : Math.sin(tt * 1.1) * 2;
       const sq = talk ? 1 + level * 0.07 : 1 + Math.sin(tt * 1.8) * 0.012;
-      pose.style.transform = `translateY(${-bob}px) rotate(${tilt}deg) scale(${sq}, ${2 - sq})`;
       halo.style.setProperty('--h', String(1 + amp * 0.35));
+      holo3(tt, bob, tilt, sq);
     }
     requestAnimationFrame(draw);
   };
@@ -227,10 +308,18 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
 
   // ---- speaking: live voice from /api/tts, the browser's voice as a fallback; the core follows the sound
   let audio: HTMLAudioElement | null = null, actx: AudioContext | null = null, stopTalk = () => {};
-  async function say(text: string): Promise<void> {
+  let lastReply = '';
+  const browserSay = (text: string) => new Promise<void>((ok) => { if (!canSpeak() || !speak(text, lang, () => ok())) ok(); const tick = () => { if (mode === 'talk') { level = 0.3 + 0.3 * Math.random(); setTimeout(tick, 120); } }; tick(); });
+  async function say(text0: string): Promise<void> {
+    // 20.11 (Dmitry: «the phrase broke off»): long answers were cut after 7 pieces and a piece the live voice refused was
+    // skipped. Now: up to ~900 characters are spoken in full, longer ones end with «the rest is on the canvas»; a refused
+    // piece and everything after it are said by the browser's voice instead.
+    let text = speakable(text0).replace(/(^|\s)(\d{1,2})\.\s/g, '$1$2) '); // «1. …» is a list number, not the end of a sentence
+    if (text.length > 900) { const at = text.lastIndexOf('.', 820); text = text.slice(0, at > 300 ? at + 1 : 820) + ' ' + t.rest; }
+    if (!text) return;
     const sent = text.replace(/\s+/g, ' ').match(/[^.!?…]+[.!?…]*\s*/g) || [text];
     // the first sentence alone (VAXO starts talking fast), the rest in a few bigger pieces
-    const parts = [sent[0], ...sent.slice(1).reduce<string[]>((a, p) => { const l = a.length - 1; if (l >= 0 && (a[l] + p).length < 480) a[l] += p; else a.push(p); return a; }, [])].filter((x) => x && x.trim()).slice(0, 7);
+    const parts = [sent[0], ...sent.slice(1).reduce<string[]>((a, p) => { const l = a.length - 1; if (l >= 0 && (a[l] + p).length < 480) a[l] += p; else a.push(p); return a; }, [])].filter((x) => x && x.trim());
     const one = (p: string) => fetch('/api/tts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: p, voice, lang }) }).then((r) => (r.ok ? r.blob() : null)).catch(() => null);
     const fetchPart = async (p: string) => (await one(p)) || (await new Promise((ok) => setTimeout(ok, 1200)).then(() => one(p))) || (await new Promise((ok) => setTimeout(ok, 2500)).then(() => one(p)));
     let cancelled = false; stopTalk = () => { cancelled = true; audio?.pause(); stopSpeak(); };
@@ -238,14 +327,15 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
     if (!first) {
       // no live voice: the browser speaks, the core pulses on its own
       vx.textContent = (sent[0] || text).trim().slice(0, 240);
-      await new Promise<void>((ok) => { if (!canSpeak() || !speak(text, lang, () => ok())) ok(); const tick = () => { if (mode === 'talk') { level = 0.3 + 0.3 * Math.random(); setTimeout(tick, 120); } }; tick(); });
+      await browserSay(text);
       return;
     }
     let next: Promise<Blob | null> | null = parts[1] ? fetchPart(parts[1]) : null;
     for (let i = 0; i < parts.length && !cancelled && alive; i++) {
       const blob = i === 0 ? first : await next;
       next = parts[i + 2] ? fetchPart(parts[i + 2]) : null;
-      if (!blob || cancelled) continue;
+      if (cancelled) break;
+      if (!blob) { vx.textContent = parts[i].trim(); await browserSay(parts.slice(i).join(' ')); break; }
       vx.textContent = parts[i].trim();
       await new Promise<void>((ok) => {
         audio = new Audio(URL.createObjectURL(blob));
@@ -272,8 +362,48 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
     const f = r?.ok ? await r.json().catch(() => null) : null;
     return f?.url ? `\n📎 ${String(f.name).replace(/\s+/g, '_')} ${f.url}` : '';
   }
+  // Listening: always (hands-free) or on tap (a noisy room, people around). Remembered.
+  let tapMode = store.get('vx_listen') === 'tap', talkPeak = 0;
+  const lmB = $<HTMLButtonElement>('.v-lm');
+  const paintLm = () => { lmB.textContent = tapMode ? t.lmT : t.lmA; lmB.setAttribute('aria-pressed', String(tapMode)); };
+  paintLm();
+  lmB.onclick = () => { tapMode = !tapMode; store.set('vx_listen', tapMode ? 'tap' : 'always'); paintLm(); if (tapMode && (mode === 'listen' || mode === 'hear')) { interrupt(); set('paused'); tip.textContent = t.lmTip; } else if (!tapMode && mode === 'paused') listen(); };
+  const resume = () => { if (!alive) return; if (tapMode) { set('paused'); tip.textContent = t.lmTip; } else listen(); };
+  // Voice commands that steer the screen itself — done at once, no AI needed.
+  const ack = async (x: string) => { vx.textContent = x; set('talk'); await browserSay(x); level = 0; };
+  async function command(said: string): Promise<boolean> {
+    const x = said.toLowerCase().replace(/[.!?,;:]+/g, ' ').replace(/^(vaxo|ваксо|вакс|vax)\s+/, '').replace(/\s+/g, ' ').trim();
+    if (/^(стоп|пауза|хватит|замолчи|тихо|stop|pause|be quiet)$/.test(x)) { stopTalk(); set('paused'); return true; }
+    if (/^(повтори|ещё раз|еще раз|повтори ещё раз|repeat|say it again)$/.test(x)) { if (lastReply) { set('talk'); await say(lastReply); level = 0; } return true; }
+    if (/(закрой|выключи|заверши|выйди из)\s+(голосов|режим)|^(пока|до свидания|close voice mode|bye)$/.test(x)) { await ack(t.bye); close(); return true; }
+    if (/(покажи|включи|переключи на|show)\s+(енот|єнот|the raccoon|raccoon|vax)/.test(x)) { d.dataset.face = 'vax'; store.set('vx_face', 'vax'); paintCtl(); paintFace(); await ack(t.ok); return true; }
+    if (/(покажи|включи|переключи на|show)\s+(ядро|the core|core)/.test(x)) { d.dataset.face = 'core'; store.set('vx_face', 'core'); paintCtl(); paintFace(); await ack(t.ok); return true; }
+    const vm = x.match(/(говори|голос|use the)\s+(?:\S+\s+)?(тёпл|тепл|делов|енерг|энерг|мягк|м.як|warm|business|energetic|soft)/);
+    if (vm) { const k = /тёпл|тепл|warm/.test(vm[2]) ? 'warm' : /делов|business/.test(vm[2]) ? 'calm' : /нерг|energetic/.test(vm[2]) ? 'bright' : 'soft'; voice = k; store.set('vx_tts_voice', k); paintCtl(); await ack(t.ok); return true; }
+    if (/(включи|увімкни|turn on)\s+камер|camera on/.test(x)) { if (!cam) { camb.click(); await new Promise((ok) => setTimeout(ok, 1200)); } await ack(t.ok); return true; }
+    if (/(выключи|вимкни|turn off)\s+камер|camera off/.test(x)) { if (cam) camb.click(); await ack(t.ok); return true; }
+    if (/^(новый|нова|new)\s+(чат|разговор|розмова|chat)/.test(x) && H.fresh) { H.fresh(); setTimeout(refresh, 300); await ack(t.ok); return true; }
+    const go = x.match(/^(?:открой|відкрий|перейди(?: в| на| до)?|покажи|open|go to)\s+(?:чат|разговор|розмову|проект|проєкт|chat|project)?\s*[«"]?(.{2,60}?)[»"]?$/);
+    if (go && H.go) { const okk = await H.go(go[1]); setTimeout(refresh, 400); await ack(okk ? t.opened : t.noFind); return true; }
+    return false;
+  }
+  const chips = $('.v-chips');
+  const paintChips = (show: boolean) => {
+    chips.replaceChildren();
+    if (!show) return;
+    for (const [label, run] of [[t.again, () => command(lang === 'en' ? 'repeat' : 'повтори')], [t.shorter, () => turn(t.shorterQ)], [t.more, () => turn(t.moreQ)], [t.nextQ, () => turn(t.nextQ2)]] as [string, () => unknown][]) {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.onclick = () => { interrupt(); run(); }; chips.append(b);
+    }
+  };
+  // Stop listening/speaking right now (typed text or a chip takes over).
+  let skipRec = false;
+  const interrupt = () => { stopTalk(); try { recog?.abort(); } catch { /* */ } if (rec?.state === 'recording') { skipRec = true; rec.stop(); } };
+  const turn = async (q: string) => { if (!(await command(q))) { await handle(q); return; } if (alive && (mode as string) !== 'paused') resume(); };
+  const typeF = $<HTMLFormElement>('.v-type'), typeI = typeF.querySelector('input')!;
+  typeF.onsubmit = (e) => { e.preventDefault(); const q = typeI.value.trim(); if (!q) return; typeI.value = ''; interrupt(); turn(q); };
   // One turn: the words heard → VAXO works → speaks → listens again.
   async function handle(said: string) {
+    paintChips(false);
     tip.textContent = t.tap; me.textContent = '«' + said + '»'; vx.textContent = ''; setTimeout(refresh, 300);
     const s1 = task(t.s1);
     const work = WORK.find(([re]) => re.test(said))![1][lang] || WORK[WORK.length - 1][1].en;
@@ -286,10 +416,10 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
     if (!reply?.text) { listen(); return; }
     const done = task(t.s3); done.classList.add('v-ok');
     if (reply.made) { const b = document.createElement('button'); b.type = 'button'; b.textContent = t.canvas + ' →'; b.onclick = () => { close(); opts.openResult?.(); }; done.append(b); }
-    vx.textContent = ''; refresh();
+    vx.textContent = ''; refresh(); lastReply = reply.text; paintChips(true);
     set('talk'); await say(reply.text); level = 0;
     await new Promise((ok) => setTimeout(ok, 700)); // the room echo of VAXO's own voice dies down first
-    if (alive && mode === 'talk') listen();
+    if (alive && mode === 'talk') resume();
   }
 
   // The core follows the microphone while listening (both ways of listening use it).
@@ -362,20 +492,25 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
       src.disconnect();
       const live = recog; recog = null; try { live?.stop(); } catch { /* */ }
       if (deadMic) { deadMic = false; meter?.(); meter = null; stream?.getTracks().forEach((x) => x.stop()); stream = null; if (alive && mode !== 'paused') listen(); return; }
+      if (skipRec) { skipRec = false; return; }
       if (!alive || mode === 'paused') return;
       if (!spoke || voiced < 650) { listen(); return; } // a cough or a click is not a phrase
+      if (talkPeak && peak < talkPeak * 0.42) { me.textContent = ''; tip.textContent = t.far; listen(); return; } // people talking further away
       set('think');
       await new Promise((ok) => setTimeout(ok, srOff ? 0 : 350)); // a moment for the live recognition's final words
       let said = srFinal;
       if (!said) {
         if (!srOff) srOff = true; // heard speech but no text from the browser → Whisper from now on
         const blob = new Blob(chunks, { type: r.mimeType || type || 'audio/webm' });
-        const res = await fetch(`/api/stt?lang=${encodeURIComponent(lang)}`, { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob }).catch(() => null);
+        const hint = (lang === 'en' ? 'open chat, go to project, new chat, repeat, shorter, more detail, raccoon, core, camera. ' : lang === 'ua' ? 'відкрий чат, перейди в проєкт, нова розмова, повтори, коротше, детальніше, єнот, ядро, камера. ' : 'открой чат, перейди в проект, новый разговор, повтори, короче, подробнее, енот, ядро, камера. ') + (H.vocab?.() || '');
+        const res = await fetch(`/api/stt?lang=${encodeURIComponent(lang)}&hint=${encodeURIComponent(hint.slice(0, 220))}`, { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob }).catch(() => null);
         const js = res?.ok ? await res.json().catch(() => null) : null;
         said = (js?.text || '').trim();
         const H2 = ((window as any).__vxHeard ||= []); H2.push({ said, raw: js?.raw, segs: js?.segs, ms: Date.now() - start, voiced }); if (H2.length > 8) H2.shift();
       }
       if (!said || FAKE.test(said) || said.replace(/[^\p{L}]/gu, '').length < 2) { me.textContent = ''; listen(); return; }
+      if (await command(said)) { if (alive && (mode as string) !== 'paused') resume(); return; }
+      talkPeak = talkPeak ? talkPeak * 0.7 + peak * 0.3 : peak;
       handle(said);
     };
     r.start(250);
@@ -397,8 +532,9 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
   function close() {
     alive = false; clearInterval(clk); stopTalk(); try { recog?.abort(); if (rec?.state === 'recording') rec.stop(); } catch { /* */ } meter?.();
     stream?.getTracks().forEach((x) => x.stop()); cam?.getTracks().forEach((x) => x.stop()); mic?.close().catch(() => {}); actx?.close().catch(() => {});
+    try { unmount?.(); } catch { /* */ }
     if (d.open) d.close(); d.remove(); opts.onClose?.();
   }
   $('.v-x').onclick = close; $('.v-end').onclick = close; d.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
-  if (opts.first) { startMeter().then(() => handle(opts.first!)); } else listen();
+  if (opts.first) { startMeter().then(() => handle(opts.first!)); } else if (tapMode) { set('paused'); tip.textContent = t.lmTip; startMeter(); } else listen();
 }
