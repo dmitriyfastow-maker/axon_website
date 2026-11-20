@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'how-to-price-your-service-small-business',
+    date: '2026-11-20',
+    t: {
+      en: {
+        title: 'How to set a price for your service: a simple method in 30 minutes', seo: 'How to price your service: 30-minute method',
+        desc: 'Count your real costs, look at the market, choose your position and test the price on real customers — how to stop guessing and charge what your work is worth.',
+        body: [
+          ['Why prices are usually wrong', ['Most people copy a competitor or pick a number that “feels okay”. Then it turns out the price does not cover the time spent, or scares away exactly the customers you wanted.']],
+          ['1. Count the floor', ['Write down everything one order costs you: materials, travel, fees, software, and your hours at the rate you want to earn. This sum is the minimum — below it you work at a loss.']],
+          ['2. Look at the market', ['Find 5–10 offers like yours in your city or niche and write their prices in a table. Not to copy them, but to see the range: cheap, middle, premium.']],
+          ['3. Choose where you stand', ['Cheap means many customers and little time for each. Premium means fewer customers, more attention and a stronger promise. Decide honestly which one you can deliver every time.']],
+          ['4. Make three options', ['Basic, standard and full. Most people choose the middle one, and the full option makes the standard look reasonable. Each option should differ in result, not just in hours.']],
+          ['5. Test on real people', ['Offer the new price to the next 5–10 customers. If everyone agrees instantly, the price is probably low. If nobody agrees, check how you explain the value before lowering it.']],
+          ['6. Review every 3 months', ['Costs grow, your skill grows, demand changes. Put a reminder in your calendar and recount the floor — small regular increases are easier than one big jump.']],
+          ['How Vaxo helps', ['In Workspace write “help me set a price for wedding photography in Kyiv” — Vax will count the floor with you, collect market prices, suggest three options with clear differences and write the text for your price list. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как назначить цену на свою услугу: простой способ за 30 минут', seo: 'Как назначить цену на услугу: способ за 30 минут',
+        desc: 'Посчитать реальные затраты, посмотреть рынок, выбрать своё место и проверить цену на живых клиентах — как перестать гадать и брать столько, сколько стоит ваша работа.',
+        body: [
+          ['Почему цены обычно ошибочные', ['Большинство копирует конкурента или берёт число, которое «вроде нормальное». Потом оказывается, что цена не окупает потраченное время или отпугивает именно тех клиентов, которых вы хотели.']],
+          ['1. Посчитайте нижнюю границу', ['Запишите всё, во что вам обходится один заказ: материалы, дорогу, комиссии, программы и ваши часы по ставке, которую вы хотите зарабатывать. Эта сумма — минимум, ниже неё вы работаете в убыток.']],
+          ['2. Посмотрите рынок', ['Найдите 5–10 похожих предложений в вашем городе или нише и запишите их цены в таблицу. Не чтобы скопировать, а чтобы увидеть разброс: дёшево, средне, премиум.']],
+          ['3. Выберите своё место', ['Дёшево — много клиентов и мало времени на каждого. Премиум — меньше клиентов, больше внимания и сильнее обещание. Честно решите, что вы можете выполнять каждый раз.']],
+          ['4. Сделайте три варианта', ['Базовый, стандартный и полный. Большинство выбирает средний, а полный делает стандартный разумным. Варианты должны отличаться результатом, а не только количеством часов.']],
+          ['5. Проверьте на живых людях', ['Предложите новую цену следующим 5–10 клиентам. Если все соглашаются сразу — цена, скорее всего, низкая. Если не соглашается никто — сначала проверьте, как вы объясняете ценность, а уже потом снижайте.']],
+          ['6. Пересматривайте раз в 3 месяца', ['Растут затраты, растёт ваш опыт, меняется спрос. Поставьте напоминание в календарь и пересчитайте нижнюю границу — небольшие регулярные повышения проще, чем один большой скачок.']],
+          ['Чем помогает Vaxo', ['В Workspace напишите «помоги назначить цену на свадебную съёмку в Киеве» — Vax вместе с вами посчитает нижнюю границу, соберёт цены рынка, предложит три варианта с понятной разницей и напишет текст для прайса. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як призначити ціну на свою послугу: простий спосіб за 30 хвилин', seo: 'Як призначити ціну на послугу: спосіб за 30 хвилин',
+        desc: 'Порахувати реальні витрати, подивитися ринок, обрати своє місце і перевірити ціну на живих клієнтах — як перестати вгадувати й брати стільки, скільки варта ваша робота.',
+        body: [
+          ['Чому ціни зазвичай помилкові', ['Більшість копіює конкурента або бере число, яке «начебто нормальне». Потім виявляється, що ціна не окупає витрачений час або відлякує саме тих клієнтів, яких ви хотіли.']],
+          ['1. Порахуйте нижню межу', ['Запишіть усе, у що вам обходиться одне замовлення: матеріали, дорогу, комісії, програми і ваші години за ставкою, яку ви хочете заробляти. Ця сума — мінімум, нижче неї ви працюєте у збиток.']],
+          ['2. Подивіться ринок', ['Знайдіть 5–10 схожих пропозицій у вашому місті чи ніші й запишіть їхні ціни в таблицю. Не щоб скопіювати, а щоб побачити розкид: дешево, середньо, преміум.']],
+          ['3. Оберіть своє місце', ['Дешево — багато клієнтів і мало часу на кожного. Преміум — менше клієнтів, більше уваги й сильніша обіцянка. Чесно вирішіть, що ви можете виконувати щоразу.']],
+          ['4. Зробіть три варіанти', ['Базовий, стандартний і повний. Більшість обирає середній, а повний робить стандартний розумним. Варіанти мають відрізнятися результатом, а не лише кількістю годин.']],
+          ['5. Перевірте на живих людях', ['Запропонуйте нову ціну наступним 5–10 клієнтам. Якщо всі погоджуються одразу — ціна, найімовірніше, низька. Якщо не погоджується ніхто — спершу перевірте, як ви пояснюєте цінність, а вже потім знижуйте.']],
+          ['6. Переглядайте раз на 3 місяці', ['Ростуть витрати, росте ваш досвід, змінюється попит. Поставте нагадування в календар і перерахуйте нижню межу — невеликі регулярні підвищення простіші, ніж один великий стрибок.']],
+          ['Чим допомагає Vaxo', ['У Workspace напишіть «допоможи призначити ціну на весільну зйомку в Києві» — Vax разом з вами порахує нижню межу, збере ціни ринку, запропонує три варіанти з зрозумілою різницею і напише текст для прайсу. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'learn-language-with-ai-30-day-plan',
     date: '2026-11-20',
     t: {
