@@ -50,7 +50,15 @@ export async function speakText(key: string, text: string, voice: string, style:
 
 export async function handleTts(db: DB, request: Request, adminToken: string | undefined, signedIn: boolean, envKey?: string): Promise<Response> {
   if (request.method !== 'POST') return new Response(null, { status: 405 });
-  if (!signedIn) return new Response(null, { status: 401 });
+  // 20.11: guests on the home page get a few live phrases a day (the «wow» before sign-up); after that the browser speaks.
+  if (!signedIn) {
+    const ip = request.headers.get('CF-Connecting-IP') || 'local';
+    const h = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('vaxo-tts:' + ip)))).slice(0, 8).map((x) => x.toString(16).padStart(2, '0')).join('');
+    const k = `tts_g_${new Date().toISOString().slice(0, 10)}_${h}`;
+    const n = Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind(k).first<{ value: string }>().catch(() => null))?.value || 0);
+    if (n >= 12) return new Response(null, { status: 429 });
+    await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(k, String(n + 1)).run().catch(() => {});
+  }
   const key = await geminiKey(db, adminToken, envKey);
   if (!key) return new Response(null, { status: 501 });
   const b = (await request.json().catch(() => ({}))) as { text?: string; voice?: string; lang?: string };

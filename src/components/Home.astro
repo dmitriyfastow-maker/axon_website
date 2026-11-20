@@ -53,7 +53,7 @@ const T = {
     h1: ["Скажите, что нужно.", "Vax берётся за дело."],
     sub: "Сайты, ролики, реклама, тексты, расчёты — любая задача в онлайне. Vax сделает её за минуты, а не просто посоветует.",
     ph: ['Посчитай юнит-экономику моей подписки', 'Сделай сайт для моей кофейни', 'План: выучить испанский за 3 месяца', 'Напиши письмо арендодателю', 'Разложи запуск курса по шагам'],
-    go: 'Начать', askL: 'Напишите задачу',
+    go: 'Начать', askL: 'Напишите задачу', vmL: 'Голосовой режим: поговорите с VAXO голосом',
     showT: 'Как это выглядит', showH: ['Вы ставите задачу.', 'Vax доводит её до результата.'], showP: 'Посчитает, разложит по шагам, соберёт и запустит. Где нужен инструмент, он появится прямо в разговоре и останется у вас. Перед важным Vax спросит.',
     tabs: ['Считает', 'Раскладывает по шагам', 'Спрашивает перед важным'],
     side: ['Разговор с Vax', 'Сайт', 'CRM', 'Партнёрский кабинет'], allow: 'Лимит на сегодня · использовано 28%', box: 'Напишите сообщение…',
@@ -112,7 +112,7 @@ const T = {
     h1: ["Say what you need.", "Vax gets on with it."],
     sub: "Sites, videos, ads, texts, calculations — any task online. Vax gets it done in minutes instead of just giving advice.",
     ph: ['Work out the unit economics of my subscription', 'Make a website for my coffee shop', 'A plan to learn Spanish in 3 months', 'Write a letter to my landlord', 'Break my course launch into steps'],
-    go: 'Start', askL: 'Write your task',
+    go: 'Start', askL: 'Write your task', vmL: 'Voice mode: talk to VAXO',
     showT: 'What it looks like', showH: ['You set the task.', 'Vax takes it to a result.'], showP: 'It counts, breaks it into steps, builds and launches. When a tool helps, it appears right in the conversation and stays yours. Before anything important, Vax asks.',
     tabs: ['Counts', 'Breaks it into steps', 'Asks before anything big'],
     side: ['Chat with Vax', 'Site', 'CRM', 'Partner cabinet'], allow: 'Today’s limit · 28% used', box: 'Write a message…',
@@ -171,7 +171,7 @@ const T = {
     h1: ["Скажіть, що потрібно.", "Vax береться до справи."],
     sub: "Сайти, ролики, реклама, тексти, розрахунки — будь-яке завдання онлайн. Vax зробить його за хвилини, а не просто порадить.",
     ph: ['Порахуй юніт-економіку моєї підписки', 'Зроби сайт для моєї кав’ярні', 'План: вивчити іспанську за 3 місяці', 'Напиши листа орендодавцю', 'Розклади запуск курсу на кроки'],
-    go: 'Почати', askL: 'Напишіть завдання',
+    go: 'Почати', askL: 'Напишіть завдання', vmL: 'Голосовий режим: поговоріть з VAXO голосом',
     showT: 'Як це виглядає', showH: ['Ви ставите завдання.', 'Vax доводить його до результату.'], showP: 'Порахує, розкладе по кроках, збере й запустить. Де потрібен інструмент, він зʼявиться просто в розмові й залишиться у вас. Перед важливим Vax запитає.',
     tabs: ['Рахує', 'Розкладає на кроки', 'Питає перед важливим'],
     side: ['Розмова з Vax', 'Сайт', 'CRM', 'Партнерський кабінет'], allow: 'Ліміт на сьогодні · використано 28%', box: 'Напишіть повідомлення…',
@@ -212,6 +212,7 @@ const ava = '/mascot/vax-talk.webp';
         <input name="q" type="text" maxlength="400" autocomplete="off" placeholder={T.ph[0]} aria-label={T.askL} />
         <a class="aic" data-aclip href={P("/app/") + "#attach"} aria-label="📎" title="📎"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M21 11.5 12.5 20a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <button type="button" class="aic" data-amic aria-label="🎤"></button>
+        <button type="button" class="aic avm" data-avm aria-label={T.vmL} title={T.vmL}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
         <button type="submit">{T.go}</button>
       </form>
       <div class="chips">{T.chips.map(([label, ask]) => <button type="button" data-chip={ask}>{label}</button>)}</div>
@@ -296,6 +297,7 @@ const ava = '/mascot/vax-talk.webp';
         <input name="q" type="text" maxlength="400" autocomplete="off" placeholder={T.askL} aria-label={T.askL} />
         <a class="aic" data-aclip href={P("/app/") + "#attach"} aria-label="📎" title="📎"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M21 11.5 12.5 20a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <button type="button" class="aic" data-amic aria-label="🎤"></button>
+        <button type="button" class="aic avm" data-avm aria-label={T.vmL} title={T.vmL}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
         <button type="submit">{T.go}</button>
       </form>
     </div>
@@ -320,6 +322,63 @@ const ava = '/mascot/vax-talk.webp';
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   // A mic in both inputs: speak the task (Web Speech, or a recording turned into text).
   document.querySelectorAll<HTMLButtonElement>('[data-amic]').forEach((b) => { const f = b.closest('form')?.querySelector('input'); if (f) attachMic(b, f, () => document.documentElement.lang === 'uk' ? 'ua' : document.documentElement.lang); });
+  // 20.11 (Dmitry): the same voice mode as inside, right on the home page, before sign-up — the «wow» at the door.
+  // Guests talk to Vax for free; what VAXO makes shows on the panel and the talk is kept for /app/ (same browser storage).
+  document.querySelectorAll<HTMLButtonElement>('[data-avm]').forEach((b) => (b.onclick = async () => {
+    const lang = document.documentElement.lang === 'uk' ? 'ua' : (document.documentElement.lang || 'en').slice(0, 2);
+    const { openVoiceMode } = await import('../scripts/voicemode');
+    const KEY = 'vaxo_ws';
+    const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || 'null') || {}; } catch { return {}; } };
+    const id = Date.now(); let msgs: { role: string; content: string; doc?: any; site?: any; image?: string; tool?: any }[] = [];
+    let last: HTMLElement | null = null;
+    const save = (title: string) => { try { const st = load(); st.chats = [{ id, title: title.slice(0, 60), msgs }, ...(st.chats || []).filter((c: any) => c.id !== id)]; localStorage.setItem(KEY, JSON.stringify(st)); } catch { /* private */ } };
+    const app = (document.querySelector<HTMLAnchorElement>('[data-aclip]')?.getAttribute('href') || '/app/').replace(/#.*/, '');
+    const L = ({ ru: ['Новый разговор', 'Без регистрации', 'Сообщений', 'Результатов', 'Открыть в рабочем пространстве →'], ua: ['Нова розмова', 'Без реєстрації', 'Повідомлень', 'Результатів', 'Відкрити в робочому просторі →'], en: ['New chat', 'No sign-up', 'Messages', 'Results', 'Open in the workspace →'] } as Record<string, string[]>)[lang] || [];
+    const preview = async (m: any): Promise<HTMLElement | null> => {
+      const box = document.createElement('div'); box.style.cssText = 'display:grid;gap:10px';
+      const open = document.createElement('a'); open.href = app; open.textContent = L[4]; open.style.cssText = 'justify-self:start;padding:8px 14px;border-radius:999px;background:#f2a93b;color:#1a1205;font-weight:600;text-decoration:none';
+      if (m.site) {
+        const r = await fetch('/api/ws/site/preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ site: m.site, lang }) }).then((x) => x.json()).catch(() => null);
+        if (r?.html) { const f = document.createElement('iframe'); f.srcdoc = r.html; f.style.cssText = 'width:100%;height:60vh;border:0;border-radius:12px;background:#fff'; box.append(f); }
+      } else if (m.doc) {
+        const h = document.createElement('h3'); h.textContent = m.doc.title || ''; h.style.margin = '0';
+        const b2 = document.createElement('div'); b2.textContent = String(m.doc.body || '').replace(/\[\[[^\]]*\]\]/g, ''); b2.style.cssText = 'white-space:pre-wrap;line-height:1.55;font-size:14px';
+        box.append(h, b2);
+      } else if (m.tool) {
+        // a live calculator / list / tracker card right on the panel (the full tool opens in the workspace)
+        const tl = m.tool, h = document.createElement('h3'); h.textContent = tl.title || ''; h.style.margin = '0'; box.append(h);
+        if (tl.kind === 'calc') {
+          const { evalFormula } = await import('../../worker/toolcore');
+          const grid = document.createElement('div'); grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px';
+          const outs = document.createElement('div'); outs.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px';
+          const vals: Record<string, number> = {};
+          const calc = () => { outs.replaceChildren(...tl.outputs.map((o: any) => { const v = evalFormula(o.f, vals); const c = document.createElement('div'); c.style.cssText = 'padding:10px 12px;border-radius:12px;background:rgba(242,169,59,.12);border:1px solid rgba(242,169,59,.4)'; c.innerHTML = '<small style="opacity:.7"></small><b style="display:block;font-size:20px"></b>'; c.querySelector('small')!.textContent = o.label; c.querySelector('b')!.textContent = (Number.isFinite(v) ? Math.round(v * 100) / 100 : '—') + (o.unit ? ' ' + o.unit : ''); return c; })); };
+          for (const f of tl.fields) { vals[f.id] = f.value; const l = document.createElement('label'); l.style.cssText = 'display:grid;gap:4px;font-size:12.5px'; l.textContent = f.label + (f.unit ? ', ' + f.unit : ''); const i = document.createElement('input'); i.type = 'number'; i.value = String(f.value); i.style.cssText = 'padding:8px 10px;border-radius:10px;border:1px solid rgba(127,127,127,.35);background:transparent;color:inherit;font:inherit'; i.oninput = () => { vals[f.id] = Number(i.value); calc(); }; l.append(i); grid.append(l); }
+          calc(); box.append(grid, outs);
+        } else if (tl.kind === 'list') { const ul = document.createElement('ul'); ul.style.cssText = 'margin:0;padding-left:18px;line-height:1.6'; for (const x of tl.items || []) { const li = document.createElement('li'); li.textContent = x; ul.append(li); } box.append(ul); }
+        if (tl.note) { const n = document.createElement('p'); n.textContent = tl.note; n.style.cssText = 'margin:0;opacity:.7;font-size:13px'; box.append(n); }
+      } else if (m.image) { const im = document.createElement('img'); im.src = m.image; im.style.cssText = 'max-width:100%;border-radius:12px'; box.append(im); }
+      else return null;
+      box.prepend(open);
+      return box;
+    };
+    openVoiceMode(lang, async (q) => {
+      msgs.push({ role: 'user', content: q });
+      const r = await fetch('/api/ws/ask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q, lang, mode: 'short', chat: 0, history: msgs.slice(0, -1).map((m) => ({ role: m.role, content: m.content })).slice(-12) }) }).then((x) => x.json()).catch(() => null);
+      if (!r?.ok) { msgs.pop(); return null; }
+      const m = { role: 'assistant', content: String(r.reply || ''), doc: r.doc || undefined, site: r.site || undefined, image: r.image || undefined, tool: r.tool || undefined };
+      msgs.push(m); save(msgs[0].content);
+      const made = m.site ? 'site' : m.doc ? 'doc' : m.image ? 'image' : m.tool ? 'tool' : '';
+      if (made) last = await preview(m);
+      const text = m.content.replace(/\[\[[^\]]*\]\]/g, '').replace(/[*#_`>]/g, '').trim();
+      return { text: text || (m.doc?.title || ''), made };
+    }, undefined, { openResult: () => { location.href = app; }, hud: {
+      title: () => (msgs[0]?.content || L[0]).slice(0, 70), crumb: () => L[1],
+      canvas: () => last,
+      stats: () => [[L[2], String(msgs.length)], [L[3], String(msgs.filter((m) => m.site || m.doc || m.image || m.tool).length)]],
+      feed: () => msgs.map((m) => ({ role: m.role, text: m.content.replace(/\[\[[^\]]*\]\]/g, '') })),
+    } });
+  }));
   const hq = document.querySelector<HTMLFormElement>('[data-ask]');
   const input = hq?.querySelector('input');
   const askVax = (q: string) => { const a = document.createElement('a'); a.href = '#'; a.setAttribute('data-vax-chat', ''); a.dataset.vaxAsk = q; a.dataset.vaxFull = '1'; a.hidden = true; document.body.appendChild(a); a.click(); a.remove(); };
@@ -659,6 +718,7 @@ const ava = '/mascot/vax-talk.webp';
   .ask .aic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 50%; background: none; color: var(--mut); cursor: pointer; padding: 0; }
   .ask .aic:hover { color: var(--tx); background: color-mix(in srgb, var(--tx) 8%, transparent); }
   .ask .aic.rec { color: #e5484d; }
+  .ask .aic.avm { color: var(--amT, #b86e00); }
   .ask .aic svg { width: 20px; height: 20px; }
   .vol { display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; align-items: center; margin: 14px 0 4px; }
   .vol .vt { color: var(--mut); font-size: 12.5px; }

@@ -3,7 +3,7 @@
 // our server (Whisper) and, if it contains the name VAXO, voice mode opens and the rest of the phrase is the command.
 // Phrases without the name are dropped at once. The browser shows its own «microphone on» sign all the time.
 const NAME = /(в[ао]кс[оауы]?|вакс|vaxo|vacso|vaxa|vax\b|ваксу|ваксы)/i;
-const FAKE = /субтитр|продолжение следует|спасибо за просмотр|thanks for watching|amara\.org/i;
+const FAKE = /ии-помощник|^(\s*(ваксо|vaxo|вакс|vax)[\s,.!?]*){2,}$|субтитр|продолжение следует|спасибо за просмотр|thanks for watching|amara\.org/i;
 
 export type Wake = { stop: () => void; pause: (on: boolean) => void };
 

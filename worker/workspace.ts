@@ -735,6 +735,46 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       return out(200, { ok: true, list: await listReviews(db, own.id, true) });
     }
     // Decision 63: public or private — the programme page of a project's business.
+    // «Всевидящее око» (20.11, Dmitry): the person, their projects and where they are heading — seen from the side, like a
+    // character sheet in a game. Numbers come from what they really did; the short outside view is written by the free model
+    // once a day (or on «refresh»).
+    if (path === 'eye') {
+      const q = <T,>(sql: string, ...v: unknown[]) => db.prepare(sql).bind(...v).all<T>().then((r) => r.results || []).catch(() => [] as T[]);
+      const kinds = (await q<{ site: number; app: number; doc: number; tool: number; img: number }>(`SELECT SUM(m.site IS NOT NULL) AS site, SUM(m.doc LIKE '%"app"%') AS app, SUM(m.doc IS NOT NULL AND m.doc NOT LIKE '%"app"%') AS doc, SUM(m.tool IS NOT NULL) AS tool, SUM(m.image IS NOT NULL) AS img FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'assistant'`, me.id))[0] || { site: 0, app: 0, doc: 0, tool: 0, img: 0 };
+      const asks = (await q<{ n: number; first: string | null }>(`SELECT COUNT(*) AS n, MIN(m.at) AS first FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user'`, me.id))[0] || { n: 0, first: null };
+      const days30 = (await q<{ n: number }>(`SELECT COUNT(DISTINCT date(m.at)) AS n FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user' AND m.at >= date('now', '-30 day')`, me.id))[0]?.n ?? 0;
+      const chats = (await q<{ n: number }>('SELECT COUNT(*) AS n FROM ws_chats WHERE client_id = ?', me.id))[0]?.n ?? 0;
+      const projects = await q<{ id: number; name: string; chats: number; results: number; last: string | null }>(`SELECT p.id, p.name, COUNT(DISTINCT c.id) AS chats, SUM(m.role = 'assistant' AND (m.site IS NOT NULL OR m.doc IS NOT NULL OR m.tool IS NOT NULL OR m.image IS NOT NULL)) AS results, MAX(m.at) AS last FROM ws_projects p LEFT JOIN ws_chats c ON c.project_id = p.id LEFT JOIN ws_msgs m ON m.chat_id = c.id WHERE p.client_id = ? GROUP BY p.id ORDER BY last DESC LIMIT 12`, me.id);
+      const mem = await readMemory(db, me.id);
+      const filled = (['niche', 'goals', 'project', 'limits'] as const).filter((k) => String((mem as any)[k] || '').trim()).length;
+      const k = { site: +kinds.site || 0, app: +kinds.app || 0, doc: +kinds.doc || 0, tool: +kinds.tool || 0, img: +kinds.img || 0 };
+      const results = k.site + k.app + k.doc + k.tool + k.img, range = Object.values(k).filter((x) => x > 0).length;
+      const live = projects.filter((x) => (x.results || 0) > 0).length;
+      const curve = (x: number, half: number) => Math.round(100 * (1 - Math.exp(-x / half)));
+      const stats = {
+        create: curve(results, 10), // how much is really made
+        focus: Math.min(100, live * 22 + (String(mem.goals || '').trim() ? 30 : 0)), // projects carried to a result + a named goal
+        rhythm: Math.min(100, Math.round((days30 / 16) * 100)), // days with Vax in the last month
+        scale: curve(chats + projects.length * 2, 14), // how many fronts at once
+        clarity: filled * 22 + (filled === 4 ? 12 : 0), // how well Vax knows them
+        range: Math.round((range / 5) * 100), // sites, apps, documents, tools, images
+      };
+      const lg = cut(url.searchParams.get('lang'), 2) || 'ru';
+      const key = 'eye_' + me.id, today = new Date().toISOString().slice(0, 10);
+      let view: { day?: string; text?: string; next?: string; way?: string } = {};
+      try { view = JSON.parse((await db.prepare('SELECT value FROM settings WHERE key = ?').bind(key).first<{ value: string }>())?.value || '{}'); } catch { /* none yet */ }
+      if (ai && (view.day !== today || url.searchParams.get('fresh') === '1' || !view.text) && asks.n > 0) {
+        const recent = (await q<{ text: string }>(`SELECT m.text FROM ws_msgs m JOIN ws_chats c ON c.id = m.chat_id WHERE c.client_id = ? AND m.role = 'user' ORDER BY m.id DESC LIMIT 12`, me.id)).map((r) => r.text.slice(0, 160));
+        const L = ({ ru: 'Russian', ua: 'Ukrainian', en: 'English' } as Record<string, string>)[lg] || 'English';
+        const raw = await freeReply(ai, [
+          { role: 'system', content: `You are Vax, an honest partner. Look at this person from the side, like a wise friend who sees their whole picture. Answer in ${L} as JSON only: {"text": "2-3 short sentences: who they are now and what really moves them forward, warm and concrete, no flattery, no made-up facts", "way": "one sentence: where they are heading if they keep going", "next": "one concrete next step they can ask Vax to do today, as a request in first person"}` },
+          { role: 'user', content: JSON.stringify({ memory: { niche: mem.niche, goals: mem.goals, project: mem.project, limits: mem.limits }, projects: projects.map((x) => ({ name: x.name, chats: x.chats, results: x.results })), made: k, days_last_month: days30, recent_requests: recent }) },
+        ], 'short').catch(() => null);
+        const j = (() => { try { return JSON.parse(String(raw || '').replace(/^[^{]*/, '').replace(/[^}]*$/, '')); } catch { return null; } })();
+        if (j?.text) { view = { day: today, text: cut(j.text, 600), way: cut(j.way, 300), next: cut(j.next, 200) }; await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(key, JSON.stringify(view)).run().catch(() => {}); }
+      }
+      return out(200, { ok: true, stats, made: k, results, asks: asks.n, first: asks.first, days30, chats, projects, filled, view: view.text ? view : null });
+    }
     const pmem = path.match(/^project\/(\d+)\/memory$/);
     if (pmem) {
       const pid = Number(pmem[1]);
