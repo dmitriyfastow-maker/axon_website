@@ -283,7 +283,7 @@ export async function ownerUpdateLead(db: DB, id: number, b: Record<string, unkn
     await db.prepare(`INSERT INTO bonuses (client_id, lead_id, kind, amount_usd, note) SELECT client_id, id, ?, ?, ? FROM leads WHERE id = ?`).bind(bonus < 0 ? 'spend' : 'manual', bonus, s(b.note, 200) || null, id).run();
   }
   // Subscription plan (migration 0034): personal | care | growth | pro | start, '' clears. Ignored before the migration.
-  if (typeof b.plan === 'string' && ['', 'personal', 'care', 'growth', 'pro', 'start'].includes(b.plan)) await db.prepare('UPDATE leads SET plan = ? WHERE id = ?').bind(b.plan || null, id).run().catch(() => {});
+  if (typeof b.plan === 'string' && ['', 'lite', 'personal', 'care', 'growth', 'pro', 'start'].includes(b.plan)) await db.prepare('UPDATE leads SET plan = ? WHERE id = ?').bind(b.plan || null, id).run().catch(() => {});
   let status = typeof b.status === 'string' && (OWNER_STATUSES as readonly string[]).includes(b.status) ? b.status : null;
   if (b.closer_id !== undefined) {
     const cid = Number(b.closer_id) || null;

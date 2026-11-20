@@ -76,6 +76,12 @@ import Base from '../layouts/Base.astro';
           <div class="two"><input name="key" type="password" placeholder="sk-ant-…" autocomplete="off" required /><button class="cta">Подключить</button></div>
           <small class="mut" data-ckey-msg></small>
         </form>
+        <form class="card keycard" data-gkey hidden>
+          <b>🎙 Ключ Google для живых голосов VAXO</b>
+          <small class="mut">Ключ уже создан в Google AI Studio (aistudio.google.com/apikey, аккаунт Vaxo) — нажмите там «Копировать» и вставьте сюда. Сайт проверит его у Google и сохранит в зашифрованном виде.</small>
+          <div class="two"><input name="key" type="password" placeholder="AIza…" autocomplete="off" required /><button class="cta">Подключить</button></div>
+          <small class="mut" data-gkey-msg></small>
+        </form>
         <form class="say" data-say>
           <textarea name="text" rows="1" placeholder="Скажите Claude, что сделать или изменить — например: «сделай 3 ролика про кофейни» или «перестань писать партнёрам по выходным»"></textarea>
           <button class="cta">Отправить Claude</button>
@@ -1396,6 +1402,21 @@ import Base from '../layouts/Base.astro';
       const r: any = await api('/claude-key', { key }).catch(() => null);
       if (r?.ok) { msg.textContent = '✅ Подключено. Клиенты теперь получают ответы Claude.'; f.reset(); setTimeout(() => { f.hidden = true; }, 4000); }
       else msg.textContent = r?.error === 'format' ? 'Это не похоже на ключ: он начинается с sk-ant-.' : 'Anthropic не принял ключ: проверьте, что он скопирован целиком и на счёте есть деньги.';
+    });
+  }
+
+  // Gemini key card (live voices): shown until a key is connected.
+  {
+    const f = document.querySelector<HTMLFormElement>('[data-gkey]')!;
+    const msg = document.querySelector<HTMLElement>('[data-gkey-msg]')!;
+    api('/gemini-key').then((r: any) => { if (r?.ok && !r.at) f.hidden = false; }).catch(() => {});
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const key = String(new FormData(f).get('key') || '').trim();
+      msg.textContent = 'Проверяю ключ у Google…';
+      const r: any = await api('/gemini-key', { key }).catch(() => null);
+      if (r?.ok) { msg.textContent = '✅ Подключено. VAXO теперь говорит живыми голосами.'; f.reset(); setTimeout(() => { f.hidden = true; }, 4000); }
+      else msg.textContent = r?.error === 'format' ? 'Это не похоже на ключ Google: он начинается с AIza.' : 'Google не принял ключ: скопируйте его целиком.';
     });
   }
 </script>

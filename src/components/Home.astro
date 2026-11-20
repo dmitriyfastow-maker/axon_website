@@ -27,11 +27,12 @@ const T = {
     per: [["1", "Месяц", ""], ["3", "3 месяца", "−10%"], ["6", "6 месяцев", "−15%"], ["12", "Год", "−20%"]],
     perNote: "${t} за {n} мес.",
     allIn: "Возможности на всех тарифах одинаковые. Отличается только то, сколько работы Vax делает за месяц: чем старше тариф, тем больше работы и тем дешевле она обходится.",
-    vol: ["Объём работы", "×1", "×2,5", "×8,5", "×20", "понемногу"], gain: "Выгоднее Плюс на {n}%",
+    vol: ["Объём работы", "×1", "×2,5", "×8,5", "×20", "понемногу", "×0,4"], gain: "Выгоднее Плюс на {n}%",
     p3: [["Делает, а не советует", "Вы просите — и получаете готовое: письмо, план отпуска, сайт, расчёт. Сразу можно пользоваться."], ["Всё в одном месте", "Дела, документы, а для бизнеса — сайт, запись, оплаты и CRM. Vax помнит всё и продолжает с того же места."], ["Вечер работы — за минуту", "Рутину Vax берёт на себя. А в бизнесе работает и без вас: клиенты записываются и платят круглые сутки."], ["Уровень лучших в мире", "Каждую задачу Vax делает как сильнейшие в своём деле — и сам предлагает, как сделать ещё лучше."]],
     outs: ["Сайты", "Ролики", "Посты и тексты", "Запись и оплата", "CRM", "ИИ-консультант", "Расчёты и планы"],
-    persL2: ["Плюс", "Для себя и первых задач", ["Всё, что умеет Vax", "Хватит на каждый день", "Сильные модели ИИ"]],
-    pro2: ["Ультра", "Для больших проектов", ["Всё, что умеет Vax", "В 20 раз больше работы, чем в Плюс", "Сильные модели ИИ"]],
+    lite: ["Лайт", "Попробовать сильный ИИ", ["Всё, что умеет Vax", "Немного работы каждый день", "Сильнейшие модели: Claude Opus, Sonnet"]],
+    persL2: ["Плюс", "Для себя и первых задач", ["Всё, что умеет Vax", "Хватит на каждый день", "Сильнейшие модели: Claude Opus, Sonnet"]],
+    pro2: ["Ультра", "Для больших проектов", ["Всё, что умеет Vax", "В 20 раз больше работы, чем в Плюс", "Сильнейшие модели: Claude Opus, Sonnet"]],
     kick: "Сайты и запись · Оплаты · CRM · ИИ-консультант · Тексты и планы",
     trust: ["Бесплатный тариф навсегда", "Возврат 14 дней", "Отмена в любой момент", "Скидка до 20%"],
     svcH: "Что делает Vax",
@@ -69,9 +70,9 @@ const T = {
     cab: ['Рабочее пространство', 'Чат, память, инструменты и холст на одном экране.', 'Открыть', ['Готовность проекта', 'Лимит на сегодня', 'Мои инструменты', 'Счёт оплачен']],
     prH: 'Тарифы', prS: "Платите помесячно или сразу за 3, 6 или 12 месяцев со скидкой до 20%. Не понравится — вернём деньги в течение 14 дней.",
     mo: '/мес', focus: 'Лучше всего начать здесь', trial: "Выбрать", startB: 'Начать бесплатно', more: '', audMe: 'Для себя', audBiz: 'Для бизнеса', focusMe: 'Для себя — лучший выбор', proD: 'Когда нужен магазин или приложение.', persL: ['Всё из Старта и намного больше запаса', 'Тексты, планы, расчёты, небольшие сборки', 'Файлы, картинки, голос'], proL: ['Всё из Макс', 'Магазин или приложение', 'Ваши соцсети и реклама', 'Приоритет'], audHint: 'Начать можно с бесплатного Старта, тариф меняется в любой момент.',
-    start: ["Бесплатный", "Попробовать бесплатно", ["Всё, что умеет Vax", "Каждый день понемногу", "Быстрая модель ИИ"]],
-    care: ["Про", "Для вашего дела", ["Всё, что умеет Vax", "В 2,5 раза больше работы, чем в Плюс", "Сильные модели ИИ"]],
-    grow: ["Макс", "Когда работы много", ["Всё, что умеет Vax", "В 8,5 раз больше работы, чем в Плюс", "Сильные модели ИИ"]],
+    start: ["Бесплатный", "Попробовать бесплатно", ["Всё, что умеет Vax", "Каждый день понемногу", "Базовая модель ИИ — проще и слабее"]],
+    care: ["Про", "Для вашего дела", ["Всё, что умеет Vax", "В 2,5 раза больше работы, чем в Плюс", "Сильнейшие модели: Claude Opus, Sonnet"]],
+    grow: ["Макс", "Когда работы много", ["Всё, что умеет Vax", "В 8,5 раз больше работы, чем в Плюс", "Сильнейшие модели: Claude Opus, Sonnet"]],
     pers: ['Плюс', 'Для одного человека: тексты, планы, небольшие сборки.'],
     pro: ['Ультра', 'Магазин или приложение, ваши соцсети и реклама, приоритет.'],
     prN: "Подписка продлевается сама: за 3 дня до списания напомним, отменить можно в кабинете в один клик. Не знаете, какой тариф нужен? Спросите Vax.",
@@ -85,11 +86,12 @@ const T = {
     per: [["1", "Monthly", ""], ["3", "3 months", "−10%"], ["6", "6 months", "−15%"], ["12", "Yearly", "−20%"]],
     perNote: "${t} for {n} months",
     allIn: "Every plan can do the same things. Plans differ only in how much work Vax does for you each month: the bigger the plan, the more work and the cheaper each piece of it.",
-    vol: ["Amount of work", "×1", "×2.5", "×8.5", "×20", "a little"], gain: "{n}% better value than Plus",
+    vol: ["Amount of work", "×1", "×2.5", "×8.5", "×20", "a little", "×0.4"], gain: "{n}% better value than Plus",
     p3: [["Does it, not just advises", "You ask and get the finished thing: a letter, a trip plan, a site, a calculation. Ready to use at once."], ["Everything in one place", "Your tasks and documents, and for a business a site, booking, payments and a CRM. Vax remembers it all and picks up where you left off."], ["An evening of work in a minute", "Vax takes the routine. And in a business it works without you: customers book and pay around the clock."], ["The level of the world's best", "Vax does every task the way the strongest in the field would, and suggests how to make it even better."]],
     outs: ["Sites", "Videos", "Posts & texts", "Booking & payments", "CRM", "AI consultant", "Calculations & plans"],
-    persL2: ["Plus", "For you and first tasks", ["Everything Vax can do", "Enough for every day", "Strong AI models"]],
-    pro2: ["Ultra", "For big projects", ["Everything Vax can do", "20× more work than Plus", "Strong AI models"]],
+    lite: ["Lite", "Try the strong AI", ["Everything Vax can do", "A little work every day", "The strongest models: Claude Opus, Sonnet"]],
+    persL2: ["Plus", "For you and first tasks", ["Everything Vax can do", "Enough for every day", "The strongest models: Claude Opus, Sonnet"]],
+    pro2: ["Ultra", "For big projects", ["Everything Vax can do", "20× more work than Plus", "The strongest models: Claude Opus, Sonnet"]],
     kick: "Sites & booking · Payments · CRM · AI consultant · Texts & plans",
     trust: ["Free plan forever", "14-day refund", "Cancel any time", "Up to 20% off"],
     svcH: "What Vax does",
@@ -127,9 +129,9 @@ const T = {
     cab: ['Workspace', 'Chat, memory, tools and Canvas on one screen.', 'Open', ['Project progress', 'Today’s limit', 'My tools', 'Invoice paid']],
     prH: 'Plans', prS: "Pay monthly or for 3, 6 or 12 months at once with up to 20% off. Not happy? We refund within 14 days.",
     mo: '/mo', focus: 'The best place to start', trial: "Choose", startB: 'Start free', more: '', audMe: 'For yourself', audBiz: 'For business', focusMe: 'Best for yourself', proD: 'When you need a shop or an app.', persL: ['Everything in Start, with much more room', 'Texts, plans, calculations, small builds', 'Files, pictures, voice'], proL: ['Everything in Max', 'A shop or an app', 'Your social media and ads', 'Priority'], audHint: 'You can start on the free Start plan and switch at any time.',
-    start: ["Free", "Try it for free", ["Everything Vax can do", "A little every day", "Fast AI model"]],
-    care: ["Pro", "For your business", ["Everything Vax can do", "2.5× more work than Plus", "Strong AI models"]],
-    grow: ["Max", "When there is a lot of work", ["Everything Vax can do", "8.5× more work than Plus", "Strong AI models"]],
+    start: ["Free", "Try it for free", ["Everything Vax can do", "A little every day", "Basic AI model — simpler and weaker"]],
+    care: ["Pro", "For your business", ["Everything Vax can do", "2.5× more work than Plus", "The strongest models: Claude Opus, Sonnet"]],
+    grow: ["Max", "When there is a lot of work", ["Everything Vax can do", "8.5× more work than Plus", "The strongest models: Claude Opus, Sonnet"]],
     pers: ['Plus', 'For one person: texts, plans, small builds.'],
     pro: ['Ultra', 'A shop or app, your social media and ads, priority.'],
     prN: "Your plan renews by itself: we remind you 3 days before each charge, and you can cancel in one click in your cabinet. Not sure which plan you need? Ask Vax.",
@@ -143,11 +145,12 @@ const T = {
     per: [["1", "Місяць", ""], ["3", "3 місяці", "−10%"], ["6", "6 місяців", "−15%"], ["12", "Рік", "−20%"]],
     perNote: "${t} за {n} міс.",
     allIn: "Можливості на всіх тарифах однакові. Відрізняється лише те, скільки роботи Vax робить за місяць: що старший тариф, то більше роботи й то дешевше вона обходиться.",
-    vol: ["Обсяг роботи", "×1", "×2,5", "×8,5", "×20", "потроху"], gain: "Вигідніше за Плюс на {n}%",
+    vol: ["Обсяг роботи", "×1", "×2,5", "×8,5", "×20", "потроху", "×0,4"], gain: "Вигідніше за Плюс на {n}%",
     p3: [["Робить, а не радить", "Ви просите — і отримуєте готове: лист, план відпустки, сайт, розрахунок. Одразу можна користуватися."], ["Усе в одному місці", "Справи, документи, а для бізнесу — сайт, запис, оплати й CRM. Vax памʼятає все й продовжує з того ж місця."], ["Вечір роботи — за хвилину", "Рутину Vax бере на себе. А в бізнесі працює й без вас: клієнти записуються й платять цілодобово."], ["Рівень найкращих у світі", "Кожне завдання Vax робить як найсильніші у своїй справі — і сам пропонує, як зробити ще краще."]],
     outs: ["Сайти", "Ролики", "Пости й тексти", "Запис і оплата", "CRM", "ШІ-консультант", "Розрахунки й плани"],
-    persL2: ["Плюс", "Для себе й перших завдань", ["Усе, що вміє Vax", "Вистачить на кожен день", "Сильні моделі ШІ"]],
-    pro2: ["Ультра", "Для великих проєктів", ["Усе, що вміє Vax", "У 20 разів більше роботи, ніж у Плюс", "Сильні моделі ШІ"]],
+    lite: ["Лайт", "Спробувати сильний ШІ", ["Усе, що вміє Vax", "Трохи роботи щодня", "Найсильніші моделі: Claude Opus, Sonnet"]],
+    persL2: ["Плюс", "Для себе й перших завдань", ["Усе, що вміє Vax", "Вистачить на кожен день", "Найсильніші моделі: Claude Opus, Sonnet"]],
+    pro2: ["Ультра", "Для великих проєктів", ["Усе, що вміє Vax", "У 20 разів більше роботи, ніж у Плюс", "Найсильніші моделі: Claude Opus, Sonnet"]],
     kick: "Сайти й запис · Оплати · CRM · ШІ-консультант · Тексти й плани",
     trust: ["Безкоштовний тариф назавжди", "Повернення 14 днів", "Скасування будь-коли", "Знижка до 20%"],
     svcH: "Що робить Vax",
@@ -185,9 +188,9 @@ const T = {
     cab: ['Робочий простір', 'Чат, памʼять, інструменти й полотно на одному екрані.', 'Відкрити', ['Готовність проєкту', 'Ліміт на сьогодні', 'Мої інструменти', 'Рахунок оплачено']],
     prH: 'Тарифи', prS: "Платіть щомісяця або одразу за 3, 6 чи 12 місяців зі знижкою до 20%. Не сподобається — повернемо гроші протягом 14 днів.",
     mo: '/міс', focus: 'Найкраще почати тут', trial: "Обрати", startB: 'Почати безкоштовно', more: '', audMe: 'Для себе', audBiz: 'Для бізнесу', focusMe: 'Для себе — найкращий вибір', proD: 'Коли потрібен магазин чи застосунок.', persL: ['Усе зі Старту й набагато більше запасу', 'Тексти, плани, розрахунки, невеликі збірки', 'Файли, картинки, голос'], proL: ['Усе з Макс', 'Магазин або застосунок', 'Ваші соцмережі й реклама', 'Пріоритет'], audHint: 'Почати можна з безкоштовного Старту, тариф змінюється будь-коли.',
-    start: ["Безкоштовний", "Спробувати безкоштовно", ["Усе, що вміє Vax", "Щодня потроху", "Швидка модель ШІ"]],
-    care: ["Про", "Для вашої справи", ["Усе, що вміє Vax", "У 2,5 раза більше роботи, ніж у Плюс", "Сильні моделі ШІ"]],
-    grow: ["Макс", "Коли роботи багато", ["Усе, що вміє Vax", "У 8,5 раза більше роботи, ніж у Плюс", "Сильні моделі ШІ"]],
+    start: ["Безкоштовний", "Спробувати безкоштовно", ["Усе, що вміє Vax", "Щодня потроху", "Базова модель ШІ — простіша й слабша"]],
+    care: ["Про", "Для вашої справи", ["Усе, що вміє Vax", "У 2,5 раза більше роботи, ніж у Плюс", "Найсильніші моделі: Claude Opus, Sonnet"]],
+    grow: ["Макс", "Коли роботи багато", ["Усе, що вміє Vax", "У 8,5 раза більше роботи, ніж у Плюс", "Найсильніші моделі: Claude Opus, Sonnet"]],
     pers: ['Плюс', 'Для однієї людини: тексти, плани, невеликі збірки.'],
     pro: ['Ультра', 'Магазин або застосунок, ваші соцмережі й реклама, пріоритет.'],
     prN: "Підписка продовжується сама: за 3 дні до списання нагадаємо, скасувати можна в кабінеті в один клік. Не знаєте, який тариф потрібен? Запитайте Vax.",
@@ -230,13 +233,20 @@ const ava = '/mascot/vax-talk.webp';
       <h2>{T.prH}</h2>
       <p class="ps">{T.prS}</p>
       <div class="per" role="tablist" data-per-tabs>{T.per.map(([m, l, off]) => <button type="button" role="tab" data-per={m} aria-selected={m === '1' ? 'true' : 'false'}>{l}{off && <i>{off}</i>}</button>)}</div>
-      <div class="plans p5">
+      <div class="plans p5 p6">
         <article class="pl">
           <h3>{T.start[0]}</h3><p class="pd">{T.start[1]}</p>
           <div class="pr">$0</div>
           <div class="vol"><span class="vt">{T.vol[0]}</span><b>{T.vol[5]}</b><i style="--v:6%"></i></div>
           <ul>{T.start[2].map((x) => (TQ.test(x) ? <li class="tql"><button type="button" class="tq" data-tq aria-expanded="false">{x}<i aria-hidden="true">?</i></button><span class="tqt" hidden>{T.tq}</span></li> : <li>{x}</li>))}</ul>
           <button type="button" class="pb" data-plan="start">{T.startB}</button>
+        </article>
+        <article class="pl">
+          <h3>{T.lite[0]}</h3><p class="pd">{T.lite[1]}</p>
+          <div class="pr" data-base="8">$8<small>{T.mo}</small></div><small class="pt" data-pt data-note={T.perNote}></small>
+          <div class="vol"><span class="vt">{T.vol[0]}</span><b>{T.vol[6]}</b><i style="--v:8%"></i></div>
+          <ul>{T.lite[2].map((x) => <li>{x}</li>)}</ul>
+          <button type="button" class="pb" data-plan="lite" data-pn={T.lite[0]}>{T.trial}</button>
         </article>
         <article class="pl">
           <h3>{T.persL2[0]}</h3><p class="pd">{T.persL2[1]}</p>
@@ -659,4 +669,12 @@ const ava = '/mascot/vax-talk.webp';
   .vol i { grid-column: 1 / -1; height: 8px; border-radius: 99px; background: var(--line); position: relative; overflow: hidden; }
   .vol i::after { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--v); border-radius: 99px; background: var(--acc); }
   .vol .gain { grid-column: 1 / -1; justify-self: start; font-style: normal; font-size: 12.5px; font-weight: 700; color: #15803d; background: color-mix(in srgb, #22c55e 14%, transparent); padding: 3px 9px; border-radius: 99px; }
+  .plans.p6 { grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .plans.p6 .pl { padding: 20px 14px; }
+  .plans.p6 .pr { font-size: clamp(28px, 2.6vw, 40px); }
+  @media (max-width: 1250px) { .plans.p6 { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 760px) { .plans.p6 { grid-template-columns: 1fr; } }
+  .plans .pl:first-child li:last-child { color: var(--dm); text-decoration: underline dotted; text-underline-offset: 3px; }
+  .plans .pl:first-child li:last-child::before { content: "⚠ "; }
+  .plans .pl:not(:first-child) li:last-child { font-weight: 700; }
 </style>

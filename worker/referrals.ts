@@ -10,7 +10,7 @@ import type { DB } from './partner.js';
 import type { Notify } from './deals.js';
 
 export const CLIENT_REF = { friendMonths: 0, holdDays: 14, maxMonthsYear: 12, windowDays: 60, burstPerDay: 3 };
-export const PLAN_PRICES: Record<string, number> = { start: 0, personal: 19, care: 39, growth: 129, pro: 299 };
+export const PLAN_PRICES: Record<string, number> = { start: 0, lite: 8, personal: 19, care: 39, growth: 129, pro: 299 };
 export const SLUG_C = /^c_[a-z0-9]{6,10}$/;
 
 const PUBLIC_MAIL = new Set(['gmail.com', 'googlemail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com', 'icloud.com', 'me.com', 'mail.ru', 'yandex.ru', 'yandex.ua', 'ukr.net', 'i.ua', 'meta.ua', 'proton.me', 'protonmail.com', 'gmx.com', 'gmx.de', 'aol.com', 'bigmir.net', 'rambler.ru', 'bk.ru', 'inbox.ru', 'list.ru', 'zoho.com', 'yahoo.co.uk', 'msn.com']);
@@ -35,7 +35,7 @@ export function isTestContact(s: string | null | undefined) {
 export function planOf(l: { plan?: string | null; service?: string | null; interest?: string | null; value_usd?: number | null }): string | null {
   if (l.plan && l.plan in PLAN_PRICES) return l.plan;
   const t = `${l.service || ''} ${l.interest || ''}`.toLowerCase();
-  for (const p of ['personal', 'growth', 'care', 'pro', 'start']) if (new RegExp(`\\b${p}\\b`).test(t)) return p;
+  for (const p of ['lite', 'personal', 'growth', 'care', 'pro', 'start']) if (new RegExp(`\\b${p}\\b`).test(t)) return p;
   if (/персонал|особист/.test(t)) return 'personal';
   const v = Number(l.value_usd) || 0;
   for (const [p, price] of Object.entries(PLAN_PRICES)) if (price > 0 && (v === price || v === price * 10)) return p;

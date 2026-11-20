@@ -9,7 +9,7 @@ export const DAILY = 10;
 /** Pictures without a felt limit (Decision 58, 17.11): Flux Schnell on Workers AI costs about $0.0006 a picture (≈$0.001
  *  at 8 steps), and pictures never spend the plan's work volume. The caps below only stop bots and abuse: 40 a day is
  *  at most ~$0.03 for a free account, 1,000 a day ~$1 for Ultra, far below any plan's price. */
-export const IMG_CAP: Record<string, number> = { start: 60, personal: 120, care: 120, growth: 200, pro: 300 }; // per HOUR for signed-in people
+export const IMG_CAP: Record<string, number> = { start: 60, lite: 90, personal: 120, care: 120, growth: 200, pro: 300 }; // per HOUR for signed-in people
 
 export const WANTS_IMAGE = /нарисуй|намалюй|сгенерируй\s+(картинк|изображ|фото|логотип)|згенеруй\s+(картинк|зображ|фото|логотип)|(создай|сделай|зроби|створи)\s+(картинк|изображен|зображен|иллюстрац|ілюстрац)|\bdraw\b|\bpaint\s+(me\s+)?(a|an)\b|\b(generate|create|make)\s+(me\s+)?(a|an|the)?\s*(image|picture|illustration|drawing)\b/i;
 

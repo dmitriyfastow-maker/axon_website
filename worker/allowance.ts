@@ -4,8 +4,8 @@
 import { activeFriends, PIGGY, proReward } from './referrals.js';
 import type { DB } from './partner.js';
 
-export const CAPS: Record<string, [number, number]> = { start: [50, 200], personal: [80, 320], care: [150, 700], growth: [400, 2000], pro: [1000, 5000] };
-const ORDER = ['start', 'personal', 'care', 'growth', 'pro'];
+export const CAPS: Record<string, [number, number]> = { start: [50, 200], lite: [60, 240], personal: [80, 320], care: [150, 700], growth: [400, 2000], pro: [1000, 5000] };
+const ORDER = ['start', 'lite', 'personal', 'care', 'growth', 'pro'];
 
 export interface Allowance { plan: string; trial: boolean; day: { used: number; cap: number }; week: { used: number; cap: number }; blocked: 'day' | 'week' | null }
 
@@ -68,7 +68,8 @@ export function windows(now = new Date()) {
 // 15.11 (Decision 52 v2): bigger plans give more work per dollar (Plus ×1, Pro ×2.5, Max ×8.5, Ultra ×20), and no plan
 // spends more than ~38% of its price on AI. Worst case of a FIRST payment via a partner (50% + team 10% of the net, tax,
 // card fee, the whole volume used) ends at about zero; renewals stay positive even with the loyalty or level bonus.
-export const MONTH_CAPS: Record<string, number> = { start: 300, personal: 570, care: 1425, growth: 4845, pro: 11400 };
+// Lite $8 (Decision 69, 20.11): every model incl. Opus, 30% of the price as AI volume like the other plans.
+export const MONTH_CAPS: Record<string, number> = { start: 300, lite: 240, personal: 570, care: 1425, growth: 4845, pro: 11400 };
 /** Extra allowance (top-up): a one-off pack on top of this month's budget, at the same rate as the plans (40% of the
  *  price goes to AI, so a pack is never a loss). Bought as an invoice whose description names the month, so it counts
  *  only for that month even when it is paid a few days later. EMPTY = switched off until Dmitry's "yes" on the price

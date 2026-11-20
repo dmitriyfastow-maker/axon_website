@@ -53,6 +53,7 @@ const C = {
 
 const plan = (name: string, v: number) => [`${name}`, `$${v}${C.month}`, pct(v, r.agencyOwn), `${pct(v, r.agencyRenewal)}${C.month}`, pct(v, r.team)];
 const rows = [
+  plan('Lite', PRICES.lite),
   plan('Plus', PRICES.personal),
   plan('Pro', PRICES.care),
   plan('Max', PRICES.growth),

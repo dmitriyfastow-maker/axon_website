@@ -181,6 +181,24 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
   // owner can also sign in to them from any browser without the HQ. Stored only here, shown only in the HQ.
   // HQ structure edited in place (Dmitry 15.11): order of tabs and blocks, hidden ones, own titles.
   // The Claude API key (16.11): the owner pastes it once in the HQ; checked with Anthropic, kept encrypted, never shown back.
+  // The Google AI key for live voices (20.11): pasted once in the HQ, checked with Google, kept sealed, never shown back.
+  if (path === 'gemini-key') {
+    const at = async () => (await db.prepare("SELECT value FROM settings WHERE key = 'gemini_key_at'").first<{ value: string }>().catch(() => null))?.value || null;
+    if (request.method === 'POST') {
+      if (me.role !== 'owner') return json(403, { ok: false });
+      const key = String(((await request.json().catch(() => ({}))) as { key?: string }).key || '').trim();
+      if (!/^AIza[0-9A-Za-z_-]{30,}$/.test(key) || !token) return json(400, { ok: false, error: 'format' });
+      const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1', { headers: { 'x-goog-api-key': key } }).catch(() => null);
+      if (!r?.ok) return json(400, { ok: false, error: 'check' });
+      const put = (k: string, v: string) => db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(k, v).run();
+      await put('gemini_key', await seal(token, key));
+      await put('gemini_key_at', new Date().toISOString());
+      (await import('./tts.js')).forgetGeminiKey();
+      await notify('🎙 Живые голоса VAXO подключены из Штаба.').catch(() => {});
+      return json(200, { ok: true, at: await at() });
+    }
+    return json(200, { ok: true, at: await at() });
+  }
   if (path === 'claude-key') {
     const at = async () => (await db.prepare("SELECT value FROM settings WHERE key = 'anthropic_key_at'").first<{ value: string }>().catch(() => null))?.value || null;
     if (request.method === 'POST') {

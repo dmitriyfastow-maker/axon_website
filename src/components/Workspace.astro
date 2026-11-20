@@ -206,7 +206,7 @@ const ico = {
     </main>
 
     <aside class="cv" data-canvas hidden>
-      <header><b data-cv-title>{T.canvas}</b><div class="cvact"><button class="tb" type="button" data-cv-full title={T.fullTip}><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg><span data-cv-full-label>{T.full}</span></button><button class="tb" type="button" data-cv-x><span>{T.hideCv}</span> ×</button></div></header>
+      <header><b data-cv-title>{T.canvas}</b><div class="cvact"><div class="cvmodes" role="group" data-cvmodes><button type="button" data-cvm="mini">{({ ru: 'Компакт', ua: 'Компакт', en: 'Compact' } as Record<string, string>)[lang]}</button><button type="button" data-cvm="std">{({ ru: 'Стандарт', ua: 'Стандарт', en: 'Standard' } as Record<string, string>)[lang]}</button><button type="button" data-cvm="desk">{({ ru: 'Стол', ua: 'Стіл', en: 'Desk' } as Record<string, string>)[lang]}</button></div><button class="tb" type="button" data-cv-full title={T.fullTip} hidden><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg><span data-cv-full-label>{T.full}</span></button><button class="tb" type="button" data-cv-x><span>{T.hideCv}</span> ×</button></div></header>
       <div class="cvb" data-cv-body></div>
     </aside>
 
@@ -319,7 +319,7 @@ const ico = {
 
   /* ---------- Sidebar ---------- */
   function side(yes: boolean) { $('[data-side]').classList.toggle('open', yes); $('[data-veil]').hidden = !yes; }
-  const PLAN_NAMES: R = { en: { start: 'Free', personal: 'Plus', care: 'Pro', growth: 'Max', pro: 'Ultra' }, ru: { start: 'Бесплатный', personal: 'Плюс', care: 'Про', growth: 'Макс', pro: 'Ультра' }, ua: { start: 'Безкоштовний', personal: 'Плюс', care: 'Про', growth: 'Макс', pro: 'Ультра' } };
+  const PLAN_NAMES: R = { en: { start: 'Free', lite: 'Lite', personal: 'Plus', care: 'Pro', growth: 'Max', pro: 'Ultra' }, ru: { start: 'Бесплатный', lite: 'Лайт', personal: 'Плюс', care: 'Про', growth: 'Макс', pro: 'Ультра' }, ua: { start: 'Безкоштовний', lite: 'Лайт', personal: 'Плюс', care: 'Про', growth: 'Макс', pro: 'Ультра' } };
   const planName = () => (PLAN_NAMES[lang] || PLAN_NAMES.en)[S.plan] || S.plan;
   // Like Claude: a bar of work used, and when it renews. Never message counts.
   const when = (iso: string) => {
@@ -472,10 +472,12 @@ const ico = {
       inp.maxLength = 60; inp.required = true; inp.placeholder = PJ[2]; inp.setAttribute('aria-label', PJ[0]);
       const row = el('div', 'tbar'), go = btn('pri', PJ[3], () => f.requestSubmit()), no = btn('sec', PJ[4], () => { d.close(); });
       go.type = 'submit'; row.append(go, no);
-      f.append(el('h2', '', '📁 ' + PJ[0]), el('p', 'hint', PJ[1]), inp, row);
+      const ex = el('div', 'ex'); PJ[2].replace(/^[^:]*:\s*/, '').split(/,\s*/).forEach((x) => ex.append(btn('', x, () => { inp.value = x; inp.focus(); })));
+      inp.placeholder = PJ[0] + '…';
+      f.append(el('h2', '', '📁 ' + PJ[0]), el('p', 'hint', PJ[1]), inp, ex, row);
       f.onsubmit = (e) => { e.preventDefault(); const v = inp.value.trim(); d.close(); ok(v); };
       d.onclose = () => { d.remove(); ok(''); };
-      d.append(f); document.body.append(d); d.showModal(); inp.focus();
+      d.append(f); root.append(d); d.showModal(); inp.focus();
     });
   }
   async function newProject(name?: string) {
@@ -909,6 +911,19 @@ const ico = {
     box.append(el('span', '', T.nextH), row); log.append(box); log.scrollTop = log.scrollHeight;
   }
 
+  function workIndicator(q: string) {
+    const W = ({ ru: [['Понимаю задачу', 'Думаю, как сделать лучше всего', 'Проверяю результат'], { site: 'Собираю сайт', trip: 'Строю маршрут и бюджет', calc: 'Считаю', game: 'Пишу игру', web: 'Ищу в интернете', doc: 'Пишу документ' }],
+      ua: [['Розумію завдання', 'Думаю, як зробити найкраще', 'Перевіряю результат'], { site: 'Збираю сайт', trip: 'Будую маршрут і бюджет', calc: 'Рахую', game: 'Пишу гру', web: 'Шукаю в інтернеті', doc: 'Пишу документ' }],
+      en: [['Understanding the task', 'Thinking how to do it best', 'Checking the result'], { site: 'Building the site', trip: 'Planning the route and budget', calc: 'Calculating', game: 'Writing the game', web: 'Searching the web', doc: 'Writing the document' }] } as Record<string, [string[], Record<string, string>]>)[lang] || [[T.think], {}];
+    const kind = /сайт|лендинг|site|сторінк/i.test(q) ? 'site' : /поездк|путешеств|подорож|trip|travel|маршрут|отпуск/i.test(q) ? 'trip' : /игр|гру\b|game/i.test(q) ? 'game' : /посчита|рассчита|порахуй|calculat|бюджет|budget/i.test(q) ? 'calc' : /найди|поищ|знайди|search|find|новост/i.test(q) ? 'web' : /план|документ|договор|стратег|plan|document/i.test(q) ? 'doc' : '';
+    const steps = [W[0][0], ...(kind ? [W[1][kind]] : []), W[0][1], W[0][2]];
+    let raccoon = true; try { raccoon = localStorage.getItem('vx_face') !== 'core'; } catch { /* */ }
+    const box = el('div', 'm vax wait vxwork'), face = raccoon ? (Object.assign(el('img', 'vxw-img'), { src: '/mascot/vax-tools.webp', alt: '' }) as HTMLElement) : el('span', 'vxw-orb');
+    const tx = el('span', 'vxw-t', steps[0]), bar = el('i', 'vxw-bar');
+    box.append(face, tx, bar);
+    let i = 0; const it = setInterval(() => { if (!box.isConnected) { clearInterval(it); return; } i = Math.min(i + 1, steps.length - 1); tx.textContent = steps[i]; }, 1900);
+    return box;
+  }
   async function ask(q: string) {
     q = q.trim();
     if (!q || S.busy) return;
@@ -919,7 +934,8 @@ const ico = {
     if (quotes.length) { q = quotes.map((x) => `[[REPLY:${x}]]`).join('') + q; quotes = []; drawQuotes(); }
     const mine: Msg = { role: 'user', content: q };
     S.msgs.push(mine); drawMsg(mine);
-    const wait = el('div', 'm vax wait', T.think); log.append(wait); log.scrollTop = log.scrollHeight;
+    // 20.11: Vax at work — the raccoon (or the VAXO core, if the person turned the raccoon off) and what he does right now.
+    const wait = workIndicator(q); log.append(wait); log.scrollTop = log.scrollHeight;
     const history = S.msgs.slice(-15, -1).map(({ role, content }) => ({ role, content }));
     let say: Msg = { role: 'assistant', content: T.err };
     let baseTier = false;
@@ -1035,7 +1051,7 @@ const ico = {
 
   /* ---------- Canvas ---------- */
   function openCv(title: string, ...body: Node[]) { cvTitle.textContent = title; parkBiz(); cvBody.replaceChildren(...body); cv.hidden = false; root.classList.add('wide'); side(false); $('[data-cv-label]').textContent = T.hideCv; }
-  function closeCv() { parkBiz(); cv.hidden = true; root.classList.remove('wide', 'cvfull'); $('[data-cv-label]').textContent = T.showCv; $('[data-cv-full-label]').textContent = T.full; }
+  function closeCv() { parkBiz(); cv.hidden = true; root.classList.remove('wide', 'cvfull'); root.querySelectorAll<HTMLButtonElement>('[data-cvm]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cvm === (root.classList.contains('cvmini') ? 'mini' : 'std')))); $('[data-cv-label]').textContent = T.showCv; $('[data-cv-full-label]').textContent = T.full; }
   function parkBiz() { if (bizbox.parentElement !== root) { bizbox.hidden = true; root.append(bizbox); } }
   const needSign = (kind?: string) => { if (kind) { try { sessionStorage.setItem(PEND, kind); } catch {} } openSign(T.needIn); };
 
@@ -2332,6 +2348,19 @@ const ico = {
   })();
   $('[data-cv-x]').onclick = closeCv;
   $('[data-cv-full]').onclick = () => { const on = root.classList.toggle('cvfull'); $('[data-cv-full-label]').textContent = on ? T.unfull : T.full; };
+  // Canvas modes (Decision 69): compact strip, standard half, and «Desk» — the chat stays as a narrow column and the
+  // results lie side by side as cards. Remembered in this browser.
+  {
+    const box = $('[data-cvmodes]');
+    const setM = (m: string) => {
+      root.classList.toggle('cvmini', m === 'mini'); root.classList.toggle('cvfull', m === 'desk');
+      box.querySelectorAll<HTMLButtonElement>('[data-cvm]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cvm === m)));
+      try { localStorage.setItem('vx_cvm', m); } catch { /* */ }
+    };
+    box.querySelectorAll<HTMLButtonElement>('[data-cvm]').forEach((b) => (b.onclick = () => setM(b.dataset.cvm!)));
+    let m0 = 'std'; try { m0 = localStorage.getItem('vx_cvm') || 'std'; } catch { /* */ }
+    setM(m0 === 'desk' ? 'std' : m0);
+  }
   $('[data-cv]').onclick = () => { if (!cv.hidden) { closeCv(); return; } if (level() === 'board' || (S.proj && !S.cur)) { showBoard(); return; } const last = [...S.msgs].reverse().find(hasArt); if (last) showArt(last); else studio(); };
   $('[data-del]').onclick = async () => {
     if (!confirm(T.delQ)) return;
@@ -2357,7 +2386,9 @@ const ico = {
     vm.onclick = () => import('../scripts/voicemode').then(({ openVoiceMode }) => openVoiceMode(lang, async (q) => {
       const before = S.msgs.length; await ask(q);
       const last = S.msgs.slice(before).reverse().find((m) => m.role === 'assistant');
-      return last ? plain(last.content) + (last.doc && !last.doc.app ? '. ' + last.doc.body.slice(0, 1200) : '') : null;
+      if (!last) return null;
+      const made = last.site ? 'site' : last.doc?.app ? 'app' : last.doc ? 'doc' : last.tool ? 'tool' : last.image ? 'image' : '';
+      return { text: plain(last.content) + (last.doc && !last.doc.app && !plain(last.content).length ? last.doc.body.slice(0, 900) : ''), made };
     }));
   }
   // Voice conversation (18.11): a question asked by voice gets its answer read aloud; typing switches it off again.
@@ -2792,8 +2823,26 @@ const ico = {
   .wsp .tb:hover { border-color: var(--ink); }
   .wsp .tb[hidden] { display: none; }
   .wsp .cvact { display: flex; gap: 6px; }
-  .wsp.cvfull, .wsp.cvfull.wide { grid-template-columns: minmax(0, 1fr); }
-  .wsp.cvfull .mid, .wsp.cvfull .side, .wsp.cvfull .rz { display: none; }
+  /* Desk (Decision 69): the chat stays as a narrow column, the canvas becomes a desk of cards */
+  .wsp.cvfull, .wsp.cvfull.wide { grid-template-columns: minmax(320px, 360px) minmax(0, 1fr); }
+  .wsp.cvfull .side, .wsp.cvfull .rz { display: none; }
+  .wsp.cvfull .cv { background-color: var(--bg); background-image: radial-gradient(color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1px); background-size: 22px 22px; }
+  .wsp.cvfull .cvb { padding: 18px clamp(16px, 2vw, 32px); }
+  .wsp.cvfull .board54 { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; align-items: start; }
+  .wsp.cvfull .board54 .blk + .blk { margin-top: 0; }
+  .wsp.cvfull .board54 > .home53 { grid-column: 1 / -1; }
+  .wsp.cvfull .doc, .wsp.cvfull .tbar + .doc { max-width: 880px; margin-inline: auto; }
+  .wsp.cvmini.wide:not(.cvfull) { --cw: max(340px, 30vw); }
+  .wsp .cvmodes { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 10px; background: var(--surf); margin-right: 6px; }
+  .wsp .cvmodes button { border: 0; background: none; color: var(--mut); font: inherit; font-size: 12.5px; font-weight: 600; padding: 5px 9px; border-radius: 7px; cursor: pointer; }
+  .wsp .cvmodes button[aria-pressed="true"] { background: var(--bg); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  /* results land softly instead of popping in */
+  .wsp .cvb > *, .wsp .board54 > * { animation: cvland .45s cubic-bezier(.2,.8,.2,1) both; }
+  .wsp .board54 > *:nth-child(2) { animation-delay: .06s; } .wsp .board54 > *:nth-child(3) { animation-delay: .12s; } .wsp .board54 > *:nth-child(4) { animation-delay: .18s; }
+  @keyframes cvland { from { opacity: 0; transform: translateY(10px); } }
+  .wsp .blk { box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px -12px rgba(0,0,0,.18); transition: box-shadow .2s, transform .2s; }
+  .wsp .blk:hover { box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 14px 34px -14px rgba(0,0,0,.28); }
+  @media (prefers-reduced-motion: reduce) { .wsp .cvb > *, .wsp .board54 > * { animation: none; } }
   .wsp .dsteps { margin: 8px 0 10px; padding-left: 20px; display: grid; gap: 6px; color: var(--mut); font-size: 14px; line-height: 1.45; }
   @media (max-width: 340px) { .wsp .tb span { display: none; } .wsp [data-cv-x] span { display: inline; } }
   .wsp .chips { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -3051,7 +3100,15 @@ const ico = {
   .iroad small { opacity: .75; } .iroad .ok { grid-column: 1 / -1; margin: 0; }
   .wsp .youh { margin: 10px 0 2px; }
   .wsp .proj:has(> .phead:not(.plain)) > .cnode { margin-left: 18px; padding-left: 8px; border-left: 2px solid var(--line, #2b2d30); }
-  .npj form { display: grid; gap: 10px; } .npj input { padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line2, #ccc); font: inherit; }
+  .wsp .npj { width: min(520px, calc(100vw - 32px)); padding: 26px; }
+  .npj form { display: grid; gap: 12px; }
+  .npj h2 { font-size: 22px; }
+  .npj input { padding: 13px 14px; border-radius: 12px; border: 1px solid var(--line2, #ccc); background: var(--bg); color: var(--ink); font: inherit; font-size: 15px; }
+  .npj input:focus { outline: 2px solid var(--accText, #e8a33d); outline-offset: 1px; }
+  .npj .tbar { display: flex; gap: 8px; justify-content: flex-end; }
+  .npj .tbar button { padding: 10px 18px; border-radius: 999px; font: inherit; font-weight: 600; cursor: pointer; }
+  .npj .ex { display: flex; flex-wrap: wrap; gap: 6px; }
+  .npj .ex button { border: 1px solid var(--line2, #ccc); background: none; color: var(--ink); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13.5px; cursor: pointer; }
   .appv { display: grid; gap: 10px; }
   .appv .appf { width: 100%; height: min(72vh, 760px); border: 1px solid var(--line, #2b2d30); border-radius: 14px; background: #fff; }
   .appv .src { min-height: 260px; font: 12px/1.45 ui-monospace, monospace; }
@@ -3073,4 +3130,12 @@ const ico = {
   .vm-ctl { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; font-size: 13px; }
   .vm-ctl button, .vm-ctl select { background: #1d1f23; color: inherit; border: 1px solid #33363c; border-radius: 999px; padding: 8px 12px; font: inherit; cursor: pointer; }
   .vm-end { background: #c2410c !important; border-color: #c2410c !important; }
+  .wsp .vxwork { display: flex; align-items: center; gap: 10px; position: relative; overflow: hidden; padding-right: 16px; }
+  .wsp .vxw-img { width: 34px; height: 34px; object-fit: contain; animation: vxwbob 1.6s ease-in-out infinite; }
+  .wsp .vxw-orb { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffd58a, #e8a33d 55%, #9a5b12); box-shadow: 0 0 14px rgba(232,163,61,.6); animation: vxwpulse 1.2s ease-in-out infinite; }
+  .wsp .vxw-t { font-weight: 600; }
+  .wsp .vxw-bar { position: absolute; left: 0; bottom: 0; height: 2px; width: 40%; background: linear-gradient(90deg, transparent, var(--accText, #e8a33d), transparent); animation: vxwscan 1.6s linear infinite; }
+  @keyframes vxwbob { 50% { transform: translateY(-3px) rotate(-3deg); } }
+  @keyframes vxwpulse { 50% { transform: scale(.85); opacity: .7; } }
+  @keyframes vxwscan { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
 </style>

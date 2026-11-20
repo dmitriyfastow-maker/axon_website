@@ -7,8 +7,8 @@ import { PLAN_PRICES, planOf, referralAdmin, CLIENT_REF } from './referrals.js';
 import { freeDaysSince } from './billing.js';
 import { FREE_CAP } from './router.js';
 
-export const PAID_PLANS = ['personal', 'care', 'growth', 'pro'] as const;
-export const ECON_DEFAULT = { cost: { personal: 4, care: 6, growth: 15, pro: 35 } as Record<string, number>, fee: 4, churn: 5 };
+export const PAID_PLANS = ['lite', 'personal', 'care', 'growth', 'pro'] as const;
+export const ECON_DEFAULT = { cost: { lite: 2, personal: 4, care: 6, growth: 15, pro: 35 } as Record<string, number>, fee: 4, churn: 5 };
 const ACTIVE_DAYS = 35; // a monthly subscription counts as active this long after its last payment
 
 export async function econSettings(db: DB) {
@@ -120,7 +120,7 @@ export async function economics(db: DB) {
     const ltv = churn > 0 ? Math.round((u.margin / (churn / 100)) * 100) / 100 : null;
     return { plan: p, price: PLAN_PRICES[p], clients: byPlan[p].n, mrr: Math.round(byPlan[p].mrr * 100) / 100, cost: u.cost, fee: u.fee, margin: u.margin, marginPct: u.marginPct, ltv, ltvPartner: churn > 0 ? Math.round(((u.m2Partner / (churn / 100)) - (u.m2Partner - u.m1Partner)) * 100) / 100 : null };
   });
-  const NAMES: Record<string, string> = { personal: 'Plus', care: 'Pro', growth: 'Max', pro: 'Ultra' };
+  const NAMES: Record<string, string> = { lite: 'Lite', personal: 'Plus', care: 'Pro', growth: 'Max', pro: 'Ultra' };
   const alerts: { level: 'r' | 'y' | 'g'; text: string }[] = [];
   for (const p of plans) if (p.marginPct < 40) alerts.push({ level: 'r', text: `Маржа ${NAMES[p.plan]} ниже 40% (${p.marginPct}%): поднимите цену или снизьте себестоимость.` });
   for (const u of units) if (u.m1Partner < 0) alerts.push({ level: 'y', text: `${NAMES[u.plan]} через партнёра: первый платный месяц в минусе (${u.m1Partner} $) — окупается со второго месяца.` });

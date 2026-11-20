@@ -13,6 +13,7 @@ type Tier = { model: string; effort: 'medium' | 'high'; price: number };
 // share one cap) and a cap for all free users together; past any cap the reply comes from the free models.
 const HAIKU = 'claude-haiku-5-5';
 export const TIERS: Record<string, Tier> = {
+  lite: { model: 'claude-sonnet-5-5', effort: 'medium', price: 8 },
   personal: { model: 'claude-sonnet-5-5', effort: 'medium', price: 19 },
   care: { model: 'claude-sonnet-5-5', effort: 'medium', price: 39 },
   growth: { model: 'claude-sonnet-5-5', effort: 'high', price: 129 },
@@ -112,7 +113,7 @@ export async function routeFor(db: DB, o: { leadId: number | null; clientId: num
   if (!all) return null; // the table is missing: spend nothing we cannot count
   let s: Spend;
   if (paid) {
-    const paying = (await db.prepare(`SELECT l.plan FROM leads l WHERE l.plan IN ('personal', 'care', 'growth', 'pro') AND EXISTS (SELECT 1 FROM invoices i WHERE i.lead_id = l.id AND i.status = 'paid' AND i.at > datetime('now', '-35 days'))`).all<{ plan: string }>().catch(() => ({ results: [] as { plan: string }[] }))).results;
+    const paying = (await db.prepare(`SELECT l.plan FROM leads l WHERE l.plan IN ('lite', 'personal', 'care', 'growth', 'pro') AND EXISTS (SELECT 1 FROM invoices i WHERE i.lead_id = l.id AND i.status = 'paid' AND i.at > datetime('now', '-35 days'))`).all<{ plan: string }>().catch(() => ({ results: [] as { plan: string }[] }))).results;
     s = { lead: await one(ledger), all: all.usd - all.free, pool: monthPool(paying.map((r) => r.plan)) };
   } else {
     const ip = o.ipKey ? Number((await db.prepare('SELECT value FROM settings WHERE key = ?').bind(ipLedger(o.ipKey)).first<{ value: string }>().catch(() => null))?.value || 0) : 0;

@@ -89,7 +89,7 @@ export async function moduleAccess(_db: DB, clientId: number): Promise<boolean> 
 }
 
 export async function paidAccess(db: DB, clientId: number): Promise<boolean> {
-  return !!(await db.prepare(`SELECT 1 FROM leads l WHERE l.client_id = ? AND l.plan IN ('personal', 'care', 'growth', 'pro')
+  return !!(await db.prepare(`SELECT 1 FROM leads l WHERE l.client_id = ? AND l.plan IN ('lite', 'personal', 'care', 'growth', 'pro')
     AND NOT EXISTS (SELECT 1 FROM invoices i WHERE i.lead_id = l.id AND i.status = 'open' AND i.description LIKE 'Vaxo %' AND i.due < date('now')) LIMIT 1`).bind(clientId).first());
 }
 

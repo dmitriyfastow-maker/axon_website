@@ -23,7 +23,7 @@ export async function periodOf(db: DB, leadId: number): Promise<number> {
 }
 const MONTHS_W: Record<string, [string, string, string]> = { ru: ['месяц', 'месяца', 'месяцев'], ua: ['місяць', 'місяці', 'місяців'], en: ['month', 'months', 'months'] };
 const periodWords = (lang: string, m: number) => { const w = MONTHS_W[lang] || MONTHS_W.en; return m === 1 ? w[0] : `${m} ${m === 3 ? w[1] : w[2]}`; };
-const PLAN_NAME: Record<string, string> = { personal: 'Plus', care: 'Pro', growth: 'Max', pro: 'Ultra' };
+const PLAN_NAME: Record<string, string> = { lite: 'Lite', personal: 'Plus', care: 'Pro', growth: 'Max', pro: 'Ultra' };
 
 const GIFT_FULL: Record<string, string> = {
   en: '🎁 Good news: next month of your {plan} plan is a gift for inviting a friend (or for joining by an invite). Nothing to pay — everything keeps working. Thank you!',

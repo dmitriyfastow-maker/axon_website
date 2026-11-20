@@ -208,6 +208,12 @@ export default {
       return json(200, { ok: true });
     }
     if (url.pathname === '/api/biz' || url.pathname.startsWith('/api/biz/')) return env.LEADS ? handleBiz(env.LEADS, request, url.pathname.slice('/api/biz'.length).replace(/^\//, ''), env.AI, notify, url.origin) : json(503, { ok: false });
+    // Live voices for «Привет, VAXO» (worker/tts.ts).
+    if (url.pathname === '/api/tts' && env.LEADS) {
+      const { handleTts } = await import('./tts.js');
+      const { sessionClient } = await import('./cabinet.js');
+      return handleTts(env.LEADS, request, env.ADMIN_TOKEN, !!(await sessionClient(env.LEADS, request).catch(() => null)));
+    }
     if (url.pathname === '/api/ws' || url.pathname.startsWith('/api/ws/')) return env.LEADS ? handleWorkspace(env.LEADS, env.AI, request, url.pathname.slice('/api/ws'.length).replace(/^\//, ''), notify, waitUntil, { token: env.CF_SAAS_TOKEN, feed: env.ADMIN_TOKEN }) : json(503, { ok: false });
     const pic = url.pathname.match(/^\/i\/([a-f0-9]{24})\.jpg$/);
     if (pic) return env.LEADS ? serveImage(env.LEADS, pic[1]) : json(503, { ok: false });
@@ -278,7 +284,7 @@ export default {
               .run()) as { meta?: { last_row_id?: number } };
             const id = res?.meta?.last_row_id;
             // A plan button on the site writes "[PLAN care 6] ...": the chosen plan and period (1, 3, 6 or 12 months); the invoice goes out at once.
-            const pm = /^\[PLAN (personal|care|growth|pro)(?: (1|3|6|12))?\]/.exec(l.message || '');
+            const pm = /^\[PLAN (lite|personal|care|growth|pro)(?: (1|3|6|12))?\]/.exec(l.message || '');
             if (id && pm) await db.prepare('UPDATE leads SET plan = ? WHERE id = ?').bind(pm[1], id).run().catch(() => {});
             if (id && pm?.[2] && pm[2] !== '1') await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(`period_${id}`, pm[2]).run().catch(() => {});
             // Lifetime partner attribution by e-mail: a returning buyer keeps the partner they first came by.
