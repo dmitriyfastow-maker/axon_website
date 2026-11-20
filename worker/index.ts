@@ -127,6 +127,17 @@ export default {
     if (svcm) return env.LEADS ? serveServices(env.LEADS, svcm[1], url.origin) : json(503, { ok: false });
     const rvw = url.pathname.match(/^\/s\/([a-z0-9-]{3,80})\/reviews\/?$/);
     if (rvw) return env.LEADS ? serveReviews(env.LEADS, rvw[1], request, url.origin) : json(503, { ok: false });
+    // A shared chat (20.11, like Gemini's public links): a card with the chat's title in any messenger, then the chat.
+    const shc = url.pathname.match(/^\/c\/([a-f0-9]{24})\/?$/);
+    if (shc && env.LEADS) {
+      const row = await env.LEADS.prepare('SELECT c.title FROM ws_share s JOIN ws_chats c ON c.id = s.chat_id WHERE s.token = ? AND s.revoked = 0').bind(shc[1]).first<{ title: string }>().catch(() => null);
+      const lg = /\bua\b|uk/.test(request.headers.get('Accept-Language') || '') ? 'ua' : /ru/.test(request.headers.get('Accept-Language') || '') ? 'ru' : 'en';
+      const esc = (x: string) => x.replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' } as Record<string, string>)[ch]);
+      const title = esc(`Vaxo – ${row?.title || 'Vax'}`.slice(0, 110));
+      const desc = esc(({ ru: 'Общедоступная ссылка на разговор с Vax. Vax делает работу за вас — попробуйте бесплатно.', ua: 'Загальнодоступне посилання на розмову з Vax. Vax робить роботу за вас — спробуйте безкоштовно.', en: 'A public link to a chat with Vax. Vax does the work for you — try it free.' } as Record<string, string>)[lg]);
+      const to = `${lg === 'en' ? '' : '/' + lg}/app/#view=${shc[1]}`;
+      return new Response(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><meta name="description" content="${desc}"><meta property="og:site_name" content="Vaxo"><meta property="og:title" content="${title}"><meta property="og:description" content="${desc}"><meta property="og:image" content="${url.origin}/og-${lg}.png"><meta property="og:url" content="${url.origin}/c/${shc[1]}"><meta name="twitter:card" content="summary_large_image"><meta http-equiv="refresh" content="0;url=${to}"></head><body><a href="${to}">${title}</a><script>location.replace(${JSON.stringify(to)})</script></body></html>`, { status: row ? 200 : 404, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' } });
+    }
     const pref = url.pathname.match(/^\/rp\/([0-9a-f]{8})\/?$/);
     if (pref) return env.LEADS ? servePartner(env.LEADS, pref[1], url.origin) : json(503, { ok: false });
     const r = url.pathname.match(/^\/r\/([^/]+)\/?$/);

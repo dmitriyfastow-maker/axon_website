@@ -53,12 +53,12 @@ const C = {
 
 const plan = (name: string, v: number) => [`${name}`, `$${v}${C.month}`, pct(v, r.agencyOwn), `${pct(v, r.agencyRenewal)}${C.month}`, pct(v, r.team)];
 const rows = [
-  plan('Personal', PRICES.personal),
+  plan('Plus', PRICES.personal),
   plan('Pro', PRICES.care),
   plan('Max', PRICES.growth),
   plan('Ultra', PRICES.pro),
-  plan(C.year, PRICES.growth * 10).map((x, i) => (i === 1 ? `$${(PRICES.growth * 10).toLocaleString('en-US')}` : i === 3 ? C.next : x)),
-  [C.custom, C.vax, `${r.agencyOwn}%`, `${r.agencyRenewal}%`, `+${r.team}%`],
+  // A Max year paid upfront: 12 months − 20% (Decision 50).
+  plan(C.year, Math.round(PRICES.growth * 12 * 0.8)).map((x, k) => (k === 1 ? '$' + Math.round(PRICES.growth * 12 * 0.8).toLocaleString('en-US') : k === 3 ? C.next : x)),
   [C.tpl, `$${PRICES.templates[0]}–${PRICES.templates[1]}`, `${r.products}%`, '—', `+${r.team}%`],
 ];
 const terms = lang === 'en' ? '/partner-terms/' : `/${lang}/partner-terms/`;

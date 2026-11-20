@@ -24,7 +24,8 @@ const MC = {
   ru: { bal: 'Доступно к выводу', balP: 'свободно сейчас — через 14 дней после оплаты клиента', out: 'Вывести средства', pend: 'В ожидании', paid: 'Уже выведено', total: 'Всего заработано', inc: 'Доход', incP: 'заработано с ваших продаж', own: 'Личные продажи', ownP: 'ваши клиенты · 50% первой оплаты, 30% дальше', team: 'Продажи команды', teamP: 'клиенты приглашённых партнёров · 10%', note: 'Доход — это доля оплат, а не вся сумма, которую заплатили клиенты.', vx: 'Бонусы Vax', vxP: 'тратьте в магазине', shop: 'Потратить в магазине', vxHow: '5 бонусов за каждый $1 продлений ваших клиентов. 100 бонусов = $1.', steps: ['Скопируйте ссылку', 'Поделитесь с аудиторией', 'Получайте 50% первой оплаты'], start: 'Как начать зарабатывать', storeH: 'Бонусный магазин', buy: 'Получить', need: 'ещё {n}', addr: 'Адрес доставки (страна, город, улица, имя, телефон)', done: 'Заказ принят — свяжемся в течение 2 рабочих дней.', fail: 'Не получилось оформить заказ.', orders: 'Мои заказы' },
   ua: { bal: 'Доступно до виведення', balP: 'вільно зараз — через 14 днів після оплати клієнта', out: 'Вивести кошти', pend: 'В очікуванні', paid: 'Уже виведено', total: 'Усього зароблено', inc: 'Дохід', incP: 'зароблено з ваших продажів', own: 'Особисті продажі', ownP: 'ваші клієнти · 50% першої оплати, 30% далі', team: 'Продажі команди', teamP: 'клієнти запрошених партнерів · 10%', note: 'Дохід — це частка оплат, а не вся сума, яку заплатили клієнти.', vx: 'Бонуси Vax', vxP: 'витрачайте в магазині', shop: 'Витратити в магазині', vxHow: '5 бонусів за кожен $1 продовжень ваших клієнтів. 100 бонусів = $1.', steps: ['Скопіюйте посилання', 'Поділіться з аудиторією', 'Отримуйте 50% першої оплати'], start: 'Як почати заробляти', storeH: 'Бонусний магазин', buy: 'Отримати', need: 'ще {n}', addr: 'Адреса доставки (країна, місто, вулиця, імʼя, телефон)', done: 'Замовлення прийнято — звʼяжемося протягом 2 робочих днів.', fail: 'Не вдалося оформити замовлення.', orders: 'Мої замовлення' },
 }[lang];
-const PM2 = ({"en": ["To a Ukrainian FOP account — 100%", "To a Ukrainian card, no FOP (civil contract, taxes withheld, ≈63% arrives)", "USDT (TRC-20) — 100%", "Vaxo plan credit ×1.5 — at once", "Wise", "Payoneer", "Bank abroad / IBAN", "FOP IBAN, card number, USDT TRC-20 address (starts with T) or Wise/Payoneer email", "Choose how you like to be paid. Ukraine: a FOP account, a card under a civil contract (we withhold the taxes for you) or USDT. Other countries: USDT, Wise, Payoneer or a bank. Or take it as Vaxo credit ×1.5. Payouts go 14 days after the client paid."], "ru": ["На счёт ФОП в Украине — 100%", "На карту в Украине без ФОП (договор ГПХ, налоги удерживаем мы, приходит ≈63%)", "USDT (TRC-20) — 100%", "На подписку Vaxo ×1,5 — сразу", "Wise", "Payoneer", "Банк за границей / IBAN", "IBAN ФОП, номер карты, адрес USDT TRC-20 (начинается с T) или email Wise/Payoneer", "Выберите, как вам удобно получать. Украина: счёт ФОП, карта по договору ГПХ (налоги удерживаем за вас) или USDT. Другие страны: USDT, Wise, Payoneer или банк. Или берите подпиской Vaxo ×1,5. Выплата — через 14 дней после оплаты клиента."], "ua": ["На рахунок ФОП в Україні — 100%", "На картку в Україні без ФОП (договір ЦПХ, податки утримуємо ми, надходить ≈63%)", "USDT (TRC-20) — 100%", "На підписку Vaxo ×1,5 — одразу", "Wise", "Payoneer", "Банк за кордоном / IBAN", "IBAN ФОП, номер картки, адреса USDT TRC-20 (починається з T) або email Wise/Payoneer", "Оберіть, як вам зручно отримувати. Україна: рахунок ФОП, картка за договором ЦПХ (податки утримуємо за вас) або USDT. Інші країни: USDT, Wise, Payoneer або банк. Або беріть підпискою Vaxo ×1,5. Виплата — через 14 днів після оплати клієнта."]} as Record<string, string[]>)[lang];
+const GG = ({"en": ["Continue with Google", "Sign in with Google", "Tick 18+ and the rules first — then Google.", "No partner account with this Google email yet — tick 18+ and the rules in «Create account», then continue with Google.", "or"], "ru": ["Продолжить с Google", "Войти через Google", "Сначала отметьте 18+ и правила — потом Google.", "Партнёрского аккаунта с этой почтой Google ещё нет — отметьте 18+ и правила во вкладке «Создать аккаунт» и продолжите с Google.", "или"], "ua": ["Продовжити з Google", "Увійти через Google", "Спершу відмітьте 18+ і правила — потім Google.", "Партнерського акаунта з цією поштою Google ще немає — відмітьте 18+ і правила у вкладці «Створити акаунт» і продовжте з Google.", "або"]} as Record<string, string[]>)[lang];
+const PM2 = ({"en": ["To a Ukrainian FOP account — 100%", "To a Ukrainian card, no FOP (civil contract, taxes withheld, ≈63% arrives)", "USDT (TRC-20) — 100% — we cover the ≈$1 fee", "Wise — the bank fee for the transfer (≈$15–40) comes off the payout", "Payoneer — the bank fee for the transfer (≈$15–40) comes off the payout", "Bank abroad / IBAN — the bank fee (≈$15–40) comes off the payout", "FOP IBAN, card number, USDT TRC-20 address (starts with T) or Wise/Payoneer email", "Choose how you like to be paid. Ukraine: a FOP account (100%), a card under a civil contract (we withhold the taxes for you, ≈63% arrives) or USDT. Other countries: USDT (fee ≈$1, we cover it) or a bank transfer (its fee ≈$15–40 comes off the payout, so USDT is better for small sums). Payouts go 14 days after the client paid."], "ru": ["На счёт ФОП в Украине — 100%", "На карту в Украине без ФОП (договор ГПХ, налоги удерживаем мы, приходит ≈63%)", "USDT (TRC-20) — 100% — комиссию ≈$1 берём на себя", "Wise — комиссия банка за перевод (≈$15–40) вычитается из выплаты", "Payoneer — комиссия банка за перевод (≈$15–40) вычитается из выплаты", "Банк за границей / IBAN — комиссия банка (≈$15–40) вычитается из выплаты", "IBAN ФОП, номер карты, адрес USDT TRC-20 (начинается с T) или email Wise/Payoneer", "Выберите, как вам удобно получать. Украина: счёт ФОП (100%), карта по договору ГПХ (налоги удерживаем за вас, приходит ≈63%) или USDT. Другие страны: USDT (комиссия ≈$1, берём на себя) или банковский перевод (его комиссия ≈$15–40 вычитается, поэтому для небольших сумм выгоднее USDT). Выплата — через 14 дней после оплаты клиента."], "ua": ["На рахунок ФОП в Україні — 100%", "На картку в Україні без ФОП (договір ЦПХ, податки утримуємо ми, надходить ≈63%)", "USDT (TRC-20) — 100% — комісію ≈$1 беремо на себе", "Wise — комісія банку за переказ (≈$15–40) віднімається з виплати", "Payoneer — комісія банку за переказ (≈$15–40) віднімається з виплати", "Банк за кордоном / IBAN — комісія банку (≈$15–40) віднімається з виплати", "IBAN ФОП, номер картки, адреса USDT TRC-20 (починається з T) або email Wise/Payoneer", "Оберіть, як вам зручно отримувати. Україна: рахунок ФОП (100%), картка за договором ЦПХ (податки утримуємо за вас, надходить ≈63%) або USDT. Інші країни: USDT (комісія ≈$1, беремо на себе) або банківський переказ (його комісія ≈$15–40 віднімається, тож для невеликих сум вигідніше USDT). Виплата — через 14 днів після оплати клієнта."]} as Record<string, string[]>)[lang];
 const PF = {
   en: { h: 'Payout details', p: 'Fill this in once — no payout is sent without it. Ukraine: to a FOP account under the partner agreement; other countries: tell us the convenient method and we agree it with you. Partners in Ukraine are paid only as a registered sole proprietor (FOP). We do not pay in crypto yet.', status: 'Your status', st: [['fop', 'Sole proprietor (FOP / self-employed)'], ['person', 'Private person'], ['company', 'Company']], country: 'Country you live in', residency: 'Tax residency (country)', legal: 'Full legal name (or company name)', tax: 'Tax ID (optional)', method: 'How to pay you', account: 'Payoneer / Wise email or IBAN', adult: 'I am 18 or older', offer: 'I accept the partner terms', save: 'Save', ok: 'Saved. Payouts can be sent to you.', err: 'Please fill in every field.', ua: 'Partners in Ukraine are paid only as a FOP — please register a FOP first.', filled: 'Filled in', soon: 'The form opens in a few days — please come back then.' },
   ru: { h: 'Данные для выплат', p: 'Заполните один раз — без этого выплата не уходит. Украина — на счёт ФОП по партнёрскому договору; другие страны — укажите удобный способ, согласуем с вами. Партнёрам из Украины — только как ФОП. Криптой пока не платим.', status: 'Ваш статус', st: [['fop', 'ФОП / самозанятый'], ['person', 'Физическое лицо'], ['company', 'Компания']], country: 'Страна проживания', residency: 'Налоговое резидентство (страна)', legal: 'Полное имя по документам (или название компании)', tax: 'Налоговый номер (необязательно)', method: 'Как вам платить', account: 'Email Payoneer / Wise или IBAN', adult: 'Мне 18 лет или больше', offer: 'Я принимаю условия партнёрской программы', save: 'Сохранить', ok: 'Сохранено. Выплаты можно отправлять.', err: 'Заполните все поля.', ua: 'Партнёрам из Украины платим только как ФОП — сначала оформите ФОП.', filled: 'Заполнено', soon: 'Форма заработает в ближайшие дни — загляните чуть позже.' },
@@ -56,15 +57,15 @@ const levelsJs = LEVELS.map((l) => ({ face: l.face, name: l.name[lang], say: l.s
 // Income map on top of the academy: every direction a partner earns from (rates from data/partners.ts).
 const r = RATES;
 const MAP = {
-  en: { h: 'Your income map — earn from every direction', p: 'One person you talk to can bring money in several ways at once. Think about all four.',
+  en: { h: 'Your income map — earn from every direction', p: 'One person you talk to can bring money in several ways at once. Think about all three.',
         rows: [['🛠', 'Vaxo plans', `${r.agencyOwn}% of your client · +${r.agencyRenewal}% of every renewal for life`],
-               ['📦', 'Our templates', `${r.products}% of every sale`], ['🤝', 'Partner offers', `${r.offers}% of the payout we receive (soon)`], ['👥', 'Your team', `+${r.team}% of every sale your partners make, on top`]] },
-  ru: { h: 'Карта вашего дохода — зарабатывайте со всех направлений', p: 'Один человек, с которым вы поговорили, может принести деньги сразу несколькими способами. Думайте обо всех четырёх.',
+               ['📦', 'Our templates', `${r.products}% of every sale`], ['👥', 'Your team', `+${r.team}% of every sale your partners make, on top`]] },
+  ru: { h: 'Карта вашего дохода — зарабатывайте со всех направлений', p: 'Один человек, с которым вы поговорили, может принести деньги сразу несколькими способами. Думайте обо всех трёх.',
         rows: [['🛠', 'Подписки Vaxo', `${r.agencyOwn}% с вашего клиента · +${r.agencyRenewal}% с каждого продления навсегда`],
-               ['📦', 'Наши шаблоны', `${r.products}% с каждой продажи`], ['🤝', 'Офферы партнёров', `${r.offers}% от выплаты, которую получаем мы (скоро)`], ['👥', 'Ваша команда', `+${r.team}% с каждой продажи ваших партнёров, сверху`]] },
-  ua: { h: 'Карта вашого доходу — заробляйте з усіх напрямів', p: 'Одна людина, з якою ви поговорили, може принести гроші одразу кількома способами. Думайте про всі чотири.',
+               ['📦', 'Наши шаблоны', `${r.products}% с каждой продажи`], ['👥', 'Ваша команда', `+${r.team}% с каждой продажи ваших партнёров, сверху`]] },
+  ua: { h: 'Карта вашого доходу — заробляйте з усіх напрямів', p: 'Одна людина, з якою ви поговорили, може принести гроші одразу кількома способами. Думайте про всі три.',
         rows: [['🛠', 'Підписки Vaxo', `${r.agencyOwn}% з вашого клієнта · +${r.agencyRenewal}% з кожного продовження назавжди`],
-               ['📦', 'Наші шаблони', `${r.products}% з кожного продажу`], ['🤝', 'Офери партнерів', `${r.offers}% від виплати, яку отримуємо ми (скоро)`], ['👥', 'Ваша команда', `+${r.team}% з кожного продажу ваших партнерів, зверху`]] },
+               ['📦', 'Наші шаблони', `${r.products}% з кожного продажу`], ['👥', 'Ваша команда', `+${r.team}% з кожного продажу ваших партнерів, зверху`]] },
 }[lang];
 const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels: levelsJs };
 ---
@@ -97,12 +98,16 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
             <label class="check"><input type="checkbox" name="adult" required /> <span>{c.auth.adult}</span></label>
             <label class="check"><input type="checkbox" name="rules" required /> <span>{c.auth.rules1} <a href="#rules">{c.auth.rules2}</a> {c.auth.and} <a href={c.auth.privacyHref} target="_blank">{c.auth.privacy}</a></span></label>
             <button type="submit" class="cta">{c.auth.create}</button>
+            <p class="gor">{GG[4]}</p>
+            <button type="button" class="gbtn" data-gp="register"><Fragment set:html={'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.7v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8Z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8l4-3.1Z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9Z"/></svg>'} />{GG[0]}</button>
             <p class="err" data-err hidden></p>
           </form>
           <form data-form="login" class="card" hidden>
             <label>{c.auth.email}<input name="email" type="email" required autocomplete="email" /></label>
             <label>{c.auth.passLogin}<input name="password" type="password" required autocomplete="current-password" /></label>
             <button type="submit" class="cta">{c.auth.login}</button>
+            <p class="gor">{GG[4]}</p>
+            <button type="button" class="gbtn" data-gp="login"><Fragment set:html={'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.7v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8Z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8l4-3.1Z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9Z"/></svg>'} />{GG[1]}</button>
             <p class="err" data-err hidden></p>
           </form>
         </div>
@@ -357,9 +362,9 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
           <label>{PF.residency}<input name="residency" required maxlength="60" /></label>
           <label>{PF.legal}<input name="legal_name" required maxlength="120" /></label>
           <label>{PF.tax}<input name="tax_id" maxlength="40" /></label>
-          <label>{PF.method}<select name="method" data-pmethod>{PM2.slice(0, 7).map((t, i) => <option value={['fop_ua', 'card_ua', 'usdt', 'credit', 'wise', 'payoneer', 'bank'][i]} data-v2={i < 4 ? '1' : undefined} hidden={i < 4}>{t}</option>)}</select></label>
+          <label>{PF.method}<select name="method" data-pmethod>{PM2.slice(0, 6).map((t, i) => <option value={['fop_ua', 'card_ua', 'usdt', 'wise', 'payoneer', 'bank'][i]} data-v2={i < 3 ? '1' : undefined} hidden={i < 3}>{t}</option>)}</select></label>
           <label data-pacc>{PF.account}<input name="account" maxlength="200" data-paccin /></label>
-          <p class="mut" data-pv2note hidden>{PM2[8]}</p>
+          <p class="mut" data-pv2note hidden>{PM2[7]}</p>
           <label class="check"><input type="checkbox" name="adult" required /> <span>{PF.adult}</span></label>
           <label class="check"><input type="checkbox" name="offer" required /> <span>{PF.offer} <a href="#rules">→</a></span></label>
           <button type="submit">{PF.save}</button>
@@ -591,7 +596,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
     const pmsg = pform.querySelector<HTMLElement>('[data-pmsg]')!;
     const mark = () => (pform.querySelector('[data-pfilled]')!.textContent = `· ${PM.filled} ✓`);
     const sel = pform.querySelector<HTMLSelectElement>('[data-pmethod]')!, accIn = pform.querySelector<HTMLInputElement>('[data-paccin]')!, accBox = pform.querySelector<HTMLElement>('[data-pacc]')!;
-    const syncAcc = () => { const c = sel.value === 'credit'; accBox.hidden = c; accIn.required = !c; };
+    const syncAcc = () => { accBox.hidden = false; accIn.required = true; };
     sel.addEventListener('change', syncAcc); syncAcc();
     api('payout').then((r) => (r.ok ? r.json() : null)).then((d: any) => {
       if (d?.v2) { sel.querySelectorAll<HTMLOptionElement>('[data-v2]').forEach((o) => (o.hidden = false)); pform.querySelector<HTMLElement>('[data-pv2note]')!.hidden = false; pform.querySelector<HTMLElement>(':scope > p.mut')!.hidden = true; }
@@ -846,6 +851,21 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
     inp.addEventListener('keydown', (e) => { if (e.key === 'Escape') { inp.value = ''; run(); } if (e.key === 'Enter') { e.preventDefault(); box.querySelector('button')?.click(); } });
     document.addEventListener('click', (e) => { if (!box.hidden && !(e.target as HTMLElement).closest('.csearch')) box.hidden = true; });
   }
+
+  // Google sign-in for partners (20.11). A new partner ticks 18+ and the rules first.
+  {
+    const G = {"en": ["Continue with Google", "Sign in with Google", "Tick 18+ and the rules first — then Google.", "No partner account with this Google email yet — tick 18+ and the rules in «Create account», then continue with Google.", "or"], "ru": ["Продолжить с Google", "Войти через Google", "Сначала отметьте 18+ и правила — потом Google.", "Партнёрского аккаунта с этой почтой Google ещё нет — отметьте 18+ и правила во вкладке «Создать аккаунт» и продолжите с Google.", "или"], "ua": ["Продовжити з Google", "Увійти через Google", "Спершу відмітьте 18+ і правила — потім Google.", "Партнерського акаунта з цією поштою Google ще немає — відмітьте 18+ і правила у вкладці «Створити акаунт» і продовжте з Google.", "або"]} as Record<string, string[]>;
+    const L = location.pathname.startsWith('/ua/') ? 'ua' : location.pathname.startsWith('/ru/') ? 'ru' : 'en', g = G[L];
+    document.querySelectorAll<HTMLButtonElement>('[data-gp]').forEach((b) => (b.onclick = () => {
+      const f = b.closest('form')!, reg = b.dataset.gp === 'register';
+      if (reg) {
+        const ok = (f.querySelector('[name="adult"]') as HTMLInputElement).checked && (f.querySelector('[name="rules"]') as HTMLInputElement).checked;
+        if (!ok) { const e = f.querySelector<HTMLElement>('[data-err]')!; e.hidden = false; e.textContent = g[2]; return; }
+      }
+      location.href = `/api/me/google?for=partner&lang=${L}${reg ? '&agree=1' : ''}`;
+    }));
+    if (new URLSearchParams(location.search).get('err') === 'google_new') { const e = document.querySelector<HTMLElement>('[data-form="register"] [data-err]'); if (e) { e.hidden = false; e.textContent = g[3]; } }
+  }
 </script>
 
 <style>
@@ -1071,4 +1091,7 @@ const js = { ...c.js, of: c.home.of, allDone: c.home.allDone, road: ROAD, levels
   .cshits small { font-size: 12px; opacity: .65; } .cshits span { font-size: 14px; }
   .cshits > small { padding: 10px; }
   :global(.cs-lit) { outline: 2px solid var(--accText, #e8a33d); outline-offset: 4px; border-radius: 6px; transition: outline-color 1s; }
+  .gor { text-align: center; margin: 2px 0; font-size: 13px; opacity: .6; }
+  .gbtn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; color: #1f1f1f; font: inherit; font-weight: 600; cursor: pointer; }
+  .gbtn:hover { box-shadow: 0 2px 10px rgba(0,0,0,.12); }
 </style>

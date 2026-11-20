@@ -24,7 +24,7 @@ const enc = new TextEncoder();
 const json = (status: number, body: unknown, headers: Record<string, string> = {}) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...headers } });
 
-function randomId(len: number): string {
+export function randomId(len: number): string {
   const abc = 'abcdefghijkmnpqrstuvwxyz23456789';
   const bytes = crypto.getRandomValues(new Uint8Array(len));
   return Array.from(bytes, (b) => abc[b % abc.length]).join('');
@@ -92,7 +92,7 @@ function safeTarget(v: unknown): string {
   return /^\/[A-Za-z0-9/_\-.#?=&]*$/.test(t) && !t.startsWith('//') ? t : '/start/';
 }
 
-async function createLink(db: DB, partnerId: number, name: string, target: string, friend = 0) {
+export async function createLink(db: DB, partnerId: number, name: string, target: string, friend = 0) {
   for (let i = 0; i < 5; i++) {
     const slug = randomId(7);
     try {
@@ -261,12 +261,12 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
     const country = s(b.country, 60), residency = s(b.residency, 60), method_ = s(b.method, 30), account = s(b.account, 200), legal = s(b.legal_name, 120);
     // Decision 68: more ways to be paid once the owner switches them on (settings payout_v2 = 1).
     const v2 = await payoutV2(db);
-    const methods = ['payoneer', 'wise', 'bank', ...(v2 ? ['fop_ua', 'card_ua', 'usdt', 'credit'] : [])];
-    if (!country || !residency || !legal || (!account && method_ !== 'credit') || !methods.includes(method_)) return json(400, { ok: false, error: 'fields' });
+    const methods = ['payoneer', 'wise', 'bank', ...(v2 ? ['fop_ua', 'card_ua', 'usdt'] : [])];
+    if (!country || !residency || !legal || !account || !methods.includes(method_)) return json(400, { ok: false, error: 'fields' });
     if (method_ === 'usdt' && !/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(account)) return json(400, { ok: false, error: 'wallet' });
     if (b.adult !== true || b.offer !== true) return json(400, { ok: false, error: 'consent' });
     const ua = /ukrain|україн|украин|^ua$/i.test(country) || /ukrain|україн|украин|^ua$/i.test(residency);
-    if (ua && status !== 'fop' && !(v2 && ['card_ua', 'usdt', 'credit'].includes(method_))) return json(400, { ok: false, error: 'ua_fop' });
+    if (ua && status !== 'fop' && !(v2 && ['card_ua', 'usdt'].includes(method_))) return json(400, { ok: false, error: 'ua_fop' });
     const profile = { status, country, residency, legal_name: legal, tax_id: s(b.tax_id, 40), method: method_, account, adult: true, offer: true };
     const saved = await db.prepare("UPDATE partners SET payout_profile = ?, payout_filled_at = datetime('now') WHERE id = ?").bind(JSON.stringify(profile), me.id).run().then(() => true, () => false);
     return saved ? json(200, { ok: true }) : json(503, { ok: false, error: 'soon' });
@@ -281,7 +281,7 @@ export async function handlePartnerApi(db: DB, request: Request, path: string, n
   return json(404, { ok: false });
 }
 
-/** Decision 68 switch: the extra payout ways (FOP, card under a civil contract, USDT, Vaxo credit ×1.5). */
+/** Decision 68 switch: the extra payout ways (FOP, card under a civil contract, USDT). */
 async function payoutV2(db: DB): Promise<boolean> {
   return (await db.prepare("SELECT value FROM settings WHERE key = 'payout_v2'").first<{ value: string }>().catch(() => null))?.value === '1';
 }

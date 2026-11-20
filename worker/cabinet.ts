@@ -266,7 +266,9 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
   // Google: /api/me/google?back=<room> → Google → /api/me/google/callback → /me/
   if (path === 'google' && request.method === 'GET') {
     if (!env.GOOGLE_CLIENT_ID) return Response.redirect(new URL('/app/?err=google_off#signin', url).toString(), 302);
-    const state = hex(16) + '.' + (url.searchParams.get('for') === 'hq' ? 'hq' : ROOM_RE.test(url.searchParams.get('back') || '') ? url.searchParams.get('back') : '');
+    // 20.11: partners sign in with Google too (state «partner-<lang>»; a new partner has ticked 18+ and the rules first).
+    const forP = url.searchParams.get('for') === 'partner' ? `partner-${['en', 'ua', 'ru'].includes(url.searchParams.get('lang') || '') ? url.searchParams.get('lang') : 'ru'}${url.searchParams.get('agree') === '1' ? '-ok' : ''}` : '';
+    const state = hex(16) + '.' + (forP || (url.searchParams.get('for') === 'hq' ? 'hq' : ROOM_RE.test(url.searchParams.get('back') || '') ? url.searchParams.get('back') : ''));
     const go = new URL('https://accounts.google.com/o/oauth2/v2/auth');
     go.search = new URLSearchParams({ client_id: env.GOOGLE_CLIENT_ID, redirect_uri: `${url.origin}/api/me/google/callback`, response_type: 'code', scope: 'openid email profile', state, prompt: 'select_account' }).toString();
     return new Response(null, { status: 302, headers: { Location: go.toString(), 'Set-Cookie': setCookie('vaxo_gst', state, 600) } });
@@ -289,6 +291,24 @@ export async function handleCabinet(db: DB, env: CabinetEnv, request: Request, p
       const h = new Headers({ Location: new URL(t ? `/admin/#hq=${t}` : `/admin/?err=denied&e=${encodeURIComponent(email)}`, url).toString() });
       h.append('Set-Cookie', setCookie('vaxo_gst', '', 0));
       return new Response(null, { status: 302, headers: h });
+    }
+    const pm = state.split('.')[1]?.match(/^partner-(en|ua|ru)(-ok)?$/);
+    if (pm) {
+      const pre = pm[1] === 'en' ? '' : `/${pm[1]}`;
+      const { createLink, randomId } = await import('./partner.js');
+      let pt = await db.prepare('SELECT id FROM partners WHERE email = ?').bind(email).first<{ id: number }>();
+      if (!pt) {
+        if (!pm[2]) { const h0 = new Headers({ Location: new URL(`${pre}/partner/?err=google_new`, url).toString() }); h0.append('Set-Cookie', setCookie('vaxo_gst', '', 0)); return new Response(null, { status: 302, headers: h0 }); }
+        await db.prepare('INSERT INTO partners (email, name, pass_hash, salt, code, parent_id, friend) VALUES (?, ?, ?, ?, ?, NULL, 0)').bind(email, String(p.name || email.split('@')[0]).slice(0, 80), 'google:' + hex(16), hex(16), randomId(8)).run();
+        pt = await db.prepare('SELECT id FROM partners WHERE email = ?').bind(email).first<{ id: number }>();
+        await createLink(db, pt!.id, 'Main link', '/start/');
+      }
+      const tk = hex(32);
+      await db.prepare("INSERT INTO sessions (token, partner_id, expires_at) VALUES (?, ?, datetime('now', '+30 day'))").bind(tk, pt!.id).run();
+      const h1 = new Headers({ Location: new URL(`${pre}/partner/`, url).toString() });
+      h1.append('Set-Cookie', `vaxo_session=${tk}; Max-Age=2592000; Path=/; HttpOnly; Secure; SameSite=Lax`);
+      h1.append('Set-Cookie', setCookie('vaxo_gst', '', 0));
+      return new Response(null, { status: 302, headers: h1 });
     }
     let c = await db.prepare('SELECT id FROM clients WHERE google_sub = ? OR email = ?').bind(p.sub, email).first<{ id: number }>();
     if (!c) {

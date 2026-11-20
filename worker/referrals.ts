@@ -271,10 +271,11 @@ export async function clientInvite(db: DB, clientId: number) {
   return out;
 }
 
-/** The piggy bank (Decision 67): +5% of your plan's volume for each invited friend who paid in the last 35 days, up to +50%. */
+/** The piggy bank (Decision 67/69): +5% of your plan's volume for each invited friend who keeps paying — from the friend's
+ *  SECOND payment (the first month already gives half of the friend's volume), so even the worst case pays for itself. */
 export const PIGGY = { per: 5, max: 100 }; // each friend's 5% lasts while that friend pays — so inviting always pays off
 export async function activeFriends(db: DB, clientId: number): Promise<number> {
-  return (await db.prepare(`SELECT COUNT(DISTINCT r.id) AS n FROM referrals r JOIN invoices i ON i.lead_id = r.lead_id WHERE r.referrer_client_id = ? AND r.status IN ('credited', 'applied') AND i.status = 'paid' AND i.amount > 0 AND i.at > datetime('now', '-35 day')`).bind(clientId).first<{ n: number }>().catch(() => null))?.n ?? 0;
+  return (await db.prepare(`SELECT COUNT(DISTINCT r.id) AS n FROM referrals r JOIN invoices i ON i.lead_id = r.lead_id WHERE r.referrer_client_id = ? AND r.status IN ('credited', 'applied') AND i.status = 'paid' AND i.amount > 0 AND i.at > datetime('now', '-35 day') AND (SELECT COUNT(*) FROM invoices i2 WHERE i2.lead_id = r.lead_id AND i2.status = 'paid' AND i2.amount > 0) >= 2`).bind(clientId).first<{ n: number }>().catch(() => null))?.n ?? 0;
 }
 
 /** HQ: referrals for the economics panel, and the owner's decision on one under review. */

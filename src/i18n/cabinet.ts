@@ -5,7 +5,7 @@ import { RATES } from '../data/partners';
 const r = RATES;
 
 const en = {
-  meta: { title: 'Vaxo Partners — your cabinet', description: 'Earn with Vaxo: services, templates and partner offers. Your links, stats, training, AI prompts and team in one place.' },
+  meta: { title: 'Vaxo Partners — your cabinet', description: 'Earn with Vaxo: Vaxo plans and templates. Your links, stats, training, AI prompts and team in one place.' },
   logout: 'Log out',
   auth: {
     h1: 'Earn with Vaxo',
@@ -45,7 +45,6 @@ const en = {
       [`${r.agencyOwn}%`, 'Vaxo plans', `client you found`],
       [`+${r.agencyRenewal}%`, 'Every renewal', 'and monthly payment, for life'],
       [`${r.products}%`, 'Our templates', '$9 – $67 per sale'],
-      [`${r.offers}%`, 'Partner offers', 'of the payout we receive (soon)'],
       [`+${r.team}%`, 'Your team', 'of their earnings, paid by us on top'],
     ],
     achievements: 'Achievements',
@@ -180,7 +179,6 @@ const ua: CabinetText = {
       [`${r.agencyOwn}%`, 'Підписки Vaxo', `клієнт, якого знайшли ви`],
       [`+${r.agencyRenewal}%`, 'Кожне продовження', 'і щомісячна оплата, назавжди'],
       [`${r.products}%`, 'Наші шаблони', '$9 – $67 за продаж'],
-      [`${r.offers}%`, 'Офери партнерів', 'від виплати, яку отримуємо ми (скоро)'],
       [`+${r.team}%`, 'Ваша команда', 'від їхнього заробітку, зверху від нас'],
     ],
     achievements: 'Досягнення',
@@ -331,7 +329,6 @@ const ru: CabinetText = {
       [`${r.agencyOwn}%`, 'Подписки Vaxo', `клиент, которого нашли вы`],
       [`+${r.agencyRenewal}%`, 'Каждое продление', 'и ежемесячная оплата, навсегда'],
       [`${r.products}%`, 'Наши шаблоны', '$9 – $67 за продажу'],
-      [`${r.offers}%`, 'Офферы партнёров', 'от выплаты, которую получаем мы (скоро)'],
       [`+${r.team}%`, 'Ваша команда', 'от их заработка, сверху от нас'],
     ],
     achievements: 'Достижения',
