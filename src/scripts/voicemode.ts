@@ -206,62 +206,63 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
     return true;
   }
 
-  // Chrome / Edge / Safari: the browser's own live recognition — words appear while you speak and the end of the
-  // phrase is caught by itself. If it is blocked or fails, the recorder + Whisper takes over for the session.
+  // 20.11 (tested on Dmitry's Mac): the browser's own recognition hears speech but Google's service never answers there,
+  // so it cannot be the main path. Now: the recorder ALWAYS listens and catches the end of the phrase itself (threshold
+  // adapts to the microphone), Whisper on our server makes the text. The browser's recognition runs alongside only for
+  // live captions; if it gives a final text in time, we use it and skip Whisper.
   const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
   let srOff = !SR, recog: any = null;
   const LOC: Record<string, string> = { ru: 'ru-RU', ua: 'uk-UA', en: 'en-US' };
   async function listen() {
     if (!alive) return;
-    set('listen');
+    set('listen'); me.textContent = '';
     if (!(await startMeter())) return;
+    let srFinal = '';
     if (!srOff) {
-      const r = new SR(); recog = r;
-      r.lang = LOC[lang] || 'en-US'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
-      let finalText = '', got = false;
-      r.onresult = (e: any) => {
-        let interim = ''; finalText = '';
-        for (let i = 0; i < e.results.length; i++) { const x = e.results[i][0].transcript; if (e.results[i].isFinal) finalText += x; else interim += x; }
-        if ((finalText || interim).trim()) { got = true; if (mode === 'listen') set('hear'); me.textContent = (finalText + interim).trim(); }
-      };
-      r.onerror = (e: any) => { if (['network', 'service-not-allowed', 'not-allowed', 'audio-capture', 'language-not-supported'].includes(e.error)) srOff = true; };
-      r.onend = () => {
-        recog = null;
-        if (!alive || mode === 'paused' || mode === 'talk' || mode === 'think') return;
-        const said = finalText.trim() || (got ? me.textContent || '' : '').trim();
-        if (said) handle(said); else listen();
-      };
-      try { r.start(); return; } catch { srOff = true; }
+      try {
+        const r = new SR(); recog = r;
+        r.lang = LOC[lang] || 'en-US'; r.interimResults = true; r.continuous = true;
+        r.onresult = (e: any) => { let fin = '', mid = ''; for (let i = 0; i < e.results.length; i++) { const x = e.results[i][0].transcript; if (e.results[i].isFinal) fin += x; else mid += x; } srFinal = fin.trim(); const live = (fin + mid).trim(); if (live) me.textContent = live; };
+        r.onerror = (e: any) => { if (['network', 'service-not-allowed', 'not-allowed', 'audio-capture', 'language-not-supported'].includes(e.error)) srOff = true; };
+        r.onend = () => { recog = null; };
+        r.start();
+      } catch { srOff = true; }
     }
-    // Recorder: the speech threshold adapts to this microphone (a quiet one with noise suppression works too).
     const type = ['audio/webm;codecs=opus', 'audio/mp4', 'audio/webm'].find((x) => { try { return MediaRecorder.isTypeSupported(x); } catch { return false; } }) || '';
     const r = new MediaRecorder(stream!, type ? { mimeType: type } : undefined); rec = r;
     const chunks: Blob[] = []; r.ondataavailable = (e) => e.data.size && chunks.push(e.data);
     const an = mic!.createAnalyser(); an.fftSize = 1024; const src = mic!.createMediaStreamSource(stream!); src.connect(an);
     const buf = new Uint8Array(an.fftSize);
-    let spoke = false, quiet = 0, noise = 0, n = 0; const start = performance.now();
-    const loop = () => {
-      if (r.state !== 'recording') return;
+    let spoke = false, quiet = 0, noise = 0, n = 0; const start = Date.now();
+    // setInterval, not requestAnimationFrame: it keeps listening even when the window is not in front.
+    const iv = setInterval(() => {
+      if (r.state !== 'recording') { clearInterval(iv); return; }
       an.getByteTimeDomainData(buf); let x = 0; for (const v of buf) x += (v - 128) ** 2; const rms = Math.sqrt(x / buf.length);
-      const now = performance.now();
-      if (now - start < 400) { noise += rms; n++; requestAnimationFrame(loop); return; }
-      const thr = Math.max(2.5, (noise / Math.max(1, n)) * 2.2 + 1.2);
-      if (rms > thr) { if (!spoke) set('hear'); spoke = true; quiet = 0; } else if (spoke) { quiet ||= now; if (now - quiet > 1100) { r.stop(); return; } }
-      if (now - start > 45000 || (!spoke && now - start > 30000)) { r.stop(); return; }
-      requestAnimationFrame(loop);
-    };
+      const now = Date.now();
+      if (now - start < 450) { noise += rms; n++; return; }
+      const thr = Math.max(2.2, (noise / Math.max(1, n)) * 2.2 + 1);
+      if (rms > thr) { if (!spoke) { set('hear'); if (!me.textContent) me.textContent = '…'; } spoke = true; quiet = 0; }
+      else if (spoke) { quiet ||= now; if (now - quiet > 1100) { clearInterval(iv); r.stop(); } }
+      if (now - start > 45000 || (!spoke && now - start > 30000)) { clearInterval(iv); r.stop(); }
+    }, 60);
     r.onstop = async () => {
       src.disconnect();
+      const live = recog; recog = null; try { live?.stop(); } catch { /* */ }
       if (!alive || mode === 'paused') return;
       if (!spoke) { listen(); return; }
       set('think');
-      const blob = new Blob(chunks, { type: r.mimeType || type || 'audio/webm' });
-      const res = await fetch(`/api/stt?lang=${encodeURIComponent(lang)}`, { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob }).catch(() => null);
-      const said = ((res?.ok ? await res.json().catch(() => null) : null)?.text || '').trim();
+      await new Promise((ok) => setTimeout(ok, srOff ? 0 : 350)); // a moment for the live recognition's final words
+      let said = srFinal;
+      if (!said) {
+        if (!srOff) srOff = true; // heard speech but no text from the browser → Whisper from now on
+        const blob = new Blob(chunks, { type: r.mimeType || type || 'audio/webm' });
+        const res = await fetch(`/api/stt?lang=${encodeURIComponent(lang)}`, { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob }).catch(() => null);
+        said = ((res?.ok ? await res.json().catch(() => null) : null)?.text || '').trim();
+      }
       if (!said) { vx.textContent = t.none; listen(); return; }
       handle(said);
     };
-    r.start(250); loop();
+    r.start(250);
   }
 
   cv.onclick = () => {
