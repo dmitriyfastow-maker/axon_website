@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'plan-birthday-party-with-ai-one-evening',
+    date: '2026-11-20',
+    t: {
+      en: {
+        title: 'How to plan a birthday or family party in one evening with AI', seo: 'Plan a birthday party in one evening with AI',
+        desc: 'Set the budget first, make the guest list, choose place and menu by the budget, send one clear invitation and keep a day-by-day checklist — a simple plan that takes one evening.',
+        body: [
+          ['Why parties get stressful', ['Everything is decided at once and in the last week: guests, food, place, gifts. If you decide in the right order, most questions answer themselves.']],
+          ['1. Start with the budget', ['Write one number you are ready to spend. Split it roughly: about half for food and drinks, a quarter for the place, the rest for decor, cake and surprises. Keep 10% for things you forgot.']],
+          ['2. Make the guest list', ['Write everyone, then mark “must come” and “nice to have”. The number of guests decides the place and the menu, so do this before booking anything.']],
+          ['3. Choose place and date', ['Home, a café or outdoors — pick by the number of guests and the budget. Check 2–3 dates with the most important guests before you send invitations.']],
+          ['4. Plan the menu by numbers', ['Count portions: for a party of 3–4 hours, plan a few snacks, one main dish and the cake. Write a shopping list grouped by shop, so you go once.']],
+          ['5. Send one clear invitation', ['One message with date, time, address, what to bring and until when to reply. Short and the same for everyone — fewer questions later.']],
+          ['6. Keep a checklist by days', ['Two weeks before: book and invite. A week before: confirm guests and order the cake. Two days before: shopping. On the day: only cooking and the party.']],
+          ['How Vaxo helps', ['In Workspace write “plan my daughter’s 7th birthday at home, 12 guests, budget 150 euros” — Vax will count the budget by items, make the menu and shopping list, write the invitation and a checklist by days in one table you can edit. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как спланировать день рождения или семейный праздник за вечер с ИИ', seo: 'Как спланировать праздник за вечер с ИИ',
+        desc: 'Сначала бюджет, потом список гостей, место и меню под бюджет, одно понятное приглашение и чек-лист по дням — простой план, на который нужен один вечер.',
+        body: [
+          ['Почему праздник превращается в стресс', ['Всё решается сразу и в последнюю неделю: гости, еда, место, подарки. Если решать в правильном порядке, большинство вопросов отвечают сами себя.']],
+          ['1. Начните с бюджета', ['Запишите одну сумму, которую готовы потратить. Разделите примерно: около половины — еда и напитки, четверть — место, остальное — украшения, торт и сюрпризы. Отложите 10% на забытое.']],
+          ['2. Составьте список гостей', ['Запишите всех, потом отметьте «обязательно» и «по желанию». Число гостей определяет место и меню, поэтому сделайте это до любых бронирований.']],
+          ['3. Выберите место и дату', ['Дома, в кафе или на природе — выбирайте по числу гостей и бюджету. Согласуйте 2–3 даты с самыми важными гостями до рассылки приглашений.']],
+          ['4. Меню по цифрам', ['Посчитайте порции: на праздник в 3–4 часа — несколько закусок, одно горячее и торт. Список покупок сгруппируйте по магазинам, чтобы сходить один раз.']],
+          ['5. Одно понятное приглашение', ['Одно сообщение: дата, время, адрес, что взять с собой и до какого дня ответить. Коротко и одинаково для всех — меньше вопросов потом.']],
+          ['6. Чек-лист по дням', ['За две недели: забронировать и пригласить. За неделю: подтвердить гостей и заказать торт. За два дня: покупки. В сам день — только готовка и праздник.']],
+          ['Чем помогает Vaxo', ['В Workspace напишите «спланируй день рождения дочки, 7 лет, дома, 12 гостей, бюджет 6000 грн» — Vax распишет бюджет по статьям, составит меню и список покупок, напишет приглашение и чек-лист по дням в одной таблице, которую можно править. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як спланувати день народження чи родинне свято за вечір із ШІ', seo: 'Як спланувати свято за вечір із ШІ',
+        desc: 'Спершу бюджет, потім список гостей, місце і меню під бюджет, одне зрозуміле запрошення і чек-лист по днях — простий план, на який потрібен один вечір.',
+        body: [
+          ['Чому свято перетворюється на стрес', ['Усе вирішується одразу й в останній тиждень: гості, їжа, місце, подарунки. Якщо вирішувати в правильному порядку, більшість питань відповідають самі.']],
+          ['1. Почніть з бюджету', ['Запишіть одну суму, яку готові витратити. Розділіть приблизно: близько половини — їжа й напої, чверть — місце, решта — прикраси, торт і сюрпризи. Відкладіть 10% на забуте.']],
+          ['2. Складіть список гостей', ['Запишіть усіх, потім позначте «обов’язково» і «за бажанням». Кількість гостей визначає місце і меню, тож зробіть це до будь-яких бронювань.']],
+          ['3. Оберіть місце і дату', ['Вдома, в кафе чи на природі — обирайте за кількістю гостей і бюджетом. Узгодьте 2–3 дати з найважливішими гостями до розсилки запрошень.']],
+          ['4. Меню за цифрами', ['Порахуйте порції: на свято на 3–4 години — кілька закусок, одна гаряча страва і торт. Список покупок згрупуйте за магазинами, щоб сходити один раз.']],
+          ['5. Одне зрозуміле запрошення', ['Одне повідомлення: дата, час, адреса, що взяти з собою і до якого дня відповісти. Коротко й однаково для всіх — менше питань потім.']],
+          ['6. Чек-лист по днях', ['За два тижні: забронювати й запросити. За тиждень: підтвердити гостей і замовити торт. За два дні: покупки. У сам день — тільки готування і свято.']],
+          ['Чим допомагає Vaxo', ['У Workspace напишіть «сплануй день народження доньки, 7 років, вдома, 12 гостей, бюджет 6000 грн» — Vax розпише бюджет за статтями, складе меню і список покупок, напише запрошення і чек-лист по днях в одній таблиці, яку можна редагувати. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'how-to-name-your-business',
     date: '2026-11-20',
     t: {
