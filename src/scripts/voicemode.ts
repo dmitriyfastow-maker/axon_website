@@ -224,20 +224,20 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
       ox.globalCompositeOperation = 'source-over'; ox.clearRect(0, 0, off.width, off.height); ox.globalAlpha = 1;
       ox.drawImage(pose, 0, 0, off.width, off.height);
       ox.globalCompositeOperation = 'source-atop';
-      const tint = ox.createLinearGradient(0, 0, 0, off.height); tint.addColorStop(0, `rgba(${C1},.68)`); tint.addColorStop(0.65, `rgba(${C1},.56)`); tint.addColorStop(1, `rgba(${C2},.6)`);
+      const tint = ox.createLinearGradient(0, 0, 0, off.height); tint.addColorStop(0, `rgba(${C1},.34)`); tint.addColorStop(0.7, `rgba(${C1},.26)`); tint.addColorStop(1, `rgba(${C2},.3)`);
       ox.fillStyle = tint; ox.fillRect(0, 0, off.width, off.height);
-      ox.globalCompositeOperation = 'destination-out'; ox.fillStyle = 'rgba(0,0,0,.42)';
+      ox.globalCompositeOperation = 'destination-out'; ox.fillStyle = 'rgba(0,0,0,.16)';
       const sh = (tt * 40) % 5; for (let y = sh; y < off.height; y += 5) ox.fillRect(0, y, off.width, 2);
       const x0 = bx - dw / 2, y0 = by - 14 - dh - bob;
       hx.save(); hx.translate(bx, y0 + dh); hx.rotate((tilt * Math.PI) / 180 * 0.6); hx.scale(sq, 2 - sq); hx.translate(-bx, -(y0 + dh));
-      const flick = 0.86 + Math.sin(tt * 37) * 0.04 + (Math.random() < 0.03 ? -0.25 : 0);
-      hx.globalAlpha = flick; hx.shadowColor = `rgba(${C1},.9)`; hx.shadowBlur = 26 + amp * 30;
+      const flick = 0.95 + Math.sin(tt * 23) * 0.03 + (Math.random() < 0.01 ? -0.15 : 0);
+      hx.globalAlpha = flick; hx.shadowColor = `rgba(${C1},.75)`; hx.shadowBlur = 22 + amp * 26;
       hx.drawImage(off, x0, y0);
-      hx.shadowBlur = 0; hx.globalCompositeOperation = 'lighter'; hx.globalAlpha = 0.22 + amp * 0.25; hx.drawImage(off, x0, y0);
+      hx.shadowBlur = 0; hx.globalCompositeOperation = 'lighter'; hx.globalAlpha = 0.08 + amp * 0.14; hx.drawImage(off, x0, y0);
       // glitches: more while it talks loudly
-      if (Math.random() < (mode === 'talk' ? 0.06 + level * 0.25 : 0.015)) {
+      if (Math.random() < (mode === 'talk' ? 0.02 + level * 0.06 : 0.004)) {
         hx.globalCompositeOperation = 'source-over'; hx.globalAlpha = 0.8;
-        for (let k = 0; k < 2 + Math.floor(Math.random() * 3); k++) { const sy = Math.random() * off.height, shh = 4 + Math.random() * 18, dx = (Math.random() - 0.5) * 26; hx.drawImage(off, 0, sy, off.width, shh, x0 + dx, y0 + sy, off.width, shh); }
+        for (let k = 0; k < 2 + Math.floor(Math.random() * 3); k++) { const sy = Math.random() * off.height, shh = 4 + Math.random() * 18, dx = (Math.random() - 0.5) * 12; hx.drawImage(off, 0, sy, off.width, shh, x0 + dx, y0 + sy, off.width, shh); }
       }
       hx.restore();
     }

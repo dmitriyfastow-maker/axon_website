@@ -781,7 +781,14 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
         const j = (() => { try { return JSON.parse(String(raw || '').replace(/^[^{]*/, '').replace(/[^}]*$/, '')); } catch { return null; } })();
         if (j?.text) { view = { day: today, text: cut(j.text, 600), way: cut(j.way, 300), next: cut(j.next, 200) }; await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(key, JSON.stringify(view)).run().catch(() => {}); }
       }
-      return out(200, { ok: true, stats, made: k, results, asks: asks.n, first: asks.first, days30, chats, projects, filled, view: view.text ? view : null });
+      // the city: every chat is a building (height = talk, lights = results), every project a district, memory links are bridges
+      const city = await q<{ id: number; title: string; project: number | null; msgs: number; results: number; last: string | null; site: number; doc: number; tool: number; img: number }>(`SELECT c.id, c.title, c.project_id AS project, COUNT(m.id) AS msgs, SUM(m.role = 'assistant' AND (m.site IS NOT NULL OR m.doc IS NOT NULL OR m.tool IS NOT NULL OR m.image IS NOT NULL)) AS results, MAX(m.at) AS last, SUM(m.site IS NOT NULL) AS site, SUM(m.doc IS NOT NULL) AS doc, SUM(m.tool IS NOT NULL) AS tool, SUM(m.image IS NOT NULL) AS img FROM ws_chats c LEFT JOIN ws_msgs m ON m.chat_id = c.id WHERE c.client_id = ? GROUP BY c.id ORDER BY last DESC LIMIT 140`, me.id);
+      const pids = projects.map((x) => x.id), links: [number, number][] = [];
+      if (pids.length) {
+        const rows = await q<{ key: string; value: string }>(`SELECT key, value FROM settings WHERE key IN (${pids.map(() => '?').join(',')})`, ...pids.map((x) => 'proj_mem_' + x));
+        for (const r of rows) { try { const v = JSON.parse(r.value); for (const l of v.links || []) if (pids.includes(+l)) links.push([+r.key.slice(9), +l]); } catch { /* */ } }
+      }
+      return out(200, { ok: true, stats, made: k, results, asks: asks.n, first: asks.first, days30, chats, projects, filled, view: view.text ? view : null, city, links });
     }
     const pmem = path.match(/^project\/(\d+)\/memory$/);
     if (pmem) {

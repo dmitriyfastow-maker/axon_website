@@ -152,7 +152,7 @@ const ico = {
       <div class="shits" data-shits hidden></div>
       <nav class="chats" data-chats></nav>
       <div class="you" data-you><button type="button" class="lbl youh" data-youh aria-expanded="true">{T.you}<i aria-hidden="true">▾</i></button>
-      <button class="nav eyenav" type="button" data-prof="eye"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg>{T.eye}</button>
+      <button class="nav eyenav" type="button" data-city><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg>{T.eye}</button>
       <button class="nav" type="button" data-prof="memory"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d={ico.memory} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.memory}</button>
       <button class="nav" type="button" data-earn><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 3v18M17 7H9.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.earn}</button>
       <button class="nav" type="button" data-prof="plan"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d={ico.user} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.profile}</button>
@@ -946,7 +946,7 @@ const ico = {
     const history = S.msgs.slice(-15, -1).map(({ role, content }) => ({ role, content }));
     // 20.11 (found live): switching to another chat while Vax was answering put the answer into the chat now open.
     // The answer belongs to the chat it was asked in; if the person moved away, it stays there and a note says it is ready.
-    const startCur = S.cur, startMsgs = S.msgs, away = () => S.cur !== startCur || S.msgs !== startMsgs;
+    const startCur = S.cur, startMsgs = S.msgs; let mineCur = startCur; const away = () => S.cur !== mineCur || S.msgs !== startMsgs;
     let say: Msg = { role: 'assistant', content: T.err };
     let baseTier = false;
     try {
@@ -957,7 +957,7 @@ const ico = {
         say = { id: d.id ?? undefined, role: 'assistant', content: d.reply, tool: d.tool || undefined, doc: d.doc || undefined, image: d.image, deploy: d.deploy || undefined, site: d.site || undefined };
         if (d.uid) mine.id = d.uid;
         if (S.signed && d.chat && d.chat !== startCur) {
-          if (!away()) S.cur = d.chat;
+          if (!away()) { S.cur = d.chat; mineCur = d.chat; }
           if (!S.chats.some((x) => x.id === d.chat)) S.chats.unshift({ id: d.chat, title: plain(q).slice(0, 60), project: S.pendingProject || undefined });
           if (S.pendingProject) post(`/api/ws/chat/${d.chat}/move`, { project: S.pendingProject });
           S.pendingProject = 0;
@@ -978,7 +978,7 @@ const ico = {
     if (away()) {
       startMsgs.push(say);
       if (!S.signed) { let c = S.chats.find((x) => x.id === startCur); if (!c) { c = { id: Date.now(), title: plain(q).slice(0, 60), msgs: startMsgs }; S.chats.unshift(c); } c.msgs = startMsgs.map((m) => ({ ...m, image: undefined })); saveGuest(); }
-      const id = S.chats.find((x) => x.id === startCur)?.id ?? S.chats.find((x) => x.title === plain(q).slice(0, 60))?.id;
+      const id = (mineCur || undefined) ?? S.chats.find((x) => x.title === plain(q).slice(0, 60))?.id;
       drawChats(); refreshUsage(); S.busy = false;
       toast(({ ru: 'Vax ответил в другом разговоре', ua: 'Vax відповів в іншій розмові', en: 'Vax answered in another chat' } as Record<string, string>)[lang] || 'Vax answered in another chat', ({ ru: 'Открыть', ua: 'Відкрити', en: 'Open' } as Record<string, string>)[lang] || 'Open', () => { if (id) openChat(id); });
       return;
@@ -2416,9 +2416,9 @@ const ico = {
       for (const c of S.chats) if (has(c.title)) { named.add(c.id); top.push(hit(clean(c.title), '', q, () => openChat(c.id))); }
       // Places in Vaxo (18.11): the search also knows where every setting lives, by plain words.
       const PL = ({
-        ru: [['💳 Тариф и оплата', 'тариф оплата подписка лимит объём карта счёт отменить продлить цена', () => openProf('plan')], ['🎁 Пригласить друга и бонусы', 'друг пригласить бонус ссылка подарок приглашение уровень награда', () => openProf('plan')], ['👁 Всевидящее око: я со стороны', 'око глаз характеристики статистика уровень прогресс со стороны куда я двигаюсь', () => openProf('eye')], ['🧠 Что Vax помнит обо мне', 'память помнит обо мне контекст профиль', () => { openProf('memory'); }], ['👤 Аккаунт', 'аккаунт почта email выйти выход удалить язык', () => openProf('account')], ['⇄ Перенести из другого ИИ', 'перенести перенос импорт chatgpt gemini claude grok copilot другой ии', () => (window as any).__vxImport?.()]],
-        ua: [['💳 Тариф і оплата', 'тариф оплата підписка ліміт обсяг картка рахунок скасувати продовжити ціна', () => openProf('plan')], ['🎁 Запросити друга й бонуси', 'друг запросити бонус посилання подарунок запрошення рівень нагорода', () => openProf('plan')], ['👁 Всевидюче око: я збоку', 'око характеристики статистика рівень прогрес збоку куди я рухаюся', () => openProf('eye')], ['🧠 Що Vax пам’ятає про мене', 'пам’ять пам\'ятає про мене контекст профіль', () => openProf('memory')], ['👤 Акаунт', 'акаунт пошта email вийти вихід видалити мова', () => openProf('account')], ['⇄ Перенести з іншого ШІ', 'перенести перенесення імпорт chatgpt gemini claude grok copilot інший ші', () => (window as any).__vxImport?.()]],
-        en: [['💳 Plan and billing', 'plan billing subscription limit volume card invoice cancel renew price pay', () => openProf('plan')], ['🎁 Invite a friend and bonuses', 'friend invite bonus link gift referral level reward', () => openProf('plan')], ['👁 All-seeing eye: me from the side', 'eye stats characteristics level progress from the side where am i heading', () => openProf('eye')], ['🧠 What Vax remembers about me', 'memory remember about me context profile', () => { openProf('memory'); }], ['👤 Account', 'account email sign out log out delete language', () => openProf('account')], ['⇄ Move from another AI', 'move import transfer chatgpt gemini claude grok copilot other ai', () => (window as any).__vxImport?.()]],
+        ru: [['💳 Тариф и оплата', 'тариф оплата подписка лимит объём карта счёт отменить продлить цена', () => openProf('plan')], ['🎁 Пригласить друга и бонусы', 'друг пригласить бонус ссылка подарок приглашение уровень награда', () => openProf('plan')], ['👁 Всевидящее око: город моих проектов', 'око глаз город карта проекты характеристики статистика уровень прогресс со стороны куда я двигаюсь', () => openCityView()], ['🧠 Что Vax помнит обо мне', 'память помнит обо мне контекст профиль', () => { openProf('memory'); }], ['👤 Аккаунт', 'аккаунт почта email выйти выход удалить язык', () => openProf('account')], ['⇄ Перенести из другого ИИ', 'перенести перенос импорт chatgpt gemini claude grok copilot другой ии', () => (window as any).__vxImport?.()]],
+        ua: [['💳 Тариф і оплата', 'тариф оплата підписка ліміт обсяг картка рахунок скасувати продовжити ціна', () => openProf('plan')], ['🎁 Запросити друга й бонуси', 'друг запросити бонус посилання подарунок запрошення рівень нагорода', () => openProf('plan')], ['👁 Всевидюче око: місто моїх проєктів', 'око місто карта проєкти характеристики статистика рівень прогрес збоку куди я рухаюся', () => openCityView()], ['🧠 Що Vax пам’ятає про мене', 'пам’ять пам\'ятає про мене контекст профіль', () => openProf('memory')], ['👤 Акаунт', 'акаунт пошта email вийти вихід видалити мова', () => openProf('account')], ['⇄ Перенести з іншого ШІ', 'перенести перенесення імпорт chatgpt gemini claude grok copilot інший ші', () => (window as any).__vxImport?.()]],
+        en: [['💳 Plan and billing', 'plan billing subscription limit volume card invoice cancel renew price pay', () => openProf('plan')], ['🎁 Invite a friend and bonuses', 'friend invite bonus link gift referral level reward', () => openProf('plan')], ['👁 All-seeing eye: the city of my projects', 'eye city map projects stats characteristics level progress from the side where am i heading', () => openCityView()], ['🧠 What Vax remembers about me', 'memory remember about me context profile', () => { openProf('memory'); }], ['👤 Account', 'account email sign out log out delete language', () => openProf('account')], ['⇄ Move from another AI', 'move import transfer chatgpt gemini claude grok copilot other ai', () => (window as any).__vxImport?.()]],
       } as Record<string, [string, string, () => void][]>)[lang] || [];
       for (const [name, kw, go] of PL) if ((name + ' ' + kw).toLowerCase().split(/\s+/).some((w) => w.startsWith(ql) || (ql.length > 3 && ql.startsWith(w.slice(0, 4))))) top.push(hit(name, '', q, go));
       for (const o of objectsOf()) if (has(o.title)) res.push(hit(clean(o.title), S.chats.find((c) => c.id === o.chat)?.title || '', q, () => openObject(o)));
@@ -2501,6 +2501,24 @@ const ico = {
   };
   root.querySelectorAll<HTMLButtonElement>('[data-panel]').forEach((b) => (b.onclick = () => panel(b.dataset.panel!)));
   root.querySelectorAll<HTMLButtonElement>('[data-prof]').forEach((b) => (b.onclick = () => { side(false); openProf(b.dataset.prof!); }));
+  // 21.11: «Всевидящее око» opens the city of your projects (3D): chats are buildings, projects districts, the HQ is you.
+  async function openCityView() {
+    if (!S.signed) { openSign(); return; }
+    const [m, d] = await Promise.all([import('../scripts/city'), fetch(`/api/ws/eye?lang=${lang}`).then((r) => r.json()).catch(() => null)]);
+    if (!d?.ok) { toast(T.err); return; }
+    m.openCity({
+      lang, data: d, level: G ? { n: G.level, name: (T.game?.names || [])[G.level - 1] || '', xp: G.xp } : undefined,
+      sheet: () => eyeTab(),
+      openChat: (id) => openChat(id),
+      openProject: (id) => { S.cur = 0; S.msgs = []; drawChats(); drawEmpty(); openProject(id, 'home'); },
+      task: async (q, chat, project) => {
+        if (chat) { await openChat(chat); ask(q); return; }
+        if (project) { S.pendingProject = project; fresh(); await useProject(project); ask(q); return; }
+        fresh(); ask(q);
+      },
+    });
+  }
+  root.querySelectorAll<HTMLButtonElement>('[data-city]').forEach((b) => (b.onclick = () => { side(false); openCityView(); }));
   root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => (b.onclick = () => {
     S.mode = b.dataset.mode!; drawMode();
     if (S.signed) post('/api/ws/memory', { ...S.memory, mode: S.mode }); else saveGuest();
@@ -2537,7 +2555,7 @@ const ico = {
         // the real canvas moves into the voice panel while it is open (everything on it keeps working), then comes back
         mount: (holder: HTMLElement) => {
           const home = cvBody.parentElement, next = cvBody.nextSibling;
-          if (!cvBody.textContent?.trim() && !cvBody.querySelector('iframe,img,canvas,svg')) { try { showBoard(); } catch { /* */ } }
+          if ((S.cur || S.proj) && S.msgs.length && !cvBody.textContent?.trim() && !cvBody.querySelector('iframe,img,canvas,svg')) { try { showBoard(); } catch { /* */ } }
           holder.append(cvBody);
           return () => { if (home) home.insertBefore(cvBody, next && next.parentNode === home ? next : null); };
         },
