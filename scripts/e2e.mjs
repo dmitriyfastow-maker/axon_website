@@ -15,7 +15,7 @@ for (const p of ['/', '/ru/', '/ua/', '/ru/app/', '/ru/partners/', '/ru/partner/
   const r = await get(p); ok(`page ${p}`, r.status === 200, String(r.status));
 }
 const home = await (await get('/ru/')).text();
-ok('pricing: 6 plans incl. Lite $8', /data-plan="lite"/.test(home) && /data-plan="pro"/.test(home));
+ok('pricing: Lite $8 + 4 plans + free strip', /data-plan="lite"/.test(home) && /data-plan="pro"/.test(home) && /freebar2/.test(home));
 ok('free plan says the model is weaker', /Базовая модель ИИ/.test(home));
 ok('footer socials without Discord', /Мы в соцсетях/.test(home) && !/discord\.com\/invite/.test(home));
 const partners = await (await get('/ru/partners/')).text();

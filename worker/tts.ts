@@ -8,7 +8,8 @@ export const VOICES: Record<string, string> = { warm: 'Sulafat', calm: 'Charon',
 const MODELS = ['gemini-2.5-flash-preview-tts', 'gemini-2.5-flash-tts'];
 let cached: { key: string; at: number } | null = null;
 
-export async function geminiKey(db: DB, adminToken?: string): Promise<string | null> {
+export async function geminiKey(db: DB, adminToken?: string, envKey?: string): Promise<string | null> {
+  if (envKey) return envKey;
   if (cached && Date.now() - cached.at < 300_000) return cached.key || null;
   const v = (await db.prepare("SELECT value FROM settings WHERE key = 'gemini_key'").first<{ value: string }>().catch(() => null))?.value;
   const key = v && adminToken ? await openSealed(adminToken, v).catch(() => '') : '';
@@ -47,10 +48,10 @@ export async function speakText(key: string, text: string, voice: string, style:
   return null;
 }
 
-export async function handleTts(db: DB, request: Request, adminToken: string | undefined, signedIn: boolean): Promise<Response> {
+export async function handleTts(db: DB, request: Request, adminToken: string | undefined, signedIn: boolean, envKey?: string): Promise<Response> {
   if (request.method !== 'POST') return new Response(null, { status: 405 });
   if (!signedIn) return new Response(null, { status: 401 });
-  const key = await geminiKey(db, adminToken);
+  const key = await geminiKey(db, adminToken, envKey);
   if (!key) return new Response(null, { status: 501 });
   const b = (await request.json().catch(() => ({}))) as { text?: string; voice?: string; lang?: string };
   const text = String(b.text || '').replace(/\s+/g, ' ').trim().slice(0, 700);

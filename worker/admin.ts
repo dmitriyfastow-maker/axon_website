@@ -116,7 +116,24 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
     const p = (await pulse(db)) as Record<string, Record<string, any>>;
     const b = request.method === 'POST' ? ((await request.json().catch(() => ({}))) as Record<string, unknown>) : {};
     const q = typeof b.q === 'string' ? b.q.trim() : '';
-    return json(200, { ok: true, tips: tipsFor(p, me), text: q ? await assistAnswer(ai, p, me, q, { view: typeof b.view === 'string' ? b.view : '', screen: typeof b.screen === 'string' ? b.screen : '' }) : '' });
+    if (!q) return json(200, { ok: true, tips: tipsFor(p, me), text: '' });
+    // 20.11: the latest records, so the HQ can also FIND things («где заявка от Анны?»), and Claude for the answer.
+    const rows = async (sql: string) => ((await db.prepare(sql).all().catch(() => ({ results: [] }))).results || []);
+    const records = JSON.stringify({
+      leads: await rows("SELECT id, created_at, name, interest, status, plan, substr(message, 1, 80) AS msg FROM leads ORDER BY id DESC LIMIT 40"),
+      payments: await rows("SELECT i.id, i.at, i.amount, i.currency, i.status, substr(i.description, 1, 60) AS what, l.name FROM invoices i LEFT JOIN leads l ON l.id = i.lead_id ORDER BY i.id DESC LIMIT 20"),
+      partners: await rows("SELECT id, name, created_at, code FROM partners ORDER BY id DESC LIMIT 20"),
+      payouts: await rows("SELECT id, partner_id, amount_usd, status, created_at FROM payouts ORDER BY id DESC LIMIT 15"),
+    }).slice(0, 14000);
+    const claude = async (prompt: string) => {
+      const v = (await db.prepare("SELECT value FROM settings WHERE key = 'anthropic_key'").first<{ value: string }>().catch(() => null))?.value;
+      const key = v && token ? await openSealed(token, v).catch(() => null) : null;
+      if (!key) return null;
+      const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' }, body: JSON.stringify({ model: 'claude-sonnet-5-5', max_tokens: 700, messages: [{ role: 'user', content: prompt }] }) }).catch(() => null);
+      const d = r?.ok ? ((await r.json().catch(() => null)) as { content?: { type: string; text?: string }[] } | null) : null;
+      return (d?.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('').trim() || null;
+    };
+    return json(200, { ok: true, tips: tipsFor(p, me), text: await assistAnswer(ai, p, me, q, { view: typeof b.view === 'string' ? b.view : '', screen: typeof b.screen === 'string' ? b.screen : '', records, claude }) });
   }
   if (path === 'staff' || path.startsWith('staff/')) return handleStaffAdmin(db, request, path.slice('staff'.length).replace(/^\//, ''), me, new URL(request.url).origin);
   if (path === '' && request.method === 'GET') return json(200, { ok: true, ...(await ownerOverview(db, notify)), payouts: await allPayouts(db), hq: HQ });
@@ -187,7 +204,7 @@ export async function handleAdminApi(db: DB, request: Request, token: string | u
     if (request.method === 'POST') {
       if (me.role !== 'owner') return json(403, { ok: false });
       const key = String(((await request.json().catch(() => ({}))) as { key?: string }).key || '').trim();
-      if (!/^AIza[0-9A-Za-z_-]{30,}$/.test(key) || !token) return json(400, { ok: false, error: 'format' });
+      if (!/^(AIza[0-9A-Za-z_-]{30,}|AQ\.[0-9A-Za-z_.-]{30,})$/.test(key) || !token) return json(400, { ok: false, error: 'format' });
       const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1', { headers: { 'x-goog-api-key': key } }).catch(() => null);
       if (!r?.ok) return json(400, { ok: false, error: 'check' });
       const put = (k: string, v: string) => db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(k, v).run();

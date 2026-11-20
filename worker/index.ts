@@ -212,7 +212,7 @@ export default {
     if (url.pathname === '/api/tts' && env.LEADS) {
       const { handleTts } = await import('./tts.js');
       const { sessionClient } = await import('./cabinet.js');
-      return handleTts(env.LEADS, request, env.ADMIN_TOKEN, !!(await sessionClient(env.LEADS, request).catch(() => null)));
+      return handleTts(env.LEADS, request, env.ADMIN_TOKEN, !!(await sessionClient(env.LEADS, request).catch(() => null)), (env as { GEMINI_API_KEY?: string }).GEMINI_API_KEY);
     }
     if (url.pathname === '/api/ws' || url.pathname.startsWith('/api/ws/')) return env.LEADS ? handleWorkspace(env.LEADS, env.AI, request, url.pathname.slice('/api/ws'.length).replace(/^\//, ''), notify, waitUntil, { token: env.CF_SAAS_TOKEN, feed: env.ADMIN_TOKEN }) : json(503, { ok: false });
     const pic = url.pathname.match(/^\/i\/([a-f0-9]{24})\.jpg$/);

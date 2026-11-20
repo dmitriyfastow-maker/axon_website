@@ -33,7 +33,11 @@ const CSS = `
 .vxm .stage{position:relative;display:grid;place-items:center;min-height:0}
 .vxm canvas{width:min(70vh,80%);aspect-ratio:1;cursor:pointer}
 .vxm .face{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;opacity:0;transition:.4s}
-.vxm .face img{width:min(28vh,34%);filter:drop-shadow(0 12px 40px rgba(242,169,59,.45));animation:vxbob 2.4s ease-in-out infinite}
+.vxm .face .pose{width:min(34vh,40%);filter:drop-shadow(0 18px 40px rgba(242,169,59,.45));transition:opacity .22s;will-change:transform}
+.vxm .face .halo{position:absolute;width:min(46vh,54%);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(242,169,59,.28),rgba(87,211,230,.08) 55%,transparent 70%);transform:scale(var(--h,1));transition:transform .08s}
+.vxm .face .spark{position:absolute;inset:0;pointer-events:none}
+.vxm .face .spark i{position:absolute;left:50%;top:50%;width:10px;height:10px;border-radius:50%;background:#ffd28a;box-shadow:0 0 12px #f2a93b;animation:vxsp .9s ease-out forwards}
+@keyframes vxsp{to{transform:translate(var(--x),var(--y)) scale(.2);opacity:0}}
 @keyframes vxbob{50%{transform:translateY(-8px)}}
 .vxm[data-face="vax"] .face{opacity:1}.vxm[data-face="vax"] canvas{opacity:.35}
 .vxm .cam{position:absolute;left:22px;top:8px;width:min(22vw,200px);aspect-ratio:3/4;object-fit:cover;border-radius:18px;border:1px solid #2a2e38;background:#000}
@@ -68,7 +72,7 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
   const voices = ['warm', 'calm', 'bright', 'soft'];
   d.innerHTML = `<div class="bg"></div><div class="in">
     <div class="top"><div class="wake"><i></i>${t.wake}</div><div style="display:flex;gap:12px;align-items:center"><span class="st"></span><button type="button" class="x" aria-label="${t.end}">×</button></div></div>
-    <div class="stage"><p class="tip">${t.hint}</p><video class="cam" playsinline muted hidden></video><canvas width="900" height="900" aria-label="VAXO"></canvas><div class="face"><img src="${vaxImg}" alt="Vax"></div>
+    <div class="stage"><p class="tip">${t.hint}</p><video class="cam" playsinline muted hidden></video><canvas width="900" height="900" aria-label="VAXO"></canvas><div class="face"><div class="halo"></div><img class="pose" src="${vaxImg}" alt="Vax"><div class="spark"></div></div>
       <div class="cap"><div class="me"></div><div class="vx"></div></div></div>
     <aside class="side"><h3>${t.side}</h3><div class="tasks"><p class="idle">${t.idle}</p></div></aside>
     <div class="ctl"><span class="lab">${t.face}</span><button type="button" data-f="core">${t.core}</button><button type="button" data-f="vax">${t.vax}</button>
@@ -104,10 +108,23 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
     }
     cx.strokeStyle = `rgba(87,211,230,${0.16 + amp * 0.3})`; cx.lineWidth = 2;
     for (let i = 0; i < 3; i++) { cx.beginPath(); cx.arc(C, C, C * (0.8 + i * 0.06) * (1 + amp * 0.05), tt * (0.3 + i * 0.2), tt * (0.3 + i * 0.2) + Math.PI * (0.6 + i * 0.3)); cx.stroke(); }
+    if (d.dataset.face === 'vax') {
+      const talk = mode === 'talk', bob = talk ? level * 16 + Math.sin(tt * 9) * level * 4 : mode === 'think' ? Math.sin(tt * 2.2) * 5 : Math.sin(tt * 1.8) * 4;
+      const tilt = mode === 'hear' ? Math.sin(tt * 2) * 6 + 4 : talk ? Math.sin(tt * 6) * 3 * (0.4 + level) : mode === 'think' ? Math.sin(tt * 1.3) * 8 : Math.sin(tt * 1.1) * 2;
+      const sq = talk ? 1 + level * 0.07 : 1 + Math.sin(tt * 1.8) * 0.012;
+      pose.style.transform = `translateY(${-bob}px) rotate(${tilt}deg) scale(${sq}, ${2 - sq})`;
+      halo.style.setProperty('--h', String(1 + amp * 0.35));
+    }
     requestAnimationFrame(draw);
   };
   requestAnimationFrame(draw);
-  const set = (m: Mode) => { mode = m; stEl.textContent = t[m]; };
+  // Vax the raccoon: a pose for every state, crossfaded, and motion that follows the voice (bob, tilt, squash).
+  const POSE: Record<Mode, string> = { listen: '/mascot/vax-headset.webp', hear: '/mascot/vax-headset.webp', think: '/mascot/vax-detective.webp', talk: '/mascot/vax-happy.webp', paused: '/mascot/vax-avatar.webp' };
+  Object.values(POSE).forEach((u) => { const i = new Image(); i.src = u; });
+  const pose = $<HTMLImageElement>('.pose'), halo = $('.halo'), spark = $('.spark');
+  const setPose = (u: string) => { if (pose.getAttribute('src') === u) return; pose.style.opacity = '0'; setTimeout(() => { pose.src = u; pose.style.opacity = '1'; }, 200); };
+  const burst = () => { for (let i = 0; i < 14; i++) { const e = document.createElement('i'); const a = (i / 14) * Math.PI * 2, r = 120 + Math.random() * 90; e.style.setProperty('--x', `${Math.cos(a) * r}px`); e.style.setProperty('--y', `${Math.sin(a) * r}px`); spark.append(e); setTimeout(() => e.remove(), 950); } };
+  const set = (m: Mode) => { if (mode === 'think' && m === 'talk') burst(); mode = m; stEl.textContent = t[m]; setPose(POSE[m]); };
 
   // ---- side column: what VAXO is doing
   const task = (title: string) => { tasks.querySelector('.idle')?.remove(); const e = document.createElement('div'); e.className = 'tk'; e.innerHTML = '<b></b><div class="bar"><i></i></div>'; e.querySelector('b')!.textContent = title; tasks.prepend(e); while (tasks.childElementCount > 8) tasks.lastElementChild?.remove(); return e; };
@@ -154,23 +171,82 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
     const f = r?.ok ? await r.json().catch(() => null) : null;
     return f?.url ? `\n📎 ${String(f.name).replace(/\s+/g, '_')} ${f.url}` : '';
   }
+  // One turn: the words heard → VAXO works → speaks → listens again.
+  async function handle(said: string) {
+    tip.textContent = t.tap; me.textContent = '«' + said + '»'; vx.textContent = '';
+    const s1 = task(t.s1);
+    const work = WORK.find(([re]) => re.test(said))![1][lang] || WORK[WORK.length - 1][1].en;
+    const s2t = setTimeout(() => { s1.classList.add('ok'); task(work); }, 900);
+    set('think'); level = 0;
+    const reply = await ask(said + (await frame()));
+    clearTimeout(s2t);
+    tasks.querySelectorAll('.tk').forEach((e) => e.classList.add('ok'));
+    if (!alive) return;
+    if (!reply?.text) { listen(); return; }
+    const done = task(t.s3); done.classList.add('ok');
+    if (reply.made) { const b = document.createElement('button'); b.type = 'button'; b.textContent = t.canvas + ' →'; b.onclick = () => close(); done.append(b); }
+    vx.textContent = reply.text.slice(0, 600);
+    set('talk'); await say(reply.text); level = 0;
+    if (alive && mode === 'talk') listen();
+  }
+
+  // The core follows the microphone while listening (both ways of listening use it).
+  let meter: (() => void) | null = null;
+  async function startMeter(): Promise<boolean> {
+    try { stream ??= await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
+    catch { set('paused'); tip.textContent = t.mic; return false; }
+    mic ??= new AudioContext(); if (mic.state === 'suspended') await mic.resume().catch(() => {});
+    if (!meter) {
+      const src = mic.createMediaStreamSource(stream), an = mic.createAnalyser(); an.fftSize = 1024; src.connect(an);
+      const buf = new Uint8Array(an.fftSize);
+      let on = true; meter = () => { on = false; src.disconnect(); };
+      const loop = () => { if (!on || !alive) return; if (mode === 'listen' || mode === 'hear') { an.getByteTimeDomainData(buf); let x = 0; for (const v of buf) x += (v - 128) ** 2; level = Math.min(1, Math.sqrt(x / buf.length) / 18); } requestAnimationFrame(loop); };
+      loop();
+    }
+    return true;
+  }
+
+  // Chrome / Edge / Safari: the browser's own live recognition — words appear while you speak and the end of the
+  // phrase is caught by itself. If it is blocked or fails, the recorder + Whisper takes over for the session.
+  const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+  let srOff = !SR, recog: any = null;
+  const LOC: Record<string, string> = { ru: 'ru-RU', ua: 'uk-UA', en: 'en-US' };
   async function listen() {
     if (!alive) return;
     set('listen');
-    try { stream ??= await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }); }
-    catch { set('paused'); tip.textContent = t.mic; return; }
-    mic ??= new AudioContext();
-    const src = mic.createMediaStreamSource(stream), an = mic.createAnalyser(); an.fftSize = 1024; src.connect(an);
-    const buf = new Uint8Array(an.fftSize);
+    if (!(await startMeter())) return;
+    if (!srOff) {
+      const r = new SR(); recog = r;
+      r.lang = LOC[lang] || 'en-US'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
+      let finalText = '', got = false;
+      r.onresult = (e: any) => {
+        let interim = ''; finalText = '';
+        for (let i = 0; i < e.results.length; i++) { const x = e.results[i][0].transcript; if (e.results[i].isFinal) finalText += x; else interim += x; }
+        if ((finalText || interim).trim()) { got = true; if (mode === 'listen') set('hear'); me.textContent = (finalText + interim).trim(); }
+      };
+      r.onerror = (e: any) => { if (['network', 'service-not-allowed', 'not-allowed', 'audio-capture', 'language-not-supported'].includes(e.error)) srOff = true; };
+      r.onend = () => {
+        recog = null;
+        if (!alive || mode === 'paused' || mode === 'talk' || mode === 'think') return;
+        const said = finalText.trim() || (got ? me.textContent || '' : '').trim();
+        if (said) handle(said); else listen();
+      };
+      try { r.start(); return; } catch { srOff = true; }
+    }
+    // Recorder: the speech threshold adapts to this microphone (a quiet one with noise suppression works too).
     const type = ['audio/webm;codecs=opus', 'audio/mp4', 'audio/webm'].find((x) => { try { return MediaRecorder.isTypeSupported(x); } catch { return false; } }) || '';
-    const r = new MediaRecorder(stream, type ? { mimeType: type } : undefined); rec = r;
+    const r = new MediaRecorder(stream!, type ? { mimeType: type } : undefined); rec = r;
     const chunks: Blob[] = []; r.ondataavailable = (e) => e.data.size && chunks.push(e.data);
-    let spoke = false, quiet = 0; const start = performance.now();
+    const an = mic!.createAnalyser(); an.fftSize = 1024; const src = mic!.createMediaStreamSource(stream!); src.connect(an);
+    const buf = new Uint8Array(an.fftSize);
+    let spoke = false, quiet = 0, noise = 0, n = 0; const start = performance.now();
     const loop = () => {
       if (r.state !== 'recording') return;
-      an.getByteTimeDomainData(buf); let s = 0; for (const v of buf) s += (v - 128) ** 2; const rms = Math.sqrt(s / buf.length); level = Math.min(1, rms / 30);
+      an.getByteTimeDomainData(buf); let x = 0; for (const v of buf) x += (v - 128) ** 2; const rms = Math.sqrt(x / buf.length);
       const now = performance.now();
-      if (rms > 9) { if (!spoke) set('hear'); spoke = true; quiet = 0; } else if (spoke) { quiet ||= now; if (now - quiet > 1200) { r.stop(); return; } }
+      if (now - start < 400) { noise += rms; n++; requestAnimationFrame(loop); return; }
+      const thr = Math.max(2.5, (noise / Math.max(1, n)) * 2.2 + 1.2);
+      if (rms > thr) { if (!spoke) set('hear'); spoke = true; quiet = 0; } else if (spoke) { quiet ||= now; if (now - quiet > 1100) { r.stop(); return; } }
       if (now - start > 45000 || (!spoke && now - start > 30000)) { r.stop(); return; }
       requestAnimationFrame(loop);
     };
@@ -178,25 +254,12 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
       src.disconnect();
       if (!alive || mode === 'paused') return;
       if (!spoke) { listen(); return; }
-      set('think'); level = 0;
+      set('think');
       const blob = new Blob(chunks, { type: r.mimeType || type || 'audio/webm' });
       const res = await fetch(`/api/stt?lang=${encodeURIComponent(lang)}`, { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob }).catch(() => null);
       const said = ((res?.ok ? await res.json().catch(() => null) : null)?.text || '').trim();
       if (!said) { vx.textContent = t.none; listen(); return; }
-      tip.textContent = t.tap; me.textContent = '«' + said + '»'; vx.textContent = '';
-      const s1 = task(t.s1);
-      const work = WORK.find(([re]) => re.test(said))![1][lang] || WORK[WORK.length - 1][1].en;
-      const s2t = setTimeout(() => { s1.classList.add('ok'); task(work); }, 900);
-      const reply = await ask(said + (await frame()));
-      clearTimeout(s2t);
-      tasks.querySelectorAll('.tk').forEach((e) => e.classList.add('ok'));
-      if (!alive) return;
-      if (!reply?.text) { listen(); return; }
-      const done = task(t.s3); done.classList.add('ok');
-      if (reply.made) { const b = document.createElement('button'); b.type = 'button'; b.textContent = t.canvas + ' →'; b.onclick = () => close(); done.append(b); }
-      vx.textContent = reply.text.slice(0, 600);
-      set('talk'); await say(reply.text); level = 0;
-      if (alive && mode === 'talk') listen();
+      handle(said);
     };
     r.start(250); loop();
   }
@@ -204,7 +267,7 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
   cv.onclick = () => {
     if (mode === 'talk') { stopTalk(); listen(); return; }
     if (mode === 'paused') { listen(); return; }
-    if (mode === 'listen' || mode === 'hear') { set('paused'); if (rec?.state === 'recording') rec.stop(); }
+    if (mode === 'listen' || mode === 'hear') { set('paused'); try { recog?.abort(); } catch { /* */ } if (rec?.state === 'recording') rec.stop(); }
   };
   const camb = $<HTMLButtonElement>('.camb');
   camb.onclick = async () => {
@@ -213,7 +276,7 @@ export function openVoiceMode(lang: string, ask: Ask, vaxImg = '/mascot/vax-happ
     catch { tip.textContent = t.camErr; }
   };
   function close() {
-    alive = false; stopTalk(); try { if (rec?.state === 'recording') rec.stop(); } catch { /* */ }
+    alive = false; stopTalk(); try { recog?.abort(); if (rec?.state === 'recording') rec.stop(); } catch { /* */ } meter?.();
     stream?.getTracks().forEach((x) => x.stop()); cam?.getTracks().forEach((x) => x.stop()); mic?.close().catch(() => {}); actx?.close().catch(() => {});
     if (d.open) d.close(); d.remove();
   }

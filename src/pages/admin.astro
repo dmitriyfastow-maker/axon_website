@@ -70,6 +70,12 @@ import Base from '../layouts/Base.astro';
       </nav>
 
       <section data-panel="today">
+        <section class="assist">
+          <h2>✦ Спросите Штаб <small class="mut" data-assist-who></small></h2><p class="mut" style="margin:0 0 8px">Спросите обычными словами — помощник сам ответит по живым данным и откроет нужный раздел: «сколько заработали за неделю?», «где заявка от Анны?», «что мне сделать сегодня?»</p>
+          <div class="tips" data-tips></div>
+          <form class="say" data-ask><textarea name="q" rows="1" placeholder="Спросите помощника — например: «что сделать сегодня, чтобы быстрее получить первую оплату?»"></textarea><button class="cta">Спросить</button><button type="button" class="ghost" data-hlp-do title="Отправить как задачу: я поменяю этот раздел и отчитаюсь в «🧠 Claude»">✏️ Поручить изменить</button></form>
+          <div class="assist-a" data-ask-a hidden></div>
+        </section>
         <form class="card keycard" data-ckey hidden>
           <b>🔑 Подключите Claude API — тогда Vax отвечает клиентам на уровне Claude</b>
           <small class="mut">Ключ создаётся на console.anthropic.com → API Keys (начинается с sk-ant-). Вставьте сюда — сайт сам проверит его и сохранит в зашифрованном виде. Пошагово: claude.ai/artifact/M1uZu5Z8qU9wmciN5rYD72</small>
@@ -87,12 +93,6 @@ import Base from '../layouts/Base.astro';
           <button class="cta">Отправить Claude</button>
         </form>
         <small class="mut" data-say-msg></small>
-        <section class="assist">
-          <h2>✦ Ваш ИИ-помощник <small class="mut" data-assist-who></small></h2>
-          <div class="tips" data-tips></div>
-          <form class="say" data-ask><textarea name="q" rows="1" placeholder="Спросите помощника — например: «что сделать сегодня, чтобы быстрее получить первую оплату?»"></textarea><button class="cta">Спросить</button><button type="button" class="ghost" data-hlp-do title="Отправить как задачу: я поменяю этот раздел и отчитаюсь в «🧠 Claude»">✏️ Поручить изменить</button></form>
-          <div class="assist-a" data-ask-a hidden></div>
-        </section>
         <h2>💰 Путь клиента: от заявки до денег</h2>
         <div class="pipe" data-pipe></div>
         <h2>Все процессы</h2>
@@ -418,7 +418,16 @@ import Base from '../layouts/Base.astro';
     const f = e.target as HTMLFormElement; const q = (f.q as HTMLTextAreaElement).value.trim(); if (!q) return;
     const a = $('[data-ask-a]'); a.hidden = false; a.textContent = 'Думаю…';
     const r = await api('/assist', { q }).catch(() => null);
-    a.textContent = r?.text || 'ИИ сейчас занят — попробуйте через минуту.';
+    const txt: string = r?.text || 'ИИ сейчас занят — попробуйте через минуту.';
+    const m = txt.match(/\n?\s*Разделы:\s*(.+)$/i);
+    a.replaceChildren(el('p', {}, m ? txt.slice(0, m.index).trim() : txt));
+    if (m) {
+      const names: Record<string, string> = {};
+      document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach((b) => { names[b.dataset.view!] = (b.textContent || '').trim(); });
+      const row = el('div', { class: 'askgo' });
+      for (const v of m[1].split(/[,\s]+/).map((x) => x.trim()).filter((x) => names[x])) row.append(el('button', { type: 'button', class: 'ghost sm', onclick: () => show(v) }, names[v] + ' →'));
+      if (row.childElementCount) a.append(row);
+    }
   });
 
   async function loadPulse() {
@@ -1409,7 +1418,7 @@ import Base from '../layouts/Base.astro';
   {
     const f = document.querySelector<HTMLFormElement>('[data-gkey]')!;
     const msg = document.querySelector<HTMLElement>('[data-gkey-msg]')!;
-    api('/gemini-key').then((r: any) => { if (r?.ok && !r.at) f.hidden = false; }).catch(() => {});
+    api('/gemini-key').then((r: any) => { if (r?.ok && !r.at && !r.env) f.hidden = false; }).catch(() => {});
     f.addEventListener('submit', async (e) => {
       e.preventDefault();
       const key = String(new FormData(f).get('key') || '').trim();
@@ -1677,4 +1686,7 @@ import Base from '../layouts/Base.astro';
   body.hq-edit [data-panel] > h2 { outline: 1px dashed var(--accText, #c79a2b); outline-offset: 4px; border-radius: 6px; }
   .gbtn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; background: #fff !important; color: #1f1f1f !important; border: 1px solid var(--line); min-height: 44px; border-radius: 10px; font-weight: 600; }
   .keycard { display: grid; gap: 8px; border: 1px solid #e8a33d; margin-bottom: 14px; }
+  .assist { border: 1px solid color-mix(in srgb, #e8a33d 45%, transparent); border-radius: 18px; padding: 16px; margin-bottom: 16px; background: color-mix(in srgb, #e8a33d 6%, transparent); }
+  .assist [data-ask] textarea { font-size: 16px; min-height: 48px; }
+  .askgo { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 </style>
