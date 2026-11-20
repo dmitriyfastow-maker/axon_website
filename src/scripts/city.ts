@@ -20,12 +20,14 @@ export type CityOpts = {
   openChat: (id: number) => void;
   openProject: (id: number) => void;
   task: (q: string, chat: number | null, project: number | null) => void;
+  openResult: (chat: number, msgId: number) => void; // a monitor in the office → that result on the canvas
+  askHere: (q: string, chat: number) => Promise<{ text: string; kind: string; title: string } | null>; // a task given inside the office
 };
 
 const TX: Record<string, Record<string, string>> = {
-  ru: { title: 'Город Vaxo', proj: 'проектов', chats: 'разговоров', res: 'результатов', find: 'Найти здание или квартал…', reset: '⌂ Обзор', hint: 'Тяните — повернуть · колесо — ближе · нажмите на здание, квартал или штаб', solo: 'Отдельные разговоры', hq: 'Ваш штаб', open: 'Открыть разговор', openP: 'Открыть проект', taskC: 'Дать задачу этому разговору…', taskP: 'Новая задача в этом проекте…', taskN: 'Первая задача для Vax…', go: 'Отправить', last: 'Последнее в разговоре', msgs: 'сообщений', made: 'Сделано', mk_site: 'сайтов', mk_doc: 'документов', mk_tool: 'инструментов', mk_img: 'картинок', mem: 'Память проекта', noMem: 'Правил пока нет — Vax запомнит их сам или впишите в обзоре проекта.', inP: 'Разговоры квартала', dist: 'Квартал проекта', empty: 'Город пока пустой. Дайте Vax первую задачу — и здесь вырастет первое здание.', ago: 'активность', loading: 'Строю город…', glErr: 'Ваш браузер не показывает 3D. Ниже — то же самое списком.' },
-  ua: { title: 'Місто Vaxo', proj: 'проєктів', chats: 'розмов', res: 'результатів', find: 'Знайти будівлю чи квартал…', reset: '⌂ Огляд', hint: 'Тягніть — повернути · коліщатко — ближче · натисніть на будівлю, квартал чи штаб', solo: 'Окремі розмови', hq: 'Ваш штаб', open: 'Відкрити розмову', openP: 'Відкрити проєкт', taskC: 'Дати завдання цій розмові…', taskP: 'Нове завдання в цьому проєкті…', taskN: 'Перше завдання для Vax…', go: 'Надіслати', last: 'Останнє в розмові', msgs: 'повідомлень', made: 'Зроблено', mk_site: 'сайтів', mk_doc: 'документів', mk_tool: 'інструментів', mk_img: 'картинок', mem: 'Памʼять проєкту', noMem: 'Правил поки немає — Vax запамʼятає їх сам або впишіть в огляді проєкту.', inP: 'Розмови кварталу', dist: 'Квартал проєкту', empty: 'Місто поки порожнє. Дайте Vax перше завдання — і тут виросте перша будівля.', ago: 'активність', loading: 'Будую місто…', glErr: 'Ваш браузер не показує 3D. Нижче — те саме списком.' },
-  en: { title: 'Vaxo City', proj: 'projects', chats: 'chats', res: 'results', find: 'Find a building or district…', reset: '⌂ Overview', hint: 'Drag to turn · wheel to zoom · click a building, a district or the HQ', solo: 'Separate chats', hq: 'Your HQ', open: 'Open the chat', openP: 'Open the project', taskC: 'Give this chat a task…', taskP: 'A new task in this project…', taskN: 'A first task for Vax…', go: 'Send', last: 'Latest in the chat', msgs: 'messages', made: 'Made', mk_site: 'sites', mk_doc: 'documents', mk_tool: 'tools', mk_img: 'images', mem: 'Project memory', noMem: 'No rules yet — Vax learns them itself, or write them in the project overview.', inP: 'Chats in this district', dist: 'Project district', empty: 'The city is empty so far. Give Vax a first task and the first building grows here.', ago: 'active', loading: 'Building the city…', glErr: 'Your browser cannot show 3D. Below is the same as a list.' },
+  ru: { office: 'Офис', enter: '🏢 Зайти в офис', back: '← В город', taskO: 'Задача агентам этого офиса…', working: 'Работаю…', idle: 'Жду задачу', agents: 'агентов', openR: 'Открыть', kd_site: 'Сайт', kd_doc: 'Документ', kd_tool: 'Инструмент', kd_image: 'Картинка', results: 'Результаты на мониторах', reply: 'Ответ', now: 'Сейчас в работе', none: 'Пока без результатов — дайте задачу, и агент сядет за стол.', busy: 'Vax занят другой задачей — подождите пару секунд.', officeHint: 'Нажмите на монитор — откроется результат · задача внизу справа', title: 'Город Vaxo', proj: 'проектов', chats: 'разговоров', res: 'результатов', find: 'Найти здание или квартал…', reset: '⌂ Обзор', hint: 'Тяните — повернуть · колесо — ближе · нажмите на здание, квартал или штаб', solo: 'Отдельные разговоры', hq: 'Ваш штаб', open: 'Открыть разговор', openP: 'Открыть проект', taskC: 'Дать задачу этому разговору…', taskP: 'Новая задача в этом проекте…', taskN: 'Первая задача для Vax…', go: 'Отправить', last: 'Последнее в разговоре', msgs: 'сообщений', made: 'Сделано', mk_site: 'сайтов', mk_doc: 'документов', mk_tool: 'инструментов', mk_img: 'картинок', mem: 'Память проекта', noMem: 'Правил пока нет — Vax запомнит их сам или впишите в обзоре проекта.', inP: 'Разговоры квартала', dist: 'Квартал проекта', empty: 'Город пока пустой. Дайте Vax первую задачу — и здесь вырастет первое здание.', ago: 'активность', loading: 'Строю город…', glErr: 'Ваш браузер не показывает 3D. Ниже — то же самое списком.' },
+  ua: { office: 'Офіс', enter: '🏢 Зайти в офіс', back: '← До міста', taskO: 'Завдання агентам цього офісу…', working: 'Працюю…', idle: 'Чекаю завдання', agents: 'агентів', openR: 'Відкрити', kd_site: 'Сайт', kd_doc: 'Документ', kd_tool: 'Інструмент', kd_image: 'Картинка', results: 'Результати на моніторах', reply: 'Відповідь', now: 'Зараз у роботі', none: 'Поки без результатів — дайте завдання, і агент сяде за стіл.', busy: 'Vax зайнятий іншим завданням — зачекайте кілька секунд.', officeHint: 'Натисніть на монітор — відкриється результат · завдання внизу праворуч', title: 'Місто Vaxo', proj: 'проєктів', chats: 'розмов', res: 'результатів', find: 'Знайти будівлю чи квартал…', reset: '⌂ Огляд', hint: 'Тягніть — повернути · коліщатко — ближче · натисніть на будівлю, квартал чи штаб', solo: 'Окремі розмови', hq: 'Ваш штаб', open: 'Відкрити розмову', openP: 'Відкрити проєкт', taskC: 'Дати завдання цій розмові…', taskP: 'Нове завдання в цьому проєкті…', taskN: 'Перше завдання для Vax…', go: 'Надіслати', last: 'Останнє в розмові', msgs: 'повідомлень', made: 'Зроблено', mk_site: 'сайтів', mk_doc: 'документів', mk_tool: 'інструментів', mk_img: 'картинок', mem: 'Памʼять проєкту', noMem: 'Правил поки немає — Vax запамʼятає їх сам або впишіть в огляді проєкту.', inP: 'Розмови кварталу', dist: 'Квартал проєкту', empty: 'Місто поки порожнє. Дайте Vax перше завдання — і тут виросте перша будівля.', ago: 'активність', loading: 'Будую місто…', glErr: 'Ваш браузер не показує 3D. Нижче — те саме списком.' },
+  en: { office: 'Office', enter: '🏢 Enter the office', back: '← Back to the city', taskO: 'A task for this office’s agents…', working: 'Working…', idle: 'Waiting for a task', agents: 'agents', openR: 'Open', kd_site: 'Site', kd_doc: 'Document', kd_tool: 'Tool', kd_image: 'Image', results: 'Results on the monitors', reply: 'Answer', now: 'In progress', none: 'No results yet — give a task and an agent sits down at a desk.', busy: 'Vax is busy with another task — wait a few seconds.', officeHint: 'Click a monitor to open the result · the task field is on the right', title: 'Vaxo City', proj: 'projects', chats: 'chats', res: 'results', find: 'Find a building or district…', reset: '⌂ Overview', hint: 'Drag to turn · wheel to zoom · click a building, a district or the HQ', solo: 'Separate chats', hq: 'Your HQ', open: 'Open the chat', openP: 'Open the project', taskC: 'Give this chat a task…', taskP: 'A new task in this project…', taskN: 'A first task for Vax…', go: 'Send', last: 'Latest in the chat', msgs: 'messages', made: 'Made', mk_site: 'sites', mk_doc: 'documents', mk_tool: 'tools', mk_img: 'images', mem: 'Project memory', noMem: 'No rules yet — Vax learns them itself, or write them in the project overview.', inP: 'Chats in this district', dist: 'Project district', empty: 'The city is empty so far. Give Vax a first task and the first building grows here.', ago: 'active', loading: 'Building the city…', glErr: 'Your browser cannot show 3D. Below is the same as a list.' },
 };
 
 const CSS = `
@@ -115,7 +117,7 @@ export function openCity(o: CityOpts): void {
     if (c.last) chips.append(el('span', '', `${t.ago} ${ago(c.last)}`));
     const msgs = el('div', 'c-pb0'); msgs.style.cssText = 'display:grid;gap:6px'; msgs.append(el('small', '', '…'));
     fetch('/api/ws/chat/' + c.id).then((r) => r.json()).then((j) => { msgs.replaceChildren(...(j?.msgs || []).slice(-4).map((m: any) => el('div', 'c-msg' + (m.role === 'user' ? ' u' : ''), String(m.content || (m.doc?.title ? '📄 ' + m.doc.title : '')).replace(/\[\[[^\]]*\]\]/g, '').replace(/\s+/g, ' ').slice(0, 260)))); }).catch(() => msgs.replaceChildren());
-    const row = el('div', 'c-row'); const ob = el('button', 'c-pri', t.open + ' →'); ob.type = 'button'; ob.onclick = () => { close(); o.openChat(c.id); }; row.append(ob);
+    const row = el('div', 'c-row'); const eb = el('button', 'c-pri', t.enter); eb.type = 'button'; eb.onclick = () => enterOffice(c); const ob = el('button', 'c-sec2', t.open + ' →'); ob.type = 'button'; ob.onclick = () => { close(); o.openChat(c.id); }; row.append(eb, ob);
     showPanel(p ? '📁 ' + p.name : t.solo, c.title, [chips, taskForm(t.taskC, (q) => o.task(q, c.id, null)), el('div', 'c-sec', t.last), msgs, row]);
   }
   function projPanel(pid: number | null) {
@@ -261,7 +263,7 @@ export function openCity(o: CityOpts): void {
     const p1 = target.clone().add(dir.multiplyScalar(dist)).setY(target.y + dist * 0.75);
     fly = { p0: cam.position.clone(), p1, t0: ctl.target.clone(), t1: target.clone().setY(Math.max(1, target.y)), s: performance.now() };
   }
-  $('.c-reset').onclick = () => { pan.hidden = true; fly = { p0: cam.position.clone(), p1: home.pos.clone(), t0: ctl.target.clone(), t1: home.tgt.clone(), s: performance.now() }; ctl.autoRotate = true; };
+  $('.c-reset').onclick = () => { leaveOffice(); pan.hidden = true; fly = { p0: cam.position.clone(), p1: home.pos.clone(), t0: ctl.target.clone(), t1: home.tgt.clone(), s: performance.now() }; ctl.autoRotate = true; };
   // search: fly to the first match
   const find = $<HTMLInputElement>('.c-find input');
   find.onkeydown = (e) => {
@@ -272,9 +274,10 @@ export function openCity(o: CityOpts): void {
   // picking
   const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(), tip = $('.c-tip');
   let hover: B | null = null, downAt = 0, downXY = [0, 0];
-  const pick = (ev: PointerEvent) => { const r = renderer.domElement.getBoundingClientRect(); ptr.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(ptr, cam); return ray.intersectObjects(pickables, false)[0]?.object; };
+  const pick = (ev: PointerEvent) => { const r = renderer.domElement.getBoundingClientRect(); ptr.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(ptr, cam); return ray.intersectObjects(inOffice ? officePick : pickables, false)[0]?.object; };
   renderer.domElement.addEventListener('pointermove', (ev) => {
-    const ob = pick(ev); const b = ob?.userData.kind === 'chat' ? buildings.find((x) => x.mesh === ob) || null : null;
+    const ob = pick(ev); const b = !inOffice && ob?.userData.kind === 'chat' ? buildings.find((x) => x.mesh === ob) || null : null;
+    if (ob?.userData.kind === 'res') { tip.hidden = false; tip.textContent = `${ob.userData.title} · ${t.openR} →`; tip.style.left = ev.clientX + 'px'; tip.style.top = ev.clientY + 'px'; renderer.domElement.style.cursor = 'pointer'; return; }
     if (hover && hover !== b) hover.mat.emissiveIntensity = hover.base;
     hover = b; if (b) b.mat.emissiveIntensity = b.base * 1.9;
     renderer.domElement.style.cursor = ob ? 'pointer' : '';
@@ -287,7 +290,10 @@ export function openCity(o: CityOpts): void {
     if (performance.now() - downAt > 400 || Math.hypot(ev.clientX - downXY[0], ev.clientY - downXY[1]) > 6) return; // that was a drag
     const ob = pick(ev); if (!ob) return;
     const u = ob.userData;
-    if (u.kind === 'chat') { const b = buildings.find((x) => x.mesh === ob)!; flyTo(b.mesh.position.clone().setY(b.mesh.position.y), 14); chatPanel(b.c); }
+    if (u.kind === 'res') { close(); o.openResult(u.chat, u.id); return; }
+    if (u.kind === 'agent') { pb.querySelector<HTMLInputElement>('.c-task input')?.focus(); return; }
+    if (inOffice) return;
+    if (u.kind === 'chat') { const b = buildings.find((x) => x.mesh === ob)!; enterOffice(b.c); }
     else if (u.kind === 'proj') { const pl = plates.find((x) => x.mesh === ob)!; flyTo(pl.center, 26); projPanel(pl.pid); }
     else if (u.kind === 'hq') { flyTo(new THREE.Vector3(0, hqH / 2, 0), 22); hqPanel(); }
   });
@@ -295,6 +301,140 @@ export function openCity(o: CityOpts): void {
 
   if (!chats.length) { const e = el('div', 'c-empty c-glass'); e.append(el('p', '', t.empty), taskForm(t.taskN, (q) => o.task(q, null, null))); d.append(e); }
   $('.c-load').remove();
+
+  // ---------- the office inside a building (21.11): desks with Vax's agents, one monitor per finished result, a wall screen
+  // with what is being done; a task given here is worked on right here — an agent types, the result lands on a new monitor.
+  let inOffice = false, office: THREE.Group | null = null, officeChat: (typeof chats)[number] | null = null;
+  const officePick: THREE.Object3D[] = [];
+  let crew: { g: THREE.Group; head: THREE.Mesh; base: THREE.Vector3; phase: number; work: boolean; screen?: THREE.Mesh; walk?: boolean }[] = [];
+  const OFF = new THREE.Vector3(0, 0, 700);
+  const KI: Record<string, string> = { site: '🌐', doc: '📄', tool: '🧮', image: '🖼' };
+  const screenTex = (rows: { t: string; f: string; c: string }[], w = 512, h = 320, bg = '#0b1724', border = '#57d3e6') => {
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const x = cv.getContext('2d')!;
+    x.fillStyle = bg; x.fillRect(0, 0, w, h); x.strokeStyle = border; x.lineWidth = 6; x.strokeRect(3, 3, w - 6, h - 6);
+    let y = 30;
+    for (const r of rows) {
+      x.font = r.f; x.fillStyle = r.c; const words = r.t.split(/\s+/); let line = '';
+      const lh = parseInt(r.f.match(/(\d+)px/)?.[1] || '24', 10) * 1.25;
+      for (const wd of words) { const tst = line ? line + ' ' + wd : wd; if (x.measureText(tst).width > w - 48 && line) { x.fillText(line, 24, y + lh * 0.8); y += lh; line = wd; if (y > h - lh) break; } else line = tst; }
+      if (line && y <= h - lh) { x.fillText(line, 24, y + lh * 0.8); y += lh; }
+      y += 8;
+    }
+    const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 4; return tx;
+  };
+  const agentMesh = (work: boolean) => {
+    // a little Vax: a round grey head with the dark raccoon mask, white eyes, ears, an apron-coloured body
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 0.6, 6, 12), new THREE.MeshStandardMaterial({ color: work ? 0x3f7d4f : 0x4a8a5c, roughness: 0.7 }));
+    body.position.y = 1.15; g.add(body);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.46, 20, 16), new THREE.MeshStandardMaterial({ color: 0x8d8f96, roughness: 0.8 }));
+    head.position.y = 2.05; g.add(head);
+    const mask = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.2, 0.3), new THREE.MeshStandardMaterial({ color: 0x23252b })); mask.position.set(0, 0.06, -0.3); head.add(mask);
+    for (const sx of [-0.17, 0.17]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 10), new THREE.MeshBasicMaterial({ color: 0xffffff })); e.position.set(sx, 0.07, -0.44); head.add(e); const ear = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.28, 10), new THREE.MeshStandardMaterial({ color: 0x6f7178 })); ear.position.set(sx * 1.9, 0.42, 0); head.add(ear); }
+    const nose = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), new THREE.MeshBasicMaterial({ color: 0x111111 })); nose.position.set(0, -0.08, -0.46); head.add(nose);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.7, 0.92, 32), new THREE.MeshBasicMaterial({ color: work ? 0xf2a93b : 0x57d3e6, side: THREE.DoubleSide, transparent: true, opacity: 0.85 }));
+    ring.rotation.x = -Math.PI / 2; ring.position.y = 0.04; g.add(ring);
+    return { g, head };
+  };
+  type It = { id: number; kind: string; title: string };
+  function buildOffice(c: (typeof chats)[number], items: It[], wall: { q: string; a: string }, working?: string) {
+    if (office) { scene.remove(office); office.traverse((ob) => { const m = ob as THREE.Mesh; m.geometry?.dispose?.(); const mt = m.material as THREE.MeshBasicMaterial | undefined; mt?.map?.dispose(); mt?.dispose?.(); }); }
+    const room = new THREE.Group(); office = room; room.position.copy(OFF); scene.add(room); officePick.length = 0; crew = [];
+    const desks: (It | null)[] = [...items.slice(-7), null]; // the last desk waits for a new task
+    const cols = Math.min(4, desks.length), rows = Math.ceil(desks.length / cols), W = cols * 6 + 6, D = rows * 6 + 10;
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(W, D), new THREE.MeshStandardMaterial({ color: dark ? 0x0c141e : 0xeef1f5, roughness: 0.9 })); floor.rotation.x = -Math.PI / 2; room.add(floor);
+    const fg = new THREE.GridHelper(Math.max(W, D), Math.max(W, D) / 2, dark ? 0x173246 : 0xd3dbe5, dark ? 0x10202d : 0xe0e6ee); fg.position.y = 0.02; room.add(fg);
+    const wallM = new THREE.MeshStandardMaterial({ color: dark ? 0x101a26 : 0xf7f8fa, roughness: 0.9 });
+    const back = new THREE.Mesh(new THREE.PlaneGeometry(W, 9), wallM); back.position.set(0, 4.5, -D / 2); room.add(back);
+    const left = new THREE.Mesh(new THREE.PlaneGeometry(D, 9), wallM); left.position.set(-W / 2, 4.5, 0); left.rotation.y = Math.PI / 2; room.add(left);
+    const strip = new THREE.Mesh(new THREE.PlaneGeometry(W, 0.12), new THREE.MeshBasicMaterial({ color: 0xf2a93b })); strip.position.set(0, 8.6, -D / 2 + 0.02); room.add(strip);
+    // the wall screen: what this office works on
+    const ws = new THREE.Mesh(new THREE.PlaneGeometry(Math.min(14, W - 4), 5.2), new THREE.MeshBasicMaterial({ map: screenTex([
+      { t: c.title.slice(0, 90), f: '700 34px Inter, sans-serif', c: '#ffffff' },
+      { t: (working ? t.now + ': ' + working : wall.q ? '› ' + wall.q : '').slice(0, 140), f: '500 24px Inter, sans-serif', c: '#ffd28a' },
+      { t: (working ? t.working : wall.a).slice(0, 240), f: '400 22px Inter, sans-serif', c: '#bfe9f2' },
+    ], 1024, 380) }));
+    ws.position.set(0, 4.6, -D / 2 + 0.05); room.add(ws);
+    desks.forEach((it, i) => {
+      const r = Math.floor(i / cols), k = i % cols;
+      const x = (k - (cols - 1) / 2) * 6, z = -D / 2 + 6 + r * 6;
+      const desk = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.16, 1.7), new THREE.MeshStandardMaterial({ color: dark ? 0x1d2a38 : 0xffffff, roughness: 0.6 })); desk.position.set(x, 1.25, z); room.add(desk);
+      for (const lx of [-1.5, 1.5]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.2, 1.5), new THREE.MeshStandardMaterial({ color: dark ? 0x2a3846 : 0xd8dee6 })); leg.position.set(x + lx, 0.62, z); room.add(leg); }
+      const isWork = !it && !!working;
+      const scr = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 1.45), new THREE.MeshBasicMaterial({ map: screenTex(it ? [
+        { t: (KI[it.kind] || '✦') + ' ' + (t['kd_' + it.kind] || ''), f: '600 26px Inter, sans-serif', c: '#ffd28a' },
+        { t: it.title || '—', f: '700 32px Inter, sans-serif', c: '#ffffff' },
+        { t: t.openR + ' →', f: '600 24px Inter, sans-serif', c: '#7fe6f5' },
+      ] : [{ t: isWork ? '⚙ ' + t.working : '＋ ' + t.idle, f: '700 34px Inter, sans-serif', c: isWork ? '#ffd28a' : '#7fe6f5' }, { t: isWork ? working!.slice(0, 80) : t.taskO, f: '500 24px Inter, sans-serif', c: '#cfe9f0' }], 512, 320, '#0b1724', it ? '#57d3e6' : '#f2a93b') }));
+      scr.position.set(x, 2.35, z - 0.55); room.add(scr);
+      const bezel = new THREE.Mesh(new THREE.BoxGeometry(2.45, 1.6, 0.08), new THREE.MeshStandardMaterial({ color: 0x15181e })); bezel.position.set(x, 2.35, z - 0.6); room.add(bezel);
+      if (it) { scr.userData = { kind: 'res', id: it.id, chat: c.id, title: it.title }; officePick.push(scr); }
+      const a = agentMesh(isWork || !!it); a.g.position.set(x, 0, z + 1.35); room.add(a.g); // faces its monitor, like people at desks
+      a.g.traverse((m) => { m.userData = { kind: it ? 'res' : 'agent', id: it?.id, chat: c.id, title: it?.title || '' }; }); officePick.push(...(a.g.children as THREE.Object3D[]));
+      crew.push({ g: a.g, head: a.head, base: a.g.position.clone(), phase: Math.random() * 6, work: isWork || !!it, screen: isWork ? scr : undefined });
+    });
+    // one agent walks between the desks, carrying work
+    const w = agentMesh(false); w.g.position.set(-W / 2 + 3, 0, D / 2 - 3); room.add(w.g); crew.push({ g: w.g, head: w.head, base: new THREE.Vector3(0, 0, 0), phase: 0, work: false, walk: true });
+    // light for the room (the city's night light is too dim indoors)
+    const lamp = new THREE.PointLight(0xfff1dc, dark ? 260 : 160, 60, 1.6); lamp.position.set(0, 9, 0); room.add(lamp);
+    const fill = new THREE.PointLight(0x9fe8f5, dark ? 120 : 60, 50, 1.6); fill.position.set(-W / 3, 6, D / 3); room.add(fill);
+    for (let k = 0; k < cols; k++) { const sh = new THREE.Mesh(new THREE.ConeGeometry(0.6, 0.5, 20, 1, true), new THREE.MeshBasicMaterial({ color: 0xffd28a, side: THREE.DoubleSide })); sh.position.set((k - (cols - 1) / 2) * 6, 7.2, 0); room.add(sh); }
+    officeSize = { W, D };
+  }
+  let officeSize = { W: 20, D: 16 };
+  function animOffice(tt: number) {
+    for (const a of crew) {
+      if (a.walk) { const u = (tt * 0.06) % 1, ang = u * Math.PI * 2, rx = officeSize.W / 2 - 3, rz = officeSize.D / 2 - 2.2; a.g.position.set(Math.cos(ang) * rx, Math.abs(Math.sin(tt * 6)) * 0.12, Math.sin(ang) * rz + 1); a.g.rotation.y = -ang; continue; }
+      const sp = a.work ? 7 : 2;
+      a.head.position.y = 2.05 + Math.sin(tt * sp + a.phase) * (a.work ? 0.05 : 0.025);
+      a.head.rotation.z = Math.sin(tt * 1.3 + a.phase) * 0.08;
+      if (a.screen) (a.screen.material as THREE.MeshBasicMaterial).color.setScalar(0.75 + 0.25 * Math.sin(tt * 5));
+    }
+  }
+  async function enterOffice(c: (typeof chats)[number], note?: { q: string; a: string }) {
+    officeChat = c; ctl.autoRotate = false;
+    const j = await fetch('/api/ws/chat/' + c.id).then((r) => r.json()).catch(() => null);
+    const msgs: any[] = j?.msgs || [];
+    const items: It[] = msgs.filter((m) => m.role === 'assistant' && (m.site || m.doc || m.tool || m.image) && m.id).map((m) => ({ id: m.id, kind: m.site ? 'site' : m.tool ? 'tool' : m.doc ? 'doc' : 'image', title: (m.site?.title || m.tool?.title || m.doc?.title || '').slice(0, 70) }));
+    const lu = [...msgs].reverse().find((m) => m.role === 'user'), la = [...msgs].reverse().find((m) => m.role === 'assistant');
+    const clean = (x: string) => String(x || '').replace(/\[\[[^\]]*\]\]/g, '').replace(/📎 \S+ \S+/g, '').replace(/\s+/g, ' ').trim();
+    buildOffice(c, items, { q: clean(lu?.content).slice(0, 140), a: clean(la?.content).slice(0, 240) });
+    inOffice = true; tip.hidden = true;
+    $('.c-hint').textContent = t.officeHint;
+    const D = officeSize.D;
+    fly = { p0: cam.position.clone(), p1: OFF.clone().add(new THREE.Vector3(officeSize.W * 0.18, 8 + D * 0.2, D / 2 + 6)), t0: ctl.target.clone(), t1: OFF.clone().add(new THREE.Vector3(0, 2, -1)), s: performance.now() };
+    officePanel(c, items, msgs, note);
+  }
+  function officePanel(c: (typeof chats)[number], items: It[], msgs: any[], note?: { q: string; a: string }) {
+    const back = el('button', 'c-sec2', t.back); back.type = 'button'; back.onclick = () => { leaveOffice(); chatPanel(c); flyTo(buildings.find((x) => x.c.id === c.id)!.mesh.position, 14); };
+    const out = el('div'); out.style.cssText = 'display:grid;gap:6px';
+    if (note) out.append(el('div', 'c-msg u', note.q), el('div', 'c-msg', note.a));
+    const f = el('form', 'c-task'); const i = el('input'); i.placeholder = t.taskO; i.maxLength = 2000; const b = el('button', '', t.go); b.type = 'submit'; f.append(i, b);
+    f.onsubmit = async (e) => {
+      e.preventDefault(); const q = i.value.trim(); if (!q) { i.focus(); return; }
+      i.value = ''; b.disabled = true;
+      buildOffice(c, items, { q, a: '' }, q);
+      out.replaceChildren(el('div', 'c-msg u', q), el('div', 'c-msg', '⚙ ' + t.working));
+      const r = await o.askHere(q, c.id).catch(() => null);
+      b.disabled = false;
+      if (!alive || !inOffice) return;
+      if (!r) { out.lastElementChild!.textContent = t.busy; buildOffice(c, items, { q, a: t.busy }); return; }
+      out.lastElementChild!.textContent = r.text.slice(0, 600) || (r.title ? (KI[r.kind] || '') + ' ' + r.title : '');
+      c.msgs += 2; if (r.kind) { c.results += 1; (c as any)[r.kind === 'image' ? 'img' : r.kind] = ((c as any)[r.kind === 'image' ? 'img' : r.kind] || 0) + 1; }
+      enterOffice(c, { q, a: out.lastElementChild!.textContent || '' });
+    };
+    const lst = el('div', 'c-list');
+    for (const it of [...items].reverse().slice(0, 12)) { const bt = el('button'); bt.type = 'button'; bt.append(el('span', '', (KI[it.kind] || '✦') + ' ' + (it.title || '—')), el('small', '', t.openR + ' →')); bt.onclick = () => { close(); o.openResult(c.id, it.id); }; lst.append(bt); }
+    const chips = el('div', 'c-chips'); chips.append(el('span', '', `${crew.length} ${t.agents}`), el('span', '', `${items.length} ${t.res}`), el('span', '', `${c.msgs} ${t.msgs}`));
+    const ob = el('button', 'c-sec2', t.open + ' →'); ob.type = 'button'; ob.onclick = () => { close(); o.openChat(c.id); };
+    const row = el('div', 'c-row'); row.append(back, ob);
+    showPanel(t.office, c.title, [chips, f, out, el('div', 'c-sec', t.results), items.length ? lst : el('p', '', t.none), row]);
+  }
+  function leaveOffice() {
+    if (!inOffice) return; inOffice = false; officeChat = null; $('.c-hint').textContent = t.hint;
+    if (office) { scene.remove(office); office.traverse((ob) => { const m = ob as THREE.Mesh; m.geometry?.dispose?.(); const mt = m.material as THREE.MeshBasicMaterial | undefined; mt?.map?.dispose(); mt?.dispose?.(); }); office = null; }
+    crew = []; officePick.length = 0;
+  }
 
   // ---------- loop
   const v = new THREE.Vector3(), t0 = performance.now();
@@ -307,10 +447,12 @@ export function openCity(o: CityOpts): void {
     crown.rotation.y = tt * 0.8; crown.position.y = hqH + 1.8 + Math.sin(tt * 1.5) * 0.25;
     for (const b of beacons) (b.material as THREE.MeshBasicMaterial).opacity = 0.55 + 0.45 * Math.sin(tt * 3 + b.userData.blink), (b.material as THREE.MeshBasicMaterial).transparent = true;
     for (const a of agents) { const u = (a.o + tt * a.s) % 2, p = a.path(u > 1 ? 2 - u : u); a.m.position.copy(p); }
+    if (inOffice) animOffice(tt);
+    bloom.strength = inOffice ? (dark ? 0.28 : 0.12) : (dark ? 0.95 : 0.35);
     composer.render();
     // labels follow their places on screen
     const w = d.clientWidth, h = d.clientHeight;
-    for (const L of labels) { v.copy(L.pos).project(cam); const vis = v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1; L.el.style.display = vis ? '' : 'none'; if (vis) L.el.style.transform = `translate(${(v.x * 0.5 + 0.5) * w}px, ${(-v.y * 0.5 + 0.5) * h}px) translate(-50%,-100%)`; }
+    for (const L of labels) { v.copy(L.pos).project(cam); const vis = !inOffice && v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1; L.el.style.display = vis ? '' : 'none'; if (vis) L.el.style.transform = `translate(${(v.x * 0.5 + 0.5) * w}px, ${(-v.y * 0.5 + 0.5) * h}px) translate(-50%,-100%)`; }
     requestAnimationFrame(loop);
   };
   requestAnimationFrame(loop);

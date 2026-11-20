@@ -2509,6 +2509,14 @@ const ico = {
     m.openCity({
       lang, data: d, level: G ? { n: G.level, name: (T.game?.names || [])[G.level - 1] || '', xp: G.xp } : undefined,
       sheet: () => eyeTab(),
+      openResult: async (chat, id) => { await openChat(chat); const m = S.msgs.find((x) => x.id === id); if (m && hasArt(m)) showArt(m); },
+      askHere: async (q, chat) => {
+        if (S.busy) return null;
+        if (S.cur !== chat) await openChat(chat);
+        const before = S.msgs.length; await ask(q);
+        const last = S.msgs.slice(before).reverse().find((m) => m.role === 'assistant');
+        return last ? { text: plain(last.content || ''), kind: artKind(last), title: artTitle(last) } : null;
+      },
       openChat: (id) => openChat(id),
       openProject: (id) => { S.cur = 0; S.msgs = []; drawChats(); drawEmpty(); openProject(id, 'home'); },
       task: async (q, chat, project) => {

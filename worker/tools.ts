@@ -54,7 +54,7 @@ const TEX: Record<string, string> = { rightarrow: '→', to: '→', leftarrow: '
 export function tidyReply(reply: string, hasTool: boolean): string {
   return reply.replace(/\$\s*\\(rightarrow|to|leftarrow|Rightarrow|times|approx|le|ge|pm|cdot)\s*\$/g, (_m, k) => TEX[k]).replace(/\[+\s*TOOL\b[^\]]*\]+/gi, '').replace(/\[+\s*(canvas|холст|полотно|tool|calculator|калькулятор|doc)[^\]\n]*\]*/gi, '').split(/\n+/).map((p) => p.trim()).filter((p) => p && !TAIL.test(p) && !(hasTool && (OFFER.test(p) || NEEDS.test(p)))).join('\n\n');
 }
-export const READY: Record<string, string> = { en: 'Ready: enter your numbers below.', ru: 'Готово: введите свои данные ниже.', ua: 'Готово: введіть свої дані нижче.' };
+export const READY: Record<string, string> = { en: 'Ready — the tool is on the Canvas: enter your numbers there.', ru: 'Готово — инструмент на холсте: впишите туда свои данные.', ua: 'Готово — інструмент на полотні: впишіть туди свої дані.' };
 
 export const toolMarker = (t: ToolSpec) => `[[TOOL:${JSON.stringify(t)}]]`;
 
