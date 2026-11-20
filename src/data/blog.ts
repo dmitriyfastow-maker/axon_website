@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'learn-language-with-ai-30-day-plan',
+    date: '2026-11-20',
+    t: {
+      en: {
+        title: 'How to learn a language with AI: a 30-day plan that actually works', seo: 'Learn a language with AI: 30-day plan',
+        desc: 'A clear goal, 20 minutes a day, real conversations with AI and a weekly check — how to make progress in a new language without expensive courses.',
+        body: [
+          ['Why most people give up', ['Not because languages are hard, but because there is no plan: a random app today, a video tomorrow, nothing next week. AI fixes this — it can be your teacher, conversation partner and checker in one place.']],
+          ['1. Set one concrete goal', ['Not “learn English”, but “order food and ask for directions on a trip in a month” or “pass a job interview in English”. The goal decides which words and phrases you need.']],
+          ['2. Get your level checked', ['Ask AI: “give me a short test in Spanish and tell me my level honestly”. Five minutes — and you know where to start instead of repeating what you already know.']],
+          ['3. 20 minutes a day, always the same', ['5 minutes — 10 new words from your topic. 10 minutes — a conversation with AI in the language (ask it to correct mistakes gently at the end). 5 minutes — repeat yesterday’s words.']],
+          ['4. Talk, do not just read', ['Ask AI to play roles: a waiter, a hotel receptionist, an interviewer. Speak out loud or type. The fear of speaking goes away when the “other person” never judges.']],
+          ['5. Keep your own phrasebook', ['Every phrase you needed but did not know — into one list. Once a week ask AI to turn the list into a quiz. These are exactly the words you will use.']],
+          ['6. Check progress every week', ['Repeat the short test on day 7, 14, 21 and 30. Seeing the result grow is the best motivation to continue.']],
+          ['How Vaxo helps', ['In Workspace write “30-day plan: Italian for a trip, 20 minutes a day” — Vax will check your level, make a day-by-day plan with words and topics, play roles in conversations and build weekly quizzes from your phrasebook. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как выучить язык с ИИ: план на 30 дней, который работает', seo: 'Выучить язык с ИИ: план на 30 дней',
+        desc: 'Понятная цель, 20 минут в день, живые разговоры с ИИ и проверка раз в неделю — как продвинуться в новом языке без дорогих курсов.',
+        body: [
+          ['Почему большинство бросает', ['Не потому, что язык сложный, а потому что нет плана: сегодня случайное приложение, завтра видео, через неделю ничего. ИИ это решает — он может быть учителем, собеседником и проверяющим в одном месте.']],
+          ['1. Поставьте одну конкретную цель', ['Не «выучить английский», а «через месяц заказать еду и спросить дорогу в поездке» или «пройти собеседование на английском». Цель решает, какие слова и фразы вам нужны.']],
+          ['2. Узнайте свой уровень', ['Попросите ИИ: «дай короткий тест по испанскому и честно скажи мой уровень». Пять минут — и вы знаете, с чего начать, а не повторяете то, что уже знаете.']],
+          ['3. 20 минут в день, всегда одинаково', ['5 минут — 10 новых слов по вашей теме. 10 минут — разговор с ИИ на языке (попросите в конце мягко исправить ошибки). 5 минут — повторить вчерашние слова.']],
+          ['4. Говорите, а не только читайте', ['Попросите ИИ играть роли: официанта, администратора отеля, интервьюера. Говорите вслух или пишите. Страх говорить уходит, когда «собеседник» никогда не осуждает.']],
+          ['5. Ведите свой разговорник', ['Каждую фразу, которая была нужна, но вы её не знали, — в один список. Раз в неделю просите ИИ сделать из списка тест. Это именно те слова, которыми вы будете пользоваться.']],
+          ['6. Проверяйте прогресс каждую неделю', ['Повторите короткий тест на 7, 14, 21 и 30 день. Видеть, как растёт результат, — лучшая мотивация продолжать.']],
+          ['Чем помогает Vaxo', ['В Workspace напишите «план на 30 дней: итальянский для поездки, 20 минут в день» — Vax проверит уровень, составит план по дням со словами и темами, сыграет роли в разговорах и соберёт еженедельные тесты из вашего разговорника. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як вивчити мову з ШІ: план на 30 днів, який працює', seo: 'Вивчити мову з ШІ: план на 30 днів',
+        desc: 'Зрозуміла ціль, 20 хвилин на день, живі розмови з ШІ і перевірка раз на тиждень — як просунутися в новій мові без дорогих курсів.',
+        body: [
+          ['Чому більшість кидає', ['Не тому, що мова складна, а тому що немає плану: сьогодні випадковий застосунок, завтра відео, через тиждень нічого. ШІ це розв’язує — він може бути вчителем, співрозмовником і перевіряльником в одному місці.']],
+          ['1. Поставте одну конкретну ціль', ['Не «вивчити англійську», а «за місяць замовити їжу й запитати дорогу в подорожі» або «пройти співбесіду англійською». Ціль вирішує, які слова й фрази вам потрібні.']],
+          ['2. Дізнайтеся свій рівень', ['Попросіть ШІ: «дай короткий тест з іспанської і чесно скажи мій рівень». П’ять хвилин — і ви знаєте, з чого почати, а не повторюєте те, що вже знаєте.']],
+          ['3. 20 хвилин на день, завжди однаково', ['5 хвилин — 10 нових слів з вашої теми. 10 хвилин — розмова з ШІ мовою (попросіть наприкінці м’яко виправити помилки). 5 хвилин — повторити вчорашні слова.']],
+          ['4. Говоріть, а не лише читайте', ['Попросіть ШІ грати ролі: офіціанта, адміністратора готелю, інтерв’юера. Говоріть уголос або пишіть. Страх говорити зникає, коли «співрозмовник» ніколи не засуджує.']],
+          ['5. Ведіть свій розмовник', ['Кожну фразу, яка була потрібна, але ви її не знали, — в один список. Раз на тиждень просіть ШІ зробити зі списку тест. Це саме ті слова, якими ви користуватиметеся.']],
+          ['6. Перевіряйте прогрес щотижня', ['Повторіть короткий тест на 7, 14, 21 і 30 день. Бачити, як росте результат, — найкраща мотивація продовжувати.']],
+          ['Чим допомагає Vaxo', ['У Workspace напишіть «план на 30 днів: італійська для подорожі, 20 хвилин на день» — Vax перевірить рівень, складе план по днях зі словами й темами, зіграє ролі в розмовах і збере щотижневі тести з вашого розмовника. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'validate-business-idea-before-building',
     date: '2026-11-19',
     t: {
