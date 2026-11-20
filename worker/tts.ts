@@ -57,7 +57,8 @@ export async function handleTts(db: DB, request: Request, adminToken: string | u
   const text = String(b.text || '').replace(/\s+/g, ' ').trim().slice(0, 700);
   if (!text) return new Response(null, { status: 400 });
   const voice = VOICES[String(b.voice || 'warm')] || VOICES.warm;
-  const style = ({ ru: 'Скажи тепло, живо и по-дружески, как настоящий человек', ua: 'Скажи тепло, жваво й по-дружньому, як справжня людина', en: 'Say it warmly and naturally, like a real person' } as Record<string, string>)[String(b.lang)] || 'Say it warmly and naturally';
+  const tl = /[іїєґ]/i.test(text) ? 'ua' : /[а-яё]/i.test(text) ? 'ru' : 'en';
+  const style = ({ ru: 'Скажи тепло, живо и по-дружески, как настоящий человек', ua: 'Скажи тепло, жваво й по-дружньому, як справжня людина', en: 'Say it warmly and naturally, like a real person' } as Record<string, string>)[tl] || 'Say it warmly and naturally';
   const audio = await speakText(key, text, voice, style);
   if (!audio) return new Response(null, { status: 502 });
   return new Response(audio, { headers: { 'Content-Type': 'audio/wav', 'Cache-Control': 'private, max-age=600' } });

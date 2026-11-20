@@ -352,6 +352,15 @@ async function ask(db: DB, ai: AiBinding, request: Request, b: Record<string, un
   // PROJECT STATE (Decision 58): what already works in this chat's project, so Vax configures instead of re-offering.
   const projRow = me && chat ? await db.prepare('SELECT p.id, p.biz_id AS biz FROM ws_chats c JOIN ws_projects p ON p.id = c.project_id WHERE c.id = ? AND c.client_id = ?').bind(chat, me.id).first<{ id: number; biz: number | null }>().catch(() => null) : null;
   let state = '';
+  // Project memory (20.11): each project has its own rules and facts, and may borrow the memory of other projects.
+  const projId = projRow?.id || (me && Number(b.project) ? Number(b.project) : 0);
+  if (me && projId) {
+    const pm = await projectMemory(db, me.id, projId).catch(() => null);
+    if (pm?.text || pm?.linked.length) {
+      state += `\nPROJECT RULES AND MEMORY (written by the person for this project; follow them in every answer here):\n${pm.text || '—'}`;
+      for (const l of pm.linked) state += `\nMEMORY BORROWED FROM THEIR PROJECT «${l.name}»:\n${l.text}`;
+    }
+  }
   if (me && projRow?.biz) {
     const ms = await modulesState(db, me.id, new URL(request.url).origin, true, projRow.biz).catch(() => null) as Record<string, any> | null;
     if (ms) {
@@ -537,6 +546,22 @@ async function importGuest(db: DB, clientId: number, b: Record<string, unknown>)
   }
 }
 
+/** A project's own rules + the memory it borrows from the person's other projects (Decision 70). */
+async function projectMemory(db: DB, clientId: number, pid: number): Promise<{ text: string; linked: { name: string; text: string }[] } | null> {
+  const get = async (id: number) => { const r = (await db.prepare('SELECT value FROM settings WHERE key = ?').bind('proj_mem_' + id).first<{ value: string }>().catch(() => null))?.value; try { return JSON.parse(r || '{}') as { text?: string; links?: number[] }; } catch { return {}; } };
+  const own = await db.prepare('SELECT id FROM ws_projects WHERE id = ? AND client_id = ?').bind(pid, clientId).first();
+  if (!own) return null;
+  const v = await get(pid), linked: { name: string; text: string }[] = [];
+  for (const id of (v.links || []).slice(0, 10)) {
+    const p = await db.prepare('SELECT name FROM ws_projects WHERE id = ? AND client_id = ?').bind(id, clientId).first<{ name: string }>();
+    if (!p) continue;
+    const lv = await get(id);
+    const chats = ((await db.prepare("SELECT title FROM ws_chats WHERE project_id = ? AND client_id = ? ORDER BY id DESC LIMIT 12").bind(id, clientId).all<{ title: string }>()).results || []).map((x) => x.title).join('; ');
+    linked.push({ name: p.name, text: [lv.text, chats && `Chats there: ${chats}`].filter(Boolean).join('\n').slice(0, 3000) });
+  }
+  return { text: (v.text || '').slice(0, 8000), linked };
+}
+
 /** A public «share» link of a chat in another AI → its text. Only these hosts (no fetching of arbitrary addresses).
  *  Some of them draw the page with scripts and give no text to a server; then the person pastes the text instead. */
 const SHARE_HOSTS = ['chatgpt.com', 'chat.openai.com', 'claude.ai', 'gemini.google.com', 'g.co', 'grok.com', 'x.com', 'copilot.microsoft.com', 'perplexity.ai', 'www.perplexity.ai', 'chat.deepseek.com', 'chat.mistral.ai', 'poe.com'];
@@ -710,6 +735,19 @@ export async function handleWorkspace(db: DB, ai: AiBinding | undefined, request
       return out(200, { ok: true, list: await listReviews(db, own.id, true) });
     }
     // Decision 63: public or private — the programme page of a project's business.
+    const pmem = path.match(/^project\/(\d+)\/memory$/);
+    if (pmem) {
+      const pid = Number(pmem[1]);
+      if (!(await db.prepare('SELECT 1 FROM ws_projects WHERE id = ? AND client_id = ?').bind(pid, me.id).first())) return out(404, { ok: false });
+      if (m === 'POST') {
+        const own = new Set(((await db.prepare('SELECT id FROM ws_projects WHERE client_id = ?').bind(me.id).all<{ id: number }>()).results || []).map((x) => x.id));
+        const v = { text: cut(b.text, 8000), links: (Array.isArray(b.links) ? b.links : []).map(Number).filter((x: number) => own.has(x) && x !== pid).slice(0, 10) };
+        await db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind('proj_mem_' + pid, JSON.stringify(v)).run();
+      }
+      const raw = (await db.prepare('SELECT value FROM settings WHERE key = ?').bind('proj_mem_' + pid).first<{ value: string }>().catch(() => null))?.value;
+      let v: { text?: string; links?: number[] } = {}; try { v = JSON.parse(raw || '{}'); } catch { /* */ }
+      return out(200, { ok: true, text: v.text || '', links: v.links || [] });
+    }
     const pubm = path.match(/^project\/(\d+)\/public$/);
     if (pubm && m === 'POST') {
       const pr = await db.prepare('SELECT biz_id FROM ws_projects WHERE id = ? AND client_id = ?').bind(Number(pubm[1]), me.id).first<{ biz_id: number | null }>();

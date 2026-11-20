@@ -62,8 +62,31 @@ export function attachMic(button: HTMLButtonElement, field: Field, lang: () => s
     const timer = setTimeout(() => mr.state !== 'inactive' && mr.stop(), MAX_MS);
     const show = () => { const s = Math.round((Date.now() - started) / 1000); note(t().rec.replace('{s}', `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`)); };
     show(); tick = setInterval(show, 500);
+    // 20.11: words appear while you speak (like ChatGPT): every ~2 s the clip so far goes to /api/stt and the new words
+    // light up in the brand colour above the field. The final text lands in the field when you stop.
+    const box = document.createElement('div'); box.className = 'dict-live'; box.setAttribute('aria-live', 'polite');
+    (field.closest('form') || field.parentElement)?.before(box);
+    if (!document.getElementById('dict-css')) { const st = document.createElement('style'); st.id = 'dict-css'; st.textContent = '.dict-live{max-width:760px;margin:0 auto 6px;padding:10px 14px;border-radius:14px;font-size:16px;line-height:1.5;background:color-mix(in srgb,#e8a33d 7%,transparent);border:1px solid color-mix(in srgb,#e8a33d 30%,transparent);min-height:24px}.dict-live:empty::before{content:"🎙 …";opacity:.6}.dict-live span{display:inline-block;margin-right:.28em;animation:dictin .5s ease-out both}.dict-live span.new{color:#e8a33d;text-shadow:0 0 12px rgba(232,163,61,.55)}@keyframes dictin{from{opacity:0;transform:translateY(4px);filter:blur(3px)}}'; document.head.append(st); }
+    let shown: string[] = [], busy = false;
+    const paintLive = (text: string) => {
+      const words = text.split(/\s+/).filter(Boolean);
+      const keep = shown.length && words.slice(0, shown.length).join(' ') === shown.join(' ') ? shown.length : 0;
+      if (!keep) box.replaceChildren();
+      box.querySelectorAll('span.new').forEach((x) => x.classList.remove('new'));
+      for (const w of words.slice(keep)) { const sp = document.createElement('span'); sp.className = 'new'; sp.textContent = w; box.append(sp); }
+      shown = words;
+    };
+    const liveTick = setInterval(async () => {
+      if (busy || !chunks.length || mr.state === 'inactive') return;
+      busy = true;
+      const blob = new Blob(chunks, { type: (mr.mimeType || type || 'audio/webm').split(';')[0] });
+      const r = await fetch(`/api/stt?lang=${encodeURIComponent(lang())}`, { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob }).catch(() => null);
+      const d = r?.ok ? await r.json().catch(() => null) : null;
+      if (d?.text && mr.state !== 'inactive') paintLive(String(d.text).trim());
+      busy = false;
+    }, 2200);
     mr.onstop = async () => {
-      clearTimeout(timer); clearInterval(tick);
+      clearTimeout(timer); clearInterval(tick); clearInterval(liveTick); setTimeout(() => box.remove(), 600);
       stream.getTracks().forEach((x) => x.stop());
       stop = null;
       setOn(false);

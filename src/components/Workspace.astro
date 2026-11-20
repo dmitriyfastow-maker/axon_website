@@ -30,12 +30,12 @@ const T = {
     exL: 'Or any task, from everyday to company level:', ex: ['Plan a 5-day trip to Italy: route, budget, what to book', 'Financial model for an online school launch at $50k revenue: ads, team and taxes', 'A 30-day training and recovery protocol'],
     mdl: { label: 'Model', auto: ['Auto', 'Picks the model for each task: a fast one for simple things, the strongest for hard ones (recommended)'], more: 'Other models', m: { 'opus-5-5': ['Opus 5.5', 'Maximum: the hardest tasks, top quality. Uses the allowance about 2× faster'], 'sonnet-5-5': ['Sonnet 5.5', 'Strong: texts, plans, analysis, everyday work'], 'haiku-5-5': ['Haiku 5.5', 'Fast: short answers and simple tasks, uses very little'], 'opus-5': ['Opus 5', 'The previous Opus'], 'sonnet-5': ['Sonnet 5', 'The previous Sonnet'] }, paid: 'Choosing a model by hand comes with any paid plan. On the free plan Vax answers with Haiku 5.5.' },
     lim: { h: 'Usage limits', month: 'This month', outMonth: 'This month\'s allowance is used up. It renews {t}; to continue now, move up a plan.', day: 'Today', week: 'This week', used: '{p}% used', reset: 'Renews {t}', note: 'The limit follows the amount of work, not the number of messages: a short answer uses little, a big document, a site or a picture uses more.', today: 'today at {h}', tomorrow: 'tomorrow at {h}', on: '{d} at {h}', outDay: 'Today’s limit is used up. It renews {t}. Everything is saved.', outWeek: 'This week’s limit is used up. It renews {t}. Everything is saved.', more: 'Need more? Plans', top: 'Add allowance for this month:', topBtn: '+${u}', topErr: 'Could not create the invoice. Try again.' }, usageGuest: 'Guest: a small daily limit. Sign in free for more.',
-    pTabs: { plan: 'Plan', memory: 'Memory', projects: 'Projects', account: 'Account' },
+    pTabs: { plan: 'Plan', earn: 'Earn with Vaxo', memory: 'Memory', projects: 'Projects', account: 'Account' },
     pub: 'Publish', pubBusy: 'Publishing…', pubDone: 'Published', pubAgain: 'Update the page', pubOff: 'Unpublish', replaceQ: 'Replace your current site with this page?', pubLink: 'Public link',
     siteCard: 'Page draft', siteNew: 'Describe your business in one line', siteNewGo: 'Build the page', siteAsk: 'Build a site and everything a business needs for: ', fAsk: 'Hint in the message box', live: 'Your site is live. Requests go to your email and CRM.', domH: 'Your own domain',
     crmFullBtn: 'Full CRM: analytics, team, AI assistant', parCab: 'Partner cabinet', parVaxo: 'Vaxo partner program: 50% of the first payment and 30% of every next one, in money. Free for anyone 18+.', parGo: 'Become a partner →', parMine: 'Links for your own partners', csv: 'Download CSV', copyT: 'Copy as table', toolMore: 'Change any number: everything recounts at once.',
     title: 'Vaxo Workspace', desc: 'Your workspace with Vax: chat, memory, tools and modules on one screen.',
-    srch: { ph: 'Search chats', none: 'Nothing found', chats: 'Chats and projects', inText: 'In messages', results: 'Results' },
+    srch: { ph: 'Find: a word, or describe what you need', none: 'Nothing found', chats: 'Chats and projects', inText: 'In messages', results: 'Results' },
     new: 'New chat', chats: 'Projects and chats', noChats: 'Your chats and projects will live here. Write your first task and it appears.', mods: 'Modules', crm: 'CRM', partner: 'Partner links', site: 'Site', you: 'My account', memory: 'Memory', earn: 'Earn with Vaxo', profile: 'Profile and billing',
     signin: 'Sign in', out: 'Sign out', guest: 'Guest: saved in this browser', short: 'Short answers', deep: 'Detailed, on the Canvas', modeL: 'How Vax answers', modeTip: 'Short: the essence in a few lines. Detailed: the full worked-out result opens on the Canvas on the right.', canvas: 'Canvas', menu: 'Menu', close: 'Close',
     ph: 'Write your task…', send: 'Send', mic: 'Voice input', attach: 'Attach a file', think: 'Vax is working…', err: 'That did not go through. Try again in a moment.', limit: 'That is all for today on this plan. It renews tomorrow, and everything is saved.', guestLimit: 'That is all for a guest today. Sign in for free to keep going.',
@@ -69,12 +69,12 @@ const T = {
     exL: 'Или любая задача — от бытовой до задачи компании:', ex: ['Спланируй отпуск в Италии на 5 дней: маршрут, бюджет, что забронировать', 'Финмодель запуска онлайн-школы на $50k оборота: реклама, команда, налоги', '30-дневный протокол тренировок и восстановления'],
     mdl: { label: 'Модель', auto: ['Авто', 'Сам выбирает модель под задачу: для простого — быструю, для сложного — самую сильную (рекомендуем)'], more: 'Другие модели', m: { 'opus-5-5': ['Opus 5.5', 'Максимальная: самые сложные задачи, наивысшее качество. Тратит запас примерно в 2 раза быстрее'], 'sonnet-5-5': ['Sonnet 5.5', 'Сильная: тексты, планы, анализ, повседневная работа'], 'haiku-5-5': ['Haiku 5.5', 'Быстрая: короткие ответы и простые задачи, почти не тратит запас'], 'opus-5': ['Opus 5', 'Прошлая версия Opus'], 'sonnet-5': ['Sonnet 5', 'Прошлая версия Sonnet'] }, paid: 'Выбор модели вручную — на любом платном тарифе. На бесплатном Vax отвечает моделью Haiku 5.5.' },
     lim: { h: 'Лимиты', month: 'Этот месяц', outMonth: 'Объём работы на этот месяц закончился. Обновится {t}; чтобы продолжить сейчас, перейдите на тариф выше.', day: 'Сегодня', week: 'Неделя', used: 'Использовано {p}%', reset: 'Обновится {t}', note: 'Лимит считается по объёму работы, а не по числу сообщений: короткий ответ тратит мало, большой документ, сайт или картинка больше.', today: 'сегодня в {h}', tomorrow: 'завтра в {h}', on: '{d} в {h}', outDay: 'Лимит на сегодня исчерпан. Обновится {t}. Всё сохранено.', outWeek: 'Лимит на неделю исчерпан. Обновится {t}. Всё сохранено.', more: 'Нужно больше? Тарифы', top: 'Докупить запас на этот месяц:', topBtn: '+${u}', topErr: 'Не получилось создать счёт. Попробуйте ещё раз.' }, usageGuest: 'Гость: небольшой лимит на день. Войдите бесплатно, лимит больше.',
-    pTabs: { plan: 'Тариф', memory: 'Память', projects: 'Проекты', account: 'Аккаунт' },
+    pTabs: { plan: 'Тариф', earn: 'Заработать', memory: 'Память', projects: 'Проекты', account: 'Аккаунт' },
     pub: 'Опубликовать', pubBusy: 'Публикую…', pubDone: 'Опубликовано', pubAgain: 'Обновить страницу', pubOff: 'Снять с публикации', replaceQ: 'Заменить ваш текущий сайт этой страницей?', pubLink: 'Публичная ссылка',
     siteCard: 'Макет страницы', siteNew: 'Опишите бизнес одной строкой', siteNewGo: 'Собрать страницу', siteAsk: 'Собери сайт и всё для бизнеса: ', fAsk: 'Подсказка в поле сообщения', live: 'Сайт работает. Заявки приходят на почту и в CRM.', domH: 'Свой домен',
     crmFullBtn: 'Полная CRM: аналитика, команда, ИИ-помощник', parCab: 'Партнёрский кабинет', parVaxo: 'Партнёрская программа Vaxo: 50% первой оплаты и 30% каждой следующей, деньгами. Бесплатно для всех 18+.', parGo: 'Стать партнёром →', parMine: 'Ссылки для ваших партнёров', csv: 'Скачать CSV', copyT: 'Копировать таблицей', toolMore: 'Меняйте любое число: всё пересчитывается сразу.',
     title: 'Vaxo Workspace', desc: 'Ваше рабочее пространство с Vax: чат, память, инструменты и модули на одном экране.',
-    srch: { ph: 'Поиск по разговорам', none: 'Ничего не нашлось', chats: 'Разговоры и проекты', inText: 'В сообщениях', results: 'Результаты' },
+    srch: { ph: 'Найти: слово или опишите, что ищете', none: 'Ничего не нашлось', chats: 'Разговоры и проекты', inText: 'В сообщениях', results: 'Результаты' },
     new: 'Новый разговор', chats: 'Проекты и разговоры', noChats: 'Здесь будут ваши разговоры и проекты. Напишите первую задачу, и она появится тут.', mods: 'Модули', crm: 'CRM', partner: 'Партнёрские ссылки', site: 'Сайт', you: 'Мой кабинет', memory: 'Память', earn: 'Заработать с Vaxo', profile: 'Профиль и оплата',
     signin: 'Войти', out: 'Выйти', guest: 'Гость: сохраняется в этом браузере', short: 'Коротко', deep: 'Подробно на холсте', modeL: 'Как отвечает Vax', modeTip: 'Коротко: суть в нескольких строках. Подробно: полный проработанный результат откроется справа на холсте.', canvas: 'Холст', menu: 'Меню', close: 'Закрыть',
     ph: 'Напишите задачу…', send: 'Отправить', mic: 'Голосовой ввод', attach: 'Прикрепить файл', think: 'Vax работает…', err: 'Не получилось. Попробуйте ещё раз через мгновение.', limit: 'На сегодня по тарифу всё. Завтра запас обновится, всё сохранено.', guestLimit: 'Для гостя на сегодня всё. Войдите бесплатно, чтобы продолжить.',
@@ -108,12 +108,12 @@ const T = {
     exL: 'Або будь-яке завдання — від побутового до завдання компанії:', ex: ['Сплануй відпустку в Італії на 5 днів: маршрут, бюджет, що забронювати', 'Фінмодель запуску онлайн-школи на $50k обороту: реклама, команда, податки', '30-денний протокол тренувань і відновлення'],
     mdl: { label: 'Модель', auto: ['Авто', 'Сам обирає модель під завдання: для простого — швидку, для складного — найсильнішу (рекомендуємо)'], more: 'Інші моделі', m: { 'opus-5-5': ['Opus 5.5', 'Максимальна: найскладніші завдання, найвища якість. Витрачає запас приблизно вдвічі швидше'], 'sonnet-5-5': ['Sonnet 5.5', 'Сильна: тексти, плани, аналіз, щоденна робота'], 'haiku-5-5': ['Haiku 5.5', 'Швидка: короткі відповіді й прості завдання, майже не витрачає запас'], 'opus-5': ['Opus 5', 'Попередня версія Opus'], 'sonnet-5': ['Sonnet 5', 'Попередня версія Sonnet'] }, paid: 'Вибір моделі вручну — на будь-якому платному тарифі. На безкоштовному Vax відповідає моделлю Haiku 5.5.' },
     lim: { h: 'Ліміти', month: 'Цей місяць', outMonth: 'Обсяг роботи на цей місяць закінчився. Оновиться {t}; щоб продовжити зараз, перейдіть на тариф вище.', day: 'Сьогодні', week: 'Тиждень', used: 'Використано {p}%', reset: 'Оновиться {t}', note: 'Ліміт рахується за обсягом роботи, а не за кількістю повідомлень: коротка відповідь витрачає мало, великий документ, сайт або картинка більше.', today: 'сьогодні о {h}', tomorrow: 'завтра о {h}', on: '{d} о {h}', outDay: 'Ліміт на сьогодні вичерпано. Оновиться {t}. Усе збережено.', outWeek: 'Ліміт на тиждень вичерпано. Оновиться {t}. Усе збережено.', more: 'Потрібно більше? Тарифи', top: 'Докупити запас на цей місяць:', topBtn: '+${u}', topErr: 'Не вдалося створити рахунок. Спробуйте ще раз.' }, usageGuest: 'Гість: невеликий ліміт на день. Увійдіть безкоштовно, ліміт більший.',
-    pTabs: { plan: 'Тариф', memory: 'Памʼять', projects: 'Проєкти', account: 'Акаунт' },
+    pTabs: { plan: 'Тариф', earn: 'Заробити', memory: 'Памʼять', projects: 'Проєкти', account: 'Акаунт' },
     pub: 'Опублікувати', pubBusy: 'Публікую…', pubDone: 'Опубліковано', pubAgain: 'Оновити сторінку', pubOff: 'Зняти з публікації', replaceQ: 'Замінити ваш поточний сайт цією сторінкою?', pubLink: 'Публічне посилання',
     siteCard: 'Макет сторінки', siteNew: 'Опишіть бізнес одним рядком', siteNewGo: 'Зібрати сторінку', siteAsk: 'Збери сайт і все для бізнесу: ', fAsk: 'Підказка в полі повідомлення', live: 'Сайт працює. Заявки приходять на пошту і в CRM.', domH: 'Свій домен',
     crmFullBtn: 'Повна CRM: аналітика, команда, ШІ-помічник', parCab: 'Партнерський кабінет', parVaxo: 'Партнерська програма Vaxo: 50% першої оплати і 30% кожної наступної, грошима. Безкоштовно для всіх 18+.', parGo: 'Стати партнером →', parMine: 'Посилання для ваших партнерів', csv: 'Завантажити CSV', copyT: 'Копіювати таблицею', toolMore: 'Змінюйте будь-яке число: усе перераховується одразу.',
     title: 'Vaxo Workspace', desc: 'Ваш робочий простір з Vax: чат, памʼять, інструменти й модулі на одному екрані.',
-    srch: { ph: 'Пошук у розмовах', none: 'Нічого не знайшлося', chats: 'Розмови й проєкти', inText: 'У повідомленнях', results: 'Результати' },
+    srch: { ph: 'Знайти: слово або опишіть, що шукаєте', none: 'Нічого не знайшлося', chats: 'Розмови й проєкти', inText: 'У повідомленнях', results: 'Результати' },
     new: 'Нова розмова', chats: 'Проєкти й розмови', noChats: 'Тут будуть ваші розмови і проєкти. Напишіть перше завдання, і воно зʼявиться тут.', mods: 'Модулі', crm: 'CRM', partner: 'Партнерські посилання', site: 'Сайт', you: 'Мій кабінет', memory: 'Памʼять', earn: 'Заробити з Vaxo', profile: 'Профіль і оплата',
     signin: 'Увійти', out: 'Вийти', guest: 'Гість: зберігається в цьому браузері', short: 'Коротко', deep: 'Детально на полотні', modeL: 'Як відповідає Vax', modeTip: 'Коротко: суть у кількох рядках. Детально: повний опрацьований результат відкриється праворуч на полотні.', canvas: 'Полотно', menu: 'Меню', close: 'Закрити',
     ph: 'Напишіть завдання…', send: 'Надіслати', mic: 'Голосове введення', attach: 'Прикріпити файл', think: 'Vax працює…', err: 'Не вийшло. Спробуйте ще раз за мить.', limit: 'На сьогодні за тарифом усе. Завтра запас оновиться, усе збережено.', guestLimit: 'Для гостя на сьогодні все. Увійдіть безкоштовно, щоб продовжити.',
@@ -151,7 +151,7 @@ const ico = {
       <input class="wsearch" type="search" data-search placeholder={T.srch.ph} aria-label={T.srch.ph} autocomplete="off" />
       <div class="shits" data-shits hidden></div>
       <nav class="chats" data-chats></nav>
-      <div class="you" data-you><p class="lbl youh">{T.you}</p>
+      <div class="you" data-you><button type="button" class="lbl youh" data-youh aria-expanded="true">{T.you}<i aria-hidden="true">▾</i></button>
       <button class="nav" type="button" data-prof="memory"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d={ico.memory} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.memory}</button>
       <button class="nav" type="button" data-earn><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 3v18M17 7H9.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.earn}</button>
       <button class="nav" type="button" data-prof="plan"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d={ico.user} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>{T.profile}</button>
@@ -437,7 +437,7 @@ const ico = {
       if (g.p) {
         const p = g.p, open = !closed.has(p.id), head = el('div', 'phead');
         const car = btn('car2' + (open ? '' : ' shut'), '', () => { if (open) closed.add(p.id); else closed.delete(p.id); keepClosed(); drawChats(); }); car.setAttribute('aria-label', open ? T.fold : T.unfold); car.title = open ? T.fold : T.unfold; car.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-        const t = btn('ptitle' + (S.proj?.id === p.id ? ' on' : ''), '', () => { side(false); openProject(p.id, 'home'); });
+        const t = btn('ptitle' + (S.proj?.id === p.id && !S.cur ? ' on' : ''), '', () => { side(false); openSeq++; S.cur = 0; S.msgs = []; S.pendingProject = p.id; drawEmpty(); openProject(p.id, 'home').then(() => drawChats()); });
         t.append(el('span', 'pn', clean(p.name)), el('i', 'cnt', String(g.chats.length)));
         head.append(car);
         const more = btn('dots', '⋯', () => projMenu(p, more));
@@ -884,18 +884,23 @@ const ico = {
     }));
     log.append(ban); for (const m of S.msgs) drawMsg(m);
   }
+  let openSeq = 0;
   async function openChat(id: number) {
+    const seq = ++openSeq;
     S.cur = id;
     const c = S.chats.find((x) => x.id === id);
     if (S.signed) {
       const d = await (await fetch('/api/ws/chat/' + id)).json().catch(() => null);
       S.msgs = d?.msgs || [];
     } else S.msgs = c?.msgs || [];
+    if (seq !== openSeq) return;
     await useProject(c?.project);
+    if (seq !== openSeq) return;
     drawChats(); drawAll();
     const last = [...S.msgs].reverse().find(hasArt);
     const lv = level();
-    if (!matchMedia('(min-width: 1100px)').matches || lv === 'chat') closeCv(); else if (lv === 'board') showBoard(); else if (last) showArt(last); else closeCv();
+    // 20.11: its own latest result first; the chat's board only when it has several; otherwise no canvas.
+    if (!matchMedia('(min-width: 1100px)').matches || lv === 'chat') closeCv(); else if (last && chatObjs().length < 2) showArt(last); else if (lv === 'board') board(); else if (last) showArt(last); else closeCv();
   }
   /** A newcomer with nothing made yet sees only the start screen: the studio does not open by itself. */
   const novice = () => !S.chats.length && !S.projects.length && !(S.mods?.pages || []).length && !S.proj?.biz;
@@ -940,7 +945,7 @@ const ico = {
     let say: Msg = { role: 'assistant', content: T.err };
     let baseTier = false;
     try {
-      const r = await post('/api/ws/ask', { q, lang, mode: S.mode, model: MODEL, chat: S.signed ? S.cur : 0, ...(S.signed ? {} : { history, memory: S.memory }) });
+      const r = await post('/api/ws/ask', { q, lang, mode: S.mode, model: MODEL, chat: S.signed ? S.cur : 0, project: S.pendingProject || S.proj?.id || 0, ...(S.signed ? {} : { history, memory: S.memory }) });
       const d = await r.json();
       if (r.status === 429) say.content = d.error === 'hour' ? (({ ru: 'Очень много сообщений за час — дайте мне пару минут.', ua: 'Дуже багато повідомлень за годину — дайте мені кілька хвилин.' } as R)[lang] || 'That was a lot of messages in one hour. Give me a few minutes.') : d.error === 'guest' ? T.guestLimit : d.reset ? (d.error === 'month' ? T.lim.outMonth : d.error === 'week' ? T.lim.outWeek : T.lim.outDay).replace('{t}', when(d.reset)) : T.limit;
       else if (d.ok) {
@@ -994,7 +999,8 @@ const ico = {
     en: { live: 'Live', files: 'Files', made: 'Made in this chat', inProj: 'Everything made in this project', empty: 'This is a big task: everything Vax makes for it will gather here, the site, requests, documents, pictures, tables. Answer the questions in the chat or pick «build now».', mkP: 'Is the task growing? Make it a project to get the business tabs: site, requests, bookings, payments, team, partners.', mk: '+ Make it a project', all: 'Whole canvas' },
   } as Record<string, any>)[lang] || ({} as any);
   function chatObjs(): Obj[] {
-    const pid = S.proj?.id || S.chats.find((x) => x.id === S.cur)?.project;
+    // 20.11: an open chat shows only ITS results; the project's overview (no chat open) shows all its chats.
+    const pid = S.cur ? 0 : S.proj?.id;
     const ids = new Set(pid ? S.chats.filter((x) => x.project === pid).map((x) => x.id) : [S.cur]);
     const seen = new Set<string>();
     return objectsOf().filter((o) => ids.has(o.chat)).filter((o) => { const k = o.kind + (o.url || o.title || o.id); if (seen.has(k)) return false; seen.add(k); return true; });
@@ -1003,16 +1009,45 @@ const ico = {
   function level(): 'chat' | 'one' | 'board' {
     if (!S.cur) return 'chat';
     const c = S.chats.find((x) => x.id === S.cur), n = chatObjs().length;
-    if (c?.project || n >= 2 || S.msgs.some((m) => m.role === 'assistant' && (BIG.test(m.content || '') || !!m.site || !!m.deploy))) return 'board';
+    if (n >= 2 || S.msgs.some((m) => m.role === 'assistant' && (BIG.test(m.content || '') || !!m.site || !!m.deploy))) return 'board';
     return n || S.msgs.some(hasArt) ? 'one' : 'chat';
   }
   function board() {
     const c = S.chats.find((x) => x.id === S.cur);
     const box = el('div', 'pf board54');
-    if (S.proj && (S.proj.biz || S.mods?.site)) { const hb = homeBox(); if (hb) box.append(hb); }
+    const overview = !S.cur && !!S.proj;
+    if (overview && (S.proj!.biz || S.mods?.site)) { const hb = homeBox(); if (hb) box.append(hb); }
+    // Decision 70: the project's own rules and memory, and memory borrowed from other projects — like a brief that every
+    // chat in the project follows, without repeating it.
+    if (overview && S.signed) {
+      const PM = ({ ru: { h: '🧠 Память и правила проекта', p: 'Всё, что Vax должен помнить и соблюдать во всех разговорах этого проекта: кто клиент, стиль, цены, запреты, цели. Писать один раз — работает везде в проекте.', ph: 'Например: салон в Киеве, премиум; пишем на «вы», без смайликов; цены не называем без меня; цель — 40 записей в месяц.', link: 'Взять память из других проектов', save: 'Сохранить', saved: 'Сохранено — Vax учтёт это в каждом разговоре проекта' },
+        ua: { h: '🧠 Пам’ять і правила проєкту', p: 'Усе, що Vax має пам’ятати й дотримуватися в усіх розмовах цього проєкту: хто клієнт, стиль, ціни, заборони, цілі. Написати один раз — працює всюди в проєкті.', ph: 'Наприклад: салон у Києві, преміум; пишемо на «ви», без смайликів; ціни не називаємо без мене; мета — 40 записів на місяць.', link: 'Взяти пам’ять з інших проєктів', save: 'Зберегти', saved: 'Збережено — Vax врахує це в кожній розмові проєкту' },
+        en: { h: '🧠 Project memory and rules', p: 'What Vax must remember and follow in every chat of this project: the client, style, prices, don’ts, goals. Write once — it works everywhere in the project.', ph: 'E.g.: a premium salon in Kyiv; formal tone, no emojis; never quote prices without me; goal — 40 bookings a month.', link: 'Borrow memory from other projects', save: 'Save', saved: 'Saved — Vax uses it in every chat of the project' } } as Record<string, Record<string, string>>)[lang];
+      const sm = el('section', 'blk pmem'), ta = el('textarea') as HTMLTextAreaElement, links = el('div', 'pml'), msg = el('small', 'hint');
+      ta.rows = 4; ta.maxLength = 8000; ta.placeholder = PM.ph;
+      const others = S.projects.filter((x) => x.id !== S.proj!.id);
+      const boxes: HTMLInputElement[] = [];
+      for (const o of others) { const l = el('label', 'pmc'), c = el('input') as HTMLInputElement; c.type = 'checkbox'; c.value = String(o.id); boxes.push(c); l.append(c, document.createTextNode(' ' + clean(o.name))); links.append(l); }
+      const save = btn('pri sm', PM.save, async () => { await postJ(`/api/ws/project/${S.proj!.id}/memory`, { text: ta.value, links: boxes.filter((x) => x.checked).map((x) => Number(x.value)) }); msg.textContent = PM.saved; });
+      sm.append(el('h3', '', PM.h), el('p', 'hint', PM.p), ta);
+      if (others.length) sm.append(el('b', 'pmlh', PM.link), links);
+      sm.append(save, msg);
+      fetch(`/api/ws/project/${S.proj!.id}/memory`).then((r) => r.json()).then((d) => { if (!d?.ok) return; ta.value = d.text || ''; boxes.forEach((x) => (x.checked = (d.links || []).includes(Number(x.value)))); }).catch(() => {});
+      box.append(sm);
+    }
+    // The project's overview lists its chats, each opens with its own canvas.
+    if (overview) {
+      const list = S.chats.filter((x) => x.project === S.proj!.id);
+      if (list.length) {
+        const sc = el('section', 'blk'); sc.append(el('h3', '', `${({ ru: 'Разговоры проекта', ua: 'Розмови проєкту', en: 'Chats in this project' } as Record<string, string>)[lang]} · ${list.length}`));
+        const objs0 = objectsOf();
+        for (const ch of list) { const n0 = objs0.filter((o) => o.chat === ch.id).length; const b = btn('sec pchat', `💬 ${clean(ch.title)}${n0 ? ` · ${n0}` : ''}`, () => openChat(ch.id)); sc.append(b); }
+        box.append(sc);
+      }
+    }
     // Decision 66: every public page of the business in one place (open in a new tab, copy, share).
     const slug0 = S.mods?.site?.slug || (S.mods?.pages || [])[0]?.slug;
-    if (S.proj && slug0) {
+    if (overview && slug0) {
       const PB = ({ ru: { h: 'Публичные страницы бизнеса', p: 'Их видят все: клиенты, партнёры, Google.', site: 'Сайт', svc: 'Услуги', rev: 'Отзывы', par: 'Партнёрская программа' }, ua: { h: 'Публічні сторінки бізнесу', p: 'Їх бачать усі: клієнти, партнери, Google.', site: 'Сайт', svc: 'Послуги', rev: 'Відгуки', par: 'Партнерська програма' } } as R)[lang] || { h: 'Public pages of the business', p: 'Everyone sees them: clients, partners, Google.', site: 'Site', svc: 'Services', rev: 'Reviews', par: 'Partner programme' };
       const sec0 = el('section', 'blk pubpages'); sec0.append(el('h3', '', PB.h), el('p', 'hint', PB.p));
       const base = `${location.origin}/s/${slug0}`;
@@ -1045,9 +1080,9 @@ const ico = {
       s2.append(el('p', 'hint', BW.mkP), btn('sec', BW.mk, async () => { const p = await newProject(c.title); if (p) { await moveChat(c, p.id); openProject(p.id, 'home'); } }));
       box.append(s2);
     }
-    openCv(S.proj?.name || c?.title || T.canvas, box);
+    openCv((S.cur ? c?.title : S.proj?.name) || T.canvas, box);
   }
-  const showBoard = () => { if (S.proj) openProject(S.proj.id, 'home'); else board(); };
+  const showBoard = () => { if (S.proj && !S.cur) openProject(S.proj.id, 'home'); else board(); };
 
   /* ---------- Canvas ---------- */
   function openCv(title: string, ...body: Node[]) { cvTitle.textContent = title; parkBiz(); cvBody.replaceChildren(...body); cv.hidden = false; root.classList.add('wide'); side(false); $('[data-cv-label]').textContent = T.hideCv; }
@@ -1601,7 +1636,7 @@ const ico = {
     openCv(T.crmH, box);
   }
 
-  async function partnerPanel() {
+  async function partnerPanel(asNode = false): Promise<HTMLElement | void> {
     if (S.signed && !ME.signedIn) await loadMe();
     const box = el('div', 'pf');
     // 1) Inviting friends to Vaxo (Decision 57 v2): +50% volume for their first month; for you, half of their plan's volume for a month.
@@ -1643,6 +1678,7 @@ const ico = {
     go.textContent = T.inv2.moneyGo;
     sec2.append(el('p', 'hint', T.inv2.money), go);
     box.append(sec1, sec2);
+    if (asNode) return box;
     openCv(T.earn, box);
   }
 
@@ -1662,11 +1698,11 @@ const ico = {
 
   function panel(k: string) {
     if (k === 'memory') { openProf('memory'); return; }
-    if (k === 'earn') { partnerPanel(); return; }
+    if (k === 'earn') { openProf('earn'); return; }
     // 19.11: only the CURRENT chat's project — never another business's site beside an unrelated chat.
     const pid = S.proj?.id;
     if (pid && PTABS.includes(k)) { openProject(pid, k); return; }
-    if (k === 'partner') { partnerPanel(); return; }
+    if (k === 'partner') { openProf('earn'); return; }
     sitePanel();
   }
 
@@ -2125,9 +2161,11 @@ const ico = {
     if (!S.signed) { openSign(); return; }
     if (!prof.open) prof.showModal();
     if (!ME.signedIn) await loadMe();
-    const tabs = ['plan', 'memory', ...((ME.projects || []).length ? ['projects'] : []), 'account'];
+    const tabs = ['plan', 'earn', 'memory', ...((ME.projects || []).length ? ['projects'] : []), 'account'];
     if (!tabs.includes(tab)) tab = 'plan';
     $('[data-ptabs]').replaceChildren(...tabs.map((k) => { const b = btn(k === tab ? 'on' : '', T.pTabs[k], () => openProf(k)); b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(k === tab)); return b; }));
+    // 20.11: «Earn with Vaxo» opens here in the middle, like Memory and Plan, not on the canvas.
+    if (tab === 'earn') { const holder = el('p', 'hint', '…'); $('[data-pbody]').replaceChildren(holder); partnerPanel(true).then((n) => { if (n) holder.replaceWith(n); }); return; }
     $('[data-pbody]').replaceChildren(({ plan: planTab, memory: memoryTab, projects: projectsTab, account: accountTab } as Record<string, () => Node>)[tab]());
   }
 
@@ -2248,8 +2286,25 @@ const ico = {
       for (let j = low.indexOf(ql); j >= 0 && q; j = low.indexOf(ql, i)) { f.append(text.slice(i, j), el('mark', '', text.slice(j, j + q.length))); i = j + q.length; }
       f.append(text.slice(i)); return f;
     };
-    const hit = (title: string, snip: string, q: string, go: () => void) => {
-      const b = btn('shit', '', () => { sIn.value = ''; showS(); side(false); go(); });
+    // 20.11: after the jump, the words searched for light up in the brand colour right where they are.
+    const markIn = (q: string) => {
+      const ql = q.toLowerCase().trim(); if (ql.length < 2) return;
+      root.querySelectorAll('mark.vxhit').forEach((m) => m.replaceWith(document.createTextNode(m.textContent || '')));
+      let first: HTMLElement | null = null;
+      for (const area of [log, cvBody]) {
+        const w = document.createTreeWalker(area, NodeFilter.SHOW_TEXT), nodes: Text[] = [];
+        while (w.nextNode()) { const n = w.currentNode as Text; if ((n.textContent || '').toLowerCase().includes(ql) && !n.parentElement?.closest('textarea,script,style')) nodes.push(n); }
+        for (const n of nodes.slice(0, 30)) {
+          const t = n.textContent || '', i = t.toLowerCase().indexOf(ql); if (i < 0) continue;
+          const mk = document.createElement('mark'); mk.className = 'vxhit'; mk.textContent = t.slice(i, i + q.length);
+          const after = n.splitText(i); after.textContent = t.slice(i + q.length); n.after(mk);
+          first ??= mk;
+        }
+      }
+      (first as HTMLElement | null)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+    const hit = (title: string, snip: string, q: string, go: () => void | Promise<void>) => {
+      const b = btn('shit', '', async () => { sIn.value = ''; showS(); side(false); await go(); setTimeout(() => markIn(q), 450); });
       const t = el('b'); t.append(mark(title || '…', q)); b.append(t);
       if (snip) { const sm = el('small'); sm.append(mark(snip, q)); b.append(sm); }
       return b;
@@ -2322,7 +2377,7 @@ const ico = {
   $('[data-new-m]').onclick = () => { S.pendingProject = 0; fresh(); };
   $('[data-newproj]').onclick = () => newProject();
   $('[data-map]').onclick = () => { side(false); openMap(); };
-  $('[data-earn]').onclick = () => { side(false); partnerPanel(); };
+  $('[data-earn]').onclick = () => { side(false); openProf('earn'); };
   $('[data-mat]').onclick = () => materials();
   $('[data-menu]').onclick = () => side(true);
   $('[data-veil]').onclick = () => side(false);
@@ -2370,13 +2425,24 @@ const ico = {
     vm.setAttribute('aria-label', vm.title);
     vm.innerHTML = '<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     mic.after(vm);
-    vm.onclick = () => import('../scripts/voicemode').then(({ openVoiceMode }) => openVoiceMode(lang, async (q) => {
+    let wake: import('../scripts/wake').Wake | null = null;
+    const openVM = (first?: string) => import('../scripts/voicemode').then(({ openVoiceMode }) => { wake?.pause(true); openVoiceMode(lang, async (q) => {
       const before = S.msgs.length; await ask(q);
       const last = S.msgs.slice(before).reverse().find((m) => m.role === 'assistant');
       if (!last) return null;
       const made = last.site ? 'site' : last.doc?.app ? 'app' : last.doc ? 'doc' : last.tool ? 'tool' : last.image ? 'image' : '';
       return { text: plain(last.content) + (last.doc && !last.doc.app && !plain(last.content).length ? last.doc.body.slice(0, 900) : ''), made };
-    }));
+    }, undefined, { first, onClose: () => wake?.pause(false) }); });
+    vm.onclick = () => openVM();
+    // «Привет, VAXO» (20.11): switched on once, remembered; VAXO waits for its name while the tab is open.
+    const WK = ({ ru: ['«Привет, VAXO»: включить — VAXO будет слушать своё имя, пока открыта вкладка', 'VAXO слушает «Привет, VAXO» — нажмите, чтобы выключить', '🎙 Скажите «Привет, VAXO»…', 'Разрешите микрофон у адреса сайта'], ua: ['«Привіт, VAXO»: увімкнути — VAXO слухатиме своє ім’я, поки відкрита вкладка', 'VAXO слухає «Привіт, VAXO» — натисніть, щоб вимкнути', '🎙 Скажіть «Привіт, VAXO»…', 'Дозвольте мікрофон біля адреси сайту'], en: ['“Hey VAXO”: turn on — VAXO listens for its name while this tab is open', 'VAXO listens for “Hey VAXO” — click to turn off', '🎙 Say “Hey VAXO”…', 'Allow the microphone next to the address'] } as Record<string, string[]>)[lang] || [];
+    const wk = document.createElement('button'); wk.type = 'button'; wk.className = 'ib wkb'; wk.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M8 18a4 4 0 0 0 4 3 4 4 0 0 0 4-3c0-2 2-3 2-6a6 6 0 1 0-12 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>';
+    vm.after(wk);
+    const paintWk = () => { const on = !!wake; wk.classList.toggle('on', on); wk.title = on ? WK[1] : WK[0]; wk.setAttribute('aria-label', wk.title); wk.setAttribute('aria-pressed', String(on)); if (on && !input.value) input.placeholder = WK[2]; else if (!on) input.placeholder = T.ph; };
+    const wkOn = async () => { const m = await import('../scripts/wake'); wake = await m.startWake(() => lang, (rest) => openVM(rest || undefined), (st) => { if (st === 'error') { toast(WK[3]); wake = null; try { localStorage.removeItem('vx_wake'); } catch { /* */ } paintWk(); } }); paintWk(); };
+    wk.onclick = async () => { if (wake) { wake.stop(); wake = null; try { localStorage.removeItem('vx_wake'); } catch { /* */ } paintWk(); return; } try { localStorage.setItem('vx_wake', '1'); } catch { /* */ } await wkOn(); };
+    paintWk();
+    try { if (localStorage.getItem('vx_wake') === '1') setTimeout(wkOn, 800); } catch { /* */ }
   }
   // Voice conversation (18.11): a question asked by voice gets its answer read aloud; typing switches it off again.
   mic.addEventListener('click', () => { voiceTurn = true; });
@@ -2475,6 +2541,9 @@ const ico = {
     else if (h === '#signin' && !S.signed) openSign();
     else { autoStudio(); if (matchMedia('(min-width: 761px)').matches) input.focus(); }
   })();
+
+  // «Мой кабинет» folds for this visit and is open again next time.
+  { const y = document.querySelector<HTMLElement>('[data-you]'), h = document.querySelector<HTMLButtonElement>('[data-youh]'); if (y && h) h.onclick = () => { const open = !y.classList.toggle('shut'); h.setAttribute('aria-expanded', String(open)); }; }
 </script>
 
 <style is:global>
@@ -3126,4 +3195,16 @@ const ico = {
   @keyframes vxwbob { 50% { transform: translateY(-3px) rotate(-3deg); } }
   @keyframes vxwpulse { 50% { transform: scale(.85); opacity: .7; } }
   @keyframes vxwscan { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
+  .wsp .pmem textarea { width: 100%; box-sizing: border-box; border: 1px solid var(--line2); border-radius: 10px; padding: 10px 12px; background: var(--bg); color: var(--ink); font: inherit; font-size: 14px; }
+  .wsp .pml { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; } .wsp .pmlh { font-size: 13px; color: var(--mut); }
+  .wsp .pchat { display: block; width: 100%; text-align: left; margin-top: 6px; }
+  .wsp .youh { display: flex; width: 100%; justify-content: space-between; align-items: center; background: none; border: 0; cursor: pointer; padding: 6px 8px 6px 0; border-radius: 8px; font: inherit; }
+  .wsp .youh:hover { background: var(--surf2); }
+  .wsp .youh i { font-style: normal; font-size: 16px; color: var(--ink); width: 24px; text-align: center; transition: transform .2s; }
+  .wsp .you.shut .youh i { transform: rotate(180deg); }
+  .wsp .you.shut > :not(.youh) { display: none; }
+  mark.vxhit { background: color-mix(in srgb, var(--accText, #e8a33d) 38%, transparent); color: inherit; border-radius: 4px; padding: 0 2px; box-shadow: 0 0 0 2px color-mix(in srgb, var(--accText, #e8a33d) 55%, transparent); animation: vxhit 1.6s ease-out 2; }
+  @keyframes vxhit { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accText, #e8a33d) 25%, transparent); } }
+  .wsp .wkb.on { color: #e8a33d; box-shadow: 0 0 0 2px color-mix(in srgb, #e8a33d 45%, transparent); border-radius: 50%; animation: wkpulse 2.4s ease-in-out infinite; }
+  @keyframes wkpulse { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, #e8a33d 12%, transparent); } }
 </style>
