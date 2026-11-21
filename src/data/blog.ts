@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'moving-house-checklist-with-ai',
+    date: '2026-11-21',
+    t: {
+      en: {
+        title: 'Moving house without stress: a simple checklist and plan with AI', seo: 'Moving house checklist: a calm plan with AI',
+        desc: 'Split the move into weeks, sort things before packing, label every box, book movers early and switch addresses in advance — a calm move instead of a chaotic weekend.',
+        body: [
+          ['Why moving feels so hard', ['Hundreds of small tasks land on the same few days. The fix is simple: spread them over four weeks and keep everything in one list.']],
+          ['1. Four weeks before', ['Pick the date, compare two or three movers or book a van, and order boxes, tape and markers. Ask for a written price — what is included and what costs extra.']],
+          ['2. Sort before you pack', ['Go room by room: keep, sell, give away, throw out. Everything you do not move saves money and time. Start with storage, the garage and the wardrobe.']],
+          ['3. Pack smart', ['One room at a time, heavy things in small boxes, light things in big ones. Write on each box the room and what is inside, and give it a number — then you know if anything is missing.']],
+          ['4. Switch addresses in time', ['Electricity, water, internet, bank, post, doctor, school, subscriptions and deliveries. Make a list and change two or three a day — not all on the last evening.']],
+          ['5. Pack a “first day” bag', ['Documents, chargers, medicine, a change of clothes, towels, bedding, a kettle, snacks and basic tools. This bag travels with you, not in the truck.']],
+          ['6. Moving day and after', ['Take photos of meter readings in both homes, check the boxes by number, and unpack the kitchen and bedroom first. The rest can wait a week.']],
+          ['How Vaxo helps', ['In Workspace write “I am moving on December 15 from a two-room flat, make me a plan by weeks, a box list and an address change list” — Vax will prepare the plan, the lists and the messages for movers and services. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Переезд без стресса: простой чек-лист и план с ИИ', seo: 'Чек-лист переезда: спокойный план с ИИ',
+        desc: 'Разбейте переезд на недели, разберите вещи до упаковки, подпишите каждую коробку, заранее закажите перевозчика и смените адреса — спокойный переезд вместо хаотичных выходных.',
+        body: [
+          ['Почему переезд так выматывает', ['Сотни мелких дел падают на одни и те же несколько дней. Решение простое: растянуть их на четыре недели и держать всё в одном списке.']],
+          ['1. За четыре недели', ['Выберите дату, сравните двух-трёх перевозчиков или закажите машину, купите коробки, скотч и маркеры. Попросите цену письменно: что входит, а что за доплату.']],
+          ['2. Разберите вещи до упаковки', ['Комната за комнатой: оставить, продать, отдать, выбросить. Всё, что вы не везёте, экономит деньги и время. Начните с кладовки, балкона и шкафа.']],
+          ['3. Упаковывайте с умом', ['По одной комнате, тяжёлое — в маленькие коробки, лёгкое — в большие. На каждой коробке пишите комнату, что внутри, и номер — так сразу видно, если что-то потерялось.']],
+          ['4. Смените адреса вовремя', ['Свет, вода, интернет, банк, почта, врач, школа, подписки и доставки. Составьте список и меняйте по два-три в день, а не всё в последний вечер.']],
+          ['5. Соберите сумку «первого дня»', ['Документы, зарядки, лекарства, смена одежды, полотенца, постельное, чайник, перекус и простые инструменты. Эта сумка едет с вами, а не в машине.']],
+          ['6. День переезда и после', ['Сфотографируйте показания счётчиков в обеих квартирах, проверьте коробки по номерам и первыми разберите кухню и спальню. Остальное подождёт неделю.']],
+          ['Чем помогает Vaxo', ['В Workspace напишите «переезжаю 15 декабря из двухкомнатной квартиры, сделай план по неделям, список коробок и список смены адресов» — Vax подготовит план, списки и сообщения для перевозчиков и служб. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Переїзд без стресу: простий чек-лист і план з ШІ', seo: 'Чек-лист переїзду: спокійний план з ШІ',
+        desc: 'Розбийте переїзд на тижні, розберіть речі до пакування, підпишіть кожну коробку, заздалегідь замовте перевізника і змініть адреси — спокійний переїзд замість хаотичних вихідних.',
+        body: [
+          ['Чому переїзд так виснажує', ['Сотні дрібних справ падають на ті самі кілька днів. Рішення просте: розтягнути їх на чотири тижні й тримати все в одному списку.']],
+          ['1. За чотири тижні', ['Оберіть дату, порівняйте двох-трьох перевізників або замовте машину, купіть коробки, скотч і маркери. Попросіть ціну письмово: що входить, а що за доплату.']],
+          ['2. Розберіть речі до пакування', ['Кімната за кімнатою: залишити, продати, віддати, викинути. Усе, що ви не везете, заощаджує гроші й час. Почніть із комори, балкона і шафи.']],
+          ['3. Пакуйте з розумом', ['По одній кімнаті, важке — в маленькі коробки, легке — у великі. На кожній коробці пишіть кімнату, що всередині, і номер — так одразу видно, якщо щось загубилося.']],
+          ['4. Змініть адреси вчасно', ['Світло, вода, інтернет, банк, пошта, лікар, школа, підписки й доставки. Складіть список і змінюйте по два-три на день, а не все в останній вечір.']],
+          ['5. Зберіть сумку «першого дня»', ['Документи, зарядки, ліки, зміна одягу, рушники, постільна білизна, чайник, перекус і прості інструменти. Ця сумка їде з вами, а не в машині.']],
+          ['6. День переїзду і після', ['Сфотографуйте показники лічильників в обох квартирах, перевірте коробки за номерами і першими розберіть кухню та спальню. Решта почекає тиждень.']],
+          ['Чим допомагає Vaxo', ['У Workspace напишіть «переїжджаю 15 грудня з двокімнатної квартири, зроби план по тижнях, список коробок і список зміни адрес» — Vax підготує план, списки і повідомлення для перевізників і служб. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'get-paid-on-time-invoices-reminders',
     date: '2026-11-21',
     t: {
