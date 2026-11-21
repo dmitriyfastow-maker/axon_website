@@ -14,6 +14,54 @@ export const BLOG_UI: Record<Lang, { h: string; title: string; desc: string; bac
 
 export const POSTS: Post[] = [
   {
+    slug: 'get-paid-on-time-invoices-reminders',
+    date: '2026-11-21',
+    t: {
+      en: {
+        title: 'How to get paid on time: a clear invoice and polite reminders', seo: 'Get paid on time: invoices and reminders',
+        desc: 'Agree on payment before work starts, send a clear invoice the same day, give an easy way to pay and follow a simple reminder schedule — so clients pay without awkward talks.',
+        body: [
+          ['Why clients pay late', ['Usually not out of bad will: the invoice is unclear, the date is not fixed, paying is inconvenient or the client simply forgot. Each of these is easy to fix.']],
+          ['1. Agree before you start', ['Write the price, what is included, the payment date and the prepayment in one short message and get a “yes”. For bigger work take 30–50% upfront — it filters out clients who were not going to pay.']],
+          ['2. Send the invoice the same day', ['The sooner the invoice arrives, the sooner it is paid. Send it the day the work is done, while the client is happy with the result.']],
+          ['3. Make the invoice clear', ['Number, date, your details, what was done in simple words, the sum, the due date and how to pay. One page, no questions left.']],
+          ['4. Make paying easy', ['Give two or three ways: card link, bank transfer, a payment button. Every extra step is another day of delay.']],
+          ['5. Remind on a schedule', ['Two days before the due date — a friendly note. On the day — a short reminder. Three days after — a polite message with the invoice attached again. A week after — a call. Calm tone, always with the invoice and the sum.']],
+          ['6. Keep a simple list', ['One table: client, sum, due date, status. Five minutes a week and you always know who owes what.']],
+          ['How Vaxo helps', ['In Workspace write “make an invoice for a logo design, 300 euros, due in 7 days, and reminder messages” — Vax will prepare the invoice, the reminder texts for each day and a table of payments you can update. You can start for free.']],
+        ],
+      },
+      ru: {
+        title: 'Как получать оплату вовремя: понятный счёт и вежливые напоминания', seo: 'Как получать оплату вовремя: счёт и напоминания',
+        desc: 'Договоритесь об оплате до начала работы, отправьте понятный счёт в тот же день, дайте удобный способ оплаты и напоминайте по простому графику — клиенты платят без неловких разговоров.',
+        body: [
+          ['Почему клиенты платят с опозданием', ['Чаще всего не со зла: счёт непонятный, дата не названа, платить неудобно или клиент просто забыл. Каждую из этих причин легко убрать.']],
+          ['1. Договоритесь до начала работы', ['Цена, что входит, дата оплаты и предоплата — в одном коротком сообщении, и получите «да». На крупную работу берите 30–50% вперёд: это сразу отсеивает тех, кто платить не собирался.']],
+          ['2. Отправьте счёт в тот же день', ['Чем раньше пришёл счёт, тем раньше его оплатят. Отправляйте в день сдачи работы, пока клиент доволен результатом.']],
+          ['3. Сделайте счёт понятным', ['Номер, дата, ваши реквизиты, что сделано простыми словами, сумма, срок оплаты и как платить. Одна страница — и никаких вопросов.']],
+          ['4. Сделайте оплату удобной', ['Дайте два-три способа: ссылка на оплату картой, перевод на счёт, кнопка оплаты. Каждый лишний шаг — ещё день задержки.']],
+          ['5. Напоминайте по графику', ['За два дня до срока — дружеское сообщение. В день оплаты — короткое напоминание. Через три дня — вежливое письмо со счётом ещё раз. Через неделю — звонок. Спокойный тон, всегда со счётом и суммой.']],
+          ['6. Ведите простой список', ['Одна таблица: клиент, сумма, срок, статус. Пять минут в неделю — и вы всегда знаете, кто сколько должен.']],
+          ['Чем помогает Vaxo', ['В Workspace напишите «сделай счёт за дизайн логотипа, 12000 грн, оплата за 7 дней, и тексты напоминаний» — Vax подготовит счёт, тексты напоминаний на каждый день и таблицу оплат, которую можно обновлять. Начать можно бесплатно.']],
+        ],
+      },
+      ua: {
+        title: 'Як отримувати оплату вчасно: зрозумілий рахунок і ввічливі нагадування', seo: 'Як отримувати оплату вчасно: рахунок і нагадування',
+        desc: 'Домовтеся про оплату до початку роботи, надішліть зрозумілий рахунок того ж дня, дайте зручний спосіб оплати і нагадуйте за простим графіком — клієнти платять без незручних розмов.',
+        body: [
+          ['Чому клієнти платять із запізненням', ['Найчастіше не зі зла: рахунок незрозумілий, дату не названо, платити незручно або клієнт просто забув. Кожну з цих причин легко прибрати.']],
+          ['1. Домовтеся до початку роботи', ['Ціна, що входить, дата оплати і передоплата — в одному короткому повідомленні, і отримайте «так». На велику роботу беріть 30–50% наперед: це одразу відсіює тих, хто платити не збирався.']],
+          ['2. Надішліть рахунок того ж дня', ['Що раніше прийшов рахунок, то раніше його оплатять. Надсилайте в день здачі роботи, поки клієнт задоволений результатом.']],
+          ['3. Зробіть рахунок зрозумілим', ['Номер, дата, ваші реквізити, що зроблено простими словами, сума, строк оплати і як платити. Одна сторінка — і жодних питань.']],
+          ['4. Зробіть оплату зручною', ['Дайте два-три способи: посилання на оплату карткою, переказ на рахунок, кнопка оплати. Кожен зайвий крок — ще день затримки.']],
+          ['5. Нагадуйте за графіком', ['За два дні до строку — дружнє повідомлення. У день оплати — коротке нагадування. Через три дні — ввічливий лист із рахунком ще раз. Через тиждень — дзвінок. Спокійний тон, завжди з рахунком і сумою.']],
+          ['6. Ведіть простий список', ['Одна таблиця: клієнт, сума, строк, статус. П’ять хвилин на тиждень — і ви завжди знаєте, хто скільки винен.']],
+          ['Чим допомагає Vaxo', ['У Workspace напишіть «зроби рахунок за дизайн логотипа, 12000 грн, оплата за 7 днів, і тексти нагадувань» — Vax підготує рахунок, тексти нагадувань на кожен день і таблицю оплат, яку можна оновлювати. Почати можна безкоштовно.']],
+        ],
+      },
+    },
+  },
+  {
     slug: 'plan-birthday-party-with-ai-one-evening',
     date: '2026-11-20',
     t: {
